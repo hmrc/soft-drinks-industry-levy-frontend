@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.softdrinksindustrylevyfrontend.generic
+@()(implicit request: Request[_], messages: Messages))
 
-import uk.gov.hmrc.softdrinksindustrylevyfrontend.pages.SDILPage
-
-object NginxFailurePage extends SDILPage {
-
-  // TODO find a better way to implement this, don't have the page source to hand right now
-  override def isCurrentPage: Boolean = pageSource.contains("nginx")
-
+@uk.gov.hmrc.softdrinksindustrylevyfrontend.views.html.main_template(title = "Hello from soft-drinks-industry-levy-frontend", bodyClasses = None) {
+    <h1>Hello from soft-drinks-industry-levy-frontend !</h1>
 }

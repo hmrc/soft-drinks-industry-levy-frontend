@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.softdrinksindustrylevyfrontend
+package uk.gov.hmrc.softdrinksindustrylevyfrontend.tests
 
 import uk.gov.hmrc.softdrinksindustrylevyfrontend.pages.TestPage
 

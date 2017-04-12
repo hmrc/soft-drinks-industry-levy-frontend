@@ -1,4 +1,4 @@
-package uk.gov.hmrc.softdrinksindustrylevyfrontend
+package uk.gov.hmrc.softdrinksindustrylevyfrontend.tests
 
 import java.io.IOException
 import java.net.URI
@@ -35,6 +35,7 @@ trait BaseFeatureSpec
 
   override protected def afterEach(testData: TestData): Unit = {
     if (!Env.withHar) return
+    import scala.collection.JavaConversions._
     println(JsObject(Seq("scenarioRequests" -> JsArray(Env.proxy.getHar.getLog.getEntries
       .filter(_.getRequest.getHeaders.exists(_.getValue.contains("text/html")))
       .filter(_.getRequest.getUrl.contains(Env.baseUrl))
