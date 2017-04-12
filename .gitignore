@@ -33,3 +33,11 @@ test-result
 tmp
 .idea_modules
 bin
+/.idea
+/*.iml
+/*.ipr
+*.iws
+/.ensime
+/.ensime_cache
+build.sublime-workspace
+classes/
