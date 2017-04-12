@@ -1,11 +1,11 @@
-package uk.gov.hmrc.softdrinksindustrylevyfrontend.acceptancetests.generic
+package uk.gov.hmrc.softdrinksindustrylevyfrontend.generic
 
 import org.openqa.selenium.{Keys, WebElement}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, PatienceConfiguration}
 import org.scalatest.selenium.WebBrowser
 import org.scalatest.time.{Millis, Seconds, Span}
-import uk.gov.hmrc.softdrinksindustrylevyfrontend.acceptancetests.util.{ImplicitWebDriverSugar, NavigationSugar}
+import uk.gov.hmrc.softdrinksindustrylevyfrontend.util.{ImplicitWebDriverSugar, NavigationSugar}
 
 
 trait WebPage extends org.scalatest.selenium.Page

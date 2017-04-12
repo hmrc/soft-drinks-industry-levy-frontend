@@ -1,5 +1,5 @@
 
-package uk.gov.hmrc.softdrinksindustrylevyfrontend.acceptancetests.util
+package uk.gov.hmrc.softdrinksindustrylevyfrontend.util
 
 import java.io.{FileNotFoundException, IOException}
 import java.net.{InetSocketAddress, URL}
@@ -18,9 +18,7 @@ import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.ie.InternetExplorerDriver
 import org.openqa.selenium.logging.{LogType, LoggingPreferences}
 import org.openqa.selenium.remote.{CapabilityType, DesiredCapabilities, RemoteWebDriver}
-import org.openqa.selenium.safari.{SafariDriver, SafariOptions}
 import org.openqa.selenium.{Proxy, WebDriver}
-import org.scalatest.selenium.InternetExplorer
 
 import scala.collection.JavaConversions._
 import scala.io.Source
@@ -106,7 +104,7 @@ class Driver {
       options.addArguments("test-type")
       capabilities.setCapability(ChromeOptions.CAPABILITY, options)
       val driver = new ChromeDriver(capabilities)
-//      driver.manage().window().maximize()
+      driver.manage().window().maximize()
       val caps = driver.getCapabilities
       val browserName = caps.getBrowserName
       val browserVersion = caps.getVersion

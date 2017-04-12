@@ -1,4 +1,4 @@
-package uk.gov.hmrc.softdrinksindustrylevyfrontend.acceptancetests.util
+package uk.gov.hmrc.softdrinksindustrylevyfrontend.util
 
 import org.openqa.selenium.{By, WebElement}
 import org.scalatest.selenium.WebBrowser
