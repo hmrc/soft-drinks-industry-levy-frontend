@@ -24,7 +24,8 @@ class MainSpec extends BaseFeatureSpec {
   feature("Test feature") {
     scenario("Test scenario") {
       Given("I navigate to the google website")
-      TestPage.goToGoogle()
+      TestPage.goToNewtours()
+      TestPage.someFunction()
     }
   }
 

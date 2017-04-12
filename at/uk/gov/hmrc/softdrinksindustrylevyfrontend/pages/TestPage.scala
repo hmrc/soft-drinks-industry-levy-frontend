@@ -18,6 +18,12 @@ package uk.gov.hmrc.softdrinksindustrylevyfrontend.pages
 
 object TestPage extends SDILPage {
 
-  def goToGoogle() = go to "http://www.google.co.uk"
+  val username = xpath("html/body/div[1]/table/tbody/tr/td[2]/table/tbody/tr[4]/td/table/tbody/tr/td[2]/table/tbody/tr[2]/td[3]/form/table/tbody/tr[4]/td/table/tbody/tr[2]/td[2]/input")
+
+  def goToNewtours() = go to "http://newtours.demoaut.com/"
+
+  def someFunction() = {
+    textField(username).value = "bob"
+  }
 
 }
