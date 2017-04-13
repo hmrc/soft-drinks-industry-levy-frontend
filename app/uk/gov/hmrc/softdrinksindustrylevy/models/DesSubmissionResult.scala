@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@()(implicit request: Request[_], messages: Messages))
+package uk.gov.hmrc.softdrinksindustrylevy.models
 
-@uk.gov.hmrc.softdrinksindustrylevyfrontend.views.html.main_template(title = "Hello from soft-drinks-industry-levy-frontend", bodyClasses = None) {
-    <h1>Hello from soft-drinks-industry-levy-frontend !</h1>
-}
+case class DesSubmissionResult(valid: Boolean)

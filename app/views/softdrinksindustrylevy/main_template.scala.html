@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.softdrinksindustrylevy.config.FrontendAppConfig
 @(title: String,
   sidebarLinks: Option[Html] = None,
   contentHeader: Option[Html] = None,
@@ -33,7 +34,7 @@
 }
 
 
-@govuk_wrapper(appConfig = uk.gov.hmrc.softdrinksindustrylevyfrontend.FrontendAppConfig,
+@govuk_wrapper(appConfig = FrontendAppConfig,
                title = title,
                mainClass = mainClass,
                bodyClasses = bodyClasses,

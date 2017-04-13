@@ -12,9 +12,9 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.message.BasicNameValuePair
 import org.scalatest._
 import play.api.libs.json.{JsArray, JsObject, JsString}
-//import uk.gov.hmrc.integration.framework.CookieManagement
 import uk.gov.hmrc.softdrinksindustrylevyfrontend.generic.NginxFailurePage
 import uk.gov.hmrc.softdrinksindustrylevyfrontend.util.{Env, ImplicitWebDriverSugar, NavigationSugar, SingletonDriver}
+//import uk.gov.hmrc.integration.framework.CookieManagement
 
 trait BaseFeatureSpec
   extends FeatureSpec
