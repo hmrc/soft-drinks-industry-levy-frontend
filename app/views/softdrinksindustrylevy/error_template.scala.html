@@ -14,8 +14,15 @@
  * limitations under the License.
  *@
 
-@()(implicit request: Request[_], messages: Messages))
+@import uk.gov.hmrc.softdrinksindustrylevy.config.FrontendAppConfig
+@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages)
 
-@uk.gov.hmrc.softdrinksindustrylevyfrontend.views.html.main_template(title = "Hello from soft-drinks-industry-levy-frontend", bodyClasses = None) {
-    <h1>Hello from soft-drinks-industry-levy-frontend !</h1>
+@contentHeader = {
+  <h1>@heading</h1>
 }
+
+@mainContent = {
+  <p>@message</p>
+}
+
+@govuk_wrapper(appConfig = FrontendAppConfig, title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.softdrinksindustrylevyfrontend
+package uk.gov.hmrc.softdrinksindustrylevy.config
 
 import java.io.File
 
@@ -47,7 +47,7 @@ object FrontendGlobal
   }
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html =
-    uk.gov.hmrc.softdrinksindustrylevyfrontend.views.html.error_template(pageTitle, heading, message)
+    views.html.softdrinksindustrylevy.error_template(pageTitle, heading, message)
 
   override def microserviceMetricsConfig(implicit app: Application): Option[Configuration] = app.configuration.getConfig(s"microservice.metrics")
 }

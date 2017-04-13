@@ -14,37 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.softdrinksindustrylevyfrontend.controllers
+package uk.gov.hmrc.softdrinksindustrylevy.controllers
 
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.http._
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.play.test.{WithFakeApplication, UnitSpec}
 
+class HelloWorldControllerSpec extends PlayMessagesSpec {
 
-class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication{
+  val controller = new HelloWorldController(messagesApi)
 
-  val fakeRequest = FakeRequest("GET", "/")
-
-
-  "GET /" should {
-    "return 200" in {
-      val result = HelloWorld.helloWorld(fakeRequest)
-      status(result) shouldBe Status.OK
+  "HelloWorldController" should {
+    "return Status: 200 Message: sdil.common.title for successful helloWorld" in {
+      val request = FakeRequest("GET", "/hello-world")
+      val result = controller.helloWorld().apply(request)
+      status(result) mustBe Status.OK
+      contentAsString(result) must include(getMessages(request)("sdil.common.title"))
     }
-
-    "return HTML" in {
-      val result = HelloWorld.helloWorld(fakeRequest)
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-    }
-
-
   }
-
-
 }
