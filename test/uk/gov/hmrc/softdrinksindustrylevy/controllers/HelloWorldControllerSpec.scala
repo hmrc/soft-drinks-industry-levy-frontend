@@ -32,29 +32,29 @@ import scala.concurrent.Future
 
 class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOneAppPerSuite with BeforeAndAfterEach {
 
-  val mockSdilController: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
-  val controller = new HelloWorldController(messagesApi, mockSdilController)
+  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  val controller = new HelloWorldController(messagesApi, mockSdilConnector)
 
   override def beforeEach() {
-    reset(mockSdilController)
+    reset(mockSdilConnector)
   }
 
   "HelloWorldController" should {
     "return Status: 200 Message: Return result is: true for successful helloWorld" in {
       val request = FakeRequest("GET", "/hello-world")
-      when(mockSdilController.retrieveHelloWorld()(any())).thenReturn(Future.successful(DesSubmissionResult(true)))
+      when(mockSdilConnector.retrieveHelloWorld()(any())).thenReturn(Future.successful(DesSubmissionResult(true)))
       val result = controller.backendRetrieve().apply(request)
       status(result) mustBe Status.OK
-      verify(mockSdilController, times(1)).retrieveHelloWorld()(any())
+      verify(mockSdilConnector, times(1)).retrieveHelloWorld()(any())
       contentAsString(result) must include("Return result is: true")
     }
 
     "return Status: 200 Message: Return result is: false for successful helloWorld" in {
       val request = FakeRequest("GET", "/hello-world")
-      when(mockSdilController.retrieveHelloWorld()(any())).thenReturn(Future.successful(DesSubmissionResult(false)))
+      when(mockSdilConnector.retrieveHelloWorld()(any())).thenReturn(Future.successful(DesSubmissionResult(false)))
       val result = controller.backendRetrieve().apply(request)
       status(result) mustBe Status.OK
-      verify(mockSdilController, times(1)).retrieveHelloWorld()(any())
+      verify(mockSdilConnector, times(1)).retrieveHelloWorld()(any())
       contentAsString(result) must include("Return result is: false")
     }
   }
