@@ -50,7 +50,6 @@ object FrontendBuild extends Build {
         "org.mockito" % "mockito-core" % "2.7.22" % "test",
         "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % "test"
       ),
-      unmanagedSourceDirectories in IntegrationTest <<= (baseDirectory in IntegrationTest)(base => Seq(base / "it")),
       retrieveManaged := true,
       routesGenerator := StaticRoutesGenerator,
       resolvers ++= Seq(
@@ -58,4 +57,7 @@ object FrontendBuild extends Build {
         Resolver.jcenterRepo
       )
     )
+    .configs(IntegrationTest)
+    .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
+
 }
