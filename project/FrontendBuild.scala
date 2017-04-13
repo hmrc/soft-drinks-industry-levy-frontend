@@ -16,7 +16,7 @@ import DefaultBuildSettings._
 object FrontendBuild extends Build {
 
   lazy val microservice = Project("soft-drinks-industry-levy-frontend", file("."))
-    .enablePlugins(Seq(play.sbt.PlayScala,SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin) : _*)
+    .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
     .settings(scalaSettings: _*)
     .settings(publishingSettings: _*)
     .settings(defaultSettings(): _*)
@@ -31,7 +31,7 @@ object FrontendBuild extends Build {
         "uk.gov.hmrc" %% "govuk-template" % "5.2.0",
         "uk.gov.hmrc" %% "play-health" % "2.1.0",
         "uk.gov.hmrc" %% "play-ui" % "7.2.0",
-        "com.typesafe.play" % "play-json_2.11" % "2.5.12",
+        "com.typesafe.play" %% "play-json" % "2.5.12",
         "org.pegdown" % "pegdown" % "1.4.2",
         "net.lightbody.bmp" % "browsermob-core" % "2.1.1",
         "org.scalatest" %% "scalatest" % "3.0.1",
@@ -39,14 +39,16 @@ object FrontendBuild extends Build {
         "com.fasterxml.jackson.core" % "jackson-annotations" % "2.7.0",
         "com.fasterxml.jackson.core" % "jackson-databind" % "2.7.2",
         "com.fasterxml.jackson.core" % "jackson-core" % "2.7.4",
-        "com.fasterxml.jackson.module" % "jackson-module-scala_2.10" % "2.7.2",
-
+        "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.7.2",
+        
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % "test",
         "org.scalatest" %% "scalatest" % "2.2.6" % "test",
         "org.pegdown" % "pegdown" % "1.6.0" % "test",
         "org.jsoup" % "jsoup" % "1.8.1" % "test",
-        "com.typesafe.play" %% "play-test" % PlayVersion.current % "test"
+        "com.typesafe.play" %% "play-test" % PlayVersion.current % "test",
+        "org.mockito" % "mockito-core" % "2.7.22" % "test",
+        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % "test"
       ),
       retrieveManaged := true,
       routesGenerator := StaticRoutesGenerator,
