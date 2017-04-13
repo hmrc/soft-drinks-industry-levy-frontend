@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.softdrinksindustrylevy.controllers
 
-import org.scalatest.BeforeAndAfterEach
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status

@@ -18,7 +18,6 @@ package uk.gov.hmrc.softdrinksindustrylevy.controllers
 
 import javax.inject.Inject
 
-import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.softdrinksindustrylevy.connectors.SoftDrinksIndustryLevyConnector

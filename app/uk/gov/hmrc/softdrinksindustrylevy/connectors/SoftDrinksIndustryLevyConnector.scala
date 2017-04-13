@@ -18,7 +18,6 @@ package uk.gov.hmrc.softdrinksindustrylevy.connectors
 
 import javax.inject.Singleton
 
-import play.api.Logger
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.softdrinksindustrylevy.config.WSHttp

@@ -16,13 +16,14 @@
 
 package uk.gov.hmrc.softdrinksindustrylevy.controllers
 
-import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 
-trait PlayMessagesSpec extends PlaySpec with OneAppPerSuite {
+trait PlayMessagesSpec extends PlaySpec with GuiceOneAppPerSuite {
   implicit override lazy val app: Application = new GuiceApplicationBuilder().
     disable[com.kenshoo.play.metrics.PlayModule].build()
 
