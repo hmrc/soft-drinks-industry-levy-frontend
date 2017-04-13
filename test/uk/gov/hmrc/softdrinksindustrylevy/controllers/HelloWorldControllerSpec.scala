@@ -16,20 +16,46 @@
 
 package uk.gov.hmrc.softdrinksindustrylevy.controllers
 
+import org.scalatest.BeforeAndAfterEach
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.softdrinksindustrylevy.connectors.SoftDrinksIndustryLevyConnector
+import uk.gov.hmrc.softdrinksindustrylevy.models.DesSubmissionResult
 
-class HelloWorldControllerSpec extends PlayMessagesSpec {
+import scala.concurrent.Future
 
-  val controller = new HelloWorldController(messagesApi)
+
+class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOneAppPerSuite with BeforeAndAfterEach {
+
+  val mockSdilController: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  val controller = new HelloWorldController(messagesApi, mockSdilController)
+
+  override def beforeEach() {
+    reset(mockSdilController)
+  }
 
   "HelloWorldController" should {
-    "return Status: 200 Message: sdil.common.title for successful helloWorld" in {
+    "return Status: 200 Message: Return result is: true for successful helloWorld" in {
       val request = FakeRequest("GET", "/hello-world")
-      val result = controller.helloWorld().apply(request)
+      when(mockSdilController.retrieveHelloWorld()(any())).thenReturn(Future.successful(DesSubmissionResult(true)))
+      val result = controller.backendRetrieve().apply(request)
       status(result) mustBe Status.OK
-      contentAsString(result) must include(getMessages(request)("sdil.common.title"))
+      verify(mockSdilController, times(1)).retrieveHelloWorld()(any())
+      contentAsString(result) must include("Return result is: true")
+    }
+
+    "return Status: 200 Message: Return result is: false for successful helloWorld" in {
+      val request = FakeRequest("GET", "/hello-world")
+      when(mockSdilController.retrieveHelloWorld()(any())).thenReturn(Future.successful(DesSubmissionResult(false)))
+      val result = controller.backendRetrieve().apply(request)
+      status(result) mustBe Status.OK
+      verify(mockSdilController, times(1)).retrieveHelloWorld()(any())
+      contentAsString(result) must include("Return result is: false")
     }
   }
 }
