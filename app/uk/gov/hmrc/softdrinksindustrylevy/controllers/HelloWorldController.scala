@@ -18,13 +18,21 @@ package uk.gov.hmrc.softdrinksindustrylevy.controllers
 
 import javax.inject.Inject
 
+import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.softdrinksindustrylevy.connectors.SoftDrinksIndustryLevyConnector
 
-class HelloWorldController @Inject()(val messagesApi: play.api.i18n.MessagesApi) extends FrontendController with play.api.i18n.I18nSupport {
+class HelloWorldController @Inject()(val messagesApi: play.api.i18n.MessagesApi, sdilConnector: SoftDrinksIndustryLevyConnector) extends FrontendController with play.api.i18n.I18nSupport {
 
   def helloWorld(): Action[AnyContent] = Action { implicit request =>
     Ok(views.html.softdrinksindustrylevy.helloworld.hello_world())
+  }
+
+  def backendRetrieve(): Action[AnyContent] = Action.async { implicit request =>
+    sdilConnector.retrieveHelloWorld().map {
+      result => Ok(views.html.softdrinksindustrylevy.helloworld.hello_world(Some(result)))
+    }
   }
 
 }
