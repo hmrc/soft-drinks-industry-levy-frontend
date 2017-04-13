@@ -41,3 +41,4 @@ bin
 /.ensime_cache
 build.sublime-workspace
 classes/
+it/
