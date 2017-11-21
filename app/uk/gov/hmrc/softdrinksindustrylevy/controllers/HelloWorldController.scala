@@ -24,10 +24,8 @@ import uk.gov.hmrc.softdrinksindustrylevy.connectors.SoftDrinksIndustryLevyConne
 
 class HelloWorldController @Inject()(val messagesApi: play.api.i18n.MessagesApi, sdilConnector: SoftDrinksIndustryLevyConnector) extends FrontendController with play.api.i18n.I18nSupport {
 
-  def backendRetrieve(): Action[AnyContent] = Action.async { implicit request =>
-    sdilConnector.retrieveHelloWorld().map {
-      result => Ok(views.html.softdrinksindustrylevy.helloworld.hello_world(Some(result)))
-    }
+  def backendRetrieve(): Action[AnyContent] = Action { implicit request =>
+      Ok(views.html.softdrinksindustrylevy.helloworld.hello_world())
   }
 
 }

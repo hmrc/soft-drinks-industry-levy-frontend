@@ -38,5 +38,14 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   override lazy val analyticsHost = loadConfig(s"google-analytics.host")
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  override lazy val betaFeedbackUrlNoAuth = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"  
+  override lazy val betaFeedbackUrlNoAuth = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+
+
+  //Auth related config
+  val appName = loadConfig("appName")
+  private lazy val companyAuthFrontend = getConfString("company-auth.url", "")
+  private lazy val companyAuthSignInPath = getConfString("company-auth.sign-in-path", "")
+  private lazy val companyAuthSignOutPath = getConfString("company-auth.sign-out-path", "")
+  val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
+  val sdilHomePage = loadConfig("sdil-home-page-url")
 }

@@ -1,3 +1,4 @@
 # microservice specific routes
 
 GET        /hello-world             @uk.gov.hmrc.softdrinksindustrylevy.controllers.HelloWorldController.backendRetrieve()
+GET        /auth-test               @uk.gov.hmrc.softdrinksindustrylevy.controllers.SDILController.testAuth

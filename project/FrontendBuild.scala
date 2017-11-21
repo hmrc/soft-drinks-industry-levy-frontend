@@ -15,6 +15,17 @@ import DefaultBuildSettings._
 
 object FrontendBuild extends Build {
 
+//  lazy val scoverageSettings = {
+//    import scoverage.ScoverageKeys
+//    Seq(
+//      // Semicolon-separated list of regexs matching classes to exclude
+//      ScoverageKeys.coverageExcludedPackages := "<empty>;app.*;views.*;uk.gov.hmrc.*;prod.*;connectors.*;models.*;utils.*",
+//      ScoverageKeys.coverageMinimum := 80,
+//      ScoverageKeys.coverageFailOnMinimum := false,
+//      ScoverageKeys.coverageHighlighting := true
+//    )
+//  }
+
   lazy val microservice = Project("soft-drinks-industry-levy-frontend", file("."))
     .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
     .settings(scalaSettings: _*)
@@ -26,18 +37,12 @@ object FrontendBuild extends Build {
         "uk.gov.hmrc" %% "frontend-bootstrap" % "8.11.0",
         "uk.gov.hmrc" %% "play-partials" % "6.1.0",
         "com.typesafe.play" %% "play-json" % "2.5.12",
-        "org.pegdown" % "pegdown" % "1.4.2",
-        "net.lightbody.bmp" % "browsermob-core" % "2.1.1",
-        "org.scalatest" %% "scalatest" % "3.0.1",
         "org.scalactic" %% "scalactic" % "3.0.1",
-        "com.fasterxml.jackson.core" % "jackson-annotations" % "2.7.0",
-        "com.fasterxml.jackson.core" % "jackson-databind" % "2.7.2",
-        "com.fasterxml.jackson.core" % "jackson-core" % "2.7.4",
-        "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.7.2",
+        "uk.gov.hmrc" %% "auth-client" % "2.3.0",
         
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % "test",
-        "org.scalatest" %% "scalatest" % "2.2.6" % "test",
+        "org.scalatest" %% "scalatest" % "3.0.1" % "test",
         "org.pegdown" % "pegdown" % "1.6.0" % "test",
         "org.jsoup" % "jsoup" % "1.8.1" % "test",
         "com.typesafe.play" %% "play-test" % PlayVersion.current % "test",
