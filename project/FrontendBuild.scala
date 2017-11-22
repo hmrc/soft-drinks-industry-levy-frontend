@@ -3,28 +3,25 @@ import play.routes.compiler.StaticRoutesGenerator
 import play.sbt.PlayImport._
 import play.sbt.routes.RoutesKeys.routesGenerator
 import sbt.Keys._
-import sbt.Tests.{SubProcess, Group}
 import sbt._
-import uk.gov.hmrc.SbtAutoBuildPlugin
-import uk.gov.hmrc._
+import uk.gov.hmrc.DefaultBuildSettings._
+import uk.gov.hmrc.{SbtAutoBuildPlugin, _}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import uk.gov.hmrc.versioning.SbtGitVersioning
-import uk.gov.hmrc.{SbtBuildInfo, ShellPrompt, SbtAutoBuildPlugin}
-import DefaultBuildSettings._
+import scoverage.ScoverageKeys
 
 object FrontendBuild extends Build {
 
-//  lazy val scoverageSettings = {
-//    import scoverage.ScoverageKeys
-//    Seq(
-//      // Semicolon-separated list of regexs matching classes to exclude
-//      ScoverageKeys.coverageExcludedPackages := "<empty>;app.*;views.*;uk.gov.hmrc.*;prod.*;connectors.*;models.*;utils.*",
-//      ScoverageKeys.coverageMinimum := 80,
-//      ScoverageKeys.coverageFailOnMinimum := false,
-//      ScoverageKeys.coverageHighlighting := true
-//    )
-//  }
+  lazy val scoverageSettings = {
+    Seq(
+      // Semicolon-separated list of regexs matching classes to exclude
+      ScoverageKeys.coverageExcludedPackages := "<empty>;app.*;views.*;uk.gov.hmrc.*;prod.*;connectors.*;models.*;utils.*",
+      ScoverageKeys.coverageMinimum := 80,
+      ScoverageKeys.coverageFailOnMinimum := false,
+      ScoverageKeys.coverageHighlighting := true
+    )
+  }
 
   lazy val microservice = Project("soft-drinks-industry-levy-frontend", file("."))
     .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
@@ -32,6 +29,7 @@ object FrontendBuild extends Build {
     .settings(publishingSettings: _*)
     .settings(defaultSettings(): _*)
     .settings(
+      scoverageSettings,
       libraryDependencies ++= Seq(
         ws,
         "uk.gov.hmrc" %% "frontend-bootstrap" % "8.11.0",

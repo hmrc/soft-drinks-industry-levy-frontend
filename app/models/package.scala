@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.softdrinksindustrylevy.models.DesSubmissionResult
-@(desSubmissionResult: Option[DesSubmissionResult] = None)(implicit request: Request[_], messages: Messages)
+import play.api.libs.json.{ Format, Json }
 
-@views.html.softdrinksindustrylevy.main_template(title = "Hello from soft-drinks-industry-levy-frontend", bodyClasses = None) {
-    <h1>@Messages("sdil.common.title")</h1>
-    <p>Return result is: @desSubmissionResult.getOrElse(DesSubmissionResult(false)).valid </p>
+package object models {
+
+  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
+
 }

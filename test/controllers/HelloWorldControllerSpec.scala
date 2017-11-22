@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.softdrinksindustrylevy.controllers
+package controllers
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import connectors.SoftDrinksIndustryLevyConnector
+import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.softdrinksindustrylevy.connectors.SoftDrinksIndustryLevyConnector
-import uk.gov.hmrc.softdrinksindustrylevy.models.DesSubmissionResult
-
-import scala.concurrent.Future
-
 
 class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOneAppPerSuite with BeforeAndAfterEach {
 

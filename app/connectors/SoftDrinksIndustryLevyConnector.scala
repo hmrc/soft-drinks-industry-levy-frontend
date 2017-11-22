@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.softdrinksindustrylevy.connectors
+package connectors
 
 import javax.inject.Singleton
 
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.softdrinksindustrylevy.config.WSHttp
-import uk.gov.hmrc.softdrinksindustrylevy.models.DesSubmissionResult
+import config.WSHttp
+import models._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -33,7 +33,7 @@ class SoftDrinksIndustryLevyConnector extends ServicesConfig {
   lazy val serviceURL = "hello-world"
   lazy val http = WSHttp
 
-  def retrieveHelloWorld()(implicit hc:HeaderCarrier): Future[DesSubmissionResult] = {
+  def retrieveHelloWorld()(implicit hc: HeaderCarrier): Future[DesSubmissionResult] = {
     http.GET[DesSubmissionResult](s"$baseURL/$serviceURL")
   }
 

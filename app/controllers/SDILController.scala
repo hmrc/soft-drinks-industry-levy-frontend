@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.softdrinksindustrylevy.controllers
+package controllers
 
 import javax.inject.Inject
 
@@ -22,16 +22,16 @@ import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
-import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
+import uk.gov.hmrc.auth.core.{ AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession }
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.softdrinksindustrylevy.config.FrontendAppConfig._
-import uk.gov.hmrc.softdrinksindustrylevy.config.FrontendAuthConnector
-import uk.gov.hmrc.softdrinksindustrylevy.connectors.SoftDrinksIndustryLevyConnector
-import uk.gov.hmrc.softdrinksindustrylevy.models.DesSubmissionResult
+import config.FrontendAppConfig._
+import config.FrontendAuthConnector
+import connectors.SoftDrinksIndustryLevyConnector
+import models.DesSubmissionResult
 
 import scala.concurrent.Future
 
-class SDILController @Inject()(val messagesApi: play.api.i18n.MessagesApi, sdilConnector: SoftDrinksIndustryLevyConnector) extends AuthorisedFunctions with FrontendController
+class SDILController @Inject() (val messagesApi: play.api.i18n.MessagesApi, sdilConnector: SoftDrinksIndustryLevyConnector) extends AuthorisedFunctions with FrontendController
   with play.api.i18n.I18nSupport {
   override def authConnector: AuthConnector = FrontendAuthConnector
 
@@ -49,12 +49,11 @@ class SDILController @Inject()(val messagesApi: play.api.i18n.MessagesApi, sdilC
   }
 
   def helloWorld: Action[AnyContent] = Action.async { implicit request =>
-      Future successful Ok(views.html.softdrinksindustrylevy.helloworld.hello_world())
+    Future successful Ok(views.html.helloworld.hello_world())
   }
 
-  def testAuth: Action[AnyContent] = authorisedForSDIL { implicit request =>
-    implicit utr =>
-      Future successful Ok(views.html.softdrinksindustrylevy.helloworld.hello_world(Some(DesSubmissionResult(true))))
+  def testAuth: Action[AnyContent] = authorisedForSDIL { implicit request => implicit utr =>
+    Future successful Ok(views.html.helloworld.hello_world(Some(DesSubmissionResult(true))))
   }
 
 }

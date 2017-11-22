@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.softdrinksindustrylevy.config
+package config
 
-import play.api.Play.{configuration, current}
+import play.api.Play.{ configuration, current }
 import uk.gov.hmrc.play.config.ServicesConfig
 
 trait AppConfig {
@@ -39,7 +39,6 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   override lazy val betaFeedbackUrlNoAuth = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
-
 
   //Auth related config
   val appName = loadConfig("appName")

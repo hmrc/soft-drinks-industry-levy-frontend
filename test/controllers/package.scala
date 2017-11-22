@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.softdrinksindustrylevy
-
-
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
@@ -24,7 +21,7 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 package object controllers extends MockitoSugar {
 

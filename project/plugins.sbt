@@ -18,3 +18,7 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.12")
 addSbtPlugin("uk.gov.hmrc" % "sbt-settings" % "3.2.0")
 
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.1.2")
+
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.0")
+
+addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.2")
