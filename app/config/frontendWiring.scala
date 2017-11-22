@@ -18,6 +18,7 @@ package config
 
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.http.hooks.HttpHooks
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
@@ -41,4 +42,14 @@ object WSHttp extends WSHttp
 object FrontendAuthConnector extends PlayAuthConnector with ServicesConfig {
   val serviceUrl = baseUrl("auth")
   lazy val http = WSHttp
+}
+
+object FormDataCache extends SessionCache with AppName with ServicesConfig {
+  override def defaultSource = appName
+
+  override def baseUri = baseUrl("cachable.session-cache")
+
+  override def domain = getConfString("cachable.session-cache.domain", throw new Exception(s"Could not find config 'cachable.session-cache.domain'"))
+
+  override def http = WSHttp
 }

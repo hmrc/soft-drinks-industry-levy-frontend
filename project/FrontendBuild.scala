@@ -37,7 +37,8 @@ object FrontendBuild extends Build {
         "com.typesafe.play" %% "play-json" % "2.5.12",
         "org.scalactic" %% "scalactic" % "3.0.1",
         "uk.gov.hmrc" %% "auth-client" % "2.3.0",
-        
+        "uk.gov.hmrc" %% "http-caching-client" % "7.0.0",
+
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % "test",
         "org.scalatest" %% "scalatest" % "3.0.1" % "test",
@@ -54,6 +55,7 @@ object FrontendBuild extends Build {
         Resolver.jcenterRepo
       )
     )
+    .settings(PlayKeys.playDefaultPort := 8700)
     .configs(IntegrationTest)
     .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
 
