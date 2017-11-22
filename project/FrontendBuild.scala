@@ -34,6 +34,7 @@ object FrontendBuild extends Build {
         "com.fasterxml.jackson.core" % "jackson-databind" % "2.7.2",
         "com.fasterxml.jackson.core" % "jackson-core" % "2.7.4",
         "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.7.2",
+        "uk.gov.hmrc" %% "http-caching-client" % "7.0.0",
         
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % "test",
@@ -51,6 +52,7 @@ object FrontendBuild extends Build {
         Resolver.jcenterRepo
       )
     )
+    .settings(PlayKeys.playDefaultPort := 8700)
     .configs(IntegrationTest)
     .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
 
