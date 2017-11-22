@@ -21,7 +21,6 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.softdrinksindustrylevy.connectors.SoftDrinksIndustryLevyConnector
@@ -33,29 +32,55 @@ import scala.concurrent.Future
 class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOneAppPerSuite with BeforeAndAfterEach {
 
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
-  val controller = new HelloWorldController(messagesApi, mockSdilConnector)
+  val controller = new SDILController(messagesApi, mockSdilConnector) {
+    override def authConnector = mockAuthConnector
+  }
 
   override def beforeEach() {
-    reset(mockSdilConnector)
+    reset(mockSdilConnector, mockAuthConnector)
   }
 
   "HelloWorldController" should {
-    "return Status: 200 Message: Return result is: true for successful helloWorld" in {
+    "return Status: 200 Message: Return result is: false for successful helloWorld" in {
       val request = FakeRequest("GET", "/hello-world")
-      when(mockSdilConnector.retrieveHelloWorld()(any())).thenReturn(Future.successful(DesSubmissionResult(true)))
-      val result = controller.backendRetrieve().apply(request)
-      status(result) mustBe Status.OK
-      verify(mockSdilConnector, times(1)).retrieveHelloWorld()(any())
+
+      val result = controller.helloWorld().apply(request)
+
+      status(result) mustBe OK
+      contentAsString(result) must include("Return result is: false")
+    }
+
+    "return Status: 200 Message: Return result is: true for successful auth with utr" in {
+      sdilAuthMock(userWithUtr)
+
+      val request = FakeRequest("GET", "/auth-test")
+
+      val result = controller.testAuth.apply(request)
+
+      status(result) mustBe OK
       contentAsString(result) must include("Return result is: true")
     }
 
-    "return Status: 200 Message: Return result is: false for successful helloWorld" in {
-      val request = FakeRequest("GET", "/hello-world")
-      when(mockSdilConnector.retrieveHelloWorld()(any())).thenReturn(Future.successful(DesSubmissionResult(false)))
-      val result = controller.backendRetrieve().apply(request)
-      status(result) mustBe Status.OK
-      verify(mockSdilConnector, times(1)).retrieveHelloWorld()(any())
-      contentAsString(result) must include("Return result is: false")
+    "return Status: 200 Message: Return result is: false for successful auth without utr" in {
+      sdilAuthMock(userNoUtr)
+
+      val request = FakeRequest("GET", "/auth-test")
+
+      val result = controller.testAuth.apply(request)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.SDILController.helloWorld().url
+    }
+
+    "return Status: SEE_OTHER when user not logged in and redirect to Sign In page" in {
+      sdilAuthMock(notLoggedIn)
+
+      val request = FakeRequest("GET", "/auth-test")
+
+      val result = controller.testAuth.apply(request)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get must include("gg/sign-in")
     }
   }
 }
