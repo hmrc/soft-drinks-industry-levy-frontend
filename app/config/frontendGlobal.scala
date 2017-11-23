@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package config
+package sdil.config
 
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._

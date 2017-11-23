@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package sdil.controllers
 
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite

@@ -4,12 +4,12 @@ import play.sbt.PlayImport._
 import play.sbt.routes.RoutesKeys.routesGenerator
 import sbt.Keys._
 import sbt._
+import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.{SbtAutoBuildPlugin, _}
+import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import uk.gov.hmrc.versioning.SbtGitVersioning
-import scoverage.ScoverageKeys
 
 object FrontendBuild extends Build {
 

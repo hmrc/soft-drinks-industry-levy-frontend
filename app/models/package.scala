@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+package sdil.models
+
 import play.api.libs.json.{ Format, Json }
 
-package object models {
+package object sdilmodels {
 
   implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
 

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+package sdil.controllers
+
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
@@ -23,7 +25,7 @@ import uk.gov.hmrc.auth.core.retrieve.Retrieval
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-package object controllers extends MockitoSugar {
+package object controllerhelpers extends MockitoSugar {
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
@@ -31,7 +33,8 @@ package object controllers extends MockitoSugar {
   val userNoUtr: Future[Option[String]] = Future successful None
 
   def sdilAuthMock(returnValue: Future[Option[String]]): OngoingStubbing[Future[Option[String]]] =
-    when(mockAuthConnector.authorise(any(), any[Retrieval[Option[String]]]())(any(), any[ExecutionContext])).thenReturn(returnValue)
+    when(mockAuthConnector.authorise(any(), any[Retrieval[Option[String]]]())(any(), any[ExecutionContext]))
+      .thenReturn(returnValue)
 
   val notLoggedIn: Future[Option[String]] = Future failed new InvalidBearerToken
 

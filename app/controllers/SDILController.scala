@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package sdil.controllers
 
 import javax.inject.Inject
 
@@ -24,10 +24,10 @@ import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.{ AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession }
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import config.FrontendAppConfig._
-import config.FrontendAuthConnector
-import connectors.SoftDrinksIndustryLevyConnector
-import models.DesSubmissionResult
+import sdil.config.FrontendAppConfig._
+import sdil.config.FrontendAuthConnector
+import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.models.DesSubmissionResult
 
 import scala.concurrent.Future
 

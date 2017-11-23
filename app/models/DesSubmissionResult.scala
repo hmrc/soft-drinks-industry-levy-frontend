@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package models
+package sdil.models
 
 case class DesSubmissionResult(valid: Boolean)

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package connectors
+package sdil.connectors
 
 import javax.inject.Singleton
 
+import sdil.config.WSHttp
+import sdil.models._
+import sdil.models.sdilmodels._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.config.ServicesConfig
-import config.WSHttp
-import models._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

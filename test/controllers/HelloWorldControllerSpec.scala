@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package controllers
+package sdil.controllers
 
-import connectors.SoftDrinksIndustryLevyConnector
 import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.controllers.controllerhelpers._
 
 class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOneAppPerSuite with BeforeAndAfterEach {
 
@@ -35,10 +36,9 @@ class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with G
     reset(mockSdilConnector, mockAuthConnector)
   }
 
-  "HelloWorldController" should {
+  "SDILController" should {
     "return Status: 200 Message: Return result is: false for successful helloWorld" in {
       val request = FakeRequest("GET", "/hello-world")
-
       val result = controller.helloWorld().apply(request)
 
       status(result) mustBe OK
@@ -47,9 +47,7 @@ class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with G
 
     "return Status: 200 Message: Return result is: true for successful auth with utr" in {
       sdilAuthMock(userWithUtr)
-
       val request = FakeRequest("GET", "/auth-test")
-
       val result = controller.testAuth.apply(request)
 
       status(result) mustBe OK
@@ -58,9 +56,7 @@ class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with G
 
     "return Status: 200 Message: Return result is: false for successful auth without utr" in {
       sdilAuthMock(userNoUtr)
-
       val request = FakeRequest("GET", "/auth-test")
-
       val result = controller.testAuth.apply(request)
 
       status(result) mustBe SEE_OTHER
@@ -69,9 +65,7 @@ class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with G
 
     "return Status: SEE_OTHER when user not logged in and redirect to Sign In page" in {
       sdilAuthMock(notLoggedIn)
-
       val request = FakeRequest("GET", "/auth-test")
-
       val result = controller.testAuth.apply(request)
 
       status(result) mustBe SEE_OTHER

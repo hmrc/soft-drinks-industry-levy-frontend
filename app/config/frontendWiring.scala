@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package config
+package sdil.config
 
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.http._

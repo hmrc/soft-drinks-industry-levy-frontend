@@ -1,4 +1,4 @@
 # microservice specific routes
 
-GET        /hello-world             @controllers.SDILController.helloWorld()
-GET        /auth-test               @controllers.SDILController.testAuth
+GET        /hello-world             @sdil.controllers.SDILController.helloWorld()
+GET        /auth-test               @sdil.controllers.SDILController.testAuth
