@@ -2,9 +2,21 @@ sdil.common.title = Soft Drinks Industry Levy
 sdil.common.continue=Continue
 sdil.common.errorSummary=This page has errors
 
+#Identify
 sdil.identify.heading=Enter your Unique Tax Reference number and postcode
 sdil.identify.utr=Unique Tax Reference number (UTR)
 sdil.identify.postcode=Registered business postcode
 
+#Contact details
+sdil.contact-details.heading=Who should we contact about the Soft Drinks Industry Levy?
+sdil.contact-details.full-name=Full name
+sdil.contact-details.position=Position
+sdil.contact-details.phone-number=Telephone number
+sdil.contact-details.email=Email
+
 error.utr.invalid=Invalid UTR
 error.postcode.invalid=Invalid postcode
+error.full-name.invalid=Enter a name
+error.position.invalid=Enter a position
+error.phone-number.invalid=Enter a valid phone number
+error.email.invalid=Enter a valid email

@@ -19,16 +19,21 @@ package sdil.controllers
 import javax.inject.Inject
 
 import play.api.Logger
+import play.api.data.Form
+import play.api.data.Forms._
+import play.api.i18n.Messages
 import play.api.mvc._
 import sdil.config.FrontendAppConfig._
 import sdil.config.{FormDataCache, FrontendAuthConnector}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.DesSubmissionResult
+import sdil.models._
+import sdil.models.sdilmodels._
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import views.html.softdrinksindustrylevy._
 
 import scala.concurrent.Future
 
@@ -54,8 +59,29 @@ class SDILController @Inject() (
     }
   }
 
+  def displayContactDetails: Action[AnyContent] = Action.async { implicit request =>
+    Future successful Ok(register.contact_details(contactForm))
+  }
+
+  def submitContactDetails: Action[AnyContent] = Action.async { implicit request =>
+    contactForm.bindFromRequest().fold(
+      formWithErrors => Future successful BadRequest(register.contact_details(formWithErrors)),
+      d => cache.cache("contact-details", d) map { _ =>
+        Redirect(routes.SDILController.displayDeclaration())
+      })
+  }
+
+  def displayDeclaration = TODO
+
   def testAuth: Action[AnyContent] = authorisedForSDIL { implicit request => implicit utr =>
     Future successful Ok(views.html.helloworld.hello_world(Some(DesSubmissionResult(true))))
   }
+
+  private val contactForm = Form(
+    mapping(
+      "fullName" -> text.verifying(Messages("error.full-name.invalid"), _.nonEmpty),
+      "position" -> text.verifying(Messages("error.position.invalid"), _.nonEmpty),
+      "phoneNumber" -> text.verifying(Messages("error.phone-number.invalid"), _.length > 10),
+      "email" -> text.verifying(Messages("error.email.invalid"), _.nonEmpty))(ContactDetails.apply)(ContactDetails.unapply))
 
 }

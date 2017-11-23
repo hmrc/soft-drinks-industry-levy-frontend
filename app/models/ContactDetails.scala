@@ -16,12 +16,4 @@
 
 package sdil.models
 
-import play.api.libs.json.{ Format, Json }
-
-package object sdilmodels {
-
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
-
-  implicit val contactDetailsFormat: Format[ContactDetails] = Json.format[ContactDetails]
-
-}
+case class ContactDetails(fullName: String, position: String, phoneNumber: String, email: String)
