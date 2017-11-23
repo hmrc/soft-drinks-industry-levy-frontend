@@ -23,7 +23,7 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 package object controllerhelpers extends MockitoSugar {
 

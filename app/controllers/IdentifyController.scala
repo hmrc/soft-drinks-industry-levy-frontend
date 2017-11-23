@@ -22,7 +22,7 @@ import javax.inject.Inject
 import models.Identification
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import sdil.config.FormDataCache
 import uk.gov.hmrc.http.SessionKeys

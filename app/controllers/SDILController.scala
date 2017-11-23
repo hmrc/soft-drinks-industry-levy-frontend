@@ -21,12 +21,12 @@ import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc._
 import sdil.config.FrontendAppConfig._
-import sdil.config.{ FormDataCache, FrontendAuthConnector }
+import sdil.config.{FormDataCache, FrontendAuthConnector}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.DesSubmissionResult
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
-import uk.gov.hmrc.auth.core.{ AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession }
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
