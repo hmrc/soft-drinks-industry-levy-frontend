@@ -16,17 +16,21 @@
 
 package sdil.controllers
 
+import java.util.UUID
 import javax.inject.Inject
 
 import play.api.Logger
+import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
 import play.api.mvc._
 import sdil.config.FrontendAppConfig._
 import sdil.config.{FormDataCache, FrontendAuthConnector}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.DesSubmissionResult
+import sdil.models.{DesSubmissionResult, Identification, StartDate}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
@@ -58,4 +62,31 @@ class SDILController @Inject() (
     Future successful Ok(views.html.helloworld.hello_world(Some(DesSubmissionResult(true))))
   }
 
+  def displayStartDate = Action { implicit request =>
+    //FIXME session ID should be initialised at the start of the journey
+    Ok(views.html.softdrinksindustrylevy.register.start_date(StartDateForm())).addingToSession(SessionKeys.sessionId -> UUID.randomUUID().toString)
+  }
+
+  def submitStartDate = Action.async { implicit request =>
+    StartDateForm().bindFromRequest().fold(
+      errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors))),
+      data => Redirect(routes.VerifyController.verify())
+    )
+//TODO Sort this!!
+  }
+
+object StartDateForm {
+  def apply(): Form[StartDate] = {
+    Form(
+      mapping(
+        "day" -> text.verifying("error.day.invalid", _.matches(dayRegex)),
+        "month" -> text.verifying("error.month.invalid", _.matches(monthRegex)),
+        "year" -> text.verifying("error.year.invalid", _.matches(yearRegex)))(StartDate.apply)(StartDate.unapply))
+  }
+
+  lazy val dayRegex = """"(0[1-9]|[12]\d|3[01])"""
+  lazy val monthRegex = """"^(0?[1-9]|1[012])$""""
+  lazy val yearRegex = """^\d{4}$"""
 }
+  }
+

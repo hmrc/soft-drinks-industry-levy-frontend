@@ -6,3 +6,5 @@ GET        /register/identify       @sdil.controllers.IdentifyController.identif
 POST       /register/identify       @sdil.controllers.IdentifyController.validate()
 
 GET        /register/verify         @sdil.controllers.VerifyController.verify()
+
+GET        /register/start-date     @sdil.controllers.SDILController.displayStartDate()
