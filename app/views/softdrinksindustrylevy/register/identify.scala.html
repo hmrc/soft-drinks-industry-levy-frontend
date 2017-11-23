@@ -19,14 +19,14 @@
 
 @(identifyForm: Form[_])(implicit request: Request[_], messages: Messages)
 
-@views.html.softdrinksindustrylevy.main_template(Messages("sdil.common.title")) {
+@views.html.main_template(Messages("sdil.common.title")) {
     <h1 class="heading-large">@Messages("sdil.identify.heading")</h1>
 
     @if(identifyForm.hasErrors) {
         @errorSummary(Messages("sdil.common.errorSummary"), identifyForm)
     }
 
-    @form(uk.gov.hmrc.softdrinksindustrylevy.controllers.routes.IdentifyController.validate()) {
+    @form(sdil.controllers.routes.IdentifyController.validate()) {
 
         @inputText(identifyForm("utr"), Messages("sdil.identify.utr"))
 
