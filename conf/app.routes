@@ -1,3 +1,8 @@
 # microservice specific routes
 
 GET        /hello-world             @uk.gov.hmrc.softdrinksindustrylevy.controllers.HelloWorldController.backendRetrieve()
+
+GET        /register/identify       @uk.gov.hmrc.softdrinksindustrylevy.controllers.IdentifyController.identify()
+POST       /register/identify       @uk.gov.hmrc.softdrinksindustrylevy.controllers.IdentifyController.validate()
+
+GET        /register/verify         @uk.gov.hmrc.softdrinksindustrylevy.controllers.VerifyController.verify()
