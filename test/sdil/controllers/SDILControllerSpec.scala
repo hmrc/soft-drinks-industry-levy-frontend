@@ -84,7 +84,7 @@ class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOn
       val response = controller.submitPackage().apply(request)
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.SDILController.showPackageOwn().url
+      redirectLocation(response).get mustBe routes.LitreageController.show("packageOwn").url
     }
 
     "return Status: See Other for package form POST with isLiable & customers and redirect to package copack" in {
@@ -92,7 +92,7 @@ class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOn
       val response = controller.submitPackage().apply(request)
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.SDILController.showPackageCopack().url
+      redirectLocation(response).get mustBe routes.LitreageController.show("packageCopack").url
     }
 
     "return Status: Bad Request for invalid liability form POST request and display field hint .." in {

@@ -17,16 +17,14 @@
 package sdil.controllers
 
 import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.FakeRequest
+import play.api.data.Form
 
-trait PlayMessagesSpec extends PlaySpec with GuiceOneAppPerSuite {
-  implicit override lazy val app: Application = new GuiceApplicationBuilder().
-    disable[com.kenshoo.play.metrics.PlayModule].build()
-
-  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val defaultMessages: Messages = messagesApi.preferred(FakeRequest())
+trait FormSpec extends PlaySpec {
+  def mustContainError(f: Form[_], fieldName: String, expectedError: String) = {
+    if(f(fieldName).hasErrors) {
+      f(fieldName).error.value.message mustBe expectedError
+    } else {
+      fail(s"No error for $fieldName; actual errors: ${f.errors}")
+    }
+  }
 }

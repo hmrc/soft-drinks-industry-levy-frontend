@@ -10,15 +10,23 @@ sdil.identify.heading=Enter your Unique Tax Reference number and postcode
 sdil.identify.utr=Unique Tax Reference number (UTR)
 sdil.identify.postcode=Registered business postcode
 
+#Litreage pages
+sdil.packageOwn.heading=How many litres of liable drink per year will you package for your own brand or brands you have the rights to manufacture?
+sdil.packageCopack.heading=How many litres of liable drink per year will you package for your customers?
+sdil.packageCopackSmallVol.heading=How many litres of liable drink per year will you package for small producers?
+sdil.copackedVolume.heading=How many litres of liable drink per year will you have packaged by third parties in the UK?
+sdil.importVolume.heading=How many litres of liable drink per year will you bring into the UK?
+sdil.litreage.lowRate=Litres at the low rate
+sdil.litreage.highRate=Litres at the high rate
+sdil.litrage.rates.help=What are the rates?
+sdil.litrage.rates.content=The low rate is from 5 grams to 7.9 grams of sugar per 100 millilitres. The high rate is 8 grams of sugar or more per 100 millilitres.
+
 #Contact details
 sdil.contact-details.heading=Who should we contact about the Soft Drinks Industry Levy?
 sdil.contact-details.full-name=Full name
 sdil.contact-details.position=Position
 sdil.contact-details.phone-number=Telephone number
 sdil.contact-details.email=Email
-
-error.utr.invalid=Invalid UTR
-error.postcode.invalid=Invalid postcode
 
 sdil.package.heading= Will you package liable drinks at a production site you operate?
 sdil.package.title=Soft Drinks Industry Levy
@@ -35,6 +43,10 @@ sdil.form.radio.error=Choose an option
 sdil.form.check.error=Choose at least one option
 sdil.form.radiocheck.error.summary=You have not chosen an option
 
+#Errors
+error.utr.invalid=Invalid UTR
+error.postcode.invalid=Invalid postcode
+error.number.negative=Must be greater than or equal to 0
 error.full-name.invalid=Enter a name
 error.position.invalid=Enter a position
 error.phone-number.invalid=Enter a valid phone number

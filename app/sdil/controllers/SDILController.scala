@@ -16,14 +16,14 @@
 
 package sdil.controllers
 
+import java.util.UUID
 import javax.inject.Inject
 
 import play.api.Logger
+import play.api.data.Forms.{boolean, email, mapping, optional, text}
 import play.api.data.{Form, Mapping}
-import play.api.data.Forms.{text, email, mapping, boolean, optional, tuple}
 import play.api.i18n.Messages
 import play.api.mvc._
-import play.api.{Configuration, Logger}
 import sdil.config.FrontendAppConfig._
 import sdil.config.{FormDataCache, FrontendAuthConnector}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -32,6 +32,7 @@ import sdil.models.sdilmodels._
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.softdrinksindustrylevy._
@@ -79,39 +80,37 @@ class SDILController @Inject() (
   }
 
   def showPackage(): Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(register.packagePage(packageForm))
+    Future successful Ok(register.packagePage(packageForm)).addingToSession(SessionKeys.sessionId -> UUID.randomUUID().toString)
   }
 
   def submitPackage(): Action[AnyContent] = Action.async { implicit request =>
     packageForm.bindFromRequest.fold(
-      formWithErrors => {
-        Future(BadRequest(register.packagePage(formWithErrors)))
-      },
-      validFormData => validFormData match {
-        // TODO save stuff to session or keystore and route correctly and fix these cases
-        case (true, false, true) =>
-          Future(Redirect(routes.SDILController.showPackageCopack()))
-        case (true, true, _) =>
-          Future(Redirect(routes.SDILController.showPackageOwn()))
-      })
+      formWithErrors => BadRequest(register.packagePage(formWithErrors)),
+      validFormData => cache.cache("packaging", validFormData) map { _ =>
+        validFormData match {
+          case Packaging(_, true, _) => Redirect(routes.LitreageController.show("packageOwn"))
+          case Packaging(_, _, true) => Redirect(routes.LitreageController.show("packageCopack"))
+          //TODO go to copacked question
+          case _ => NotImplemented(views.html.defaultpages.todo())
+        }
+      }
+    )
   }
-
-  def showPackageOwn(): Action[AnyContent] = ???
-  def showPackageCopack(): Action[AnyContent] = ???
 
   private lazy val booleanMapping: Mapping[Boolean] =
     optional(boolean).verifying("sdil.form.radio.error", _.nonEmpty).
       transform(_.getOrElse(false), x => Some(x))
 
-  private val packageForm = Form(
-    tuple(
+  private lazy val packageForm = Form(
+    mapping(
       "isLiable" -> booleanMapping,
       "ownBrands" -> boolean,
-      "customers" -> boolean).verifying(
-        Messages("sdil.form.check.error"),
-        formData => (formData._1 && formData._2 || formData._3) || (!formData._1)))
+      "customers" -> boolean
+    )(Packaging.apply)(Packaging.unapply)
+      .verifying("sdil.form.check.error", p => !p.isLiable || (p.ownBrands || p.customers))
+  )
 
-  private val contactForm = Form(
+  private lazy val contactForm = Form(
     mapping(
       "fullName" -> text.verifying(Messages("error.full-name.invalid"), _.nonEmpty),
       "position" -> text.verifying(Messages("error.position.invalid"), _.nonEmpty),

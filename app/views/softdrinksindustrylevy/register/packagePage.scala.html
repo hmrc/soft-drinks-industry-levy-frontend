@@ -19,7 +19,7 @@
 @import views.html.softdrinksindustrylevy.helpers.{radioButtonWithConditionalContent, checkbox}
 
 
-@(packageForm: Form[(Boolean,Boolean,Boolean)])(implicit messages: Messages, request: Request[_])
+@(packageForm: Form[_])(implicit messages: Messages, request: Request[_])
 
 @checkboxes = {
     @if(packageForm.hasErrors) {
