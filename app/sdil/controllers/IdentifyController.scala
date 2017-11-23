@@ -19,12 +19,12 @@ package sdil.controllers
 import java.util.UUID
 import javax.inject.Inject
 
-import models.Identification
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import sdil.config.FormDataCache
+import sdil.models.Identification
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
