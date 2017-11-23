@@ -8,3 +8,18 @@ sdil.identify.postcode=Registered business postcode
 
 error.utr.invalid=Invalid UTR
 error.postcode.invalid=Invalid postcode
+
+sdil.package.heading= Will you package liable drinks at a production site you operate?
+sdil.package.title=Soft Drinks Industry Levy
+sdil.package.radioGroup.yes=Yes
+sdil.package.radioGroup.no=No
+sdil.package.button.continue=Continue
+sdil.package.button.back=Back
+
+sdil.who-for.instruction=Select one or both
+sdil.who-for.option1=Your own brand or brands you have the rights to manufacture
+sdil.who-for.option2=Your customers
+
+sdil.form.radio.error=Choose an option
+sdil.form.check.error=Choose at least one option
+sdil.form.radiocheck.error.summary=You have not chosen an option

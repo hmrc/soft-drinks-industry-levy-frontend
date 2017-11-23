@@ -1,4 +1,5 @@
 # microservice specific routes
+GET         /assets/*file           controllers.Assets.at(path="/public", file)
 
 GET        /auth-test               @sdil.controllers.SDILController.testAuth
 
@@ -6,3 +7,8 @@ GET        /register/identify       @sdil.controllers.IdentifyController.identif
 POST       /register/identify       @sdil.controllers.IdentifyController.validate()
 
 GET        /register/verify         @sdil.controllers.VerifyController.verify()
+
+GET        /register/package        @sdil.controllers.SDILController.showPackage()
+POST       /register/package        @sdil.controllers.SDILController.submitPackage()
+
+GET        /register/package-own    @sdil.controllers.SDILController.showPackageOwn()

@@ -1,0 +1,42 @@
+.black-border {
+    border: 2px solid #0b0c0c;
+}
+.heading-medium {
+    margin-top: 1.875em!important; /* TODO try to get overridden important removed */
+}
+.panel .heading-medium {
+    margin-top: 0!important;
+}
+.list {
+    margin-bottom: 20px; /* TODO remove when prototype classes are ported */
+}
+
+.panel.panel-border-wide {
+    border-left-width: 10px;
+    border-left-style: solid;
+    border-color: #bfc1c3;
+    padding: 0.78947em;
+    margin-bottom: 0.78947em;
+}
+
+.panel :only-child, .panel :last-child {
+    margin-bottom: 0;
+}
+.panel :first-child {
+    margin-top: 0;
+}
+
+.check-your-answers td {
+    font-size: 19px;
+    line-height: 1.31579;
+}
+
+.check-your-answers .change-answer {
+    text-align: right;
+    font-weight: bold;
+    padding-right: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}

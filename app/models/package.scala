@@ -16,7 +16,7 @@
 
 package sdil.models
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{ Format, Json }
 
 package object sdilmodels {
 
