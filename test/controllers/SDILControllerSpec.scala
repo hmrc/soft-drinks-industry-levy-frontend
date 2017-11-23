@@ -25,7 +25,7 @@ import play.api.test.Helpers._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.controllerhelpers._
 
-class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOneAppPerSuite with BeforeAndAfterEach {
+class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOneAppPerSuite with BeforeAndAfterEach {
 
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val controller = new SDILController(messagesApi, mockSdilConnector) {
@@ -37,14 +37,6 @@ class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with G
   }
 
   "SDILController" should {
-    "return Status: 200 Message: Return result is: false for successful helloWorld" in {
-      val request = FakeRequest("GET", "/hello-world")
-      val result = controller.helloWorld().apply(request)
-
-      status(result) mustBe OK
-      contentAsString(result) must include("Return result is: false")
-    }
-
     "return Status: 200 Message: Return result is: true for successful auth with utr" in {
       sdilAuthMock(userWithUtr)
       val request = FakeRequest("GET", "/auth-test")
@@ -54,13 +46,13 @@ class HelloWorldControllerSpec extends PlayMessagesSpec with MockitoSugar with G
       contentAsString(result) must include("Return result is: true")
     }
 
-    "return Status: 200 Message: Return result is: false for successful auth without utr" in {
+    "return Status: SEE_OTHER when user logged in without utr and redirect to Sign In page" in {
       sdilAuthMock(userNoUtr)
       val request = FakeRequest("GET", "/auth-test")
       val result = controller.testAuth.apply(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.SDILController.helloWorld().url
+      redirectLocation(result).get must include("gg/sign-in")
     }
 
     "return Status: SEE_OTHER when user not logged in and redirect to Sign In page" in {

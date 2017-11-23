@@ -1,1 +1,10 @@
-sdil.common.title = soft-drinks-industry-levy-frontend
+sdil.common.title = Soft Drinks Industry Levy
+sdil.common.continue=Continue
+sdil.common.errorSummary=This page has errors
+
+sdil.identify.heading=Enter your Unique Tax Reference number and postcode
+sdil.identify.utr=Unique Tax Reference number (UTR)
+sdil.identify.postcode=Registered business postcode
+
+error.utr.invalid=Invalid UTR
+error.postcode.invalid=Invalid postcode

@@ -20,36 +20,38 @@ import javax.inject.Inject
 
 import play.api.Logger
 import play.api.mvc._
+import sdil.config.FrontendAppConfig._
+import sdil.config.{ FormDataCache, FrontendAuthConnector }
+import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.models.DesSubmissionResult
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.{ AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession }
+import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import sdil.config.FrontendAppConfig._
-import sdil.config.FrontendAuthConnector
-import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.DesSubmissionResult
 
 import scala.concurrent.Future
 
-class SDILController @Inject() (val messagesApi: play.api.i18n.MessagesApi, sdilConnector: SoftDrinksIndustryLevyConnector) extends AuthorisedFunctions with FrontendController
+class SDILController @Inject() (
+  val messagesApi: play.api.i18n.MessagesApi,
+  sdilConnector: SoftDrinksIndustryLevyConnector) extends AuthorisedFunctions with FrontendController
   with play.api.i18n.I18nSupport {
+
   override def authConnector: AuthConnector = FrontendAuthConnector
 
-  def authorisedForSDIL(action: Request[AnyContent] => String => Future[Result]): Action[AnyContent] = {
+  val cache: SessionCache = FormDataCache
+
+  private def authorisedForSDIL(action: Request[AnyContent] => String => Future[Result]): Action[AnyContent] = {
     Action.async { implicit request =>
       authorised(AuthProviders(GovernmentGateway)).retrieve(saUtr) {
         case Some(utr) => action(request)(utr)
-        case _ => Future successful Redirect(routes.SDILController.helloWorld())
+        case _ => Future successful Redirect(ggLoginUrl, Map("continue" -> Seq(sdilHomePage), "origin" -> Seq(appName)))
       } recover {
         case e: NoActiveSession =>
           Logger.warn(s"Bad person $e")
           Redirect(ggLoginUrl, Map("continue" -> Seq(sdilHomePage), "origin" -> Seq(appName)))
       }
     }
-  }
-
-  def helloWorld: Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(views.html.helloworld.hello_world())
   }
 
   def testAuth: Action[AnyContent] = authorisedForSDIL { implicit request => implicit utr =>
