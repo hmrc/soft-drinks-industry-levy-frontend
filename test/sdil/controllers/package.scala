@@ -38,4 +38,18 @@ package object controllerhelpers extends MockitoSugar {
 
   val notLoggedIn: Future[Option[String]] = Future failed new InvalidBearerToken
 
+  val validContactDetailsForm = Seq(
+    "fullName" -> "hello",
+    "position" -> "boss",
+    "phoneNumber" -> "+4411111111111",
+    "email" -> "mremail"
+  )
+
+  val invalidContactDetailsForm = Seq(
+    "fullName" -> "",
+    "position" -> "boss",
+    "phoneNumber" -> "+4411111111111",
+    "email" -> "mremail"
+  )
+
 }

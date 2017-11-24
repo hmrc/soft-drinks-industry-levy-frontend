@@ -38,13 +38,11 @@
 }
 
 @headerNavLinks = {
-  <li><a id="homeNavHref" href="http://www.google.com"
-         data-journey-click="primary-navigation:Click:Home">Home</a></li>
 }
 
 @insideHeader = {
     @uiLayouts.header_nav(
-      navTitle = Some("soft-drinks-industry-levy-frontend"),
+      navTitle = Some(Messages("sdil.common.title")),
       navTitleLink = None,
       showBetaLink = false,
       navLinks = Some(headerNavLinks))
@@ -65,12 +63,12 @@
 @footerLinks = {}
 
 @betaBanner = {
-   @uiLayouts.betaBanner(
-     false, 
-     appConfig.betaFeedbackUrlNoAuth, 
-     appConfig.betaFeedbackUrlNoAuth, 
-     true, 
-     true)
+    <div class="phase-banner">
+        <p>
+            <strong class="phase-tag">@Messages("sdil.common.alpha")</strong>
+            @Html(Messages("sdil.common.alpha-info", appConfig.betaFeedbackUrlAuth))
+        </p>
+    </div>
 }  
   
 @serviceInfo = {
