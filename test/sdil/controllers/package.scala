@@ -57,14 +57,14 @@ package object controllerhelpers extends MockitoSugar {
     "fullName" -> "hello",
     "position" -> "boss",
     "phoneNumber" -> "+4411111111111",
-    "email" -> "mremail"
+    "email" -> "a@a.com"
   )
 
   val invalidContactDetailsForm = Seq(
     "fullName" -> "",
     "position" -> "boss",
     "phoneNumber" -> "+4411111111111",
-    "email" -> "mremail"
+    "email" -> "a@a.com"
   )
 
 }
