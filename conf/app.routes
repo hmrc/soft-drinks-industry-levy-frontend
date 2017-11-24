@@ -13,3 +13,8 @@ POST       /register/package            @sdil.controllers.SDILController.submitP
 
 GET        /register/package-own        @sdil.controllers.SDILController.showPackageOwn()
 GET        /register/package-copack     @sdil.controllers.SDILController.showPackageCopack()
+
+GET         /register/contact-details        @sdil.controllers.SDILController.displayContactDetails
+POST        /register/contact-details        @sdil.controllers.SDILController.submitContactDetails
+
+GET         /register/declaration            @sdil.controllers.SDILController.displayDeclaration
