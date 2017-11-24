@@ -70,6 +70,40 @@ class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOn
       redirectLocation(result).get must include("gg/sign-in")
     }
 
+    "return Status: 200 when user is logged in and loads package page" in {
+      sdilAuthMock(userWithUtr)
+      val request = FakeRequest("GET", "/package")
+      val result = controller.showPackage().apply(request)
+
+      status(result) mustBe OK
+      contentAsString(result) must include(messagesApi("sdil.package.heading"))
+    }
+
+    "return Status: See Other for package form POST with isLiable & ownBrands and redirect to package own" in {
+      val request = FakeRequest().withFormUrlEncodedBody(validPackageForm: _*)
+      val response = controller.submitPackage().apply(request)
+
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.SDILController.showPackageOwn().url
+    }
+
+    "return Status: See Other for package form POST with isLiable & customers and redirect to package copack" in {
+      val request = FakeRequest().withFormUrlEncodedBody(validPackageFormCustomersOnly: _*)
+      val response = controller.submitPackage().apply(request)
+
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.SDILController.showPackageCopack().url
+    }
+
+    "return Status: Bad Request for invalid liability form POST request and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidPackageForm: _*)
+      val response = controller.submitPackage().apply(request)
+
+      status(response) mustBe BAD_REQUEST
+      contentType(response).get mustBe HTML
+      contentAsString(response) must include(messagesApi("sdil.form.radiocheck.error.summary"))
+    }
+
     "return Status: OK for contact details form GET" in {
       val request = FakeRequest("GET", "/contact-details")
       val result = controller.displayContactDetails.apply(request)
