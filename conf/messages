@@ -1,5 +1,7 @@
 sdil.common.title = Soft Drinks Industry Levy
 sdil.common.continue=Continue
+sdil.common.save-and-continue=Save and continue
+sdil.common.back=Back
 sdil.common.errorSummary=This page has errors
 
 sdil.identify.heading=Enter your Unique Tax Reference number and postcode

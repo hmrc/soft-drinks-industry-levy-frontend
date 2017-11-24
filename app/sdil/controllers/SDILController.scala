@@ -68,7 +68,7 @@ class SDILController @Inject()(
 
   def submitStartDate: Action[AnyContent] = Action.async { implicit request =>
     startDateForm.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.start_date(formWitherrors))),
+      errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors))),
       data => cache.cache("start-date", data) map { _ =>
         Redirect(routes.SDILController.displaySites())
       })
@@ -85,6 +85,8 @@ class SDILController @Inject()(
   lazy val dayRegex = """"(0[1-9]|[12]\d|3[01])"""
   lazy val monthRegex = """"^(0?[1-9]|1[012])$""""
   lazy val yearRegex = """^\d{4}$"""
+ //date has to be greater than 1/4/2017 and less than 31/12/18
+  //must also be a valid
 
 }
 

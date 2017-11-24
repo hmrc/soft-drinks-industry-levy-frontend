@@ -9,3 +9,5 @@ GET         /register/verify            @sdil.controllers.VerifyController.verif
 
 GET         /register/start-date        @sdil.controllers.SDILController.displayStartDate()
 POST        /register/start-date        @sdil.controllers.SDILController.submitStartDate()
+
+GET        /register/display-sites        @sdil.controllers.SDILController.displaySites()

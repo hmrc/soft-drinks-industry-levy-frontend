@@ -20,18 +20,24 @@
 @(startDateForm: Form[_])(implicit request: Request[_], messages: Messages)
 
 @views.html.main_template(Messages("sdil.common.title")) {
+    <a class="back-link">@Messages("sdil.common.back")</a>
     <h1 class="heading-large">@Messages("sdil.start-date.heading")</h1>
 
     @if(startDateForm.hasErrors) {
         @errorSummary(Messages("sdil.common.errorSummary"), startDateForm)
     }
 
-    @form(sdil.controllers.routes.SDILController.submitStartDate()) {
+    <div class="form-date">
+        <span class="form-hint">@Messages("sdil.start-date.example")</span>
 
-        @inputText(startDateForm("day"), Messages("sdil.start-date.day"))
-        @inputText(startDateForm("month"), Messages("sdil.start-date.month"))
-        @inputText(startDateForm("yearr"), Messages("sdil.start-date.year"))
-
-        <input class="button" value="@Messages("sdil.common.continue")" type="submit">
-    }
+        @form(sdil.controllers.routes.SDILController.submitStartDate()) {
+            <input class="form-control form-control-error" min="2017" max="2018" type="number" @Messages("sdil.start-date.year")>
+            @inputText(startDateForm("day"), Messages("sdil.start-date.day"))
+            @inputText(startDateForm("month"), Messages("sdil.start-date.month"))
+            @inputText(startDateForm("year"), Messages("sdil.start-date.year"))
+        </div>
+    <br>
+    <br>
+    <input class="button" value="@Messages("sdil.common.save-and-continue")" type="submit">
+}
 }
