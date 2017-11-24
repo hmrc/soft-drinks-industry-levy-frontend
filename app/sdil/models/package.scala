@@ -16,10 +16,12 @@
 
 package sdil.models
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, Json, OFormat}
 
 package object sdilmodels {
 
   implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
+
+  implicit val startDateFormat: Format[StartDate] = Json.format[StartDate]
 
 }

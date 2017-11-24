@@ -16,14 +16,6 @@
 
 package sdil.models
 
-import play.api.libs.json.{Json, OFormat}
-
-
 case class StartDate(day: String, month: String, year: String)
-
-object StartDate {
-  implicit val format: OFormat[Identification] = Json.format[Identification]
-
-}
 
 //TODO find out and format date.

@@ -6,5 +6,15 @@ sdil.identify.heading=Enter your Unique Tax Reference number and postcode
 sdil.identify.utr=Unique Tax Reference number (UTR)
 sdil.identify.postcode=Registered business postcode
 
+sdil.start-date.heading=What date did or will you become liable for the Soft Drinks Industry Levy?
+sdil.start-date.example=For example, 6 4 2018
+sdil.start-date.day=Day
+sdil.start-date.month=Month
+sdil.start-date.year=Year
+
+error.day.invalid=Invalid Day
+error.day.invalid=Invalid Month
+error.year.invalid=Invalid Year
+
 error.utr.invalid=Invalid UTR
 error.postcode.invalid=Invalid postcode

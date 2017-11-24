@@ -1,10 +1,11 @@
 # microservice specific routes
 
-GET        /auth-test               @sdil.controllers.SDILController.testAuth
+GET         /auth-test                  @sdil.controllers.SDILController.testAuth
 
-GET        /register/identify       @sdil.controllers.IdentifyController.identify()
-POST       /register/identify       @sdil.controllers.IdentifyController.validate()
+GET         /register/identify          @sdil.controllers.IdentifyController.identify()
+POST        /register/identify          @sdil.controllers.IdentifyController.validate()
 
-GET        /register/verify         @sdil.controllers.VerifyController.verify()
+GET         /register/verify            @sdil.controllers.VerifyController.verify()
 
-GET        /register/start-date     @sdil.controllers.SDILController.displayStartDate()
+GET         /register/start-date        @sdil.controllers.SDILController.displayStartDate()
+POST        /register/start-date        @sdil.controllers.SDILController.submitStartDate()
