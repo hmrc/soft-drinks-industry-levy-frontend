@@ -48,8 +48,11 @@
 
         <div class="form-group">
             @radioButtonWithConditionalContent(
-                packageForm("isLiable"), // TODO try using a Map below
-                Seq("true" -> (Messages("sdil.package.radioGroup.yes"), Some(checkboxes: Any)), "false" -> (Messages("sdil.package.radioGroup.no"), None)),
+                packageForm("isLiable"),
+                Seq(
+                    "true" -> ((Messages("sdil.package.radioGroup.yes"), Some(checkboxes: Html))),
+                    "false" -> ((Messages("sdil.package.radioGroup.no"), None))
+                ),
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
                 '_groupClass -> "form-field-group",

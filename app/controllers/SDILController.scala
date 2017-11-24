@@ -71,13 +71,17 @@ class SDILController @Inject() (
       formWithErrors => {
         Future(BadRequest(register.packagePage(formWithErrors)))
       },
-      validFormData => {
-        // TODO save stuff to session or keystore and route appropriately
-        Future(Redirect(routes.SDILController.showPackageOwn()))
+      validFormData => validFormData match {
+        // TODO save stuff to session or keystore and route correctly and fix these cases
+        case (true, false, true) =>
+          Future(Redirect(routes.SDILController.showPackageCopack()))
+        case (true, true, _) =>
+          Future(Redirect(routes.SDILController.showPackageOwn()))
       })
   }
 
   def showPackageOwn(): Action[AnyContent] = ???
+  def showPackageCopack(): Action[AnyContent] = ???
 
   private lazy val booleanMapping: Mapping[Boolean] =
     optional(boolean).verifying("sdil.form.radio.error", _.nonEmpty).

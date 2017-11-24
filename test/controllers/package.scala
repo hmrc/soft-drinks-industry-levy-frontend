@@ -23,7 +23,7 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 package object controllerhelpers extends MockitoSugar {
 
@@ -37,5 +37,20 @@ package object controllerhelpers extends MockitoSugar {
       .thenReturn(returnValue)
 
   val notLoggedIn: Future[Option[String]] = Future failed new InvalidBearerToken
+
+  val validPackageForm = Seq(
+    "isLiable" -> "true",
+    "customers" -> "true",
+    "ownBrands" -> "true")
+
+  val validPackageFormCustomersOnly = Seq(
+    "isLiable" -> "true",
+    "customers" -> "true",
+    "ownBrands" -> "false")
+
+  val invalidPackageForm = Seq(
+    "isLiable" -> "true",
+    "customers" -> "false",
+    "ownBrands" -> "false")
 
 }
