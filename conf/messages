@@ -13,7 +13,7 @@ sdil.package.heading= Will you package liable drinks at a production site you op
 sdil.package.title=Soft Drinks Industry Levy
 sdil.package.radioGroup.yes=Yes
 sdil.package.radioGroup.no=No
-sdil.package.button.continue=Continue
+sdil.package.button.continue=Save and continue
 sdil.package.button.back=Back
 
 sdil.who-for.instruction=Select one or both
