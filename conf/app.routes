@@ -1,20 +1,34 @@
 # microservice specific routes
-GET         /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file                             controllers.Assets.at(path="/public", file)
 
-GET        /auth-test                   @sdil.controllers.SDILController.testAuth
+GET         /auth-test                                @sdil.controllers.SDILController.testAuth
 
-GET        /register/identify           @sdil.controllers.IdentifyController.identify()
-POST       /register/identify           @sdil.controllers.IdentifyController.validate()
+GET         /register/identify                        @sdil.controllers.IdentifyController.identify()
+POST        /register/identify                        @sdil.controllers.IdentifyController.validate()
 
-GET        /register/verify             @sdil.controllers.VerifyController.verify()
+GET         /register/verify                          @sdil.controllers.VerifyController.verify()
 
-GET        /register/package            @sdil.controllers.SDILController.showPackage()
-POST       /register/package            @sdil.controllers.SDILController.submitPackage()
+GET         /register/package                         @sdil.controllers.SDILController.showPackage()
+POST        /register/package                         @sdil.controllers.SDILController.submitPackage()
 
-GET        /register/package-own        @sdil.controllers.SDILController.showPackageOwn()
-GET        /register/package-copack     @sdil.controllers.SDILController.showPackageCopack()
+GET         /register/package-own                     @sdil.controllers.LitreageController.show(pageName = "packageOwn")
+POST        /register/package-own                     @sdil.controllers.LitreageController.validate(pageName = "packageOwn")
 
-GET         /register/contact-details        @sdil.controllers.SDILController.displayContactDetails
-POST        /register/contact-details        @sdil.controllers.SDILController.submitContactDetails
+GET         /register/package-copack                  @sdil.controllers.LitreageController.show(pageName = "packageCopack")
+POST        /register/package-copack                  @sdil.controllers.LitreageController.validate(pageName = "packageCopack")
 
-GET         /register/declaration            @sdil.controllers.SDILController.displayDeclaration
+GET         /register/package-copack-small-vol        @sdil.controllers.LitreageController.show(pageName = "packageCopackSmallVol")
+POST        /register/package-copack-small-vol        @sdil.controllers.LitreageController.validate(pageName = "packageCopackSmallVol")
+
+GET         /register/copacked-volume                 @sdil.controllers.LitreageController.show(pageName = "copackedVolume")
+POST        /register/copacked-volume                 @sdil.controllers.LitreageController.validate(pageName = "copackedVolume")
+
+GET         /register/import-volume                   @sdil.controllers.LitreageController.show(pageName = "importVolume")
+POST        /register/import-volume                   @sdil.controllers.LitreageController.validate(pageName = "importVolume")
+
+GET         /register/start-date                      @sdil.controllers.StartDateController.show()
+
+GET         /register/contact-details                 @sdil.controllers.SDILController.displayContactDetails
+POST        /register/contact-details                 @sdil.controllers.SDILController.submitContactDetails
+
+GET         /register/declaration                     @sdil.controllers.SDILController.displayDeclaration

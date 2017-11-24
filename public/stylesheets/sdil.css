@@ -40,3 +40,19 @@
 input[type=number] {
     -moz-appearance: textfield;
 }
+
+.form-litres {
+    width: 50%;
+}
+
+details summary:not([tabindex]) {
+    display: list-item;
+}
+
+.form-control-1-4 {
+    width: 25%;
+}
+
+.form-postcode .form-control {
+    width: 100px;
+}

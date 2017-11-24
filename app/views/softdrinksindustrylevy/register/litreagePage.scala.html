@@ -1,0 +1,46 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.play.views.html.helpers._
+@import softdrinksindustrylevy.helpers._
+
+@(litreageForm: Form[_], pageName: String)(implicit request: Request[_], messages: Messages)
+
+    @main_template(Messages("sdil.common.title")) {
+
+        <h1 class="heading-large">@Messages(s"sdil.$pageName.heading")</h1>
+
+        @form(sdil.controllers.routes.LitreageController.validate(pageName)) {
+            <div class="form-group form-litres">
+                @inputText(litreageForm("lowerRateLitres"), Messages("sdil.litreage.lowRate"))
+            </div>
+
+            <div class="form-group form-litres">
+                @inputText(litreageForm("higherRateLitres"), Messages("sdil.litreage.highRate"))
+            </div>
+
+            <details role="group">
+                <summary role="button">
+                    <span class="summary">@Messages("sdil.litrage.rates.help")</span>
+                </summary>
+                <div class="details__inner panel-border-narrow panel" id="details-content-0">
+                    <p>@Messages("sdil.litrage.rates.content")</p>
+                </div>
+            </details>
+
+            <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+        }
+    }
