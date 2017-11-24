@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 import play.api.Logger
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.Forms.{text, email, mapping}
 import play.api.i18n.Messages
 import play.api.mvc._
 import sdil.config.FrontendAppConfig._
@@ -82,6 +82,6 @@ class SDILController @Inject() (
       "fullName" -> text.verifying(Messages("error.full-name.invalid"), _.nonEmpty),
       "position" -> text.verifying(Messages("error.position.invalid"), _.nonEmpty),
       "phoneNumber" -> text.verifying(Messages("error.phone-number.invalid"), _.length > 10),
-      "email" -> text.verifying(Messages("error.email.invalid"), _.nonEmpty))(ContactDetails.apply)(ContactDetails.unapply))
+      "email" -> email)(ContactDetails.apply)(ContactDetails.unapply))
 
 }
