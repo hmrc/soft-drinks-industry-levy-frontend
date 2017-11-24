@@ -25,7 +25,8 @@
     @if(packageForm.hasErrors) {
         <fieldset class="form-field-group form-field--error">
             <span class="error-notification">@Messages("sdil.form.check.error")</span>
-        </fieldset>
+    } else {
+        <fieldset>
     }
     <h2 class="heading-medium">Who will you package liable drinks for?</h2>
     @checkbox(
@@ -37,6 +38,7 @@
         packageForm("customers"),
         '_label -> Messages("sdil.who-for.option2")
     )
+    </fieldset>
 }
 
 @views.html.main_template(title = Messages("sdil.package.title")) {
