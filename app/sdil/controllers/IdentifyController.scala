@@ -19,19 +19,17 @@ package sdil.controllers
 import java.util.UUID
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import sdil.config.FormDataCache
-import sdil.models.Identification
+import sdil.forms.IdentifyForm
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
-class IdentifyController @Inject() (val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+class IdentifyController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
   val cache: SessionCache = FormDataCache
 
@@ -47,16 +45,4 @@ class IdentifyController @Inject() (val messagesApi: MessagesApi) extends Fronte
         Redirect(routes.VerifyController.verify())
       })
   }
-}
-
-object IdentifyForm {
-  def apply(): Form[Identification] = {
-    Form(
-      mapping(
-        "utr" -> text.verifying("error.utr.invalid", _.matches(utrRegex)),
-        "postcode" -> text.verifying("error.postcode.invalid", _.matches(postcodeRegex)))(Identification.apply)(Identification.unapply))
-  }
-
-  lazy val utrRegex = """\d{10}"""
-  lazy val postcodeRegex = """([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z]))))\s?[0-9][A-Za-z]{2})"""
 }

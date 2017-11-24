@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package sdil.controllers
+package sdil.forms
 
 import play.api.data.Form
 import sdil.models.Identification
@@ -69,28 +69,6 @@ class IdentifyFormSpec extends UnitSpec {
 
         errorFor(f, postcode) shouldBe "error.postcode.invalid"
       }
-    }
-
-    "accept postcodes without spaces" in {
-      Seq("A11AA", "AA11AA", "AA111AA", "AA1A1AA", "A1A1AA", "A111AA") map { pc =>
-        val f = IdentifyForm().bind(validData.updated(postcode, pc))
-
-        f.error("postcode") shouldBe None
-      }
-    }
-
-    "accept all formats of valid postcodes" in {
-      Seq("A1 1AA", "A11 1AA", "A1A 1AA", "AA1 1AA", "AA11 1AA", "AA1A 1AA") map { pc =>
-        val f = IdentifyForm().bind(validData.updated(postcode, pc))
-
-        f.error("postcode") shouldBe None
-      }
-    }
-
-    "accept lower case postcodes" in {
-      val f = IdentifyForm().bind(validData.updated(postcode, "a1 1aa"))
-
-      f.error("postcode") shouldBe None
     }
 
     "bind to Identification when the postcode and UTR are valid" in {

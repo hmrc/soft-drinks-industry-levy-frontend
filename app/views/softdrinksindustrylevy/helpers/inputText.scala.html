@@ -14,9 +14,9 @@
  * limitations under the License.
  *@
 
-@(field: Field, label: String)(implicit request: Request[_], messages: Messages)
+@(field: Field, label: String, args: (Symbol, String)*)(implicit request: Request[_], messages: Messages)
 
-<div class="form-group form-@field.name @if(field.hasErrors) {form-field--error}">
+<div class="form-group form-@field.name @if(field.hasErrors) {form-field--error} @args.toMap.get('_divClass)">
     <label class="form-label" for="@field.name">
         @field.errors.map { error =>
             <span class="error-notification" role="tooltip" data-journey="search-page:error:@field.name">
@@ -25,5 +25,5 @@
         }
         @label
     </label>
-    <input class="form-control form-control-1-4" id="@field.name" name="@field.name" value="@field.value">
+    <input class="form-control @args.toMap.get('_inputClass)" id="@field.name" name="@field.name" value="@field.value">
 </div>

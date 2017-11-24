@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package sdil.controllers
+package sdil.models
 
-import org.scalatestplus.play.PlaySpec
-import play.api.data.Form
+import play.api.libs.json.{Json, OFormat}
 
-trait FormSpec extends PlaySpec {
-  def mustContainError(f: Form[_], fieldName: String, expectedError: String) = {
-    if(f(fieldName).hasErrors) {
-      f(fieldName).error.value.message mustBe expectedError
-    } else {
-      fail(s"No error for $fieldName; actual errors: ${f.errors}")
-    }
-  }
+case class Address(line1: String, line2: String, line3: String, line4: String, postcode: String)
+
+object Address {
+  implicit val address: OFormat[Address] = Json.format[Address]
 }

@@ -18,12 +18,11 @@ package sdil.controllers
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Request, Result}
 import sdil.config.{FormDataCache, FrontendGlobal}
-import sdil.models.{Litreage, Packaging}
+import sdil.forms.LitreageForm
+import sdil.models.Packaging
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
@@ -62,14 +61,4 @@ class LitreageController @Inject()(val messagesApi: MessagesApi) extends Fronten
       case _ => BadRequest(FrontendGlobal.badRequestTemplate)
     }
   }
-}
-
-object LitreageForm {
-  def apply(): Form[Litreage] = Form(
-    mapping(
-      "lowerRateLitres" -> positiveInt,
-      "higherRateLitres" -> positiveInt)
-    (Litreage.apply)(Litreage.unapply))
-
-  private lazy val positiveInt = number.verifying("error.number.negative", _ >= 0)
 }
