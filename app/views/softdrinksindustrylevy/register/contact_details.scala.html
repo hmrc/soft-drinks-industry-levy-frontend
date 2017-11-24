@@ -1,0 +1,38 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.softdrinksindustrylevy.helpers.inputText
+
+@(contactForm: Form[_])(implicit request: Request[_], messages: Messages)
+
+@views.html.main_template(Messages("sdil.common.title")) {
+    <h1 class="heading-large">@Messages("sdil.contact-details.heading")</h1>
+
+    @if(contactForm.hasErrors) {
+        @errorSummary(Messages("sdil.common.errorSummary"), contactForm)
+    }
+
+    @form(sdil.controllers.routes.SDILController.submitContactDetails()) {
+
+        @inputText(contactForm("fullName"), Messages("sdil.contact-details.full-name"))
+        @inputText(contactForm("position"), Messages("sdil.contact-details.position"))
+        @inputText(contactForm("phoneNumber"), Messages("sdil.contact-details.phone-number"))
+        @inputText(contactForm("email"), Messages("sdil.contact-details.email"))
+
+        <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+    }
+}
