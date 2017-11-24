@@ -18,18 +18,18 @@ package sdil.controllers
 
 import javax.inject.Inject
 
-import play.api.data.Forms.{ boolean, optional, tuple }
-import play.api.data.{ Form, Mapping }
+import play.api.data.Forms.{boolean, optional, tuple}
+import play.api.data.{Form, Mapping}
 import play.api.i18n.Messages
 import play.api.mvc._
-import play.api.{ Configuration, Logger }
+import play.api.{Configuration, Logger}
 import sdil.config.FrontendAppConfig._
-import sdil.config.{ FormDataCache, FrontendAuthConnector }
+import sdil.config.{FormDataCache, FrontendAuthConnector}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.DesSubmissionResult
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
-import uk.gov.hmrc.auth.core.{ AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession }
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.softdrinksindustrylevy._

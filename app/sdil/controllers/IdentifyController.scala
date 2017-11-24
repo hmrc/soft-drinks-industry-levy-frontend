@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import sdil.config.FormDataCache
 import sdil.models.Identification
