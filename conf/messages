@@ -5,6 +5,15 @@ sdil.common.errorSummary=This page has errors
 sdil.common.alpha=ALPHA
 sdil.common.alpha-info=<span>This is a new service – your <a href="{0}">feedback</a> will help us to improve it.</span>
 sdil.common.or=Or
+sdil.common.yes=Yes
+sdil.common.no=No
+
+#Address lines
+sdil.address.line1=Address line 1
+sdil.address.line2=Address line 2
+sdil.address.line3=Address line 3
+sdil.address.line4=Address line 4
+sdil.address.postcode=Postcode
 
 #Identify
 sdil.identify.heading=Enter your Unique Tax Reference number and postcode
@@ -39,6 +48,16 @@ sdil.litreage.highRate=Litres at the high rate
 sdil.litrage.rates.help=What are the rates?
 sdil.litrage.rates.content=The low rate is from 5 grams to 7.9 grams of sugar per 100 millilitres. The high rate is 8 grams of sugar or more per 100 millilitres.
 error.litreage.max=This must be less than 10,000,000,000,000
+
+#Secondary warehouse
+sdil.warehouse.heading=Do you want to register any of the warehouses you will use to store liable drinks?
+sdil.warehouse.add.heading=Does the business have another secondary warehouse to declare?
+sdil.warehouse.address.heading=Enter a warehouse site
+sdil.warehouse.address.hint=You can enter more sites later if you need to
+sdil.warehouse.address.legend=A warehouse site address
+sdil.warehouse.add=Yes - add another address
+sdil.warehouse.address=Address {0}
+sdil.warehouse.remove=Remove?
 
 #Contact details
 sdil.contact-details.heading=Who should we contact about the Soft Drinks Industry Levy?

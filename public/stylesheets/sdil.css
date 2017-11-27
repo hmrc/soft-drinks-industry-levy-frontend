@@ -57,6 +57,22 @@ table th, table td {
     font-size: 19px;
 }
 
+hr {
+    display: block;
+    background: #bfc1c3;
+    border: 0;
+    height: 1px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 0;
+}
+
+html .font-xsmall {
+    font-size: 16px;
+    line-height: 1.25;
+}
+
+
 /*override the assets-frontend .form-block*/
 .form-block {
     margin-top: 0 !important;

@@ -48,7 +48,7 @@
                 field = verifyForm("detailsCorrect"),
                 radioOptions = Seq(
                     ("yes", (Messages("sdil.verify.detailsCorrect.yes"), None)),
-                    ("differentAddress", (Messages("sdil.verify.detailsCorrect.differentAddress"), Some(alternativeAddress)))
+                    ("differentAddress", (Messages("sdil.verify.detailsCorrect.differentAddress"), Some(addressFields(verifyForm, "alternativeAddress", "sdil.verify.address"))))
                 ),
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
@@ -64,53 +64,9 @@
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
                 '_groupClass -> "form-field-group",
-                '_dataTargetTrue -> "something"
+                '_dataTargetTrue -> "altAddress"
             )
 
             <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
         }
-    }
-
-    @alternativeAddress = {
-        <div id="SDILaddress">
-            <h2 class="heading-small">@Messages("sdil.verify.altAddress.heading")</h2>
-            <fieldset>
-
-                <legend class="visuallyhidden">
-                @Messages("sdil.verify.altAddress.legend")
-                </legend>
-
-                @inputText(
-                    verifyForm("alternativeAddress.line1"),
-                    Messages("sdil.verify.address.line1"),
-                    '_divClass -> "form-group-compound"
-                )
-
-                @inputText(
-                    verifyForm("alternativeAddress.line2"),
-                    Messages("sdil.verify.address.line2"),
-                    '_divClass -> "form-group-compound"
-                )
-
-                @inputText(
-                    verifyForm("alternativeAddress.line3"),
-                    Messages("sdil.verify.address.line3"),
-                    '_divClass -> "form-group-compound"
-                )
-
-                @inputText(
-                    verifyForm("alternativeAddress.line4"),
-                    Messages("sdil.verify.address.line4"),
-                    '_divClass -> "form-group-compound"
-                )
-
-                @inputText(
-                    verifyForm("alternativeAddress.postcode"),
-                    Messages("sdil.verify.postcode"),
-                    '_divClass -> "form-group-compound",
-                    '_inputClass -> "form-control-1-4"
-                )
-
-            </fieldset>
-        </div>
     }
