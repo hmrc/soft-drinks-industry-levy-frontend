@@ -73,13 +73,26 @@ class SDILController @Inject() (
       })
   }
 
-  def displayDeclaration = TODO
+  def displayDeclaration: Action[AnyContent] = Action.async { implicit request =>
+    Future successful Ok(register.
+      declaration(
+        Identification("foo", "bar"),
+        ContactDetails(
+          fullName = "Nick Karaolis",
+          position = "Scala Ninja",
+          phoneNumber = "x directory",
+          email = "nick.karaolis@wouldn'tyouliketoknow.com"
+        )
+      ))
+  }
+
+  def submitDeclaration() = TODO // TODO hit the backend to create subscription
 
   def testAuth: Action[AnyContent] = authorisedForSDIL { implicit request => implicit utr =>
     Future successful Ok(views.html.helloworld.hello_world(Some(DesSubmissionResult(true))))
   }
 
-  def showPackage(): Action[AnyContent] = Action.async { implicit request =>
+  def displayPackage(): Action[AnyContent] = Action.async { implicit request =>
     Future successful Ok(register.packagePage(packageForm)).addingToSession(SessionKeys.sessionId -> UUID.randomUUID().toString)
   }
 
