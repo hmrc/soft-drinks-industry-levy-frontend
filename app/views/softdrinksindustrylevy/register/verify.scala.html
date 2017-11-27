@@ -19,88 +19,98 @@
 
 @(verifyForm: Form[_], utr: String, organisation: String, address: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(Messages("sdil.common.title")) {
+    @main_template(Messages("sdil.common.title")) {
 
-    <h1 class="heading-large">@Messages("sdil.verify.heading")</h1>
+        <h1 class="heading-large">@Messages("sdil.verify.heading")</h1>
 
-    @errorSummary(Messages("sdil.common.errorSummary"), verifyForm)
+        @errorSummary(Messages("sdil.common.errorSummary"), verifyForm)
 
-    <table>
-        <caption class="heading-small visuallyhidden">@Messages("sdil.verify.table.caption")</caption>
-        <tbody>
-            <tr>
-                <th scope="row">@Messages("sdil.verify.utr")</th>
-                <td>@utr</td>
-            </tr>
-            <tr>
-                <th scope="row">@Messages("sdil.verify.organisation")</th>
-                <td class="org">@organisation</td>
-            </tr>
-            <tr>
-                <th scope="row">@Messages("sdil.verify.address")</th>
-                <td>@address</td>
-            </tr>
-        </tbody>
-    </table>
+        <table>
+            <caption class="heading-small visuallyhidden">@Messages("sdil.verify.table.caption")</caption>
+            <tbody>
+                <tr>
+                    <th scope="row">@Messages("sdil.verify.utr")</th>
+                    <td>@utr</td>
+                </tr>
+                <tr>
+                    <th scope="row">@Messages("sdil.verify.organisation")</th>
+                    <td class="org">@organisation</td>
+                </tr>
+                <tr>
+                    <th scope="row">@Messages("sdil.verify.address")</th>
+                    <td>@address</td>
+                </tr>
+            </tbody>
+        </table>
 
-    @form(sdil.controllers.routes.VerifyController.validate()) {
-        @radioButtonWithConditionalContent(
-            field = verifyForm("detailsCorrect"),
-            radioOptions = Seq(
-                ("yes", (Messages("sdil.verify.detailsCorrect.yes"), None)),
-                ("differentAddress", (Messages("sdil.verify.detailsCorrect.differentAddress"), Some(alternativeAddress))),
-                ("no", (Messages("sdil.verify.detailsCorrect.no"), None))
-            ),
-            '_labelClass -> "block-label",
-            '_labelAfter -> true,
-            '_groupClass -> "form-field-group",
-            '_dataTargetTrue -> "something"
-        )
+        @form(sdil.controllers.routes.VerifyController.validate()) {
+            @radioButtonWithConditionalContent(
+                field = verifyForm("detailsCorrect"),
+                radioOptions = Seq(
+                    ("yes", (Messages("sdil.verify.detailsCorrect.yes"), None)),
+                    ("differentAddress", (Messages("sdil.verify.detailsCorrect.differentAddress"), Some(alternativeAddress)))
+                ),
+                '_labelClass -> "block-label",
+                '_labelAfter -> true,
+                '_groupClass -> "form-field-group",
+                '_dataTargetTrue -> "something"
+            )
 
-        <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+            <p class="form-block">@Messages("sdil.common.or")</p>
+
+            @radioButtonWithConditionalContent(
+                field = verifyForm("detailsCorrect"),
+                radioOptions = Seq(("no", (Messages("sdil.verify.detailsCorrect.no"), None))),
+                '_labelClass -> "block-label",
+                '_labelAfter -> true,
+                '_groupClass -> "form-field-group",
+                '_dataTargetTrue -> "something"
+            )
+
+            <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+        }
     }
-}
 
-@alternativeAddress = {
-    <div id="SDILaddress">
-        <h2 class="heading-small">@Messages("sdil.verify.altAddress.heading")</h2>
-        <fieldset>
+    @alternativeAddress = {
+        <div id="SDILaddress">
+            <h2 class="heading-small">@Messages("sdil.verify.altAddress.heading")</h2>
+            <fieldset>
 
-            <legend class="visuallyhidden">
+                <legend class="visuallyhidden">
                 @Messages("sdil.verify.altAddress.legend")
-            </legend>
+                </legend>
 
-            @inputText(
-                verifyForm("alternativeAddress.line1"),
-                Messages("sdil.verify.address.line1"),
-                '_divClass -> "form-group-compound"
-            )
+                @inputText(
+                    verifyForm("alternativeAddress.line1"),
+                    Messages("sdil.verify.address.line1"),
+                    '_divClass -> "form-group-compound"
+                )
 
-            @inputText(
-                verifyForm("alternativeAddress.line2"),
-                Messages("sdil.verify.address.line2"),
-                '_divClass -> "form-group-compound"
-            )
+                @inputText(
+                    verifyForm("alternativeAddress.line2"),
+                    Messages("sdil.verify.address.line2"),
+                    '_divClass -> "form-group-compound"
+                )
 
-            @inputText(
-                verifyForm("alternativeAddress.line3"),
-                Messages("sdil.verify.address.line3"),
-                '_divClass -> "form-group-compound"
-            )
+                @inputText(
+                    verifyForm("alternativeAddress.line3"),
+                    Messages("sdil.verify.address.line3"),
+                    '_divClass -> "form-group-compound"
+                )
 
-            @inputText(
-                verifyForm("alternativeAddress.line4"),
-                Messages("sdil.verify.address.line4"),
-                '_divClass -> "form-group-compound"
-            )
+                @inputText(
+                    verifyForm("alternativeAddress.line4"),
+                    Messages("sdil.verify.address.line4"),
+                    '_divClass -> "form-group-compound"
+                )
 
-            @inputText(
-                verifyForm("alternativeAddress.postcode"),
-                Messages("sdil.verify.postcode"),
-                '_divClass -> "form-group-compound",
-                '_inputClass -> "form-control-1-4"
-            )
+                @inputText(
+                    verifyForm("alternativeAddress.postcode"),
+                    Messages("sdil.verify.postcode"),
+                    '_divClass -> "form-group-compound",
+                    '_inputClass -> "form-control-1-4"
+                )
 
-        </fieldset>
-    </div>
-}
+            </fieldset>
+        </div>
+    }

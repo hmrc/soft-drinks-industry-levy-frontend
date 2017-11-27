@@ -18,7 +18,7 @@ package sdil.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Litreage(atLowRate: Int, atHighRate: Int)
+case class Litreage(atLowRate: Long, atHighRate: Long)
 
 object Litreage {
   implicit val format: OFormat[Litreage] = Json.format[Litreage]

@@ -57,6 +57,18 @@ class LitreageFormSpec extends FormSpec {
       mustContainError(f, higherRate, "error.number.negative")
     }
 
+    "require the lower rate volume to be less than 10,000,000,000,000" in {
+      val f = LitreageForm().bind(validData.updated(lowerRate, "10000000000000"))
+
+      mustContainError(f, lowerRate, "error.litreage.max")
+    }
+
+    "require the higher rate volume to be less than 10,000,000,000,000" in {
+      val f = LitreageForm().bind(validData.updated(higherRate, "10000000000000"))
+
+      mustContainError(f, higherRate, "error.litreage.max")
+    }
+
     "bind to Litreage if the lower and higher rate volumes are valid" in {
       val f = LitreageForm().bind(validData)
 
