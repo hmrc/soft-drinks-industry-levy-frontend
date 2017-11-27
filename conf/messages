@@ -62,6 +62,20 @@ sdil.form.radio.error=Choose an option
 sdil.form.check.error=Choose at least one option
 sdil.form.radiocheck.error.summary=You have not chosen an option
 
+
+# Declaration
+sdil.declaration.heading=Declaration
+sdil.declaration.info=By continuing you''re confirming that the details provided are true and complete.
+sdil.declaration.subtitle=Check your details
+sdil.declaration.change-link=Change
+sdil.declaration.utr=UTR
+sdil.declaration.postcode=Postcode
+sdil.declaration.name=Name
+sdil.declaration.position=Position
+sdil.declaration.phone-number=Phone number
+sdil.declaration.email=Email
+sdil.declaration.continue=Accept and continue
+
 #Errors
 error.utr.invalid=Invalid UTR
 error.postcode.invalid=Invalid postcode

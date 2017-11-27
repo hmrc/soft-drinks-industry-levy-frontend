@@ -42,7 +42,7 @@ class VerifyController @Inject()(val messagesApi: MessagesApi) extends FrontendC
         if (data == DetailsCorrect.No) {
           Redirect(routes.IdentifyController.identify())
         } else {
-          Redirect(routes.SDILController.showPackage())
+          Redirect(routes.SDILController.displayPackage())
         }
       }
     )
