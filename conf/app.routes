@@ -7,6 +7,7 @@ GET         /register/identify                        @sdil.controllers.Identify
 POST        /register/identify                        @sdil.controllers.IdentifyController.validate()
 
 GET         /register/verify                          @sdil.controllers.VerifyController.verify()
+POST        /register/verify                          @sdil.controllers.VerifyController.validate()
 
 GET         /register/package                         @sdil.controllers.SDILController.showPackage()
 POST        /register/package                         @sdil.controllers.SDILController.submitPackage()

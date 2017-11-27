@@ -24,7 +24,7 @@
 @labelAfter = @{ elements.args.get('_labelAfter).getOrElse(false).asInstanceOf[Boolean] }
 @target = @{elements.args.get('_dataTargetTrue)}
 
-<fieldset class="@fieldsetClass"
+<fieldset id="@field.name" class="@fieldsetClass"
     @if(elements.args.get('_fieldsetAttributes).isDefined) {@elements.args.get('_fieldsetAttributes)}>
 @if(elements.args.get('_legend).isDefined) {
     <legend @if(elements.args.get('_legendClass).isDefined) {class="@elements.args.get('_legendClass)"}>

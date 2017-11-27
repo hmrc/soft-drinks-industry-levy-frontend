@@ -56,3 +56,7 @@ details summary:not([tabindex]) {
 .form-postcode .form-control {
     width: 100px;
 }
+
+table th, table td {
+    font-size: 19px;
+}

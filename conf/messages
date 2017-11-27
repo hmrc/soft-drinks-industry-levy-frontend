@@ -10,6 +10,23 @@ sdil.identify.heading=Enter your Unique Tax Reference number and postcode
 sdil.identify.utr=Unique Tax Reference number (UTR)
 sdil.identify.postcode=Registered business postcode
 
+#Verify
+sdil.verify.heading=Is this the business you want to register?
+sdil.verify.table.caption=Your business record in HMRC
+sdil.verify.utr=UTR
+sdil.verify.organisation=Organisation
+sdil.verify.address=Address
+sdil.verify.detailsCorrect.yes=Yes - this is the business and the address I want to register
+sdil.verify.detailsCorrect.differentAddress=Yes - but I want to register a different address for the Soft Drinks Industry Levy
+sdil.verify.detailsCorrect.no=No - enter a different UTR and postcode
+sdil.verify.altAddress.heading=Enter an address for the Soft Drinks Industry Levy:
+sdil.verify.altAddress.legend=Enter an address for the Soft Drinks Industry Levy:
+sdil.verify.address.line1=Address line 1
+sdil.verify.address.line2=Address line 2
+sdil.verify.address.line3=Address line 3
+sdil.verify.address.line4=Address line 4
+sdil.verify.postcode=Postcode
+
 #Litreage pages
 sdil.packageOwn.heading=How many litres of liable drink per year will you package for your own brand or brands you have the rights to manufacture?
 sdil.packageCopack.heading=How many litres of liable drink per year will you package for your customers?
