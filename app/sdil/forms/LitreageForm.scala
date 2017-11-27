@@ -17,15 +17,19 @@
 package sdil.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, number}
+import play.api.data.Forms._
 import sdil.models.Litreage
 
 object LitreageForm {
   def apply(): Form[Litreage] = Form(
     mapping(
-      "lowerRateLitres" -> positiveInt,
-      "higherRateLitres" -> positiveInt)
-    (Litreage.apply)(Litreage.unapply))
+      "lowerRateLitres" -> litreage,
+      "higherRateLitres" -> litreage
+    )(Litreage.apply)(Litreage.unapply))
 
-  private lazy val positiveInt = number.verifying("error.number.negative", _ >= 0)
+  private lazy val litreage = {
+    longNumber
+      .verifying("error.litreage.max", _ < 10000000000000L)
+      .verifying("error.number.negative", _ >= 0)
+  }
 }

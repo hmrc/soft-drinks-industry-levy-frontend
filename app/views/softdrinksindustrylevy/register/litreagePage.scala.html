@@ -25,11 +25,21 @@
 
         @form(sdil.controllers.routes.LitreageController.validate(pageName)) {
             <div class="form-group form-litres">
-                @inputText(litreageForm("lowerRateLitres"), Messages("sdil.litreage.lowRate"))
+                @inputText(
+                    litreageForm("lowerRateLitres"),
+                    Messages("sdil.litreage.lowRate"),
+                    '_inputType -> "number",
+                    '_inputClass -> "input--no-spinner"
+                )
             </div>
 
             <div class="form-group form-litres">
-                @inputText(litreageForm("higherRateLitres"), Messages("sdil.litreage.highRate"))
+                @inputText(
+                    litreageForm("higherRateLitres"),
+                    Messages("sdil.litreage.highRate"),
+                    '_inputType -> "number",
+                    '_inputClass -> "input--no-spinner"
+                )
             </div>
 
             <details role="group">

@@ -4,6 +4,7 @@ sdil.common.save-continue=Save and continue
 sdil.common.errorSummary=This page has errors
 sdil.common.alpha=ALPHA
 sdil.common.alpha-info=<span>This is a new service – your <a href="{0}">feedback</a> will help us to improve it.</span>
+sdil.common.or=Or
 
 #Identify
 sdil.identify.heading=Enter your Unique Tax Reference number and postcode
@@ -37,6 +38,7 @@ sdil.litreage.lowRate=Litres at the low rate
 sdil.litreage.highRate=Litres at the high rate
 sdil.litrage.rates.help=What are the rates?
 sdil.litrage.rates.content=The low rate is from 5 grams to 7.9 grams of sugar per 100 millilitres. The high rate is 8 grams of sugar or more per 100 millilitres.
+error.litreage.max=This must be less than 10,000,000,000,000
 
 #Contact details
 sdil.contact-details.heading=Who should we contact about the Soft Drinks Industry Levy?

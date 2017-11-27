@@ -25,5 +25,5 @@
         }
         @label
     </label>
-    <input class="form-control @args.toMap.get('_inputClass)" id="@field.name" name="@field.name" value="@field.value">
+    <input class="form-control @args.toMap.get('_inputClass)" id="@field.name" name="@field.name" value="@field.value" @args.toMap.get('_inputType).map(t => s"""type=$t""")>
 </div>
