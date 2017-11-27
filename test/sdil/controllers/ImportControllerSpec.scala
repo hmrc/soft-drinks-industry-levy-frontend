@@ -64,12 +64,6 @@ class ImportControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
   lazy val testController = new ImportController(messagesApi) {
-    override val cache: SessionCache = mockCache
-  }
-
-  lazy val mockCache = {
-    val m = mock[SessionCache]
-    when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
-    m
+    override val cache: SessionCache = controllerhelpers.mockCache
   }
 }

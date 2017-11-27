@@ -63,12 +63,7 @@ class CopackedControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
   lazy val testController = new CopackedController(messagesApi) {
-    override val cache: SessionCache = mockCache
+    override val cache: SessionCache = controllerhelpers.mockCache
   }
 
-  lazy val mockCache = {
-    val m = mock[SessionCache]
-    when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
-    m
-  }
 }

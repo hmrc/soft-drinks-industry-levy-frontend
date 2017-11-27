@@ -128,10 +128,4 @@ class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOn
       contentAsString(result) must include(messagesApi("error.full-name.invalid"))
     }
   }
-
-  lazy val mockCache = {
-    val m = mock[SessionCache]
-    when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
-    m
-  }
 }

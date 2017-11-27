@@ -21,7 +21,7 @@ import javax.inject.Inject
 import play.api.data.Forms.{boolean, optional, single}
 import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.Action
 import sdil.config.FormDataCache
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -55,8 +55,4 @@ class CopackedController @Inject()(val messagesApi: MessagesApi) extends Fronten
           }
         })
     }
-  private lazy val booleanMapping: Mapping[Boolean] =
-    optional(boolean).verifying("sdil.form.radio.error", _.nonEmpty).
-      transform(_.getOrElse(false), x => Some(x))
-
 }

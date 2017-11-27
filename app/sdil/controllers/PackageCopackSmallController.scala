@@ -16,20 +16,16 @@
 
 package sdil.controllers
 
-import java.util.UUID
 import javax.inject.Inject
 
 import play.api.data.{Form, Mapping}
-import play.api.data.Forms.{boolean, mapping, optional, single, text}
+import play.api.data.Forms.{boolean, optional, single}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.Action
 import sdil.config.FormDataCache
-import sdil.models.Identification
-import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
-
 import scala.concurrent.Future
 
 class PackageCopackSmallController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
@@ -58,8 +54,4 @@ class PackageCopackSmallController @Inject()(val messagesApi: MessagesApi) exten
           }
         })
     }
-  private lazy val booleanMapping: Mapping[Boolean] =
-    optional(boolean).verifying("sdil.form.radio.error", _.nonEmpty).
-      transform(_.getOrElse(false), x => Some(x))
-
 }

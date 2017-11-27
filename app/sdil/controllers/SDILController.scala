@@ -96,11 +96,6 @@ class SDILController @Inject() (
       }
     )
   }
-
-  private lazy val booleanMapping: Mapping[Boolean] =
-    optional(boolean).verifying("sdil.form.radio.error", _.nonEmpty).
-      transform(_.getOrElse(false), x => Some(x))
-
   private lazy val packageForm = Form(
     mapping(
       "isLiable" -> booleanMapping,

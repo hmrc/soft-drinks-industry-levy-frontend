@@ -22,6 +22,7 @@ import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -66,5 +67,10 @@ package object controllerhelpers extends MockitoSugar {
     "phoneNumber" -> "+4411111111111",
     "email" -> "a@a.com"
   )
+  lazy val mockCache = {
+    val m = mock[SessionCache]
+    when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
+    m
+  }
 
 }
