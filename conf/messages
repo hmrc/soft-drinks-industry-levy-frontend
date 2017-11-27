@@ -45,6 +45,26 @@ sdil.contact-details.position=Position
 sdil.contact-details.phone-number=Telephone number
 sdil.contact-details.email=Email
 
+#Package Copack Small
+sdil.package-copack-small.heading=Will you package liable drinks for any small producers?
+sdil.package-copack-small.yes=Yes
+sdil.package-copack-small.no=No
+sdil.package-copack-small.save-continue=Save and continue
+sdil.package-copack-small.whatis.header=What is a small producer?
+sdil.package-copack-small.whatis.body=A business is considered a small producer if it produces less than one million litres of liable drink per year and does not expect to exceed that amount within the next 30 days.
+
+#Co Packed
+sdil.copacked.heading=Will you use any third parties in the UK to package liable drinks on your behalf?
+sdil.copacked.yes=Yes
+sdil.copacked.no=No
+sdil.copacked.save-continue=Save and continue
+
+#Import
+sdil.import.heading=Will you bring liable drinks into the UK from anywhere outside of the UK?
+sdil.import.yes=Yes
+sdil.import.no=No
+sdil.import.save-continue=Save and continue
+
 sdil.package.heading= Will you package liable drinks at a production site you operate?
 sdil.package.title=Soft Drinks Industry Levy
 sdil.package.radioGroup.yes=Yes

@@ -33,3 +33,12 @@ GET         /register/contact-details                 @sdil.controllers.SDILCont
 POST        /register/contact-details                 @sdil.controllers.SDILController.submitContactDetails
 
 GET         /register/declaration                     @sdil.controllers.SDILController.displayDeclaration
+
+GET        /register/package-copack-small             @sdil.controllers.PackageCopackSmallController.display()
+POST       /register/package-copack-small             @sdil.controllers.PackageCopackSmallController.submit()
+
+GET        /register/copacked                         @sdil.controllers.CopackedController.display()
+POST       /register/copacked                         @sdil.controllers.CopackedController.submit()
+
+GET        /register/import                           @sdil.controllers.ImportController.display()
+POST       /register/import                           @sdil.controllers.ImportController.submit()
