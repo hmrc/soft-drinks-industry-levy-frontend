@@ -18,10 +18,10 @@
 @import sdil.controllers.routes
 @import views.html.helper._
 
-@(isPackageCopackSmall: Form[Boolean])(implicit messages: Messages, request: Request[_])
+@(isPackageCopackSmall: Form[Boolean], backLink: Call)(implicit messages: Messages, request: Request[_])
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
-    @*<a class="back-link" href="@routes.VerifyController.verify()">@Messages("sdil.pages.back-button-Repoint Me!")</a>*@
+    <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
     <h1 class="heading-large">@Messages("sdil.package-copack-small.heading")</h1>
 
