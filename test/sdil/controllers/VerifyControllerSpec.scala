@@ -52,7 +52,7 @@ class VerifyControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.validate()(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.SDILController.showPackage().url)
+      redirectLocation(res) mustBe Some(routes.SDILController.displayPackage().url)
     }
 
     "redirect to the identify page if the details are incorrect" in {

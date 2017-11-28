@@ -9,7 +9,7 @@ POST        /register/identify                        @sdil.controllers.Identify
 GET         /register/verify                          @sdil.controllers.VerifyController.verify()
 POST        /register/verify                          @sdil.controllers.VerifyController.validate()
 
-GET         /register/package                         @sdil.controllers.SDILController.showPackage()
+GET         /register/package                         @sdil.controllers.SDILController.displayPackage()
 POST        /register/package                         @sdil.controllers.SDILController.submitPackage()
 
 GET         /register/package-own                     @sdil.controllers.LitreageController.show(pageName = "packageOwn")
@@ -33,6 +33,7 @@ GET         /register/contact-details                 @sdil.controllers.SDILCont
 POST        /register/contact-details                 @sdil.controllers.SDILController.submitContactDetails
 
 GET         /register/declaration                     @sdil.controllers.SDILController.displayDeclaration
+POST        /register/declaration                     @sdil.controllers.SDILController.submitDeclaration()
 
 GET        /register/package-copack-small             @sdil.controllers.PackageCopackSmallController.display()
 POST       /register/package-copack-small             @sdil.controllers.PackageCopackSmallController.submit()

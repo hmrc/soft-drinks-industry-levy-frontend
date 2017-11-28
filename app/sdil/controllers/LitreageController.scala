@@ -43,7 +43,7 @@ class LitreageController @Inject()(val messagesApi: MessagesApi) extends Fronten
       } yield {
         packaging match {
           case Some(p) => nextPageFor(pageName, p)
-          case _ => Redirect(routes.SDILController.showPackage())
+          case _ => Redirect(routes.SDILController.displayPackage())
         }
       }
     )

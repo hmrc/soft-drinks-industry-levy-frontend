@@ -73,7 +73,7 @@ class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOn
     "return Status: 200 when user is logged in and loads package page" in {
       sdilAuthMock(userWithUtr)
       val request = FakeRequest("GET", "/package")
-      val result = controller.showPackage().apply(request)
+      val result = controller.displayPackage().apply(request)
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.package.heading"))
@@ -127,5 +127,14 @@ class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOn
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include(messagesApi("error.full-name.invalid"))
     }
+
+    "return Status: 200 when user is logged in and loads declaration page" in {
+      val request = FakeRequest("GET", "/declaration")
+      val result = controller.displayDeclaration.apply(request)
+
+      status(result) mustBe OK
+      contentAsString(result) must include(messagesApi("sdil.declaration.heading"))
+    }
+
   }
 }

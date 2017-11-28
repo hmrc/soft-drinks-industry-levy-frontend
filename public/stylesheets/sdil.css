@@ -37,10 +37,6 @@
     padding-right: 0;
 }
 
-input[type=number] {
-    -moz-appearance: textfield;
-}
-
 .form-litres {
     width: 50%;
 }
@@ -59,4 +55,14 @@ details summary:not([tabindex]) {
 
 table th, table td {
     font-size: 19px;
+}
+
+/*override the assets-frontend .form-block*/
+.form-block {
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
+}
+
+.panel-border-narrow {
+    padding-bottom: 0;
 }
