@@ -20,6 +20,7 @@ import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.mockito.MockitoSugar
+import sdil.models.Packaging
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
@@ -67,6 +68,35 @@ package object controllerhelpers extends MockitoSugar {
     "phoneNumber" -> "+4411111111111",
     "email" -> "a@a.com"
   )
+
+  val validStartDateForm = Seq(
+    "startDateDay" -> "06",
+    "startDateMonth" -> "04",
+    "startDateYear" -> "2017"
+  )
+
+  val invalidStartDateForm = Seq(
+    "startDateDay" -> "29",
+    "startDateMonth" -> "02",
+    "startDateYear" -> "2017"
+  )
+  val invalidStartDateDayForm = Seq(
+    "startDateDay" -> "35",
+    "startDateMonth" -> "08",
+    "startDateYear" -> "2017"
+  )
+  val invalidStartDateMonthForm = Seq(
+    "startDateDay" -> "20",
+    "startDateMonth" -> "30",
+    "startDateYear" -> "2017"
+  )
+  val invalidStartDateYearForm = Seq(
+    "startDateDay" -> "20",
+    "startDateMonth" -> "02",
+    "startDateYear" -> "20189"
+  )
+  val packagingIsLiable = Packaging(true, true, false)
+  val packagingIsntLiable = Packaging(false, false, false)
   lazy val mockCache = {
     val m = mock[SessionCache]
     when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))

@@ -37,8 +37,8 @@ sdil.verify.address=Address
 sdil.verify.detailsCorrect.yes=Yes - this is the business and the address I want to register
 sdil.verify.detailsCorrect.differentAddress=Yes - but I want to register a different address for the Soft Drinks Industry Levy
 sdil.verify.detailsCorrect.no=No - enter a different UTR and postcode
-sdil.verify.altAddress.heading=Enter an address for the Soft Drinks Industry Levy:
-sdil.verify.altAddress.legend=Enter an address for the Soft Drinks Industry Levy:
+sdil.verify.address.heading=Enter an address for the Soft Drinks Industry Levy:
+sdil.verify.address.legend=Enter an address for the Soft Drinks Industry Levy:
 sdil.verify.address.line1=Address line 1
 sdil.verify.address.line2=Address line 2
 sdil.verify.address.line3=Address line 3
@@ -56,6 +56,16 @@ sdil.litreage.highRate=Litres at the high rate
 sdil.litrage.rates.help=What are the rates?
 sdil.litrage.rates.content=The low rate is from 5 grams to 7.9 grams of sugar per 100 millilitres. The high rate is 8 grams of sugar or more per 100 millilitres.
 error.litreage.max=This must be less than 10,000,000,000,000
+
+#Production sites
+sdil.productionSite.heading=Will you package liable drinks at a production site in the UK other than:
+sdil.productionSite.add.heading=Will you have another liable drink production site in the UK?
+sdil.otherSite.address.heading=Enter a production site
+sdil.otherSite.address.hint=You can enter more sites later if you need to
+sdil.otherSite.address.legend=An additional production site address
+sdil.productionSite.address=Address {0}
+sdil.productionSite.remove=Remove?
+sdil.otherSite.add=Yes - add another address
 
 #Secondary warehouse
 sdil.warehouse.heading=Do you want to register any of the warehouses you will use to store liable drinks?

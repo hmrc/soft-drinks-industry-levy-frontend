@@ -4,8 +4,6 @@ GET         /assets/*file                                    controllers.Assets.
 GET         /register/start-date                             @sdil.controllers.StartDateController.displayStartDate()
 POST        /register/start-date                             @sdil.controllers.StartDateController.submitStartDate()
 
-GET         /register/display-sites                          @sdil.controllers.StartDateController.displaySites()
-
 GET         /auth-test                                       @sdil.controllers.SDILController.testAuth
 
 GET         /register/identify                               @sdil.controllers.IdentifyController.identify()
@@ -31,6 +29,10 @@ POST        /register/copacked-volume                        @sdil.controllers.L
 
 GET         /register/import-volume                          @sdil.controllers.LitreageController.show(pageName = "importVolume")
 POST        /register/import-volume                          @sdil.controllers.LitreageController.validate(pageName = "importVolume")
+
+GET         /register/production-sites                       @sdil.controllers.ProductionSiteController.addSite()
+POST        /register/production-sites                       @sdil.controllers.ProductionSiteController.validate()
+GET         /register/production-sites/remove/:idx           @sdil.controllers.ProductionSiteController.remove(idx: Int)
 
 GET         /register/secondary-warehouse                    @sdil.controllers.WarehouseController.secondaryWarehouse()
 POST        /register/secondary-warehouse                    @sdil.controllers.WarehouseController.validate()

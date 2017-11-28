@@ -190,7 +190,7 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.validate("importVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.StartDateController.show().url)
+      redirectLocation(res) mustBe Some(routes.StartDateController.displayStartDate().url)
     }
 
     "store the form data in keystore if it is valid" in {

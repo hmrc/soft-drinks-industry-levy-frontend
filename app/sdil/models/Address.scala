@@ -18,7 +18,9 @@ package sdil.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Address(line1: String, line2: String, line3: String, line4: String, postcode: String)
+case class Address(line1: String, line2: String, line3: String, line4: String, postcode: String) {
+  def nonEmptyLines: Seq[String] = Seq(line1, line2, line3, line4, postcode).filter(_.nonEmpty)
+}
 
 object Address {
   implicit val address: OFormat[Address] = Json.format[Address]
