@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package sdil.models
+package sdil.forms
 
-import play.api.libs.json.{Format, Json}
+import play.api.data.Form
+import play.api.data.Forms._
+import sdil.models.Litreage
 
-package object sdilmodels {
+object LitreageForm {
+  def apply(): Form[Litreage] = Form(
+    mapping(
+      "lowerRateLitres" -> litreage,
+      "higherRateLitres" -> litreage
+    )(Litreage.apply)(Litreage.unapply))
 
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
-
-  implicit val startDateFormat: Format[StartDate] = Json.format[StartDate]
-  implicit val contactDetailsFormat: Format[ContactDetails] = Json.format[ContactDetails]
-
+  private lazy val litreage = {
+    longNumber
+      .verifying("error.litreage.max", _ < 10000000000000L)
+      .verifying("error.number.negative", _ >= 0)
+  }
 }

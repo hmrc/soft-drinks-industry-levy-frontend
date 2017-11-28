@@ -16,13 +16,10 @@
 
 package sdil.models
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, OFormat}
 
-package object sdilmodels {
+case class Litreage(atLowRate: Long, atHighRate: Long)
 
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
-
-  implicit val startDateFormat: Format[StartDate] = Json.format[StartDate]
-  implicit val contactDetailsFormat: Format[ContactDetails] = Json.format[ContactDetails]
-
+object Litreage {
+  implicit val format: OFormat[Litreage] = Json.format[Litreage]
 }

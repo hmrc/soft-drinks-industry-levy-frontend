@@ -28,5 +28,5 @@ trait PlayMessagesSpec extends PlaySpec with GuiceOneAppPerSuite {
     disable[com.kenshoo.play.metrics.PlayModule].build()
 
   val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  def getMessages(r: FakeRequest[_]): Messages = messagesApi.preferred(r)
+  implicit val defaultMessages: Messages = messagesApi.preferred(FakeRequest())
 }

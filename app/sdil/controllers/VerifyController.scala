@@ -16,10 +16,35 @@
 
 package sdil.controllers
 
+import javax.inject.Inject
+
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Action
+import sdil.config.FormDataCache
+import sdil.forms.VerifyForm
+import sdil.models.DetailsCorrect
+import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-class VerifyController extends FrontendController {
+class VerifyController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
-  def verify = TODO
+  val cache: SessionCache = FormDataCache
 
+  def verify = Action { implicit request =>
+    //FIXME look up UTR, org, address
+    Ok(views.html.softdrinksindustrylevy.register.verify(VerifyForm(), "a utr", "an organisation", "an address"))
+  }
+
+  def validate = Action.async { implicit request =>
+    VerifyForm().bindFromRequest().fold(
+      errors => BadRequest(views.html.softdrinksindustrylevy.register.verify(errors, "a utr", "an organisation", "an address")),
+      data => cache.cache("verifiedDetails", data) map { _ =>
+        if (data == DetailsCorrect.No) {
+          Redirect(routes.IdentifyController.identify())
+        } else {
+          Redirect(routes.SDILController.displayPackage())
+        }
+      }
+    )
+  }
 }

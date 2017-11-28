@@ -16,13 +16,10 @@
 
 package sdil.models
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, OFormat}
 
-package object sdilmodels {
+case class Address(line1: String, line2: String, line3: String, line4: String, postcode: String)
 
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
-
-  implicit val startDateFormat: Format[StartDate] = Json.format[StartDate]
-  implicit val contactDetailsFormat: Format[ContactDetails] = Json.format[ContactDetails]
-
+object Address {
+  implicit val address: OFormat[Address] = Json.format[Address]
 }

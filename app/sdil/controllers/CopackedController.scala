@@ -16,33 +16,43 @@
 
 package sdil.controllers
 
-import java.util.UUID
 import javax.inject.Inject
 
+import play.api.data.Forms.{boolean, optional, single}
+import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import sdil.config.FormDataCache
-import sdil.forms.IdentifyForm
-import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class IdentifyController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+class CopackedController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
   val cache: SessionCache = FormDataCache
 
-  def identify = Action { implicit request =>
-    //FIXME session ID should be initialised at the start of the journey
-    Ok(views.html.softdrinksindustrylevy.register.identify(IdentifyForm())).addingToSession(SessionKeys.sessionId -> UUID.randomUUID().toString)
+  private val copackedForm = Form(single(
+    "isCopacked" -> booleanMapping))
+
+  def display = Action { implicit request =>
+    Ok(register.copacked(copackedForm))
   }
 
-  def validate = Action.async { implicit request =>
-    IdentifyForm().bindFromRequest().fold(
-      errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.identify(errors))),
-      data => cache.cache("identify", data) map { _ =>
-        Redirect(routes.VerifyController.verify())
-      })
-  }
+  def submit = Action.async { implicit request =>
+      copackedForm.bindFromRequest.fold(
+        formWithErrors => {
+          Future.successful(
+            BadRequest(register.copacked(formWithErrors)))
+        },
+        validFormData => {
+          if (validFormData){
+            Redirect(routes.LitreageController.show("copackedVolume"))
+          }
+          else{
+            Redirect(routes.ImportController.display())
+          }
+        })
+    }
 }

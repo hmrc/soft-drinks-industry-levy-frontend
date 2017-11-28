@@ -16,13 +16,4 @@
 
 package sdil.models
 
-import play.api.libs.json.{Format, Json}
-
-package object sdilmodels {
-
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
-
-  implicit val startDateFormat: Format[StartDate] = Json.format[StartDate]
-  implicit val contactDetailsFormat: Format[ContactDetails] = Json.format[ContactDetails]
-
-}
+case class SecondaryWarehouse(hasWarehouse: Boolean, address: Option[Address])

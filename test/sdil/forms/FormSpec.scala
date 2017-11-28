@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package sdil.models
+package sdil.forms
 
-import play.api.libs.json.{Format, Json}
+import org.scalatestplus.play.PlaySpec
+import play.api.data.Form
 
-package object sdilmodels {
-
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
-
-  implicit val startDateFormat: Format[StartDate] = Json.format[StartDate]
-  implicit val contactDetailsFormat: Format[ContactDetails] = Json.format[ContactDetails]
-
+trait FormSpec extends PlaySpec {
+  def mustContainError(f: Form[_], fieldName: String, expectedError: String) = {
+    if(f(fieldName).hasErrors) {
+      f(fieldName).error.value.message mustBe expectedError
+    } else {
+      fail(s"No error for $fieldName; actual errors: ${f.errors}")
+    }
+  }
 }

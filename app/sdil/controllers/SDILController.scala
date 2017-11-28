@@ -16,26 +16,26 @@
 
 package sdil.controllers
 
-import java.text.SimpleDateFormat
-import java.time.LocalDate
+import java.util.UUID
 import javax.inject.Inject
 
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.i18n.Messages
 import play.api.mvc._
 import sdil.config.FrontendAppConfig._
 import sdil.config.{FormDataCache, FrontendAuthConnector}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.sdilmodels._
 import sdil.models._
+import sdil.models.sdilmodels._
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core.retrieve.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.Retrievals.saUtr
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import views.html.softdrinksindustrylevy._
 
 import scala.concurrent.Future
 
@@ -61,95 +61,69 @@ class SDILController @Inject()(
     }
   }
 
-  def testAuth: Action[AnyContent] = authorisedForSDIL { implicit request =>
-    implicit utr =>
-      Future successful Ok(views.html.helloworld.hello_world(Some(DesSubmissionResult(true))))
+  def displayContactDetails: Action[AnyContent] = Action.async { implicit request =>
+    Future successful Ok(register.contact_details(contactForm))
   }
 
-  def displayStartDate: Action[AnyContent] = Action.async { implicit request =>
-    if (LocalDate.now isBefore StartDateForm.taxStartDate){
-      Future.successful(Ok(views.html.softdrinksindustrylevy.register.identify(StartDateForm.startDateForm)))
-      //TODO change identify to next view
-    }
-    else {
-      Future.successful(Ok(views.html.softdrinksindustrylevy.register.start_date(StartDateForm.startDateForm)))
-    }
-  }
-
-  def submitStartDate: Action[AnyContent] = Action.async { implicit request =>
-
-    StartDateForm.validateStartDate(StartDateForm.startDateForm.bindFromRequest()).fold(
-      errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors))),
-      data => cache.cache("start-date", data) map { _ =>
-        Redirect(routes.SDILController.displaySites())
+  def submitContactDetails: Action[AnyContent] = Action.async { implicit request =>
+    contactForm.bindFromRequest().fold(
+      formWithErrors => Future successful BadRequest(register.contact_details(formWithErrors)),
+      d => cache.cache("contact-details", d) map { _ =>
+        Redirect(routes.SDILController.displayDeclaration())
       })
   }
 
-  def displaySites() = TODO
-
-  object StartDateForm {
-    def startDateForm: Form[StartDate] = Form(
-      mapping(
-        "startDateDay" -> number.verifying(startDayConstraint),
-        "startDateMonth" -> number.verifying(startMonthConstraint),
-        "startDateYear" -> number.verifying(startYearConstraint)
-      )(StartDate.apply)(StartDate.unapply)
-    )
-
-    val startDayConstraint: Constraint[Int] = Constraint {
-      day =>
-        val errors = day match {
-          case a if a <= 0 => Seq(ValidationError(Messages("error.start-date.day-too-low")))
-          case b if b > 31 => Seq(ValidationError(Messages("error.start-date.day-too-high")))
-          case _ => Nil
-        }
-        if (errors.isEmpty) Valid else Invalid(errors)
-    }
-    val startMonthConstraint: Constraint[Int] = Constraint {
-      day =>
-        val errors = day match {
-          case a if a <= 0 => Seq(ValidationError(Messages("error.start-date.month-too-low")))
-          case b if b > 12 => Seq(ValidationError(Messages("error.start-date.month-too-high")))
-          case _ => Nil
-        }
-        if (errors.isEmpty) Valid else Invalid(errors)
-    }
-    val startYearConstraint: Constraint[Int] = Constraint {
-      day =>
-        val errors = day match {
-          case a if a < 2017 => Seq(ValidationError(Messages("error.start-date.year-too-low")))
-          case b if b.toString.length > 4=> Seq(ValidationError(Messages("error.start-date.year-too-high")))
-          case _ => Nil
-        }
-        if (errors.isEmpty) Valid else Invalid(errors)
-    }
-
-    def validateStartDate(form: Form[StartDate]): Form[StartDate] = {
-      if (form.hasErrors) form else {
-        val day = form.get.startDateDay
-        val month = form.get.startDateMonth
-        val year = form.get.startDateYear
-        if (!isValidDate(day, month, year)) form.withError("", Messages("error.start-date.date-invalid"))
-        else if (LocalDate.of(year, month, day) isAfter LocalDate.now) form.withError("", Messages("error.start-date.date-too-high"))
-        else if (LocalDate.of(year, month, day) isBefore taxStartDate)
-          form.withError("", Messages("error.start-date.date-too-low"))
-        else form
-      }
-    }
-
-    val taxStartDate = LocalDate.parse("2018-04-06")
-
-    def isValidDate(day: Int, month: Int, year: Int): Boolean = {
-      try {
-        val fmt = new SimpleDateFormat("dd/MM/yyyy")
-        fmt.setLenient(false)
-        fmt.parse(s"$day/$month/$year")
-        true
-      } catch {
-        case e: Exception => false
-      }
-    }
+  def displayDeclaration: Action[AnyContent] = Action.async { implicit request =>
+    Future successful Ok(register.
+      declaration(
+        Identification("foo", "bar"),
+        ContactDetails(
+          fullName = "Nick Karaolis",
+          position = "Scala Ninja",
+          phoneNumber = "x directory",
+          email = "nick.karaolis@wouldn'tyouliketoknow.com"
+        )
+      ))
   }
+
+  def submitDeclaration() = TODO // TODO hit the backend to create subscription
+
+  def testAuth: Action[AnyContent] = authorisedForSDIL { implicit request => implicit utr =>
+    Future successful Ok(views.html.helloworld.hello_world(Some(DesSubmissionResult(true))))
+  }
+
+  def displayPackage(): Action[AnyContent] = Action.async { implicit request =>
+    Future successful Ok(register.packagePage(packageForm)).addingToSession(SessionKeys.sessionId -> UUID.randomUUID().toString)
+  }
+
+  def submitPackage(): Action[AnyContent] = Action.async { implicit request =>
+    packageForm.bindFromRequest.fold(
+      formWithErrors => BadRequest(register.packagePage(formWithErrors)),
+      validFormData => cache.cache("packaging", validFormData) map { _ =>
+        validFormData match {
+          case Packaging(_, true, _) => Redirect(routes.LitreageController.show("packageOwn"))
+          case Packaging(_, _, true) => Redirect(routes.LitreageController.show("packageCopack"))
+          //TODO go to copacked question
+          case _ => NotImplemented(views.html.defaultpages.todo())
+        }
+      }
+    )
+  }
+  private lazy val packageForm = Form(
+    mapping(
+      "isLiable" -> booleanMapping,
+      "ownBrands" -> boolean,
+      "customers" -> boolean
+    )(Packaging.apply)(Packaging.unapply)
+      .verifying("sdil.form.check.error", p => !p.isLiable || (p.ownBrands || p.customers))
+  )
+
+  private lazy val contactForm = Form(
+    mapping(
+      "fullName" -> text.verifying(Messages("error.full-name.invalid"), _.nonEmpty),
+      "position" -> text.verifying(Messages("error.position.invalid"), _.nonEmpty),
+      "phoneNumber" -> text.verifying(Messages("error.phone-number.invalid"), _.length > 10),
+      "email" -> email)(ContactDetails.apply)(ContactDetails.unapply))
 
 }
 

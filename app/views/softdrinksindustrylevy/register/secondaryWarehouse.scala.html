@@ -1,0 +1,77 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.softdrinksindustrylevy.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+@import sdil.models.Address
+
+@(warehouseForm: Form[_], warehouses: Seq[Address])(implicit request: Request[_], messages: Messages)
+
+@main_template(Messages("sdil.common.title")) {
+    <h1 class="heading-large">@heading</h1>
+
+    @errorSummary(Messages("sdil.common.errorSummary"), warehouseForm)
+
+    @if(warehouses.nonEmpty) {
+        <hr>
+
+        @warehouses.zipWithIndex.map { case (addr, i) =>
+            <div>
+                <h2 class="heading-small">@Messages("sdil.warehouse.address", i + 1)</h2>
+                @Seq(addr.line1, addr.line2, addr.line3, addr.line4, addr.postcode).filter(_.nonEmpty).map { l =>
+                  <p>@l</p>
+                }
+                <p class="font-xsmall">
+                    <a href="@sdil.controllers.routes.WarehouseController.remove(i)">@Messages("sdil.warehouse.remove")</a>
+                </p>
+            </div>
+
+            <br/>
+        }
+    }
+
+    @form(sdil.controllers.routes.WarehouseController.validate()) {
+        @radioButtonWithConditionalContent(
+            field = warehouseForm("hasWarehouse"),
+            radioOptions = Seq(
+                ("true", (yesLabel, Some(addressFields(warehouseForm, "warehouseAddress", "sdil.warehouse.address")))),
+                ("false", (Messages("sdil.common.no"), None))
+            ),
+            '_labelClass -> "block-label",
+            '_labelAfter -> true,
+            '_groupClass -> "form-field-group",
+            '_dataTargetTrue -> "warehouse"
+        )
+
+        <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+    }
+}
+
+@heading = @{
+    if(warehouses.nonEmpty) {
+        Messages("sdil.warehouse.add.heading")
+    } else {
+        Messages("sdil.warehouse.heading")
+    }
+}
+
+@yesLabel = @{
+    if(warehouses.nonEmpty) {
+        Messages("sdil.warehouse.add")
+    } else {
+        Messages("sdil.common.yes")
+    }
+}

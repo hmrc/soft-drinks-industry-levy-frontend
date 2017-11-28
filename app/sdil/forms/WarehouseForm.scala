@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package sdil.models
+package sdil.forms
 
-import play.api.libs.json.{Format, Json}
+import play.api.data.Form
+import play.api.data.Forms._
+import sdil.models.SecondaryWarehouse
+import uk.gov.voa.play.form.ConditionalMappings._
 
-package object sdilmodels {
-
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
-
-  implicit val startDateFormat: Format[StartDate] = Json.format[StartDate]
-  implicit val contactDetailsFormat: Format[ContactDetails] = Json.format[ContactDetails]
-
+object WarehouseForm extends FormHelpers {
+  def apply(): Form[SecondaryWarehouse] = Form(
+    mapping(
+      "hasWarehouse" -> mandatoryBoolean,
+      "warehouseAddress" -> mandatoryIfTrue("hasWarehouse", addressMapping)
+    )(SecondaryWarehouse.apply)(SecondaryWarehouse.unapply)
+  )
 }

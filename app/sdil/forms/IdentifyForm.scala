@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package sdil.models
+package sdil.forms
 
-import play.api.libs.json.{Format, Json}
+import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
+import sdil.models.Identification
 
-package object sdilmodels {
+object IdentifyForm extends FormHelpers {
+  def apply(): Form[Identification] = Form(
+    mapping(
+      "utr" -> text.verifying("error.utr.invalid", _.matches(utrRegex)),
+      "postcode" -> postcode
+    )(Identification.apply)(Identification.unapply)
+  )
 
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
-
-  implicit val startDateFormat: Format[StartDate] = Json.format[StartDate]
-  implicit val contactDetailsFormat: Format[ContactDetails] = Json.format[ContactDetails]
-
+  lazy val utrRegex = """\d{10}"""
 }

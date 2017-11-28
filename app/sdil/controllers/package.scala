@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package sdil.models
+package sdil
 
-import play.api.libs.json.{Format, Json}
+import play.api.data.Forms.{boolean, optional}
+import play.api.data.Mapping
 
-package object sdilmodels {
+import scala.concurrent.Future
 
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
+package object controllers {
+  implicit def future[A](a: A): Future[A] = Future.successful(a)
 
-  implicit val startDateFormat: Format[StartDate] = Json.format[StartDate]
-  implicit val contactDetailsFormat: Format[ContactDetails] = Json.format[ContactDetails]
+  lazy val booleanMapping: Mapping[Boolean] =
+    optional(boolean).verifying("sdil.form.radio.error", _.nonEmpty).
+      transform(_.getOrElse(false), x => Some(x))
 
 }

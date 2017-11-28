@@ -16,13 +16,10 @@
 
 package sdil.models
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, OFormat}
 
-package object sdilmodels {
+case class Packaging(isLiable: Boolean, ownBrands: Boolean, customers: Boolean)
 
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
-
-  implicit val startDateFormat: Format[StartDate] = Json.format[StartDate]
-  implicit val contactDetailsFormat: Format[ContactDetails] = Json.format[ContactDetails]
-
+object Packaging {
+  implicit val format: OFormat[Packaging] = Json.format[Packaging]
 }

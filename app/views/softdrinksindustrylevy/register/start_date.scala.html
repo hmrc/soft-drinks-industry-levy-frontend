@@ -28,7 +28,7 @@
         @errorSummary(Messages("sdil.common.errorSummary"), startDateForm)
     }
 
-    @form(sdil.controllers.routes.SDILController.submitStartDate()) {
+    @form(sdil.controllers.routes.StartDateController.submitStartDate()) {
         <span class="form-hint">@Messages("sdil.start-date.example")</span>
         <div class="inline form-group">
 
@@ -66,6 +66,6 @@
         </div>
         <br>
         <br>
-        <input class="button" value="@Messages("sdil.common.save-and-continue")" type="submit">
+        <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
     }
 }
