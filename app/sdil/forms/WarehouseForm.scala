@@ -16,20 +16,16 @@
 
 package sdil.forms
 
+import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.{Form, Mapping}
-import sdil.models.DetailsCorrect
-import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
+import sdil.models.SecondaryWarehouse
+import uk.gov.voa.play.form.ConditionalMappings._
 
-object VerifyForm extends FormHelpers {
-  def apply(): Form[DetailsCorrect] = Form(
+object WarehouseForm extends FormHelpers {
+  def apply(): Form[SecondaryWarehouse] = Form(
     mapping(
-      "detailsCorrect" -> oneOf(DetailsCorrect.options, "error.detailsCorrect.invalid"),
-      "alternativeAddress" -> mandatoryIf(isEqual("detailsCorrect", "differentAddress"), addressMapping)
-    )(DetailsCorrect.apply)(DetailsCorrect.unapply)
+      "hasWarehouse" -> mandatoryBoolean,
+      "warehouseAddress" -> mandatoryIfTrue("hasWarehouse", addressMapping)
+    )(SecondaryWarehouse.apply)(SecondaryWarehouse.unapply)
   )
-
-  def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
-    nonEmptyText.verifying(errorMsg, s => options.contains(s))
-  }
 }
