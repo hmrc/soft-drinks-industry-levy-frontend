@@ -18,15 +18,14 @@ package sdil.controllers
 
 import javax.inject.Inject
 
-import play.api.data.Forms.{boolean, optional, single}
-import play.api.data.{Form, Mapping}
+import play.api.data.Form
+import play.api.data.Forms.single
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import sdil.config.FormDataCache
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
-import sdil.controllers.SDILController
 
 import scala.concurrent.Future
 

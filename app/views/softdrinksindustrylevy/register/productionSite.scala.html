@@ -1,0 +1,90 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import sdil.models.Address
+@import views.html.softdrinksindustrylevy.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@(siteForm: Form[_], mainSite: Address, otherSites: Seq[Address])(implicit request: Request[_], messages: Messages)
+
+@main_template(Messages("sdil.common.title")) {
+
+    <h1 class="heading-large">@heading</h1>
+
+    @errorSummary(Messages("sdil.common.errorSummary"), siteForm)
+
+    @if(otherSites.nonEmpty) {
+        <h2 class="heading-small">@Messages("sdil.productionSite.address", 1)</h2>
+        <div class="form-group">
+            @mainSite.nonEmptyLines.map { l =>
+                <div>@l</div>
+            }
+        </div>
+
+        @otherSites.zipWithIndex.map { case (addr, idx) =>
+            <hr>
+            <h2 class="heading-small">@Messages("sdil.productionSite.address", idx + 2)</h2>
+            <div class="form-group">
+                @addr.nonEmptyLines.map { l =>
+                    <div>@l</div>
+                }
+            </div>
+            <p class="font-xsmall">
+                <a href="#">@Messages("sdil.productionSite.remove")</a>
+            </p>
+        }
+
+        <br/>
+    } else {
+        <div class="form-group">
+            @mainSite.nonEmptyLines.map { l =>
+                <div>@l</div>
+            }
+        </div>
+    }
+
+    @form(sdil.controllers.routes.ProductionSiteController.validate()) {
+        @radioButtonWithConditionalContent(
+            field = siteForm("hasOtherSite"),
+            radioOptions = Seq(
+                ("true", (yesLabel, Some(addressFields(siteForm, "otherSiteAddress", "sdil.otherSite.address")))),
+                ("false", (Messages("sdil.common.no"), None))
+            ),
+            '_labelClass -> "block-label",
+            '_labelAfter -> true,
+            '_groupClass -> "form-field-group",
+            '_dataTargetTrue -> "otherSite"
+        )
+
+        <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+    }
+}
+
+@heading = @{
+    if(otherSites.nonEmpty) {
+        Messages("sdil.productionSite.add.heading")
+    } else {
+        Messages("sdil.productionSite.heading")
+    }
+}
+
+@yesLabel = @{
+    if(otherSites.nonEmpty) {
+        Messages("sdil.otherSite.add")
+    } else {
+        Messages("sdil.common.yes")
+    }
+}

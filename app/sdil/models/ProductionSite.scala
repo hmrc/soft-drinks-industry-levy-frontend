@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package sdil
+package sdil.models
 
-import play.api.data.Forms.{boolean, optional}
-import play.api.data.Mapping
+import play.api.libs.json.{Json, OFormat}
 
-import scala.concurrent.Future
-import scala.language.implicitConversions
+case class ProductionSite(hasOtherSite: Boolean, address: Option[Address])
 
-package object controllers {
-  implicit def future[A](a: A): Future[A] = Future.successful(a)
-
-  lazy val booleanMapping: Mapping[Boolean] =
-    optional(boolean).verifying("sdil.form.radio.error", _.nonEmpty).
-      transform(_.getOrElse(false), x => Some(x))
-
+object ProductionSite {
+  implicit val format: OFormat[ProductionSite] = Json.format[ProductionSite]
 }
