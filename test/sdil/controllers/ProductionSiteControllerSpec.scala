@@ -16,14 +16,15 @@
 
 package sdil.controllers
 
-import org.scalatest.mockito.MockitoSugar
-import org.mockito.Mockito._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import sdil.models.Address
 import play.api.test.Helpers._
 import sdil.controllers.controllerhelpers.mockCache
+import sdil.models.Address
 
 import scala.concurrent.Future
 
@@ -48,6 +49,47 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
       contentAsString(res) must include (Messages("sdil.productionSite.add.heading"))
+    }
+
+    "return a page with a link back to the start date page if the date is after the sugar tax start date" in {
+      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
+        .thenReturn(Future.successful(None))
+
+      val res = testController.addSite()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.StartDateController.displayStartDate().url
+    }
+
+    "return a page with a link back to the import volume page if the date is before the sugar tax start date " +
+      "and the user is importing liable drinks" in {
+      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
+        .thenReturn(Future.successful(None))
+
+      when(mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(true)))
+
+      val res = testControllerBeforeTaxStart.addSite()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
+    }
+
+    "return a page with a link back to the import page if the date is before the sugar tax start date " +
+      "and the user is not importing liable drinks" in {
+      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
+        .thenReturn(Future.successful(None))
+
+      when(mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(false)))
+
+      val res = testControllerBeforeTaxStart.addSite()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.ImportController.display().url
     }
   }
 
@@ -146,7 +188,11 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new ProductionSiteController(messagesApi) {
+  lazy val testController = new ProductionSiteController(messagesApi, controllerhelpers.dateAfterTaxStart) {
+    override val cache = controllerhelpers.mockCache
+  }
+
+  lazy val testControllerBeforeTaxStart = new ProductionSiteController(messagesApi, controllerhelpers.dateBeforeTaxStart) {
     override val cache = controllerhelpers.mockCache
   }
 }

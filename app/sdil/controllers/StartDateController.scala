@@ -17,52 +17,58 @@
 package sdil.controllers
 
 import java.text.SimpleDateFormat
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 import javax.inject.Inject
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, number}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Request}
 import sdil.config.{FormDataCache, FrontendAppConfig}
+import sdil.models.sdilmodels._
 import sdil.models.{Packaging, StartDate}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import sdil.models.sdilmodels._
 
-import scala.concurrent.Future
+import scala.util.Try
 
-class StartDateController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+class StartDateController @Inject()(val messagesApi: MessagesApi, clock: Clock) extends FrontendController with I18nSupport {
 
   val cache: SessionCache = FormDataCache
 
   def displayStartDate: Action[AnyContent] = Action.async { implicit request =>
-    if (LocalDate.now isBefore FrontendAppConfig.taxStartDate)
-      cache.cache("start-date", FrontendAppConfig.taxStartDate) map { _ =>
-        Redirect(routes.ProductionSiteController.addSite())
+    if (LocalDate.now(clock) isBefore FrontendAppConfig.taxStartDate) {
+      for {
+        _ <- cache.cache("start-date", FrontendAppConfig.taxStartDate)
+        packaging <- cache.fetchAndGetEntry[Packaging]("packaging")
+      } yield {
+        packaging match {
+          case Some(p) if p.isLiable => Redirect(routes.ProductionSiteController.addSite())
+          case Some(p) => Redirect(routes.WarehouseController.secondaryWarehouse())
+          case None => Redirect(routes.SDILController.displayPackage())
+        }
       }
-    else {
-      Future.successful(Ok(views.html.softdrinksindustrylevy.register.start_date(startDateForm)))
+    } else {
+      getBackLink map { link =>
+        Ok(views.html.softdrinksindustrylevy.register.start_date(startDateForm, link))
+      }
     }
   }
 
   def submitStartDate: Action[AnyContent] = Action.async { implicit request =>
-
     validateStartDate(startDateForm.bindFromRequest()).fold(
-      errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors))),
+      errors => getBackLink map { link => BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors, link)) },
       data => {
         cache.cache("start-date", data) flatMap { _ =>
           cache.fetchAndGetEntry[Packaging]("packaging") map {
-            _ match {
-              case Some(Packaging(true, _, _)) => Redirect(routes.ProductionSiteController.addSite())
-              case _ => Redirect(routes.WarehouseController.secondaryWarehouse())
-            }
+            case Some(Packaging(true, _, _)) => Redirect(routes.ProductionSiteController.addSite())
+            case _ => Redirect(routes.WarehouseController.secondaryWarehouse())
           }
         }
-      })
+      }
+    )
   }
-
 
   def startDateForm: Form[StartDate] = Form(
     mapping(
@@ -81,6 +87,7 @@ class StartDateController @Inject()(val messagesApi: MessagesApi) extends Fronte
       }
       if (errors.isEmpty) Valid else Invalid(errors)
   }
+
   val startMonthConstraint: Constraint[Int] = Constraint {
     day =>
       val errors = day match {
@@ -90,6 +97,7 @@ class StartDateController @Inject()(val messagesApi: MessagesApi) extends Fronte
       }
       if (errors.isEmpty) Valid else Invalid(errors)
   }
+
   val startYearConstraint: Constraint[Int] = Constraint {
     day =>
       val errors = day match {
@@ -106,7 +114,7 @@ class StartDateController @Inject()(val messagesApi: MessagesApi) extends Fronte
       val month = form.get.startDateMonth
       val year = form.get.startDateYear
       if (!isValidDate(day, month, year)) form.withError("", Messages("error.start-date.date-invalid"))
-      else if (LocalDate.of(year, month, day) isAfter LocalDate.now) form.withError("", Messages("error.start-date.date-too-high"))
+      else if (LocalDate.of(year, month, day) isAfter LocalDate.now(clock)) form.withError("", Messages("error.start-date.date-too-high"))
       else if (LocalDate.of(year, month, day) isBefore FrontendAppConfig.taxStartDate)
         form.withError("", Messages("error.start-date.date-too-low"))
       else form
@@ -114,13 +122,18 @@ class StartDateController @Inject()(val messagesApi: MessagesApi) extends Fronte
   }
 
   def isValidDate(day: Int, month: Int, year: Int): Boolean = {
-    try {
+    Try {
       val fmt = new SimpleDateFormat("dd/MM/yyyy")
       fmt.setLenient(false)
       fmt.parse(s"$day/$month/$year")
-      true
-    } catch {
-      case e: Exception => false
+    }.isSuccess
+  }
+
+  private def getBackLink(implicit request: Request[_]) = {
+    cache.fetchAndGetEntry[Boolean]("import") map {
+      case Some(true) => routes.LitreageController.show("importVolume")
+      case Some(false) => routes.ImportController.display()
+      case None => routes.SDILController.displayPackage()
     }
   }
 }

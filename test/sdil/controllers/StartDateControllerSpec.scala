@@ -16,9 +16,7 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
@@ -26,18 +24,15 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.controllerhelpers._
-import sdil.models.{Address, Packaging}
+import sdil.models.Packaging
 import uk.gov.hmrc.http.cache.client.SessionCache
-import org.mockito.ArgumentMatchers.{eq => matching, _}
 
 import scala.concurrent.Future
 
-class StartDateControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOneAppPerSuite with BeforeAndAfterEach {
+class StartDateControllerSpec extends PlayMessagesSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val controller = new StartDateController(messagesApi) {
-
+  val controller = new StartDateController(messagesApi, controllerhelpers.dateAfterTaxStart) {
     override val cache: SessionCache = mockCache
-
   }
 
   "StartDateController" should {

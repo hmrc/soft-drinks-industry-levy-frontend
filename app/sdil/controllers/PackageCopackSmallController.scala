@@ -18,40 +18,49 @@ package sdil.controllers
 
 import javax.inject.Inject
 
-import play.api.data.{Form, Mapping}
-import play.api.data.Forms.{boolean, optional, single}
+import play.api.data.Form
+import play.api.data.Forms.single
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Action
+import play.api.mvc.{Action, Call, Request}
 import sdil.config.FormDataCache
+import sdil.models.Packaging
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
+
 import scala.concurrent.Future
 
 class PackageCopackSmallController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
   val cache: SessionCache = FormDataCache
 
-  private val packageCopackSmallForm = Form(single(
-    "isPackageCopackSmall" -> booleanMapping))
+  private val packageCopackSmallForm = Form(single("isPackageCopackSmall" -> booleanMapping))
 
-  def display = Action { implicit request =>
-    Ok(register.package_copack_small(packageCopackSmallForm))
+  def display = Action.async { implicit request =>
+    getBackLink.map { backLink =>
+      Ok(register.package_copack_small(packageCopackSmallForm, backLink))
+    }
   }
 
   def submit = Action.async { implicit request =>
-      packageCopackSmallForm.bindFromRequest.fold(
-        formWithErrors => {
-          Future.successful(
-            BadRequest(register.package_copack_small(formWithErrors)))
-        },
-        validFormData => {
-          if (validFormData){
-            Redirect(routes.LitreageController.show("packageCopackSmallVol"))
-          }
-          else{
-            Redirect(routes.CopackedController.display())
-          }
-        })
+    packageCopackSmallForm.bindFromRequest.fold(
+      formWithErrors => getBackLink map { link => BadRequest(register.package_copack_small(formWithErrors, link)) },
+      validFormData => cache.cache("packageCopackSmall", validFormData) map { _ =>
+        if (validFormData) {
+          Redirect(routes.LitreageController.show("packageCopackSmallVol"))
+        }
+        else {
+          Redirect(routes.CopackedController.display())
+        }
+      }
+    )
+  }
+
+  private def getBackLink(implicit request: Request[_]): Future[Call] = {
+    cache.fetchAndGetEntry[Packaging]("packaging") map {
+      case Some(p) if p.customers => routes.LitreageController.show("packageCopack")
+      case Some(p) if p.isLiable => routes.LitreageController.show("packageOwn")
+      case _ => routes.SDILController.displayPackage()
     }
+  }
 }

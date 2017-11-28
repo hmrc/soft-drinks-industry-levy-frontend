@@ -23,10 +23,9 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 
-trait  PlayMessagesSpec extends PlaySpec with GuiceOneAppPerSuite {
-  implicit override lazy val app: Application = new GuiceApplicationBuilder().
-    disable[com.kenshoo.play.metrics.PlayModule]
-  .configure("tax-start-date" -> "1908-02-15")
+trait PlayMessagesSpec extends PlaySpec with GuiceOneAppPerSuite {
+  implicit override lazy val app: Application = new GuiceApplicationBuilder()
+    .disable[com.kenshoo.play.metrics.PlayModule]
     .build()
 
   val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]

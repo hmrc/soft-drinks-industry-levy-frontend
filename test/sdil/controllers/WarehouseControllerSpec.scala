@@ -16,14 +16,14 @@
 
 package sdil.controllers
 
-import org.scalatest.mockito.MockitoSugar
-import org.mockito.Mockito._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import sdil.models.Address
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import play.api.test.Helpers._
+import sdil.models.{Address, Packaging}
 
 import scala.concurrent.Future
 
@@ -31,45 +31,98 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
   "GET /secondary-warehouse" should {
     "return 200 Ok and the secondary warehouse page if no secondary warehouses have been added" in {
-      when(mockSessionCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
         .thenReturn(Future.successful(None))
 
       val res = testController.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
-      contentAsString(res) must include (Messages("sdil.warehouse.heading"))
+      contentAsString(res) must include(Messages("sdil.warehouse.heading"))
     }
 
     "return 200 Ok and the add secondary warehouse page if other secondary warehouses have been added" in {
-      when(mockSessionCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(Seq(Address("1", "", "", "", "AA11 1AA")))))
 
       val res = testController.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
-      contentAsString(res) must include (Messages("sdil.warehouse.add.heading"))
+      contentAsString(res) must include(Messages("sdil.warehouse.add.heading"))
+    }
+
+    "return a page with a link back to the production sites page if the user packages liable drinks" in {
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(Packaging(true, true, true))))
+
+      val res = testController.secondaryWarehouse()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.ProductionSiteController.addSite().url
+    }
+
+    "return a page with a link back to the start date page if the user does not package liable drinks" +
+      "and the date is after the tax start date" in {
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(Packaging(false, false, false))))
+
+      val res = testController.secondaryWarehouse()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.StartDateController.displayStartDate().url
+    }
+
+    "return a page with a link back to the import volume page if the user does not package liable drinks, " +
+      "imports liable drinks, and the date is before the tax start date" in {
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(Packaging(false, false, false))))
+
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(true)))
+
+      val res = testControllerBeforeTaxStart.secondaryWarehouse()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
+    }
+
+    "return a page with a link back to the import page if the user does not package or import liable drinks," +
+      "and the date is before the tax start date" in {
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(Packaging(false, false, false))))
+
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(false)))
+
+      val res = testControllerBeforeTaxStart.secondaryWarehouse()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.ImportController.display().url
     }
   }
 
   "POST /secondary-warehouse" should {
     "return 400 Bad Request and the secondary warehouse page if no secondary warehouses have been added and the form data is invalid" in {
-      when(mockSessionCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
         .thenReturn(Future.successful(None))
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include (Messages("sdil.warehouse.heading"))
+      contentAsString(res) must include(Messages("sdil.warehouse.heading"))
     }
 
     "return 400 Bad Request and the add secondary warehouse page if other warehouses have been added and the form data is invalid" in {
-      when(mockSessionCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(Seq(Address("1", "", "", "", "AA11 1AA")))))
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include (Messages("sdil.warehouse.add.heading"))
+      contentAsString(res) must include(Messages("sdil.warehouse.add.heading"))
     }
 
     "redirect to the add secondary warehouse page if a warehouse has been added" in {
-      when(mockSessionCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
         .thenReturn(Future.successful(None))
 
       val request = FakeRequest().withFormUrlEncodedBody(
@@ -87,7 +140,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "redirect to the contact details page if a warehouse is not added" in {
-      when(mockSessionCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
         .thenReturn(Future.successful(None))
 
       val res = testController.validate()(FakeRequest().withFormUrlEncodedBody("hasWarehouse" -> "false"))
@@ -96,7 +149,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "store the new address in keystore if a warehouse is added" in {
-      when(mockSessionCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
         .thenReturn(Future.successful(None))
 
       val request = FakeRequest().withFormUrlEncodedBody(
@@ -111,7 +164,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.validate()(request)
       status(res) mustBe SEE_OTHER
 
-      verify(mockSessionCache, times(1))
+      verify(controllerhelpers.mockCache, times(1))
         .cache(
           matching("secondaryWarehouses"),
           matching(Seq(Address("line 2", "line 3", "line 4", "line 5", "AA11 1AA")))
@@ -126,18 +179,18 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
         Address("2", "", "", "", "AA12 2AA")
       )
 
-      when(mockSessionCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(addresses)))
 
       val res = testController.remove(0)(FakeRequest())
       status(res) mustBe SEE_OTHER
 
-      verify(mockSessionCache, times(1))
+      verify(controllerhelpers.mockCache, times(1))
         .cache(matching("secondaryWarehouses"), matching(Seq(Address("2", "", "", "", "AA12 2AA"))))(any(), any(), any())
     }
 
     "always redirect to the secondary warehouse page" in {
-      when(mockSessionCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(Seq(Address("1", "", "", "", "AA11 1AA")))))
 
       val res = testController.remove(0)(FakeRequest())
@@ -146,13 +199,12 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new WarehouseController(messagesApi) {
-    override val cache = mockSessionCache
+  lazy val testController = new WarehouseController(messagesApi, controllerhelpers.dateAfterTaxStart) {
+    override val cache = controllerhelpers.mockCache
   }
 
-  lazy val mockSessionCache = {
-    val m = mock[SessionCache]
-    when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("id", Map.empty)))
-    m
+  lazy val testControllerBeforeTaxStart = new WarehouseController(messagesApi, controllerhelpers.dateBeforeTaxStart) {
+    override val cache = controllerhelpers.mockCache
   }
+
 }
