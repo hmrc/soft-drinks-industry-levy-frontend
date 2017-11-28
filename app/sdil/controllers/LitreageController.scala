@@ -53,10 +53,10 @@ class LitreageController @Inject()(val messagesApi: MessagesApi) extends Fronten
     //FIXME question pages need to go in between the litreage pages
     page match {
       case "packageOwn" if packaging.customers => Redirect(routes.LitreageController.show("packageCopack"))
-      case "packageOwn" => Redirect(routes.LitreageController.show("packageCopackSmallVol"))
-      case "packageCopack" => Redirect(routes.LitreageController.show("packageCopackSmallVol"))
-      case "packageCopackSmallVol" => Redirect(routes.LitreageController.show("copackedVolume"))
-      case "copackedVolume" => Redirect(routes.LitreageController.show("importVolume"))
+      case "packageOwn" => Redirect(routes.PackageCopackSmallController.display())
+      case "packageCopack" => Redirect(routes.PackageCopackSmallController.display())
+      case "packageCopackSmallVol" => Redirect(routes.CopackedController.display())
+      case "copackedVolume" => Redirect(routes.ImportController.display())
       case "importVolume" => Redirect(routes.StartDateController.displayStartDate())
       case _ => BadRequest(FrontendGlobal.badRequestTemplate)
     }
