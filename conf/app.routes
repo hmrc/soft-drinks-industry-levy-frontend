@@ -29,6 +29,10 @@ POST        /register/import-volume                   @sdil.controllers.Litreage
 
 GET         /register/start-date                      @sdil.controllers.StartDateController.show()
 
+GET         /register/production-sites                @sdil.controllers.ProductionSiteController.addSite()
+POST        /register/production-sites                @sdil.controllers.ProductionSiteController.validate()
+GET         /register/production-sites/remove/:idx    @sdil.controllers.ProductionSiteController.remove(idx: Int)
+
 GET         /register/secondary-warehouse             @sdil.controllers.WarehouseController.secondaryWarehouse()
 POST        /register/secondary-warehouse             @sdil.controllers.WarehouseController.validate()
 GET         /register/secondary-warehouse/remove/:idx @sdil.controllers.WarehouseController.remove(idx: Int)
