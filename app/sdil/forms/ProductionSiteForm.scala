@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package sdil
+package sdil.forms
 
-import play.api.data.Forms.{boolean, optional}
-import play.api.data.Mapping
+import play.api.data.Form
+import play.api.data.Forms.mapping
+import sdil.models.ProductionSite
+import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
-import scala.concurrent.Future
-import scala.language.implicitConversions
-
-package object controllers {
-  implicit def future[A](a: A): Future[A] = Future.successful(a)
-
-  lazy val booleanMapping: Mapping[Boolean] =
-    optional(boolean).verifying("sdil.form.radio.error", _.nonEmpty).
-      transform(_.getOrElse(false), x => Some(x))
-
+object ProductionSiteForm extends FormHelpers {
+  def apply(): Form[ProductionSite] = Form(
+    mapping(
+      "hasOtherSite" -> mandatoryBoolean,
+      "otherSiteAddress" -> mandatoryIfTrue("hasOtherSite", addressMapping)
+    )(ProductionSite.apply)(ProductionSite.unapply)
+  )
 }
