@@ -137,10 +137,4 @@ class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOn
     }
 
   }
-
-  lazy val mockCache = {
-    val m = mock[SessionCache]
-    when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
-    m
-  }
 }
