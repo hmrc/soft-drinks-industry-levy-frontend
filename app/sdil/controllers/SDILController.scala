@@ -16,17 +16,21 @@
 
 package sdil.controllers
 
+import java.text.SimpleDateFormat
+import java.time.LocalDate
 import javax.inject.Inject
 
 import play.api.Logger
 import play.api.data.Form
-import play.api.data.Forms.{mapping, text}
+import play.api.data.Forms._
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
+import play.api.i18n.Messages
 import play.api.mvc._
 import sdil.config.FrontendAppConfig._
 import sdil.config.{FormDataCache, FrontendAuthConnector}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models._
 import sdil.models.sdilmodels._
+import sdil.models._
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
@@ -63,11 +67,18 @@ class SDILController @Inject()(
   }
 
   def displayStartDate: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(views.html.softdrinksindustrylevy.register.start_date(startDateForm)))
+    if (LocalDate.now isBefore StartDateForm.taxStartDate){
+      Future.successful(Ok(views.html.softdrinksindustrylevy.register.identify(StartDateForm.startDateForm)))
+      //TODO change identify to next view
+    }
+    else {
+      Future.successful(Ok(views.html.softdrinksindustrylevy.register.start_date(StartDateForm.startDateForm)))
+    }
   }
 
   def submitStartDate: Action[AnyContent] = Action.async { implicit request =>
-    startDateForm.bindFromRequest().fold(
+
+    StartDateForm.validateStartDate(StartDateForm.startDateForm.bindFromRequest()).fold(
       errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors))),
       data => cache.cache("start-date", data) map { _ =>
         Redirect(routes.SDILController.displaySites())
@@ -76,17 +87,69 @@ class SDILController @Inject()(
 
   def displaySites() = TODO
 
-  private val startDateForm = Form(
-    mapping(
-      "day" -> text.verifying("error.day.invalid", _.matches(dayRegex)),
-      "month" -> text.verifying("error.month.invalid", _.matches(monthRegex)),
-      "year" -> text.verifying("error.year.invalid", _.matches(yearRegex)))(StartDate.apply)(StartDate.unapply))
+  object StartDateForm {
+    def startDateForm: Form[StartDate] = Form(
+      mapping(
+        "startDateDay" -> number.verifying(startDayConstraint),
+        "startDateMonth" -> number.verifying(startMonthConstraint),
+        "startDateYear" -> number.verifying(startYearConstraint)
+      )(StartDate.apply)(StartDate.unapply)
+    )
 
-  lazy val dayRegex = """"(0[1-9]|[12]\d|3[01])"""
-  lazy val monthRegex = """"^(0?[1-9]|1[012])$""""
-  lazy val yearRegex = """^\d{4}$"""
- //date has to be greater than 1/4/2017 and less than 31/12/18
-  //must also be a valid
+    val startDayConstraint: Constraint[Int] = Constraint {
+      day =>
+        val errors = day match {
+          case a if a <= 0 => Seq(ValidationError(Messages("error.start-date.day-too-low")))
+          case b if b > 31 => Seq(ValidationError(Messages("error.start-date.day-too-high")))
+          case _ => Nil
+        }
+        if (errors.isEmpty) Valid else Invalid(errors)
+    }
+    val startMonthConstraint: Constraint[Int] = Constraint {
+      day =>
+        val errors = day match {
+          case a if a <= 0 => Seq(ValidationError(Messages("error.start-date.month-too-low")))
+          case b if b > 12 => Seq(ValidationError(Messages("error.start-date.month-too-high")))
+          case _ => Nil
+        }
+        if (errors.isEmpty) Valid else Invalid(errors)
+    }
+    val startYearConstraint: Constraint[Int] = Constraint {
+      day =>
+        val errors = day match {
+          case a if a < 2017 => Seq(ValidationError(Messages("error.start-date.year-too-low")))
+          case b if b.toString.length > 4=> Seq(ValidationError(Messages("error.start-date.year-too-high")))
+          case _ => Nil
+        }
+        if (errors.isEmpty) Valid else Invalid(errors)
+    }
+
+    def validateStartDate(form: Form[StartDate]): Form[StartDate] = {
+      if (form.hasErrors) form else {
+        val day = form.get.startDateDay
+        val month = form.get.startDateMonth
+        val year = form.get.startDateYear
+        if (!isValidDate(day, month, year)) form.withError("", Messages("error.start-date.date-invalid"))
+        else if (LocalDate.of(year, month, day) isAfter LocalDate.now) form.withError("", Messages("error.start-date.date-too-high"))
+        else if (LocalDate.of(year, month, day) isBefore taxStartDate)
+          form.withError("", Messages("error.start-date.date-too-low"))
+        else form
+      }
+    }
+
+    val taxStartDate = LocalDate.parse("2018-04-06")
+
+    def isValidDate(day: Int, month: Int, year: Int): Boolean = {
+      try {
+        val fmt = new SimpleDateFormat("dd/MM/yyyy")
+        fmt.setLenient(false)
+        fmt.parse(s"$day/$month/$year")
+        true
+      } catch {
+        case e: Exception => false
+      }
+    }
+  }
 
 }
 

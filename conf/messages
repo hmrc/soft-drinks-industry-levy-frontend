@@ -14,9 +14,21 @@ sdil.start-date.day=Day
 sdil.start-date.month=Month
 sdil.start-date.year=Year
 
-error.day.invalid=Invalid Day
-error.day.invalid=Invalid Month
-error.year.invalid=Invalid Year
+error.start-date.day-empty=Enter a day
+error.start-date.day-too-high=Enter a valid day
+error.start-date.day-too-low=Enter a valid day
+error.start-date.month-empty=Enter a month
+error.start-date.month-too-high=Enter a valid month
+error.start-date.month-too-low=Enter a valid month
+error.start-date.year-empty=Enter a year
+error.start-date.year-too-high=Enter a valid year
+error.start-date.year-too-low=Enter a valid year
+error.start-date.date-too-low=Date must be after 06 04 2018
+error.start-date.date-too-high=Date cannot be in the future
+error.start-date.day-invalid=Invalid Day
+error.start-date.month-invalid=Invalid Month
+error.start-date.year-invalid=Invalid Year
+error.start-date.date-invalid=Invalid Date
 
 error.utr.invalid=Invalid UTR
 error.postcode.invalid=Invalid postcode

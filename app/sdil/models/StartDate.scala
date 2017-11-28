@@ -16,6 +16,6 @@
 
 package sdil.models
 
-case class StartDate(day: String, month: String, year: String)
+case class StartDate(startDateDay: Int, startDateMonth: Int, startDateYear: Int)
 
 //TODO find out and format date.
