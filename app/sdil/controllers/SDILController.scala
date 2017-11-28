@@ -103,8 +103,7 @@ class SDILController @Inject() (
         validFormData match {
           case Packaging(_, true, _) => Redirect(routes.LitreageController.show("packageOwn"))
           case Packaging(_, _, true) => Redirect(routes.LitreageController.show("packageCopack"))
-          //TODO go to copacked question
-          case _ => NotImplemented(views.html.defaultpages.todo())
+          case _ => Redirect(routes.CopackedController.display())
         }
       }
     )

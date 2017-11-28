@@ -54,8 +54,8 @@ class WarehouseController @Inject()(val messagesApi: MessagesApi) extends Fronte
 
   def remove(idx: Int) = Action.async { implicit request =>
     getWarehouseAddresses flatMap { addrs =>
-      val v = addrs.take(idx) ++ addrs.drop(idx + 1)
-      cache.cache("secondaryWarehouses", v) map { _ =>
+      val updated = addrs.take(idx) ++ addrs.drop(idx + 1)
+      cache.cache("secondaryWarehouses", updated) map { _ =>
         Redirect(routes.WarehouseController.secondaryWarehouse())
       }
     }
