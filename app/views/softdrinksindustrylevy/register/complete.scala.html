@@ -14,24 +14,16 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.{helpers => govHelpers}
-@import sdil.controllers.routes
-@import views.html.helper._
-
 @()(implicit messages: Messages, request: Request[_])
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
 
-   <a class="back-link" href="@routes.SDILController.displayDeclaration()">@Messages("sdil.common.back")</a>
+    <div class="govuk-box-highlight">
+        <h1 class="heading-xlarge">@Messages("sdil.complete.title")</h1>
+    </div>
 
-   <div class="govuk-box-highlight">
-    <h1 class="heading-xlarge">
-@Messages("sdil.complete.title")
-    </h1>
-   </div>
+    <h2 class="heading-medium">@Messages("sdil.complete.what-happens.title")</h2>
 
-   <h2 class="heading-medium">@Messages("sdil.complete.what-happens.title")</h2>
-
-   <p>@Messages("sdil.complete.what-happens.content")</p>
+    <p>@Messages("sdil.complete.what-happens.content")</p>
 }
 

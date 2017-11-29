@@ -19,7 +19,6 @@ package sdil.config
 import java.time.Clock
 
 import com.google.inject.AbstractModule
-import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.cache.client.SessionCache
