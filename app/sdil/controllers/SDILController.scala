@@ -20,8 +20,8 @@ import java.util.UUID
 import javax.inject.Inject
 
 import play.api.Logger
-import play.api.data.Forms.{boolean, email, mapping, optional, text}
-import play.api.data.{Form, Mapping}
+import play.api.data.Form
+import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.mvc._
 import sdil.config.FrontendAppConfig._
@@ -29,19 +29,19 @@ import sdil.config.{FormDataCache, FrontendAuthConnector}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.sdilmodels._
-import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core.retrieve.Retrievals._
-import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
 import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
+import uk.gov.hmrc.auth.core.retrieve.Retrievals.saUtr
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.softdrinksindustrylevy._
 
 import scala.concurrent.Future
 
-class SDILController @Inject() (
-  val messagesApi: play.api.i18n.MessagesApi,
-  sdilConnector: SoftDrinksIndustryLevyConnector) extends AuthorisedFunctions with FrontendController
+class SDILController @Inject()(
+                                val messagesApi: play.api.i18n.MessagesApi,
+                                sdilConnector: SoftDrinksIndustryLevyConnector) extends AuthorisedFunctions with FrontendController
   with play.api.i18n.I18nSupport {
 
   override def authConnector: AuthConnector = FrontendAuthConnector
@@ -125,3 +125,4 @@ class SDILController @Inject() (
       "email" -> email)(ContactDetails.apply)(ContactDetails.unapply))
 
 }
+

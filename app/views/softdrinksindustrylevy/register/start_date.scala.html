@@ -1,0 +1,69 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.softdrinksindustrylevy.helpers.inputText
+
+@import sdil.models.StartDate
+@(startDateForm: Form[StartDate])(implicit request: Request[_], messages: Messages)
+
+@views.html.main_template(Messages("sdil.common.title")) {
+    <a class="back-link">@Messages("sdil.common.back")</a>
+    <h1 class="heading-large">@Messages("sdil.start-date.heading")</h1>
+
+    @if(startDateForm.hasErrors) {
+        @errorSummary(Messages("sdil.common.errorSummary"), startDateForm)
+    }
+
+    @form(sdil.controllers.routes.StartDateController.submitStartDate()) {
+        <span class="form-hint">@Messages("sdil.start-date.example")</span>
+        <div class="inline form-group">
+
+            <div class="form-group">
+
+                <fieldset class="form-group form-date @if(startDateForm.hasErrors) {form-field--error}" id="start-date-fieldset">
+
+                    @startDateForm.errors.map { error => <span class="error-notification">@Messages(error.message, error.args: _*)</span> }
+
+                    <label for="startDateDay" class="form-group form-group-day">
+                        <span>@Messages("sdil.start-date.day")</span>
+
+                        <input type="number" class="input--xxsmall input--no-spinner @if(startDateForm("startDateDay").hasErrors) {error-field}"
+                        name="startDateDay" id="startDateDay" value="@startDateForm("startDateDay").value">
+
+                    </label>
+
+                    <label for="startDateMonth" class="form-group form-group-month">
+
+                        <span>@Messages("sdil.start-date.month")</span>
+
+                        <input type="number" class="input--xxsmall input--no-spinner @if(startDateForm("startDateMonth").hasErrors) {error-field}"
+                        name="startDateMonth" id="startDateMonth" value="@startDateForm("startDateMonth").value">
+                    </label>
+
+                    <label for="startDateYear" class="form-group form-group-year">
+                        <span>@Messages("sdil.start-date.year")</span>
+
+                        <input type="number" class="input--small input--no-spinner @if(startDateForm("startDateYear").hasErrors) {error-field}"
+                        name="startDateYear" id="startDateYear" value="@startDateForm("startDateYear").value">
+                    </label>
+
+                </fieldset>
+                <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+            </div>
+        </div>
+    }
+}

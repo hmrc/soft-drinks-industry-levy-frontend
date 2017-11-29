@@ -51,7 +51,7 @@ class ImportController @Inject()(val messagesApi: MessagesApi) extends FrontendC
             Redirect(routes.LitreageController.show("importVolume"))
           }
           else{
-            Redirect(routes.StartDateController.show())
+            Redirect(routes.StartDateController.displayStartDate())
           }
         })
     }

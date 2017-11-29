@@ -57,7 +57,7 @@ class LitreageController @Inject()(val messagesApi: MessagesApi) extends Fronten
       case "packageCopack" => Redirect(routes.LitreageController.show("packageCopackSmallVol"))
       case "packageCopackSmallVol" => Redirect(routes.LitreageController.show("copackedVolume"))
       case "copackedVolume" => Redirect(routes.LitreageController.show("importVolume"))
-      case "importVolume" => Redirect(routes.StartDateController.show())
+      case "importVolume" => Redirect(routes.StartDateController.displayStartDate())
       case _ => BadRequest(FrontendGlobal.badRequestTemplate)
     }
   }

@@ -59,7 +59,7 @@ class ImportControllerSpec extends PlayMessagesSpec with MockitoSugar {
         val res = testController.submit(request)
 
         status(res) mustBe SEE_OTHER
-        redirectLocation(res).value mustBe routes.StartDateController.show().url
+        redirectLocation(res).value mustBe routes.StartDateController.displayStartDate().url
       }
     }
   }
