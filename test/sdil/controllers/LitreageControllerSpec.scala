@@ -66,7 +66,7 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.validate("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
-      pending
+      redirectLocation(res) mustBe Some(routes.PackageCopackSmallController.display().url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -96,7 +96,11 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "redirect to the package copack small page if the form data is valid" in {
-      pending
+      val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
+
+      val res = testController.validate("packageCopack")(request)
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.PackageCopackSmallController.display().url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -126,7 +130,11 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "redirect to the copacked page if the form data is valid" in {
-      pending
+      val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
+      val res = testController.validate("packageCopackSmallVol")(request)
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.CopackedController.display().url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -156,15 +164,19 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "redirect to the import page if the form data is valid" in {
-      pending
+      val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
+      val res = testController.validate("copackedVolume")(request)
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.ImportController.display().url)
     }
 
     "store the form data in keystore if it is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "5", "higherRateLitres" -> "6")
-      val res = testController.validate("packageCopackSmallVol")(request)
+      val res = testController.validate("copackedVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      verify(mockCache, once).cache(matching("packageCopackSmallVol"), matching(Litreage(5, 6)))(any(), any(), any())
+      verify(mockCache, once).cache(matching("copackedVolume"), matching(Litreage(5, 6)))(any(), any(), any())
     }
   }
 
