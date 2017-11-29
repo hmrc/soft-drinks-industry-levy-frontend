@@ -106,7 +106,7 @@ class SDILController @Inject()(
         validFormData match {
           case Packaging(_, true, _) => Redirect(routes.LitreageController.show("packageOwn"))
           case Packaging(_, _, true) => Redirect(routes.LitreageController.show("packageCopack"))
-          case _ => Redirect(routes.CopackedController.display())
+          case _ => Redirect(routes.PackageCopackSmallController.display())
         }
       }
     )

@@ -16,14 +16,14 @@
 
 package sdil.controllers
 
-import org.mockito.ArgumentMatchers.{eq => matching, _}
-import org.mockito.Mockito._
+import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.{eq => matching}
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
-
-import scala.concurrent.Future
+import sdil.controllers.controllerhelpers._
+import sdil.models.Packaging
+import uk.gov.hmrc.http.cache.client.SessionCache
 
 class PackageCopackSmallControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
@@ -32,6 +32,36 @@ class PackageCopackSmallControllerSpec extends PlayMessagesSpec with MockitoSuga
       val res = testController.display(FakeRequest())
       status(res) mustBe OK
       contentAsString(res) must include("Will you package liable drinks for any small producers?")
+    }
+
+    "return a page with a link back to the package copack page if the user packages liable drinks for customers" in {
+      stubCacheEntry[Packaging]("packaging", Some(Packaging(true, true, true)))
+
+      val res = testController.display()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageCopack").url
+    }
+
+    "return a page with a link to the package own page if the user packages drinks for their own brand, but not customers" in {
+      stubCacheEntry[Packaging]("packaging", Some(Packaging(true, true, false)))
+
+      val res = testController.display()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageOwn").url
+    }
+
+    "return a page with a link to the package page if the user does not package liable drinks" in {
+      stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
+
+      val res = testController.display()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.SDILController.displayPackage().url
     }
   }
 
@@ -43,25 +73,24 @@ class PackageCopackSmallControllerSpec extends PlayMessagesSpec with MockitoSuga
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include("You have not chosen an option")
     }
+
     "redirect to the co-packed-volume page if the form data is true" in {
-      {
-        val request = FakeRequest().withFormUrlEncodedBody("isPackageCopackSmall" -> "true")
-        val res = testController.submit(request)
+      val request = FakeRequest().withFormUrlEncodedBody("isPackageCopackSmall" -> "true")
+      val res = testController.submit(request)
 
-        status(res) mustBe SEE_OTHER
-        redirectLocation(res).value mustBe routes.LitreageController.show("packageCopackSmallVol").url
-      }
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.LitreageController.show("packageCopackSmallVol").url
     }
-    "redirect to the start date page if the form data is false" in {
-      {
-        val request = FakeRequest().withFormUrlEncodedBody("isPackageCopackSmall" -> "false")
-        val res = testController.submit(request)
 
-        status(res) mustBe SEE_OTHER
-        redirectLocation(res).value mustBe routes.CopackedController.display().url
-      }
+    "redirect to the start date page if the form data is false" in {
+      val request = FakeRequest().withFormUrlEncodedBody("isPackageCopackSmall" -> "false")
+      val res = testController.submit(request)
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.CopackedController.display().url
     }
   }
+
   lazy val testController = new PackageCopackSmallController(messagesApi) {
     override val cache: SessionCache = controllerhelpers.mockCache
   }

@@ -16,11 +16,13 @@
 
 package sdil.controllers
 
+import java.time.{Clock, LocalDate}
 import javax.inject.Inject
 
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Request}
-import sdil.config.FormDataCache
+import play.api.mvc.{Action, Call, Request}
+import sdil.config.FrontendAppConfig.taxStartDate
+import sdil.config.{FormDataCache, FrontendAppConfig}
 import sdil.forms.ProductionSiteForm
 import sdil.models.{Address, ProductionSite}
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -28,21 +30,26 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
-class ProductionSiteController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+class ProductionSiteController @Inject()(val messagesApi: MessagesApi, clock: Clock) extends FrontendController with I18nSupport {
 
   val cache: SessionCache = FormDataCache
 
   def addSite = Action.async { implicit request =>
     //FIXME look up address record
-    getOtherSites map { addrs =>
-      Ok(views.html.softdrinksindustrylevy.register.productionSite(ProductionSiteForm(), fakeAddress, addrs))
+    for {
+      addrs <- getOtherSites
+      link <- getBackLink
+    } yield {
+      Ok(views.html.softdrinksindustrylevy.register.productionSite(ProductionSiteForm(), fakeAddress, addrs, link))
     }
   }
 
   def validate = Action.async { implicit request =>
     getOtherSites flatMap { addrs =>
       ProductionSiteForm().bindFromRequest().fold(
-        errors => BadRequest(views.html.softdrinksindustrylevy.register.productionSite(errors, fakeAddress, addrs)),
+        errors => getBackLink map { link =>
+          BadRequest(views.html.softdrinksindustrylevy.register.productionSite(errors, fakeAddress, addrs, link))
+        },
         {
           case ProductionSite(_, Some(addr)) => cache.cache("productionSites", addrs :+ addr) map { _ =>
             Redirect(routes.ProductionSiteController.addSite())
@@ -66,6 +73,18 @@ class ProductionSiteController @Inject()(val messagesApi: MessagesApi) extends F
     cache.fetchAndGetEntry[Seq[Address]]("productionSites") map {
       case Some(Nil) | None => Nil
       case Some(addrs) => addrs
+    }
+  }
+
+  private def getBackLink(implicit request: Request[_]): Future[Call] = {
+    if (LocalDate.now(clock).isBefore(taxStartDate)) {
+      cache.fetchAndGetEntry[Boolean]("import") map {
+        case Some(true) => routes.LitreageController.show("importVolume")
+        case Some(false) => routes.ImportController.display()
+        case None => routes.SDILController.displayPackage()
+      }
+    } else {
+      routes.StartDateController.displayStartDate()
     }
   }
 

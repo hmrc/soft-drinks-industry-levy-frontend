@@ -14,14 +14,15 @@
  * limitations under the License.
  *@
 
-@(isImport: Form[Boolean])(implicit messages: Messages, request: Request[_])
+@(isImport: Form[Boolean], backLink: Call)(implicit messages: Messages, request: Request[_])
 
 @import uk.gov.hmrc.play.views.html.{helpers => govHelpers}
 @import sdil.controllers.routes
 @import views.html.helper._
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
-    @*<a class="back-link" href="@routes.VerifyController.verify()">@Messages("sdil.pages.back-button-Repoint Me!")</a>*@
+
+    <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
     <h1 class="heading-large">@Messages("sdil.import.heading")</h1>
 
     @govHelpers.errorSummary(Messages("sdil.form.radiocheck.error.summary"), isImport)

@@ -16,6 +16,10 @@
 
 package sdil.config
 
+import java.time.Clock
+
+import com.google.inject.AbstractModule
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -52,4 +56,10 @@ object FormDataCache extends SessionCache with AppName with ServicesConfig {
   override def domain = getConfString("cachable.session-cache.domain", throw new Exception(s"Could not find config 'cachable.session-cache.domain'"))
 
   override def http = WSHttp
+}
+
+class Module extends AbstractModule {
+  override def configure() = {
+    bind(classOf[Clock]).toInstance(Clock.systemDefaultZone())
+  }
 }

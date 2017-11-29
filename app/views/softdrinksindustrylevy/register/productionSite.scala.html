@@ -18,9 +18,11 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@(siteForm: Form[_], mainSite: Address, otherSites: Seq[Address])(implicit request: Request[_], messages: Messages)
+@(siteForm: Form[_], mainSite: Address, otherSites: Seq[Address], backLink: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(Messages("sdil.common.title")) {
+
+    <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
     <h1 class="heading-large">@heading</h1>
 

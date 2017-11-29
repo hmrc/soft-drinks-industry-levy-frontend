@@ -16,14 +16,13 @@
 
 package sdil.controllers
 
-import org.mockito.ArgumentMatchers.{eq => matching, _}
-import org.mockito.Mockito._
+import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.{eq => matching}
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
-
-import scala.concurrent.Future
+import sdil.controllers.controllerhelpers._
+import uk.gov.hmrc.http.cache.client.SessionCache
 
 class CopackedControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
@@ -32,6 +31,26 @@ class CopackedControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.display(FakeRequest())
       status(res) mustBe OK
       contentAsString(res) must include("Will you use any third parties in the UK to package liable drinks on your behalf?")
+    }
+
+    "return a page with a back link to the package copack small volume page when the user packages drinks for small producers" in {
+      stubCacheEntry[Boolean]("packageCopackSmall", Some(true))
+
+      val res = testController.display(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageCopackSmallVol").url
+    }
+
+    "return a page with a back link to the package copack small page when the user does not package drinks for small producers" in {
+      stubCacheEntry[Boolean]("packageCopackSmall", Some(false))
+
+      val res = testController.display(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.PackageCopackSmallController.display().url
     }
   }
 
@@ -43,25 +62,24 @@ class CopackedControllerSpec extends PlayMessagesSpec with MockitoSugar {
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include("You have not chosen an option")
     }
+
     "redirect to the co-packed-volume page if the form data is true" in {
-      {
-        val request = FakeRequest().withFormUrlEncodedBody("isCopacked" -> "true")
-        val res = testController.submit(request)
+      val request = FakeRequest().withFormUrlEncodedBody("isCopacked" -> "true")
+      val res = testController.submit(request)
 
-        status(res) mustBe SEE_OTHER
-        redirectLocation(res).value mustBe routes.LitreageController.show("copackedVolume").url
-      }
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.LitreageController.show("copackedVolume").url
     }
-    "redirect to the start date page if the form data is false" in {
-      {
-        val request = FakeRequest().withFormUrlEncodedBody("isCopacked" -> "false")
-        val res = testController.submit(request)
 
-        status(res) mustBe SEE_OTHER
-        redirectLocation(res).value mustBe routes.ImportController.display().url
-      }
+    "redirect to the start date page if the form data is false" in {
+      val request = FakeRequest().withFormUrlEncodedBody("isCopacked" -> "false")
+      val res = testController.submit(request)
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.ImportController.display().url
     }
   }
+
   lazy val testController = new CopackedController(messagesApi) {
     override val cache: SessionCache = controllerhelpers.mockCache
   }

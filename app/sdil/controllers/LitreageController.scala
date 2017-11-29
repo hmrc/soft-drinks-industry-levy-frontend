@@ -19,7 +19,7 @@ package sdil.controllers
 import javax.inject.Inject
 
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Request, Result}
+import play.api.mvc.{Action, Call, Request, Result}
 import sdil.config.{FormDataCache, FrontendGlobal}
 import sdil.forms.LitreageForm
 import sdil.models.Packaging
@@ -30,23 +30,23 @@ class LitreageController @Inject()(val messagesApi: MessagesApi) extends Fronten
 
   val cache: SessionCache = FormDataCache
 
-  def show(pageName: String) = Action { implicit request =>
-    Ok(views.html.softdrinksindustrylevy.register.litreagePage(LitreageForm(), pageName))
+  def show(pageName: String) = Action.async { implicit request =>
+    cache.fetchAndGetEntry[Packaging]("packaging") map {
+      case Some(p) => Ok(views.html.softdrinksindustrylevy.register.litreagePage(LitreageForm(), pageName, backLinkFor(pageName, p)))
+      case None => Redirect(routes.SDILController.displayPackage())
+    }
   }
 
   def validate(pageName: String) = Action.async { implicit request =>
-    LitreageForm().bindFromRequest().fold(
-      errors => BadRequest(views.html.softdrinksindustrylevy.register.litreagePage(errors, pageName)),
-      data => for {
-        _ <- cache.cache(pageName, data)
-        packaging <- cache.fetchAndGetEntry[Packaging]("packaging")
-      } yield {
-        packaging match {
-          case Some(p) => nextPageFor(pageName, p)
-          case _ => Redirect(routes.SDILController.displayPackage())
+    cache.fetchAndGetEntry[Packaging]("packaging") flatMap {
+      case Some(p) => LitreageForm().bindFromRequest().fold(
+        errors => BadRequest(views.html.softdrinksindustrylevy.register.litreagePage(errors, pageName, backLinkFor(pageName, p))),
+        data => cache.cache(pageName, data) map { _ =>
+          nextPageFor(pageName, p)
         }
-      }
-    )
+      )
+      case None => Redirect(routes.SDILController.displayPackage())
+    }
   }
 
   private def nextPageFor(page: String, packaging: Packaging)(implicit request: Request[_]): Result = {
@@ -59,6 +59,18 @@ class LitreageController @Inject()(val messagesApi: MessagesApi) extends Fronten
       case "copackedVolume" => Redirect(routes.ImportController.display())
       case "importVolume" => Redirect(routes.StartDateController.displayStartDate())
       case _ => BadRequest(FrontendGlobal.badRequestTemplate)
+    }
+  }
+
+  private def backLinkFor(page: String, packaging: Packaging)(implicit request: Request[_]): Call = {
+    page match {
+      case "packageOwn" => routes.SDILController.displayPackage()
+      case "packageCopack" if packaging.ownBrands => routes.LitreageController.show("packageOwn")
+      case "packageCopack" => routes.SDILController.displayPackage()
+      case "packageCopackSmallVol" => routes.PackageCopackSmallController.display()
+      case "copackedVolume" => routes.CopackedController.display()
+      case "importVolume" => routes.ImportController.display()
+      case _ => throw new IllegalArgumentException(s"Invalid page name $page")
     }
   }
 }

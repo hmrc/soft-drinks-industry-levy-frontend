@@ -16,7 +16,9 @@
 
 package sdil.controllers
 
-import org.mockito.ArgumentMatchers._
+import java.time.{Clock, Instant, ZoneId}
+
+import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.mockito.MockitoSugar
@@ -72,7 +74,7 @@ package object controllerhelpers extends MockitoSugar {
   val validStartDateForm = Seq(
     "startDateDay" -> "06",
     "startDateMonth" -> "04",
-    "startDateYear" -> "2017"
+    "startDateYear" -> "2018"
   )
 
   val invalidStartDateForm = Seq(
@@ -97,10 +99,20 @@ package object controllerhelpers extends MockitoSugar {
   )
   val packagingIsLiable = Packaging(true, true, false)
   val packagingIsntLiable = Packaging(false, false, false)
+
   lazy val mockCache = {
     val m = mock[SessionCache]
     when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
+    when(m.fetchAndGetEntry(any())(any(), any(), any())).thenReturn(Future.successful(None))
     m
   }
+
+  def stubCacheEntry[T](key: String, value: Option[T]) = {
+    when(mockCache.fetchAndGetEntry[T](matching(key))(any(), any(), any())).thenReturn(Future.successful(value))
+  }
+
+  lazy val dateBeforeTaxStart = Clock.fixed(Instant.parse("2017-11-18T14:19:00.000Z"), ZoneId.systemDefault())
+
+  lazy val dateAfterTaxStart = Clock.fixed(Instant.parse("2018-04-07T00:00:00.000Z"), ZoneId.systemDefault())
 
 }

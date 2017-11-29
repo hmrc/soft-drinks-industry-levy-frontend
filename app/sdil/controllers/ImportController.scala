@@ -21,7 +21,7 @@ import javax.inject.Inject
 import play.api.data.Form
 import play.api.data.Forms.single
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Action
+import play.api.mvc.{Action, Call, Request}
 import sdil.config.FormDataCache
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -33,26 +33,31 @@ class ImportController @Inject()(val messagesApi: MessagesApi) extends FrontendC
 
   val cache: SessionCache = FormDataCache
 
-  private val importForm = Form(single(
-    "isImport" -> booleanMapping))
+  private val importForm = Form(single("isImport" -> booleanMapping))
 
-  def display = Action { implicit request =>
-    Ok(register.imports(importForm))
+  def display = Action.async { implicit request =>
+    getBackLink map { link => Ok(register.imports(importForm, link)) }
   }
 
   def submit = Action.async { implicit request =>
-      importForm.bindFromRequest.fold(
-        formWithErrors => {
-          Future.successful(
-            BadRequest(register.copacked(formWithErrors)))
-        },
-        validFormData => {
-          if (validFormData){
-            Redirect(routes.LitreageController.show("importVolume"))
-          }
-          else{
-            Redirect(routes.StartDateController.displayStartDate())
-          }
-        })
+    importForm.bindFromRequest.fold(
+      formWithErrors => getBackLink map { link => BadRequest(register.imports(formWithErrors, link)) },
+      validFormData => cache.cache("import", validFormData) map { _ =>
+        if (validFormData) {
+          Redirect(routes.LitreageController.show("importVolume"))
+        }
+        else {
+          Redirect(routes.StartDateController.displayStartDate())
+        }
+      }
+    )
+  }
+
+  private def getBackLink(implicit request: Request[_]): Future[Call] = {
+    cache.fetchAndGetEntry[Boolean]("copacked") map {
+      case Some(true) => routes.LitreageController.show("copackedVolume")
+      case Some(false) => routes.CopackedController.display()
+      case _ => routes.SDILController.displayPackage()
     }
+  }
 }

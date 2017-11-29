@@ -18,10 +18,11 @@
 @import sdil.controllers.routes
 @import views.html.helper._
 
-@(isCopacked: Form[Boolean])(implicit messages: Messages, request: Request[_])
+@(isCopacked: Form[Boolean], backLink: Call)(implicit messages: Messages, request: Request[_])
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
-    @*<a class="back-link" href="@routes.VerifyController.verify()">@Messages("sdil.pages.back-button-Repoint Me!")</a>*@
+
+    <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
     <h1 class="heading-large">@Messages("sdil.copacked.heading")</h1>
 
     @govHelpers.errorSummary(Messages("sdil.form.radiocheck.error.summary"), isCopacked)
