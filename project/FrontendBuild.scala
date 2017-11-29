@@ -59,5 +59,4 @@ object FrontendBuild extends Build {
     .settings(PlayKeys.playDefaultPort := 8700)
     .configs(IntegrationTest)
     .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
-
 }

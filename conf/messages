@@ -141,6 +141,7 @@ error.full-name.invalid=Enter a name
 error.position.invalid=Enter a position
 error.phone-number.invalid=Enter a valid phone number
 error.email.invalid=Enter a valid email
+
 error.start-date.day-empty=Enter a day
 error.start-date.day-too-high=Enter a valid day
 error.start-date.day-too-low=Enter a valid day

@@ -16,6 +16,8 @@
 
 package sdil.config
 
+import java.time.LocalDate
+
 import play.api.Play.{configuration, current}
 import uk.gov.hmrc.play.config.ServicesConfig
 
@@ -47,4 +49,5 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   private lazy val companyAuthSignOutPath = getConfString("company-auth.sign-out-path", "")
   val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
   val sdilHomePage = loadConfig("sdil-home-page-url")
+  val taxStartDate = LocalDate.parse(loadConfig("tax-start-date"))
 }

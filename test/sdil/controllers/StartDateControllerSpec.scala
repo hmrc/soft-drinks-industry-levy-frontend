@@ -37,9 +37,9 @@ class StartDateControllerSpec extends PlayMessagesSpec with MockitoSugar with Gu
   val controller = new StartDateController(messagesApi) {
 
     override val cache: SessionCache = mockCache
-    override val taxStartDate: LocalDate = LocalDate.parse("1906-05-14")
+
   }
-  //normal ok
+
   "StartDateController" should {
     "return Status: 200 when user is logged in and loads start date page" in {
       val request = FakeRequest("GET", "/start-date")
@@ -49,7 +49,6 @@ class StartDateControllerSpec extends PlayMessagesSpec with MockitoSugar with Gu
       contentAsString(result) must include(messagesApi("sdil.start-date.heading"))
     }
 
-    //good post
     "return Status: See Other for start date form POST with valid date and redirect to add site page" in {
       when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(packagingIsLiable)))
@@ -69,13 +68,41 @@ class StartDateControllerSpec extends PlayMessagesSpec with MockitoSugar with Gu
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.WarehouseController.secondaryWarehouse().url
     }
-    // wrong day
 
-    //wrong month
+    "return Status: Bad Request for invalid start date form POST request with invalid day and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateDayForm: _*)
+      val response = controller.submitStartDate().apply(request)
 
-    //wrong year
+      status(response) mustBe BAD_REQUEST
+      contentType(response).get mustBe HTML
+      contentAsString(response) must include(messagesApi("error.start-date.day-too-high"))
+    }
 
-    //wrong date like 29th feb
+    "return Status: Bad Request for invalid start date form POST request with invalid month and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateMonthForm: _*)
+      val response = controller.submitStartDate().apply(request)
 
+      status(response) mustBe BAD_REQUEST
+      contentType(response).get mustBe HTML
+      contentAsString(response) must include(messagesApi("error.start-date.month-too-high"))
+    }
+
+    "return Status: Bad Request for invalid start date form POST request with invalid year and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateYearForm: _*)
+      val response = controller.submitStartDate().apply(request)
+
+      status(response) mustBe BAD_REQUEST
+      contentType(response).get mustBe HTML
+      contentAsString(response) must include(messagesApi("error.start-date.year-too-high"))
+    }
+
+    "return Status: Bad Request for invalid start date form POST request with invalid date and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateForm: _*)
+      val response = controller.submitStartDate().apply(request)
+
+      status(response) mustBe BAD_REQUEST
+      contentType(response).get mustBe HTML
+      contentAsString(response) must include(messagesApi("error.start-date.date-invalid"))
+    }
   }
 }

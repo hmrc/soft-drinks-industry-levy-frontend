@@ -25,7 +25,7 @@ import play.api.data.Forms.{mapping, number}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import sdil.config.FormDataCache
+import sdil.config.{FormDataCache, FrontendAppConfig}
 import sdil.models.{Packaging, StartDate}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -38,8 +38,10 @@ class StartDateController @Inject()(val messagesApi: MessagesApi) extends Fronte
   val cache: SessionCache = FormDataCache
 
   def displayStartDate: Action[AnyContent] = Action.async { implicit request =>
-    if (LocalDate.now isBefore taxStartDate)
-      Redirect(routes.ProductionSiteController.addSite())
+    if (LocalDate.now isBefore FrontendAppConfig.taxStartDate)
+      cache.cache("start-date", FrontendAppConfig.taxStartDate) map { _ =>
+        Redirect(routes.ProductionSiteController.addSite())
+      }
     else {
       Future.successful(Ok(views.html.softdrinksindustrylevy.register.start_date(startDateForm)))
     }
@@ -105,13 +107,11 @@ class StartDateController @Inject()(val messagesApi: MessagesApi) extends Fronte
       val year = form.get.startDateYear
       if (!isValidDate(day, month, year)) form.withError("", Messages("error.start-date.date-invalid"))
       else if (LocalDate.of(year, month, day) isAfter LocalDate.now) form.withError("", Messages("error.start-date.date-too-high"))
-      else if (LocalDate.of(year, month, day) isBefore taxStartDate)
+      else if (LocalDate.of(year, month, day) isBefore FrontendAppConfig.taxStartDate)
         form.withError("", Messages("error.start-date.date-too-low"))
       else form
     }
   }
-
-  val taxStartDate = LocalDate.parse("2018-04-06")
 
   def isValidDate(day: Int, month: Int, year: Int): Boolean = {
     try {
