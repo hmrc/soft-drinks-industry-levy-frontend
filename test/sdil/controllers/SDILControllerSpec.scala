@@ -136,5 +136,12 @@ class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOn
       contentAsString(result) must include(messagesApi("sdil.declaration.heading"))
     }
 
+    "return Status: See Other when POST from declaration" in {
+      val request = FakeRequest("POST", "/declaration")
+      val result = controller.submitDeclaration().apply(request)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.SDILController.displayComplete().url
+    }
   }
 }

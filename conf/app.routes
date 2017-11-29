@@ -1,9 +1,6 @@
 # microservice specific routes
 GET         /assets/*file                                    controllers.Assets.at(path="/public", file)
 
-GET         /register/start-date                             @sdil.controllers.StartDateController.displayStartDate()
-POST        /register/start-date                             @sdil.controllers.StartDateController.submitStartDate()
-
 GET         /auth-test                                       @sdil.controllers.SDILController.testAuth
 
 GET         /register/identify                               @sdil.controllers.IdentifyController.identify()
@@ -21,14 +18,26 @@ POST        /register/package-own                            @sdil.controllers.L
 GET         /register/package-copack                         @sdil.controllers.LitreageController.show(pageName = "packageCopack")
 POST        /register/package-copack                         @sdil.controllers.LitreageController.validate(pageName = "packageCopack")
 
+GET         /register/package-copack-small                   @sdil.controllers.PackageCopackSmallController.display()
+POST        /register/package-copack-small                   @sdil.controllers.PackageCopackSmallController.submit()
+
 GET         /register/package-copack-small-vol               @sdil.controllers.LitreageController.show(pageName = "packageCopackSmallVol")
 POST        /register/package-copack-small-vol               @sdil.controllers.LitreageController.validate(pageName = "packageCopackSmallVol")
+
+GET         /register/copacked                               @sdil.controllers.CopackedController.display()
+POST        /register/copacked                               @sdil.controllers.CopackedController.submit()
 
 GET         /register/copacked-volume                        @sdil.controllers.LitreageController.show(pageName = "copackedVolume")
 POST        /register/copacked-volume                        @sdil.controllers.LitreageController.validate(pageName = "copackedVolume")
 
+GET         /register/import                                 @sdil.controllers.ImportController.display()
+POST        /register/import                                 @sdil.controllers.ImportController.submit()
+
 GET         /register/import-volume                          @sdil.controllers.LitreageController.show(pageName = "importVolume")
 POST        /register/import-volume                          @sdil.controllers.LitreageController.validate(pageName = "importVolume")
+
+GET         /register/start-date                             @sdil.controllers.StartDateController.displayStartDate()
+POST        /register/start-date                             @sdil.controllers.StartDateController.submitStartDate()
 
 GET         /register/production-sites                       @sdil.controllers.ProductionSiteController.addSite()
 POST        /register/production-sites                       @sdil.controllers.ProductionSiteController.validate()
@@ -44,11 +53,6 @@ POST        /register/contact-details                        @sdil.controllers.S
 GET         /register/declaration                            @sdil.controllers.SDILController.displayDeclaration
 POST        /register/declaration                            @sdil.controllers.SDILController.submitDeclaration()
 
-GET         /register/package-copack-small                   @sdil.controllers.PackageCopackSmallController.display()
-POST        /register/package-copack-small                   @sdil.controllers.PackageCopackSmallController.submit()
+GET         /register/complete                               @sdil.controllers.SDILController.displayComplete()
 
-GET         /register/copacked                               @sdil.controllers.CopackedController.display()
-POST        /register/copacked                               @sdil.controllers.CopackedController.submit()
 
-GET         /register/import                                 @sdil.controllers.ImportController.display()
-POST        /register/import                                 @sdil.controllers.ImportController.submit()

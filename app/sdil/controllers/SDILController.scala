@@ -86,7 +86,10 @@ class SDILController @Inject()(
       ))
   }
 
-  def submitDeclaration() = TODO // TODO hit the backend to create subscription
+  def submitDeclaration(): Action[AnyContent] = Action.async { implicit request =>
+    // TODO hit the backend to create subscription
+    Redirect(routes.SDILController.displayComplete())
+  }
 
   def testAuth: Action[AnyContent] = authorisedForSDIL { implicit request => implicit utr =>
     Future successful Ok(views.html.helloworld.hello_world(Some(DesSubmissionResult(true))))
@@ -108,6 +111,13 @@ class SDILController @Inject()(
       }
     )
   }
+
+  def displayComplete(): Action[AnyContent] = Action.async { implicit request =>
+    Ok(register.complete())
+  }
+
+
+
   private lazy val packageForm = Form(
     mapping(
       "isLiable" -> booleanMapping,
