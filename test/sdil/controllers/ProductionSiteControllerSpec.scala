@@ -23,37 +23,30 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.controllerhelpers.mockCache
+import sdil.controllers.controllerhelpers._
 import sdil.models.Address
-
-import scala.concurrent.Future
 
 class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
   "GET /production-site" should {
-    import controllerhelpers.mockCache
-
     "return 200 Ok and the production site page if no other sites have been added" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("productionSites", None)
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
-      contentAsString(res) must include (Messages("sdil.productionSite.heading"))
+      contentAsString(res) must include(Messages("sdil.productionSite.heading"))
     }
 
     "return 200 Ok and the add production site page if another site has been added" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Seq(Address("1", "", "", "", "AA11 1AA")))))
+      stubCacheEntry[Seq[Address]]("productionSites", Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
-      contentAsString(res) must include (Messages("sdil.productionSite.add.heading"))
+      contentAsString(res) must include(Messages("sdil.productionSite.add.heading"))
     }
 
     "return a page with a link back to the start date page if the date is after the sugar tax start date" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("productionSites", None)
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -64,11 +57,9 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
     "return a page with a link back to the import volume page if the date is before the sugar tax start date " +
       "and the user is importing liable drinks" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("productionSites", None)
 
-      when(mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(true)))
+      stubCacheEntry[Boolean]("import", Some(true))
 
       val res = testControllerBeforeTaxStart.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -79,11 +70,9 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
     "return a page with a link back to the import page if the date is before the sugar tax start date " +
       "and the user is not importing liable drinks" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("productionSites", None)
 
-      when(mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(false)))
+      stubCacheEntry[Boolean]("import", Some(false))
 
       val res = testControllerBeforeTaxStart.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -95,26 +84,23 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
   "POST /production-site" should {
     "return 400 Bad Request and the production site page if no other sites have been added and the form data is invalid" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("productionSites", None)
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include (Messages("sdil.productionSite.heading"))
+      contentAsString(res) must include(Messages("sdil.productionSite.heading"))
     }
 
     "return 400 Bad Request and the add production site page if another site has been added and the form data is invalid" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Seq(Address("1", "", "", "", "AA11 1AA")))))
+      stubCacheEntry[Seq[Address]]("productionSites", Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include (Messages("sdil.productionSite.add.heading"))
+      contentAsString(res) must include(Messages("sdil.productionSite.add.heading"))
     }
 
     "redirect to the add production site page if another site has been added and the form data is valid" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("productionSites", None)
 
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasOtherSite" -> "true",
@@ -131,8 +117,7 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "redirect to the warehouse page if another site has not been added and the form data is valid" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("productionSites", None)
 
       val res = testController.validate()(FakeRequest().withFormUrlEncodedBody("hasOtherSite" -> "false"))
       status(res) mustBe SEE_OTHER
@@ -140,8 +125,7 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "store the new address in keystore if another site has been added and the form data is valid" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("productionSites", None)
 
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasOtherSite" -> "true",
@@ -162,11 +146,10 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
   "GET /production-site/remove" should {
     "remove the production site address from keystore" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Seq(
-          Address("1", "", "", "", "AA11 1AA"),
-          Address("2", "", "", "", "AA12 2AA")
-        ))))
+      stubCacheEntry[Seq[Address]]("productionSites", Some(Seq(
+        Address("1", "", "", "", "AA11 1AA"),
+        Address("2", "", "", "", "AA12 2AA")
+      )))
 
       val res = testController.remove(1)(FakeRequest())
       status(res) mustBe SEE_OTHER
@@ -176,11 +159,10 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "always redirect to the production site page" in {
-      when(mockCache.fetchAndGetEntry[Seq[Address]](matching("productionSites"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Seq(
-          Address("1", "", "", "", "AA11 1AA"),
-          Address("2", "", "", "", "AA12 2AA")
-        ))))
+      stubCacheEntry[Seq[Address]]("productionSites", Some(Seq(
+        Address("1", "", "", "", "AA11 1AA"),
+        Address("2", "", "", "", "AA12 2AA")
+      )))
 
       val res = testController.remove(1)(FakeRequest())
       status(res) mustBe SEE_OTHER

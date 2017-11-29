@@ -59,17 +59,12 @@ class IdentifyControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
       status(res) mustBe SEE_OTHER
 
-      verify(mockCache, times(1)).cache(matching("identify"), matching(Identification("1234567890", "AA11 1AA")))(any(), any(), any())
+      verify(controllerhelpers.mockCache, times(1)).cache(matching("identify"), matching(Identification("1234567890", "AA11 1AA")))(any(), any(), any())
     }
   }
 
   lazy val testController = new IdentifyController(messagesApi) {
-    override val cache: SessionCache = mockCache
+    override val cache: SessionCache = controllerhelpers.mockCache
   }
 
-  lazy val mockCache = {
-    val m = mock[SessionCache]
-    when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
-    m
-  }
 }

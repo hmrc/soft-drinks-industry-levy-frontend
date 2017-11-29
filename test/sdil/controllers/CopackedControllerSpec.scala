@@ -17,14 +17,12 @@
 package sdil.controllers
 
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{eq => matching, _}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{eq => matching}
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.controllers.controllerhelpers._
 import uk.gov.hmrc.http.cache.client.SessionCache
-
-import scala.concurrent.Future
 
 class CopackedControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
@@ -36,8 +34,7 @@ class CopackedControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "return a page with a back link to the package copack small volume page when the user packages drinks for small producers" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Boolean](matching("packageCopackSmall"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(true)))
+      stubCacheEntry[Boolean]("packageCopackSmall", Some(true))
 
       val res = testController.display(FakeRequest())
       status(res) mustBe OK
@@ -47,8 +44,7 @@ class CopackedControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "return a page with a back link to the package copack small page when the user does not package drinks for small producers" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Boolean](matching("packageCopackSmall"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(false)))
+      stubCacheEntry[Boolean]("packageCopackSmall", Some(false))
 
       val res = testController.display(FakeRequest())
       status(res) mustBe OK

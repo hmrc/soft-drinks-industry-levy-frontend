@@ -23,16 +23,14 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.controllers.controllerhelpers._
 import sdil.models.{Address, Packaging}
-
-import scala.concurrent.Future
 
 class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
   "GET /secondary-warehouse" should {
     "return 200 Ok and the secondary warehouse page if no secondary warehouses have been added" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("secondaryWarehouses", None)
 
       val res = testController.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
@@ -40,8 +38,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "return 200 Ok and the add secondary warehouse page if other secondary warehouses have been added" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Seq(Address("1", "", "", "", "AA11 1AA")))))
+      stubCacheEntry[Seq[Address]]("secondaryWarehouses", Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
       val res = testController.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
@@ -49,8 +46,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "return a page with a link back to the production sites page if the user packages liable drinks" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(true, true, true))))
+      stubCacheEntry[Packaging]("packaging", Some(Packaging(true, true, true)))
 
       val res = testController.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
@@ -61,8 +57,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
     "return a page with a link back to the start date page if the user does not package liable drinks" +
       "and the date is after the tax start date" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(false, false, false))))
+      stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
 
       val res = testController.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
@@ -73,11 +68,9 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
     "return a page with a link back to the import volume page if the user does not package liable drinks, " +
       "imports liable drinks, and the date is before the tax start date" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(false, false, false))))
+      stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
 
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(true)))
+      stubCacheEntry[Boolean]("import", Some(true))
 
       val res = testControllerBeforeTaxStart.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
@@ -88,11 +81,9 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
     "return a page with a link back to the import page if the user does not package or import liable drinks," +
       "and the date is before the tax start date" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(false, false, false))))
+      stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
 
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(false)))
+      stubCacheEntry[Boolean]("import", Some(false))
 
       val res = testControllerBeforeTaxStart.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
@@ -104,8 +95,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
   "POST /secondary-warehouse" should {
     "return 400 Bad Request and the secondary warehouse page if no secondary warehouses have been added and the form data is invalid" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("secondaryWarehouses", None)
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
@@ -113,8 +103,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "return 400 Bad Request and the add secondary warehouse page if other warehouses have been added and the form data is invalid" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Seq(Address("1", "", "", "", "AA11 1AA")))))
+      stubCacheEntry[Seq[Address]]("secondaryWarehouses", Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
@@ -122,8 +111,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "redirect to the add secondary warehouse page if a warehouse has been added" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("secondaryWarehouses", None)
 
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasWarehouse" -> "true",
@@ -140,8 +128,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "redirect to the contact details page if a warehouse is not added" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("secondaryWarehouses", None)
 
       val res = testController.validate()(FakeRequest().withFormUrlEncodedBody("hasWarehouse" -> "false"))
       status(res) mustBe SEE_OTHER
@@ -149,8 +136,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "store the new address in keystore if a warehouse is added" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
-        .thenReturn(Future.successful(None))
+      stubCacheEntry[Seq[Address]]("secondaryWarehouses", None)
 
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasWarehouse" -> "true",
@@ -179,8 +165,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
         Address("2", "", "", "", "AA12 2AA")
       )
 
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(addresses)))
+      stubCacheEntry[Seq[Address]]("secondaryWarehouses", Some(addresses))
 
       val res = testController.remove(0)(FakeRequest())
       status(res) mustBe SEE_OTHER
@@ -190,8 +175,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "always redirect to the secondary warehouse page" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Seq[Address]](matching("secondaryWarehouses"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Seq(Address("1", "", "", "", "AA11 1AA")))))
+      stubCacheEntry[Seq[Address]]("secondaryWarehouses", Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
       val res = testController.remove(0)(FakeRequest())
       status(res) mustBe SEE_OTHER

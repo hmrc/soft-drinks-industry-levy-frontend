@@ -17,15 +17,13 @@
 package sdil.controllers
 
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => matching}
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{eq => matching}
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.controllers.controllerhelpers._
 import sdil.models.Packaging
 import uk.gov.hmrc.http.cache.client.SessionCache
-
-import scala.concurrent.Future
 
 class PackageCopackSmallControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
@@ -37,8 +35,7 @@ class PackageCopackSmallControllerSpec extends PlayMessagesSpec with MockitoSuga
     }
 
     "return a page with a link back to the package copack page if the user packages liable drinks for customers" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(true, true, true))))
+      stubCacheEntry[Packaging]("packaging", Some(Packaging(true, true, true)))
 
       val res = testController.display()(FakeRequest())
       status(res) mustBe OK
@@ -48,8 +45,7 @@ class PackageCopackSmallControllerSpec extends PlayMessagesSpec with MockitoSuga
     }
 
     "return a page with a link to the package own page if the user packages drinks for their own brand, but not customers" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(true, true, false))))
+      stubCacheEntry[Packaging]("packaging", Some(Packaging(true, true, false)))
 
       val res = testController.display()(FakeRequest())
       status(res) mustBe OK
@@ -59,8 +55,7 @@ class PackageCopackSmallControllerSpec extends PlayMessagesSpec with MockitoSuga
     }
 
     "return a page with a link to the package page if the user does not package liable drinks" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(false, false, false))))
+      stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
 
       val res = testController.display()(FakeRequest())
       status(res) mustBe OK

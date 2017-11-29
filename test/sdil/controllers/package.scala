@@ -107,6 +107,10 @@ package object controllerhelpers extends MockitoSugar {
     m
   }
 
+  def stubCacheEntry[T](key: String, value: Option[T]) = {
+    when(mockCache.fetchAndGetEntry[T](matching(key))(any(), any(), any())).thenReturn(Future.successful(value))
+  }
+
   lazy val dateBeforeTaxStart = Clock.fixed(Instant.parse("2017-11-18T14:19:00.000Z"), ZoneId.systemDefault())
 
   lazy val dateAfterTaxStart = Clock.fixed(Instant.parse("2018-04-07T00:00:00.000Z"), ZoneId.systemDefault())

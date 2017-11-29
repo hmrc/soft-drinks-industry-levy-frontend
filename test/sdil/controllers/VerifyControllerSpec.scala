@@ -16,15 +16,15 @@
 
 package sdil.controllers
 
-import org.scalatest.mockito.MockitoSugar
-import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers.{eq => matching, _}
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import play.api.test.Helpers._
+import sdil.models.Address
 import sdil.models.DetailsCorrect.DifferentAddress
-import sdil.models.{Address, DetailsCorrect}
+import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 
 import scala.concurrent.Future
 
