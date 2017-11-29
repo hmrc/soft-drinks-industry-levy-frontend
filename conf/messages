@@ -133,6 +133,12 @@ sdil.declaration.phone-number=Phone number
 sdil.declaration.email=Email
 sdil.declaration.continue=Accept and continue
 
+#Complete
+sdil.complete.title=Registration submitted
+sdil.complete.what-happens.title=What happens next?
+sdil.complete.what-happens.content=You don’t need to do anything else. We’ll contact you with a registration number.
+
+
 #Errors
 error.utr.invalid=Invalid UTR
 error.postcode.invalid=Invalid postcode
