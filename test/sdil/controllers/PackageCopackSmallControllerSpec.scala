@@ -91,7 +91,5 @@ class PackageCopackSmallControllerSpec extends PlayMessagesSpec with MockitoSuga
     }
   }
 
-  lazy val testController = new PackageCopackSmallController(messagesApi) {
-    override val cache: SessionCache = controllerhelpers.mockCache
-  }
+  lazy val testController = new PackageCopackSmallController(messagesApi, mockCache)(testConfig)
 }

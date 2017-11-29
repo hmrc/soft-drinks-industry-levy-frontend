@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import sdil.config.AppConfig
+package sdil.config
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, config: AppConfig)
+import java.time.Clock
 
-@contentHeader = {
-    <h1>@heading</h1>
+import com.google.inject.AbstractModule
+import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+
+class Module extends AbstractModule {
+  override def configure() = {
+    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig])
+    bind(classOf[SessionCache]).to(classOf[FormDataCache])
+    bind(classOf[Clock]).toInstance(Clock.systemDefaultZone())
+    bind(classOf[FrontendErrorHandler]).to(classOf[SDILErrorHandler])
+  }
 }
-
-@mainContent = {
-    <p>@message</p>
-}
-
-@govuk_wrapper(appConfig = config, title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)

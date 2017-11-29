@@ -16,8 +16,9 @@
 
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.softdrinksindustrylevy.helpers.inputText
+@import sdil.config.AppConfig
 
-@(identifyForm: Form[_])(implicit request: Request[_], messages: Messages)
+@(identifyForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title")) {
     <h1 class="heading-large">@Messages("sdil.identify.heading")</h1>

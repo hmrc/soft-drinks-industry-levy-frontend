@@ -17,8 +17,9 @@
 @import uk.gov.hmrc.play.views.html.{helpers => govHelpers}
 @import sdil.controllers.routes
 @import views.html.helper._
+@import sdil.config.AppConfig
 
-@(isCopacked: Form[Boolean], backLink: Call)(implicit messages: Messages, request: Request[_])
+@(isCopacked: Form[Boolean], backLink: Call)(implicit messages: Messages, request: Request[_], config: AppConfig)
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
 

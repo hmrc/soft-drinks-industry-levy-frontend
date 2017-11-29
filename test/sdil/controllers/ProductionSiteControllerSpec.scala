@@ -170,11 +170,7 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new ProductionSiteController(messagesApi, controllerhelpers.dateAfterTaxStart) {
-    override val cache = controllerhelpers.mockCache
-  }
+  lazy val testController = new ProductionSiteController(messagesApi, dateAfterTaxStart, mockCache)(testConfig)
 
-  lazy val testControllerBeforeTaxStart = new ProductionSiteController(messagesApi, controllerhelpers.dateBeforeTaxStart) {
-    override val cache = controllerhelpers.mockCache
-  }
+  lazy val testControllerBeforeTaxStart = new ProductionSiteController(messagesApi, dateBeforeTaxStart, mockCache)(testConfig)
 }

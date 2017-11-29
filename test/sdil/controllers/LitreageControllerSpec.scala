@@ -17,22 +17,23 @@
 package sdil.controllers
 
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.{eq => matching, _}
+import org.mockito.Mockito._
+import org.mockito.verification.VerificationMode
 import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import play.api.test.Helpers._
-import org.mockito.Mockito._
-import org.mockito.ArgumentMatchers.{eq => matching, _}
-import org.mockito.verification.VerificationMode
+import sdil.controllers.controllerhelpers._
 import sdil.models.{Litreage, Packaging}
+import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.Future
 
 class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
-  when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-    .thenReturn(Future.successful(Some(Packaging(false, false, false))))
+  stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
 
   "GET /package-own" should {
     "always return 200 Ok and the package own page" in {
@@ -240,9 +241,9 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new LitreageController(messagesApi) {
-    override val cache: SessionCache = controllerhelpers.mockCache
-  }
+  lazy val testController = new LitreageController(messagesApi, mockErrorHandler, mockCache)(testConfig)
+
+  lazy val mockErrorHandler = mock[FrontendErrorHandler]
 
   lazy val once: VerificationMode = times(1)
 }

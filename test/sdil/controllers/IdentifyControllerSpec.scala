@@ -21,10 +21,9 @@ import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.controllers.controllerhelpers._
 import sdil.models.Identification
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
-
-import scala.concurrent.Future
+import uk.gov.hmrc.http.cache.client.SessionCache
 
 class IdentifyControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
@@ -59,12 +58,10 @@ class IdentifyControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
       status(res) mustBe SEE_OTHER
 
-      verify(controllerhelpers.mockCache, times(1)).cache(matching("identify"), matching(Identification("1234567890", "AA11 1AA")))(any(), any(), any())
+      verify(mockCache, times(1)).cache(matching("identify"), matching(Identification("1234567890", "AA11 1AA")))(any(), any(), any())
     }
   }
 
-  lazy val testController = new IdentifyController(messagesApi) {
-    override val cache: SessionCache = controllerhelpers.mockCache
-  }
+  lazy val testController = new IdentifyController(messagesApi, mockCache)(testConfig)
 
 }

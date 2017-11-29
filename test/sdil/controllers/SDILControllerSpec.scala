@@ -16,8 +16,7 @@
 
 package sdil.controllers
 
-import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -25,18 +24,12 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.controllerhelpers._
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
-
-import scala.concurrent.Future
 
 class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOneAppPerSuite with BeforeAndAfterEach {
 
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
-  val controller = new SDILController(messagesApi, mockSdilConnector) {
-    override def authConnector = mockAuthConnector
 
-    override val cache: SessionCache = mockCache
-  }
+  val controller = new SDILController(messagesApi, mockAuthConnector, mockCache, mockSdilConnector)(testConfig)
 
   override def beforeEach() {
     reset(mockSdilConnector, mockAuthConnector)

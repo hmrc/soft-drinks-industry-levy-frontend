@@ -21,18 +21,16 @@ import javax.inject.Inject
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Call, Request}
-import sdil.config.FrontendAppConfig.taxStartDate
-import sdil.config.{FormDataCache, FrontendAppConfig}
+import sdil.config.AppConfig
 import sdil.forms.ProductionSiteForm
 import sdil.models.{Address, ProductionSite}
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
-class ProductionSiteController @Inject()(val messagesApi: MessagesApi, clock: Clock) extends FrontendController with I18nSupport {
-
-  val cache: SessionCache = FormDataCache
+class ProductionSiteController @Inject()(val messagesApi: MessagesApi, clock: Clock, cache: SessionCache)(implicit config: AppConfig)
+  extends FrontendController with I18nSupport {
 
   def addSite = Action.async { implicit request =>
     //FIXME look up address record
@@ -77,7 +75,7 @@ class ProductionSiteController @Inject()(val messagesApi: MessagesApi, clock: Cl
   }
 
   private def getBackLink(implicit request: Request[_]): Future[Call] = {
-    if (LocalDate.now(clock).isBefore(taxStartDate)) {
+    if (LocalDate.now(clock).isBefore(config.taxStartDate)) {
       cache.fetchAndGetEntry[Boolean]("import") map {
         case Some(true) => routes.LitreageController.show("importVolume")
         case Some(false) => routes.ImportController.display()

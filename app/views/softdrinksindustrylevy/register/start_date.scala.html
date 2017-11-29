@@ -17,8 +17,9 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.softdrinksindustrylevy.helpers.inputText
 @import sdil.models.StartDate
+@import sdil.config.AppConfig
 
-@(startDateForm: Form[StartDate], backLink: Call)(implicit request: Request[_], messages: Messages)
+@(startDateForm: Form[StartDate], backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title")) {
 

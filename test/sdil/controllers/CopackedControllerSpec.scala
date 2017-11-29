@@ -17,12 +17,10 @@
 package sdil.controllers
 
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{eq => matching}
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.controllerhelpers._
-import uk.gov.hmrc.http.cache.client.SessionCache
 
 class CopackedControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
@@ -80,8 +78,6 @@ class CopackedControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new CopackedController(messagesApi) {
-    override val cache: SessionCache = controllerhelpers.mockCache
-  }
+  lazy val testController = new CopackedController(messagesApi, mockCache)(testConfig)
 
 }

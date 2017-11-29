@@ -32,7 +32,9 @@ object FrontendBuild extends Build {
       scoverageSettings,
       libraryDependencies ++= Seq(
         ws,
-        "uk.gov.hmrc" %% "frontend-bootstrap" % "8.11.0",
+        "uk.gov.hmrc" %% "bootstrap-play-25" % "1.0.0",
+        "uk.gov.hmrc" %% "govuk-template" % "5.15.0",
+        "uk.gov.hmrc" %% "play-ui" % "7.9.0",
         "uk.gov.hmrc" %% "play-partials" % "6.1.0",
         "com.typesafe.play" %% "play-json" % "2.5.12",
         "org.scalactic" %% "scalactic" % "3.0.1",

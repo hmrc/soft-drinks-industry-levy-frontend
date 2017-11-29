@@ -16,8 +16,9 @@
 
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.softdrinksindustrylevy.helpers._
+@import sdil.config.AppConfig
 
-@(verifyForm: Form[_], utr: String, organisation: String, address: String)(implicit request: Request[_], messages: Messages)
+@(verifyForm: Form[_], utr: String, organisation: String, address: String)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
     @main_template(Messages("sdil.common.title")) {
 

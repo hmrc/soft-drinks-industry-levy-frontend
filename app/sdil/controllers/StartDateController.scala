@@ -25,22 +25,21 @@ import play.api.data.Forms.{mapping, number}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Request}
-import sdil.config.{FormDataCache, FrontendAppConfig}
+import sdil.config.AppConfig
 import sdil.models.sdilmodels._
 import sdil.models.{Packaging, StartDate}
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.util.Try
 
-class StartDateController @Inject()(val messagesApi: MessagesApi, clock: Clock) extends FrontendController with I18nSupport {
-
-  val cache: SessionCache = FormDataCache
+class StartDateController @Inject()(val messagesApi: MessagesApi, clock: Clock, cache: SessionCache)(implicit config: AppConfig)
+  extends FrontendController with I18nSupport {
 
   def displayStartDate: Action[AnyContent] = Action.async { implicit request =>
-    if (LocalDate.now(clock) isBefore FrontendAppConfig.taxStartDate) {
+    if (LocalDate.now(clock) isBefore config.taxStartDate) {
       for {
-        _ <- cache.cache("start-date", FrontendAppConfig.taxStartDate)
+        _ <- cache.cache("start-date", config.taxStartDate)
         packaging <- cache.fetchAndGetEntry[Packaging]("packaging")
       } yield {
         packaging match {
@@ -115,7 +114,7 @@ class StartDateController @Inject()(val messagesApi: MessagesApi, clock: Clock) 
       val year = form.get.startDateYear
       if (!isValidDate(day, month, year)) form.withError("", Messages("error.start-date.date-invalid"))
       else if (LocalDate.of(year, month, day) isAfter LocalDate.now(clock)) form.withError("", Messages("error.start-date.date-too-high"))
-      else if (LocalDate.of(year, month, day) isBefore FrontendAppConfig.taxStartDate)
+      else if (LocalDate.of(year, month, day) isBefore config.taxStartDate)
         form.withError("", Messages("error.start-date.date-too-low"))
       else form
     }

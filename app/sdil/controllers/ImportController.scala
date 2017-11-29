@@ -22,16 +22,15 @@ import play.api.data.Form
 import play.api.data.Forms.single
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Call, Request}
-import sdil.config.FormDataCache
+import sdil.config.AppConfig
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class ImportController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
-
-  val cache: SessionCache = FormDataCache
+class ImportController @Inject()(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+  extends FrontendController with I18nSupport {
 
   private val importForm = Form(single("isImport" -> booleanMapping))
 

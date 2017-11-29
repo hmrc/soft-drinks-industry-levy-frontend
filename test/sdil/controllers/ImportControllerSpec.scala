@@ -22,7 +22,7 @@ import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.cache.client.SessionCache
+import sdil.controllers.controllerhelpers._
 
 import scala.concurrent.Future
 
@@ -36,7 +36,7 @@ class ImportControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "return a page with a link back to the copacked volume page if third parties package drinks on the user's behalf" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Boolean](matching("copacked"))(any(), any(), any()))
+      when(mockCache.fetchAndGetEntry[Boolean](matching("copacked"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(true)))
 
       val res = testController.display(FakeRequest())
@@ -47,7 +47,7 @@ class ImportControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "return a page with a link back to the copacked page if third parties do not package drinks on the user's behalf" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Boolean](matching("copacked"))(any(), any(), any()))
+      when(mockCache.fetchAndGetEntry[Boolean](matching("copacked"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(false)))
 
       val res = testController.display(FakeRequest())
@@ -84,7 +84,5 @@ class ImportControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new ImportController(messagesApi) {
-    override val cache: SessionCache = controllerhelpers.mockCache
-  }
+  lazy val testController = new ImportController(messagesApi, mockCache)(testConfig)
 }
