@@ -19,10 +19,10 @@ package sdil.controllers
 import javax.inject.Inject
 
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Request}
+import play.api.mvc.{Action, Call, Request}
 import sdil.config.FormDataCache
 import sdil.forms.WarehouseForm
-import sdil.models.{Address, SecondaryWarehouse}
+import sdil.models.{Address, Packaging, SecondaryWarehouse}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
@@ -33,15 +33,20 @@ class WarehouseController @Inject()(val messagesApi: MessagesApi) extends Fronte
   val cache: SessionCache = FormDataCache
 
   def secondaryWarehouse = Action.async { implicit request =>
-    getWarehouseAddresses map { addrs =>
-      Ok(views.html.softdrinksindustrylevy.register.secondaryWarehouse(WarehouseForm(), addrs))
+    for {
+      addrs <- getWarehouseAddresses
+      backLink <- getBackLink
+    } yield {
+      Ok(views.html.softdrinksindustrylevy.register.secondaryWarehouse(WarehouseForm(), addrs, backLink))
     }
   }
 
   def validate = Action.async { implicit request =>
     getWarehouseAddresses flatMap { addrs =>
       WarehouseForm().bindFromRequest().fold(
-        errors => BadRequest(views.html.softdrinksindustrylevy.register.secondaryWarehouse(errors, addrs)),
+        errors => getBackLink map { link =>
+          BadRequest(views.html.softdrinksindustrylevy.register.secondaryWarehouse(errors, addrs, link))
+        },
         {
           case SecondaryWarehouse(_, Some(addr)) => cache.cache("secondaryWarehouses", addrs :+ addr) map { _ =>
             Redirect(routes.WarehouseController.secondaryWarehouse())
@@ -65,6 +70,14 @@ class WarehouseController @Inject()(val messagesApi: MessagesApi) extends Fronte
     cache.fetchAndGetEntry[Seq[Address]]("secondaryWarehouses") map {
       case None | Some(Nil) => Nil
       case Some(addrs) => addrs
+    }
+  }
+
+  private def getBackLink(implicit request: Request[_]): Future[Call] = {
+    cache.fetchAndGetEntry[Packaging]("packaging") map {
+      case Some(p) if p.isLiable => routes.ProductionSiteController.addSite()
+      case Some(p) => routes.StartDateController.show()
+      case _ => routes.SDILController.displayPackage()
     }
   }
 }

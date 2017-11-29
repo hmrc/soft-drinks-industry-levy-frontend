@@ -70,6 +70,7 @@ class LitreageController @Inject()(val messagesApi: MessagesApi) extends Fronten
       case "packageCopackSmallVol" => routes.PackageCopackSmallController.display()
       case "copackedVolume" => routes.CopackedController.display()
       case "importVolume" => routes.ImportController.display()
+      case _ => throw new IllegalArgumentException(s"Invalid page name $page")
     }
   }
 }

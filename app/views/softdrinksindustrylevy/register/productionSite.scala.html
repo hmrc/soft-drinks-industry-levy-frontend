@@ -22,6 +22,8 @@
 
 @main_template(Messages("sdil.common.title")) {
 
+    <a class="link-back" href="@sdil.controllers.routes.StartDateController.show()">@Messages("sdil.common.back")</a>
+
     <h1 class="heading-large">@heading</h1>
 
     @errorSummary(Messages("sdil.common.errorSummary"), siteForm)
