@@ -16,13 +16,13 @@
 
 package sdil.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
-import org.mockito.Mockito._
+import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.Identification
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
+import uk.gov.hmrc.http.cache.client.SessionCache
 
 import scala.concurrent.Future
 
@@ -34,6 +34,28 @@ class ImportControllerSpec extends PlayMessagesSpec with MockitoSugar {
       status(res) mustBe OK
       contentAsString(res) must include("Will you bring liable drinks into the UK from anywhere outside of the UK?")
     }
+
+    "return a page with a link back to the copacked volume page if third parties package drinks on the user's behalf" in {
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Boolean](matching("copacked"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(true)))
+
+      val res = testController.display(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("copackedVolume").url
+    }
+
+    "return a page with a link back to the copacked page if third parties do not package drinks on the user's behalf" in {
+      when(controllerhelpers.mockCache.fetchAndGetEntry[Boolean](matching("copacked"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(false)))
+
+      val res = testController.display(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.CopackedController.display().url
+    }
   }
 
   "POST /import" should {
@@ -44,25 +66,24 @@ class ImportControllerSpec extends PlayMessagesSpec with MockitoSugar {
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include("You have not chosen an option")
     }
+
     "redirect to the import-volume page if the form data is true" in {
-      {
-        val request = FakeRequest().withFormUrlEncodedBody("isImport" -> "true")
-        val res = testController.submit(request)
+      val request = FakeRequest().withFormUrlEncodedBody("isImport" -> "true")
+      val res = testController.submit(request)
 
-        status(res) mustBe SEE_OTHER
-        redirectLocation(res).value mustBe routes.LitreageController.show("importVolume").url
-      }
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.LitreageController.show("importVolume").url
     }
-    "redirect to the start date page if the form data is false" in {
-      {
-        val request = FakeRequest().withFormUrlEncodedBody("isImport" -> "false")
-        val res = testController.submit(request)
 
-        status(res) mustBe SEE_OTHER
-        redirectLocation(res).value mustBe routes.StartDateController.show().url
-      }
+    "redirect to the start date page if the form data is false" in {
+      val request = FakeRequest().withFormUrlEncodedBody("isImport" -> "false")
+      val res = testController.submit(request)
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.StartDateController.show().url
     }
   }
+
   lazy val testController = new ImportController(messagesApi) {
     override val cache: SessionCache = controllerhelpers.mockCache
   }
