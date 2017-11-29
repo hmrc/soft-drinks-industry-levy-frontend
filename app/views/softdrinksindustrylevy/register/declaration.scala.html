@@ -23,6 +23,8 @@
 @(identification: Identification, contactDetails: ContactDetails)(implicit request: Request[_], messages: Messages)
 
 @views.html.main_template(Messages("sdil.common.title")) {
+    <a class="link-back" href="@sdil.controllers.routes.SDILController.displayContactDetails()">@Messages("sdil.common.back")</a>
+
     <h1 class="heading-large">@Messages("sdil.declaration.heading")</h1>
 
     <p>@Messages("sdil.declaration.info")</p>
