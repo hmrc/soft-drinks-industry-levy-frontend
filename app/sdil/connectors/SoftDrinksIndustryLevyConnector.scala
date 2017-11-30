@@ -16,23 +16,27 @@
 
 package sdil.connectors
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
-import sdil.config.WSHttp
+import play.api.{Configuration, Environment}
 import sdil.models._
 import sdil.models.sdilmodels._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SoftDrinksIndustryLevyConnector extends ServicesConfig {
+class SoftDrinksIndustryLevyConnector @Inject()(http: HttpClient,
+                                                environment: Environment,
+                                                val runModeConfiguration: Configuration
+                                               )(implicit ec: ExecutionContext) extends ServicesConfig {
 
   lazy val baseURL: String = baseUrl("soft-drinks-industry-levy")
   lazy val serviceURL = "hello-world"
-  lazy val http = WSHttp
+
+  override protected def mode = environment.mode
 
   def retrieveHelloWorld()(implicit hc: HeaderCarrier): Future[DesSubmissionResult] = {
     http.GET[DesSubmissionResult](s"$baseURL/$serviceURL")

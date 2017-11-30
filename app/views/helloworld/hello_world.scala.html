@@ -15,7 +15,8 @@
  *@
 
 @import sdil.models.DesSubmissionResult
-@(desSubmissionResult: Option[DesSubmissionResult] = None)(implicit request: Request[_], messages: Messages)
+@import sdil.config.AppConfig
+@(desSubmissionResult: Option[DesSubmissionResult] = None)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(title = "Hello from soft-drinks-industry-levy-frontend", bodyClasses = None) {
     <h1>@Messages("sdil.common.title")</h1>

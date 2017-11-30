@@ -19,8 +19,9 @@
 
 @import sdil.models.Identification
 @import sdil.models.ContactDetails
+@import sdil.config.AppConfig
 
-@(identification: Identification, contactDetails: ContactDetails)(implicit request: Request[_], messages: Messages)
+@(identification: Identification, contactDetails: ContactDetails)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title")) {
     <a class="link-back" href="@sdil.controllers.routes.SDILController.displayContactDetails()">@Messages("sdil.common.back")</a>
@@ -57,11 +58,6 @@
                 sdil.controllers.routes.SDILController.displayContactDetails(), contactDetails.phoneNumber)
             @declaration_details_table_row("email",
                 sdil.controllers.routes.SDILController.displayContactDetails(), contactDetails.email)
-
-
-
-
-
         </tbody>
     </table>
 

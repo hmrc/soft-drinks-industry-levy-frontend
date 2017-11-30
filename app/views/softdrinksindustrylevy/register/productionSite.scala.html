@@ -17,8 +17,9 @@
 @import sdil.models.Address
 @import views.html.softdrinksindustrylevy.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
+@import sdil.config.AppConfig
 
-@(siteForm: Form[_], mainSite: Address, otherSites: Seq[Address], backLink: Call)(implicit request: Request[_], messages: Messages)
+@(siteForm: Form[_], mainSite: Address, otherSites: Seq[Address], backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.common.title")) {
 

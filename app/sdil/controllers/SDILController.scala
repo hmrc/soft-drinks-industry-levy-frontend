@@ -22,41 +22,38 @@ import javax.inject.Inject
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc._
-import sdil.config.FrontendAppConfig._
-import sdil.config.{FormDataCache, FrontendAuthConnector}
+import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.sdilmodels._
-import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.saUtr
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy._
 
 import scala.concurrent.Future
 
-class SDILController @Inject()(
-                                val messagesApi: play.api.i18n.MessagesApi,
-                                sdilConnector: SoftDrinksIndustryLevyConnector) extends AuthorisedFunctions with FrontendController
-  with play.api.i18n.I18nSupport {
-
-  override def authConnector: AuthConnector = FrontendAuthConnector
-
-  val cache: SessionCache = FormDataCache
+class SDILController @Inject()(val messagesApi: MessagesApi,
+                               val authConnector: AuthConnector,
+                               cache: SessionCache,
+                               sdilConnector: SoftDrinksIndustryLevyConnector)
+                              (implicit config: AppConfig)
+  extends AuthorisedFunctions with FrontendController with I18nSupport {
 
   private def authorisedForSDIL(action: Request[AnyContent] => String => Future[Result]): Action[AnyContent] = {
     Action.async { implicit request =>
       authorised(AuthProviders(GovernmentGateway)).retrieve(saUtr) {
         case Some(utr) => action(request)(utr)
-        case _ => Future successful Redirect(ggLoginUrl, Map("continue" -> Seq(sdilHomePage), "origin" -> Seq(appName)))
+        case _ => Future successful Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName)))
       } recover {
         case e: NoActiveSession =>
           Logger.warn(s"Bad person $e")
-          Redirect(ggLoginUrl, Map("continue" -> Seq(sdilHomePage), "origin" -> Seq(appName)))
+          Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName)))
       }
     }
   }

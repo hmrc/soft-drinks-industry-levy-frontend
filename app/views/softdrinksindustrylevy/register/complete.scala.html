@@ -14,7 +14,9 @@
  * limitations under the License.
  *@
 
-@()(implicit messages: Messages, request: Request[_])
+@import sdil.config.AppConfig
+
+@()(implicit messages: Messages, request: Request[_], config: AppConfig)
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
 

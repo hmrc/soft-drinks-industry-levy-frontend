@@ -22,7 +22,9 @@ import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.mockito.MockitoSugar
+import sdil.config.AppConfig
 import sdil.models.Packaging
+import sdil.utils.TestConfig
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
@@ -71,12 +73,6 @@ package object controllerhelpers extends MockitoSugar {
     "email" -> "a@a.com"
   )
 
-  val validStartDateForm = Seq(
-    "startDateDay" -> "06",
-    "startDateMonth" -> "04",
-    "startDateYear" -> "2018"
-  )
-
   val invalidStartDateForm = Seq(
     "startDateDay" -> "29",
     "startDateMonth" -> "02",
@@ -114,5 +110,7 @@ package object controllerhelpers extends MockitoSugar {
   lazy val dateBeforeTaxStart = Clock.fixed(Instant.parse("2017-11-18T14:19:00.000Z"), ZoneId.systemDefault())
 
   lazy val dateAfterTaxStart = Clock.fixed(Instant.parse("2018-04-07T00:00:00.000Z"), ZoneId.systemDefault())
+
+  lazy val testConfig = TestConfig
 
 }

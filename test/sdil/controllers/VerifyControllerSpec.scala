@@ -22,11 +22,9 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.controllers.controllerhelpers._
 import sdil.models.Address
 import sdil.models.DetailsCorrect.DifferentAddress
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
-
-import scala.concurrent.Future
 
 class VerifyControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
@@ -84,13 +82,5 @@ class VerifyControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new VerifyController(messagesApi) {
-    override val cache: SessionCache = mockCache
-  }
-
-  lazy val mockCache = {
-    val m = mock[SessionCache]
-    when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("id", Map.empty)))
-    m
-  }
+  lazy val testController = new VerifyController(messagesApi, mockCache)(testConfig)
 }

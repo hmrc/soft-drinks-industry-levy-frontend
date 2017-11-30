@@ -16,23 +16,23 @@
 
 package sdil.controllers
 
+import java.time.{Clock, LocalDate}
+
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.controllerhelpers._
 import sdil.models.Packaging
-import uk.gov.hmrc.http.cache.client.SessionCache
+import sdil.utils.TestConfig
 
 import scala.concurrent.Future
 
-class StartDateControllerSpec extends PlayMessagesSpec with MockitoSugar with BeforeAndAfterEach {
+class StartDateControllerSpec extends PlayMessagesSpec with MockitoSugar with BeforeAndAfterAll {
 
-  val controller = new StartDateController(messagesApi, controllerhelpers.dateAfterTaxStart) {
-    override val cache: SessionCache = mockCache
-  }
+  val controller = new StartDateController(messagesApi, Clock.systemDefaultZone(), mockCache)(testConfig)
 
   "StartDateController" should {
     "return Status: 200 when user is logged in and loads start date page" in {
@@ -44,9 +44,10 @@ class StartDateControllerSpec extends PlayMessagesSpec with MockitoSugar with Be
     }
 
     "return Status: See Other for start date form POST with valid date and redirect to add site page" in {
-      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(packagingIsLiable)))
-      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
+      stubCacheEntry[Packaging]("packaging", Some(packagingIsLiable))
+
+      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm:_*)
+
       val response = controller.submitStartDate().apply(request)
 
       status(response) mustBe SEE_OTHER
@@ -98,5 +99,19 @@ class StartDateControllerSpec extends PlayMessagesSpec with MockitoSugar with Be
       contentType(response).get mustBe HTML
       contentAsString(response) must include(messagesApi("error.start-date.date-invalid"))
     }
+  }
+
+  lazy val validStartDateForm = Seq(
+    "startDateDay" -> LocalDate.now.getDayOfMonth.toString,
+    "startDateMonth" -> LocalDate.now.getMonthValue.toString,
+    "startDateYear" -> LocalDate.now.getYear.toString
+  )
+
+  override protected def beforeAll(): Unit = {
+    TestConfig.setTaxStartDate(LocalDate.now minusDays 1)
+  }
+
+  override protected def afterAll(): Unit = {
+    TestConfig.resetTaxStartDate()
   }
 }

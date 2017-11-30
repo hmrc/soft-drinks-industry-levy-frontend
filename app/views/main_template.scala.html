@@ -14,13 +14,14 @@
  * limitations under the License.
  *@
 
-@import sdil.config.FrontendAppConfig
+@import sdil.config.AppConfig
+
 @(title: String,
   sidebarLinks: Option[Html] = None,
   contentHeader: Option[Html] = None,
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
-  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages)
+  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @import uk.gov.hmrc.play.views.html.layouts
 
@@ -34,7 +35,7 @@
 }
 
 
-@govuk_wrapper(appConfig = FrontendAppConfig,
+@govuk_wrapper(appConfig = config,
                title = title,
                mainClass = mainClass,
                bodyClasses = bodyClasses,

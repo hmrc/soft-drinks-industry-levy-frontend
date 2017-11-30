@@ -20,15 +20,15 @@ import javax.inject.Inject
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Call, Request, Result}
-import sdil.config.{FormDataCache, FrontendGlobal}
+import sdil.config.AppConfig
 import sdil.forms.LitreageForm
 import sdil.models.Packaging
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
-class LitreageController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
-
-  val cache: SessionCache = FormDataCache
+class LitreageController @Inject()(val messagesApi: MessagesApi, errorHandler: FrontendErrorHandler, cache: SessionCache)(implicit config: AppConfig)
+  extends FrontendController with I18nSupport {
 
   def show(pageName: String) = Action.async { implicit request =>
     cache.fetchAndGetEntry[Packaging]("packaging") map {
@@ -50,7 +50,6 @@ class LitreageController @Inject()(val messagesApi: MessagesApi) extends Fronten
   }
 
   private def nextPageFor(page: String, packaging: Packaging)(implicit request: Request[_]): Result = {
-    //FIXME question pages need to go in between the litreage pages
     page match {
       case "packageOwn" if packaging.customers => Redirect(routes.LitreageController.show("packageCopack"))
       case "packageOwn" => Redirect(routes.PackageCopackSmallController.display())
@@ -58,7 +57,7 @@ class LitreageController @Inject()(val messagesApi: MessagesApi) extends Fronten
       case "packageCopackSmallVol" => Redirect(routes.CopackedController.display())
       case "copackedVolume" => Redirect(routes.ImportController.display())
       case "importVolume" => Redirect(routes.StartDateController.displayStartDate())
-      case _ => BadRequest(FrontendGlobal.badRequestTemplate)
+      case _ => BadRequest(errorHandler.badRequestTemplate)
     }
   }
 

@@ -17,8 +17,9 @@
 package sdil.config
 
 import java.time.LocalDate
+import javax.inject.Inject
 
-import play.api.Play.{configuration, current}
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
 
 trait AppConfig {
@@ -27,14 +28,19 @@ trait AppConfig {
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
   val betaFeedbackUrlAuth: String
+  def taxStartDate: LocalDate
+  val ggLoginUrl: String
+  val sdilHomePage: String
+  val appName: String
 }
 
-object FrontendAppConfig extends AppConfig with ServicesConfig {
+class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends AppConfig with ServicesConfig {
+  override protected def mode = environment.mode
 
-  private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+  private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  private val contactHost = configuration.getString(s"contact-frontend.host").getOrElse("")
-  private val contactFormServiceIdentifier = configuration.getString("appName").get
+  private val contactHost = runModeConfiguration.getString(s"contact-frontend.host").getOrElse("")
+  private val contactFormServiceIdentifier = runModeConfiguration.getString("appName").get
 
   override lazy val analyticsToken = loadConfig(s"google-analytics.token")
   override lazy val analyticsHost = loadConfig(s"google-analytics.host")
@@ -43,11 +49,11 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   override lazy val betaFeedbackUrlAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
 
   //Auth related config
-  val appName = loadConfig("appName")
+  val appName: String = loadConfig("appName")
   private lazy val companyAuthFrontend = getConfString("company-auth.url", "")
   private lazy val companyAuthSignInPath = getConfString("company-auth.sign-in-path", "")
   private lazy val companyAuthSignOutPath = getConfString("company-auth.sign-out-path", "")
   val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
-  val sdilHomePage = loadConfig("sdil-home-page-url")
-  val taxStartDate = LocalDate.parse(loadConfig("tax-start-date"))
+  val sdilHomePage: String = loadConfig("sdil-home-page-url")
+  val taxStartDate: LocalDate = LocalDate.parse(loadConfig("tax-start-date"))
 }

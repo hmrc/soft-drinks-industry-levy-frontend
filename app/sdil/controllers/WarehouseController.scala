@@ -21,18 +21,16 @@ import javax.inject.Inject
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Call, Request}
-import sdil.config.FrontendAppConfig.taxStartDate
-import sdil.config.{FormDataCache, FrontendAppConfig}
+import sdil.config.AppConfig
 import sdil.forms.WarehouseForm
 import sdil.models.{Address, Packaging, SecondaryWarehouse}
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
-class WarehouseController @Inject()(val messagesApi: MessagesApi, clock: Clock) extends FrontendController with I18nSupport {
-
-  val cache: SessionCache = FormDataCache
+class WarehouseController @Inject()(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+  extends FrontendController with I18nSupport {
 
   def secondaryWarehouse = Action.async { implicit request =>
     for {
@@ -84,7 +82,7 @@ class WarehouseController @Inject()(val messagesApi: MessagesApi, clock: Clock) 
   }
 
   private def backToStartDate(implicit request: Request[_]): Future[Call] = {
-    if (LocalDate.now(clock).isBefore(taxStartDate)) {
+    if (LocalDate.now.isBefore(config.taxStartDate)) {
       cache.fetchAndGetEntry[Boolean]("import") map {
         case Some(true) => routes.LitreageController.show("importVolume")
         case _ => routes.ImportController.display()

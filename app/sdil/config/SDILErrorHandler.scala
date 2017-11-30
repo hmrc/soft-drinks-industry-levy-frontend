@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import sdil.config.AppConfig
+package sdil.config
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, config: AppConfig)
+import javax.inject.Inject
 
-@contentHeader = {
-    <h1>@heading</h1>
+import play.api.Configuration
+import play.api.i18n.MessagesApi
+import play.api.mvc.Request
+import play.twirl.api.Html
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+
+class SDILErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Configuration)(implicit config: AppConfig)
+  extends FrontendErrorHandler {
+
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = {
+    views.html.error_template(pageTitle, heading, message)
+  }
 }
-
-@mainContent = {
-    <p>@message</p>
-}
-
-@govuk_wrapper(appConfig = config, title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)

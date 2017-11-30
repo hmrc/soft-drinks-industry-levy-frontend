@@ -16,6 +16,8 @@
 
 package sdil.controllers
 
+import java.time.{Clock, LocalDate}
+
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
@@ -25,6 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.controllerhelpers._
 import sdil.models.{Address, Packaging}
+import sdil.utils.TestConfig
 
 class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
@@ -58,38 +61,45 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     "return a page with a link back to the start date page if the user does not package liable drinks" +
       "and the date is after the tax start date" in {
       stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
+      TestConfig.setTaxStartDate(LocalDate.now minusDays 1)
 
       val res = testController.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.StartDateController.displayStartDate().url
+
+      TestConfig.resetTaxStartDate()
     }
 
     "return a page with a link back to the import volume page if the user does not package liable drinks, " +
       "imports liable drinks, and the date is before the tax start date" in {
       stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
-
       stubCacheEntry[Boolean]("import", Some(true))
+      TestConfig.setTaxStartDate(LocalDate.now plusDays 1)
 
       val res = testControllerBeforeTaxStart.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
+
+      TestConfig.resetTaxStartDate()
     }
 
     "return a page with a link back to the import page if the user does not package or import liable drinks," +
       "and the date is before the tax start date" in {
       stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
-
       stubCacheEntry[Boolean]("import", Some(false))
+      TestConfig.setTaxStartDate(LocalDate.now plusDays 1)
 
       val res = testControllerBeforeTaxStart.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.ImportController.display().url
+
+      TestConfig.resetTaxStartDate()
     }
   }
 
@@ -150,7 +160,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.validate()(request)
       status(res) mustBe SEE_OTHER
 
-      verify(controllerhelpers.mockCache, times(1))
+      verify(mockCache, times(1))
         .cache(
           matching("secondaryWarehouses"),
           matching(Seq(Address("line 2", "line 3", "line 4", "line 5", "AA11 1AA")))
@@ -170,7 +180,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.remove(0)(FakeRequest())
       status(res) mustBe SEE_OTHER
 
-      verify(controllerhelpers.mockCache, times(1))
+      verify(mockCache, times(1))
         .cache(matching("secondaryWarehouses"), matching(Seq(Address("2", "", "", "", "AA12 2AA"))))(any(), any(), any())
     }
 
@@ -183,12 +193,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new WarehouseController(messagesApi, controllerhelpers.dateAfterTaxStart) {
-    override val cache = controllerhelpers.mockCache
-  }
+  lazy val testController = new WarehouseController(messagesApi, mockCache)(testConfig)
 
-  lazy val testControllerBeforeTaxStart = new WarehouseController(messagesApi, controllerhelpers.dateBeforeTaxStart) {
-    override val cache = controllerhelpers.mockCache
-  }
-
+  lazy val testControllerBeforeTaxStart = new WarehouseController(messagesApi, mockCache)(testConfig)
 }

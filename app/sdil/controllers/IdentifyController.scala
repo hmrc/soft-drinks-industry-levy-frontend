@@ -21,17 +21,16 @@ import javax.inject.Inject
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
-import sdil.config.FormDataCache
+import sdil.config.AppConfig
 import sdil.forms.IdentifyForm
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
-class IdentifyController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
-
-  val cache: SessionCache = FormDataCache
+class IdentifyController @Inject()(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+  extends FrontendController with I18nSupport {
 
   def identify = Action { implicit request =>
     //FIXME session ID should be initialised at the start of the journey
