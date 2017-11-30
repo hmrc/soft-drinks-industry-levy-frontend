@@ -16,18 +16,30 @@
 
 package sdil.controllers
 
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.guice.GuiceApplicationBuilder
+import java.io.File
+
+import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory, PlaySpec}
+import play.api.i18n.{DefaultLangs, DefaultMessagesApi, Messages, MessagesApi}
 import play.api.test.FakeRequest
+import play.api.{Application, ApplicationLoader, Configuration, Environment}
+import play.core.DefaultWebCommands
+import sdil.config.SDILApplicationLoader
 
-trait PlayMessagesSpec extends PlaySpec with GuiceOneAppPerSuite {
-  implicit override lazy val app: Application = new GuiceApplicationBuilder()
-    .disable[com.kenshoo.play.metrics.PlayModule]
-    .build()
+trait PlayMessagesSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicationFactory {
+  override def fakeApplication: Application = {
+    val context = ApplicationLoader.Context(
+      environment = env,
+      sourceMapper = None,
+      webCommands = new DefaultWebCommands,
+      initialConfiguration = configuration
+    )
+    val loader = new SDILApplicationLoader
+    loader.load(context)
+  }
 
-  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  private lazy val env = Environment.simple(new File("."))
+  private lazy val configuration = Configuration.load(env, Map("metrics.enabled" -> false.asInstanceOf[AnyRef]))
+
+  val messagesApi: MessagesApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   implicit val defaultMessages: Messages = messagesApi.preferred(FakeRequest())
 }

@@ -19,13 +19,12 @@ package sdil.controllers
 import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.controllerhelpers._
 
-class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with GuiceOneAppPerSuite with BeforeAndAfterEach {
+class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with BeforeAndAfterEach {
 
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
 
