@@ -16,8 +16,6 @@
 
 package sdil.controllers
 
-import javax.inject.Inject
-
 import play.api.data.Form
 import play.api.data.Forms.single
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,7 +27,7 @@ import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class CopackedController @Inject()(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class CopackedController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   private val copackedForm = Form(single("isCopacked" -> booleanMapping))

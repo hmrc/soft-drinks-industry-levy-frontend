@@ -17,8 +17,7 @@
 package sdil.controllers
 
 import java.text.SimpleDateFormat
-import java.time.{Clock, LocalDate}
-import javax.inject.Inject
+import java.time.LocalDate
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, number}
@@ -33,11 +32,11 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.util.Try
 
-class StartDateController @Inject()(val messagesApi: MessagesApi, clock: Clock, cache: SessionCache)(implicit config: AppConfig)
+class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def displayStartDate: Action[AnyContent] = Action.async { implicit request =>
-    if (LocalDate.now(clock) isBefore config.taxStartDate) {
+    if (LocalDate.now isBefore config.taxStartDate) {
       for {
         _ <- cache.cache("start-date", config.taxStartDate)
         packaging <- cache.fetchAndGetEntry[Packaging]("packaging")
@@ -113,7 +112,7 @@ class StartDateController @Inject()(val messagesApi: MessagesApi, clock: Clock, 
       val month = form.get.startDateMonth
       val year = form.get.startDateYear
       if (!isValidDate(day, month, year)) form.withError("", Messages("error.start-date.date-invalid"))
-      else if (LocalDate.of(year, month, day) isAfter LocalDate.now(clock)) form.withError("", Messages("error.start-date.date-too-high"))
+      else if (LocalDate.of(year, month, day) isAfter LocalDate.now) form.withError("", Messages("error.start-date.date-too-high"))
       else if (LocalDate.of(year, month, day) isBefore config.taxStartDate)
         form.withError("", Messages("error.start-date.date-too-low"))
       else form

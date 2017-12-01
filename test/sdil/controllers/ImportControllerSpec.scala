@@ -19,14 +19,12 @@ package sdil.controllers
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.controllerhelpers._
 
 import scala.concurrent.Future
 
-class ImportControllerSpec extends PlayMessagesSpec with MockitoSugar {
+class ImportControllerSpec extends ControllerSpec {
 
   "GET /import" should {
     "always return 200 Ok and the imports page" in {
@@ -84,5 +82,5 @@ class ImportControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new ImportController(messagesApi, mockCache)(testConfig)
+  lazy val testController = wire[ImportController]
 }

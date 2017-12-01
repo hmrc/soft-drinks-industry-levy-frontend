@@ -16,17 +16,14 @@
 
 package sdil.config
 
-import java.time.Clock
-
-import com.google.inject.AbstractModule
+import com.softwaremill.macwire.wire
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
 
-class Module extends AbstractModule {
-  override def configure() = {
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig])
-    bind(classOf[SessionCache]).to(classOf[FormDataCache])
-    bind(classOf[Clock]).toInstance(Clock.systemDefaultZone())
-    bind(classOf[FrontendErrorHandler]).to(classOf[SDILErrorHandler])
-  }
+trait ConfigWiring extends CommonWiring {
+  val httpClient: HttpClient
+
+  implicit lazy val appConfig: AppConfig = wire[FrontendAppConfig]
+  lazy val cache: SessionCache = wire[FormDataCache]
+  lazy val errorHandler: FrontendErrorHandler = wire[SDILErrorHandler]
 }

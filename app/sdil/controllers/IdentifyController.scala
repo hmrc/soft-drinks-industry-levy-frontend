@@ -17,7 +17,6 @@
 package sdil.controllers
 
 import java.util.UUID
-import javax.inject.Inject
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
@@ -29,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
-class IdentifyController @Inject()(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class IdentifyController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def identify = Action { implicit request =>

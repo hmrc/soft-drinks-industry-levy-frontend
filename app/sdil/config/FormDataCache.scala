@@ -16,16 +16,13 @@
 
 package sdil.config
 
-import javax.inject.Inject
-
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.config.AppName
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
 
-class FormDataCache @Inject()(val http: HttpClient,
-                              val runModeConfiguration: Configuration, environment: Environment)
+class FormDataCache(val http: HttpClient, val runModeConfiguration: Configuration, environment: Environment)
   extends SessionCache with ServicesConfig with AppName {
 
   override def defaultSource = appName

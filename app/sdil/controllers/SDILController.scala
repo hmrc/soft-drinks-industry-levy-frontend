@@ -17,7 +17,6 @@
 package sdil.controllers
 
 import java.util.UUID
-import javax.inject.Inject
 
 import play.api.Logger
 import play.api.data.Form
@@ -38,11 +37,11 @@ import views.html.softdrinksindustrylevy._
 
 import scala.concurrent.Future
 
-class SDILController @Inject()(val messagesApi: MessagesApi,
-                               val authConnector: AuthConnector,
-                               cache: SessionCache,
-                               sdilConnector: SoftDrinksIndustryLevyConnector)
-                              (implicit config: AppConfig)
+class SDILController(val messagesApi: MessagesApi,
+                     val authConnector: AuthConnector,
+                     cache: SessionCache,
+                     sdilConnector: SoftDrinksIndustryLevyConnector)
+                    (implicit config: AppConfig)
   extends AuthorisedFunctions with FrontendController with I18nSupport {
 
   private def authorisedForSDIL(action: Request[AnyContent] => String => Future[Result]): Action[AnyContent] = {
@@ -112,7 +111,6 @@ class SDILController @Inject()(val messagesApi: MessagesApi,
   def displayComplete(): Action[AnyContent] = Action.async { implicit request =>
     Ok(register.complete())
   }
-
 
 
   private lazy val packageForm = Form(

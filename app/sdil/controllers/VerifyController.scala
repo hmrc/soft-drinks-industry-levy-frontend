@@ -16,8 +16,6 @@
 
 package sdil.controllers
 
-import javax.inject.Inject
-
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import sdil.config.AppConfig
@@ -26,7 +24,7 @@ import sdil.models.DetailsCorrect
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-class VerifyController @Inject()(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class VerifyController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def verify = Action { implicit request =>

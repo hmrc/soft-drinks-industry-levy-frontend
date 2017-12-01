@@ -16,8 +16,6 @@
 
 package sdil.controllers
 
-import javax.inject.Inject
-
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Call, Request, Result}
 import sdil.config.AppConfig
@@ -27,7 +25,7 @@ import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
-class LitreageController @Inject()(val messagesApi: MessagesApi, errorHandler: FrontendErrorHandler, cache: SessionCache)(implicit config: AppConfig)
+class LitreageController(val messagesApi: MessagesApi, errorHandler: FrontendErrorHandler, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def show(pageName: String) = Action.async { implicit request =>

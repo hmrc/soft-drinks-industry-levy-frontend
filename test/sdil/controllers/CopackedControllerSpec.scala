@@ -17,12 +17,10 @@
 package sdil.controllers
 
 import org.jsoup.Jsoup
-import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.controllerhelpers._
 
-class CopackedControllerSpec extends PlayMessagesSpec with MockitoSugar {
+class CopackedControllerSpec extends ControllerSpec {
 
   "GET /copacked" should {
     "always return 200 Ok and the copacked page" in {
@@ -78,6 +76,5 @@ class CopackedControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new CopackedController(messagesApi, mockCache)(testConfig)
-
+  lazy val testController = wire[CopackedController]
 }
