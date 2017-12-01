@@ -24,7 +24,7 @@
 @(identification: Identification, contactDetails: ContactDetails)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title")) {
-    <a class="link-back" href="@sdil.controllers.routes.SDILController.displayContactDetails()">@Messages("sdil.common.back")</a>
+    <a class="link-back" href="@sdil.controllers.routes.ContactDetailsController.displayContactDetails()">@Messages("sdil.common.back")</a>
 
     <h1 class="heading-large">@Messages("sdil.declaration.heading")</h1>
 
@@ -51,13 +51,13 @@
                 sdil.controllers.routes.IdentifyController.identify(), identification.postcode)
 
             @declaration_details_table_row("name",
-                sdil.controllers.routes.SDILController.displayContactDetails(), contactDetails.fullName)
+                sdil.controllers.routes.ContactDetailsController.displayContactDetails(), contactDetails.fullName)
             @declaration_details_table_row("position",
-                sdil.controllers.routes.SDILController.displayContactDetails(), contactDetails.position)
+                sdil.controllers.routes.ContactDetailsController.displayContactDetails(), contactDetails.position)
             @declaration_details_table_row("phone-number",
-                sdil.controllers.routes.SDILController.displayContactDetails(), contactDetails.phoneNumber)
+                sdil.controllers.routes.ContactDetailsController.displayContactDetails(), contactDetails.phoneNumber)
             @declaration_details_table_row("email",
-                sdil.controllers.routes.SDILController.displayContactDetails(), contactDetails.email)
+                sdil.controllers.routes.ContactDetailsController.displayContactDetails(), contactDetails.email)
         </tbody>
     </table>
 

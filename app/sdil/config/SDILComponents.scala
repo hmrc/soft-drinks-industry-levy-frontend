@@ -26,11 +26,11 @@ import play.api.http.{HttpErrorHandler, HttpRequestHandler}
 import play.api.i18n.I18nComponents
 import play.api.inject.{Injector, SimpleInjector}
 import play.api.libs.ws.ahc.AhcWSComponents
-import play.api.{BuiltInComponentsFromContext, Configuration, DefaultApplication, Logger}
+import play.api.{BuiltInComponentsFromContext, Configuration, DefaultApplication}
 import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.controllers.{CopackedController, IdentifyController, ImportController, LitreageController, PackageCopackSmallController, ProductionSiteController, SDILController, StartDateController, VerifyController, WarehouseController}
+import sdil.controllers._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.crypto.ApplicationCryptoDI
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -123,6 +123,7 @@ class SDILComponents(context: Context)
   lazy val startDateController: StartDateController = new StartDateController(messagesApi, Clock.systemDefaultZone(), cache)(appConfig)
   lazy val productionSiteController: ProductionSiteController = new ProductionSiteController(messagesApi, Clock.systemDefaultZone(), cache)(appConfig)
   lazy val warehouseController: WarehouseController = new WarehouseController(messagesApi, cache)(appConfig)
+  lazy val contactDetailsController: ContactDetailsController = new ContactDetailsController(messagesApi, cache)(appConfig)
 
   lazy val appRoutes: app.Routes = new app.Routes(
     httpErrorHandler,
@@ -136,7 +137,8 @@ class SDILComponents(context: Context)
     importController,
     startDateController,
     productionSiteController,
-    warehouseController
+    warehouseController,
+    contactDetailsController
   )
 
   lazy val adminController: AdminController = new AdminController(configuration)

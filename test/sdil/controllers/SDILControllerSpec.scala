@@ -96,29 +96,7 @@ class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with BeforeA
       contentAsString(response) must include(messagesApi("sdil.form.radiocheck.error.summary"))
     }
 
-    "return Status: OK for contact details form GET" in {
-      val request = FakeRequest("GET", "/contact-details")
-      val result = controller.displayContactDetails.apply(request)
 
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("sdil.contact-details.heading"))
-    }
-
-    "return Status: SEE_OTHER for valid contact details form POST" in {
-      val request = FakeRequest("POST", "/contact-details").withFormUrlEncodedBody(validContactDetailsForm: _*)
-      val result = controller.submitContactDetails.apply(request)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.SDILController.displayDeclaration().url
-    }
-
-    "return Status: BAD_REQUEST for invalid contact details form POST" in {
-      val request = FakeRequest("POST", "/contact-details").withFormUrlEncodedBody(invalidContactDetailsForm: _*)
-      val result = controller.submitContactDetails.apply(request)
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messagesApi("error.full-name.invalid"))
-    }
 
     "return Status: 200 when user is logged in and loads declaration page" in {
       val request = FakeRequest("GET", "/declaration")

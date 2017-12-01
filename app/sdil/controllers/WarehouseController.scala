@@ -51,7 +51,7 @@ class WarehouseController @Inject()(val messagesApi: MessagesApi, cache: Session
           case SecondaryWarehouse(_, Some(addr)) => cache.cache("secondaryWarehouses", addrs :+ addr) map { _ =>
             Redirect(routes.WarehouseController.secondaryWarehouse())
           }
-          case _ => Redirect(routes.SDILController.displayContactDetails())
+          case _ => Redirect(routes.ContactDetailsController.displayContactDetails())
         }
       )
     }

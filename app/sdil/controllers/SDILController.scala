@@ -58,18 +58,6 @@ class SDILController @Inject()(val messagesApi: MessagesApi,
     }
   }
 
-  def displayContactDetails: Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(register.contact_details(contactForm))
-  }
-
-  def submitContactDetails: Action[AnyContent] = Action.async { implicit request =>
-    contactForm.bindFromRequest().fold(
-      formWithErrors => Future successful BadRequest(register.contact_details(formWithErrors)),
-      d => cache.cache("contact-details", d) map { _ =>
-        Redirect(routes.SDILController.displayDeclaration())
-      })
-  }
-
   def displayDeclaration: Action[AnyContent] = Action.async { implicit request =>
     Future successful Ok(register.
       declaration(
@@ -113,8 +101,6 @@ class SDILController @Inject()(val messagesApi: MessagesApi,
     Ok(register.complete())
   }
 
-
-
   private lazy val packageForm = Form(
     mapping(
       "isLiable" -> booleanMapping,
@@ -124,12 +110,6 @@ class SDILController @Inject()(val messagesApi: MessagesApi,
       .verifying("sdil.form.check.error", p => !p.isLiable || (p.ownBrands || p.customers))
   )
 
-  private lazy val contactForm = Form(
-    mapping(
-      "fullName" -> text.verifying(Messages("error.full-name.invalid"), _.nonEmpty),
-      "position" -> text.verifying(Messages("error.position.invalid"), _.nonEmpty),
-      "phoneNumber" -> text.verifying(Messages("error.phone-number.invalid"), _.length > 10),
-      "email" -> email)(ContactDetails.apply)(ContactDetails.unapply))
 
 }
 

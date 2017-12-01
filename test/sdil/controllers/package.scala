@@ -59,20 +59,6 @@ package object controllerhelpers extends MockitoSugar {
     "customers" -> "false",
     "ownBrands" -> "false")
 
-  val validContactDetailsForm = Seq(
-    "fullName" -> "hello",
-    "position" -> "boss",
-    "phoneNumber" -> "+4411111111111",
-    "email" -> "a@a.com"
-  )
-
-  val invalidContactDetailsForm = Seq(
-    "fullName" -> "",
-    "position" -> "boss",
-    "phoneNumber" -> "+4411111111111",
-    "email" -> "a@a.com"
-  )
-
   val invalidStartDateForm = Seq(
     "startDateDay" -> "29",
     "startDateMonth" -> "02",

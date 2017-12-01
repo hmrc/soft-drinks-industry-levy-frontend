@@ -147,7 +147,7 @@ error.number.negative=Must be greater than or equal to 0
 error.full-name.invalid=Enter a name
 error.position.invalid=Enter a position
 error.phone-number.invalid=Enter a valid phone number
-error.email.invalid=Enter a valid email
+error.email=Enter a valid email
 
 error.start-date.day-empty=Enter a day
 error.start-date.day-too-high=Enter a valid day

@@ -47,8 +47,8 @@ GET         /register/secondary-warehouse                    sdil.controllers.Wa
 POST        /register/secondary-warehouse                    sdil.controllers.WarehouseController.validate()
 GET         /register/secondary-warehouse/remove/:idx        sdil.controllers.WarehouseController.remove(idx: Int)
 
-GET         /register/contact-details                        sdil.controllers.SDILController.displayContactDetails
-POST        /register/contact-details                        sdil.controllers.SDILController.submitContactDetails
+GET         /register/contact-details                        sdil.controllers.ContactDetailsController.displayContactDetails
+POST        /register/contact-details                        sdil.controllers.ContactDetailsController.submitContactDetails
 
 GET         /register/declaration                            sdil.controllers.SDILController.displayDeclaration
 POST        /register/declaration                            sdil.controllers.SDILController.submitDeclaration()

@@ -142,7 +142,7 @@ class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
       val res = testController.validate()(FakeRequest().withFormUrlEncodedBody("hasWarehouse" -> "false"))
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.SDILController.displayContactDetails().url)
+      redirectLocation(res) mustBe Some(routes.ContactDetailsController.displayContactDetails().url)
     }
 
     "store the new address in keystore if a warehouse is added" in {

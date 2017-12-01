@@ -28,7 +28,7 @@
         @errorSummary(Messages("sdil.common.errorSummary"), contactForm)
     }
 
-    @form(sdil.controllers.routes.SDILController.submitContactDetails()) {
+    @form(sdil.controllers.routes.ContactDetailsController.submitContactDetails()) {
 
         @inputText(contactForm("fullName"), Messages("sdil.contact-details.full-name"))
         @inputText(contactForm("position"), Messages("sdil.contact-details.position"))
