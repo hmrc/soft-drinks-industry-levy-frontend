@@ -93,23 +93,5 @@ class SDILControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       contentType(response).get mustBe HTML
       contentAsString(response) must include(messagesApi("sdil.form.radiocheck.error.summary"))
     }
-
-
-
-    "return Status: 200 when user is logged in and loads declaration page" in {
-      val request = FakeRequest("GET", "/declaration")
-      val result = controller.displayDeclaration.apply(request)
-
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("sdil.declaration.heading"))
-    }
-
-    "return Status: See Other when POST from declaration" in {
-      val request = FakeRequest("POST", "/declaration")
-      val result = controller.submitDeclaration().apply(request)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.SDILController.displayComplete().url
-    }
   }
 }

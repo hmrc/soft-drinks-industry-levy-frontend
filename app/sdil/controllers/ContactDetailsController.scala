@@ -16,21 +16,20 @@
 
 package sdil.controllers
 
-import javax.inject.Inject
-
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.config.AppConfig
 import sdil.models.ContactDetails
+import sdil.models.sdilmodels._
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
-import sdil.models.sdilmodels._
+
 import scala.concurrent.Future
 
-class ContactDetailsController @Inject()(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class ContactDetailsController (val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def displayContactDetails: Action[AnyContent] = Action.async { implicit request =>
@@ -41,7 +40,7 @@ class ContactDetailsController @Inject()(val messagesApi: MessagesApi, cache: Se
     contactForm.bindFromRequest().fold(
       formWithErrors => Future successful BadRequest(register.contact_details(formWithErrors)),
       d => cache.cache("contact-details", d) map { _ =>
-        Redirect(routes.SDILController.displayDeclaration())
+        Redirect(routes.DeclarationController.displayDeclaration())
       })
   }
 

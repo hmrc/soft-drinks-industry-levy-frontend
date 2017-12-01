@@ -56,24 +56,6 @@ class SDILController(val messagesApi: MessagesApi,
     }
   }
 
-  def displayDeclaration: Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(register.
-      declaration(
-        Identification("foo", "bar"),
-        ContactDetails(
-          fullName = "Nick Karaolis",
-          position = "Scala Ninja",
-          phoneNumber = "x directory",
-          email = "nick.karaolis@wouldn'tyouliketoknow.com"
-        )
-      ))
-  }
-
-  def submitDeclaration(): Action[AnyContent] = Action.async { implicit request =>
-    // TODO hit the backend to create subscription
-    Redirect(routes.SDILController.displayComplete())
-  }
-
   def testAuth: Action[AnyContent] = authorisedForSDIL { implicit request => implicit utr =>
     Future successful Ok(views.html.helloworld.hello_world(Some(DesSubmissionResult(true))))
   }

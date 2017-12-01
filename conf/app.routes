@@ -50,8 +50,8 @@ GET         /register/secondary-warehouse/remove/:idx        sdil.controllers.Wa
 GET         /register/contact-details                        sdil.controllers.ContactDetailsController.displayContactDetails
 POST        /register/contact-details                        sdil.controllers.ContactDetailsController.submitContactDetails
 
-GET         /register/declaration                            sdil.controllers.SDILController.displayDeclaration
-POST        /register/declaration                            sdil.controllers.SDILController.submitDeclaration()
+GET         /register/declaration                            sdil.controllers.DeclarationController.displayDeclaration
+POST        /register/declaration                            sdil.controllers.DeclarationController.submitDeclaration()
 
 GET         /register/complete                               sdil.controllers.SDILController.displayComplete()
 

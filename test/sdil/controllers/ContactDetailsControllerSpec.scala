@@ -39,7 +39,7 @@ class ContactDetailsControllerSpec extends ControllerSpec {
       val result = testController.submitContactDetails.apply(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.SDILController.displayDeclaration().url
+      redirectLocation(result).get mustBe routes.DeclarationController.displayDeclaration().url
     }
 
     "return Status: BAD_REQUEST for invalid full name for contact details form submission" in {
@@ -95,6 +95,6 @@ class ContactDetailsControllerSpec extends ControllerSpec {
     }
   }
 
-  lazy val testController = wire[ContactDetailsController]
+  lazy val testController: ContactDetailsController = wire[ContactDetailsController]
 
 }
