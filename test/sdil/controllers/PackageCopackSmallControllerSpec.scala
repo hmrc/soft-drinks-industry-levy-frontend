@@ -18,14 +18,11 @@ package sdil.controllers
 
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching}
-import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.controllerhelpers._
 import sdil.models.Packaging
-import uk.gov.hmrc.http.cache.client.SessionCache
 
-class PackageCopackSmallControllerSpec extends PlayMessagesSpec with MockitoSugar {
+class PackageCopackSmallControllerSpec extends ControllerSpec {
 
   "GET /package-copack-small" should {
     "always return 200 Ok and the package-copack-small page" in {
@@ -91,5 +88,5 @@ class PackageCopackSmallControllerSpec extends PlayMessagesSpec with MockitoSuga
     }
   }
 
-  lazy val testController = new PackageCopackSmallController(messagesApi, mockCache)(testConfig)
+  lazy val testController = wire[PackageCopackSmallController]
 }

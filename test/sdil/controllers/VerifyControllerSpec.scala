@@ -22,11 +22,10 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.controllerhelpers._
 import sdil.models.Address
 import sdil.models.DetailsCorrect.DifferentAddress
 
-class VerifyControllerSpec extends PlayMessagesSpec with MockitoSugar {
+class VerifyControllerSpec extends ControllerSpec {
 
   "GET /verify" should {
     "always return 200 Ok and the verify page" in {
@@ -82,5 +81,5 @@ class VerifyControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new VerifyController(messagesApi, mockCache)(testConfig)
+  lazy val testController = wire[VerifyController]
 }

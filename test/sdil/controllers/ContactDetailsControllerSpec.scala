@@ -16,12 +16,10 @@
 
 package sdil.controllers
 
-import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.controllerhelpers.{mockCache, testConfig}
 
-class ContactDetailsControllerSpec extends PlayMessagesSpec with MockitoSugar {
+class ContactDetailsControllerSpec extends ControllerSpec {
 
   "Contact details controller" should {
     "return Status: OK for displaying contact details page" in {
@@ -97,6 +95,6 @@ class ContactDetailsControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new ContactDetailsController(messagesApi, mockCache)(testConfig)
+  lazy val testController = wire[ContactDetailsController]
 
 }

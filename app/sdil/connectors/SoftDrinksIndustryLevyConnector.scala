@@ -16,8 +16,6 @@
 
 package sdil.connectors
 
-import javax.inject.{Inject, Singleton}
-
 import play.api.{Configuration, Environment}
 import sdil.models._
 import sdil.models.sdilmodels._
@@ -27,11 +25,10 @@ import uk.gov.hmrc.play.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class SoftDrinksIndustryLevyConnector @Inject()(http: HttpClient,
-                                                environment: Environment,
-                                                val runModeConfiguration: Configuration
-                                               )(implicit ec: ExecutionContext) extends ServicesConfig {
+class SoftDrinksIndustryLevyConnector(http: HttpClient,
+                                      environment: Environment,
+                                      val runModeConfiguration: Configuration
+                                     )(implicit ec: ExecutionContext) extends ServicesConfig {
 
   lazy val baseURL: String = baseUrl("soft-drinks-industry-levy")
   lazy val serviceURL = "hello-world"

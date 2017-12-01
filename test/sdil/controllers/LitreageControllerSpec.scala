@@ -20,18 +20,14 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import org.mockito.verification.VerificationMode
-import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.controllerhelpers._
 import sdil.models.{Litreage, Packaging}
-import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.Future
 
-class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
+class LitreageControllerSpec extends ControllerSpec {
 
   stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
 
@@ -53,7 +49,7 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "redirect to the package copack page if the form data is valid and the user is packaging for their customers" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
+      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(Packaging(isLiable = false, ownBrands = true, customers = true))))
 
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
@@ -64,7 +60,7 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "redirect to the package copack small page if the form data is valid and the user is not packaging for their customers" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
+      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(Packaging(isLiable = false, ownBrands = true, customers = false))))
 
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "2", "higherRateLitres" -> "1")
@@ -79,7 +75,7 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.validate("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
-      verify(controllerhelpers.mockCache, once).cache(matching("packageOwn"), matching(Litreage(2, 3)))(any(), any(), any())
+      verify(mockCache, once).cache(matching("packageOwn"), matching(Litreage(2, 3)))(any(), any(), any())
     }
   }
 
@@ -92,7 +88,7 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "return a page with a link back to the package own page if the user packages liable drinks" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
+      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(Packaging(true, true, false))))
 
       val res = testController.show("packageCopack")(FakeRequest())
@@ -103,7 +99,7 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
 
     "return a page with a link back to the package page if the user does not package liable drinks" in {
-      when(controllerhelpers.mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
+      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(Packaging(false, false, false))))
 
       val res = testController.show("packageCopack")(FakeRequest())
@@ -135,7 +131,7 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.validate("packageCopack")(request)
 
       status(res) mustBe SEE_OTHER
-      verify(controllerhelpers.mockCache, once).cache(matching("packageCopack"), matching(Litreage(3, 4)))(any(), any(), any())
+      verify(mockCache, once).cache(matching("packageCopack"), matching(Litreage(3, 4)))(any(), any(), any())
     }
   }
 
@@ -169,7 +165,7 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.validate("packageCopackSmallVol")(request)
 
       status(res) mustBe SEE_OTHER
-      verify(controllerhelpers.mockCache, once).cache(matching("packageCopackSmallVol"), matching(Litreage(4, 5)))(any(), any(), any())
+      verify(mockCache, once).cache(matching("packageCopackSmallVol"), matching(Litreage(4, 5)))(any(), any(), any())
     }
   }
 
@@ -203,7 +199,7 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.validate("copackedVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      verify(controllerhelpers.mockCache, once).cache(matching("copackedVolume"), matching(Litreage(5, 6)))(any(), any(), any())
+      verify(mockCache, once).cache(matching("copackedVolume"), matching(Litreage(5, 6)))(any(), any(), any())
     }
   }
 
@@ -237,13 +233,11 @@ class LitreageControllerSpec extends PlayMessagesSpec with MockitoSugar {
       val res = testController.validate("importVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      verify(controllerhelpers.mockCache, once).cache(matching("importVolume"), matching(Litreage(6, 7)))(any(), any(), any())
+      verify(mockCache, once).cache(matching("importVolume"), matching(Litreage(6, 7)))(any(), any(), any())
     }
   }
 
-  lazy val testController = new LitreageController(messagesApi, mockErrorHandler, mockCache)(testConfig)
-
-  lazy val mockErrorHandler = mock[FrontendErrorHandler]
+  lazy val testController = wire[LitreageController]
 
   lazy val once: VerificationMode = times(1)
 }

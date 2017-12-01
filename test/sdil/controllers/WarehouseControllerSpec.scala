@@ -29,7 +29,7 @@ import sdil.controllers.controllerhelpers._
 import sdil.models.{Address, Packaging}
 import sdil.utils.TestConfig
 
-class WarehouseControllerSpec extends PlayMessagesSpec with MockitoSugar {
+class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
 
   "GET /secondary-warehouse" should {
     "return 200 Ok and the secondary warehouse page if no secondary warehouses have been added" in {

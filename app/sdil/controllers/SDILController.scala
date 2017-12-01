@@ -17,17 +17,15 @@
 package sdil.controllers
 
 import java.util.UUID
-import javax.inject.Inject
 
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.sdilmodels._
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.saUtr
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
@@ -38,11 +36,11 @@ import views.html.softdrinksindustrylevy._
 
 import scala.concurrent.Future
 
-class SDILController @Inject()(val messagesApi: MessagesApi,
-                               val authConnector: AuthConnector,
-                               cache: SessionCache,
-                               sdilConnector: SoftDrinksIndustryLevyConnector)
-                              (implicit config: AppConfig)
+class SDILController(val messagesApi: MessagesApi,
+                     val authConnector: AuthConnector,
+                     cache: SessionCache,
+                     sdilConnector: SoftDrinksIndustryLevyConnector)
+                    (implicit config: AppConfig)
   extends AuthorisedFunctions with FrontendController with I18nSupport {
 
   private def authorisedForSDIL(action: Request[AnyContent] => String => Future[Result]): Action[AnyContent] = {
@@ -110,6 +108,4 @@ class SDILController @Inject()(val messagesApi: MessagesApi,
       .verifying("sdil.form.check.error", p => !p.isLiable || (p.ownBrands || p.customers))
   )
 
-
 }
-

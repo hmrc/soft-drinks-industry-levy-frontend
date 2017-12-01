@@ -16,31 +16,16 @@
 
 package sdil.controllers
 
-import java.time.{Clock, Instant, ZoneId}
-
-import org.mockito.ArgumentMatchers.{eq => matching, _}
-import org.mockito.Mockito._
-import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.mockito.MockitoSugar
-import sdil.config.AppConfig
 import sdil.models.Packaging
-import sdil.utils.TestConfig
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 package object controllerhelpers extends MockitoSugar {
 
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
-
   val userWithUtr: Future[Option[String]] = Future successful Some("UTR")
   val userNoUtr: Future[Option[String]] = Future successful None
-
-  def sdilAuthMock(returnValue: Future[Option[String]]): OngoingStubbing[Future[Option[String]]] =
-    when(mockAuthConnector.authorise(any(), any[Retrieval[Option[String]]]())(any(), any[ExecutionContext]))
-      .thenReturn(returnValue)
 
   val notLoggedIn: Future[Option[String]] = Future failed new InvalidBearerToken
 
@@ -81,22 +66,4 @@ package object controllerhelpers extends MockitoSugar {
   )
   val packagingIsLiable = Packaging(true, true, false)
   val packagingIsntLiable = Packaging(false, false, false)
-
-  lazy val mockCache = {
-    val m = mock[SessionCache]
-    when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
-    when(m.fetchAndGetEntry(any())(any(), any(), any())).thenReturn(Future.successful(None))
-    m
-  }
-
-  def stubCacheEntry[T](key: String, value: Option[T]) = {
-    when(mockCache.fetchAndGetEntry[T](matching(key))(any(), any(), any())).thenReturn(Future.successful(value))
-  }
-
-  lazy val dateBeforeTaxStart = Clock.fixed(Instant.parse("2017-11-18T14:19:00.000Z"), ZoneId.systemDefault())
-
-  lazy val dateAfterTaxStart = Clock.fixed(Instant.parse("2018-04-07T00:00:00.000Z"), ZoneId.systemDefault())
-
-  lazy val testConfig = TestConfig
-
 }
