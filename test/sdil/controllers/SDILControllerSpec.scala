@@ -24,11 +24,9 @@ import play.api.test.Helpers._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.controllerhelpers._
 
-class SDILControllerSpec extends PlayMessagesSpec with MockitoSugar with BeforeAndAfterEach {
+class SDILControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
-  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
-
-  val controller = new SDILController(messagesApi, mockAuthConnector, mockCache, mockSdilConnector)(testConfig)
+  val controller = wire[SDILController]
 
   override def beforeEach() {
     reset(mockSdilConnector, mockAuthConnector)

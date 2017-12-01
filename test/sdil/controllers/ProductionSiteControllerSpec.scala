@@ -16,17 +16,18 @@
 
 package sdil.controllers
 
+import java.time.LocalDate
+
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.controllerhelpers._
 import sdil.models.Address
+import sdil.utils.TestConfig
 
-class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
+class ProductionSiteControllerSpec extends ControllerSpec {
 
   "GET /production-site" should {
     "return 200 Ok and the production site page if no other sites have been added" in {
@@ -47,12 +48,15 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
     "return a page with a link back to the start date page if the date is after the sugar tax start date" in {
       stubCacheEntry[Seq[Address]]("productionSites", None)
+      TestConfig.setTaxStartDate(LocalDate.now minusDays 1)
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.StartDateController.displayStartDate().url
+
+      TestConfig.resetTaxStartDate()
     }
 
     "return a page with a link back to the import volume page if the date is before the sugar tax start date " +
@@ -61,7 +65,7 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
       stubCacheEntry[Boolean]("import", Some(true))
 
-      val res = testControllerBeforeTaxStart.addSite()(FakeRequest())
+      val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
@@ -74,7 +78,7 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
       stubCacheEntry[Boolean]("import", Some(false))
 
-      val res = testControllerBeforeTaxStart.addSite()(FakeRequest())
+      val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
@@ -170,7 +174,5 @@ class ProductionSiteControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new ProductionSiteController(messagesApi, dateAfterTaxStart, mockCache)(testConfig)
-
-  lazy val testControllerBeforeTaxStart = new ProductionSiteController(messagesApi, dateBeforeTaxStart, mockCache)(testConfig)
+  lazy val testController = wire[ProductionSiteController]
 }

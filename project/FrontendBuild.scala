@@ -41,6 +41,10 @@ object FrontendBuild extends Build {
         "uk.gov.hmrc" %% "auth-client" % "2.3.0",
         "uk.gov.hmrc" %% "http-caching-client" % "7.0.0",
         "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0",
+        "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided",
+        "com.softwaremill.macwire" %% "macrosakka" % "2.3.0" % "provided",
+        "com.softwaremill.macwire" %% "util" % "2.3.0",
+        "com.softwaremill.macwire" %% "proxy" % "2.3.0",
 
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % "test",

@@ -16,16 +16,19 @@
 
 package sdil.controllers
 
-import java.io.File
-
+import org.mockito.ArgumentMatchers.{any, eq => matching}
+import org.mockito.Mockito.when
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory, PlaySpec}
-import play.api.i18n.{DefaultLangs, DefaultMessagesApi, Messages, MessagesApi}
-import play.api.test.FakeRequest
-import play.api.{Application, ApplicationLoader, Configuration, Environment}
+import play.api.{Application, ApplicationLoader}
 import play.core.DefaultWebCommands
 import sdil.config.SDILApplicationLoader
+import sdil.utils.TestWiring
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
 
-trait PlayMessagesSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicationFactory {
+import scala.concurrent.{ExecutionContext, Future}
+
+trait ControllerSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicationFactory with TestWiring {
   override def fakeApplication: Application = {
     val context = ApplicationLoader.Context(
       environment = env,
@@ -37,9 +40,11 @@ trait PlayMessagesSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplica
     loader.load(context)
   }
 
-  private lazy val env = Environment.simple(new File("."))
-  private lazy val configuration = Configuration.load(env, Map("metrics.enabled" -> false.asInstanceOf[AnyRef]))
+  def stubCacheEntry[T](key: String, value: Option[T]) = {
+    when(mockCache.fetchAndGetEntry[T](matching(key))(any(), any(), any())).thenReturn(Future.successful(value))
+  }
 
-  val messagesApi: MessagesApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
-  implicit val defaultMessages: Messages = messagesApi.preferred(FakeRequest())
+  def sdilAuthMock(returnValue: Future[Option[String]]): OngoingStubbing[Future[Option[String]]] =
+    when(mockAuthConnector.authorise(any(), any[Retrieval[Option[String]]]())(any(), any[ExecutionContext]))
+      .thenReturn(returnValue)
 }

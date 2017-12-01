@@ -16,8 +16,7 @@
 
 package sdil.controllers
 
-import java.time.{Clock, LocalDate}
-import javax.inject.Inject
+import java.time.LocalDate
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Call, Request}
@@ -29,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
-class WarehouseController @Inject()(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class WarehouseController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def secondaryWarehouse = Action.async { implicit request =>

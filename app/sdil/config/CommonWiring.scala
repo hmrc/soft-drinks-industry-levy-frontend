@@ -16,16 +16,17 @@
 
 package sdil.config
 
-import play.api._
+import akka.stream.Materializer
 import play.api.i18n.MessagesApi
-import play.api.mvc.Request
-import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import play.api.{Configuration, Environment}
 
-class SDILErrorHandler(val messagesApi: MessagesApi, val configuration: Configuration)(implicit config: AppConfig)
-  extends FrontendErrorHandler {
+import scala.concurrent.ExecutionContext
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = {
-    views.html.error_template(pageTitle, heading, message)
-  }
+trait CommonWiring {
+  val configuration: Configuration
+  val environment: Environment
+  val messagesApi: MessagesApi
+  implicit val ec: ExecutionContext
+  implicit val appConfig: AppConfig
+  implicit val materializer: Materializer
 }

@@ -16,8 +16,7 @@
 
 package sdil.controllers
 
-import java.time.{Clock, LocalDate}
-import javax.inject.Inject
+import java.time.LocalDate
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Call, Request}
@@ -29,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
-class ProductionSiteController @Inject()(val messagesApi: MessagesApi, clock: Clock, cache: SessionCache)(implicit config: AppConfig)
+class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def addSite = Action.async { implicit request =>
@@ -75,7 +74,7 @@ class ProductionSiteController @Inject()(val messagesApi: MessagesApi, clock: Cl
   }
 
   private def getBackLink(implicit request: Request[_]): Future[Call] = {
-    if (LocalDate.now(clock).isBefore(config.taxStartDate)) {
+    if (LocalDate.now.isBefore(config.taxStartDate)) {
       cache.fetchAndGetEntry[Boolean]("import") map {
         case Some(true) => routes.LitreageController.show("importVolume")
         case Some(false) => routes.ImportController.display()

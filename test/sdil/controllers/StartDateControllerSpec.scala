@@ -16,12 +16,11 @@
 
 package sdil.controllers
 
-import java.time.{Clock, LocalDate}
+import java.time.LocalDate
 
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
-import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.controllerhelpers._
@@ -30,9 +29,9 @@ import sdil.utils.TestConfig
 
 import scala.concurrent.Future
 
-class StartDateControllerSpec extends PlayMessagesSpec with MockitoSugar with BeforeAndAfterAll {
+class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
-  val controller = new StartDateController(messagesApi, Clock.systemDefaultZone(), mockCache)(testConfig)
+  val controller = wire[StartDateController]
 
   "StartDateController" should {
     "return Status: 200 when user is logged in and loads start date page" in {

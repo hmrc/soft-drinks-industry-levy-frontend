@@ -18,14 +18,12 @@ package sdil.controllers
 
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.controllerhelpers._
 import sdil.models.Identification
-import uk.gov.hmrc.http.cache.client.SessionCache
+import sdil.utils.TestWiring
 
-class IdentifyControllerSpec extends PlayMessagesSpec with MockitoSugar {
+class IdentifyControllerSpec extends ControllerSpec {
 
   "GET /identify" should {
     "always return 200 Ok and the identify page" in {
@@ -62,6 +60,5 @@ class IdentifyControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
   }
 
-  lazy val testController = new IdentifyController(messagesApi, mockCache)(testConfig)
-
+  lazy val testController = wire[IdentifyController]
 }
