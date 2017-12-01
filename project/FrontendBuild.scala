@@ -52,7 +52,6 @@ object FrontendBuild extends Build {
         "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % "test"
       ),
       retrieveManaged := true,
-      routesGenerator := StaticRoutesGenerator,
       resolvers ++= Seq(
         Resolver.bintrayRepo("hmrc", "releases"),
         Resolver.jcenterRepo

@@ -16,18 +16,14 @@
 
 package sdil.config
 
-import javax.inject.Inject
+import play.api.{Application, ApplicationLoader, LoggerConfigurator}
 
-import play.api._
-import play.api.i18n.MessagesApi
-import play.api.mvc.Request
-import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+class SDILApplicationLoader extends ApplicationLoader {
+  override def load(context: ApplicationLoader.Context): Application = {
+    LoggerConfigurator(context.environment.classLoader).foreach {
+      _.configure(context.environment)
+    }
 
-class SDILErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Configuration)(implicit config: AppConfig)
-  extends FrontendErrorHandler {
-
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = {
-    views.html.error_template(pageTitle, heading, message)
+    new SDILComponents(context).application
   }
 }
