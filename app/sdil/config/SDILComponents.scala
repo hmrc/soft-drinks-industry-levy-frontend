@@ -43,6 +43,7 @@ import uk.gov.hmrc.play.bootstrap.filters.frontend._
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.{CookieCryptoFilter, DefaultCookieCryptoFilter, SessionCookieCrypto}
 import uk.gov.hmrc.play.bootstrap.filters.frontend.deviceid.{DefaultDeviceIdFilter, DeviceIdFilter}
 import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, FrontendErrorHandler, HttpClient, RequestHandler}
+import uk.gov.hmrc.play.health.AdminController
 
 class SDILComponents(context: Context)
   extends BuiltInComponentsFromContext(context)
@@ -138,11 +139,13 @@ class SDILComponents(context: Context)
     warehouseController
   )
 
+  lazy val adminController: AdminController = new AdminController(configuration)
+
   lazy val healthRoutes: health.Routes = new health.Routes()
 
   lazy val templateController: Template = new Template(httpErrorHandler)
 
-  lazy val customInjector: Injector = new SimpleInjector(injector) + templateController + wsApi
+  lazy val customInjector: Injector = new SimpleInjector(injector) + templateController + adminController + wsApi
 
   lazy val templateRoutes: template.Routes = new template.Routes()
 
