@@ -82,7 +82,7 @@ class ProductionSiteControllerSpec extends ControllerSpec {
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.ImportController.display().url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites").url
     }
   }
 

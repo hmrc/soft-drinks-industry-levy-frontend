@@ -41,7 +41,7 @@ class PackageController (val messagesApi: MessagesApi, cache: SessionCache)(impl
         validFormData match {
           case Packaging(_, true, _) => Redirect(routes.LitreageController.show("packageOwn"))
           case Packaging(_, _, true) => Redirect(routes.LitreageController.show("packageCopack"))
-          case _ => Redirect(routes.PackageCopackSmallController.display())
+          case _ => Redirect(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked"))
         }
       }
     )

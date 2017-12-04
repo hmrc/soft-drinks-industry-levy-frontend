@@ -39,15 +39,13 @@ trait RoutesWiring extends CommonWiring {
   lazy val identifyController: IdentifyController = wire[IdentifyController]
   lazy val verifyController: VerifyController = wire[VerifyController]
   lazy val litreageController: LitreageController = wire[LitreageController]
-  lazy val packageCopackController: PackageCopackSmallController = wire[PackageCopackSmallController]
-  lazy val copackedController: CopackedController = wire[CopackedController]
-  lazy val importController: ImportController = wire[ImportController]
   lazy val startDateController: StartDateController = wire[StartDateController]
   lazy val productionSiteController: ProductionSiteController = wire[ProductionSiteController]
   lazy val warehouseController: WarehouseController = wire[WarehouseController]
   lazy val contactDetailsController: ContactDetailsController = wire[ContactDetailsController]
   lazy val declarationController: DeclarationController = wire[DeclarationController]
   lazy val packageController: PackageController = wire[PackageController]
+  lazy val radioFormController: RadioFormController = wire[RadioFormController]
 
   private lazy val appRoutes: app.Routes = wire[app.Routes]
   private lazy val healthRoutes = new health.Routes()

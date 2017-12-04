@@ -97,7 +97,7 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.ImportController.display().url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites").url
 
       TestConfig.resetTaxStartDate()
     }

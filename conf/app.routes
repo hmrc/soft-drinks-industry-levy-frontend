@@ -18,20 +18,20 @@ POST        /register/package-own                            sdil.controllers.Li
 GET         /register/package-copack                         sdil.controllers.LitreageController.show(pageName = "packageCopack")
 POST        /register/package-copack                         sdil.controllers.LitreageController.validate(pageName = "packageCopack")
 
-GET         /register/package-copack-small                   sdil.controllers.PackageCopackSmallController.display()
-POST        /register/package-copack-small                   sdil.controllers.PackageCopackSmallController.submit()
+GET         /register/package-copack-small                   sdil.controllers.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked")
+POST        /register/package-copack-small                   sdil.controllers.RadioFormController.submit(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked")
 
 GET         /register/package-copack-small-vol               sdil.controllers.LitreageController.show(pageName = "packageCopackSmallVol")
 POST        /register/package-copack-small-vol               sdil.controllers.LitreageController.validate(pageName = "packageCopackSmallVol")
 
-GET         /register/copacked                               sdil.controllers.CopackedController.display()
-POST        /register/copacked                               sdil.controllers.CopackedController.submit()
+GET         /register/copacked                               sdil.controllers.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import")
+POST        /register/copacked                               sdil.controllers.RadioFormController.submit(page = "copacked", trueLink = "copackedVolume", falseLink = "import")
 
 GET         /register/copacked-volume                        sdil.controllers.LitreageController.show(pageName = "copackedVolume")
 POST        /register/copacked-volume                        sdil.controllers.LitreageController.validate(pageName = "copackedVolume")
 
-GET         /register/import                                 sdil.controllers.ImportController.display()
-POST        /register/import                                 sdil.controllers.ImportController.submit()
+GET         /register/import                                 sdil.controllers.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
+POST        /register/import                                 sdil.controllers.RadioFormController.submit(page = "import", trueLink = "importVolume", falseLink = "production-sites")
 
 GET         /register/import-volume                          sdil.controllers.LitreageController.show(pageName = "importVolume")
 POST        /register/import-volume                          sdil.controllers.LitreageController.validate(pageName = "importVolume")

@@ -130,7 +130,7 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
   private def getBackLink(implicit request: Request[_]) = {
     cache.fetchAndGetEntry[Boolean]("import") map {
       case Some(true) => routes.LitreageController.show("importVolume")
-      case Some(false) => routes.ImportController.display()
+      case Some(false) => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
       case None => routes.PackageController.displayPackage()
     }
   }

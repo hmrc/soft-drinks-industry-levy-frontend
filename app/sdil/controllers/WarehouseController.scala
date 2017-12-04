@@ -84,7 +84,7 @@ class WarehouseController(val messagesApi: MessagesApi, cache: SessionCache)(imp
     if (LocalDate.now.isBefore(config.taxStartDate)) {
       cache.fetchAndGetEntry[Boolean]("import") map {
         case Some(true) => routes.LitreageController.show("importVolume")
-        case _ => routes.ImportController.display()
+        case _ => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
       }
     } else {
       routes.StartDateController.displayStartDate()

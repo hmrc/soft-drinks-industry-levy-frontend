@@ -67,7 +67,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.PackageCopackSmallController.display().url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked").url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -123,7 +123,7 @@ class LitreageControllerSpec extends ControllerSpec {
 
       val res = testController.validate("packageCopack")(request)
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.PackageCopackSmallController.display().url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked").url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -157,7 +157,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("packageCopackSmallVol")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.CopackedController.display().url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import").url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -191,7 +191,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("copackedVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.ImportController.display().url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites").url)
     }
 
     "store the form data in keystore if it is valid" in {

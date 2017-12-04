@@ -50,10 +50,10 @@ class LitreageController(val messagesApi: MessagesApi, errorHandler: FrontendErr
   private def nextPageFor(page: String, packaging: Packaging)(implicit request: Request[_]): Result = {
     page match {
       case "packageOwn" if packaging.customers => Redirect(routes.LitreageController.show("packageCopack"))
-      case "packageOwn" => Redirect(routes.PackageCopackSmallController.display())
-      case "packageCopack" => Redirect(routes.PackageCopackSmallController.display())
-      case "packageCopackSmallVol" => Redirect(routes.CopackedController.display())
-      case "copackedVolume" => Redirect(routes.ImportController.display())
+      case "packageOwn" => Redirect(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked"))
+      case "packageCopack" => Redirect(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked"))
+      case "packageCopackSmallVol" => Redirect(routes.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import"))
+      case "copackedVolume" => Redirect(routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites"))
       case "importVolume" => Redirect(routes.StartDateController.displayStartDate())
       case _ => BadRequest(errorHandler.badRequestTemplate)
     }
@@ -64,9 +64,9 @@ class LitreageController(val messagesApi: MessagesApi, errorHandler: FrontendErr
       case "packageOwn" => routes.PackageController.displayPackage()
       case "packageCopack" if packaging.ownBrands => routes.LitreageController.show("packageOwn")
       case "packageCopack" => routes.PackageController.displayPackage()
-      case "packageCopackSmallVol" => routes.PackageCopackSmallController.display()
-      case "copackedVolume" => routes.CopackedController.display()
-      case "importVolume" => routes.ImportController.display()
+      case "packageCopackSmallVol" => routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked")
+      case "copackedVolume" => routes.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import")
+      case "importVolume" => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
       case _ => throw new IllegalArgumentException(s"Invalid page name $page")
     }
   }
