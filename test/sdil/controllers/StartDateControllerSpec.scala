@@ -45,12 +45,23 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     "return Status: See Other for start date form POST with valid date and redirect to add site page" in {
       stubCacheEntry[Packaging]("packaging", Some(packagingIsLiable))
 
-      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm:_*)
+      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
 
       val response = controller.submitStartDate().apply(request)
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.ProductionSiteController.addSite().url
+    }
+
+    "return Status: Ok and redirect to addSite page for liable form in past" in {
+      stubCacheEntry[Packaging]("packaging", Some(packagingIsLiable))
+      TestConfig.setTaxStartDate (LocalDate.now minusDays 1)
+
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDatePastForm: _*)
+
+      val response = controller.displayStartDate().apply(request)
+
+      contentAsString(response) must include(messagesApi("sdil.address.line1"))
     }
 
     "return Status: See Other for start date form POST with valid date and redirect to secondary warehouse page" in {
@@ -63,8 +74,17 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       redirectLocation(response).get mustBe routes.WarehouseController.secondaryWarehouse().url
     }
 
-    "return Status: Bad Request for invalid start date form POST request with invalid day and display field hint .." in {
-      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateDayForm: _*)
+    "return Status: Bad Request for invalid start date form POST request with day too low and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateDayTooLowForm: _*)
+      val response = controller.submitStartDate().apply(request)
+
+      status(response) mustBe BAD_REQUEST
+      contentType(response).get mustBe HTML
+      contentAsString(response) must include(messagesApi("error.start-date.day-too-low"))
+    }
+
+    "return Status: Bad Request for invalid start date form POST request with day too high and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateDayTooHighForm: _*)
       val response = controller.submitStartDate().apply(request)
 
       status(response) mustBe BAD_REQUEST
@@ -72,8 +92,17 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       contentAsString(response) must include(messagesApi("error.start-date.day-too-high"))
     }
 
-    "return Status: Bad Request for invalid start date form POST request with invalid month and display field hint .." in {
-      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateMonthForm: _*)
+    "return Status: Bad Request for invalid start date form POST request with month too low and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateMonthTooLowForm: _*)
+      val response = controller.submitStartDate().apply(request)
+
+      status(response) mustBe BAD_REQUEST
+      contentType(response).get mustBe HTML
+      contentAsString(response) must include(messagesApi("error.start-date.month-too-low"))
+    }
+
+    "return Status: Bad Request for invalid start date form POST request with month too high and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateMonthTooHighForm: _*)
       val response = controller.submitStartDate().apply(request)
 
       status(response) mustBe BAD_REQUEST
@@ -81,8 +110,17 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       contentAsString(response) must include(messagesApi("error.start-date.month-too-high"))
     }
 
-    "return Status: Bad Request for invalid start date form POST request with invalid year and display field hint .." in {
-      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateYearForm: _*)
+    "return Status: Bad Request for invalid start date form POST request with year too low and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateYearTooLowForm: _*)
+      val response = controller.submitStartDate().apply(request)
+
+      status(response) mustBe BAD_REQUEST
+      contentType(response).get mustBe HTML
+      contentAsString(response) must include(messagesApi("error.start-date.year-too-low"))
+    }
+
+    "return Status: Bad Request for invalid start date form POST request with year too high and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateYearTooHighForm: _*)
       val response = controller.submitStartDate().apply(request)
 
       status(response) mustBe BAD_REQUEST
@@ -98,19 +136,30 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       contentType(response).get mustBe HTML
       contentAsString(response) must include(messagesApi("error.start-date.date-invalid"))
     }
-  }
 
-  lazy val validStartDateForm = Seq(
-    "startDateDay" -> LocalDate.now.getDayOfMonth.toString,
-    "startDateMonth" -> LocalDate.now.getMonthValue.toString,
-    "startDateYear" -> LocalDate.now.getYear.toString
-  )
+  "return Status: Bad Request for invalid start date form POST request with date in future and display field hint .." in {
+    val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateFutureForm: _*)
+    val response = controller.submitStartDate().apply(request)
 
-  override protected def beforeAll(): Unit = {
-    TestConfig.setTaxStartDate(LocalDate.now minusDays 1)
+    status(response) mustBe BAD_REQUEST
+    contentType(response).get mustBe HTML
+    contentAsString(response) must include(messagesApi("error.start-date.date-too-high"))
   }
+    "return Status: Bad Request for invalid start date form POST request with date in past and display field hint .." in {
+    val request = FakeRequest().withFormUrlEncodedBody(invalidStartDatePastForm: _*)
+    val response = controller.submitStartDate().apply(request)
 
-  override protected def afterAll(): Unit = {
-    TestConfig.resetTaxStartDate()
+    status(response) mustBe BAD_REQUEST
+    contentType(response).get mustBe HTML
+    contentAsString(response) must include(messagesApi("error.start-date.date-too-low"))
   }
+}
+
+override protected def beforeAll (): Unit = {
+  TestConfig.setTaxStartDate (LocalDate.now minusDays 1)
+}
+
+  override protected def afterAll (): Unit = {
+  TestConfig.resetTaxStartDate ()
+}
 }
