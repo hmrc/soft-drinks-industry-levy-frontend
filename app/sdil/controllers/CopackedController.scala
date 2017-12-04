@@ -54,7 +54,7 @@ class CopackedController(val messagesApi: MessagesApi, cache: SessionCache)(impl
     cache.fetchAndGetEntry[Boolean]("packageCopackSmall") map {
       case Some(true) => routes.LitreageController.show("packageCopackSmallVol")
       case Some(false) => routes.PackageCopackSmallController.display()
-      case _ => routes.SDILController.displayPackage()
+      case _ => routes.PackageController.displayPackage()
     }
   }
 }

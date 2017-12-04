@@ -39,7 +39,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: SessionCache)(implic
         if (data == DetailsCorrect.No) {
           Redirect(routes.IdentifyController.identify())
         } else {
-          Redirect(routes.SDILController.displayPackage())
+          Redirect(routes.PackageController.displayPackage())
         }
       }
     )

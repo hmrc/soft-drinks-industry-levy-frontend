@@ -9,8 +9,8 @@ POST        /register/identify                               sdil.controllers.Id
 GET         /register/verify                                 sdil.controllers.VerifyController.verify()
 POST        /register/verify                                 sdil.controllers.VerifyController.validate()
 
-GET         /register/package                                sdil.controllers.SDILController.displayPackage()
-POST        /register/package                                sdil.controllers.SDILController.submitPackage()
+GET         /register/package                                sdil.controllers.PackageController.displayPackage()
+POST        /register/package                                sdil.controllers.PackageController.submitPackage()
 
 GET         /register/package-own                            sdil.controllers.LitreageController.show(pageName = "packageOwn")
 POST        /register/package-own                            sdil.controllers.LitreageController.validate(pageName = "packageOwn")

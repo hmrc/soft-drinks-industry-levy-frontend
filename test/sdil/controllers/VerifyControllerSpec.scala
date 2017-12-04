@@ -49,7 +49,7 @@ class VerifyControllerSpec extends ControllerSpec {
       val res = testController.validate()(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.SDILController.displayPackage().url)
+      redirectLocation(res) mustBe Some(routes.PackageController.displayPackage().url)
     }
 
     "redirect to the identify page if the details are incorrect" in {

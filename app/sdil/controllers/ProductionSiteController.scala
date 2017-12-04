@@ -78,7 +78,7 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache
       cache.fetchAndGetEntry[Boolean]("import") map {
         case Some(true) => routes.LitreageController.show("importVolume")
         case Some(false) => routes.ImportController.display()
-        case None => routes.SDILController.displayPackage()
+        case None => routes.PackageController.displayPackage()
       }
     } else {
       routes.StartDateController.displayStartDate()

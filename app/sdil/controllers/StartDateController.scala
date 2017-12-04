@@ -44,7 +44,7 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
         packaging match {
           case Some(p) if p.isLiable => Redirect(routes.ProductionSiteController.addSite())
           case Some(p) => Redirect(routes.WarehouseController.secondaryWarehouse())
-          case None => Redirect(routes.SDILController.displayPackage())
+          case None => Redirect(routes.PackageController.displayPackage())
         }
       }
     } else {
@@ -131,7 +131,7 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
     cache.fetchAndGetEntry[Boolean]("import") map {
       case Some(true) => routes.LitreageController.show("importVolume")
       case Some(false) => routes.ImportController.display()
-      case None => routes.SDILController.displayPackage()
+      case None => routes.PackageController.displayPackage()
     }
   }
 }

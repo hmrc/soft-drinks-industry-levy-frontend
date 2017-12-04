@@ -47,7 +47,7 @@
 
     <h1 class="heading-large">@Messages("sdil.package.heading")</h1>
     @govHelpers.errorSummary(Messages("sdil.form.radiocheck.error.summary"), packageForm)
-    @govHelpers.form(action = sdil.controllers.routes.SDILController.submitPackage()) {
+    @govHelpers.form(action = sdil.controllers.routes.PackageController.submitPackage()) {
 
         <div class="form-group">
             @radioButtonWithConditionalContent(

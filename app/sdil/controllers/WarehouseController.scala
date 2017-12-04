@@ -76,7 +76,7 @@ class WarehouseController(val messagesApi: MessagesApi, cache: SessionCache)(imp
     cache.fetchAndGetEntry[Packaging]("packaging") flatMap {
       case Some(p) if p.isLiable => routes.ProductionSiteController.addSite()
       case Some(p) => backToStartDate
-      case _ => routes.SDILController.displayPackage()
+      case _ => routes.PackageController.displayPackage()
     }
   }
 

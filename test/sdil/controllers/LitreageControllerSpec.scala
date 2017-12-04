@@ -106,7 +106,7 @@ class LitreageControllerSpec extends ControllerSpec {
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.SDILController.displayPackage().url
+      html.select("a.link-back").attr("href") mustBe routes.PackageController.displayPackage().url
     }
   }
 

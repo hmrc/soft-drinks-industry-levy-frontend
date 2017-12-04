@@ -54,7 +54,7 @@ class ImportController(val messagesApi: MessagesApi, cache: SessionCache)(implic
     cache.fetchAndGetEntry[Boolean]("copacked") map {
       case Some(true) => routes.LitreageController.show("copackedVolume")
       case Some(false) => routes.CopackedController.display()
-      case _ => routes.SDILController.displayPackage()
+      case _ => routes.PackageController.displayPackage()
     }
   }
 }

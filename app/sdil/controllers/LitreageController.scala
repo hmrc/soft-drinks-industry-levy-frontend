@@ -31,7 +31,7 @@ class LitreageController(val messagesApi: MessagesApi, errorHandler: FrontendErr
   def show(pageName: String) = Action.async { implicit request =>
     cache.fetchAndGetEntry[Packaging]("packaging") map {
       case Some(p) => Ok(views.html.softdrinksindustrylevy.register.litreagePage(LitreageForm(), pageName, backLinkFor(pageName, p)))
-      case None => Redirect(routes.SDILController.displayPackage())
+      case None => Redirect(routes.PackageController.displayPackage())
     }
   }
 
@@ -43,7 +43,7 @@ class LitreageController(val messagesApi: MessagesApi, errorHandler: FrontendErr
           nextPageFor(pageName, p)
         }
       )
-      case None => Redirect(routes.SDILController.displayPackage())
+      case None => Redirect(routes.PackageController.displayPackage())
     }
   }
 
@@ -61,9 +61,9 @@ class LitreageController(val messagesApi: MessagesApi, errorHandler: FrontendErr
 
   private def backLinkFor(page: String, packaging: Packaging)(implicit request: Request[_]): Call = {
     page match {
-      case "packageOwn" => routes.SDILController.displayPackage()
+      case "packageOwn" => routes.PackageController.displayPackage()
       case "packageCopack" if packaging.ownBrands => routes.LitreageController.show("packageOwn")
-      case "packageCopack" => routes.SDILController.displayPackage()
+      case "packageCopack" => routes.PackageController.displayPackage()
       case "packageCopackSmallVol" => routes.PackageCopackSmallController.display()
       case "copackedVolume" => routes.CopackedController.display()
       case "importVolume" => routes.ImportController.display()

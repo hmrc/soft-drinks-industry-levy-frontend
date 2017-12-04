@@ -57,7 +57,7 @@ class PackageCopackSmallController(val messagesApi: MessagesApi, cache: SessionC
     cache.fetchAndGetEntry[Packaging]("packaging") map {
       case Some(p) if p.customers => routes.LitreageController.show("packageCopack")
       case Some(p) if p.isLiable => routes.LitreageController.show("packageOwn")
-      case _ => routes.SDILController.displayPackage()
+      case _ => routes.PackageController.displayPackage()
     }
   }
 }
