@@ -21,7 +21,7 @@ import java.time.LocalDate
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterAll
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.controllerhelpers._
@@ -30,7 +30,7 @@ import sdil.utils.TestConfig
 
 import scala.concurrent.Future
 
-class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
+class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   val controller = wire[StartDateController]
 
@@ -176,7 +176,6 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       val response = controller.displayStartDate().apply(request)
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.ProductionSiteController.addSite().url
-      afterAll()
     }
     "return Status: See Other for start date form GET with valid date and no Liable booleans with redirect to display Package page" in {
       stubCacheEntry[Packaging]("packaging", None)
@@ -187,7 +186,6 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       val response = controller.displayStartDate().apply(request)
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SDILController.displayPackage().url
-      afterAll()
     }
 
     "return Status: See Other for start date form GET with valid date and isnt Liable booleans with redirect to secondary warehouse page" in {
@@ -199,7 +197,6 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       val response = controller.displayStartDate().apply(request)
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.WarehouseController.secondaryWarehouse().url
-      afterAll()
     }
   }
 
@@ -207,11 +204,11 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     TestConfig.setTaxStartDate(LocalDate.now plusDays 1)
   }
 
-  override protected def beforeAll(): Unit = {
+  override protected def beforeEach(): Unit = {
     TestConfig.setTaxStartDate(LocalDate.now minusDays 1)
   }
 
-  override protected def afterAll(): Unit = {
+  override protected def afterEach(): Unit = {
     TestConfig.resetTaxStartDate()
   }
 }
