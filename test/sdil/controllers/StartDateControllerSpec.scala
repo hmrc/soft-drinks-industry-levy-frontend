@@ -18,6 +18,7 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
@@ -51,17 +52,6 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.ProductionSiteController.addSite().url
-    }
-
-    "return Status: Ok and redirect to addSite page for liable form in past" in {
-      stubCacheEntry[Packaging]("packaging", Some(packagingIsLiable))
-      TestConfig.setTaxStartDate (LocalDate.now minusDays 1)
-
-      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDatePastForm: _*)
-
-      val response = controller.displayStartDate().apply(request)
-
-      contentAsString(response) must include(messagesApi("sdil.address.line1"))
     }
 
     "return Status: See Other for start date form POST with valid date and redirect to secondary warehouse page" in {
@@ -137,29 +127,80 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       contentAsString(response) must include(messagesApi("error.start-date.date-invalid"))
     }
 
-  "return Status: Bad Request for invalid start date form POST request with date in future and display field hint .." in {
-    val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateFutureForm: _*)
-    val response = controller.submitStartDate().apply(request)
+    "return Status: Bad Request for invalid start date form POST request with date in future and display field hint .." in {
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDateFutureForm: _*)
+      val response = controller.submitStartDate().apply(request)
 
-    status(response) mustBe BAD_REQUEST
-    contentType(response).get mustBe HTML
-    contentAsString(response) must include(messagesApi("error.start-date.date-too-high"))
-  }
+      status(response) mustBe BAD_REQUEST
+      contentType(response).get mustBe HTML
+      contentAsString(response) must include(messagesApi("error.start-date.date-too-high"))
+    }
+
     "return Status: Bad Request for invalid start date form POST request with date in past and display field hint .." in {
-    val request = FakeRequest().withFormUrlEncodedBody(invalidStartDatePastForm: _*)
-    val response = controller.submitStartDate().apply(request)
+      val request = FakeRequest().withFormUrlEncodedBody(invalidStartDatePastForm: _*)
+      val response = controller.submitStartDate().apply(request)
 
-    status(response) mustBe BAD_REQUEST
-    contentType(response).get mustBe HTML
-    contentAsString(response) must include(messagesApi("error.start-date.date-too-low"))
+      status(response) mustBe BAD_REQUEST
+      contentType(response).get mustBe HTML
+      contentAsString(response) must include(messagesApi("error.start-date.date-too-low"))
+    }
+
+    "return a page with a link back to the import volume page if the user imports liable drinks" in {
+      when(mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(true)))
+
+      val response = controller.displayStartDate(FakeRequest())
+      status(response) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(response))
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
+    }
+
+    "return a page with a link back to the imports page if the user does not import liable drinks" in {
+      when(mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(false)))
+
+      val response = controller.displayStartDate(FakeRequest())
+      status(response) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(response))
+      html.select("a.link-back").attr("href") mustBe routes.ImportController.display().url
+    }
+
+    "return Status: See Other for start date form GET with valid date and Liable booleans with redirect to add site page" in {
+      stubCacheEntry[Packaging]("packaging", Some(packagingIsLiable))
+      futureTaxStartDate()
+
+      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
+
+      val response = controller.displayStartDate().apply(request)
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.ProductionSiteController.addSite().url
+      afterAll()
+    }
+
+    "return Status: See Other for start date form GET with valid date and isnt Liable booleans with redirect to secondary warehouse page" in {
+      stubCacheEntry[Packaging]("packaging", Some(packagingIsntLiable))
+      futureTaxStartDate()
+
+      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
+
+      val response = controller.displayStartDate().apply(request)
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.WarehouseController.secondaryWarehouse().url
+      afterAll()
+    }
   }
-}
 
-override protected def beforeAll (): Unit = {
-  TestConfig.setTaxStartDate (LocalDate.now minusDays 1)
-}
+  def futureTaxStartDate(): Unit = {
+    TestConfig.setTaxStartDate(LocalDate.now plusDays 1)
+  }
 
-  override protected def afterAll (): Unit = {
-  TestConfig.resetTaxStartDate ()
-}
+  override protected def beforeAll(): Unit = {
+    TestConfig.setTaxStartDate(LocalDate.now minusDays 1)
+  }
+
+  override protected def afterAll(): Unit = {
+    TestConfig.resetTaxStartDate()
+  }
 }
