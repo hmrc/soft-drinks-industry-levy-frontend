@@ -26,6 +26,8 @@
 @views.html.main_template(Messages("sdil.common.title")) {
     <a class="link-back" href="@sdil.controllers.routes.SDILController.displayContactDetails()">@Messages("sdil.common.back")</a>
 
+    <p class="float--right"><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
+
     <h1 class="heading-large">@Messages("sdil.declaration.heading")</h1>
 
     <p>@Messages("sdil.declaration.info")</p>
@@ -63,8 +65,6 @@
 
     @form(sdil.controllers.routes.SDILController.submitDeclaration()) {
         <input class="button" value="@Messages("sdil.declaration.continue")" type="submit">
-        
-        <p class="float--right"><a href="javascript:window.print()" class="print-link">Print</a></p>
     }
 
 }

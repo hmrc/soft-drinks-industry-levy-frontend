@@ -8,7 +8,7 @@ sdil.common.alpha-info=<span>This is a new service – your <a href="{0}">feedba
 sdil.common.or=Or
 sdil.common.yes=Yes
 sdil.common.no=No
-sdil.common.back=Back
+sdil.common.print=Print
 
 #Address lines
 sdil.address.line1=Address line 1
