@@ -178,6 +178,17 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       redirectLocation(response).get mustBe routes.ProductionSiteController.addSite().url
       afterAll()
     }
+    "return Status: See Other for start date form GET with valid date and no Liable booleans with redirect to display Package page" in {
+      stubCacheEntry[Packaging]("packaging", None)
+      futureTaxStartDate()
+
+      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
+
+      val response = controller.displayStartDate().apply(request)
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.SDILController.displayPackage().url
+      afterAll()
+    }
 
     "return Status: See Other for start date form GET with valid date and isnt Liable booleans with redirect to secondary warehouse page" in {
       stubCacheEntry[Packaging]("packaging", Some(packagingIsntLiable))
@@ -192,7 +203,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     }
   }
 
-  def futureTaxStartDate(): Unit = {
+  private def futureTaxStartDate(): Unit = {
     TestConfig.setTaxStartDate(LocalDate.now plusDays 1)
   }
 
