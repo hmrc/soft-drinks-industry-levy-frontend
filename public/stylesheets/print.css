@@ -1,0 +1,4 @@
+/*hide unnecessary elements from print view*/
+.print-hidden, a, .button, .phase-banner, .header-wrapper {
+    display: none !important;
+}
