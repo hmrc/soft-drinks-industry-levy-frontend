@@ -16,6 +16,8 @@
 
 package sdil.controllers
 
+import java.time.LocalDate
+
 import org.scalatest.mockito.MockitoSugar
 import sdil.models.Packaging
 import uk.gov.hmrc.auth.core._
@@ -34,22 +36,71 @@ package object controllerhelpers extends MockitoSugar {
     "customers" -> "true",
     "ownBrands" -> "false")
 
+  val invalidPackageForm = Seq(
+    "isLiable" -> "true",
+    "customers" -> "false",
+    "ownBrands" -> "false")
+
+  val validContactDetailsForm = Seq(
+    "fullName" -> "hello",
+    "position" -> "boss",
+    "phoneNumber" -> "+4411111111111",
+    "email" -> "a@a.com"
+  )
+  val invalidContactDetailsForm = Seq(
+    "fullName" -> "",
+    "position" -> "boss",
+    "phoneNumber" -> "+4411111111111",
+    "email" -> "a@a.com"
+  )
+
+  val validStartDateForm = Seq(
+    "startDateDay" -> LocalDate.now.getDayOfMonth.toString,
+    "startDateMonth" -> LocalDate.now.getMonthValue.toString,
+    "startDateYear" -> LocalDate.now.getYear.toString
+  )
+  val invalidStartDateFutureForm = Seq(
+    "startDateDay" -> "20",
+    "startDateMonth" -> "12",
+    "startDateYear" -> "9999"
+  )
+  val invalidStartDatePastForm = Seq(
+    "startDateDay" -> "22",
+    "startDateMonth" -> "06",
+    "startDateYear" -> "2017"
+  )
+
   val invalidStartDateForm = Seq(
     "startDateDay" -> "29",
     "startDateMonth" -> "02",
     "startDateYear" -> "2017"
   )
-  val invalidStartDateDayForm = Seq(
+  val invalidStartDateDayTooHighForm = Seq(
     "startDateDay" -> "35",
     "startDateMonth" -> "08",
     "startDateYear" -> "2017"
   )
-  val invalidStartDateMonthForm = Seq(
+  val invalidStartDateDayTooLowForm = Seq(
+    "startDateDay" -> "-2",
+    "startDateMonth" -> "08",
+    "startDateYear" -> "2017"
+  )
+  val invalidStartDateMonthTooHighForm = Seq(
     "startDateDay" -> "20",
     "startDateMonth" -> "30",
     "startDateYear" -> "2017"
   )
-  val invalidStartDateYearForm = Seq(
+  val invalidStartDateMonthTooLowForm = Seq(
+    "startDateDay" -> "20",
+    "startDateMonth" -> "-59",
+    "startDateYear" -> "2017"
+  )
+  val invalidStartDateYearTooLowForm = Seq(
+    "startDateDay" -> "20",
+    "startDateMonth" -> "02",
+    "startDateYear" -> "2007"
+  )
+  val invalidStartDateYearTooHighForm = Seq(
     "startDateDay" -> "20",
     "startDateMonth" -> "02",
     "startDateYear" -> "20189"
