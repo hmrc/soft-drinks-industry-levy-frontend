@@ -53,7 +53,7 @@ class PackageController (val messagesApi: MessagesApi, cache: SessionCache)(impl
       "ownBrands" -> boolean,
       "customers" -> boolean
     )(Packaging.apply)(Packaging.unapply)
-      .verifying("sdil.form.check.error", p => !p.isLiable || (p.ownBrands || p.customers))
+      .verifying("error.radio-form.choose-one-option", p => !p.isLiable || (p.ownBrands || p.customers))
   )
 
 }

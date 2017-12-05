@@ -22,17 +22,17 @@
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
 
-    <a class="back-link" href="@back.url">@Messages("sdil.common.back")</a>
+    <a class="link-back" href="@back.url">@Messages("sdil.common.back")</a>
 
     <h1 class="heading-large">@Messages(s"sdil.$page.heading")</h1>
 
-    @govHelpers.errorSummary(Messages("sdil.form.radiocheck.error.summary"), form)
+    @govHelpers.errorSummary(Messages("error.radio-form.choose-option.summary"), form)
     @govHelpers.form(action = forward) {
         <div class = "form-group">
             <fieldset class = "form-field-group">
             @govHelpers.inputRadioGroup(
                 form("yesOrNo"),
-                options("true" -> Messages("sdil.package-copack-small.yes"), "false" -> Messages("sdil.package-copack-small.no")),
+                options("true" -> Messages("sdil.common.yes"), "false" -> Messages("sdil.common.no")),
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
                 '_groupClass -> "form-field-group")
@@ -43,6 +43,17 @@
             </button>
         </div>
 
+    }
+
+    @if(page == "package-copack-small") {
+        <details role="group">
+            <summary role="button" aria-controls="details-content-0"><span class="summary">@Messages("sdil.package-copack-small.whatis.header")</span></summary>
+            <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+
+                <p id="details-content-1">@Messages("sdil.package-copack-small.whatis.body")</p>
+            </div>
+            <br>
+        </details>
     }
 
 }

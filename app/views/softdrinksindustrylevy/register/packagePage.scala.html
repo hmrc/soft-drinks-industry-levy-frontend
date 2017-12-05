@@ -24,7 +24,7 @@
 @checkboxes = {
     @if(packageForm.hasErrors) {
         <fieldset class="form-field-group form-field--error">
-            <span class="error-notification">@Messages("sdil.form.check.error")</span>
+            <span class="error-notification">@Messages("error.radio-form.choose-one-option")</span>
     } else {
         <fieldset>
     }
@@ -46,23 +46,23 @@
     <a class="link-back" href="@sdil.controllers.routes.VerifyController.verify()">@Messages("sdil.common.back")</a>
 
     <h1 class="heading-large">@Messages("sdil.package.heading")</h1>
-    @govHelpers.errorSummary(Messages("sdil.form.radiocheck.error.summary"), packageForm)
+    @govHelpers.errorSummary(Messages("error.radio-form.choose-option.summary"), packageForm)
     @govHelpers.form(action = sdil.controllers.routes.PackageController.submitPackage()) {
 
         <div class="form-group">
             @radioButtonWithConditionalContent(
                 packageForm("isLiable"),
                 Seq(
-                    "true" -> ((Messages("sdil.package.radioGroup.yes"), Some(checkboxes: Html))),
-                    "false" -> ((Messages("sdil.package.radioGroup.no"), None))
+                    "true" -> ((Messages("sdil.common.yes"), Some(checkboxes: Html))),
+                    "false" -> ((Messages("sdil.common.no"), None))
                 ),
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
                 '_groupClass -> "form-field-group",
                 '_label -> "Liable",
                 '_dataTargetTrue -> "manufactureForCheckboxes",
-                '_error -> packageForm("isLiable").error.map(_.withMessage(Messages("sdil.form.radio.error"))))
-            <button class="button" type="submit" id="continue-button">@Messages("sdil.package.button.continue")</button>
+                '_error -> packageForm("isLiable").error.map(_.withMessage(Messages("error.radio-form.choose-option"))))
+            <button class="button" type="submit" id="continue-button">@Messages("sdil.common.save-continue")</button>
         </div>
 
     }

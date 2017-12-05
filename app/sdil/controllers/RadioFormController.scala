@@ -32,8 +32,6 @@ import scala.concurrent.Future
 class RadioFormController(val messagesApi: MessagesApi, errorHandler: FrontendErrorHandler, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  private val radioButtonForm = Form(single("yesOrNo" -> booleanMapping))
-
   def display(page: String, trueLink: String, falseLink: String) = Action.async { implicit request =>
     radioBackLink(page) map { backLink =>
       Ok(register.radio_button(radioButtonForm, page, backLink, routes.RadioFormController.submit(page, trueLink, falseLink)))
@@ -85,5 +83,7 @@ class RadioFormController(val messagesApi: MessagesApi, errorHandler: FrontendEr
       case _ => routes.PackageController.displayPackage()
     }
   }
+
+  private val radioButtonForm = Form(single("yesOrNo" -> booleanMapping))
 
 }

@@ -76,7 +76,7 @@ class PackageControllerSpec extends ControllerSpec {
 
       status(response) mustBe BAD_REQUEST
       contentType(response).get mustBe HTML
-      contentAsString(response) must include(messagesApi("sdil.form.check.error"))
+      contentAsString(response) must include(messagesApi("error.radio-form.choose-one-option"))
     }
 
     "return Status: Bad Request for invalid liability form POST request and show you have not chosen an option error" in {
@@ -89,7 +89,7 @@ class PackageControllerSpec extends ControllerSpec {
 
       status(response) mustBe BAD_REQUEST
       contentType(response).get mustBe HTML
-      contentAsString(response) must include(messagesApi("sdil.form.radiocheck.error.summary"))
+      contentAsString(response) must include(messagesApi("error.radio-form.choose-option.summary"))
     }
   }
 
