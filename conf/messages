@@ -22,7 +22,7 @@ sdil.identify.heading=Enter your Unique Tax Reference number and postcode
 sdil.identify.utr=Unique Tax Reference number (UTR)
 sdil.identify.postcode=Registered business postcode
 
-#start date
+#Start date
 sdil.start-date.heading=What date did or will you become liable for the Soft Drinks Industry Levy?
 sdil.start-date.example=For example, 6 4 2018
 sdil.start-date.day=Day
@@ -87,39 +87,23 @@ sdil.contact-details.email=Email
 
 #Package Copack Small
 sdil.package-copack-small.heading=Will you package liable drinks for any small producers?
-sdil.package-copack-small.yes=Yes
-sdil.package-copack-small.no=No
-sdil.package-copack-small.save-continue=Save and continue
 sdil.package-copack-small.whatis.header=What is a small producer?
 sdil.package-copack-small.whatis.body=A business is considered a small producer if it produces less than one million litres of liable drink per year and does not expect to exceed that amount within the next 30 days.
 
 #Co Packed
 sdil.copacked.heading=Will you use any third parties in the UK to package liable drinks on your behalf?
-sdil.copacked.yes=Yes
-sdil.copacked.no=No
-sdil.copacked.save-continue=Save and continue
 
 #Import
 sdil.import.heading=Will you bring liable drinks into the UK from anywhere outside of the UK?
-sdil.import.yes=Yes
-sdil.import.no=No
-sdil.import.save-continue=Save and continue
 
+#Package
 sdil.package.heading= Will you package liable drinks at a production site you operate?
 sdil.package.title=Soft Drinks Industry Levy
-sdil.package.radioGroup.yes=Yes
-sdil.package.radioGroup.no=No
-sdil.package.button.continue=Save and continue
 sdil.package.button.back=Back
 
 sdil.who-for.instruction=Select one or both
 sdil.who-for.option1=Your own brand or brands you have the rights to manufacture
 sdil.who-for.option2=Your customers
-
-sdil.form.radio.error=Choose an option
-sdil.form.check.error=Choose at least one option
-sdil.form.radiocheck.error.summary=You have not chosen an option
-
 
 # Declaration
 sdil.declaration.heading=Declaration
@@ -137,8 +121,7 @@ sdil.declaration.continue=Accept and continue
 #Complete
 sdil.complete.title=Registration submitted
 sdil.complete.what-happens.title=What happens next?
-sdil.complete.what-happens.content=You don’t need to do anything else. We’ll contact you with a registration number.
-
+sdil.complete.what-happens.content=You don’t need to do anything else. We''ll contact you with a registration number.
 
 #Errors
 error.utr.invalid=Invalid UTR
@@ -147,7 +130,10 @@ error.number.negative=Must be greater than or equal to 0
 error.full-name.invalid=Enter a name
 error.position.invalid=Enter a position
 error.phone-number.invalid=Enter a valid phone number
-error.email.invalid=Enter a valid email
+error.email=Enter a valid email
+error.radio-form.choose-option=Choose an option
+error.radio-form.choose-one-option=Choose at least one option
+error.radio-form.choose-option.summary=You have not chosen an option
 
 error.start-date.day-empty=Enter a day
 error.start-date.day-too-high=Enter a valid day

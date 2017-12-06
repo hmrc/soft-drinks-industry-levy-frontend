@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(questionKey: String, changeRoute: Call, rowData: Any)(implicit messages: Messages, request: Request[_])
+@(questionKey: String, changeRoute: Call, rowData: String)(implicit messages: Messages, request: Request[_])
 <tr>
     <td>
         @Messages(s"sdil.declaration.$questionKey")

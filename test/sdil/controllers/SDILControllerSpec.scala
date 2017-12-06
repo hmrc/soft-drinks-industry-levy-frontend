@@ -18,11 +18,8 @@ package sdil.controllers
 
 import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.controllers.controllerhelpers._
 
 class SDILControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -60,78 +57,11 @@ class SDILControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(result).get must include("gg/sign-in")
     }
 
-    "return Status: 200 when user is logged in and loads package page" in {
-      sdilAuthMock(userWithUtr)
-      val request = FakeRequest("GET", "/package")
-      val result = controller.displayPackage().apply(request)
+    "return Status: OK when displaying the completion page" in {
+      val result = controller.displayComplete().apply(FakeRequest())
 
       status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("sdil.package.heading"))
-    }
-
-    "return Status: See Other for package form POST with isLiable & ownBrands and redirect to package own" in {
-      val request = FakeRequest().withFormUrlEncodedBody(validPackageForm: _*)
-      val response = controller.submitPackage().apply(request)
-
-      status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.LitreageController.show("packageOwn").url
-    }
-
-    "return Status: See Other for package form POST with isLiable & customers and redirect to package copack" in {
-      val request = FakeRequest().withFormUrlEncodedBody(validPackageFormCustomersOnly: _*)
-      val response = controller.submitPackage().apply(request)
-
-      status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.LitreageController.show("packageCopack").url
-    }
-
-    "return Status: Bad Request for invalid liability form POST request and display field hint .." in {
-      val request = FakeRequest().withFormUrlEncodedBody(invalidPackageForm: _*)
-      val response = controller.submitPackage().apply(request)
-
-      status(response) mustBe BAD_REQUEST
-      contentType(response).get mustBe HTML
-      contentAsString(response) must include(messagesApi("sdil.form.radiocheck.error.summary"))
-    }
-
-    "return Status: OK for contact details form GET" in {
-      val request = FakeRequest("GET", "/contact-details")
-      val result = controller.displayContactDetails.apply(request)
-
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("sdil.contact-details.heading"))
-    }
-
-    "return Status: SEE_OTHER for valid contact details form POST" in {
-      val request = FakeRequest("POST", "/contact-details").withFormUrlEncodedBody(validContactDetailsForm: _*)
-      val result = controller.submitContactDetails.apply(request)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.SDILController.displayDeclaration().url
-    }
-
-    "return Status: BAD_REQUEST for invalid contact details form POST" in {
-      val request = FakeRequest("POST", "/contact-details").withFormUrlEncodedBody(invalidContactDetailsForm: _*)
-      val result = controller.submitContactDetails.apply(request)
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messagesApi("error.full-name.invalid"))
-    }
-
-    "return Status: 200 when user is logged in and loads declaration page" in {
-      val request = FakeRequest("GET", "/declaration")
-      val result = controller.displayDeclaration.apply(request)
-
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("sdil.declaration.heading"))
-    }
-
-    "return Status: See Other when POST from declaration" in {
-      val request = FakeRequest("POST", "/declaration")
-      val result = controller.submitDeclaration().apply(request)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.SDILController.displayComplete().url
+      contentAsString(result) must include(messagesApi("sdil.complete.title"))
     }
   }
 }

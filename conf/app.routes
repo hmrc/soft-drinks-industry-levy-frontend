@@ -9,8 +9,8 @@ POST        /register/identify                               sdil.controllers.Id
 GET         /register/verify                                 sdil.controllers.VerifyController.verify()
 POST        /register/verify                                 sdil.controllers.VerifyController.validate()
 
-GET         /register/package                                sdil.controllers.SDILController.displayPackage()
-POST        /register/package                                sdil.controllers.SDILController.submitPackage()
+GET         /register/package                                sdil.controllers.PackageController.displayPackage()
+POST        /register/package                                sdil.controllers.PackageController.submitPackage()
 
 GET         /register/package-own                            sdil.controllers.LitreageController.show(pageName = "packageOwn")
 POST        /register/package-own                            sdil.controllers.LitreageController.validate(pageName = "packageOwn")
@@ -18,20 +18,20 @@ POST        /register/package-own                            sdil.controllers.Li
 GET         /register/package-copack                         sdil.controllers.LitreageController.show(pageName = "packageCopack")
 POST        /register/package-copack                         sdil.controllers.LitreageController.validate(pageName = "packageCopack")
 
-GET         /register/package-copack-small                   sdil.controllers.PackageCopackSmallController.display()
-POST        /register/package-copack-small                   sdil.controllers.PackageCopackSmallController.submit()
+GET         /register/package-copack-small                   sdil.controllers.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked")
+POST        /register/package-copack-small                   sdil.controllers.RadioFormController.submit(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked")
 
 GET         /register/package-copack-small-vol               sdil.controllers.LitreageController.show(pageName = "packageCopackSmallVol")
 POST        /register/package-copack-small-vol               sdil.controllers.LitreageController.validate(pageName = "packageCopackSmallVol")
 
-GET         /register/copacked                               sdil.controllers.CopackedController.display()
-POST        /register/copacked                               sdil.controllers.CopackedController.submit()
+GET         /register/copacked                               sdil.controllers.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import")
+POST        /register/copacked                               sdil.controllers.RadioFormController.submit(page = "copacked", trueLink = "copackedVolume", falseLink = "import")
 
 GET         /register/copacked-volume                        sdil.controllers.LitreageController.show(pageName = "copackedVolume")
 POST        /register/copacked-volume                        sdil.controllers.LitreageController.validate(pageName = "copackedVolume")
 
-GET         /register/import                                 sdil.controllers.ImportController.display()
-POST        /register/import                                 sdil.controllers.ImportController.submit()
+GET         /register/import                                 sdil.controllers.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
+POST        /register/import                                 sdil.controllers.RadioFormController.submit(page = "import", trueLink = "importVolume", falseLink = "production-sites")
 
 GET         /register/import-volume                          sdil.controllers.LitreageController.show(pageName = "importVolume")
 POST        /register/import-volume                          sdil.controllers.LitreageController.validate(pageName = "importVolume")
@@ -47,11 +47,11 @@ GET         /register/secondary-warehouse                    sdil.controllers.Wa
 POST        /register/secondary-warehouse                    sdil.controllers.WarehouseController.validate()
 GET         /register/secondary-warehouse/remove/:idx        sdil.controllers.WarehouseController.remove(idx: Int)
 
-GET         /register/contact-details                        sdil.controllers.SDILController.displayContactDetails
-POST        /register/contact-details                        sdil.controllers.SDILController.submitContactDetails
+GET         /register/contact-details                        sdil.controllers.ContactDetailsController.displayContactDetails
+POST        /register/contact-details                        sdil.controllers.ContactDetailsController.submitContactDetails
 
-GET         /register/declaration                            sdil.controllers.SDILController.displayDeclaration
-POST        /register/declaration                            sdil.controllers.SDILController.submitDeclaration()
+GET         /register/declaration                            sdil.controllers.DeclarationController.displayDeclaration
+POST        /register/declaration                            sdil.controllers.DeclarationController.submitDeclaration()
 
 GET         /register/complete                               sdil.controllers.SDILController.displayComplete()
 

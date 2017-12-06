@@ -19,7 +19,7 @@ package sdil.controllers
 import java.time.LocalDate
 
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{eq => matching, _}
+import org.mockito.ArgumentMatchers.{eq => matching, any}
 import org.mockito.Mockito._
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
@@ -82,7 +82,7 @@ class ProductionSiteControllerSpec extends ControllerSpec {
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.ImportController.display().url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites").url
     }
   }
 

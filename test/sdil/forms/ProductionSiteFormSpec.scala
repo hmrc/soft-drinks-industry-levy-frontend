@@ -17,36 +17,37 @@
 package sdil.forms
 
 import sdil.models.{Address, ProductionSite}
+import sdil.controllers.ProductionSiteController.form
 
 class ProductionSiteFormSpec extends FormSpec {
 
   "The production site form" should {
     "require a selection for 'do you have another production site'" in {
-      val f = ProductionSiteForm().bind(otherSiteData - hasOtherSite)
+      val f = form.bind(otherSiteData - hasOtherSite)
 
-      mustContainError(f, hasOtherSite, "error.required")
+      mustContainError(f, hasOtherSite, "error.radio-form.choose-option")
     }
 
     "require the first line of the address if there is another site" in {
-      val f = ProductionSiteForm().bind(otherSiteData - line1)
+      val f = form.bind(otherSiteData - line1)
 
       mustContainError(f, line1, "error.required")
     }
 
     "require the postcode is there is another site" in {
-      val f = ProductionSiteForm().bind(otherSiteData - postcode)
+      val f = form.bind(otherSiteData - postcode)
 
       mustContainError(f, postcode, "error.required")
     }
 
     "bind to ProductionSite if there is not another site" in {
-      val f = ProductionSiteForm().bind(Map(hasOtherSite -> "false"))
+      val f = form.bind(Map(hasOtherSite -> "false"))
 
       f.value mustBe Some(ProductionSite(false, None))
     }
 
     "bind to ProductionSite if there is another site and an address is provided" in {
-      val f = ProductionSiteForm().bind(otherSiteData)
+      val f = form.bind(otherSiteData)
 
       f.value mustBe Some(ProductionSite(true, Some(Address("line 1", "line 2", "line 3", "line 4", "AA11 1AA"))))
     }

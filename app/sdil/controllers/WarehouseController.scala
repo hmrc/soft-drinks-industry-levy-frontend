@@ -18,31 +18,36 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import play.api.data.Form
+import play.api.data.Forms.mapping
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Call, Request}
 import sdil.config.AppConfig
-import sdil.forms.WarehouseForm
+import sdil.forms.FormHelpers
 import sdil.models.{Address, Packaging, SecondaryWarehouse}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
 import scala.concurrent.Future
 
 class WarehouseController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
+  
+  import WarehouseController._
 
   def secondaryWarehouse = Action.async { implicit request =>
     for {
       addrs <- getWarehouseAddresses
       backLink <- getBackLink
     } yield {
-      Ok(views.html.softdrinksindustrylevy.register.secondaryWarehouse(WarehouseForm(), addrs, backLink))
+      Ok(views.html.softdrinksindustrylevy.register.secondaryWarehouse(form, addrs, backLink))
     }
   }
 
   def validate = Action.async { implicit request =>
     getWarehouseAddresses flatMap { addrs =>
-      WarehouseForm().bindFromRequest().fold(
+      form.bindFromRequest().fold(
         errors => getBackLink map { link =>
           BadRequest(views.html.softdrinksindustrylevy.register.secondaryWarehouse(errors, addrs, link))
         },
@@ -50,7 +55,7 @@ class WarehouseController(val messagesApi: MessagesApi, cache: SessionCache)(imp
           case SecondaryWarehouse(_, Some(addr)) => cache.cache("secondaryWarehouses", addrs :+ addr) map { _ =>
             Redirect(routes.WarehouseController.secondaryWarehouse())
           }
-          case _ => Redirect(routes.SDILController.displayContactDetails())
+          case _ => Redirect(routes.ContactDetailsController.displayContactDetails())
         }
       )
     }
@@ -76,7 +81,7 @@ class WarehouseController(val messagesApi: MessagesApi, cache: SessionCache)(imp
     cache.fetchAndGetEntry[Packaging]("packaging") flatMap {
       case Some(p) if p.isLiable => routes.ProductionSiteController.addSite()
       case Some(p) => backToStartDate
-      case _ => routes.SDILController.displayPackage()
+      case _ => routes.PackageController.displayPackage()
     }
   }
 
@@ -84,10 +89,19 @@ class WarehouseController(val messagesApi: MessagesApi, cache: SessionCache)(imp
     if (LocalDate.now.isBefore(config.taxStartDate)) {
       cache.fetchAndGetEntry[Boolean]("import") map {
         case Some(true) => routes.LitreageController.show("importVolume")
-        case _ => routes.ImportController.display()
+        case _ => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
       }
     } else {
       routes.StartDateController.displayStartDate()
     }
   }
+}
+
+object WarehouseController extends FormHelpers {
+  val form: Form[SecondaryWarehouse] = Form(
+    mapping(
+      "hasWarehouse" -> mandatoryBoolean,
+      "warehouseAddress" -> mandatoryIfTrue("hasWarehouse", addressMapping)
+    )(SecondaryWarehouse.apply)(SecondaryWarehouse.unapply)
+  )
 }

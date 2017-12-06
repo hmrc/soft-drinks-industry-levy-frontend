@@ -21,7 +21,7 @@ import com.softwaremill.macwire.wire
 import controllers.Assets
 import play.api.inject.DefaultApplicationLifecycle
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.controllers.{CopackedController, IdentifyController, ImportController, LitreageController, PackageCopackSmallController, ProductionSiteController, SDILController, StartDateController, VerifyController, WarehouseController}
+import sdil.controllers._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
@@ -39,12 +39,13 @@ trait RoutesWiring extends CommonWiring {
   lazy val identifyController: IdentifyController = wire[IdentifyController]
   lazy val verifyController: VerifyController = wire[VerifyController]
   lazy val litreageController: LitreageController = wire[LitreageController]
-  lazy val packageCopackController: PackageCopackSmallController = wire[PackageCopackSmallController]
-  lazy val copackedController: CopackedController = wire[CopackedController]
-  lazy val importController: ImportController = wire[ImportController]
   lazy val startDateController: StartDateController = wire[StartDateController]
   lazy val productionSiteController: ProductionSiteController = wire[ProductionSiteController]
   lazy val warehouseController: WarehouseController = wire[WarehouseController]
+  lazy val contactDetailsController: ContactDetailsController = wire[ContactDetailsController]
+  lazy val declarationController: DeclarationController = wire[DeclarationController]
+  lazy val packageController: PackageController = wire[PackageController]
+  lazy val radioFormController: RadioFormController = wire[RadioFormController]
 
   private lazy val appRoutes: app.Routes = wire[app.Routes]
   private lazy val healthRoutes = new health.Routes()

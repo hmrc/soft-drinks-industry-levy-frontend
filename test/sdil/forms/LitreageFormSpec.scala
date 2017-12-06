@@ -17,60 +17,61 @@
 package sdil.forms
 
 import sdil.models.Litreage
+import sdil.controllers.LitreageController.form
 
 class LitreageFormSpec extends FormSpec {
 
   "The litreage form" should {
     "require the lower rate volume" in {
-      val f = LitreageForm().bind(validData - lowerRate)
+      val f = form.bind(validData - lowerRate)
 
       mustContainError(f, lowerRate, "error.required")
     }
 
     "require the higher rate volume" in {
-      val f = LitreageForm().bind(validData - higherRate)
+      val f = form.bind(validData - higherRate)
 
       mustContainError(f, higherRate, "error.required")
     }
 
     "require the lower rate volume to be a number" in {
-      val f = LitreageForm().bind(validData.updated(lowerRate, "not a number"))
+      val f = form.bind(validData.updated(lowerRate, "not a number"))
 
       mustContainError(f, lowerRate, "error.number")
     }
 
     "require the higher rate volume to be a number" in {
-      val f = LitreageForm().bind(validData.updated(higherRate, "not a number"))
+      val f = form.bind(validData.updated(higherRate, "not a number"))
 
       mustContainError(f, higherRate, "error.number")
     }
 
     "require the lower rate volume to be positive" in {
-      val f = LitreageForm().bind(validData.updated(lowerRate, "-1"))
+      val f = form.bind(validData.updated(lowerRate, "-1"))
 
       mustContainError(f, lowerRate, "error.number.negative")
     }
 
     "require the higher rate volume to be positive" in {
-      val f = LitreageForm().bind(validData.updated(higherRate, "-1"))
+      val f = form.bind(validData.updated(higherRate, "-1"))
 
       mustContainError(f, higherRate, "error.number.negative")
     }
 
     "require the lower rate volume to be less than 10,000,000,000,000" in {
-      val f = LitreageForm().bind(validData.updated(lowerRate, "10000000000000"))
+      val f = form.bind(validData.updated(lowerRate, "10000000000000"))
 
       mustContainError(f, lowerRate, "error.litreage.max")
     }
 
     "require the higher rate volume to be less than 10,000,000,000,000" in {
-      val f = LitreageForm().bind(validData.updated(higherRate, "10000000000000"))
+      val f = form.bind(validData.updated(higherRate, "10000000000000"))
 
       mustContainError(f, higherRate, "error.litreage.max")
     }
 
     "bind to Litreage if the lower and higher rate volumes are valid" in {
-      val f = LitreageForm().bind(validData)
+      val f = form.bind(validData)
 
       f.value mustBe Some(Litreage(1, 2))
     }

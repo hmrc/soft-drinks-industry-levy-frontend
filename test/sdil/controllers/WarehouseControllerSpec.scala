@@ -25,7 +25,6 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.controllerhelpers._
 import sdil.models.{Address, Packaging}
 import sdil.utils.TestConfig
 
@@ -97,7 +96,7 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.ImportController.display().url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites").url
 
       TestConfig.resetTaxStartDate()
     }
@@ -142,7 +141,7 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
 
       val res = testController.validate()(FakeRequest().withFormUrlEncodedBody("hasWarehouse" -> "false"))
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.SDILController.displayContactDetails().url)
+      redirectLocation(res) mustBe Some(routes.ContactDetailsController.displayContactDetails().url)
     }
 
     "store the new address in keystore if a warehouse is added" in {

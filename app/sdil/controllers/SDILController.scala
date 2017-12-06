@@ -16,21 +16,15 @@
 
 package sdil.controllers
 
-import java.util.UUID
-
 import play.api.Logger
-import play.api.data.Form
-import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.sdilmodels._
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.saUtr
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions, NoActiveSession}
-import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy._
@@ -57,77 +51,13 @@ class SDILController(val messagesApi: MessagesApi,
     }
   }
 
-  def displayContactDetails: Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(register.contact_details(contactForm))
-  }
-
-  def submitContactDetails: Action[AnyContent] = Action.async { implicit request =>
-    contactForm.bindFromRequest().fold(
-      formWithErrors => Future successful BadRequest(register.contact_details(formWithErrors)),
-      d => cache.cache("contact-details", d) map { _ =>
-        Redirect(routes.SDILController.displayDeclaration())
-      })
-  }
-
-  def displayDeclaration: Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(register.
-      declaration(
-        Identification("foo", "bar"),
-        ContactDetails(
-          fullName = "Nick Karaolis",
-          position = "Scala Ninja",
-          phoneNumber = "x directory",
-          email = "nick.karaolis@wouldn'tyouliketoknow.com"
-        )
-      ))
-  }
-
-  def submitDeclaration(): Action[AnyContent] = Action.async { implicit request =>
-    // TODO hit the backend to create subscription
-    Redirect(routes.SDILController.displayComplete())
-  }
-
-  def testAuth: Action[AnyContent] = authorisedForSDIL { implicit request => implicit utr =>
-    Future successful Ok(views.html.helloworld.hello_world(Some(DesSubmissionResult(true))))
-  }
-
-  def displayPackage(): Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(register.packagePage(packageForm)).addingToSession(SessionKeys.sessionId -> UUID.randomUUID().toString)
-  }
-
-  def submitPackage(): Action[AnyContent] = Action.async { implicit request =>
-    packageForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(register.packagePage(formWithErrors)),
-      validFormData => cache.cache("packaging", validFormData) map { _ =>
-        validFormData match {
-          case Packaging(_, true, _) => Redirect(routes.LitreageController.show("packageOwn"))
-          case Packaging(_, _, true) => Redirect(routes.LitreageController.show("packageCopack"))
-          case _ => Redirect(routes.PackageCopackSmallController.display())
-        }
-      }
-    )
+  def testAuth: Action[AnyContent] = authorisedForSDIL { implicit request =>
+    implicit utr =>
+      Future successful Ok(views.html.helloworld.hello_world(Some(DesSubmissionResult(true))))
   }
 
   def displayComplete(): Action[AnyContent] = Action.async { implicit request =>
     Ok(register.complete())
   }
 
-
-  private lazy val packageForm = Form(
-    mapping(
-      "isLiable" -> booleanMapping,
-      "ownBrands" -> boolean,
-      "customers" -> boolean
-    )(Packaging.apply)(Packaging.unapply)
-      .verifying("sdil.form.check.error", p => !p.isLiable || (p.ownBrands || p.customers))
-  )
-
-  private lazy val contactForm = Form(
-    mapping(
-      "fullName" -> text.verifying(Messages("error.full-name.invalid"), _.nonEmpty),
-      "position" -> text.verifying(Messages("error.position.invalid"), _.nonEmpty),
-      "phoneNumber" -> text.verifying(Messages("error.phone-number.invalid"), _.length > 10),
-      "email" -> email)(ContactDetails.apply)(ContactDetails.unapply))
-
 }
-

@@ -17,36 +17,36 @@
 package sdil.forms
 
 import sdil.models.{Address, SecondaryWarehouse}
-
+import sdil.controllers.WarehouseController.form
 class WarehouseFormSpec extends FormSpec {
 
   "The warehouse form" should {
     "require a 'do you have a warehouse' option to be selected" in {
-      val f = WarehouseForm().bind(secondaryWarehouseData - hasWarehouse)
+      val f = form.bind(secondaryWarehouseData - hasWarehouse)
 
-      mustContainError(f, hasWarehouse, "error.required")
+      mustContainError(f, hasWarehouse, "error.radio-form.choose-option")
     }
 
     "require the first line of the address if there is a warehouse" in {
-      val f = WarehouseForm().bind(secondaryWarehouseData - line1)
+      val f = form.bind(secondaryWarehouseData - line1)
 
       mustContainError(f, line1, "error.required")
     }
 
     "require a postcode if there is a warehouse" in {
-      val f = WarehouseForm().bind(secondaryWarehouseData - postcode)
+      val f = form.bind(secondaryWarehouseData - postcode)
 
       mustContainError(f, postcode, "error.required")
     }
 
     "bind to SecondaryWarehouse if there is no warehouse" in {
-      val f = WarehouseForm().bind(Map(hasWarehouse -> "false"))
+      val f = form.bind(Map(hasWarehouse -> "false"))
 
       f.value mustBe Some(SecondaryWarehouse(false, None))
     }
 
     "bind to SecondaryWarehouse if there is a warehouse and an address is provided" in {
-      val f = WarehouseForm().bind(secondaryWarehouseData)
+      val f = form.bind(secondaryWarehouseData)
 
       f.value mustBe Some(SecondaryWarehouse(true, Some(Address("line 1", "", "", "", "AA11 1AA"))))
     }

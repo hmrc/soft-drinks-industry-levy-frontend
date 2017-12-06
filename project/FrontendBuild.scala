@@ -16,7 +16,7 @@ object FrontendBuild extends Build {
   lazy val scoverageSettings = {
     Seq(
       // Semicolon-separated list of regexs matching classes to exclude
-      ScoverageKeys.coverageExcludedPackages := "<empty>;app.*;views.*;uk.gov.hmrc.*;prod.*;connectors.*;models.*;utils.*",
+      ScoverageKeys.coverageExcludedPackages := "<empty>;app.*;views.*;uk.gov.hmrc.*;prod.*;sdil.config.*;sdil.connectors.*;sdil.models.*;",
       ScoverageKeys.coverageMinimum := 80,
       ScoverageKeys.coverageFailOnMinimum := false,
       ScoverageKeys.coverageHighlighting := true

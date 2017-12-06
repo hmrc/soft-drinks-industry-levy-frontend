@@ -16,17 +16,10 @@
 
 package sdil
 
-import play.api.data.Forms.{boolean, optional}
-import play.api.data.Mapping
-
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
 package object controllers {
   implicit def future[A](a: A): Future[A] = Future.successful(a)
-
-  lazy val booleanMapping: Mapping[Boolean] =
-    optional(boolean).verifying("sdil.form.radio.error", _.nonEmpty).
-      transform(_.getOrElse(false), x => Some(x))
 
 }

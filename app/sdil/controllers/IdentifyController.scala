@@ -18,10 +18,13 @@ package sdil.controllers
 
 import java.util.UUID
 
+import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import sdil.config.AppConfig
-import sdil.forms.IdentifyForm
+import sdil.forms.FormHelpers
+import sdil.models.Identification
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -31,16 +34,27 @@ import scala.concurrent.Future
 class IdentifyController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
+  import IdentifyController.form
+
   def identify = Action { implicit request =>
     //FIXME session ID should be initialised at the start of the journey
-    Ok(views.html.softdrinksindustrylevy.register.identify(IdentifyForm())).addingToSession(SessionKeys.sessionId -> UUID.randomUUID().toString)
+    Ok(views.html.softdrinksindustrylevy.register.identify(form)).addingToSession(SessionKeys.sessionId -> UUID.randomUUID().toString)
   }
 
   def validate = Action.async { implicit request =>
-    IdentifyForm().bindFromRequest().fold(
+    form.bindFromRequest().fold(
       errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.identify(errors))),
       data => cache.cache("identify", data) map { _ =>
         Redirect(routes.VerifyController.verify())
       })
   }
+}
+
+object IdentifyController extends FormHelpers {
+  val form: Form[Identification] = Form(
+    mapping(
+      "utr" -> text.verifying("error.utr.invalid", _.matches(utrRegex)),
+      "postcode" -> postcode
+    )(Identification.apply)(Identification.unapply)
+  )
 }

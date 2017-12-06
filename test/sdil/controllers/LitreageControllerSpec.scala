@@ -17,7 +17,7 @@
 package sdil.controllers
 
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{eq => matching, _}
+import org.mockito.ArgumentMatchers.{eq => matching, any}
 import org.mockito.Mockito._
 import org.mockito.verification.VerificationMode
 import play.api.i18n.Messages
@@ -36,7 +36,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.show("packageOwn")(FakeRequest())
 
       status(res) mustBe OK
-      contentAsString(res) must include (Messages("sdil.packageOwn.heading"))
+      contentAsString(res) must include(Messages("sdil.packageOwn.heading"))
     }
   }
 
@@ -45,7 +45,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("packageOwn")(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include (Messages("sdil.packageOwn.heading"))
+      contentAsString(res) must include(Messages("sdil.packageOwn.heading"))
     }
 
     "redirect to the package copack page if the form data is valid and the user is packaging for their customers" in {
@@ -67,7 +67,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.PackageCopackSmallController.display().url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked").url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -84,7 +84,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.show("packageCopack")(FakeRequest())
 
       status(res) mustBe OK
-      contentAsString(res) must include (Messages("sdil.packageCopack.heading"))
+      contentAsString(res) must include(Messages("sdil.packageCopack.heading"))
     }
 
     "return a page with a link back to the package own page if the user packages liable drinks" in {
@@ -106,7 +106,7 @@ class LitreageControllerSpec extends ControllerSpec {
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.SDILController.displayPackage().url
+      html.select("a.link-back").attr("href") mustBe routes.PackageController.displayPackage().url
     }
   }
 
@@ -115,7 +115,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("packageCopack")(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include (Messages("sdil.packageCopack.heading"))
+      contentAsString(res) must include(Messages("sdil.packageCopack.heading"))
     }
 
     "redirect to the package copack small page if the form data is valid" in {
@@ -123,7 +123,7 @@ class LitreageControllerSpec extends ControllerSpec {
 
       val res = testController.validate("packageCopack")(request)
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.PackageCopackSmallController.display().url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked").url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -140,7 +140,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.show("packageCopackSmallVol")(FakeRequest())
 
       status(res) mustBe OK
-      contentAsString(res) must include (Messages("sdil.packageCopackSmallVol.heading"))
+      contentAsString(res) must include(Messages("sdil.packageCopackSmallVol.heading"))
     }
   }
 
@@ -149,7 +149,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("packageCopackSmallVol")(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include (Messages("sdil.packageCopackSmallVol.heading"))
+      contentAsString(res) must include(Messages("sdil.packageCopackSmallVol.heading"))
     }
 
     "redirect to the copacked page if the form data is valid" in {
@@ -157,7 +157,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("packageCopackSmallVol")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.CopackedController.display().url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import").url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -174,7 +174,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.show("copackedVolume")(FakeRequest())
 
       status(res) mustBe OK
-      contentAsString(res) must include (Messages("sdil.copackedVolume.heading"))
+      contentAsString(res) must include(Messages("sdil.copackedVolume.heading"))
     }
   }
 
@@ -183,7 +183,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("copackedVolume")(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include (Messages("sdil.copackedVolume.heading"))
+      contentAsString(res) must include(Messages("sdil.copackedVolume.heading"))
     }
 
     "redirect to the import page if the form data is valid" in {
@@ -191,7 +191,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("copackedVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.ImportController.display().url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites").url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -208,7 +208,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.show("importVolume")(FakeRequest())
 
       status(res) mustBe OK
-      contentAsString(res) must include (Messages("sdil.importVolume.heading"))
+      contentAsString(res) must include(Messages("sdil.importVolume.heading"))
     }
   }
 
@@ -217,7 +217,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("importVolume")(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include (Messages("sdil.importVolume.heading"))
+      contentAsString(res) must include(Messages("sdil.importVolume.heading"))
     }
 
     "redirect to the start date page if the form data is valid" in {

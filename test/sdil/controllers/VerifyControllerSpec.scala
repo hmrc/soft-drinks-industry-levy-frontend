@@ -16,9 +16,8 @@
 
 package sdil.controllers
 
-import org.mockito.ArgumentMatchers.{eq => matching, _}
+import org.mockito.ArgumentMatchers.{eq => matching, any}
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -49,7 +48,7 @@ class VerifyControllerSpec extends ControllerSpec {
       val res = testController.validate()(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.SDILController.displayPackage().url)
+      redirectLocation(res) mustBe Some(routes.PackageController.displayPackage().url)
     }
 
     "redirect to the identify page if the details are incorrect" in {
