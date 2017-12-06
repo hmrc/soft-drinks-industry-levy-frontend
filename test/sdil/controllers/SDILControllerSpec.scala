@@ -18,11 +18,8 @@ package sdil.controllers
 
 import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.controllers.controllerhelpers._
 
 class SDILControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -58,6 +55,13 @@ class SDILControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get must include("gg/sign-in")
+    }
+
+    "return Status: OK when displaying the completion page" in {
+      val result = controller.displayComplete().apply(FakeRequest())
+
+      status(result) mustBe OK
+      contentAsString(result) must include(messagesApi("sdil.complete.title"))
     }
   }
 }

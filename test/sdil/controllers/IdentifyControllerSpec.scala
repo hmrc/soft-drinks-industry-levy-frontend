@@ -16,12 +16,11 @@
 
 package sdil.controllers
 
-import org.mockito.ArgumentMatchers.{eq => matching, _}
+import org.mockito.ArgumentMatchers.{eq => matching, any}
 import org.mockito.Mockito._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.Identification
-import sdil.utils.TestWiring
 
 class IdentifyControllerSpec extends ControllerSpec {
 

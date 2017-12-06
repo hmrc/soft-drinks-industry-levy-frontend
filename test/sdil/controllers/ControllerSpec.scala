@@ -24,6 +24,7 @@ import play.api.{Application, ApplicationLoader}
 import play.core.DefaultWebCommands
 import sdil.config.SDILApplicationLoader
 import sdil.utils.TestWiring
+import uk.gov.hmrc.auth.core.InvalidBearerToken
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,4 +48,10 @@ trait ControllerSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicati
   def sdilAuthMock(returnValue: Future[Option[String]]): OngoingStubbing[Future[Option[String]]] =
     when(mockAuthConnector.authorise(any(), any[Retrieval[Option[String]]]())(any(), any[ExecutionContext]))
       .thenReturn(returnValue)
+
+  val userWithUtr: Future[Option[String]] = Future successful Some("UTR")
+  val userNoUtr: Future[Option[String]] = Future successful None
+
+  val notLoggedIn: Future[Option[String]] = Future failed new InvalidBearerToken
+
 }

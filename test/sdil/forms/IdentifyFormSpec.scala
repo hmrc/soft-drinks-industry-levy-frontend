@@ -19,6 +19,7 @@ package sdil.forms
 import play.api.data.Form
 import sdil.models.Identification
 import uk.gov.hmrc.play.test.UnitSpec
+import sdil.controllers.IdentifyController.form
 
 class IdentifyFormSpec extends UnitSpec {
 
@@ -26,7 +27,7 @@ class IdentifyFormSpec extends UnitSpec {
     "require the UTR to be non-empty" in {
       val emptyUtr = validData.updated(utr, "")
 
-      val f = IdentifyForm().bind(emptyUtr)
+      val f = form.bind(emptyUtr)
 
       errorFor(f, utr) shouldBe "error.utr.invalid"
     }
@@ -34,7 +35,7 @@ class IdentifyFormSpec extends UnitSpec {
     "reject UTRs with non-numeric characters" in {
       val nonNumericUtr = validData.updated(utr, "utr")
 
-      val f = IdentifyForm().bind(nonNumericUtr)
+      val f = form.bind(nonNumericUtr)
 
       errorFor(f, utr) shouldBe "error.utr.invalid"
     }
@@ -42,7 +43,7 @@ class IdentifyFormSpec extends UnitSpec {
     "reject UTRs that are fewer than 10 characters" in {
       val tooShortUtr = validData.updated(utr, "123")
 
-      val f = IdentifyForm().bind(tooShortUtr)
+      val f = form.bind(tooShortUtr)
 
       errorFor(f, utr) shouldBe "error.utr.invalid"
     }
@@ -50,7 +51,7 @@ class IdentifyFormSpec extends UnitSpec {
     "reject UTRs that are longer than 10 characters" in {
       val tooLongUtr = validData.updated(utr, "12345678900987654321")
 
-      val f = IdentifyForm().bind(tooLongUtr)
+      val f = form.bind(tooLongUtr)
 
       errorFor(f, utr) shouldBe "error.utr.invalid"
     }
@@ -58,21 +59,21 @@ class IdentifyFormSpec extends UnitSpec {
     "require the postcode to be non-empty" in {
       val emptyPostcode = validData.updated(postcode, "")
 
-      val f = IdentifyForm().bind(emptyPostcode)
+      val f = form.bind(emptyPostcode)
 
       errorFor(f, postcode) shouldBe "error.postcode.invalid"
     }
 
     "require the postcode to be valid" in {
       Seq("AA11", "A11A 1AA", "not a postcode") map { pc =>
-        val f = IdentifyForm().bind(validData.updated(postcode, pc))
+        val f = form.bind(validData.updated(postcode, pc))
 
         errorFor(f, postcode) shouldBe "error.postcode.invalid"
       }
     }
 
     "bind to Identification when the postcode and UTR are valid" in {
-      IdentifyForm().bind(validData).value shouldBe Some(Identification("1234567890", "SW1A 1AA"))
+      form.bind(validData).value shouldBe Some(Identification("1234567890", "SW1A 1AA"))
     }
   }
 

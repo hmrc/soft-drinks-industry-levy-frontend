@@ -22,9 +22,10 @@ import java.time.LocalDate
 import play.api.data.Form
 import play.api.data.Forms.{mapping, number}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Request}
 import sdil.config.AppConfig
+import sdil.forms.FormHelpers
 import sdil.models.sdilmodels._
 import sdil.models.{Packaging, StartDate}
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -34,6 +35,8 @@ import scala.util.Try
 
 class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
+
+  import StartDateController._
 
   def displayStartDate: Action[AnyContent] = Action.async { implicit request =>
     if (LocalDate.now isBefore config.taxStartDate) {
@@ -49,13 +52,13 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
       }
     } else {
       getBackLink map { link =>
-        Ok(views.html.softdrinksindustrylevy.register.start_date(startDateForm, link))
+        Ok(views.html.softdrinksindustrylevy.register.start_date(form, link))
       }
     }
   }
 
   def submitStartDate: Action[AnyContent] = Action.async { implicit request =>
-    validateStartDate(startDateForm.bindFromRequest()).fold(
+    validateStartDate(form.bindFromRequest()).fold(
       errors => getBackLink map { link => BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors, link)) },
       data => {
         cache.cache("start-date", data) flatMap { _ =>
@@ -68,7 +71,18 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
     )
   }
 
-  def startDateForm: Form[StartDate] = Form(
+  private def getBackLink(implicit request: Request[_]) = {
+    cache.fetchAndGetEntry[Boolean]("import") map {
+      case Some(true) => routes.LitreageController.show("importVolume")
+      case Some(false) => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
+      case None => routes.PackageController.displayPackage()
+    }
+  }
+}
+
+object StartDateController extends FormHelpers {
+
+  def form: Form[StartDate] = Form(
     mapping(
       "startDateDay" -> number.verifying(startDayConstraint),
       "startDateMonth" -> number.verifying(startMonthConstraint),
@@ -79,8 +93,8 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
   val startDayConstraint: Constraint[Int] = Constraint {
     day =>
       val errors = day match {
-        case a if a <= 0 => Seq(ValidationError(Messages("error.start-date.day-too-low")))
-        case b if b > 31 => Seq(ValidationError(Messages("error.start-date.day-too-high")))
+        case a if a <= 0 => Seq(ValidationError("error.start-date.day-too-low"))
+        case b if b > 31 => Seq(ValidationError("error.start-date.day-too-high"))
         case _ => Nil
       }
       if (errors.isEmpty) Valid else Invalid(errors)
@@ -89,8 +103,8 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
   val startMonthConstraint: Constraint[Int] = Constraint {
     day =>
       val errors = day match {
-        case a if a <= 0 => Seq(ValidationError(Messages("error.start-date.month-too-low")))
-        case b if b > 12 => Seq(ValidationError(Messages("error.start-date.month-too-high")))
+        case a if a <= 0 => Seq(ValidationError("error.start-date.month-too-low"))
+        case b if b > 12 => Seq(ValidationError("error.start-date.month-too-high"))
         case _ => Nil
       }
       if (errors.isEmpty) Valid else Invalid(errors)
@@ -99,22 +113,23 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
   val startYearConstraint: Constraint[Int] = Constraint {
     day =>
       val errors = day match {
-        case a if a < 2017 => Seq(ValidationError(Messages("error.start-date.year-too-low")))
-        case b if b.toString.length > 4 => Seq(ValidationError(Messages("error.start-date.year-too-high")))
+        case a if a < 2017 => Seq(ValidationError("error.start-date.year-too-low"))
+        case b if b.toString.length > 4 => Seq(ValidationError("error.start-date.year-too-high"))
         case _ => Nil
       }
       if (errors.isEmpty) Valid else Invalid(errors)
   }
 
-  def validateStartDate(form: Form[StartDate]): Form[StartDate] = {
+  def validateStartDate(form: Form[StartDate])(implicit config: AppConfig): Form[StartDate] = {
     if (form.hasErrors) form else {
       val day = form.get.startDateDay
       val month = form.get.startDateMonth
       val year = form.get.startDateYear
-      if (!isValidDate(day, month, year)) form.withError("", Messages("error.start-date.date-invalid"))
-      else if (LocalDate.of(year, month, day) isAfter LocalDate.now) form.withError("", Messages("error.start-date.date-too-high"))
+
+      if (!isValidDate(day, month, year)) form.withError("", "error.start-date.date-invalid")
+      else if (LocalDate.of(year, month, day) isAfter LocalDate.now) form.withError("", "error.start-date.date-too-high")
       else if (LocalDate.of(year, month, day) isBefore config.taxStartDate)
-        form.withError("", Messages("error.start-date.date-too-low"))
+        form.withError("", "error.start-date.date-too-low")
       else form
     }
   }
@@ -125,13 +140,5 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
       fmt.setLenient(false)
       fmt.parse(s"$day/$month/$year")
     }.isSuccess
-  }
-
-  private def getBackLink(implicit request: Request[_]) = {
-    cache.fetchAndGetEntry[Boolean]("import") map {
-      case Some(true) => routes.LitreageController.show("importVolume")
-      case Some(false) => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
-      case None => routes.PackageController.displayPackage()
-    }
   }
 }

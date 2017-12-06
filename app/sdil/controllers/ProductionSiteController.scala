@@ -18,18 +18,23 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import play.api.data.Form
+import play.api.data.Forms.mapping
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Call, Request}
 import sdil.config.AppConfig
-import sdil.forms.ProductionSiteForm
+import sdil.forms.FormHelpers
 import sdil.models.{Address, ProductionSite}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
 import scala.concurrent.Future
 
 class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
+
+  import ProductionSiteController.form
 
   def addSite = Action.async { implicit request =>
     //FIXME look up address record
@@ -37,13 +42,13 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache
       addrs <- getOtherSites
       link <- getBackLink
     } yield {
-      Ok(views.html.softdrinksindustrylevy.register.productionSite(ProductionSiteForm(), fakeAddress, addrs, link))
+      Ok(views.html.softdrinksindustrylevy.register.productionSite(form, fakeAddress, addrs, link))
     }
   }
 
   def validate = Action.async { implicit request =>
     getOtherSites flatMap { addrs =>
-      ProductionSiteForm().bindFromRequest().fold(
+      form.bindFromRequest().fold(
         errors => getBackLink map { link =>
           BadRequest(views.html.softdrinksindustrylevy.register.productionSite(errors, fakeAddress, addrs, link))
         },
@@ -87,4 +92,13 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache
 
   private lazy val fakeAddress = Address("an address", "somewhere", "", "", "AA11 1AA")
 
+}
+
+object ProductionSiteController extends FormHelpers {
+  val form: Form[ProductionSite] = Form(
+    mapping(
+      "hasOtherSite" -> mandatoryBoolean,
+      "otherSiteAddress" -> mandatoryIfTrue("hasOtherSite", addressMapping)
+    )(ProductionSite.apply)(ProductionSite.unapply)
+  )
 }

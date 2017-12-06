@@ -33,5 +33,9 @@ trait FormHelpers {
     "postcode" -> postcode
   )(Address.apply)(Address.unapply)
 
-  lazy val mandatoryBoolean: Mapping[Boolean] = optional(boolean).verifying("error.required", _.nonEmpty).transform(_.get, Some.apply)
+  lazy val mandatoryBoolean: Mapping[Boolean] = optional(boolean)
+    .verifying("error.radio-form.choose-option", _.nonEmpty).transform(_.get, Some.apply)
+
+  lazy val utrRegex = """\d{10}"""
+
 }

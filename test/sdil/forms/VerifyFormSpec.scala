@@ -17,48 +17,49 @@
 package sdil.forms
 
 import sdil.models.{Address, DetailsCorrect}
+import sdil.controllers.VerifyController.form
 
 class VerifyFormSpec extends FormSpec {
 
   "The verify form" should {
     "require a 'details correct' selection" in {
-      val f = VerifyForm().bind(altAddressData - detailsCorrect)
+      val f = form.bind(altAddressData - detailsCorrect)
 
       mustContainError(f, detailsCorrect, "error.required")
     }
 
     "reject invalid 'details correct' options" in {
-      val f = VerifyForm().bind(altAddressData.updated(detailsCorrect, "maybe"))
+      val f = form.bind(altAddressData.updated(detailsCorrect, "maybe"))
 
       mustContainError(f, detailsCorrect, "error.detailsCorrect.invalid")
     }
 
     "require the first address line if the user wants to register a different address" in {
-      val f = VerifyForm().bind(altAddressData - line1)
+      val f = form.bind(altAddressData - line1)
 
       mustContainError(f, line1, "error.required")
     }
 
     "require a postcode if the user wants to register a different address" in {
-      val f = VerifyForm().bind(altAddressData - postcode)
+      val f = form.bind(altAddressData - postcode)
 
       mustContainError(f, postcode, "error.required")
     }
 
     "bind to VerifiedDetails if the details are correct and an alternative address is not provided" in {
-      val f = VerifyForm().bind(Map(detailsCorrect -> "yes"))
+      val f = form.bind(Map(detailsCorrect -> "yes"))
 
       f.value mustBe Some(DetailsCorrect.Yes)
     }
 
     "bind to VerifiedDetails if the user wants to register a different address, and the first line and postcode are provided" in {
-      val f = VerifyForm().bind(altAddressData)
+      val f = form.bind(altAddressData)
 
       f.value mustBe Some(DetailsCorrect.DifferentAddress(Address("some street", "", "", "", "AA11 1AA")))
     }
 
     "bind to VerifiedDetails if the details are wrong and an alternative address is not provided" in {
-      val f = VerifyForm().bind(Map(detailsCorrect -> "no"))
+      val f = form.bind(Map(detailsCorrect -> "no"))
 
       f.value mustBe Some(DetailsCorrect.No)
     }

@@ -21,6 +21,7 @@ import play.api.data.Forms.{boolean, mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.config.AppConfig
+import sdil.forms.FormHelpers
 import sdil.models.Packaging
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -28,14 +29,16 @@ import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class PackageController (val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig) extends FrontendController with I18nSupport {
+class PackageController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig) extends FrontendController with I18nSupport {
+  
+  import PackageController._
 
   def displayPackage(): Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(register.packagePage(packageForm))
+    Future successful Ok(register.packagePage(form))
   }
 
   def submitPackage(): Action[AnyContent] = Action.async { implicit request =>
-    packageForm.bindFromRequest.fold(
+    form.bindFromRequest.fold(
       formWithErrors => BadRequest(register.packagePage(formWithErrors)),
       validFormData => cache.cache("packaging", validFormData) map { _ =>
         validFormData match {
@@ -47,13 +50,15 @@ class PackageController (val messagesApi: MessagesApi, cache: SessionCache)(impl
     )
   }
 
-  private lazy val packageForm = Form(
+}
+
+object PackageController extends FormHelpers {
+  val form = Form(
     mapping(
-      "isLiable" -> booleanMapping,
+      "isLiable" -> mandatoryBoolean,
       "ownBrands" -> boolean,
       "customers" -> boolean
     )(Packaging.apply)(Packaging.unapply)
       .verifying("error.radio-form.choose-one-option", p => !p.isLiable || (p.ownBrands || p.customers))
   )
-
 }

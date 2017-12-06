@@ -21,6 +21,7 @@ import play.api.data.Forms.single
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Call, Request}
 import sdil.config.AppConfig
+import sdil.forms.FormHelpers
 import sdil.models.Packaging
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -31,16 +32,18 @@ import scala.concurrent.Future
 
 class RadioFormController(val messagesApi: MessagesApi, errorHandler: FrontendErrorHandler, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
+  
+  import RadioFormController._
 
   def display(page: String, trueLink: String, falseLink: String) = Action.async { implicit request =>
     radioBackLink(page) map { backLink =>
-      Ok(register.radio_button(radioButtonForm, page, backLink, routes.RadioFormController.submit(page, trueLink, falseLink)))
+      Ok(register.radio_button(form, page, backLink, routes.RadioFormController.submit(page, trueLink, falseLink)))
     }
   }
 
   def submit(page: String, trueLink: String, falseLink: String) = Action.async { implicit request =>
     radioBackLink(page) flatMap { backLink =>
-      radioButtonForm.bindFromRequest().fold(
+      form.bindFromRequest().fold(
         formWithErrors => BadRequest(register.radio_button(formWithErrors, page, backLink,
           routes.RadioFormController.submit(page, trueLink, falseLink))),
         radioForm =>
@@ -84,6 +87,8 @@ class RadioFormController(val messagesApi: MessagesApi, errorHandler: FrontendEr
     }
   }
 
-  private val radioButtonForm = Form(single("yesOrNo" -> booleanMapping))
+}
 
+object RadioFormController extends FormHelpers {
+  val form = Form(single("yesOrNo" -> mandatoryBoolean))
 }

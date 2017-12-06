@@ -29,25 +29,30 @@ import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class ContactDetailsController (val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class ContactDetailsController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
+  import ContactDetailsController._
+
   def displayContactDetails: Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(register.contact_details(contactForm))
+    Future successful Ok(register.contact_details(form))
   }
 
   def submitContactDetails: Action[AnyContent] = Action.async { implicit request =>
-    contactForm.bindFromRequest().fold(
+    form.bindFromRequest().fold(
       formWithErrors => Future successful BadRequest(register.contact_details(formWithErrors)),
       d => cache.cache("contact-details", d) map { _ =>
         Redirect(routes.DeclarationController.displayDeclaration())
       })
   }
 
-  private lazy val contactForm = Form(
+}
+
+object ContactDetailsController {
+  val form = Form(
     mapping(
-      "fullName" -> text.verifying(Messages("error.full-name.invalid"), _.nonEmpty),
-      "position" -> text.verifying(Messages("error.position.invalid"), _.nonEmpty),
-      "phoneNumber" -> text.verifying(Messages("error.phone-number.invalid"), _.length > 10),
+      "fullName" -> text.verifying("error.full-name.invalid", _.nonEmpty),
+      "position" -> text.verifying("error.position.invalid", _.nonEmpty),
+      "phoneNumber" -> text.verifying("error.phone-number.invalid", _.length > 10),
       "email" -> email)(ContactDetails.apply)(ContactDetails.unapply))
 }
