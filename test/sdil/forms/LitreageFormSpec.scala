@@ -23,39 +23,39 @@ class LitreageFormSpec extends FormSpec {
 
   "The litreage form" should {
     "require the lower rate volume" in {
-      val f = form.bind(validData - lowerRate)
+      val f = form.bind(validData.updated(lowerRate, ""))
 
-      mustContainError(f, lowerRate, "error.required")
+      mustContainError(f, lowerRate, "error.litreage.required")
     }
 
     "require the higher rate volume" in {
-      val f = form.bind(validData - higherRate)
+      val f = form.bind(validData.updated(higherRate, ""))
 
-      mustContainError(f, higherRate, "error.required")
+      mustContainError(f, higherRate, "error.litreage.required")
     }
 
     "require the lower rate volume to be a number" in {
       val f = form.bind(validData.updated(lowerRate, "not a number"))
 
-      mustContainError(f, lowerRate, "error.number")
+      mustContainError(f, lowerRate, "error.litreage.numeric")
     }
 
     "require the higher rate volume to be a number" in {
       val f = form.bind(validData.updated(higherRate, "not a number"))
 
-      mustContainError(f, higherRate, "error.number")
+      mustContainError(f, higherRate, "error.litreage.numeric")
     }
 
     "require the lower rate volume to be positive" in {
       val f = form.bind(validData.updated(lowerRate, "-1"))
 
-      mustContainError(f, lowerRate, "error.number.negative")
+      mustContainError(f, lowerRate, "error.litreage.min")
     }
 
     "require the higher rate volume to be positive" in {
       val f = form.bind(validData.updated(higherRate, "-1"))
 
-      mustContainError(f, higherRate, "error.number.negative")
+      mustContainError(f, higherRate, "error.litreage.min")
     }
 
     "require the lower rate volume to be less than 10,000,000,000,000" in {

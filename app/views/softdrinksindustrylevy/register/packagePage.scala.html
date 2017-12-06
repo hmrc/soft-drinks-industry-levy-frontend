@@ -22,13 +22,14 @@
 @(packageForm: Form[_])(implicit messages: Messages, request: Request[_], config: AppConfig)
 
 @checkboxes = {
-    @if(packageForm.hasErrors) {
+    @packageForm.error("manufactureForCheckboxes").map { err =>
         <fieldset class="form-field-group form-field--error">
-            <span class="error-notification">@Messages("error.radio-form.choose-one-option")</span>
-    } else {
+        <span class="error-notification">@Messages(err.message)</span>
+    }.getOrElse {
         <fieldset>
     }
-    <h2 class="heading-medium">Who will you package liable drinks for?</h2>
+
+    <h2 class="heading-medium">@Messages("sdil.package.who-for")</h2>
     @checkbox(
         packageForm("ownBrands"),
         '_label -> Messages("sdil.who-for.option1")
@@ -41,7 +42,7 @@
     </fieldset>
 }
 
-@views.html.main_template(title = Messages("sdil.package.title")) {
+@views.html.main_template(title = Messages("sdil.common.title")) {
 
     <a class="link-back" href="@sdil.controllers.routes.VerifyController.verify()">@Messages("sdil.common.back")</a>
 

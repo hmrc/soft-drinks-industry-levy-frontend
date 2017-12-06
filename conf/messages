@@ -2,7 +2,7 @@ sdil.common.title = Soft Drinks Industry Levy
 sdil.common.continue=Continue
 sdil.common.back=Back
 sdil.common.save-continue=Save and continue
-sdil.common.errorSummary=This page has errors
+sdil.common.errorSummary=Something you’ve entered is not valid
 sdil.common.alpha=ALPHA
 sdil.common.alpha-info=<span>This is a new service – your <a href="{0}">feedback</a> will help us to improve it.</span>
 sdil.common.or=Or
@@ -17,17 +17,14 @@ sdil.address.line3=Address line 3
 sdil.address.line4=Address line 4
 sdil.address.postcode=Postcode
 
+error.utr.required=Enter a valid UTR
+error.utr.length=UTR must be 10 digits long
+error.utr.invalid=UTR must only contain digits
+
 #Identify
 sdil.identify.heading=Enter your Unique Tax Reference number and postcode
 sdil.identify.utr=Unique Tax Reference number (UTR)
 sdil.identify.postcode=Registered business postcode
-
-#Start date
-sdil.start-date.heading=What date did or will you become liable for the Soft Drinks Industry Levy?
-sdil.start-date.example=For example, 6 4 2018
-sdil.start-date.day=Day
-sdil.start-date.month=Month
-sdil.start-date.year=Year
 
 #Verify
 sdil.verify.heading=Is this the business you want to register?
@@ -46,6 +43,15 @@ sdil.verify.address.line3=Address line 3
 sdil.verify.address.line4=Address line 4
 sdil.verify.postcode=Postcode
 
+#Package
+sdil.package.heading=Will you package liable drinks at a production site you operate?
+sdil.package.who-for=Who will you package liable drinks for?
+sdil.who-for.instruction=Select one or both
+sdil.who-for.option1=Your own brand or brands you have the rights to manufacture
+sdil.who-for.option2=Your customers
+
+error.packaging.none-selected=Choose at least one option
+
 #Litreage pages
 sdil.packageOwn.heading=How many litres of liable drink per year will you package for your own brand or brands you have the rights to manufacture?
 sdil.packageCopack.heading=How many litres of liable drink per year will you package for your customers?
@@ -56,7 +62,11 @@ sdil.litreage.lowRate=Litres at the low rate
 sdil.litreage.highRate=Litres at the high rate
 sdil.litrage.rates.help=What are the rates?
 sdil.litrage.rates.content=The low rate is from 5 grams to 7.9 grams of sugar per 100 millilitres. The high rate is 8 grams of sugar or more per 100 millilitres.
-error.litreage.max=This must be less than 10,000,000,000,000
+
+error.litreage.required=Number of litres must be 0 or more
+error.litreage.numeric=Number of litres must be a whole number
+error.litreage.max=Number of litres must be less than 10,000,000,000,000
+error.litreage.min=Number of litres must be 0 or more
 
 #Production sites
 sdil.productionSite.heading=Will you package liable drinks at a production site in the UK other than:
@@ -78,13 +88,6 @@ sdil.warehouse.add=Yes - add another address
 sdil.warehouse.address=Address {0}
 sdil.warehouse.remove=Remove?
 
-#Contact details
-sdil.contact-details.heading=Who should we contact about the Soft Drinks Industry Levy?
-sdil.contact-details.full-name=Full name
-sdil.contact-details.position=Position
-sdil.contact-details.phone-number=Telephone number
-sdil.contact-details.email=Email
-
 #Package Copack Small
 sdil.package-copack-small.heading=Will you package liable drinks for any small producers?
 sdil.package-copack-small.whatis.header=What is a small producer?
@@ -96,14 +99,39 @@ sdil.copacked.heading=Will you use any third parties in the UK to package liable
 #Import
 sdil.import.heading=Will you bring liable drinks into the UK from anywhere outside of the UK?
 
-#Package
-sdil.package.heading= Will you package liable drinks at a production site you operate?
-sdil.package.title=Soft Drinks Industry Levy
-sdil.package.button.back=Back
+#Start date
+sdil.start-date.heading=What date did or will you become liable for the Soft Drinks Industry Levy?
+sdil.start-date.example=For example, 6 4 2018
+sdil.start-date.day=Day
+sdil.start-date.month=Month
+sdil.start-date.year=Year
 
-sdil.who-for.instruction=Select one or both
-sdil.who-for.option1=Your own brand or brands you have the rights to manufacture
-sdil.who-for.option2=Your customers
+error.day.required=Enter a day
+error.month.required=Enter a month
+error.year.required=Enter a year
+error.start-day.invalid=Enter a valid day
+error.start-month.invalid=Enter a valid month
+error.start-year.invalid=Enter a valid year
+error.start-date.before-tax-start=Date must be after 6 April 2018
+error.start-date.in-future=Date cannot be in the future
+error.date.invalid=Invalid date
+
+#Contact details
+sdil.contact-details.heading=Who should we contact about the Soft Drinks Industry Levy?
+sdil.contact-details.full-name=Full name
+sdil.contact-details.position=Position
+sdil.contact-details.phone-number=Telephone number
+sdil.contact-details.email=Email
+
+error.fullName.required=Enter a name
+error.position.required=Enter a position
+error.phoneNumber.required=Enter a telephone number
+error.email.required=Enter an email address
+error.email.length=Email must be fewer than 132 characters
+error.fullName.length=Name must be fewer than 40 characters
+error.phoneNumber.length=Telephone number must be fewer than 24 characters
+error.phoneNumber.invalid=Telephone number must only contain numbers and ()+,-
+error.position.length=Position must be fewer than 155 characters
 
 # Declaration
 sdil.declaration.heading=Declaration
@@ -123,30 +151,18 @@ sdil.complete.title=Registration submitted
 sdil.complete.what-happens.title=What happens next?
 sdil.complete.what-happens.content=You don’t need to do anything else. We''ll contact you with a registration number.
 
-#Errors
-error.utr.invalid=Invalid UTR
-error.postcode.invalid=Invalid postcode
+#Common errors
+error.line1.required=Address line 1 must not be empty
+error.line2.required=Address line 2 must not be empty
+error.address-line.invalid=This can only contain numbers, letters, and -,.&'/
+error.address-line.length=This must be no more than 35 characters
+error.postcode.required=Enter a postcode
+error.postcode.invalid=Enter a valid postcode
 error.number.negative=Must be greater than or equal to 0
 error.full-name.invalid=Enter a name
 error.position.invalid=Enter a position
 error.phone-number.invalid=Enter a valid phone number
 error.email=Enter a valid email
-error.radio-form.choose-option=Choose an option
+error.radio-form.choose-option=Choose one option
 error.radio-form.choose-one-option=Choose at least one option
-error.radio-form.choose-option.summary=You have not chosen an option
-
-error.start-date.day-empty=Enter a day
-error.start-date.day-too-high=Enter a valid day
-error.start-date.day-too-low=Enter a valid day
-error.start-date.month-empty=Enter a month
-error.start-date.month-too-high=Enter a valid month
-error.start-date.month-too-low=Enter a valid month
-error.start-date.year-empty=Enter a year
-error.start-date.year-too-high=Enter a valid year
-error.start-date.year-too-low=Enter a valid year
-error.start-date.date-too-low=Date must be after 06 04 2018
-error.start-date.date-too-high=Date cannot be in the future
-error.start-date.day-invalid=Invalid Day
-error.start-date.month-invalid=Invalid Month
-error.start-date.year-invalid=Invalid Year
-error.start-date.date-invalid=Invalid Date
+error.radio-form.choose-option.summary=You haven’t chosen an option

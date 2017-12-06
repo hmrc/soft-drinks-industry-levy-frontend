@@ -82,7 +82,7 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache
     if (LocalDate.now.isBefore(config.taxStartDate)) {
       cache.fetchAndGetEntry[Boolean]("import") map {
         case Some(true) => routes.LitreageController.show("importVolume")
-        case Some(false) => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
+        case Some(false) => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date")
         case None => routes.PackageController.displayPackage()
       }
     } else {

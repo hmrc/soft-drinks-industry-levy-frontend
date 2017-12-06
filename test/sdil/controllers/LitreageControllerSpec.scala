@@ -191,7 +191,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("copackedVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date").url)
     }
 
     "store the form data in keystore if it is valid" in {

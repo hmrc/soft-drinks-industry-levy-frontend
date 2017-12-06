@@ -17,7 +17,7 @@
 package sdil.controllers
 
 import play.api.data.Form
-import play.api.data.Forms.{longNumber, mapping}
+import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Call, Request, Result}
 import sdil.config.AppConfig
@@ -27,8 +27,11 @@ import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
+import scala.util.Try
+
 class LitreageController(val messagesApi: MessagesApi, errorHandler: FrontendErrorHandler, cache: SessionCache)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
+
   import LitreageController._
 
   def show(pageName: String) = Action.async { implicit request =>
@@ -56,7 +59,7 @@ class LitreageController(val messagesApi: MessagesApi, errorHandler: FrontendErr
       case "packageOwn" => Redirect(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked"))
       case "packageCopack" => Redirect(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked"))
       case "packageCopackSmallVol" => Redirect(routes.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import"))
-      case "copackedVolume" => Redirect(routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites"))
+      case "copackedVolume" => Redirect(routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date"))
       case "importVolume" => Redirect(routes.StartDateController.displayStartDate())
       case _ => BadRequest(errorHandler.badRequestTemplate)
     }
@@ -69,7 +72,7 @@ class LitreageController(val messagesApi: MessagesApi, errorHandler: FrontendErr
       case "packageCopack" => routes.PackageController.displayPackage()
       case "packageCopackSmallVol" => routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked")
       case "copackedVolume" => routes.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import")
-      case "importVolume" => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
+      case "importVolume" => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date")
       case _ => throw new IllegalArgumentException(s"Invalid page name $page")
     }
   }
@@ -82,9 +85,10 @@ object LitreageController extends FormHelpers {
       "higherRateLitres" -> litreage
     )(Litreage.apply)(Litreage.unapply))
 
-  private lazy val litreage = {
-    longNumber
-      .verifying("error.litreage.max", _ < 10000000000000L)
-      .verifying("error.number.negative", _ >= 0)
-  }
+  private lazy val litreage = text
+    .verifying("error.litreage.required", _.nonEmpty)
+    .verifying("error.litreage.numeric", l => l.isEmpty || Try(l.toLong).isSuccess) //don't try to parse empty string as a number
+    .transform[Long](_.toLong, _.toString)
+    .verifying("error.litreage.max", _ <= 9999999999999L)
+    .verifying("error.litreage.min", _ >= 0)
 }

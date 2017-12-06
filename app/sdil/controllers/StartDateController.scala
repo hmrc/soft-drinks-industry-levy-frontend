@@ -19,8 +19,8 @@ package sdil.controllers
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 
-import play.api.data.Form
-import play.api.data.Forms.{mapping, number}
+import play.api.data.{Form, Mapping}
+import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Request}
@@ -58,7 +58,7 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
   }
 
   def submitStartDate: Action[AnyContent] = Action.async { implicit request =>
-    validateStartDate(form.bindFromRequest()).fold(
+    form.bindFromRequest().fold(
       errors => getBackLink map { link => BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors, link)) },
       data => {
         cache.cache("start-date", data) flatMap { _ =>
@@ -74,7 +74,7 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
   private def getBackLink(implicit request: Request[_]) = {
     cache.fetchAndGetEntry[Boolean]("import") map {
       case Some(true) => routes.LitreageController.show("importVolume")
-      case Some(false) => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
+      case Some(false) => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date")
       case None => routes.PackageController.displayPackage()
     }
   }
@@ -82,63 +82,23 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(imp
 
 object StartDateController extends FormHelpers {
 
-  def form: Form[StartDate] = Form(
-    mapping(
-      "startDateDay" -> number.verifying(startDayConstraint),
-      "startDateMonth" -> number.verifying(startMonthConstraint),
-      "startDateYear" -> number.verifying(startYearConstraint)
-    )(StartDate.apply)(StartDate.unapply)
+  def form(implicit appConfig: AppConfig): Form[LocalDate] = Form(
+    single(
+      "startDate" -> startDate
+        .verifying("error.start-date.in-future", !_.isAfter(LocalDate.now))
+        .verifying("error.start-date.before-tax-start", !_.isBefore(appConfig.taxStartDate))
+    )
   )
 
-  val startDayConstraint: Constraint[Int] = Constraint {
-    day =>
-      val errors = day match {
-        case a if a <= 0 => Seq(ValidationError("error.start-date.day-too-low"))
-        case b if b > 31 => Seq(ValidationError("error.start-date.day-too-high"))
-        case _ => Nil
-      }
-      if (errors.isEmpty) Valid else Invalid(errors)
-  }
+  lazy val startDate: Mapping[LocalDate] = tuple(
+    "day" -> numeric("day").verifying("error.start-day.invalid", d => d > 0 && d <= 31),
+    "month" -> numeric("month").verifying("error.start-month.invalid", d => d > 0 && d <= 12),
+    "year" -> numeric("year").verifying("error.start-year.invalid", d => d >= 1900 && d < 2100)
+  ).verifying("error.date.invalid", x => x match { case (d, m, y) => Try(LocalDate.of(y, m, d)).isSuccess } )
+    .transform({ case (d, m, y) => LocalDate.of(y, m, d) }, d => (d.getDayOfMonth, d.getMonthValue, d.getYear))
 
-  val startMonthConstraint: Constraint[Int] = Constraint {
-    day =>
-      val errors = day match {
-        case a if a <= 0 => Seq(ValidationError("error.start-date.month-too-low"))
-        case b if b > 12 => Seq(ValidationError("error.start-date.month-too-high"))
-        case _ => Nil
-      }
-      if (errors.isEmpty) Valid else Invalid(errors)
-  }
-
-  val startYearConstraint: Constraint[Int] = Constraint {
-    day =>
-      val errors = day match {
-        case a if a < 2017 => Seq(ValidationError("error.start-date.year-too-low"))
-        case b if b.toString.length > 4 => Seq(ValidationError("error.start-date.year-too-high"))
-        case _ => Nil
-      }
-      if (errors.isEmpty) Valid else Invalid(errors)
-  }
-
-  def validateStartDate(form: Form[StartDate])(implicit config: AppConfig): Form[StartDate] = {
-    if (form.hasErrors) form else {
-      val day = form.get.startDateDay
-      val month = form.get.startDateMonth
-      val year = form.get.startDateYear
-
-      if (!isValidDate(day, month, year)) form.withError("", "error.start-date.date-invalid")
-      else if (LocalDate.of(year, month, day) isAfter LocalDate.now) form.withError("", "error.start-date.date-too-high")
-      else if (LocalDate.of(year, month, day) isBefore config.taxStartDate)
-        form.withError("", "error.start-date.date-too-low")
-      else form
-    }
-  }
-
-  def isValidDate(day: Int, month: Int, year: Int): Boolean = {
-    Try {
-      val fmt = new SimpleDateFormat("dd/MM/yyyy")
-      fmt.setLenient(false)
-      fmt.parse(s"$day/$month/$year")
-    }.isSuccess
-  }
+  def numeric(key: String): Mapping[Int] = text
+    .verifying(s"error.$key.required", _.nonEmpty)
+    .verifying("error.number", v => v.isEmpty || Try(v.toInt).isSuccess)
+    .transform[Int](_.toInt, _.toString)
 }

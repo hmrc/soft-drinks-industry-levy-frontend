@@ -25,25 +25,17 @@ class VerifyFormSpec extends FormSpec {
     "require a 'details correct' selection" in {
       val f = form.bind(altAddressData - detailsCorrect)
 
-      mustContainError(f, detailsCorrect, "error.required")
+      mustContainError(f, detailsCorrect, "error.radio-form.choose-option")
     }
 
     "reject invalid 'details correct' options" in {
       val f = form.bind(altAddressData.updated(detailsCorrect, "maybe"))
 
-      mustContainError(f, detailsCorrect, "error.detailsCorrect.invalid")
+      mustContainError(f, detailsCorrect, "error.radio-form.choose-option")
     }
 
-    "require the first address line if the user wants to register a different address" in {
-      val f = form.bind(altAddressData - line1)
-
-      mustContainError(f, line1, "error.required")
-    }
-
-    "require a postcode if the user wants to register a different address" in {
-      val f = form.bind(altAddressData - postcode)
-
-      mustContainError(f, postcode, "error.required")
+    "validate the address if the user wants to register a different address" in {
+      mustValidateAddress(form, "alternativeAddress", altAddressData)
     }
 
     "bind to VerifiedDetails if the details are correct and an alternative address is not provided" in {
@@ -55,7 +47,7 @@ class VerifyFormSpec extends FormSpec {
     "bind to VerifiedDetails if the user wants to register a different address, and the first line and postcode are provided" in {
       val f = form.bind(altAddressData)
 
-      f.value mustBe Some(DetailsCorrect.DifferentAddress(Address("some street", "", "", "", "AA11 1AA")))
+      f.value mustBe Some(DetailsCorrect.DifferentAddress(Address("some street", "some town", "", "", "AA11 1AA")))
     }
 
     "bind to VerifiedDetails if the details are wrong and an alternative address is not provided" in {
@@ -67,12 +59,13 @@ class VerifyFormSpec extends FormSpec {
 
   lazy val detailsCorrect = "detailsCorrect"
   lazy val line1 = "alternativeAddress.line1"
+  lazy val line2 = "alternativeAddress.line2"
   lazy val postcode = "alternativeAddress.postcode"
 
   lazy val altAddressData = Map(
     detailsCorrect -> "differentAddress",
     line1 -> "some street",
-    "alternativeAddress.line2" -> "",
+    line2 -> "some town",
     "alternativeAddress.line3" -> "",
     "alternativeAddress.line4" -> "",
     postcode -> "AA11 1AA"

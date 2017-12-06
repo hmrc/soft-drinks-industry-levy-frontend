@@ -20,7 +20,7 @@ class PostcodeMappingSpec extends FormSpec with FormHelpers {
 
   "The postcode mapping" should {
     "require the postcode to be non-empty" in {
-      expectError("", "error.postcode.invalid")
+      expectError("", "error.postcode.required")
     }
 
     "require the postcode to be valid" in {

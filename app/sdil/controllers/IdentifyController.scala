@@ -20,6 +20,7 @@ import java.util.UUID
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
+import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import sdil.config.AppConfig
@@ -53,7 +54,12 @@ class IdentifyController(val messagesApi: MessagesApi, cache: SessionCache)(impl
 object IdentifyController extends FormHelpers {
   val form: Form[Identification] = Form(
     mapping(
-      "utr" -> text.verifying("error.utr.invalid", _.matches(utrRegex)),
+      "utr" -> text.verifying(Constraint { x: String => x match {
+        case "" => Invalid("error.utr.required")
+        case utr if utr.exists(!_.isDigit) => Invalid("error.utr.invalid")
+        case utr if utr.length != 10 => Invalid("error.utr.length")
+        case _ => Valid
+      }}),
       "postcode" -> postcode
     )(Identification.apply)(Identification.unapply)
   )

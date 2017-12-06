@@ -54,45 +54,6 @@ class ContactDetailsControllerSpec extends ControllerSpec {
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include(messagesApi("error.full-name.invalid"))
     }
-
-    "return Status: BAD_REQUEST for invalid position for contact details form submission" in {
-      val request = FakeRequest("POST", "/contact-details").withFormUrlEncodedBody(
-        "fullName" -> "valid",
-        "position" -> "",
-        "phoneNumber" -> "+4411111111111",
-        "email" -> "a@a.com"
-      )
-      val result = testController.submitContactDetails.apply(request)
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messagesApi("error.position.invalid"))
-    }
-
-    "return Status: BAD_REQUEST for invalid phone number for contact details form submission" in {
-      val request = FakeRequest("POST", "/contact-details").withFormUrlEncodedBody(
-        "fullName" -> "valid",
-        "position" -> "position",
-        "phoneNumber" -> "",
-        "email" -> "a@a.com"
-      )
-      val result = testController.submitContactDetails.apply(request)
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messagesApi("error.phone-number.invalid"))
-    }
-
-    "return Status: BAD_REQUEST for invalid email for contact details form submission" in {
-      val request = FakeRequest("POST", "/contact-details").withFormUrlEncodedBody(
-        "fullName" -> "valid",
-        "position" -> "position",
-        "phoneNumber" -> "55561446556",
-        "email" -> ""
-      )
-      val result = testController.submitContactDetails.apply(request)
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messagesApi("error.email"))
-    }
   }
 
   lazy val testController: ContactDetailsController = wire[ContactDetailsController]

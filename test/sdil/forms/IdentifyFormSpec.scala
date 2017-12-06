@@ -29,7 +29,7 @@ class IdentifyFormSpec extends UnitSpec {
 
       val f = form.bind(emptyUtr)
 
-      errorFor(f, utr) shouldBe "error.utr.invalid"
+      errorFor(f, utr) shouldBe "error.utr.required"
     }
 
     "reject UTRs with non-numeric characters" in {
@@ -45,7 +45,7 @@ class IdentifyFormSpec extends UnitSpec {
 
       val f = form.bind(tooShortUtr)
 
-      errorFor(f, utr) shouldBe "error.utr.invalid"
+      errorFor(f, utr) shouldBe "error.utr.length"
     }
 
     "reject UTRs that are longer than 10 characters" in {
@@ -53,7 +53,7 @@ class IdentifyFormSpec extends UnitSpec {
 
       val f = form.bind(tooLongUtr)
 
-      errorFor(f, utr) shouldBe "error.utr.invalid"
+      errorFor(f, utr) shouldBe "error.utr.length"
     }
 
     "require the postcode to be non-empty" in {
@@ -61,7 +61,7 @@ class IdentifyFormSpec extends UnitSpec {
 
       val f = form.bind(emptyPostcode)
 
-      errorFor(f, postcode) shouldBe "error.postcode.invalid"
+      errorFor(f, postcode) shouldBe "error.postcode.required"
     }
 
     "require the postcode to be valid" in {

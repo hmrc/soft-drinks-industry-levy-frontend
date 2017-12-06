@@ -18,6 +18,7 @@ package sdil.forms
 
 import sdil.models.{Address, SecondaryWarehouse}
 import sdil.controllers.WarehouseController.form
+
 class WarehouseFormSpec extends FormSpec {
 
   "The warehouse form" should {
@@ -27,16 +28,8 @@ class WarehouseFormSpec extends FormSpec {
       mustContainError(f, hasWarehouse, "error.radio-form.choose-option")
     }
 
-    "require the first line of the address if there is a warehouse" in {
-      val f = form.bind(secondaryWarehouseData - line1)
-
-      mustContainError(f, line1, "error.required")
-    }
-
-    "require a postcode if there is a warehouse" in {
-      val f = form.bind(secondaryWarehouseData - postcode)
-
-      mustContainError(f, postcode, "error.required")
+    "validate the address if there is a warehouse" in {
+      mustValidateAddress(form, "warehouseAddress", secondaryWarehouseData)
     }
 
     "bind to SecondaryWarehouse if there is no warehouse" in {
@@ -48,19 +41,20 @@ class WarehouseFormSpec extends FormSpec {
     "bind to SecondaryWarehouse if there is a warehouse and an address is provided" in {
       val f = form.bind(secondaryWarehouseData)
 
-      f.value mustBe Some(SecondaryWarehouse(true, Some(Address("line 1", "", "", "", "AA11 1AA"))))
+      f.value mustBe Some(SecondaryWarehouse(true, Some(Address("line 1", "line 2", "", "", "AA11 1AA"))))
     }
   }
 
   lazy val secondaryWarehouseData = Map(
     hasWarehouse -> "true",
     line1 -> "line 1",
-    "warehouseAddress.line2" -> "",
+    line2 -> "line 2",
     "warehouseAddress.line3" -> "",
     "warehouseAddress.line4" -> "",
     postcode -> "AA11 1AA"
   )
   lazy val hasWarehouse = "hasWarehouse"
   lazy val line1 = "warehouseAddress.line1"
+  lazy val line2 = "warehouseAddress.line2"
   lazy val postcode = "warehouseAddress.postcode"
 }
