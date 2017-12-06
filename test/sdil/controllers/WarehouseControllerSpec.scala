@@ -25,7 +25,6 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.controllerhelpers._
 import sdil.models.{Address, Packaging}
 import sdil.utils.TestConfig
 
