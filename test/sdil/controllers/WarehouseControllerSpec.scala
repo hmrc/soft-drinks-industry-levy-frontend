@@ -16,7 +16,7 @@
 
 package sdil.controllers
 
-import java.time.{Clock, LocalDate}
+import java.time.LocalDate
 
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
@@ -26,7 +26,6 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.{Address, Packaging}
-import sdil.utils.TestConfig
 
 class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
 
@@ -60,7 +59,7 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
     "return a page with a link back to the start date page if the user does not package liable drinks" +
       "and the date is after the tax start date" in {
       stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
-      TestConfig.setTaxStartDate(LocalDate.now minusDays 1)
+      testConfig.setTaxStartDate(LocalDate.now minusDays 1)
 
       val res = testController.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
@@ -68,14 +67,14 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.StartDateController.displayStartDate().url
 
-      TestConfig.resetTaxStartDate()
+      testConfig.resetTaxStartDate()
     }
 
     "return a page with a link back to the import volume page if the user does not package liable drinks, " +
       "imports liable drinks, and the date is before the tax start date" in {
       stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
       stubCacheEntry[Boolean]("import", Some(true))
-      TestConfig.setTaxStartDate(LocalDate.now plusDays 1)
+      testConfig.setTaxStartDate(LocalDate.now plusDays 1)
 
       val res = testControllerBeforeTaxStart.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
@@ -83,22 +82,22 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
 
-      TestConfig.resetTaxStartDate()
+      testConfig.resetTaxStartDate()
     }
 
     "return a page with a link back to the import page if the user does not package or import liable drinks," +
       "and the date is before the tax start date" in {
       stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
       stubCacheEntry[Boolean]("import", Some(false))
-      TestConfig.setTaxStartDate(LocalDate.now plusDays 1)
+      testConfig.setTaxStartDate(LocalDate.now plusDays 1)
 
       val res = testControllerBeforeTaxStart.secondaryWarehouse()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites").url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date").url
 
-      TestConfig.resetTaxStartDate()
+      testConfig.resetTaxStartDate()
     }
   }
 

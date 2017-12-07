@@ -30,8 +30,8 @@ POST        /register/copacked                               sdil.controllers.Ra
 GET         /register/copacked-volume                        sdil.controllers.LitreageController.show(pageName = "copackedVolume")
 POST        /register/copacked-volume                        sdil.controllers.LitreageController.validate(pageName = "copackedVolume")
 
-GET         /register/import                                 sdil.controllers.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites")
-POST        /register/import                                 sdil.controllers.RadioFormController.submit(page = "import", trueLink = "importVolume", falseLink = "production-sites")
+GET         /register/import                                 sdil.controllers.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date")
+POST        /register/import                                 sdil.controllers.RadioFormController.submit(page = "import", trueLink = "importVolume", falseLink = "start-date")
 
 GET         /register/import-volume                          sdil.controllers.LitreageController.show(pageName = "importVolume")
 POST        /register/import-volume                          sdil.controllers.LitreageController.validate(pageName = "importVolume")

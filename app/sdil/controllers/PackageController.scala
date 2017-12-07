@@ -16,8 +16,9 @@
 
 package sdil.controllers
 
-import play.api.data.Form
 import play.api.data.Forms.{boolean, mapping}
+import play.api.data.validation.Constraint
+import play.api.data.{Form, FormError, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.config.AppConfig
@@ -53,12 +54,33 @@ class PackageController(val messagesApi: MessagesApi, cache: SessionCache)(impli
 }
 
 object PackageController extends FormHelpers {
-  val form = Form(
-    mapping(
+  val form = Form(packageMapping)
+
+  private lazy val packageMapping = new Mapping[Packaging] {
+    lazy val underlying: Mapping[Packaging] = mapping(
       "isLiable" -> mandatoryBoolean,
       "ownBrands" -> boolean,
       "customers" -> boolean
     )(Packaging.apply)(Packaging.unapply)
-      .verifying("error.radio-form.choose-one-option", p => !p.isLiable || (p.ownBrands || p.customers))
-  )
+
+    override def bind(data: Map[String, String]): Either[Seq[FormError], Packaging] = {
+      underlying.bind(data) match {
+        case Left(errs) => Left(errs)
+        case Right(p) if p.isLiable && !(p.ownBrands || p.customers) =>
+          Left(Seq(FormError("manufactureForCheckboxes", "error.packaging.none-selected")))
+        case Right(p) => Right(p)
+      }
+    }
+
+    override def unbind(value: Packaging): Map[String, String] = underlying.unbind(value)
+
+    override def unbindAndValidate(value: Packaging): (Map[String, String], Seq[FormError]) = underlying.unbindAndValidate(value)
+
+    //not required
+    override val key: String = ""
+    override val mappings: Seq[Mapping[_]] = Nil
+    override val constraints: Seq[Constraint[Packaging]] = Nil
+    override def withPrefix(prefix: String): Mapping[Packaging] = this
+    override def verifying(constraints: Constraint[Packaging]*): Mapping[Packaging] = this
+  }
 }

@@ -16,7 +16,7 @@
 
 package sdil.controllers
 
-import play.api.data.Forms.{mapping, nonEmptyText}
+import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
@@ -55,12 +55,13 @@ class VerifyController(val messagesApi: MessagesApi, cache: SessionCache)(implic
 object VerifyController extends FormHelpers {
   val form: Form[DetailsCorrect] = Form(
     mapping(
-      "detailsCorrect" -> oneOf(DetailsCorrect.options, "error.detailsCorrect.invalid"),
+      "detailsCorrect" -> oneOf(DetailsCorrect.options, "error.radio-form.choose-option"),
       "alternativeAddress" -> mandatoryIf(isEqual("detailsCorrect", "differentAddress"), addressMapping)
     )(DetailsCorrect.apply)(DetailsCorrect.unapply)
   )
 
   def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
-    nonEmptyText.verifying(errorMsg, s => options.contains(s))
+    //have to use optional, or the framework returns `error.required` when no option is selected
+    optional(text).verifying(errorMsg, s => s.exists(options.contains)).transform(_.getOrElse(""), Some.apply)
   }
 }

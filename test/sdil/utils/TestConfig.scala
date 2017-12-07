@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import sdil.config.AppConfig
 
-object TestConfig extends AppConfig {
+class TestConfig extends AppConfig {
   override val analyticsToken: String = "token"
   override val analyticsHost: String = "host"
   override val reportAProblemPartialUrl: String = "reportProblem"

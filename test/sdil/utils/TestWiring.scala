@@ -45,7 +45,7 @@ trait TestWiring extends MockitoSugar {
     m
   }
 
-  implicit lazy val testConfig: AppConfig = TestConfig
+  implicit lazy val testConfig: TestConfig = new TestConfig
 
   lazy val mockErrorHandler = mock[FrontendErrorHandler]
 

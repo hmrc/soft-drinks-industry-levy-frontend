@@ -25,7 +25,6 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.Address
-import sdil.utils.TestConfig
 
 class ProductionSiteControllerSpec extends ControllerSpec {
 
@@ -48,7 +47,7 @@ class ProductionSiteControllerSpec extends ControllerSpec {
 
     "return a page with a link back to the start date page if the date is after the sugar tax start date" in {
       stubCacheEntry[Seq[Address]]("productionSites", None)
-      TestConfig.setTaxStartDate(LocalDate.now minusDays 1)
+      testConfig.setTaxStartDate(LocalDate.now minusDays 1)
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -56,7 +55,7 @@ class ProductionSiteControllerSpec extends ControllerSpec {
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.StartDateController.displayStartDate().url
 
-      TestConfig.resetTaxStartDate()
+      testConfig.resetTaxStartDate()
     }
 
     "return a page with a link back to the import volume page if the date is before the sugar tax start date " +
@@ -82,7 +81,7 @@ class ProductionSiteControllerSpec extends ControllerSpec {
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "production-sites").url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date").url
     }
   }
 
@@ -109,7 +108,7 @@ class ProductionSiteControllerSpec extends ControllerSpec {
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasOtherSite" -> "true",
         "otherSiteAddress.line1" -> "line 1",
-        "otherSiteAddress.line2" -> "",
+        "otherSiteAddress.line2" -> "line 2",
         "otherSiteAddress.line3" -> "",
         "otherSiteAddress.line4" -> "",
         "otherSiteAddress.postcode" -> "AA11 1AA"
@@ -134,7 +133,7 @@ class ProductionSiteControllerSpec extends ControllerSpec {
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasOtherSite" -> "true",
         "otherSiteAddress.line1" -> "line 2",
-        "otherSiteAddress.line2" -> "",
+        "otherSiteAddress.line2" -> "line 3",
         "otherSiteAddress.line3" -> "",
         "otherSiteAddress.line4" -> "",
         "otherSiteAddress.postcode" -> "AA12 2AA"
@@ -144,28 +143,28 @@ class ProductionSiteControllerSpec extends ControllerSpec {
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1))
-        .cache(matching("productionSites"), matching(Seq(Address("line 2", "", "", "", "AA12 2AA"))))(any(), any(), any())
+        .cache(matching("productionSites"), matching(Seq(Address("line 2", "line 3", "", "", "AA12 2AA"))))(any(), any(), any())
     }
   }
 
   "GET /production-site/remove" should {
     "remove the production site address from keystore" in {
       stubCacheEntry[Seq[Address]]("productionSites", Some(Seq(
-        Address("1", "", "", "", "AA11 1AA"),
-        Address("2", "", "", "", "AA12 2AA")
+        Address("1", "2", "", "", "AA11 1AA"),
+        Address("2", "3", "", "", "AA12 2AA")
       )))
 
       val res = testController.remove(1)(FakeRequest())
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1))
-        .cache(matching("productionSites"), matching(Seq(Address("line 1", "", "", "", "AA11 1AA"))))(any(), any(), any())
+        .cache(matching("productionSites"), matching(Seq(Address("1", "2", "", "", "AA11 1AA"))))(any(), any(), any())
     }
 
     "always redirect to the production site page" in {
       stubCacheEntry[Seq[Address]]("productionSites", Some(Seq(
-        Address("1", "", "", "", "AA11 1AA"),
-        Address("2", "", "", "", "AA12 2AA")
+        Address("1", "2", "", "", "AA11 1AA"),
+        Address("2", "3", "", "", "AA12 2AA")
       )))
 
       val res = testController.remove(1)(FakeRequest())

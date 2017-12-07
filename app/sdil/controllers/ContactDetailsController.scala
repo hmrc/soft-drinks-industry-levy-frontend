@@ -18,9 +18,11 @@ package sdil.controllers
 
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.config.AppConfig
+import sdil.forms.FormHelpers
 import sdil.models.ContactDetails
 import sdil.models.sdilmodels._
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -48,11 +50,24 @@ class ContactDetailsController(val messagesApi: MessagesApi, cache: SessionCache
 
 }
 
-object ContactDetailsController {
+object ContactDetailsController extends FormHelpers {
   val form = Form(
     mapping(
-      "fullName" -> text.verifying("error.full-name.invalid", _.nonEmpty),
-      "position" -> text.verifying("error.position.invalid", _.nonEmpty),
-      "phoneNumber" -> text.verifying("error.phone-number.invalid", _.length > 10),
-      "email" -> email)(ContactDetails.apply)(ContactDetails.unapply))
+      "fullName" -> text
+        .verifying("error.fullName.required", _.nonEmpty)
+        .verifying("error.fullName.length", _.length <= 40),
+      "position" -> text
+        .verifying("error.position.required", _.nonEmpty)
+        .verifying("error.position.length", _.length <= 155),
+      "phoneNumber" -> text.verifying(Constraint { x: String => x match {
+        case "" => Invalid("error.phoneNumber.required")
+        case name if name.length > 24 => Invalid("error.phoneNumber.length")
+        case name if !name.matches("^[0-9 ()+--]{1,24}$") => Invalid("error.phoneNumber.invalid")
+        case _ => Valid
+      }}),
+      "email" -> text
+        .verifying("error.email.length", _.length <= 132)
+        .verifying(combine(required("email"), Constraints.emailAddress))
+    )(ContactDetails.apply)(ContactDetails.unapply)
+  )
 }

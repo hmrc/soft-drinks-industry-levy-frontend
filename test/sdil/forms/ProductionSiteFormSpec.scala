@@ -28,10 +28,8 @@ class ProductionSiteFormSpec extends FormSpec {
       mustContainError(f, hasOtherSite, "error.radio-form.choose-option")
     }
 
-    "require the first line of the address if there is another site" in {
-      val f = form.bind(otherSiteData - line1)
-
-      mustContainError(f, line1, "error.required")
+    "validate the address if there is another site" in {
+      mustValidateAddress(form, "otherSiteAddress", otherSiteData)
     }
 
     "require the postcode is there is another site" in {
