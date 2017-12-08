@@ -19,62 +19,63 @@ package sdil.controllers
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Call, Request, Result}
+import sdil.actions.FormAction
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
-import sdil.models.{Litreage, Packaging}
+import sdil.models._
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import views.html.softdrinksindustrylevy.register.litreagePage
 
 import scala.util.Try
 
-class LitreageController(val messagesApi: MessagesApi, errorHandler: FrontendErrorHandler, cache: SessionCache)(implicit config: AppConfig)
+class LitreageController(val messagesApi: MessagesApi,
+                         errorHandler: FrontendErrorHandler,
+                         cache: SessionCache,
+                         formAction: FormAction)
+                        (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import LitreageController._
 
-  def show(pageName: String) = Action.async { implicit request =>
-    cache.fetchAndGetEntry[Packaging]("packaging") map {
-      case Some(p) => Ok(views.html.softdrinksindustrylevy.register.litreagePage(form, pageName, backLinkFor(pageName, p)))
-      case None => Redirect(routes.PackageController.displayPackage())
+  def show(pageName: String) = formAction.async { implicit request =>
+    val page = getPage(pageName)
+
+    page.expectedPage(request.formData) match {
+      case `page` => Ok(litreagePage(form, pageName, page.previousPage(request.formData).show))
+      case otherPage => Redirect(otherPage.show)
     }
   }
 
-  def validate(pageName: String) = Action.async { implicit request =>
-    cache.fetchAndGetEntry[Packaging]("packaging") flatMap {
-      case Some(p) => form.bindFromRequest().fold(
-        errors => BadRequest(views.html.softdrinksindustrylevy.register.litreagePage(errors, pageName, backLinkFor(pageName, p))),
-        data => cache.cache(pageName, data) map { _ =>
-          nextPageFor(pageName, p)
+  def validate(pageName: String) = formAction.async { implicit request =>
+    val page = getPage(pageName)
+    form.bindFromRequest().fold(
+      errors => BadRequest(litreagePage(errors, pageName, page.nextPage(request.formData).show)),
+      litreage => {
+        val updated = update(litreage, request.formData, page)
+        cache.cache("formData", updated) map { _ =>
+          Redirect(page.nextPage(updated).show)
         }
-      )
-      case None => Redirect(routes.PackageController.displayPackage())
-    }
+      }
+    )
   }
 
-  private def nextPageFor(page: String, packaging: Packaging)(implicit request: Request[_]): Result = {
-    page match {
-      case "packageOwn" if packaging.customers => Redirect(routes.LitreageController.show("packageCopack"))
-      case "packageOwn" => Redirect(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked"))
-      case "packageCopack" => Redirect(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked"))
-      case "packageCopackSmallVol" => Redirect(routes.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import"))
-      case "copackedVolume" => Redirect(routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date"))
-      case "importVolume" => Redirect(routes.StartDateController.displayStartDate())
-      case _ => BadRequest(errorHandler.badRequestTemplate)
-    }
+  private def getPage(pageName: String): MidJourneyPage = pageName match {
+    case "packageOwn" => PackageOwnPage
+    case "packageCopack" => PackageCopackPage
+    case "packageCopackSmallVol" => PackageCopackSmallVolPage
+    case "copackedVolume" => CopackedVolumePage
+    case "importVolume" => ImportVolumePage
+    case other => throw new IllegalArgumentException(s"Invalid page litreage page: $other")
   }
 
-  private def backLinkFor(page: String, packaging: Packaging)(implicit request: Request[_]): Call = {
-    page match {
-      case "packageOwn" => routes.PackageController.displayPackage()
-      case "packageCopack" if packaging.ownBrands => routes.LitreageController.show("packageOwn")
-      case "packageCopack" => routes.PackageController.displayPackage()
-      case "packageCopackSmallVol" => routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked")
-      case "copackedVolume" => routes.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import")
-      case "importVolume" => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date")
-      case _ => throw new IllegalArgumentException(s"Invalid page name $page")
-    }
+  private def update(litreage: Litreage, formData: RegistrationFormData, page: Page): RegistrationFormData = page match {
+    case PackageOwnPage => formData.copy(packageOwn = Some(litreage))
+    case PackageCopackPage => formData.copy(packageCopack = Some(litreage))
+    case PackageCopackSmallVolPage => formData.copy(packageCopackSmallVol = Some(litreage))
+    case CopackedVolumePage => formData.copy(copackedVolume = Some(litreage))
+    case ImportVolumePage => formData.copy(importVolume = Some(litreage))
   }
 }
 

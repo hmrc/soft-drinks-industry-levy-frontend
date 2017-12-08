@@ -16,10 +16,11 @@
 
 package sdil.controllers
 
+import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class ContactDetailsControllerSpec extends ControllerSpec {
+class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "Contact details controller" should {
     "return Status: OK for displaying contact details page" in {
@@ -58,4 +59,5 @@ class ContactDetailsControllerSpec extends ControllerSpec {
 
   lazy val testController: ContactDetailsController = wire[ContactDetailsController]
 
+  override protected def beforeEach(): Unit = stubFilledInForm
 }

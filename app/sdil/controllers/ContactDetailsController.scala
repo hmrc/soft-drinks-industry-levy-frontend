@@ -19,35 +19,38 @@ package sdil.controllers
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import sdil.actions.FormAction
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
-import sdil.models.ContactDetails
-import sdil.models.sdilmodels._
+import sdil.models.{ContactDetails, ContactDetailsPage}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class ContactDetailsController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class ContactDetailsController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import ContactDetailsController._
 
-  def displayContactDetails: Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(register.contact_details(form))
+  def displayContactDetails: Action[AnyContent] = formAction.async { implicit request =>
+    ContactDetailsPage.expectedPage(request.formData) match {
+      case ContactDetailsPage => Ok(register.contact_details(form))
+      case otherPage => Redirect(otherPage.show)
+    }
   }
 
-  def submitContactDetails: Action[AnyContent] = Action.async { implicit request =>
+  def submitContactDetails: Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest().fold(
       formWithErrors => Future successful BadRequest(register.contact_details(formWithErrors)),
-      d => cache.cache("contact-details", d) map { _ =>
+      details => cache.cache("formData", request.formData.copy(contactDetails = Some(details))) map { _ =>
         Redirect(routes.DeclarationController.displayDeclaration())
-      })
+      }
+    )
   }
-
 }
 
 object ContactDetailsController extends FormHelpers {

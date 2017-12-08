@@ -21,35 +21,33 @@ import java.time.LocalDate
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Address, Packaging}
+import sdil.models.{Address, Packaging, RegistrationFormData}
 
-class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
+class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /secondary-warehouse" should {
     "return 200 Ok and the secondary warehouse page if no secondary warehouses have been added" in {
-      stubCacheEntry[Seq[Address]]("secondaryWarehouses", None)
+      stubFormPage(secondaryWarehouses = Nil)
 
-      val res = testController.secondaryWarehouse()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
       contentAsString(res) must include(Messages("sdil.warehouse.heading"))
     }
 
     "return 200 Ok and the add secondary warehouse page if other secondary warehouses have been added" in {
-      stubCacheEntry[Seq[Address]]("secondaryWarehouses", Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
+      stubFormPage(secondaryWarehouses = Seq(Address("1", "", "", "", "AA11 1AA")))
 
-      val res = testController.secondaryWarehouse()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
       contentAsString(res) must include(Messages("sdil.warehouse.add.heading"))
     }
 
     "return a page with a link back to the production sites page if the user packages liable drinks" in {
-      stubCacheEntry[Packaging]("packaging", Some(Packaging(true, true, true)))
-
-      val res = testController.secondaryWarehouse()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
@@ -58,10 +56,10 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
 
     "return a page with a link back to the start date page if the user does not package liable drinks" +
       "and the date is after the tax start date" in {
-      stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
+      stubFormPage(packaging = Some(Packaging(false, false, false)))
       testConfig.setTaxStartDate(LocalDate.now minusDays 1)
 
-      val res = testController.secondaryWarehouse()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
@@ -72,11 +70,10 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
 
     "return a page with a link back to the import volume page if the user does not package liable drinks, " +
       "imports liable drinks, and the date is before the tax start date" in {
-      stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
-      stubCacheEntry[Boolean]("import", Some(true))
+      stubFormPage(packaging = Some(Packaging(false, false, false)), imports = Some(true))
       testConfig.setTaxStartDate(LocalDate.now plusDays 1)
 
-      val res = testControllerBeforeTaxStart.secondaryWarehouse()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
@@ -87,15 +84,14 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
 
     "return a page with a link back to the import page if the user does not package or import liable drinks," +
       "and the date is before the tax start date" in {
-      stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
-      stubCacheEntry[Boolean]("import", Some(false))
+      stubFormPage(packaging = Some(Packaging(false, false, false)), imports = Some(false))
       testConfig.setTaxStartDate(LocalDate.now plusDays 1)
 
-      val res = testControllerBeforeTaxStart.secondaryWarehouse()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date").url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display("import").url
 
       testConfig.resetTaxStartDate()
     }
@@ -103,7 +99,7 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
 
   "POST /secondary-warehouse" should {
     "return 400 Bad Request and the secondary warehouse page if no secondary warehouses have been added and the form data is invalid" in {
-      stubCacheEntry[Seq[Address]]("secondaryWarehouses", None)
+      stubFormPage(secondaryWarehouses = Nil)
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
@@ -111,7 +107,10 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
     }
 
     "return 400 Bad Request and the add secondary warehouse page if other warehouses have been added and the form data is invalid" in {
-      stubCacheEntry[Seq[Address]]("secondaryWarehouses", Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
+      stubCacheEntry[RegistrationFormData](
+        "formData",
+        Some(defaultFormData.copy(secondaryWarehouses = Seq(Address("1", "", "", "", "AA11 1AA"))))
+      )
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
@@ -119,8 +118,6 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
     }
 
     "redirect to the add secondary warehouse page if a warehouse has been added" in {
-      stubCacheEntry[Seq[Address]]("secondaryWarehouses", None)
-
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasWarehouse" -> "true",
         "warehouseAddress.line1" -> "line 1",
@@ -132,19 +129,17 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
 
       val res = testController.validate()(request)
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.WarehouseController.secondaryWarehouse().url)
+      redirectLocation(res) mustBe Some(routes.WarehouseController.show().url)
     }
 
     "redirect to the contact details page if a warehouse is not added" in {
-      stubCacheEntry[Seq[Address]]("secondaryWarehouses", None)
-
       val res = testController.validate()(FakeRequest().withFormUrlEncodedBody("hasWarehouse" -> "false"))
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.ContactDetailsController.displayContactDetails().url)
     }
 
     "store the new address in keystore if a warehouse is added" in {
-      stubCacheEntry[Seq[Address]]("secondaryWarehouses", None)
+      stubFormPage(secondaryWarehouses = Nil)
 
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasWarehouse" -> "true",
@@ -160,8 +155,8 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
 
       verify(mockCache, times(1))
         .cache(
-          matching("secondaryWarehouses"),
-          matching(Seq(Address("line 2", "line 3", "line 4", "line 5", "AA11 1AA")))
+          matching("formData"),
+          matching(defaultFormData.copy(secondaryWarehouses = Seq(Address("line 2", "line 3", "line 4", "line 5", "AA11 1AA"))))
         )(any(), any(), any())
     }
   }
@@ -173,25 +168,27 @@ class WarehouseControllerSpec extends ControllerSpec with MockitoSugar {
         Address("2", "", "", "", "AA12 2AA")
       )
 
-      stubCacheEntry[Seq[Address]]("secondaryWarehouses", Some(addresses))
+      stubFormPage(secondaryWarehouses = addresses)
 
       val res = testController.remove(0)(FakeRequest())
       status(res) mustBe SEE_OTHER
 
-      verify(mockCache, times(1))
-        .cache(matching("secondaryWarehouses"), matching(Seq(Address("2", "", "", "", "AA12 2AA"))))(any(), any(), any())
+      verify(mockCache, times(1)).cache(
+        matching("formData"),
+        matching(defaultFormData.copy(secondaryWarehouses = Seq(Address("2", "", "", "", "AA12 2AA"))))
+      )(any(), any(), any())
     }
 
     "always redirect to the secondary warehouse page" in {
-      stubCacheEntry[Seq[Address]]("secondaryWarehouses", Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
+      stubFormPage(secondaryWarehouses = Seq(Address("1", "", "", "", "AA11 1AA")))
 
       val res = testController.remove(0)(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.WarehouseController.secondaryWarehouse().url)
+      redirectLocation(res) mustBe Some(routes.WarehouseController.show().url)
     }
   }
 
-  lazy val testController = new WarehouseController(messagesApi, mockCache)(testConfig)
+  lazy val testController = wire[WarehouseController]
 
-  lazy val testControllerBeforeTaxStart = new WarehouseController(messagesApi, mockCache)(testConfig)
+  override protected def beforeEach(): Unit = stubFilledInForm
 }

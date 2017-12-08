@@ -21,31 +21,33 @@ import play.api.data.validation.Constraint
 import play.api.data.{Form, FormError, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import sdil.actions.FormAction
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
-import sdil.models.Packaging
+import sdil.models.{PackagePage, Packaging}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
-import scala.concurrent.Future
+class PackageController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
+  extends FrontendController with I18nSupport {
 
-class PackageController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig) extends FrontendController with I18nSupport {
-  
   import PackageController._
 
-  def displayPackage(): Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(register.packagePage(form))
+  def displayPackage(): Action[AnyContent] = formAction.async { implicit request =>
+    PackagePage.expectedPage(request.formData) match {
+      case PackagePage => Ok(register.packagePage(form))
+      case otherPage => Redirect(otherPage.show)
+    }
   }
 
-  def submitPackage(): Action[AnyContent] = Action.async { implicit request =>
+  def submitPackage(): Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest.fold(
       formWithErrors => BadRequest(register.packagePage(formWithErrors)),
-      validFormData => cache.cache("packaging", validFormData) map { _ =>
-        validFormData match {
-          case Packaging(_, true, _) => Redirect(routes.LitreageController.show("packageOwn"))
-          case Packaging(_, _, true) => Redirect(routes.LitreageController.show("packageCopack"))
-          case _ => Redirect(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked"))
+      packaging => {
+        val updated = request.formData.copy(packaging = Some(packaging))
+        cache.cache("formData", updated) map { _ =>
+          Redirect(PackagePage.nextPage(updated).show)
         }
       }
     )
