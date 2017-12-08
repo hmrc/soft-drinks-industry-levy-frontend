@@ -16,11 +16,11 @@
 
 package sdil.controllers
 
-import org.mockito.ArgumentMatchers.{eq => matching, any}
+import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.Identification
+import sdil.models.{Identification, RegistrationFormData}
 
 class IdentifyControllerSpec extends ControllerSpec {
 
@@ -55,7 +55,10 @@ class IdentifyControllerSpec extends ControllerSpec {
 
       status(res) mustBe SEE_OTHER
 
-      verify(mockCache, times(1)).cache(matching("identify"), matching(Identification("1234567890", "AA11 1AA")))(any(), any(), any())
+      verify(mockCache, times(1)).cache(
+        matching("formData"),
+        matching(RegistrationFormData(Identification("1234567890", "AA11 1AA")))
+      )(any(), any(), any())
     }
   }
 

@@ -19,72 +19,57 @@ package sdil.controllers
 import play.api.data.Form
 import play.api.data.Forms.single
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Call, Request}
+import sdil.actions.FormAction
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
-import sdil.models.Packaging
+import sdil.models._
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.softdrinksindustrylevy.register
 
-import scala.concurrent.Future
-
-class RadioFormController(val messagesApi: MessagesApi, errorHandler: FrontendErrorHandler, cache: SessionCache)(implicit config: AppConfig)
+class RadioFormController(val messagesApi: MessagesApi,
+                          errorHandler: FrontendErrorHandler,
+                          cache: SessionCache,
+                          formAction: FormAction)
+                         (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
-  
+
   import RadioFormController._
 
-  def display(page: String, trueLink: String, falseLink: String) = Action.async { implicit request =>
-    radioBackLink(page) map { backLink =>
-      Ok(register.radio_button(form, page, backLink, routes.RadioFormController.submit(page, trueLink, falseLink)))
+  def display(pageName: String) = formAction.async { implicit request =>
+    val page = getPage(pageName)
+
+    page.expectedPage(request.formData) match {
+      case `page` => Ok(register.radio_button(form, pageName, page.previousPage(request.formData).show))
+      case otherPage => Redirect(otherPage.show)
     }
   }
 
-  def submit(page: String, trueLink: String, falseLink: String) = Action.async { implicit request =>
-    radioBackLink(page) flatMap { backLink =>
-      form.bindFromRequest().fold(
-        formWithErrors => BadRequest(register.radio_button(formWithErrors, page, backLink,
-          routes.RadioFormController.submit(page, trueLink, falseLink))),
-        radioForm =>
-          cache.cache(page, radioForm) flatMap { _ =>
-            if (radioForm) Redirect(routes.LitreageController.show(trueLink)) else Redirect(falseLink)
-          }
-      )
-    }
+  def submit(pageName: String) = formAction.async { implicit request =>
+    val page = getPage(pageName)
+    form.bindFromRequest().fold(
+      errors => BadRequest(register.radio_button(errors, pageName, page.previousPage(request.formData).show)),
+      choice => {
+        val updated = update(choice, request.formData, page)
+        cache.cache("formData", updated) map { _ =>
+          Redirect(page.nextPage(updated).show)
+        }
+      }
+    )
   }
 
-  private def radioBackLink(page: String)(implicit request: Request[_]): Future[Call] = {
-    page match {
-      case "package-copack-small" => copackSmallBack
-      case "copacked" => copackedBack
-      case "import" => importBack
-      case _ => throw new IllegalArgumentException(s"Invalid page name $page")
-    }
+  //FIXME compiler warnings
+  private def getPage(pageName: String): MidJourneyPage = pageName match {
+    case "package-copack-small" => PackageCopackSmallPage
+    case "copacked" => CopackedPage
+    case "import" => ImportPage
   }
 
-  private def copackSmallBack(implicit request: Request[_]): Future[Call] = {
-    cache.fetchAndGetEntry[Packaging]("packaging") flatMap {
-      case Some(p) if p.customers => routes.LitreageController.show("packageCopack")
-      case Some(p) if p.isLiable => routes.LitreageController.show("packageOwn")
-      case _ => routes.PackageController.displayPackage()
-    }
-  }
-
-  private def copackedBack(implicit request: Request[_]): Future[Call] = {
-    cache.fetchAndGetEntry[Boolean]("package-copack-small") map {
-      case Some(true) => routes.LitreageController.show("packageCopackSmallVol")
-      case Some(false) => routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked")
-      case _ => routes.PackageController.displayPackage()
-    }
-  }
-
-  private def importBack(implicit request: Request[_]): Future[Call] = {
-    cache.fetchAndGetEntry[Boolean]("copacked") map {
-      case Some(true) => routes.LitreageController.show("copackedVolume")
-      case Some(false) => routes.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import")
-      case _ => routes.PackageController.displayPackage()
-    }
+  private def update(choice: Boolean, formData: RegistrationFormData, page: Page): RegistrationFormData = page match {
+    case PackageCopackSmallPage => formData.copy(packageCopackSmall = Some(choice))
+    case CopackedPage => formData.copy(copacked = Some(choice))
+    case ImportPage => formData.copy(imports = Some(choice))
   }
 
 }

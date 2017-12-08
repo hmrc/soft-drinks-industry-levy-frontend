@@ -19,13 +19,14 @@ package sdil.utils
 import java.io.File
 
 import com.softwaremill.macwire.MacwireMacros
-import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi, Messages, MessagesApi}
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
-import sdil.config.AppConfig
+import sdil.actions.FormAction
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
@@ -58,4 +59,6 @@ trait TestWiring extends MockitoSugar {
 
   lazy val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   lazy val mockAuthConnector: AuthConnector = mock[AuthConnector]
+
+  lazy val formAction: FormAction = wire[FormAction]
 }

@@ -17,19 +17,16 @@
 package sdil.controllers
 
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{eq => matching, any}
+import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito._
 import org.mockito.verification.VerificationMode
+import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.{Litreage, Packaging}
 
-import scala.concurrent.Future
-
-class LitreageControllerSpec extends ControllerSpec {
-
-  stubCacheEntry[Packaging]("packaging", Some(Packaging(false, false, false)))
+class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /package-own" should {
     "always return 200 Ok and the package own page" in {
@@ -49,9 +46,6 @@ class LitreageControllerSpec extends ControllerSpec {
     }
 
     "redirect to the package copack page if the form data is valid and the user is packaging for their customers" in {
-      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(isLiable = false, ownBrands = true, customers = true))))
-
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
       val res = testController.validate("packageOwn")(request)
 
@@ -60,14 +54,13 @@ class LitreageControllerSpec extends ControllerSpec {
     }
 
     "redirect to the package copack small page if the form data is valid and the user is not packaging for their customers" in {
-      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(isLiable = false, ownBrands = true, customers = false))))
+      stubFormPage(packaging = Some(Packaging(false, false, false)))
 
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "2", "higherRateLitres" -> "1")
       val res = testController.validate("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display("package-copack-small").url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -75,7 +68,10 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
-      verify(mockCache, once).cache(matching("packageOwn"), matching(Litreage(2, 3)))(any(), any(), any())
+      verify(mockCache, once).cache(
+        matching("formData"),
+        matching(defaultFormData.copy(packageOwn = Some(Litreage(2, 3))))
+      )(any(), any(), any())
     }
   }
 
@@ -88,9 +84,6 @@ class LitreageControllerSpec extends ControllerSpec {
     }
 
     "return a page with a link back to the package own page if the user packages liable drinks" in {
-      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(true, true, false))))
-
       val res = testController.show("packageCopack")(FakeRequest())
       status(res) mustBe OK
 
@@ -99,8 +92,7 @@ class LitreageControllerSpec extends ControllerSpec {
     }
 
     "return a page with a link back to the package page if the user does not package liable drinks" in {
-      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(false, false, false))))
+      stubFormPage(packaging = Some(Packaging(false, false, false)))
 
       val res = testController.show("packageCopack")(FakeRequest())
       status(res) mustBe OK
@@ -123,15 +115,18 @@ class LitreageControllerSpec extends ControllerSpec {
 
       val res = testController.validate("packageCopack")(request)
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display("package-copack-small").url)
     }
 
     "store the form data in keystore if it is valid" in {
-      val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "3", "higherRateLitres" -> "4")
+      val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "4", "higherRateLitres" -> "3")
       val res = testController.validate("packageCopack")(request)
 
       status(res) mustBe SEE_OTHER
-      verify(mockCache, once).cache(matching("packageCopack"), matching(Litreage(3, 4)))(any(), any(), any())
+      verify(mockCache, once).cache(
+        matching("formData"),
+        matching(defaultFormData.copy(packageCopack = Some(Litreage(4, 3))))
+      )(any(), any(), any())
     }
   }
 
@@ -157,7 +152,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("packageCopackSmallVol")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display("copacked").url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -165,7 +160,10 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("packageCopackSmallVol")(request)
 
       status(res) mustBe SEE_OTHER
-      verify(mockCache, once).cache(matching("packageCopackSmallVol"), matching(Litreage(4, 5)))(any(), any(), any())
+      verify(mockCache, once).cache(
+        matching("formData"),
+        matching(defaultFormData.copy(packageCopackSmallVol = Some(Litreage(4, 5))))
+      )(any(), any(), any())
     }
   }
 
@@ -191,7 +189,7 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("copackedVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display("import").url)
     }
 
     "store the form data in keystore if it is valid" in {
@@ -199,7 +197,10 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("copackedVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      verify(mockCache, once).cache(matching("copackedVolume"), matching(Litreage(5, 6)))(any(), any(), any())
+      verify(mockCache, once).cache(
+        matching("formData"),
+        matching(defaultFormData.copy(copackedVolume = Some(Litreage(5, 6))))
+      )(any(), any(), any())
     }
   }
 
@@ -233,11 +234,16 @@ class LitreageControllerSpec extends ControllerSpec {
       val res = testController.validate("importVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      verify(mockCache, once).cache(matching("importVolume"), matching(Litreage(6, 7)))(any(), any(), any())
+      verify(mockCache, once).cache(
+        matching("formData"),
+        matching(defaultFormData.copy(importVolume = Some(Litreage(6, 7))))
+      )(any(), any(), any())
     }
   }
 
   lazy val testController = wire[LitreageController]
 
   lazy val once: VerificationMode = times(1)
+
+  override protected def beforeEach(): Unit = stubFilledInForm
 }

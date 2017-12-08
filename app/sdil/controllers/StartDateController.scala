@@ -16,67 +16,49 @@
 
 package sdil.controllers
 
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 
-import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
+import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Request}
+import play.api.mvc.{Action, AnyContent}
+import sdil.actions.FormAction
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
-import sdil.models.sdilmodels._
-import sdil.models.{Packaging, StartDate}
+import sdil.models.StartDatePage
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.softdrinksindustrylevy.register.start_date
 
 import scala.util.Try
 
-class StartDateController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class StartDateController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import StartDateController._
 
-  def displayStartDate: Action[AnyContent] = Action.async { implicit request =>
-    if (LocalDate.now isBefore config.taxStartDate) {
-      for {
-        _ <- cache.cache("start-date", config.taxStartDate)
-        packaging <- cache.fetchAndGetEntry[Packaging]("packaging")
-      } yield {
-        packaging match {
-          case Some(p) if p.isLiable => Redirect(routes.ProductionSiteController.addSite())
-          case Some(p) => Redirect(routes.WarehouseController.secondaryWarehouse())
-          case None => Redirect(routes.PackageController.displayPackage())
+  def displayStartDate: Action[AnyContent] = formAction.async { implicit request =>
+    StartDatePage.expectedPage(request.formData) match {
+      case StartDatePage if LocalDate.now isBefore config.taxStartDate =>
+        val updated = request.formData.copy(startDate = Some(config.taxStartDate))
+        cache.cache("formData", updated) map { _ =>
+          Redirect(StartDatePage.nextPage(updated).show)
         }
-      }
-    } else {
-      getBackLink map { link =>
-        Ok(views.html.softdrinksindustrylevy.register.start_date(form, link))
-      }
+      case StartDatePage => Ok(start_date(form, StartDatePage.previousPage(request.formData).show))
+      case otherPage => Redirect(otherPage.show)
     }
   }
 
-  def submitStartDate: Action[AnyContent] = Action.async { implicit request =>
+  def submitStartDate: Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => getBackLink map { link => BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors, link)) },
-      data => {
-        cache.cache("start-date", data) flatMap { _ =>
-          cache.fetchAndGetEntry[Packaging]("packaging") map {
-            case Some(Packaging(true, _, _)) => Redirect(routes.ProductionSiteController.addSite())
-            case _ => Redirect(routes.WarehouseController.secondaryWarehouse())
-          }
+      errors => BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors, StartDatePage.previousPage(request.formData).show)),
+      startDate => {
+        val updated = request.formData.copy(startDate = Some(startDate))
+        cache.cache("formData", updated) map { _ =>
+          Redirect(StartDatePage.nextPage(updated).show)
         }
       }
     )
-  }
-
-  private def getBackLink(implicit request: Request[_]) = {
-    cache.fetchAndGetEntry[Boolean]("import") map {
-      case Some(true) => routes.LitreageController.show("importVolume")
-      case Some(false) => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date")
-      case None => routes.PackageController.displayPackage()
-    }
   }
 }
 
@@ -94,7 +76,9 @@ object StartDateController extends FormHelpers {
     "day" -> numeric("day").verifying("error.start-day.invalid", d => d > 0 && d <= 31),
     "month" -> numeric("month").verifying("error.start-month.invalid", d => d > 0 && d <= 12),
     "year" -> numeric("year").verifying("error.start-year.invalid", d => d >= 1900 && d < 2100)
-  ).verifying("error.date.invalid", x => x match { case (d, m, y) => Try(LocalDate.of(y, m, d)).isSuccess } )
+  ).verifying("error.date.invalid", x => x match {
+    case (d, m, y) => Try(LocalDate.of(y, m, d)).isSuccess
+  })
     .transform({ case (d, m, y) => LocalDate.of(y, m, d) }, d => (d.getDayOfMonth, d.getMonthValue, d.getYear))
 
   def numeric(key: String): Mapping[Int] = text
