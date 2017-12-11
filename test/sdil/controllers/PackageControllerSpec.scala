@@ -19,6 +19,7 @@ package sdil.controllers
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.models.Packaging
 
 class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -100,6 +101,25 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.VerifyController.verify().url)
+    }
+
+    "update the keystore record with the form data, and purge the package own, package copack, and production sites data, " +
+      "when the form data is valid" in {
+      val request = FakeRequest().withFormUrlEncodedBody(
+        "isLiable" -> "true",
+        "ownBrands" -> "true",
+        "customers" -> "false"
+      )
+
+      val res = controller.submitPackage()(request)
+      status(res) mustBe SEE_OTHER
+
+      verifyDataCached(defaultFormData.copy(
+        packaging = Some(Packaging(true, true, false)),
+        packageOwn = None,
+        packageCopack = None,
+        productionSites = Nil
+      ))
     }
   }
 

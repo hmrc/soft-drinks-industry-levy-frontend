@@ -16,6 +16,8 @@
 
 package sdil.controllers
 
+import java.time.LocalDate
+
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
@@ -251,6 +253,48 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = controller.display(imports)(FakeRequest())
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.LitreageController.show("copackedVolume").url)
+    }
+
+    "store the form data in keystore, and purge the package copack small volume data, when the package copack small form data is valid" in {
+      stubFormPage(startDate = Some(LocalDate.of(2018, 4, 7)))
+
+      val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false")
+      val res = controller.submit(copackSmall)(request)
+
+      status(res) mustBe SEE_OTHER
+      verifyDataCached(defaultFormData.copy(
+        packageCopackSmall = Some(false),
+        packageCopackSmallVol = None,
+        startDate = Some(LocalDate.of(2018, 4, 7))
+      ))
+    }
+
+    "store the form data in keystore, and purge the copacked volume data, when the copacked form data is valid" in {
+      stubFormPage(startDate = Some(LocalDate.of(2018, 4, 7)))
+
+      val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "true")
+      val res = controller.submit(copacked)(request)
+
+      status(res) mustBe SEE_OTHER
+      verifyDataCached(defaultFormData.copy(
+        copacked = Some(true),
+        copackedVolume = None,
+        startDate = Some(LocalDate.of(2018, 4, 7))
+      ))
+    }
+
+    "store the form data in keystore, and purge the import volume data, when the import form data is valid" in {
+      stubFormPage(startDate = Some(LocalDate.of(2018, 4, 7)))
+
+      val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false")
+      val res = controller.submit(imports)(request)
+
+      status(res) mustBe SEE_OTHER
+      verifyDataCached(defaultFormData.copy(
+        imports = Some(false),
+        importVolume = None,
+        startDate = Some(LocalDate.of(2018, 4, 7))
+      ))
     }
   }
 
