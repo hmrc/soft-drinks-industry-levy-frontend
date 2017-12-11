@@ -19,18 +19,19 @@ package sdil.controllers
 import java.time.LocalDate
 
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{eq => matching, any}
+import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.Address
 
-class ProductionSiteControllerSpec extends ControllerSpec {
+class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /production-site" should {
     "return 200 Ok and the production site page if no other sites have been added" in {
-      stubCacheEntry[Seq[Address]]("productionSites", None)
+      stubFormPage(productionSites = Nil)
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -38,7 +39,7 @@ class ProductionSiteControllerSpec extends ControllerSpec {
     }
 
     "return 200 Ok and the add production site page if another site has been added" in {
-      stubCacheEntry[Seq[Address]]("productionSites", Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
+      stubFormPage(productionSites = Seq(Address("1", "", "", "", "AA11 1AA")))
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -46,7 +47,6 @@ class ProductionSiteControllerSpec extends ControllerSpec {
     }
 
     "return a page with a link back to the start date page if the date is after the sugar tax start date" in {
-      stubCacheEntry[Seq[Address]]("productionSites", None)
       testConfig.setTaxStartDate(LocalDate.now minusDays 1)
 
       val res = testController.addSite()(FakeRequest())
@@ -60,9 +60,8 @@ class ProductionSiteControllerSpec extends ControllerSpec {
 
     "return a page with a link back to the import volume page if the date is before the sugar tax start date " +
       "and the user is importing liable drinks" in {
-      stubCacheEntry[Seq[Address]]("productionSites", None)
-
-      stubCacheEntry[Boolean]("import", Some(true))
+      testConfig.setTaxStartDate(LocalDate.now plusDays 1)
+      stubFormPage(imports = Some(true))
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -73,21 +72,20 @@ class ProductionSiteControllerSpec extends ControllerSpec {
 
     "return a page with a link back to the import page if the date is before the sugar tax start date " +
       "and the user is not importing liable drinks" in {
-      stubCacheEntry[Seq[Address]]("productionSites", None)
-
-      stubCacheEntry[Boolean]("import", Some(false))
+      testConfig.setTaxStartDate(LocalDate.now plusDays 1)
+      stubFormPage(imports = Some(false))
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date").url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display("import").url
     }
   }
 
   "POST /production-site" should {
     "return 400 Bad Request and the production site page if no other sites have been added and the form data is invalid" in {
-      stubCacheEntry[Seq[Address]]("productionSites", None)
+      stubFormPage(productionSites = Nil)
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
@@ -95,7 +93,7 @@ class ProductionSiteControllerSpec extends ControllerSpec {
     }
 
     "return 400 Bad Request and the add production site page if another site has been added and the form data is invalid" in {
-      stubCacheEntry[Seq[Address]]("productionSites", Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
+      stubFormPage(productionSites = Seq(Address("1", "", "", "", "AA11 1AA")))
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
@@ -103,8 +101,6 @@ class ProductionSiteControllerSpec extends ControllerSpec {
     }
 
     "redirect to the add production site page if another site has been added and the form data is valid" in {
-      stubCacheEntry[Seq[Address]]("productionSites", None)
-
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasOtherSite" -> "true",
         "otherSiteAddress.line1" -> "line 1",
@@ -120,16 +116,14 @@ class ProductionSiteControllerSpec extends ControllerSpec {
     }
 
     "redirect to the warehouse page if another site has not been added and the form data is valid" in {
-      stubCacheEntry[Seq[Address]]("productionSites", None)
-
       val res = testController.validate()(FakeRequest().withFormUrlEncodedBody("hasOtherSite" -> "false"))
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.WarehouseController.secondaryWarehouse().url)
+      redirectLocation(res) mustBe Some(routes.WarehouseController.show().url)
     }
 
     "store the new address in keystore if another site has been added and the form data is valid" in {
-      stubCacheEntry[Seq[Address]]("productionSites", None)
-
+      stubFormPage(productionSites = Nil)
+      
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasOtherSite" -> "true",
         "otherSiteAddress.line1" -> "line 2",
@@ -142,30 +136,34 @@ class ProductionSiteControllerSpec extends ControllerSpec {
       val res = testController.validate()(request)
       status(res) mustBe SEE_OTHER
 
-      verify(mockCache, times(1))
-        .cache(matching("productionSites"), matching(Seq(Address("line 2", "line 3", "", "", "AA12 2AA"))))(any(), any(), any())
+      verify(mockCache, times(1)).cache(
+        matching("formData"),
+        matching(defaultFormData.copy(productionSites = Seq(Address("line 2", "line 3", "", "", "AA12 2AA"))))
+      )(any(), any(), any())
     }
   }
 
   "GET /production-site/remove" should {
     "remove the production site address from keystore" in {
-      stubCacheEntry[Seq[Address]]("productionSites", Some(Seq(
+      stubFormPage(productionSites = Seq(
         Address("1", "2", "", "", "AA11 1AA"),
         Address("2", "3", "", "", "AA12 2AA")
-      )))
+      ))
 
       val res = testController.remove(1)(FakeRequest())
       status(res) mustBe SEE_OTHER
 
-      verify(mockCache, times(1))
-        .cache(matching("productionSites"), matching(Seq(Address("1", "2", "", "", "AA11 1AA"))))(any(), any(), any())
+      verify(mockCache, times(1)).cache(
+        matching("formData"),
+        matching(defaultFormData.copy(productionSites = Seq(Address("1", "2", "", "", "AA11 1AA"))))
+      )(any(), any(), any())
     }
 
     "always redirect to the production site page" in {
-      stubCacheEntry[Seq[Address]]("productionSites", Some(Seq(
+      stubFormPage(productionSites = Seq(
         Address("1", "2", "", "", "AA11 1AA"),
         Address("2", "3", "", "", "AA12 2AA")
-      )))
+      ))
 
       val res = testController.remove(1)(FakeRequest())
       status(res) mustBe SEE_OTHER
@@ -174,4 +172,6 @@ class ProductionSiteControllerSpec extends ControllerSpec {
   }
 
   lazy val testController = wire[ProductionSiteController]
+
+  override protected def beforeEach(): Unit = stubFilledInForm
 }

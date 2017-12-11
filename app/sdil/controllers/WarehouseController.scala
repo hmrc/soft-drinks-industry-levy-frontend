@@ -21,79 +21,55 @@ import java.time.LocalDate
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Call, Request}
+import sdil.actions.FormAction
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
-import sdil.models.{Address, Packaging, SecondaryWarehouse}
+import sdil.models._
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
+import views.html.softdrinksindustrylevy.register.secondaryWarehouse
 
-import scala.concurrent.Future
-
-class WarehouseController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class WarehouseController(val messagesApi: MessagesApi,
+                          cache: SessionCache,
+                          formAction: FormAction)
+                         (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
-  
+
   import WarehouseController._
 
-  def secondaryWarehouse = Action.async { implicit request =>
-    for {
-      addrs <- getWarehouseAddresses
-      backLink <- getBackLink
-    } yield {
-      Ok(views.html.softdrinksindustrylevy.register.secondaryWarehouse(form, addrs, backLink))
+  def show = formAction.async { implicit request =>
+    WarehouseSitesPage.expectedPage(request.formData) match {
+      case WarehouseSitesPage => Ok(secondaryWarehouse(form, request.formData.secondaryWarehouses, previousPage(request.formData).show))
+      case otherPage => Redirect(otherPage.show)
     }
   }
 
-  def validate = Action.async { implicit request =>
-    getWarehouseAddresses flatMap { addrs =>
-      form.bindFromRequest().fold(
-        errors => getBackLink map { link =>
-          BadRequest(views.html.softdrinksindustrylevy.register.secondaryWarehouse(errors, addrs, link))
-        },
-        {
-          case SecondaryWarehouse(_, Some(addr)) => cache.cache("secondaryWarehouses", addrs :+ addr) map { _ =>
-            Redirect(routes.WarehouseController.secondaryWarehouse())
+  def validate = formAction.async { implicit request =>
+    form.bindFromRequest().fold(
+      errors => BadRequest(secondaryWarehouse(errors, request.formData.secondaryWarehouses, previousPage(request.formData).show)),
+      {
+        case SecondaryWarehouse(_, Some(addr)) => {
+          val updatedSites = request.formData.secondaryWarehouses :+ addr
+          cache.cache("formData", request.formData.copy(secondaryWarehouses = updatedSites)) map { _ =>
+            Redirect(routes.WarehouseController.show())
           }
-          case _ => Redirect(routes.ContactDetailsController.displayContactDetails())
         }
-      )
-    }
-  }
-
-  def remove(idx: Int) = Action.async { implicit request =>
-    getWarehouseAddresses flatMap { addrs =>
-      val updated = addrs.take(idx) ++ addrs.drop(idx + 1)
-      cache.cache("secondaryWarehouses", updated) map { _ =>
-        Redirect(routes.WarehouseController.secondaryWarehouse())
+        case _ => Redirect(WarehouseSitesPage.nextPage(request.formData).show)
       }
+    )
+  }
+
+  def remove(idx: Int) = formAction.async { implicit request =>
+    val updatedSites = request.formData.secondaryWarehouses.take(idx) ++ request.formData.secondaryWarehouses.drop(idx + 1)
+    cache.cache("formData", request.formData.copy(secondaryWarehouses = updatedSites)) map { _ =>
+      Redirect(routes.WarehouseController.show())
     }
   }
 
-  private def getWarehouseAddresses(implicit request: Request[_]): Future[Seq[Address]] = {
-    cache.fetchAndGetEntry[Seq[Address]]("secondaryWarehouses") map {
-      case None | Some(Nil) => Nil
-      case Some(addrs) => addrs
-    }
-  }
-
-  private def getBackLink(implicit request: Request[_]): Future[Call] = {
-    cache.fetchAndGetEntry[Packaging]("packaging") flatMap {
-      case Some(p) if p.isLiable => routes.ProductionSiteController.addSite()
-      case Some(p) => backToStartDate
-      case _ => routes.PackageController.displayPackage()
-    }
-  }
-
-  private def backToStartDate(implicit request: Request[_]): Future[Call] = {
-    if (LocalDate.now.isBefore(config.taxStartDate)) {
-      cache.fetchAndGetEntry[Boolean]("import") map {
-        case Some(true) => routes.LitreageController.show("importVolume")
-        case _ => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date")
-      }
-    } else {
-      routes.StartDateController.displayStartDate()
-    }
+  private def previousPage(formData: RegistrationFormData) = WarehouseSitesPage.previousPage(formData) match {
+    case StartDatePage if LocalDate.now isBefore config.taxStartDate => StartDatePage.previousPage(formData)
+    case other => other
   }
 }
 

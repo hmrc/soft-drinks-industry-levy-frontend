@@ -18,29 +18,20 @@ package sdil.controllers
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import sdil.actions.FormAction
 import sdil.config.AppConfig
-import sdil.models.{ContactDetails, Identification}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
-import scala.concurrent.Future
-
-class DeclarationController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class DeclarationController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-
-  def displayDeclaration: Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(register.
-      declaration(
-        Identification("foo", "bar"),
-        ContactDetails(
-          fullName = "Nick Karaolis",
-          position = "Scala Ninja",
-          phoneNumber = "x directory",
-          email = "nick.karaolis@wouldn'tyouliketoknow.com"
-        )
-      ))
+  def displayDeclaration: Action[AnyContent] = formAction.async { implicit request =>
+    request.formData.contactDetails match {
+      case Some(details) => Ok(register.declaration(request.formData.identify, details))
+      case None => Redirect(routes.ContactDetailsController.displayContactDetails())
+    }
   }
 
   def submitDeclaration(): Action[AnyContent] = Action.async { implicit request =>
