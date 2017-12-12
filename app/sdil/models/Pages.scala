@@ -67,7 +67,7 @@ case object PackagePage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData): Page = formData.packaging match {
     case Some(p) if p.isLiable && p.ownBrands => PackageOwnPage
     case Some(p) if p.isLiable && p.customers => PackageCopackPage
-    case Some(p) => PackageCopackSmallPage
+    case Some(p) => CopackedPage
     case None => PackagePage
   }
 
@@ -80,8 +80,8 @@ case object PackagePage extends MidJourneyPage {
 
 case object PackageOwnPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData): Page = formData.packaging match {
-    case Some(p) if p.isLiable && p.customers => PackageCopackPage
-    case Some(p) => PackageCopackSmallPage
+    case Some(p) if p.isLiable && p.customers => CopackedVolumePage
+    case Some(p) => CopackedPage
     case None => PackagePage
   }
 
@@ -118,7 +118,14 @@ case object PackageCopackSmallPage extends MidJourneyPage {
     case _ => PackagePage
   }
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.packageCopackSmall.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = {
+    formData.packaging match {
+      case Some(p) if (!p.customers && !p.ownBrands) || formData.packageCopackSmall.isDefined  => true
+      case _ =>
+    }
+
+    formData.packageCopackSmall.isDefined
+  }
 
   override def show: Call = routes.RadioFormController.display("package-copack-small")
 }
@@ -140,9 +147,11 @@ case object CopackedPage extends MidJourneyPage {
     case None => CopackedPage
   }
 
-  override def previousPage(formData: RegistrationFormData): Page = formData.packageCopackSmall match {
-    case Some(true) => PackageCopackSmallVolPage
-    case _ => PackageCopackSmallPage
+  override def previousPage(formData: RegistrationFormData): Page = formData.packaging match {
+    case Some(p) if p.customers && formData.packageCopackSmall.get =>  PackageCopackSmallVolPage
+    case Some(p) if p.customers && !formData.packageCopackSmall.get =>  PackageCopackSmallPage
+    case Some(p) if p.ownBrands && !p.customers => PackageOwnPage
+    case _ => PackagePage
   }
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.copacked.isDefined
