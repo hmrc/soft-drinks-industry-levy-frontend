@@ -64,7 +64,7 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val response = controller.submitPackage().apply(request)
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.RadioFormController.display("package-copack-small").url
+      redirectLocation(response).get mustBe routes.RadioFormController.display("copacked").url
     }
 
     "return Status: Bad Request for invalid liability form POST request and show choose one option error" in {
