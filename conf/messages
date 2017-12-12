@@ -65,7 +65,7 @@ sdil.litrage.rates.content=The low rate is from 5 grams to 7.9 grams of sugar pe
 
 error.litreage.required=Number of litres must be 0 or more
 error.litreage.numeric=Number of litres must be a whole number
-error.litreage.max=Number of litres must be less than 10,000,000,000,000
+error.litreage.max=Must be less than or equal to 9,999,999,999,999
 error.litreage.min=Number of litres must be 0 or more
 
 #Production sites
@@ -113,8 +113,8 @@ error.start-day.invalid=Enter a valid day
 error.start-month.invalid=Enter a valid month
 error.start-year.invalid=Enter a valid year
 error.start-date.before-tax-start=Date must be after 6 April 2018
-error.start-date.in-future=Date cannot be in the future
-error.date.invalid=Invalid date
+error.start-date.in-future=Date must not be in the future
+error.date.invalid=Enter a valid date
 
 #Contact details
 sdil.contact-details.heading=Who should we contact about the Soft Drinks Industry Levy?
@@ -156,7 +156,7 @@ error.line1.required=Address line 1 must not be empty
 error.line2.required=Address line 2 must not be empty
 error.address-line.invalid=This can only contain numbers, letters, and -,.&'/
 error.address-line.length=This must be no more than 35 characters
-error.postcode.required=Enter a postcode
+error.postcode.required=Postcode must not be empty
 error.postcode.invalid=Enter a valid postcode
 error.number.negative=Must be greater than or equal to 0
 error.full-name.invalid=Enter a name
