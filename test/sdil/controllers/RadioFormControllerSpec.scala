@@ -17,40 +17,37 @@
 package sdil.controllers
 
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => matching}
-import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.Packaging
 
-import scala.concurrent.Future
-
-class RadioFormControllerSpec extends ControllerSpec {
+class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "Radio Form Controller" should {
     "return Status: OK when user is logged in and loads package copack small page" in {
-      val result = (controller.display _).tupled(copackSmallValues).apply(FakeRequest())
+      val result = controller.display(copackSmall)(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.package-copack-small.heading"))
     }
 
     "return Status: OK when user is logged in and loads copacked page" in {
-      val result = (controller.display _).tupled(copackedValues).apply(FakeRequest())
+      val result = controller.display(copacked)(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.copacked.heading"))
     }
 
     "return Status: OK when user is logged in and loads import page" in {
-      val result = (controller.display _).tupled(importValues).apply(FakeRequest())
+      val result = controller.display(imports)(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.import.heading"))
     }
 
     "return Status: SEE_OTHER and redirect to package copack small volume with true value for copack small page" in {
-      val result = copackSmallSubmit.apply(FakeRequest().withFormUrlEncodedBody(
+      val result = copackSmallSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "true"
       ))
 
@@ -59,16 +56,16 @@ class RadioFormControllerSpec extends ControllerSpec {
     }
 
     "return Status: SEE_OTHER and redirect to copacked with false value for copack small page" in {
-      val result = copackSmallSubmit.apply(FakeRequest().withFormUrlEncodedBody(
+      val result = copackSmallSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "false"
       ))
 
       status(result) mustBe SEE_OTHER
-      (routes.RadioFormController.display _).tupled(copackedValues).url must include(redirectLocation(result).get)
+      routes.RadioFormController.display(copacked).url must include(redirectLocation(result).get)
     }
 
     "return Status: SEE_OTHER and redirect to copacked volume with true value for copacked page" in {
-      val result = copackedSubmit.apply(FakeRequest().withFormUrlEncodedBody(
+      val result = copackedSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "true"
       ))
 
@@ -77,16 +74,16 @@ class RadioFormControllerSpec extends ControllerSpec {
     }
 
     "return Status: SEE_OTHER and redirect to import with false value for copacked page" in {
-      val result = copackedSubmit.apply(FakeRequest().withFormUrlEncodedBody(
+      val result = copackedSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "false"
       ))
 
       status(result) mustBe SEE_OTHER
-      (routes.RadioFormController.display _).tupled(importValues).url must include(redirectLocation(result).get)
+      routes.RadioFormController.display(imports).url must include(redirectLocation(result).get)
     }
 
     "return Status: SEE_OTHER and redirect to import volume with true value for import page" in {
-      val result = importSubmit.apply(FakeRequest().withFormUrlEncodedBody(
+      val result = importSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "true"
       ))
 
@@ -100,11 +97,11 @@ class RadioFormControllerSpec extends ControllerSpec {
       ))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some("start-date")
+      redirectLocation(result) mustBe Some(routes.StartDateController.displayStartDate().url)
     }
 
     "return Status: BAD_REQUEST for invalid form input for copacked small form submission" in {
-      val result = copackSmallSubmit.apply(FakeRequest().withFormUrlEncodedBody(
+      val result = copackSmallSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> ""
       ))
 
@@ -113,7 +110,7 @@ class RadioFormControllerSpec extends ControllerSpec {
     }
 
     "return Status: BAD_REQUEST for invalid form input for copacked form submission" in {
-      val result = copackedSubmit.apply(FakeRequest().withFormUrlEncodedBody(
+      val result = copackedSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> ""
       ))
 
@@ -131,10 +128,9 @@ class RadioFormControllerSpec extends ControllerSpec {
     }
 
     "generate correct back link for copack small page with false for packaging" in {
-      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(false, false, false))))
+      stubFormPage(packaging = Some(Packaging(false, false, false)))
 
-      val result = (controller.display _).tupled(copackSmallValues).apply(FakeRequest())
+      val result = controller.display(copackSmall)(FakeRequest())
 
       val html = Jsoup.parse(contentAsString(result))
       html.select("a.link-back").attr("href") mustBe routes.PackageController.displayPackage().url
@@ -142,10 +138,8 @@ class RadioFormControllerSpec extends ControllerSpec {
     }
 
     "generate correct back link for copack small page with true for packaging and false for customers" in {
-      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(true, true, false))))
-
-      val result = (controller.display _).tupled(copackSmallValues).apply(FakeRequest())
+      stubFormPage(packaging = Some(Packaging(true, true, false)))
+      val result = controller.display(copackSmall)(FakeRequest())
 
       val html = Jsoup.parse(contentAsString(result))
       html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageOwn").url
@@ -153,10 +147,7 @@ class RadioFormControllerSpec extends ControllerSpec {
     }
 
     "generate correct back link for copack small page with true for packaging and true for customers" in {
-      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(Packaging(true, true, true))))
-
-      val result = (controller.display _).tupled(copackSmallValues).apply(FakeRequest())
+      val result = controller.display(copackSmall)(FakeRequest())
 
       val html = Jsoup.parse(contentAsString(result))
       html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageCopack").url
@@ -164,10 +155,9 @@ class RadioFormControllerSpec extends ControllerSpec {
     }
 
     "generate correct back link for copacked page with true for copack small" in {
-      when(mockCache.fetchAndGetEntry[Boolean](matching("package-copack-small"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(true)))
+      stubFormPage(packageCopackSmall = Some(true))
 
-      val result = (controller.display _).tupled(copackedValues).apply(FakeRequest())
+      val result = controller.display(copacked)(FakeRequest())
 
       val html = Jsoup.parse(contentAsString(result))
       html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageCopackSmallVol").url
@@ -175,21 +165,19 @@ class RadioFormControllerSpec extends ControllerSpec {
     }
 
     "generate correct back link for copacked page with false for copack small" in {
-      when(mockCache.fetchAndGetEntry[Boolean](matching("package-copack-small"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(false)))
+      stubFormPage(packageCopackSmall = Some(false))
 
-      val result = (controller.display _).tupled(copackedValues).apply(FakeRequest())
+      val result = controller.display(copacked)(FakeRequest())
 
       val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe (routes.RadioFormController.display _).tupled(copackSmallValues).url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(copackSmall).url
       status(result) mustBe OK
     }
 
     "generate correct back link for import page with true for copacked" in {
-      when(mockCache.fetchAndGetEntry[Boolean](matching("copacked"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(true)))
+      stubFormPage(copacked = Some(true))
 
-      val result = (controller.display _).tupled(importValues).apply(FakeRequest())
+      val result = controller.display(imports).apply(FakeRequest())
 
       val html = Jsoup.parse(contentAsString(result))
       html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("copackedVolume").url
@@ -197,31 +185,84 @@ class RadioFormControllerSpec extends ControllerSpec {
     }
 
     "generate correct back link for copacked page with false for copacked" in {
-      when(mockCache.fetchAndGetEntry[Boolean](matching("copacked"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(false)))
+      stubFormPage(copacked = Some(false))
 
-      val result = (controller.display _).tupled(importValues).apply(FakeRequest())
+      val result = controller.display(imports).apply(FakeRequest())
 
-      val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe (routes.RadioFormController.display _).tupled(copackedValues).url
       status(result) mustBe OK
+      val html = Jsoup.parse(contentAsString(result))
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display(copacked).url
     }
 
-    "generate illegal argument when provided incorrect page name" in {
-      assertThrows[IllegalArgumentException] {
-        controller.display("a", "a", "a").apply(FakeRequest())
-      }
+    "redirect to the package page from the copack small page if the package page is not complete" in {
+      stubFormPage(packaging = None)
+
+      val res = controller.display(copackSmall)(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.PackageController.displayPackage().url)
+    }
+
+    "redirect to the package own page from the copack small page if the user packages for their own brand " +
+      "and the package own page is not complete" in {
+      stubFormPage(packaging = Some(Packaging(true, true, false)), packageOwn = None)
+
+      val res = controller.display(copackSmall)(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageOwn").url)
+    }
+
+    "redirect to the package copack page from the copack small page if the user packages for other brands " +
+      "and the package copack page is not complete" in {
+      stubFormPage(packaging = Some(Packaging(true, true, true)), packageCopack = None)
+
+      val res = controller.display(copackSmall)(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopack").url)
+    }
+
+    "redirect to the package copack small page from the copacked page if the package copack small page is not complete" in {
+      stubFormPage(packageCopackSmall = None)
+
+      val res = controller.display(copacked)(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display(copackSmall).url)
+    }
+
+    "redirect to the package copack small volume page from the copacked page if the user copacks for small producers " +
+      "and the package copack small volume page is not complete" in {
+      stubFormPage(packageCopackSmall = Some(true), packageCopackSmallVol = None)
+
+      val res = controller.display(copacked)(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopackSmallVol").url)
+    }
+
+    "redirect to the copacked page from the import page if the copacked page is not complete" in {
+      stubFormPage(copacked = None)
+
+      val res = controller.display(imports)(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display(copacked).url)
+    }
+
+    "redirect to the copacked volume page from the import page if the user has copackers and the copacked volume page is not complete" in {
+      stubFormPage(copacked = Some(true), copackedVolume = None)
+
+      val res = controller.display(imports)(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.LitreageController.show("copackedVolume").url)
     }
   }
 
   lazy val controller: RadioFormController = wire[RadioFormController]
 
-  private val copackSmallValues = ("package-copack-small", "packageCopackSmallVol", "copacked")
-  private val copackedValues = ("copacked", "copackedVolume", "import")
-  private val importValues = ("import", "importVolume", "start-date")
+  private val copackSmall = "package-copack-small"
+  private val copacked = "copacked"
+  private val imports = "import"
 
-  private val copackSmallSubmit = (controller.submit _).tupled(copackSmallValues)
-  private val copackedSubmit = (controller.submit _).tupled(copackedValues)
-  private val importSubmit = (controller.submit _).tupled(importValues)
+  private val copackSmallSubmit = controller.submit(copackSmall)
+  private val copackedSubmit = controller.submit(copacked)
+  private val importSubmit = controller.submit(imports)
 
+  override protected def beforeEach(): Unit = stubFilledInForm
 }

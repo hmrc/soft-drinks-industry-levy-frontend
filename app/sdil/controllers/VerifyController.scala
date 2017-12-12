@@ -19,32 +19,34 @@ package sdil.controllers
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Action
+import sdil.actions.FormAction
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
-import sdil.models.DetailsCorrect
+import sdil.models.{DetailsCorrect, VerifyPage}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
-class VerifyController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class VerifyController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import VerifyController._
 
-  def verify = Action { implicit request =>
+  def verify = formAction.async { implicit request =>
     //FIXME look up UTR, org, address
-    Ok(views.html.softdrinksindustrylevy.register.verify(form, "a utr", "an organisation", "an address"))
+    VerifyPage.expectedPage(request.formData) match {
+      case VerifyPage => Ok(views.html.softdrinksindustrylevy.register.verify(form, "a utr", "an organisation", "an address"))
+      case otherPage => Redirect(otherPage.show)
+    }
   }
 
-  def validate = Action.async { implicit request =>
+  def validate = formAction.async { implicit request =>
     form.bindFromRequest().fold(
       errors => BadRequest(views.html.softdrinksindustrylevy.register.verify(errors, "a utr", "an organisation", "an address")),
-      data => cache.cache("verifiedDetails", data) map { _ =>
-        if (data == DetailsCorrect.No) {
-          Redirect(routes.IdentifyController.identify())
-        } else {
-          Redirect(routes.PackageController.displayPackage())
+      detailsCorrect => {
+        val updated = request.formData.copy(verify = Some(detailsCorrect))
+        cache.cache("formData", updated) map { _ =>
+          Redirect(VerifyPage.nextPage(updated).show)
         }
       }
     )

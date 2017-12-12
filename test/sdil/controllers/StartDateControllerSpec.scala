@@ -19,14 +19,10 @@ package sdil.controllers
 import java.time.LocalDate
 
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => matching}
-import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.Packaging
-
-import scala.concurrent.Future
 
 class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -42,7 +38,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return Status: See Other for start date form POST with valid date and redirect to add site page" in {
-      stubCacheEntry[Packaging]("packaging", Some(packagingIsLiable))
+      stubFormPage(packaging = Some(packagingIsLiable))
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
 
@@ -53,13 +49,13 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return Status: See Other for start date form POST with valid date and redirect to secondary warehouse page" in {
-      when(mockCache.fetchAndGetEntry[Packaging](matching("packaging"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(packagingIsntLiable)))
+      stubFormPage(packaging = Some(packagingIsntLiable))
+
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
       val response = controller.submitStartDate().apply(request)
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.WarehouseController.secondaryWarehouse().url
+      redirectLocation(response).get mustBe routes.WarehouseController.show().url
     }
 
     "return Status: Bad Request for invalid start date form POST request with day too low and display field hint" in {
@@ -76,8 +72,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return a page with a link back to the import volume page if the user imports liable drinks" in {
-      when(mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(true)))
+      stubFormPage(imports = Some(true))
 
       val response = controller.displayStartDate(FakeRequest())
       status(response) mustBe OK
@@ -87,18 +82,17 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return a page with a link back to the imports page if the user does not import liable drinks" in {
-      when(mockCache.fetchAndGetEntry[Boolean](matching("import"))(any(), any(), any()))
-        .thenReturn(Future.successful(Some(false)))
+      stubFormPage(imports = Some(false))
 
       val response = controller.displayStartDate(FakeRequest())
       status(response) mustBe OK
 
       val html = Jsoup.parse(contentAsString(response))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display("import", "importVolume", "start-date").url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display("import").url
     }
 
     "return Status: See Other for start date form GET with valid date and Liable booleans with redirect to add site page" in {
-      stubCacheEntry[Packaging]("packaging", Some(packagingIsLiable))
+      stubFormPage(packaging = Some(packagingIsLiable))
       testConfig.setTaxStartDate(tomorrow)
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
@@ -109,7 +103,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return Status: See Other for start date form GET with valid date and no Liable booleans with redirect to display Package page" in {
-      stubCacheEntry[Packaging]("packaging", None)
+      stubFormPage(packaging = None)
       testConfig.setTaxStartDate(tomorrow)
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
@@ -120,14 +114,30 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return Status: See Other for start date form GET with valid date and isnt Liable booleans with redirect to secondary warehouse page" in {
-      stubCacheEntry[Packaging]("packaging", Some(packagingIsntLiable))
+      stubFormPage(packaging = Some(packagingIsntLiable))
       testConfig.setTaxStartDate(tomorrow)
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
 
       val response = controller.displayStartDate().apply(request)
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.WarehouseController.secondaryWarehouse().url
+      redirectLocation(response).get mustBe routes.WarehouseController.show().url
+    }
+
+    "return status See Other and redirect to the import page if the import page is not complete" in {
+      stubFormPage(imports = None)
+
+      val res = controller.displayStartDate()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display("import").url)
+    }
+
+    "return status See Other and redirect to the import volume page if the user imports and the import volume page is not complete" in {
+      stubFormPage(imports = Some(true), importVolume = None)
+
+      val res = controller.displayStartDate()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.LitreageController.show("importVolume").url)
     }
   }
 
@@ -139,6 +149,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   override protected def beforeEach(): Unit = {
     testConfig.setTaxStartDate(yesterday)
+    stubFilledInForm
   }
 
   override protected def afterEach(): Unit = {

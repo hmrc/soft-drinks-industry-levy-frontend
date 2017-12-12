@@ -16,10 +16,11 @@
 
 package sdil.controllers
 
+import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class PackageControllerSpec extends ControllerSpec {
+class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "Package controller" should {
     "return Status: 200 when user is logged in and loads package page" in {
@@ -63,7 +64,7 @@ class PackageControllerSpec extends ControllerSpec {
       val response = controller.submitPackage().apply(request)
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked").url
+      redirectLocation(response).get mustBe routes.RadioFormController.display("package-copack-small").url
     }
 
     "return Status: Bad Request for invalid liability form POST request and show choose one option error" in {
@@ -91,8 +92,18 @@ class PackageControllerSpec extends ControllerSpec {
       contentType(response).get mustBe HTML
       contentAsString(response) must include(messagesApi("error.radio-form.choose-option.summary"))
     }
+
+    "return status See Other and redirect to the verify page when the verify page is not complete" in {
+      stubFormPage(verify = None)
+
+      val res = controller.displayPackage()(FakeRequest())
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.VerifyController.verify().url)
+    }
   }
 
   lazy val controller = wire[PackageController]
 
+  override protected def beforeEach(): Unit = stubFilledInForm
 }

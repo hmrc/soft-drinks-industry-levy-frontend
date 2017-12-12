@@ -16,4 +16,10 @@
 
 package sdil.models
 
+import play.api.libs.json.{Format, Json}
+
 case class SecondaryWarehouse(hasWarehouse: Boolean, address: Option[Address])
+
+object SecondaryWarehouse {
+  implicit val format: Format[SecondaryWarehouse] = Json.format[SecondaryWarehouse]
+}

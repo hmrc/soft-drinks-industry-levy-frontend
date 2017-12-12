@@ -16,15 +16,16 @@
 
 package sdil.controllers
 
-import org.mockito.ArgumentMatchers.{eq => matching, any}
+import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.Address
 import sdil.models.DetailsCorrect.DifferentAddress
 
-class VerifyControllerSpec extends ControllerSpec {
+class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /verify" should {
     "always return 200 Ok and the verify page" in {
@@ -73,12 +74,13 @@ class VerifyControllerSpec extends ControllerSpec {
 
       status(res) mustBe SEE_OTHER
 
-      val expectedBody = DifferentAddress(Address("line1", "line2", "line3", "line4", "AA11 1AA"))
+      val expectedBody = defaultFormData.copy(verify = Some(DifferentAddress(Address("line1", "line2", "line3", "line4", "AA11 1AA"))))
 
-      verify(mockCache, times(1))
-        .cache(matching("verifiedDetails"), matching(expectedBody))(any(), any(), any())
+      verify(mockCache, times(1)).cache(matching("formData"), matching(expectedBody))(any(), any(), any())
     }
   }
 
   lazy val testController = wire[VerifyController]
+
+  override protected def beforeEach(): Unit = stubFilledInForm
 }

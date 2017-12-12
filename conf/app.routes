@@ -18,20 +18,20 @@ POST        /register/package-own                            sdil.controllers.Li
 GET         /register/package-copack                         sdil.controllers.LitreageController.show(pageName = "packageCopack")
 POST        /register/package-copack                         sdil.controllers.LitreageController.validate(pageName = "packageCopack")
 
-GET         /register/package-copack-small                   sdil.controllers.RadioFormController.display(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked")
-POST        /register/package-copack-small                   sdil.controllers.RadioFormController.submit(page = "package-copack-small", trueLink = "packageCopackSmallVol", falseLink = "copacked")
+GET         /register/package-copack-small                   sdil.controllers.RadioFormController.display(page = "package-copack-small")
+POST        /register/package-copack-small                   sdil.controllers.RadioFormController.submit(page = "package-copack-small")
 
 GET         /register/package-copack-small-vol               sdil.controllers.LitreageController.show(pageName = "packageCopackSmallVol")
 POST        /register/package-copack-small-vol               sdil.controllers.LitreageController.validate(pageName = "packageCopackSmallVol")
 
-GET         /register/copacked                               sdil.controllers.RadioFormController.display(page = "copacked", trueLink = "copackedVolume", falseLink = "import")
-POST        /register/copacked                               sdil.controllers.RadioFormController.submit(page = "copacked", trueLink = "copackedVolume", falseLink = "import")
+GET         /register/copacked                               sdil.controllers.RadioFormController.display(page = "copacked")
+POST        /register/copacked                               sdil.controllers.RadioFormController.submit(page = "copacked")
 
 GET         /register/copacked-volume                        sdil.controllers.LitreageController.show(pageName = "copackedVolume")
 POST        /register/copacked-volume                        sdil.controllers.LitreageController.validate(pageName = "copackedVolume")
 
-GET         /register/import                                 sdil.controllers.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date")
-POST        /register/import                                 sdil.controllers.RadioFormController.submit(page = "import", trueLink = "importVolume", falseLink = "start-date")
+GET         /register/import                                 sdil.controllers.RadioFormController.display(page = "import")
+POST        /register/import                                 sdil.controllers.RadioFormController.submit(page = "import")
 
 GET         /register/import-volume                          sdil.controllers.LitreageController.show(pageName = "importVolume")
 POST        /register/import-volume                          sdil.controllers.LitreageController.validate(pageName = "importVolume")
@@ -43,7 +43,7 @@ GET         /register/production-sites                       sdil.controllers.Pr
 POST        /register/production-sites                       sdil.controllers.ProductionSiteController.validate()
 GET         /register/production-sites/remove/:idx           sdil.controllers.ProductionSiteController.remove(idx: Int)
 
-GET         /register/secondary-warehouse                    sdil.controllers.WarehouseController.secondaryWarehouse()
+GET         /register/secondary-warehouse                    sdil.controllers.WarehouseController.show()
 POST        /register/secondary-warehouse                    sdil.controllers.WarehouseController.validate()
 GET         /register/secondary-warehouse/remove/:idx        sdil.controllers.WarehouseController.remove(idx: Int)
 
@@ -54,5 +54,3 @@ GET         /register/declaration                            sdil.controllers.De
 POST        /register/declaration                            sdil.controllers.DeclarationController.submitDeclaration()
 
 GET         /register/complete                               sdil.controllers.SDILController.displayComplete()
-
-

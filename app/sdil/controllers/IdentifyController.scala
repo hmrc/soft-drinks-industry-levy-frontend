@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
-import sdil.models.Identification
+import sdil.models.{Identification, RegistrationFormData}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -45,9 +45,10 @@ class IdentifyController(val messagesApi: MessagesApi, cache: SessionCache)(impl
   def validate = Action.async { implicit request =>
     form.bindFromRequest().fold(
       errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.identify(errors))),
-      data => cache.cache("identify", data) map { _ =>
+      identification => cache.cache("formData", RegistrationFormData(identification)) map { _ =>
         Redirect(routes.VerifyController.verify())
-      })
+      }
+    )
   }
 }
 

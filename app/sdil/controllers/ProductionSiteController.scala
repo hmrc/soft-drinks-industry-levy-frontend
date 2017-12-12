@@ -21,77 +21,60 @@ import java.time.LocalDate
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Call, Request}
+import play.api.mvc.Action
+import sdil.actions.FormAction
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
-import sdil.models.{Address, ProductionSite}
+import sdil.models._
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
+import views.html.softdrinksindustrylevy.register.productionSite
 
-import scala.concurrent.Future
-
-class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import ProductionSiteController.form
 
-  def addSite = Action.async { implicit request =>
+  def addSite = formAction.async { implicit request =>
     //FIXME look up address record
-    for {
-      addrs <- getOtherSites
-      link <- getBackLink
-    } yield {
-      Ok(views.html.softdrinksindustrylevy.register.productionSite(form, fakeAddress, addrs, link))
+    ProductionSitesPage.expectedPage(request.formData) match {
+      case ProductionSitesPage => Ok(productionSite(form, fakeAddress, request.formData.productionSites, previousPage(request.formData).show))
+      case otherPage => Redirect(otherPage.show)
     }
   }
 
-  def validate = Action.async { implicit request =>
-    getOtherSites flatMap { addrs =>
-      form.bindFromRequest().fold(
-        errors => getBackLink map { link =>
-          BadRequest(views.html.softdrinksindustrylevy.register.productionSite(errors, fakeAddress, addrs, link))
-        },
-        {
-          case ProductionSite(_, Some(addr)) => cache.cache("productionSites", addrs :+ addr) map { _ =>
+  def validate = formAction.async { implicit request =>
+    form.bindFromRequest().fold(
+      errors => BadRequest(productionSite(errors, fakeAddress, request.formData.productionSites, previousPage(request.formData).show)),
+      {
+        case ProductionSite(_, Some(addr)) => {
+          val updated = request.formData.copy(productionSites = request.formData.productionSites :+ addr)
+          cache.cache("formData", updated) map { _ =>
             Redirect(routes.ProductionSiteController.addSite())
           }
-          case _ => Redirect(routes.WarehouseController.secondaryWarehouse())
         }
-      )
-    }
-  }
-
-  def remove(idx: Int) = Action.async { implicit request =>
-    getOtherSites flatMap { addrs =>
-      val updated = addrs.take(idx) ++ addrs.drop(idx + 1)
-      cache.cache("productionSites", updated) map { _ =>
-        Redirect(routes.ProductionSiteController.addSite())
+        case _ => Redirect(ProductionSitesPage.nextPage(request.formData).show)
       }
+    )
+  }
+
+  def remove(idx: Int) = formAction.async { implicit request =>
+    val updatedSites = request.formData.productionSites.take(idx) ++ request.formData.productionSites.drop(idx + 1)
+    cache.cache("formData", request.formData.copy(productionSites = updatedSites)) map { _ =>
+      Redirect(routes.ProductionSiteController.addSite())
     }
   }
 
-  private def getOtherSites(implicit request: Request[_]): Future[Seq[Address]] = {
-    cache.fetchAndGetEntry[Seq[Address]]("productionSites") map {
-      case Some(Nil) | None => Nil
-      case Some(addrs) => addrs
-    }
-  }
-
-  private def getBackLink(implicit request: Request[_]): Future[Call] = {
-    if (LocalDate.now.isBefore(config.taxStartDate)) {
-      cache.fetchAndGetEntry[Boolean]("import") map {
-        case Some(true) => routes.LitreageController.show("importVolume")
-        case Some(false) => routes.RadioFormController.display(page = "import", trueLink = "importVolume", falseLink = "start-date")
-        case None => routes.PackageController.displayPackage()
-      }
+  private def previousPage(formData: RegistrationFormData) = {
+    if (LocalDate.now isBefore config.taxStartDate) {
+      StartDatePage.previousPage(formData)
     } else {
-      routes.StartDateController.displayStartDate()
+      ProductionSitesPage.previousPage(formData)
     }
   }
 
   private lazy val fakeAddress = Address("an address", "somewhere", "", "", "AA11 1AA")
-
 }
 
 object ProductionSiteController extends FormHelpers {
