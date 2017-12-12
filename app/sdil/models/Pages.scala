@@ -223,7 +223,9 @@ case object WarehouseSitesPage extends MidJourneyPage {
     case None => PackagePage
   }
 
-  override def isComplete(formData: RegistrationFormData): Boolean = true
+  //there's no way to tell if the warehouse page has been completed, as the radio button choice is not stored
+  //so the previous page is checked to prevent the user skipping to the contact details page
+  override def isComplete(formData: RegistrationFormData): Boolean = previousPage(formData).isComplete(formData)
 
   override def show: Call = routes.WarehouseController.show()
 }
