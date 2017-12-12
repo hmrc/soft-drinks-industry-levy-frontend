@@ -26,17 +26,19 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FormAction(cache: SessionCache)(implicit ec: ExecutionContext) extends ActionBuilder[RegistrationFormRequest] {
+class FormAction(cache: SessionCache, authorisedAction: AuthorisedAction)(implicit ec: ExecutionContext)
+  extends ActionBuilder[RegistrationFormRequest] {
+
   type Body[A] = RegistrationFormRequest[A] => Future[Result]
 
-  override def invokeBlock[A](request: Request[A], block: Body[A]): Future[Result] = {
+  override def invokeBlock[A](request: Request[A], block: Body[A]): Future[Result] = authorisedAction.invokeBlock[A](request, { _ =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     cache.fetchAndGetEntry[RegistrationFormData]("formData") flatMap {
       case Some(data) => block(RegistrationFormRequest(request, data))
       case None => Future.successful(Redirect(routes.IdentifyController.identify()))
     }
-  }
+  })
 }
 
 case class RegistrationFormRequest[T](request: Request[T], formData: RegistrationFormData) extends WrappedRequest[T](request)
