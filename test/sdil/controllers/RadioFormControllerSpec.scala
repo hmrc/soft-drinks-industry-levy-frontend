@@ -220,14 +220,6 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopack").url)
     }
 
-    "redirect to the package copack small page from the copacked page if the package copack small page is not complete" in {
-      stubFormPage(packageCopackSmall = None)
-
-      val res = controller.display(copacked)(FakeRequest())
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display(copackSmall).url)
-    }
-
     "redirect to the package copack small volume page from the copacked page if the user copacks for small producers " +
       "and the package copack small volume page is not complete" in {
       stubFormPage(packageCopackSmall = Some(true), packageCopackSmallVol = None)
