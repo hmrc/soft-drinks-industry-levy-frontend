@@ -209,7 +209,8 @@ case object ProductionSitesPage extends MidJourneyPage {
 
   override def previousPage(formData: RegistrationFormData): Page = StartDatePage
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.productionSites.nonEmpty
+  //prevents users from skipping the rest of the form by navigating directly to production sites
+  override def isComplete(formData: RegistrationFormData): Boolean = StartDatePage.isComplete(formData)
 
   override def show: Call = routes.ProductionSiteController.addSite()
 }
