@@ -148,8 +148,8 @@ case object CopackedPage extends MidJourneyPage {
   }
 
   override def previousPage(formData: RegistrationFormData): Page = formData.packaging match {
-    case Some(p) if p.customers && formData.packageCopackSmall.get =>  PackageCopackSmallVolPage
-    case Some(p) if p.customers && !formData.packageCopackSmall.get =>  PackageCopackSmallPage
+    case Some(p) if p.customers && formData.packageCopackSmall.contains(true) =>  PackageCopackSmallVolPage
+    case Some(p) if p.customers && formData.packageCopackSmall.contains(false) =>  PackageCopackSmallPage
     case Some(p) if p.ownBrands && !p.customers => PackageOwnPage
     case _ => PackagePage
   }
