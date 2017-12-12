@@ -53,22 +53,22 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       contentAsString(res) must include(Messages("sdil.packageOwn.heading"))
     }
 
-    "redirect to the package copack page if the form data is valid and the user is packaging for their customers" in {
+    "redirect to the copacked volume page if the form data is valid and the user is packaging for their customers" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
       val res = testController.validate("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopack").url)
+      redirectLocation(res) mustBe Some(routes.LitreageController.show("copackedVolume").url)
     }
 
-    "redirect to the package copack small page if the form data is valid and the user is not packaging for their customers" in {
+    "redirect to the package copack page if the form data is valid and the user is not packaging for their customers" in {
       stubFormPage(packaging = Some(Packaging(false, false, false)))
 
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "2", "higherRateLitres" -> "1")
       val res = testController.validate("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display("package-copack-small").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.display("copacked").url)
     }
 
     "store the form data in keystore if it is valid" in {
