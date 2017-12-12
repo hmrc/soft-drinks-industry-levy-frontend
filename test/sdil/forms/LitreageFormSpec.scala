@@ -70,6 +70,12 @@ class LitreageFormSpec extends FormSpec {
       mustContainError(f, higherRate, "error.litreage.max")
     }
 
+    "must return the correct error if the low rate volume is greater than 9223372036854775807" in {
+      val f = form.bind(validData.updated(higherRate, "9223372036854775808"))
+
+      mustContainError(f, higherRate, "error.litreage.max")
+    }
+
     "bind to Litreage if the lower and higher rate volumes are valid" in {
       val f = form.bind(validData)
 

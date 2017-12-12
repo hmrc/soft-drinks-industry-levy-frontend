@@ -88,8 +88,8 @@ object LitreageController extends FormHelpers {
 
   private lazy val litreage = text
     .verifying("error.litreage.required", _.nonEmpty)
-    .verifying("error.litreage.numeric", l => l.isEmpty || Try(l.toLong).isSuccess) //don't try to parse empty string as a number
-    .transform[Long](_.toLong, _.toString)
+    .verifying("error.litreage.numeric", l => l.isEmpty || Try(BigDecimal.apply(l)).isSuccess) //don't try to parse empty string as a number
+    .transform[BigDecimal](BigDecimal.apply, _.toString)
     .verifying("error.litreage.max", _ <= 9999999999999L)
     .verifying("error.litreage.min", _ >= 0)
 }
