@@ -39,22 +39,23 @@
                 '_groupClass -> "form-field-group")
             </fieldset>
 
+            @if(pageName == "package-copack-small") {
+                <details role="group">
+                    <summary role="button" aria-controls="details-content-0"><span class="summary">@Messages("sdil.package-copack-small.whatis.header")</span></summary>
+                    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+
+                        <p id="details-content-1">@Messages("sdil.package-copack-small.whatis.body")</p>
+                    </div>
+                    <br>
+                </details>
+                <br>
+            }
+
             <button class="button" type="submit" id="continue-button">
             @Messages("sdil.common.save-continue")
             </button>
         </div>
 
-    }
-
-    @if(pageName == "package-copack-small") {
-        <details role="group">
-            <summary role="button" aria-controls="details-content-0"><span class="summary">@Messages("sdil.package-copack-small.whatis.header")</span></summary>
-            <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-
-                <p id="details-content-1">@Messages("sdil.package-copack-small.whatis.body")</p>
-            </div>
-            <br>
-        </details>
     }
 
 }
