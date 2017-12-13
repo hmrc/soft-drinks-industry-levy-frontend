@@ -18,8 +18,8 @@ package sdil.controllers
 
 import java.time.LocalDate
 
-import org.mockito.ArgumentMatchers.{any, eq => matching}
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{eq => matching, _}
+import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory, PlaySpec}
 import play.api.{Application, ApplicationLoader}
@@ -46,6 +46,10 @@ trait ControllerSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicati
 
   def stubCacheEntry[T](key: String, value: Option[T]) = {
     when(mockCache.fetchAndGetEntry[T](matching(key))(any(), any(), any())).thenReturn(Future.successful(value))
+  }
+
+  def verifyDataCached(formData: RegistrationFormData) = {
+    verify(mockCache, times(1)).cache(matching("formData"), matching(formData))(any(), any(), any())
   }
 
   def stubFormPage(identify: Identification = defaultFormData.identify,
