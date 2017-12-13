@@ -57,8 +57,11 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache
             Redirect(routes.ProductionSiteController.addSite())
           }
         case _ =>
-          cache.cache("formData", request.formData.copy(productionSites = Some(Nil))) map { _ =>
-            Redirect(ProductionSitesPage.nextPage(request.formData).show)
+          request.formData.productionSites match {
+            case Some(_) => Redirect(ProductionSitesPage.nextPage(request.formData).show)
+            case _ => cache.cache("formData", request.formData.copy(productionSites = Some(Nil))) map { _ =>
+              Redirect(ProductionSitesPage.nextPage(request.formData).show)
+            }
           }
       }
     )

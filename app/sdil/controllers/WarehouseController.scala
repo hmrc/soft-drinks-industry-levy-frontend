@@ -58,8 +58,11 @@ class WarehouseController(val messagesApi: MessagesApi,
             Redirect(routes.WarehouseController.show())
           }
         case _ =>
-          cache.cache("formData", request.formData.copy(secondaryWarehouses = Some(Nil))) map { _ =>
-            Redirect(WarehouseSitesPage.nextPage(request.formData).show)
+          request.formData.secondaryWarehouses match {
+            case Some(_) => Redirect(WarehouseSitesPage.nextPage(request.formData).show)
+            case _ => cache.cache("formData", request.formData.copy(secondaryWarehouses = Some(Nil))) map { _ =>
+              Redirect(WarehouseSitesPage.nextPage(request.formData).show)
+            }
           }
       }
     )
