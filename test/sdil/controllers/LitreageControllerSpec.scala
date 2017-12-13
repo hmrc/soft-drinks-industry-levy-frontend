@@ -58,7 +58,7 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = testController.validate("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.LitreageController.show("copackedVolume").url)
+      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopack").url)
     }
 
     "redirect to the package copack page if the form data is valid and the user is not packaging for their customers" in {

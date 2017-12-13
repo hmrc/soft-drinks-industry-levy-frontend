@@ -80,7 +80,7 @@ case object PackagePage extends MidJourneyPage {
 
 case object PackageOwnPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData): Page = formData.packaging match {
-    case Some(p) if p.isLiable && p.customers => CopackedVolumePage
+    case Some(p) if p.isLiable && p.customers => PackageCopackPage
     case Some(p) => CopackedPage
     case None => PackagePage
   }
