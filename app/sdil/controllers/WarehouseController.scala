@@ -40,28 +40,35 @@ class WarehouseController(val messagesApi: MessagesApi,
 
   def show = formAction.async { implicit request =>
     WarehouseSitesPage.expectedPage(request.formData) match {
-      case WarehouseSitesPage => Ok(secondaryWarehouse(form, request.formData.secondaryWarehouses, previousPage(request.formData).show))
+      case WarehouseSitesPage => Ok(secondaryWarehouse(form, request.formData.secondaryWarehouses.getOrElse(Nil), previousPage(request.formData).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def validate = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => BadRequest(secondaryWarehouse(errors, request.formData.secondaryWarehouses, previousPage(request.formData).show)),
+      errors => BadRequest(secondaryWarehouse(errors, request.formData.secondaryWarehouses.getOrElse(Nil), previousPage(request.formData).show)),
       {
-        case SecondaryWarehouse(_, Some(addr)) => {
-          val updatedSites = request.formData.secondaryWarehouses :+ addr
+        case SecondaryWarehouse(_, Some(addr)) =>
+          val updatedSites = request.formData.secondaryWarehouses match {
+            case Some(addrs) => Some(addrs :+ addr)
+            case _ => Some(Seq(addr))
+          }
           cache.cache("formData", request.formData.copy(secondaryWarehouses = updatedSites)) map { _ =>
             Redirect(routes.WarehouseController.show())
           }
-        }
-        case _ => Redirect(WarehouseSitesPage.nextPage(request.formData).show)
+        case _ =>
+          cache.cache("formData", request.formData.copy(secondaryWarehouses = Some(Nil))) map { _ =>
+            Redirect(WarehouseSitesPage.nextPage(request.formData).show)
+          }
       }
     )
   }
 
   def remove(idx: Int) = formAction.async { implicit request =>
-    val updatedSites = request.formData.secondaryWarehouses.take(idx) ++ request.formData.secondaryWarehouses.drop(idx + 1)
+    val updatedSites = request.formData.secondaryWarehouses map {
+      addr => addr.take(idx) ++ addr.drop(idx + 1)
+    }
     cache.cache("formData", request.formData.copy(secondaryWarehouses = updatedSites)) map { _ =>
       Redirect(routes.WarehouseController.show())
     }

@@ -32,8 +32,8 @@ case class RegistrationFormData(identify: Identification,
                                 imports: Option[Boolean] = None,
                                 importVolume: Option[Litreage] = None,
                                 startDate: Option[LocalDate] = None,
-                                productionSites: Seq[Address] = Nil,
-                                secondaryWarehouses: Seq[Address] = Nil,
+                                productionSites: Option[Seq[Address]] = None,
+                                secondaryWarehouses: Option[Seq[Address]] = None,
                                 contactDetails: Option[ContactDetails] = None)
 
 object RegistrationFormData {

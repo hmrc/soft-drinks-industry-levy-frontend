@@ -118,7 +118,7 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         packaging = Some(Packaging(true, true, false)),
         packageOwn = None,
         packageCopack = None,
-        productionSites = Nil
+        productionSites = Some(Nil)
       ))
     }
   }
