@@ -31,7 +31,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
   "GET /production-site" should {
     "return 200 Ok and the production site page if no other sites have been added" in {
-      stubFormPage(productionSites = Nil)
+      stubFormPage(productionSites = Some(Nil))
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -39,7 +39,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
     }
 
     "return 200 Ok and the add production site page if another site has been added" in {
-      stubFormPage(productionSites = Seq(Address("1", "", "", "", "AA11 1AA")))
+      stubFormPage(productionSites = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -85,7 +85,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
   "POST /production-site" should {
     "return 400 Bad Request and the production site page if no other sites have been added and the form data is invalid" in {
-      stubFormPage(productionSites = Nil)
+      stubFormPage(productionSites = Some(Nil))
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
@@ -93,7 +93,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
     }
 
     "return 400 Bad Request and the add production site page if another site has been added and the form data is invalid" in {
-      stubFormPage(productionSites = Seq(Address("1", "", "", "", "AA11 1AA")))
+      stubFormPage(productionSites = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
@@ -122,7 +122,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
     }
 
     "store the new address in keystore if another site has been added and the form data is valid" in {
-      stubFormPage(productionSites = Nil)
+      stubFormPage(productionSites = Some(Nil))
       
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasOtherSite" -> "true",
@@ -138,32 +138,32 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
       verify(mockCache, times(1)).cache(
         matching("formData"),
-        matching(defaultFormData.copy(productionSites = Seq(Address("line 2", "line 3", "", "", "AA12 2AA"))))
+        matching(defaultFormData.copy(productionSites = Some(Seq(Address("line 2", "line 3", "", "", "AA12 2AA")))))
       )(any(), any(), any())
     }
   }
 
   "GET /production-site/remove" should {
     "remove the production site address from keystore" in {
-      stubFormPage(productionSites = Seq(
+      stubFormPage(productionSites = Some(Seq(
         Address("1", "2", "", "", "AA11 1AA"),
         Address("2", "3", "", "", "AA12 2AA")
-      ))
+      )))
 
       val res = testController.remove(1)(FakeRequest())
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1)).cache(
         matching("formData"),
-        matching(defaultFormData.copy(productionSites = Seq(Address("1", "2", "", "", "AA11 1AA"))))
+        matching(defaultFormData.copy(productionSites = Some(Seq(Address("1", "2", "", "", "AA11 1AA")))))
       )(any(), any(), any())
     }
 
     "always redirect to the production site page" in {
-      stubFormPage(productionSites = Seq(
+      stubFormPage(productionSites = Some(Seq(
         Address("1", "2", "", "", "AA11 1AA"),
         Address("2", "3", "", "", "AA12 2AA")
-      ))
+      )))
 
       val res = testController.remove(1)(FakeRequest())
       status(res) mustBe SEE_OTHER

@@ -39,28 +39,38 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache
   def addSite = formAction.async { implicit request =>
     //FIXME look up address record
     ProductionSitesPage.expectedPage(request.formData) match {
-      case ProductionSitesPage => Ok(productionSite(form, fakeAddress, request.formData.productionSites, previousPage(request.formData).show))
+      case ProductionSitesPage => Ok(productionSite(form, fakeAddress, request.formData.productionSites.getOrElse(Nil), previousPage(request.formData).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def validate = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => BadRequest(productionSite(errors, fakeAddress, request.formData.productionSites, previousPage(request.formData).show)),
+      errors => BadRequest(productionSite(errors, fakeAddress, request.formData.productionSites.getOrElse(Nil), previousPage(request.formData).show)),
       {
-        case ProductionSite(_, Some(addr)) => {
-          val updated = request.formData.copy(productionSites = request.formData.productionSites :+ addr)
-          cache.cache("formData", updated) map { _ =>
+        case ProductionSite(_, Some(addr)) =>
+          val updated = request.formData.productionSites match {
+            case Some(addrs) => Some(addrs :+ addr)
+            case _ => Some(Seq(addr))
+          }
+          cache.cache("formData", request.formData.copy(productionSites = updated)) map { _ =>
             Redirect(routes.ProductionSiteController.addSite())
           }
-        }
-        case _ => Redirect(ProductionSitesPage.nextPage(request.formData).show)
+        case _ =>
+          request.formData.productionSites match {
+            case Some(_) => Redirect(ProductionSitesPage.nextPage(request.formData).show)
+            case _ => cache.cache("formData", request.formData.copy(productionSites = Some(Nil))) map { _ =>
+              Redirect(ProductionSitesPage.nextPage(request.formData).show)
+            }
+          }
       }
     )
   }
 
   def remove(idx: Int) = formAction.async { implicit request =>
-    val updatedSites = request.formData.productionSites.take(idx) ++ request.formData.productionSites.drop(idx + 1)
+    val updatedSites = request.formData.productionSites map {
+      addr => addr.take(idx) ++ addr.drop(idx + 1)
+    }
     cache.cache("formData", request.formData.copy(productionSites = updatedSites)) map { _ =>
       Redirect(routes.ProductionSiteController.addSite())
     }

@@ -64,8 +64,8 @@ trait ControllerSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicati
                    imports: Option[Boolean] = defaultFormData.imports,
                    importVolume: Option[Litreage] = defaultFormData.importVolume,
                    startDate: Option[LocalDate] = defaultFormData.startDate,
-                   productionSites: Seq[Address] = defaultFormData.productionSites,
-                   secondaryWarehouses: Seq[Address] = defaultFormData.secondaryWarehouses,
+                   productionSites: Option[Seq[Address]] = defaultFormData.productionSites,
+                   secondaryWarehouses: Option[Seq[Address]] = defaultFormData.secondaryWarehouses,
                    contactDetails: Option[ContactDetails] = defaultFormData.contactDetails) = {
 
     stubCacheEntry[RegistrationFormData]("formData", Some(RegistrationFormData(
@@ -139,8 +139,8 @@ trait ControllerSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicati
         atHighRate = 10
       )),
       startDate = Some(LocalDate.of(2018, 4, 6)),
-      productionSites = Seq(Address("1 Production Site St", "Production Site Town", "", "", "AA11 1AA")),
-      secondaryWarehouses = Seq(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA")),
+      productionSites = Some(Seq(Address("1 Production Site St", "Production Site Town", "", "", "AA11 1AA"))),
+      secondaryWarehouses = Some(Seq(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA"))),
       contactDetails = Some(ContactDetails(
         fullName = "A person",
         position = "A position",

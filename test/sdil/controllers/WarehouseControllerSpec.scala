@@ -31,7 +31,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /secondary-warehouse" should {
     "return 200 Ok and the secondary warehouse page if no secondary warehouses have been added" in {
-      stubFormPage(secondaryWarehouses = Nil)
+      stubFormPage(secondaryWarehouses = Some(Nil))
 
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
@@ -39,7 +39,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return 200 Ok and the add secondary warehouse page if other secondary warehouses have been added" in {
-      stubFormPage(secondaryWarehouses = Seq(Address("1", "", "", "", "AA11 1AA")))
+      stubFormPage(secondaryWarehouses = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
@@ -99,7 +99,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "POST /secondary-warehouse" should {
     "return 400 Bad Request and the secondary warehouse page if no secondary warehouses have been added and the form data is invalid" in {
-      stubFormPage(secondaryWarehouses = Nil)
+      stubFormPage(secondaryWarehouses = Some(Nil))
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
@@ -109,7 +109,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return 400 Bad Request and the add secondary warehouse page if other warehouses have been added and the form data is invalid" in {
       stubCacheEntry[RegistrationFormData](
         "formData",
-        Some(defaultFormData.copy(secondaryWarehouses = Seq(Address("1", "", "", "", "AA11 1AA"))))
+        Some(defaultFormData.copy(secondaryWarehouses = Some(Seq(Address("1", "", "", "", "AA11 1AA")))))
       )
 
       val res = testController.validate()(FakeRequest())
@@ -139,7 +139,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "store the new address in keystore if a warehouse is added" in {
-      stubFormPage(secondaryWarehouses = Nil)
+      stubFormPage(secondaryWarehouses = Some(Nil))
 
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasWarehouse" -> "true",
@@ -156,7 +156,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       verify(mockCache, times(1))
         .cache(
           matching("formData"),
-          matching(defaultFormData.copy(secondaryWarehouses = Seq(Address("line 2", "line 3", "line 4", "line 5", "AA11 1AA"))))
+          matching(defaultFormData.copy(secondaryWarehouses = Some(Seq(Address("line 2", "line 3", "line 4", "line 5", "AA11 1AA")))))
         )(any(), any(), any())
     }
   }
@@ -168,19 +168,19 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         Address("2", "", "", "", "AA12 2AA")
       )
 
-      stubFormPage(secondaryWarehouses = addresses)
+      stubFormPage(secondaryWarehouses = Some(addresses))
 
       val res = testController.remove(0)(FakeRequest())
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1)).cache(
         matching("formData"),
-        matching(defaultFormData.copy(secondaryWarehouses = Seq(Address("2", "", "", "", "AA12 2AA"))))
+        matching(defaultFormData.copy(secondaryWarehouses = Some(Seq(Address("2", "", "", "", "AA12 2AA")))))
       )(any(), any(), any())
     }
 
     "always redirect to the secondary warehouse page" in {
-      stubFormPage(secondaryWarehouses = Seq(Address("1", "", "", "", "AA11 1AA")))
+      stubFormPage(secondaryWarehouses = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
       val res = testController.remove(0)(FakeRequest())
       status(res) mustBe SEE_OTHER

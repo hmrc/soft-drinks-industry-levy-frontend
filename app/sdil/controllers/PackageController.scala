@@ -45,7 +45,7 @@ class PackageController(val messagesApi: MessagesApi, cache: SessionCache, formA
     form.bindFromRequest.fold(
       formWithErrors => BadRequest(register.packagePage(formWithErrors)),
       packaging => {
-        val updated = request.formData.copy(packaging = Some(packaging), packageOwn = None, packageCopack = None, productionSites = Nil)
+        val updated = request.formData.copy(packaging = Some(packaging), packageOwn = None, packageCopack = None, productionSites = None)
         cache.cache("formData", updated) map { _ =>
           Redirect(PackagePage.nextPage(updated).show)
         }
