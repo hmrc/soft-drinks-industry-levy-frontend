@@ -218,7 +218,8 @@ case object ProductionSitesPage extends MidJourneyPage {
 
   override def previousPage(formData: RegistrationFormData): Page = StartDatePage
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.productionSites.nonEmpty
+  //prevents users from skipping the rest of the form by navigating directly to production sites
+  override def isComplete(formData: RegistrationFormData): Boolean = StartDatePage.isComplete(formData)
 
   override def show: Call = routes.ProductionSiteController.addSite()
 }
@@ -232,7 +233,9 @@ case object WarehouseSitesPage extends MidJourneyPage {
     case None => PackagePage
   }
 
-  override def isComplete(formData: RegistrationFormData): Boolean = true
+  //there's no way to tell if the warehouse page has been completed, as the radio button choice is not stored
+  //so the previous page is checked to prevent the user skipping to the contact details page
+  override def isComplete(formData: RegistrationFormData): Boolean = previousPage(formData).isComplete(formData)
 
   override def show: Call = routes.WarehouseController.show()
 }
