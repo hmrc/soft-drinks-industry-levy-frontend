@@ -46,6 +46,7 @@ sealed trait MidJourneyPage extends PageWithPreviousPage with PageWithNextPage
 
 case object IdentifyPage extends PageWithNextPage {
   override def nextPage(formData: RegistrationFormData): Page = VerifyPage
+
   override def isComplete(formData: RegistrationFormData): Boolean = true
 
   override def show: Call = routes.IdentifyController.identify()
@@ -57,7 +58,9 @@ case object VerifyPage extends MidJourneyPage {
     case Some(_) => PackagePage
     case None => VerifyPage
   }
+
   override def previousPage(formData: RegistrationFormData): Page = IdentifyPage
+
   override def isComplete(formData: RegistrationFormData): Boolean = formData.verify.isDefined
 
   override def show: Call = routes.VerifyController.verify()
@@ -141,8 +144,8 @@ case object CopackedPage extends MidJourneyPage {
   }
 
   override def previousPage(formData: RegistrationFormData): Page = formData.packaging match {
-    case Some(p) if p.customers && formData.packageCopackSmall.contains(true) =>  PackageCopackSmallVolPage
-    case Some(p) if p.customers && formData.packageCopackSmall.isEmpty =>  PackageCopackSmallPage
+    case Some(p) if p.customers && formData.packageCopackSmall.contains(true) => PackageCopackSmallVolPage
+    case Some(p) if p.customers && !formData.packageCopackSmall.contains(true) => PackageCopackSmallPage
     case Some(p) if p.ownBrands && !p.customers => PackageOwnPage
     case Some(p) if p.customers => PackageCopackPage
     case _ => PackagePage

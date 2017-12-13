@@ -65,7 +65,7 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache
   }
 
   def remove(idx: Int) = formAction.async { implicit request =>
-    val updatedSites = request.formData.secondaryWarehouses map {
+    val updatedSites = request.formData.productionSites map {
       addr => addr.take(idx) ++ addr.drop(idx + 1)
     }
     cache.cache("formData", request.formData.copy(productionSites = updatedSites)) map { _ =>
