@@ -43,6 +43,14 @@ sdil.verify.address.line3=Address line 3
 sdil.verify.address.line4=Address line 4
 sdil.verify.postcode=Postcode
 
+#Organisation Type
+sdil.organisation-type.heading=What organisation type is your business?
+sdil.organisation-type.limited-company=Limited Company
+sdil.organisation-type.llp=Limited Liability Partnership
+sdil.organisation-type.partnership=Partnership
+sdil.organisation-type.sole-trader=Sole Trader
+sdil.organisation-type.unincorporated-body=Unincorporated Body
+
 #Package
 sdil.package.heading=Will you package liable drinks at a production site you operate?
 sdil.package.who-for=Who will you package liable drinks for?

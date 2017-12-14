@@ -68,7 +68,6 @@ case object VerifyPage extends MidJourneyPage {
 
 case object OrgTypePage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData): Page = formData.orgType match {
-    case Some(DetailsCorrect.No) => VerifyPage
     case Some(_) => PackagePage
     case None => OrgTypePage
   }
