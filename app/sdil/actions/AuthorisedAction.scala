@@ -35,7 +35,7 @@ class AuthorisedAction(val authConnector: AuthConnector, config: AppConfig)(impl
   override protected def filter[A](request: Request[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments and affinityGroup) { case ~(enrolments, _) =>
+    authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
       Future.successful(alreadyEnrolled(enrolments))
     } recover {
       case _: NoActiveSession => Some(Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName))))

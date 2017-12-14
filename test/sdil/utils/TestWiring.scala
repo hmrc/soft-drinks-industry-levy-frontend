@@ -61,9 +61,8 @@ trait TestWiring extends MockitoSugar {
   lazy val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   lazy val mockAuthConnector: AuthConnector = {
     val m = mock[AuthConnector]
-    when(m.authorise[~[Enrolments, Option[AffinityGroup]]](any(), any())(any(), any())).thenReturn {
-      //have to make types explicit because type inference is hard
-      Future.successful(new ~(Enrolments(Set.empty), Option(AffinityGroup.Organisation.asInstanceOf[AffinityGroup])))
+    when(m.authorise[Enrolments](any(), any())(any(), any())).thenReturn {
+      Future.successful(Enrolments(Set.empty))
     }
     m
   }
