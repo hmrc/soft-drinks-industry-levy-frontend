@@ -62,8 +62,7 @@ class LitreageController(val messagesApi: MessagesApi,
   }
 
   private def getPage(pageName: String): MidJourneyPage = pageName match {
-    case "packageOwn" => PackageOwnPage
-    case "packageCopack" => PackageCopackPage
+    case "packageOwn" => PackageOwnPage  case "packageCopack" => PackageCopackPage
     case "packageCopackSmallVol" => PackageCopackSmallVolPage
     case "copackedVolume" => CopackedVolumePage
     case "importVolume" => ImportVolumePage

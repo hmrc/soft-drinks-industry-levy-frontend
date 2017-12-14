@@ -57,6 +57,7 @@ object FrontendBuild extends Build {
         "com.softwaremill.macwire" %% "macrosakka" % "2.3.0" % "provided",
         "com.softwaremill.macwire" %% "util" % "2.3.0",
         "com.softwaremill.macwire" %% "proxy" % "2.3.0",
+        "uk.gov.hmrc" %% "play-auditing" % "3.2.1",
 
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % "test",
