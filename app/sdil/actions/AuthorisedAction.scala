@@ -35,17 +35,11 @@ class AuthorisedAction(val authConnector: AuthConnector, config: AppConfig)(impl
   override protected def filter[A](request: Request[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments and affinityGroup) { case ~(enrolments, affinity) =>
-      Future.successful(invalidAccountType(affinity) orElse alreadyEnrolled(enrolments))
+    authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments and affinityGroup) { case ~(enrolments, _) =>
+      Future.successful(alreadyEnrolled(enrolments))
     } recover {
       case _: NoActiveSession => Some(Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName))))
     }
-  }
-
-  private def invalidAccountType(affinityGroup: Option[AffinityGroup]): Option[Result] = affinityGroup match {
-    case Some(AffinityGroup.Organisation) => None
-    case Some(g) => Some(Unauthorized(s"Affinity group $g not permitted"))
-    case None => Some(Unauthorized("No affinity group found"))
   }
 
   private def alreadyEnrolled(enrolments: Enrolments): Option[Result] = {
