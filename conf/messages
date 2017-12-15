@@ -159,6 +159,9 @@ sdil.complete.what-happens.content=You don’t need to do anything else. We''ll 
 sdil.already-enrolled.heading=You have already registered for this service
 sdil.service-page.link=Go to service page
 
+#Invalid role
+sdil.invalid-role.title=Government Gateway assistants cannot register for Soft Drinks Industry Levy
+
 #Common errors
 error.line1.required=Address line 1 must not be empty
 error.line2.required=Address line 2 must not be empty

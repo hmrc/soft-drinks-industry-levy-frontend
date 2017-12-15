@@ -28,7 +28,8 @@ import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
 import sdil.actions.{AuthorisedAction, FormAction}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.{AuthConnector, CredentialRole, Enrolments, User}
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
@@ -61,8 +62,8 @@ trait TestWiring extends MockitoSugar {
   lazy val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   lazy val mockAuthConnector: AuthConnector = {
     val m = mock[AuthConnector]
-    when(m.authorise[Enrolments](any(), any())(any(), any())).thenReturn {
-      Future.successful(Enrolments(Set.empty))
+    when(m.authorise[~[Enrolments, Option[CredentialRole]]](any(), any())(any(), any())).thenReturn {
+      Future.successful(new ~[Enrolments, Option[CredentialRole]](Enrolments(Set.empty), Some(User)))
     }
     m
   }
