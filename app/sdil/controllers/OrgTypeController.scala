@@ -22,10 +22,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.AppConfig
-import sdil.controllers.IdentifyController.form
-import sdil.controllers.OrgTypeController.form
-import sdil.controllers.PackageController.form
-import sdil.models.{OrgTypePage, PackagePage, RegistrationFormData}
+import sdil.forms.FormHelpers
+import sdil.models.{OrgTypePage, RegistrationFormData}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.views.html.helpers.form
@@ -37,33 +35,28 @@ import scala.concurrent.Future
 class OrgTypeController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  import OrgTypeController._
+  import OrgTypeController.form
 
   def displayOrgType(): Action[AnyContent] = formAction.async { implicit request =>
     OrgTypePage.expectedPage(request.formData) match {
-      case OrgTypePage => Ok(register.organisation_type(form))
+      case OrgTypePage => Ok(register.organisation_type(form, OrgTypePage.previousPage(request.formData).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
-//  def submitOrgType(): Action[AnyContent] = formAction.async { implicit request =>
-//    form.bindFromRequest.fold(
-//      formWithErrors => BadRequest(register.OrgTypePage(formWithErrors)),
-//      orgType => {
-//        val updated = request.formData.copy()
-//        cache.cache("formData", updated) map { _ =>
-//          Redirect(PackagePage.nextPage(updated).show)
-//        }
-//      }
-//    )
-//  }
-def SubmitOrgType() = Action.async { implicit request =>
-  form.bindFromRequest().fold(
-    errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.organisation_type(errors))),
-    orgType => cache.cache("formData", RegistrationFormData(orgType)) map { _ =>
-      Redirect(routes.PackageController.displayPackage())
-    }
-  )
+  def submitOrgType(): Action[AnyContent] = formAction.async { implicit request =>
+    form.bindFromRequest().fold(
+      errors => Future.successful(BadRequest(register.organisation_type(errors, OrgTypePage.previousPage(request.formData).show))),
+      orgType => cache.cache("formData", request.formData.copy(orgType = Some(orgType))) map { _ =>
+        Redirect(routes.PackageController.displayPackage())
+      }
+    )
+  }
 }
-}
-}
+
+  object OrgTypeController extends FormHelpers {
+
+    val form: Form[String] = Form(single(
+      "orgType" -> oneOf(Seq("limitedCompany", "limitedLiabilityPartnership", "partnership", "soleTrader", "unincorporatedBody"),"error.radio-form.choose-one-option")
+    ))
+  }

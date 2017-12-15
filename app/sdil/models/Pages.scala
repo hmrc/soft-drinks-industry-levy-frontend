@@ -74,7 +74,7 @@ case object OrgTypePage extends MidJourneyPage {
 
   override def previousPage(formData: RegistrationFormData): Page = VerifyPage
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.verify.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.orgType.isDefined
 
   override def show: Call = routes.OrgTypeController.displayOrgType()
 }

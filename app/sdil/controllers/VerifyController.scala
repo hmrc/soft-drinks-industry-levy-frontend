@@ -62,8 +62,4 @@ object VerifyController extends FormHelpers {
     )(DetailsCorrect.apply)(DetailsCorrect.unapply)
   )
 
-  def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
-    //have to use optional, or the framework returns `error.required` when no option is selected
-    optional(text).verifying(errorMsg, s => s.exists(options.contains)).transform(_.getOrElse(""), Some.apply)
-  }
 }
