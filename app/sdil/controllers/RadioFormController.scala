@@ -70,6 +70,7 @@ class RadioFormController(val messagesApi: MessagesApi,
     case PackageCopackSmallPage => formData.copy(packageCopackSmall = Some(choice), packageCopackSmallVol = None)
     case CopackedPage => formData.copy(copacked = Some(choice), copackedVolume = None)
     case ImportPage => formData.copy(imports = Some(choice), importVolume = None)
+    case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
   }
 
 }

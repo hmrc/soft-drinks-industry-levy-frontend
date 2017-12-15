@@ -21,6 +21,8 @@ import play.api.data.Mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import sdil.models.Address
 
+import scala.util.Try
+
 trait FormHelpers {
   private lazy val postcodeRegex = """^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z]))))\s?[0-9][A-Za-z]{2})$"""
 
@@ -66,4 +68,12 @@ trait FormHelpers {
       case i: Invalid => i
     }
   }
+
+  lazy val litreage: Mapping[BigDecimal] = text
+    .verifying("error.litreage.required", _.nonEmpty)
+    .verifying("error.litreage.numeric", l => l.isEmpty || Try(BigDecimal.apply(l)).isSuccess) //don't try to parse empty string as a number
+    .transform[BigDecimal](BigDecimal.apply, _.toString)
+    .verifying("error.litreage.numeric", _.isWhole)
+    .verifying("error.litreage.max", _ <= 9999999999999L)
+    .verifying("error.litreage.min", _ >= 0)
 }

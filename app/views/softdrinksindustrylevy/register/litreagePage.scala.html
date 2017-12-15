@@ -17,8 +17,9 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
+@import sdil.controllers.routes
 
-@(litreageForm: Form[_], pageName: String, backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(litreageForm: Form[_], pageName: String, backLink: Call, nextLink: Option[Call] = None)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
     @main_template(Messages("sdil.common.title")) {
 
@@ -28,7 +29,7 @@
 
         @errorSummary(Messages("sdil.common.errorSummary"), litreageForm)
 
-        @form(sdil.controllers.routes.LitreageController.validate(pageName)) {
+        @form(nextLink.getOrElse(routes.LitreageController.validate(pageName))) {
             <div class="form-group form-litres">
                 @inputText(
                     litreageForm("lowerRateLitres"),

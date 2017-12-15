@@ -154,51 +154,6 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
   }
 
-  "GET /package-copack-small-vol" should {
-    "return 200 Ok and the package copack small vol page if the previous pages have been completed" in {
-      val res = testController.show("packageCopackSmallVol")(FakeRequest())
-
-      status(res) mustBe OK
-      contentAsString(res) must include(Messages("sdil.packageCopackSmallVol.heading"))
-    }
-
-    "redirect back to the package-copack-small page if it has not been completed" in {
-      stubFormPage(packageCopackSmall = None)
-
-      val res = testController.show("packageCopackSmallVol")(FakeRequest())
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display("package-copack-small").url)
-    }
-  }
-
-  "POST /package-copack-small-vol" should {
-    "return 400 Bad Request and the package copack small vol page when the form data is invalid" in {
-      val res = testController.validate("packageCopackSmallVol")(FakeRequest())
-
-      status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include(Messages("sdil.packageCopackSmallVol.heading"))
-    }
-
-    "redirect to the copacked page if the form data is valid" in {
-      val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
-      val res = testController.validate("packageCopackSmallVol")(request)
-
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display("copacked").url)
-    }
-
-    "store the form data in keystore if it is valid" in {
-      val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "4", "higherRateLitres" -> "5")
-      val res = testController.validate("packageCopackSmallVol")(request)
-
-      status(res) mustBe SEE_OTHER
-      verify(mockCache, once).cache(
-        matching("formData"),
-        matching(defaultFormData.copy(packageCopackSmallVol = Some(Litreage(4, 5))))
-      )(any(), any(), any())
-    }
-  }
-
   "GET /copacked-volume" should {
     "return 200 Ok and the copacked volume page if the previous pages have been completed" in {
       val res = testController.show("copackedVolume")(FakeRequest())

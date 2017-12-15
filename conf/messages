@@ -52,6 +52,10 @@ sdil.who-for.option2=Your customers
 
 error.packaging.none-selected=Choose at least one option
 
+#Package copack page
+error.copack-small.lower-greater-than-total-lower=This must be less than the total litres copacked at the low rate
+error.copack-small.higher-greater-than-total-higher=This must be less than the total litres copacked at the high rate
+
 #Litreage pages
 sdil.packageOwn.heading=How many litres of liable drink per year will you package for your own brand or brands you have the rights to manufacture?
 sdil.packageCopack.heading=How many litres of liable drink per year will you package for your customers?
