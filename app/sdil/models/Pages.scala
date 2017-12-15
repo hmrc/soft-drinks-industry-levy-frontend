@@ -133,7 +133,7 @@ case object PackageCopackSmallVolPage extends MidJourneyPage {
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.packageCopackSmallVol.isDefined
 
-  override def show: Call = routes.LitreageController.show("packageCopackSmallVol")
+  override def show: Call = routes.PackageCopackSmallVolumeController.show
 }
 
 case object CopackedPage extends MidJourneyPage {
