@@ -18,7 +18,7 @@ package sdil.actions
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
-import play.api.mvc.{ActionBuilder, ActionFilter, Request, Result}
+import play.api.mvc._
 import sdil.config.AppConfig
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
@@ -33,15 +33,17 @@ import scala.language.implicitConversions
 
 class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: MessagesApi)
                       (implicit config: AppConfig, ec: ExecutionContext)
-  extends ActionFilter[Request] with ActionBuilder[Request] with AuthorisedFunctions with I18nSupport {
+  extends ActionRefiner[Request, EnrolmentRequest] with ActionBuilder[EnrolmentRequest] with AuthorisedFunctions with I18nSupport {
 
-  override protected def filter[A](request: Request[A]): Future[Option[Result]] = {
+  override protected def refine[A](request: Request[A]): Future[Either[Result, EnrolmentRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments and credentialRole) { case ~(enrolments, role) =>
-      Future.successful(duplicateEnrolment(enrolments)(request) orElse invalidRole(role)(request))
+      val error: Option[Result] = duplicateEnrolment(enrolments)(request) orElse invalidRole(role)(request)
+
+      Future.successful(error.toLeft(EnrolmentRequest(enrolments, request)))
     } recover {
-      case _: NoActiveSession => Some(Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName))))
+      case _: NoActiveSession => Left(Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName))))
     }
   }
 
@@ -60,3 +62,5 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
     }
   }
 }
+
+case class EnrolmentRequest[A](enrolments: Enrolments, request: Request[A]) extends WrappedRequest(request)

@@ -21,12 +21,69 @@ import org.mockito.Mockito._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.{Identification, RegistrationFormData}
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.~
+
+import scala.concurrent.Future
 
 class IdentifyControllerSpec extends ControllerSpec {
 
+  "GET /utr" should {
+    "redirect to the verify page if the user has a IR-CT enrolment" in {
+      val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1234567891")), "Active")))
+
+      stubAuthResult(Future.successful(new ~(irctEnrolment, Some(User))))
+
+      val res = testController.getUtr()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.VerifyController.verify().url
+    }
+
+    "store the UTR in keystore if the user has an IR-CT enrolment" in {
+      val ctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1234567892")), "Active")))
+
+      stubAuthResult(Future.successful(new ~(ctEnrolment, Some(User))))
+
+      val res = testController.getUtr()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      verifyDataCached(RegistrationFormData(Identification("1234567892", "AA11 1AA")))
+    }
+
+    "redirect to the verify page if the user has an IR-SA enrolment" in {
+      val saEnrolment = Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567893")), "Active")))
+
+      stubAuthResult(Future.successful(new ~(saEnrolment, Some(User))))
+
+      val res = testController.getUtr()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.VerifyController.verify().url
+    }
+
+    "store the UTR in keystore if the user has an IR-SA enrolment" in {
+      val saEnrolment = Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567894")), "Active")))
+
+      stubAuthResult(Future.successful(new ~(saEnrolment, Some(User))))
+
+      val res = testController.getUtr()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      verifyDataCached(RegistrationFormData(Identification("1234567894", "AA11 1AA")))
+    }
+
+    "redirect to the identify page if the user does not have a UTR enrolment" in {
+      stubAuthResult(Future.successful(new ~(Enrolments(Set.empty), Some(User))))
+
+      val res = testController.getUtr()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      redirectLocation(res).value mustBe routes.IdentifyController.show().url
+    }
+  }
+
   "GET /identify" should {
     "always return 200 Ok and the identify page" in {
-      val res = testController.identify()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
       contentAsString(res) must include("Enter your Unique Tax Reference number and postcode")
     }
@@ -63,4 +120,8 @@ class IdentifyControllerSpec extends ControllerSpec {
   }
 
   lazy val testController = wire[IdentifyController]
+
+  def stubAuthResult(res: Future[~[Enrolments, Option[CredentialRole]]]) = {
+    when(mockAuthConnector.authorise[~[Enrolments, Option[CredentialRole]]](any(), any())(any(), any())).thenReturn(res)
+  }
 }

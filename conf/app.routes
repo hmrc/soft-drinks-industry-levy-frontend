@@ -3,7 +3,8 @@ GET         /assets/*file                                    controllers.Assets.
 
 GET         /auth-test                                       sdil.controllers.SDILController.testAuth
 
-GET         /register/identify                               sdil.controllers.IdentifyController.identify()
+GET         /register/utr                                    sdil.controllers.IdentifyController.getUtr
+GET         /register/identify                               sdil.controllers.IdentifyController.show()
 POST        /register/identify                               sdil.controllers.IdentifyController.validate()
 
 GET         /register/verify                                 sdil.controllers.VerifyController.verify()

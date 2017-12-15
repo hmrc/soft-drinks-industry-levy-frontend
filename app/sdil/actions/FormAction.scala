@@ -36,7 +36,7 @@ class FormAction(cache: SessionCache, authorisedAction: AuthorisedAction)(implic
 
     cache.fetchAndGetEntry[RegistrationFormData]("formData") flatMap {
       case Some(data) => block(RegistrationFormRequest(request, data))
-      case None => Future.successful(Redirect(routes.IdentifyController.identify()))
+      case None => Future.successful(Redirect(routes.IdentifyController.getUtr()))
     }
   })
 }

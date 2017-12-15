@@ -34,8 +34,18 @@ class IdentifyController(val messagesApi: MessagesApi, cache: SessionCache, auth
 
   import IdentifyController.form
 
-  def identify = authorisedAction { implicit request =>
+  def show = authorisedAction { implicit request =>
     Ok(views.html.softdrinksindustrylevy.register.identify(form))
+  }
+
+  def getUtr = authorisedAction.async { implicit request =>
+    request.enrolments.getEnrolment("IR-CT").orElse(request.enrolments.getEnrolment("IR-SA")).flatMap(_.getIdentifier("UTR")) match {
+      //FIXME look up postcode from somewhere
+      case Some(utr) => cache.cache("formData", RegistrationFormData(Identification(utr.value, "AA11 1AA"))) map { _ =>
+        Redirect(routes.VerifyController.verify())
+      }
+      case None => Redirect(routes.IdentifyController.show())
+    }
   }
 
   def validate = authorisedAction.async { implicit request =>
