@@ -39,14 +39,14 @@ class OrgTypeController(val messagesApi: MessagesApi, cache: SessionCache, formA
 
   def displayOrgType(): Action[AnyContent] = formAction.async { implicit request =>
     OrgTypePage.expectedPage(request.formData) match {
-      case OrgTypePage => Ok(register.organisation_type(form, OrgTypePage.previousPage(request.formData).show))
+      case OrgTypePage => Ok(register.organisation_type(form))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def submitOrgType(): Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(register.organisation_type(errors, OrgTypePage.previousPage(request.formData).show))),
+      errors => Future.successful(BadRequest(register.organisation_type(errors))),
       orgType => cache.cache("formData", request.formData.copy(orgType = Some(orgType))) map { _ =>
         Redirect(routes.PackageController.displayPackage())
       }
