@@ -38,8 +38,8 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  private val contactHost = runModeConfiguration.getString(s"contact-frontend.host").getOrElse("")
-  private val contactFormServiceIdentifier = runModeConfiguration.getString("appName").get
+  private lazy val contactHost = runModeConfiguration.getString(s"contact-frontend.host").getOrElse("")
+  private lazy val contactFormServiceIdentifier = runModeConfiguration.getString("appName").get
 
   override lazy val analyticsToken = loadConfig(s"google-analytics.token")
   override lazy val analyticsHost = loadConfig(s"google-analytics.host")
@@ -48,11 +48,11 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   override lazy val betaFeedbackUrlAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
 
   //Auth related config
-  val appName: String = loadConfig("appName")
+  lazy val appName: String = loadConfig("appName")
   private lazy val companyAuthFrontend = getConfString("company-auth.url", "")
   private lazy val companyAuthSignInPath = getConfString("company-auth.sign-in-path", "")
   private lazy val companyAuthSignOutPath = getConfString("company-auth.sign-out-path", "")
-  val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
-  val sdilHomePage: String = loadConfig("sdil-home-page-url")
-  val taxStartDate: LocalDate = LocalDate.parse(loadConfig("tax-start-date"))
+  lazy val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
+  lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
+  lazy val taxStartDate: LocalDate = LocalDate.parse(loadConfig("tax-start-date"))
 }

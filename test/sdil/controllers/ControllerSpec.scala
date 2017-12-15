@@ -21,28 +21,14 @@ import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
-import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory, PlaySpec}
-import play.api.{Application, ApplicationLoader}
-import play.core.DefaultWebCommands
-import sdil.config.SDILApplicationLoader
 import sdil.models._
-import sdil.utils.TestWiring
+import sdil.utils.FakeApplicationSpec
 import uk.gov.hmrc.auth.core.InvalidBearerToken
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait ControllerSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicationFactory with TestWiring {
-  override def fakeApplication: Application = {
-    val context = ApplicationLoader.Context(
-      environment = env,
-      sourceMapper = None,
-      webCommands = new DefaultWebCommands,
-      initialConfiguration = configuration
-    )
-    val loader = new SDILApplicationLoader
-    loader.load(context)
-  }
+trait ControllerSpec extends FakeApplicationSpec {
 
   def stubCacheEntry[T](key: String, value: Option[T]) = {
     when(mockCache.fetchAndGetEntry[T](matching(key))(any(), any(), any())).thenReturn(Future.successful(value))
