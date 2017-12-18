@@ -25,13 +25,9 @@ import sdil.forms.FormHelpers
 import sdil.models._
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.softdrinksindustrylevy.register.litreagePage
 
-import scala.util.Try
-
 class LitreageController(val messagesApi: MessagesApi,
-                         errorHandler: FrontendErrorHandler,
                          cache: SessionCache,
                          formAction: FormAction)
                         (implicit config: AppConfig)
@@ -62,19 +58,19 @@ class LitreageController(val messagesApi: MessagesApi,
   }
 
   private def getPage(pageName: String): MidJourneyPage = pageName match {
-    case "packageOwn" => PackageOwnPage  case "packageCopack" => PackageCopackPage
-    case "packageCopackSmallVol" => PackageCopackSmallVolPage
+    case "packageOwn" => PackageOwnPage
+    case "packageCopack" => PackageCopackPage
     case "copackedVolume" => CopackedVolumePage
     case "importVolume" => ImportVolumePage
-    case other => throw new IllegalArgumentException(s"Invalid page litreage page: $other")
+    case other => throw new IllegalArgumentException(s"Invalid litreage page: $other")
   }
 
   private def update(litreage: Litreage, formData: RegistrationFormData, page: Page): RegistrationFormData = page match {
     case PackageOwnPage => formData.copy(packageOwn = Some(litreage))
     case PackageCopackPage => formData.copy(packageCopack = Some(litreage))
-    case PackageCopackSmallVolPage => formData.copy(packageCopackSmallVol = Some(litreage))
     case CopackedVolumePage => formData.copy(copackedVolume = Some(litreage))
     case ImportVolumePage => formData.copy(importVolume = Some(litreage))
+    case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
   }
 }
 
@@ -84,11 +80,4 @@ object LitreageController extends FormHelpers {
       "lowerRateLitres" -> litreage,
       "higherRateLitres" -> litreage
     )(Litreage.apply)(Litreage.unapply))
-
-  private lazy val litreage = text
-    .verifying("error.litreage.required", _.nonEmpty)
-    .verifying("error.litreage.numeric", l => l.isEmpty || Try(BigDecimal.apply(l)).isSuccess) //don't try to parse empty string as a number
-    .transform[BigDecimal](BigDecimal.apply, _.toString)
-    .verifying("error.litreage.max", _ <= 9999999999999L)
-    .verifying("error.litreage.min", _ >= 0)
 }

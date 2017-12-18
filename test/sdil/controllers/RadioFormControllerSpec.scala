@@ -54,7 +54,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       ))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.LitreageController.show("packageCopackSmallVol").url
+      redirectLocation(result).get mustBe routes.PackageCopackSmallVolumeController.show.url
     }
 
     "return Status: SEE_OTHER and redirect to copacked with false value for copack small page" in {
@@ -162,7 +162,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val result = controller.display(copacked)(FakeRequest())
 
       val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageCopackSmallVol").url
+      html.select("a.link-back").attr("href") mustBe routes.PackageCopackSmallVolumeController.show.url
       status(result) mustBe OK
     }
 
@@ -228,7 +228,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       val res = controller.display(copacked)(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopackSmallVol").url)
+      redirectLocation(res) mustBe Some(routes.PackageCopackSmallVolumeController.show.url)
     }
 
     "redirect to the copacked page from the import page if the copacked page is not complete" in {

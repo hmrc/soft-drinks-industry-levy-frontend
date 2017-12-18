@@ -27,9 +27,9 @@ class TestConfig extends AppConfig {
   override val reportAProblemNonJSUrl: String = "reportProblemNonJs"
   override val betaFeedbackUrlAuth: String = "betaFeedback"
   override def taxStartDate: LocalDate = _taxStartDate
-  override val ggLoginUrl: String = "/gg/sign-in"
-  override val sdilHomePage: String = "sdilHome"
-  override val appName: String = "appName"
+  override val ggLoginUrl: String = "http://localhost:9025/gg/sign-in"
+  override val sdilHomePage: String = "http://localhost:8700/soft-drinks-industry-levy/register/identify"
+  override val appName: String = "soft-drinks-industry-levy-frontend"
 
   private var _taxStartDate: LocalDate = LocalDate.of(2018, 4, 6)
 

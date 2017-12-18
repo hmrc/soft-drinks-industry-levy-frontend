@@ -20,7 +20,7 @@ import com.kenshoo.play.metrics.{Metrics, MetricsController, MetricsImpl}
 import com.softwaremill.macwire.wire
 import controllers.Assets
 import play.api.inject.DefaultApplicationLifecycle
-import sdil.actions.FormAction
+import sdil.actions.{AuthorisedAction, FormAction}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers._
 import uk.gov.hmrc.auth.core.AuthConnector
@@ -35,6 +35,7 @@ trait RoutesWiring extends CommonWiring {
   val cache: SessionCache
   val sdilConnector: SoftDrinksIndustryLevyConnector
 
+  lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
   lazy val formAction: FormAction = wire[FormAction]
   lazy val assets: Assets = wire[Assets]
   lazy val sdilController: SDILController = wire[SDILController]
@@ -42,6 +43,7 @@ trait RoutesWiring extends CommonWiring {
   lazy val identifyController: IdentifyController = wire[IdentifyController]
   lazy val verifyController: VerifyController = wire[VerifyController]
   lazy val litreageController: LitreageController = wire[LitreageController]
+  lazy val packageCopackSmallVolumeController: PackageCopackSmallVolumeController = wire[PackageCopackSmallVolumeController]
   lazy val startDateController: StartDateController = wire[StartDateController]
   lazy val productionSiteController: ProductionSiteController = wire[ProductionSiteController]
   lazy val warehouseController: WarehouseController = wire[WarehouseController]
