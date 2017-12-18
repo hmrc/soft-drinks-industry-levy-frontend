@@ -46,6 +46,18 @@ class LitreageFormSpec extends FormSpec {
       mustContainError(f, higherRate, "error.litreage.numeric")
     }
 
+    "require the lower rate volume to be a whole number" in {
+      val f = form.bind(validData.updated(lowerRate, "1.1"))
+
+      mustContainError(f, lowerRate, "error.litreage.numeric")
+    }
+
+    "require the higher rate volume to be a whole number" in {
+      val f = form.bind(validData.updated(higherRate, "2.2"))
+
+      mustContainError(f, higherRate, "error.litreage.numeric")
+    }
+
     "require the lower rate volume to be positive" in {
       val f = form.bind(validData.updated(lowerRate, "-1"))
 

@@ -16,33 +16,39 @@
 
 package sdil.controllers
 
-import java.util.UUID
-
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Action
+import sdil.actions.AuthorisedAction
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
 import sdil.models.{Identification, RegistrationFormData}
-import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
-class IdentifyController(val messagesApi: MessagesApi, cache: SessionCache)(implicit config: AppConfig)
+class IdentifyController(val messagesApi: MessagesApi, cache: SessionCache, authorisedAction: AuthorisedAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import IdentifyController.form
 
-  def identify = Action { implicit request =>
-    //FIXME session ID should be initialised at the start of the journey
-    Ok(views.html.softdrinksindustrylevy.register.identify(form)).addingToSession(SessionKeys.sessionId -> UUID.randomUUID().toString)
+  def show = authorisedAction { implicit request =>
+    Ok(views.html.softdrinksindustrylevy.register.identify(form))
   }
 
-  def validate = Action.async { implicit request =>
+  def getUtr = authorisedAction.async { implicit request =>
+    request.enrolments.getEnrolment("IR-CT").orElse(request.enrolments.getEnrolment("IR-SA")).flatMap(_.getIdentifier("UTR")) match {
+      //FIXME look up postcode from somewhere
+      case Some(utr) => cache.cache("formData", RegistrationFormData(Identification(utr.value, "AA11 1AA"))) map { _ =>
+        Redirect(routes.VerifyController.verify())
+      }
+      case None => Redirect(routes.IdentifyController.show())
+    }
+  }
+
+  def validate = authorisedAction.async { implicit request =>
     form.bindFromRequest().fold(
       errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.identify(errors))),
       identification => cache.cache("formData", RegistrationFormData(identification)) map { _ =>

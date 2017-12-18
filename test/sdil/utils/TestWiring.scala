@@ -19,20 +19,21 @@ package sdil.utils
 import java.io.File
 
 import com.softwaremill.macwire.MacwireMacros
-import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi, Messages, MessagesApi}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.concurrent.Execution.defaultContext
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
-import sdil.actions.FormAction
+import sdil.actions.{AuthorisedAction, FormAction}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.{AuthConnector, CredentialRole, Enrolments, User}
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.experimental.macros
 
 trait TestWiring extends MockitoSugar {
@@ -56,9 +57,17 @@ trait TestWiring extends MockitoSugar {
 
   val messagesApi: MessagesApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   implicit val defaultMessages: Messages = messagesApi.preferred(FakeRequest())
+  implicit val ec: ExecutionContext = defaultContext
 
   lazy val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
-  lazy val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  lazy val mockAuthConnector: AuthConnector = {
+    val m = mock[AuthConnector]
+    when(m.authorise[~[Enrolments, Option[CredentialRole]]](any(), any())(any(), any())).thenReturn {
+      Future.successful(new ~[Enrolments, Option[CredentialRole]](Enrolments(Set.empty), Some(User)))
+    }
+    m
+  }
 
   lazy val formAction: FormAction = wire[FormAction]
+  lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
 }

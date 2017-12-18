@@ -26,6 +26,7 @@ import sdil.models.{DetailsCorrect, VerifyPage}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
+import views.html.softdrinksindustrylevy.register
 
 class VerifyController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
@@ -33,16 +34,16 @@ class VerifyController(val messagesApi: MessagesApi, cache: SessionCache, formAc
   import VerifyController._
 
   def verify = formAction.async { implicit request =>
-    //FIXME look up UTR, org, address
+    //FIXME look up org & address from ROSM
     VerifyPage.expectedPage(request.formData) match {
-      case VerifyPage => Ok(views.html.softdrinksindustrylevy.register.verify(form, "a utr", "an organisation", "an address"))
+      case VerifyPage => Ok(register.verify(form, request.formData.identify.utr, "an organisation", "an address, " + request.formData.identify.postcode))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def validate = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => BadRequest(views.html.softdrinksindustrylevy.register.verify(errors, "a utr", "an organisation", "an address")),
+      errors => BadRequest(register.verify(errors, request.formData.identify.utr, "an organisation", "an address, " + request.formData.identify.postcode)),
       detailsCorrect => {
         val updated = request.formData.copy(verify = Some(detailsCorrect))
         cache.cache("formData", updated) map { _ =>
