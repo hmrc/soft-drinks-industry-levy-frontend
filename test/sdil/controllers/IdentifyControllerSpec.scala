@@ -16,8 +16,7 @@
 
 package sdil.controllers
 
-import
-org.mockito.ArgumentMatchers.{any, eq => matching}
+import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

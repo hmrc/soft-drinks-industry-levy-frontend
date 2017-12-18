@@ -16,8 +16,7 @@
 
 package sdil.controllers
 
-import
-play.api.data.Form
+import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.FormAction
@@ -53,7 +52,7 @@ class LitreageController(val messagesApi: MessagesApi,
     val page = getPage(pageName)
     form.bindFromRequest().fold(
       errors => BadRequest(litreagePage(errors, pageName, page.nextPage(request.formData).show)),
-        litreage => {
+      litreage => {
         val updated = update(litreage, request.formData, page)
         cache.cache("formData", updated) map { _ =>
           Redirect(page.nextPage(updated).show)
