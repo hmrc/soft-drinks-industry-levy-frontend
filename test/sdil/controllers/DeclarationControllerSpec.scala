@@ -18,12 +18,12 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import org.mockito.ArgumentMatchers.{eq => matching, _}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import org.mockito.Mockito._
-import org.mockito.ArgumentMatchers.{eq => matching, _}
-import sdil.models.{Identification, Litreage}
+import sdil.models.Litreage
 import sdil.models.backend._
 
 class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
@@ -46,14 +46,14 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "submit a valid Subscription to the backend on POST if all required form pages are complete" in {
-      stubFormPage(identify = Identification("1112223334", "AA11 1AA"))
+      stubFormPage(utr = "1112223334")
       val res = testController.submitDeclaration()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
 
       val expected = Subscription(
         "1112223334",
-        "",
+        "an organisation",
         "3",
         UkAddress(Seq("1", "The Road"), "AA11 1AA"),
         Activity(
@@ -88,7 +88,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "translate the organisation type field to the correct enum value" in {
       lazy val expected = Subscription(
         "1112223335",
-        "",
+        "an organisation",
         "3",
         UkAddress(Seq("1", "The Road"), "AA11 1AA"),
         Activity(
@@ -111,13 +111,13 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
 
       Seq(
-      "soleTrader" -> "1",
+        "soleTrader" -> "1",
         "limitedLiabilityPartnership" -> "2",
-      "partnership" -> "3",
-      "unincorporatedBody" -> "5",
-      "limitedCompany" -> "7"
+        "partnership" -> "3",
+        "unincorporatedBody" -> "5",
+        "limitedCompany" -> "7"
       ) foreach { case (orgType, enumValue) =>
-        stubFormPage(identify = Identification("1112223335", "AA11 1AA"), orgType = Some(orgType))
+        stubFormPage(utr = "1112223335", orgType = Some(orgType))
 
         val res = testController.submitDeclaration()(FakeRequest())
         status(res) mustBe SEE_OTHER

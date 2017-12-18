@@ -34,16 +34,17 @@ class VerifyController(val messagesApi: MessagesApi, cache: SessionCache, formAc
   import VerifyController._
 
   def verify = formAction.async { implicit request =>
-    //FIXME look up org & address from ROSM
-    VerifyPage.expectedPage(request.formData) match {
-      case VerifyPage => Ok(register.verify(form, request.formData.identify.utr, "an organisation", "an address, " + request.formData.identify.postcode))
+    val data = request.formData
+
+    VerifyPage.expectedPage(data) match {
+      case VerifyPage => Ok(register.verify(form, data.utr, data.rosmData.organisation.organisationName, data.rosmData.address))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def validate = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => BadRequest(register.verify(errors, request.formData.identify.utr, "an organisation", "an address, " + request.formData.identify.postcode)),
+      errors => BadRequest(register.verify(errors, request.formData.utr, request.formData.rosmData.organisation.organisationName, request.formData.rosmData.address)),
       detailsCorrect => {
         val updated = request.formData.copy(verify = Some(detailsCorrect))
         cache.cache("formData", updated) map { _ =>

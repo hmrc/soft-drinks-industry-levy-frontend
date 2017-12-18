@@ -35,7 +35,7 @@ class DeclarationController(val messagesApi: MessagesApi,
 
   def displayDeclaration: Action[AnyContent] = formAction.async { implicit request =>
     request.formData.contactDetails match {
-      case Some(details) => Ok(register.declaration(request.formData.identify, details))
+      case Some(details) => Ok(register.declaration(request.formData.utr, request.formData.rosmData.address.nonEmptyLines.mkString(", "), details))
       case None => Redirect(routes.ContactDetailsController.displayContactDetails())
     }
   }

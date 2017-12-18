@@ -17,8 +17,9 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
+@import sdil.models.Address
 
-@(verifyForm: Form[_], utr: String, organisation: String, address: String)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(verifyForm: Form[_], utr: String, organisation: String, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
     @main_template(Messages("sdil.common.title")) {
 
@@ -41,7 +42,13 @@
                 </tr>
                 <tr>
                     <th scope="row">@Messages("sdil.verify.address")</th>
-                    <td>@address</td>
+                    <td>
+                        @address.line1,<br/>
+                        @if(address.line2.nonEmpty) { @address.line2,<br/> }
+                        @if(address.line3.nonEmpty) { @address.line3,<br/> }
+                        @if(address.line4.nonEmpty) { @address.line4,<br/> }
+                        @address.postcode
+                    </td>
                 </tr>
             </tbody>
         </table>
