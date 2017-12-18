@@ -47,10 +47,10 @@
         <tbody>
 
             @declaration_details_table_row("utr",
-                sdil.controllers.routes.IdentifyController.identify(), identification.utr)
+                sdil.controllers.routes.IdentifyController.show(), identification.utr)
 
             @declaration_details_table_row("postcode",
-                sdil.controllers.routes.IdentifyController.identify(), identification.postcode)
+                sdil.controllers.routes.IdentifyController.show(), identification.postcode)
 
             @declaration_details_table_row("name",
                 sdil.controllers.routes.ContactDetailsController.displayContactDetails(), contactDetails.fullName)

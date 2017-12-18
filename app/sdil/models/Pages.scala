@@ -49,7 +49,7 @@ case object IdentifyPage extends PageWithNextPage {
 
   override def isComplete(formData: RegistrationFormData): Boolean = true
 
-  override def show: Call = routes.IdentifyController.identify()
+  override def show: Call = routes.IdentifyController.show()
 }
 
 case object VerifyPage extends MidJourneyPage {
