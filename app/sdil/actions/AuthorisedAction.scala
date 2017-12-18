@@ -23,8 +23,10 @@ import sdil.config.AppConfig
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import views.html.softdrinksindustrylevy.errors
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -36,19 +38,25 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
   override protected def filter[A](request: Request[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
-      Future.successful(alreadyEnrolled(enrolments)(request))
+    authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments and credentialRole) { case ~(enrolments, role) =>
+      Future.successful(duplicateEnrolment(enrolments)(request) orElse invalidRole(role)(request))
     } recover {
       case _: NoActiveSession => Some(Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName))))
     }
   }
 
-  private def alreadyEnrolled(enrolments: Enrolments)(implicit request: Request[_]): Option[Result] = {
+  private def duplicateEnrolment(enrolments: Enrolments)(implicit request: Request[_]): Option[Result] = {
     for {
       enrolment <- enrolments.getEnrolment("HMRC-ORG-OBTDS")
       sdil <- enrolment.identifiers.find(id => id.key == "EtmpRegistrationNumber" && id.value.slice(2, 4) == "SD")
     } yield {
-      Forbidden(views.html.softdrinksindustrylevy.register.already_registered())
+      Forbidden(errors.already_registered())
+    }
+  }
+
+  private def invalidRole(credentialRole: Option[CredentialRole])(implicit request: Request[_]): Option[Result] = {
+    credentialRole collect {
+      case Assistant => Forbidden(errors.invalid_role())
     }
   }
 }
