@@ -47,16 +47,19 @@ class OrgTypeController(val messagesApi: MessagesApi, cache: SessionCache, formA
   def submitOrgType(): Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest().fold(
       errors => Future.successful(BadRequest(register.organisation_type(errors))),
-      orgType => cache.cache("formData", request.formData.copy(orgType = Some(orgType))) map { _ =>
-        Redirect(routes.PackageController.displayPackage())
-      }
+      orgType =>
+        cache.cache("formData", request.formData.copy(orgType = Some(orgType))) map { _ =>
+          if (orgType == "partnership") Redirect("noPartnerships")
+          else
+            Redirect(routes.PackageController.displayPackage())
+        }
     )
   }
 }
 
-  object OrgTypeController extends FormHelpers {
+object OrgTypeController extends FormHelpers {
 
-    val form: Form[String] = Form(single(
-      "orgType" -> oneOf(Seq("limitedCompany", "limitedLiabilityPartnership", "partnership", "soleTrader", "unincorporatedBody"),"error.radio-form.choose-one-option")
-    ))
-  }
+  val form: Form[String] = Form(single(
+    "orgType" -> oneOf(Seq("limitedCompany", "limitedLiabilityPartnership", "partnership", "soleTrader", "unincorporatedBody"), "error.radio-form.choose-one-option")
+  ))
+}

@@ -44,7 +44,7 @@
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
 
-    <a class="link-back" href="@sdil.controllers.routes.VerifyController.verify()">@Messages("sdil.common.back")</a>
+    <a class="link-back" href="@sdil.controllers.routes.OrgTypeController.displayOrgType()">@Messages("sdil.common.back")</a>
 
     <h1 class="heading-large">@Messages("sdil.package.heading")</h1>
     @govHelpers.errorSummary(Messages("error.radio-form.choose-option.summary"), packageForm)

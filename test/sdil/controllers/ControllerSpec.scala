@@ -54,6 +54,7 @@ trait ControllerSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicati
 
   def stubFormPage(identify: Identification = defaultFormData.identify,
                    verify: Option[DetailsCorrect] = defaultFormData.verify,
+                   orgType: Option[String] = defaultFormData.orgType,
                    packaging: Option[Packaging] = defaultFormData.packaging,
                    packageOwn: Option[Litreage] = defaultFormData.packageOwn,
                    packageCopack: Option[Litreage] = defaultFormData.packageCopack,
@@ -71,6 +72,7 @@ trait ControllerSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicati
     stubCacheEntry[RegistrationFormData]("formData", Some(RegistrationFormData(
       identify,
       verify,
+      orgType,
       packaging,
       packageOwn,
       packageCopack,
