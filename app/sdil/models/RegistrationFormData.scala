@@ -22,6 +22,7 @@ import play.api.libs.json.{Format, Json}
 
 case class RegistrationFormData(identify: Identification,
                                 verify: Option[DetailsCorrect] = None,
+                                orgType: Option[String] = None,
                                 packaging: Option[Packaging] = None,
                                 packageOwn: Option[Litreage] = None,
                                 packageCopack: Option[Litreage] = None,

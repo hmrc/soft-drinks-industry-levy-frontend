@@ -40,6 +40,11 @@ trait FormHelpers {
     "postcode" -> postcode
   )(Address.apply)(Address.unapply)
 
+  def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
+    //have to use optional, or the framework returns `error.required` when no option is selected
+    optional(text).verifying(errorMsg, s => s.exists(options.contains)).transform(_.getOrElse(""), Some.apply)
+  }
+
   private def mandatoryAddressLine(key: String): Mapping[String] = {
     text.verifying(combine(required(key), optionalAddressLineConstraint))
   }

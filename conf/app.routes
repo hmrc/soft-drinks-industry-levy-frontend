@@ -10,6 +10,9 @@ POST        /register/identify                               sdil.controllers.Id
 GET         /register/verify                                 sdil.controllers.VerifyController.verify()
 POST        /register/verify                                 sdil.controllers.VerifyController.validate()
 
+GET         /register/organisation-type                      sdil.controllers.OrgTypeController.displayOrgType()
+POST        /register/organisation-type                      sdil.controllers.OrgTypeController.submitOrgType()
+
 GET         /register/package                                sdil.controllers.PackageController.displayPackage()
 POST        /register/package                                sdil.controllers.PackageController.submitPackage()
 

@@ -55,7 +55,7 @@ case object IdentifyPage extends PageWithNextPage {
 case object VerifyPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData): Page = formData.verify match {
     case Some(DetailsCorrect.No) => IdentifyPage
-    case Some(_) => PackagePage
+    case Some(_) => OrgTypePage
     case None => VerifyPage
   }
 
@@ -64,6 +64,19 @@ case object VerifyPage extends MidJourneyPage {
   override def isComplete(formData: RegistrationFormData): Boolean = formData.verify.isDefined
 
   override def show: Call = routes.VerifyController.verify()
+}
+
+case object OrgTypePage extends MidJourneyPage {
+  override def nextPage(formData: RegistrationFormData): Page = formData.orgType match {
+    case Some(_) => PackagePage
+    case None => OrgTypePage
+  }
+
+  override def previousPage(formData: RegistrationFormData): Page = VerifyPage
+
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.orgType.isDefined
+
+  override def show: Call = routes.OrgTypeController.displayOrgType()
 }
 
 case object PackagePage extends MidJourneyPage {
