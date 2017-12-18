@@ -16,9 +16,15 @@
 
 package sdil.controllers
 
+import java.time.LocalDate
+
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{eq => matching, _}
+import sdil.models.{Identification, Litreage}
+import sdil.models.backend._
 
 class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -37,6 +43,86 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.SDILController.displayComplete().url
+    }
+
+    "submit a valid Subscription to the backend on POST if all required form pages are complete" in {
+      stubFormPage(identify = Identification("1112223334", "AA11 1AA"))
+      val res = testController.submitDeclaration()(FakeRequest())
+
+      status(res) mustBe SEE_OTHER
+
+      val expected = Subscription(
+        "1112223334",
+        "",
+        4,
+        UkAddress(Seq("1", "The Road"), "AA11 1AA"),
+        Activity(
+          Some(Litreage(1, 2)),
+          Some(Litreage(9, 10)),
+          Some(Litreage(3, 4)),
+          Some(Litreage(5, 6)),
+          Some(Litreage(7, 8))
+        ),
+        LocalDate.of(2018, 4, 6),
+        Seq(Site(UkAddress(Seq("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(Seq("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
+        Contact(
+          Some("A person"),
+          Some("A position"),
+          "1234",
+          "aa@bb.cc"
+        )
+      )
+
+      verify(mockSdilConnector, times(1)).submit(matching(expected))(any())
+    }
+
+    "redirect to the Contact Details page on POST if a required form page is missing" in {
+      stubFormPage(contactDetails = None)
+
+      val res = testController.submitDeclaration()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.ContactDetailsController.displayContactDetails().url
+    }
+
+    "translate the organisation type field to the correct enum value" in {
+      lazy val expected = Subscription(
+        "1112223335",
+        "",
+        4,
+        UkAddress(Seq("1", "The Road"), "AA11 1AA"),
+        Activity(
+          Some(Litreage(1, 2)),
+          Some(Litreage(9, 10)),
+          Some(Litreage(3, 4)),
+          Some(Litreage(5, 6)),
+          Some(Litreage(7, 8))
+        ),
+        LocalDate.of(2018, 4, 6),
+        Seq(Site(UkAddress(Seq("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(Seq("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
+        Contact(
+          Some("A person"),
+          Some("A position"),
+          "1234",
+          "aa@bb.cc"
+        )
+      )
+
+      Seq(
+        "soleTrader" -> 1,
+        "limitedCompany" -> 2,
+        "limitedLiabilityPartnership" -> 3,
+        "unincorporatedBody" -> 4,
+        "partnership" -> 5
+      ) foreach { case (orgType, enumValue) =>
+        stubFormPage(identify = Identification("1112223335", "AA11 1AA"), orgType = Some(orgType))
+
+        val res = testController.submitDeclaration()(FakeRequest())
+        status(res) mustBe SEE_OTHER
+
+        verify(mockSdilConnector, times(1)).submit(matching(expected.copy(orgType = enumValue)))(any())
+      }
     }
   }
 

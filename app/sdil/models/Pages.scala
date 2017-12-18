@@ -87,7 +87,7 @@ case object PackagePage extends MidJourneyPage {
     case None => PackagePage
   }
 
-  override def previousPage(formData: RegistrationFormData): Page = VerifyPage
+  override def previousPage(formData: RegistrationFormData): Page = OrgTypePage
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.packaging.isDefined
 
