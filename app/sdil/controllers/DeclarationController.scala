@@ -20,11 +20,17 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.AppConfig
+import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.models.ContactDetailsPage
+import sdil.models.backend.Subscription
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
-class DeclarationController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
+class DeclarationController(val messagesApi: MessagesApi,
+                            cache: SessionCache,
+                            formAction: FormAction,
+                            softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def displayDeclaration: Action[AnyContent] = formAction.async { implicit request =>
@@ -34,9 +40,11 @@ class DeclarationController(val messagesApi: MessagesApi, cache: SessionCache, f
     }
   }
 
-  def submitDeclaration(): Action[AnyContent] = Action.async { implicit request =>
-    // TODO hit the backend to create subscription
-    Redirect(routes.SDILController.displayComplete())
+  def submitDeclaration(): Action[AnyContent] = formAction.async { implicit request =>
+    Subscription.fromFormData(request.formData) match {
+      case Some(s) => softDrinksIndustryLevyConnector.submit(s) map { _ => Redirect(routes.SDILController.displayComplete()) }
+      case None => Redirect(ContactDetailsPage.expectedPage(request.formData).show)
+    }
   }
 
 }

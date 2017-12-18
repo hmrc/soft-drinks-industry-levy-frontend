@@ -18,8 +18,9 @@ package sdil.connectors
 
 import play.api.{Configuration, Environment}
 import sdil.models._
+import sdil.models.backend.Subscription
 import sdil.models.sdilmodels._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
 
@@ -37,6 +38,10 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
 
   def retrieveHelloWorld()(implicit hc: HeaderCarrier): Future[DesSubmissionResult] = {
     http.GET[DesSubmissionResult](s"$baseURL/$serviceURL")
+  }
+
+  def submit(subscription: Subscription)(implicit hc: HeaderCarrier): Future[Unit] = {
+    http.POST[Subscription, HttpResponse](s"$baseURL/subscription/utr/${subscription.utr}", subscription) map { _ => () }
   }
 
 }

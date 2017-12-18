@@ -94,13 +94,13 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       contentAsString(response) must include(messagesApi("error.radio-form.choose-option.summary"))
     }
 
-    "return status See Other and redirect to the verify page when the verify page is not complete" in {
-      stubFormPage(verify = None)
+    "return status See Other and redirect to the org type page when the org type page is not complete" in {
+      stubFormPage(orgType = None)
 
       val res = controller.displayPackage()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.VerifyController.verify().url)
+      redirectLocation(res) mustBe Some(routes.OrgTypeController.displayOrgType().url)
     }
 
     "update the keystore record with the form data, and purge the package own, package copack, and production sites data, " +
