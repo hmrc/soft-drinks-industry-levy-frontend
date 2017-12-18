@@ -54,7 +54,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val expected = Subscription(
         "1112223334",
         "",
-        4,
+        "4",
         UkAddress(Seq("1", "The Road"), "AA11 1AA"),
         Activity(
           Some(Litreage(1, 2)),
@@ -89,7 +89,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       lazy val expected = Subscription(
         "1112223335",
         "",
-        4,
+        "4",
         UkAddress(Seq("1", "The Road"), "AA11 1AA"),
         Activity(
           Some(Litreage(1, 2)),
@@ -110,11 +110,11 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       )
 
       Seq(
-        "soleTrader" -> 1,
-        "limitedCompany" -> 2,
-        "limitedLiabilityPartnership" -> 3,
-        "unincorporatedBody" -> 4,
-        "partnership" -> 5
+        "soleTrader" -> "1",
+        "limitedCompany" -> "2",
+        "limitedLiabilityPartnership" -> "3",
+        "unincorporatedBody" -> "4",
+        "partnership" -> "5"
       ) foreach { case (orgType, enumValue) =>
         stubFormPage(identify = Identification("1112223335", "AA11 1AA"), orgType = Some(orgType))
 

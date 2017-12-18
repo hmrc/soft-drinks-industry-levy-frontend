@@ -23,7 +23,7 @@ import sdil.models.RegistrationFormData
 
 case class Subscription(utr: String,
                         orgName: String,
-                        orgType: Int,
+                        orgType: String,
                         address: UkAddress,
                         activity: Activity,
                         liabilityDate: LocalDate,
@@ -72,12 +72,12 @@ object Subscription {
     }
   }
 
-  private def toEnum: String => Int = {
-    case "soleTrader" => 1
-    case "limitedCompany" => 2
-    case "limitedLiabilityPartnership" => 3
-    case "unincorporatedBody" => 4
-    case "partnership" => 5
+  private def toEnum: String => String = {
+    case "soleTrader" => "1"
+    case "limitedCompany" => "2"
+    case "limitedLiabilityPartnership" => "3"
+    case "unincorporatedBody" => "4"
+    case "partnership" => "5"
     case other => throw new IllegalArgumentException(s"Unexpected orgType $other")
   }
 }
