@@ -74,10 +74,10 @@ object Subscription {
 
   private def toEnum: String => String = {
     case "soleTrader" => "1"
-    case "limitedCompany" => "2"
-    case "limitedLiabilityPartnership" => "3"
-    case "unincorporatedBody" => "4"
-    case "partnership" => "5"
+    case "limitedLiabilityPartnership" => "2"
+    case "partnership" => "3"
+    case "unincorporatedBody" => "5"
+    case "limitedCompany" => "7"
     case other => throw new IllegalArgumentException(s"Unexpected orgType $other")
   }
 }
