@@ -38,7 +38,8 @@ trait ControllerSpec extends FakeApplicationSpec {
     verify(mockCache, times(1)).cache(matching("formData"), matching(formData))(any(), any(), any())
   }
 
-  def stubFormPage(identify: Identification = defaultFormData.identify,
+  def stubFormPage(rosmData: RosmRegistration = defaultRosmData,
+                   utr: String = defaultFormData.utr,
                    verify: Option[DetailsCorrect] = defaultFormData.verify,
                    orgType: Option[String] = defaultFormData.orgType,
                    packaging: Option[Packaging] = defaultFormData.packaging,
@@ -56,7 +57,8 @@ trait ControllerSpec extends FakeApplicationSpec {
                    contactDetails: Option[ContactDetails] = defaultFormData.contactDetails) = {
 
     stubCacheEntry[RegistrationFormData]("formData", Some(RegistrationFormData(
-      identify,
+      rosmData,
+      utr,
       verify,
       orgType,
       packaging,
@@ -91,12 +93,12 @@ trait ControllerSpec extends FakeApplicationSpec {
     )
   }
 
+  when(mockSdilConnector.getRosmRegistration(any())(any())).thenReturn(Future.successful(Some(defaultRosmData)))
+
   lazy val defaultFormData: RegistrationFormData = {
     RegistrationFormData(
-      identify = Identification(
-        utr = "1234567890",
-        postcode = "AA11 1AA"
-      ),
+      rosmData = defaultRosmData,
+      utr = "1234567890",
       verify = Some(DetailsCorrect.Yes),
       orgType = Some("partnership"),
       packaging = Some(Packaging(
@@ -138,4 +140,13 @@ trait ControllerSpec extends FakeApplicationSpec {
       ))
     )
   }
+
+  lazy val defaultRosmData = RosmRegistration(
+    "some-safe-id",
+    OrganisationDetails(
+      "an organisation",
+      Some(RosmOrganisationType.CorporateBody)
+    ),
+    Address("1", "The Road", "", "", "AA11 1AA")
+  )
 }

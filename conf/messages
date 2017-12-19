@@ -25,6 +25,7 @@ error.utr.invalid=UTR must only contain digits
 sdil.identify.heading=Enter your Unique Tax Reference number and postcode
 sdil.identify.utr=Unique Tax Reference number (UTR)
 sdil.identify.postcode=Registered business postcode
+error.utr.no-record=No record matching your UTR and postcode were found
 
 #Verify
 sdil.verify.heading=Is this the business you want to register?

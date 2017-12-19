@@ -18,9 +18,10 @@ package sdil.controllers
 
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito._
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Identification, RegistrationFormData}
+import sdil.models.RegistrationFormData
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 
@@ -29,6 +30,18 @@ import scala.concurrent.Future
 class IdentifyControllerSpec extends ControllerSpec {
 
   "GET /utr" should {
+
+    "look up the business partner record in ROSM if the user has an existing UTR enrolment" in {
+      val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1122334455")), "Active")))
+
+      stubAuthResult(Future.successful(new ~(irctEnrolment, Some(User))))
+
+      val res = testController.getUtr()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      verify(mockSdilConnector, times(1)).getRosmRegistration(matching("1122334455"))(any())
+    }
+
     "redirect to the verify page if the user has a IR-CT enrolment" in {
       val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1234567891")), "Active")))
 
@@ -39,7 +52,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       redirectLocation(res).value mustBe routes.VerifyController.verify().url
     }
 
-    "store the UTR in keystore if the user has an IR-CT enrolment" in {
+    "store the UTR and BPR in keystore if the user has an IR-CT enrolment" in {
       val ctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1234567892")), "Active")))
 
       stubAuthResult(Future.successful(new ~(ctEnrolment, Some(User))))
@@ -47,7 +60,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       val res = testController.getUtr()(FakeRequest())
       status(res) mustBe SEE_OTHER
 
-      verifyDataCached(RegistrationFormData(Identification("1234567892", "AA11 1AA")))
+      verifyDataCached(RegistrationFormData(defaultRosmData, "1234567892"))
     }
 
     "redirect to the verify page if the user has an IR-SA enrolment" in {
@@ -60,7 +73,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       redirectLocation(res).value mustBe routes.VerifyController.verify().url
     }
 
-    "store the UTR in keystore if the user has an IR-SA enrolment" in {
+    "store the UTR and BPR in keystore if the user has an IR-SA enrolment" in {
       val saEnrolment = Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567894")), "Active")))
 
       stubAuthResult(Future.successful(new ~(saEnrolment, Some(User))))
@@ -68,11 +81,23 @@ class IdentifyControllerSpec extends ControllerSpec {
       val res = testController.getUtr()(FakeRequest())
       status(res) mustBe SEE_OTHER
 
-      verifyDataCached(RegistrationFormData(Identification("1234567894", "AA11 1AA")))
+      verifyDataCached(RegistrationFormData(defaultRosmData, "1234567894"))
     }
 
     "redirect to the identify page if the user does not have a UTR enrolment" in {
       stubAuthResult(Future.successful(new ~(Enrolments(Set.empty), Some(User))))
+
+      val res = testController.getUtr()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      redirectLocation(res).value mustBe routes.IdentifyController.show().url
+    }
+
+    "redirect to the identify page if the user has a UTR enrolment, but no record in ROSM" in {
+      val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "3344556677")), "Active")))
+
+      stubAuthResult(Future.successful(new ~(irctEnrolment, Some(User))))
+      when(mockSdilConnector.getRosmRegistration(matching("3344556677"))(any())).thenReturn(Future.successful(None))
 
       val res = testController.getUtr()(FakeRequest())
       status(res) mustBe SEE_OTHER
@@ -98,6 +123,28 @@ class IdentifyControllerSpec extends ControllerSpec {
       contentAsString(res) must include("Enter your Unique Tax Reference number and postcode")
     }
 
+    "return 400 - Bad Request and the identify page if there is no record in ROSM for the entered UTR" in {
+      when(mockSdilConnector.getRosmRegistration(matching("2233445566"))(any())).thenReturn(Future.successful(None))
+
+      val request = FakeRequest().withFormUrlEncodedBody("utr" -> "2233445566", "postcode" -> "AA11 1AA")
+      val res = testController.validate()(request)
+
+      status(res) mustBe BAD_REQUEST
+      contentAsString(res) must include(Messages("error.utr.no-record"))
+    }
+
+    "return 400 - Bad Request and the identify page if the postcode does not match ROSM's business partner record" in {
+      val rosmData = defaultRosmData.copy(address = defaultRosmData.address.copy(postcode = "AA12 2AA"))
+
+      when(mockSdilConnector.getRosmRegistration(matching("4455667788"))(any())).thenReturn(Future.successful(Some(rosmData)))
+
+      val request = FakeRequest().withFormUrlEncodedBody("utr" -> "4455667788", "postcode" -> "AA11 1AA")
+      val res = testController.validate()(request)
+      
+      status(res) mustBe BAD_REQUEST
+      contentAsString(res) must include(Messages("error.utr.no-record"))
+    }
+
     "redirect to the verify page if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("utr" -> "1122334455", "postcode" -> "AA11 1AA")
       val res = testController.validate()(request)
@@ -106,7 +153,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       redirectLocation(res).value mustBe routes.VerifyController.verify().url
     }
 
-    "store the form data in keystore if it is valid" in {
+    "store the UTR and business partner record in keystore if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("utr" -> "1234567890", "postcode" -> "AA11 1AA")
       val res = testController.validate()(request)
 
@@ -114,7 +161,7 @@ class IdentifyControllerSpec extends ControllerSpec {
 
       verify(mockCache, times(1)).cache(
         matching("formData"),
-        matching(RegistrationFormData(Identification("1234567890", "AA11 1AA")))
+        matching(RegistrationFormData(defaultRosmData, "1234567890"))
       )(any(), any(), any())
     }
   }

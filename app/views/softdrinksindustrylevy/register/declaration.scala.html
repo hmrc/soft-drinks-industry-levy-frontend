@@ -21,7 +21,7 @@
 @import sdil.models.ContactDetails
 @import sdil.config.AppConfig
 
-@(identification: Identification, contactDetails: ContactDetails)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(utr: String, address: String, contactDetails: ContactDetails)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title")) {
     <a class="link-back" href="@sdil.controllers.routes.ContactDetailsController.displayContactDetails()">@Messages("sdil.common.back")</a>
@@ -47,10 +47,10 @@
         <tbody>
 
             @declaration_details_table_row("utr",
-                sdil.controllers.routes.IdentifyController.show(), identification.utr)
+                sdil.controllers.routes.IdentifyController.show(), utr)
 
-            @declaration_details_table_row("postcode",
-                sdil.controllers.routes.IdentifyController.show(), identification.postcode)
+            @declaration_details_table_row("address",
+                sdil.controllers.routes.IdentifyController.show(), address)
 
             @declaration_details_table_row("name",
                 sdil.controllers.routes.ContactDetailsController.displayContactDetails(), contactDetails.fullName)

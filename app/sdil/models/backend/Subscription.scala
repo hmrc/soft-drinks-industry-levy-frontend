@@ -48,10 +48,10 @@ object Subscription {
       contactDetails <- formData.contactDetails
     } yield {
       Subscription(
-        utr = formData.identify.utr,
-        orgName = "", //FIXME
+        utr = formData.utr,
+        orgName = formData.rosmData.organisation.organisationName,
         orgType = toEnum(orgType),
-        address = UkAddress(Seq("1", "The Road"), "AA11 1AA"), //FIXME
+        address = UkAddress.fromAddress(formData.rosmData.address),
         activity = Activity(
           formData.packageOwn,
           formData.importVolume,

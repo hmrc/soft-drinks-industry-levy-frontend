@@ -31,17 +31,16 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
                                       val runModeConfiguration: Configuration
                                      )(implicit ec: ExecutionContext) extends ServicesConfig {
 
-  lazy val baseURL: String = baseUrl("soft-drinks-industry-levy")
-  lazy val serviceURL = "hello-world"
+  lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
 
   override protected def mode = environment.mode
 
-  def retrieveHelloWorld()(implicit hc: HeaderCarrier): Future[DesSubmissionResult] = {
-    http.GET[DesSubmissionResult](s"$baseURL/$serviceURL")
+  def getRosmRegistration(utr: String)(implicit hc: HeaderCarrier): Future[Option[RosmRegistration]] = {
+    http.GET[Option[RosmRegistration]](s"$sdilUrl/rosm-registration/lookup/$utr")
   }
 
   def submit(subscription: Subscription)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POST[Subscription, HttpResponse](s"$baseURL/subscription/utr/${subscription.utr}", subscription) map { _ => () }
+    http.POST[Subscription, HttpResponse](s"$sdilUrl/subscription/utr/${subscription.utr}", subscription) map { _ => () }
   }
 
 }

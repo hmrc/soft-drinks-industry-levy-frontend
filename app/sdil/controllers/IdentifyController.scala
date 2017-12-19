@@ -20,39 +20,53 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import sdil.actions.AuthorisedAction
+import sdil.actions.{AuthorisedAction, EnrolmentRequest}
 import sdil.config.AppConfig
+import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
 import sdil.models.{Identification, RegistrationFormData}
+import uk.gov.hmrc.auth.core.EnrolmentIdentifier
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.softdrinksindustrylevy.register
 
-import scala.concurrent.Future
-
-class IdentifyController(val messagesApi: MessagesApi, cache: SessionCache, authorisedAction: AuthorisedAction)(implicit config: AppConfig)
+class IdentifyController(val messagesApi: MessagesApi,
+                         cache: SessionCache,
+                         authorisedAction: AuthorisedAction,
+                         softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import IdentifyController.form
 
   def show = authorisedAction { implicit request =>
-    Ok(views.html.softdrinksindustrylevy.register.identify(form))
+    Ok(register.identify(form))
   }
 
   def getUtr = authorisedAction.async { implicit request =>
-    request.enrolments.getEnrolment("IR-CT").orElse(request.enrolments.getEnrolment("IR-SA")).flatMap(_.getIdentifier("UTR")) match {
-      //FIXME look up postcode from somewhere
-      case Some(utr) => cache.cache("formData", RegistrationFormData(Identification(utr.value, "AA11 1AA"))) map { _ =>
-        Redirect(routes.VerifyController.verify())
+    getUtrFromEnrolments match {
+      case Some(utr) => softDrinksIndustryLevyConnector.getRosmRegistration(utr.value) flatMap {
+        case Some(reg) => cache.cache("formData", RegistrationFormData(reg, utr.value)) map { _ =>
+          Redirect(routes.VerifyController.verify())
+        }
+        case None => Redirect(routes.IdentifyController.show())
       }
       case None => Redirect(routes.IdentifyController.show())
     }
   }
 
+  private def getUtrFromEnrolments(implicit request: EnrolmentRequest[_]): Option[EnrolmentIdentifier] = {
+    request.enrolments.getEnrolment("IR-CT").orElse(request.enrolments.getEnrolment("IR-SA")).flatMap(_.getIdentifier("UTR"))
+  }
+
   def validate = authorisedAction.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(views.html.softdrinksindustrylevy.register.identify(errors))),
-      identification => cache.cache("formData", RegistrationFormData(identification)) map { _ =>
-        Redirect(routes.VerifyController.verify())
+      errors => BadRequest(register.identify(errors)),
+      identification => softDrinksIndustryLevyConnector.getRosmRegistration(identification.utr) flatMap {
+        case Some(reg) if reg.address.postcode == identification.postcode =>
+          cache.cache("formData", RegistrationFormData(reg, identification.utr)) map { _ =>
+            Redirect(routes.VerifyController.verify())
+          }
+        case _ => BadRequest(register.identify(form.withError("utr", "error.utr.no-record")))
       }
     )
   }
