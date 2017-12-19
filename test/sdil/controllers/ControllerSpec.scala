@@ -98,7 +98,7 @@ trait ControllerSpec extends FakeApplicationSpec {
         postcode = "AA11 1AA"
       ),
       verify = Some(DetailsCorrect.Yes),
-      orgType = Some("unincorporatedBody"),
+      orgType = Some("partnership"),
       packaging = Some(Packaging(
         isLiable = true,
         ownBrands = true,
