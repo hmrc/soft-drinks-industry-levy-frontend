@@ -24,7 +24,7 @@ import sdil.actions.{AuthorisedAction, EnrolmentRequest}
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
-import sdil.models.{Identification, RegistrationFormData}
+import sdil.models.{Address, Identification, RegistrationFormData}
 import uk.gov.hmrc.auth.core.EnrolmentIdentifier
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -62,13 +62,17 @@ class IdentifyController(val messagesApi: MessagesApi,
     form.bindFromRequest().fold(
       errors => BadRequest(register.identify(errors)),
       identification => softDrinksIndustryLevyConnector.getRosmRegistration(identification.utr) flatMap {
-        case Some(reg) if reg.address.postcode == identification.postcode =>
+        case Some(reg) if postcodesMatch(reg.address, identification) =>
           cache.cache("formData", RegistrationFormData(reg, identification.utr)) map { _ =>
             Redirect(routes.VerifyController.verify())
           }
         case _ => BadRequest(register.identify(form.withError("utr", "error.utr.no-record")))
       }
     )
+  }
+
+  private def postcodesMatch(rosmAddress: Address, identification: Identification) = {
+    rosmAddress.postcode.replaceAll(" ", "").equalsIgnoreCase(identification.postcode.replaceAll(" ", ""))
   }
 }
 

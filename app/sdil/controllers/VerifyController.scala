@@ -35,10 +35,14 @@ class VerifyController(val messagesApi: MessagesApi, cache: SessionCache, formAc
 
   def verify = formAction.async { implicit request =>
     val data = request.formData
-    val f = data.verify.fold(form)(form.fill)
 
     VerifyPage.expectedPage(data) match {
-      case VerifyPage => Ok(register.verify(f, data.utr, data.rosmData.organisation.organisationName, data.rosmData.address))
+      case VerifyPage => Ok(register.verify(
+        data.verify.fold(form)(form.fill),
+        data.utr,
+        data.rosmData.organisation.organisationName,
+        data.rosmData.address
+      ))
       case otherPage => Redirect(otherPage.show)
     }
   }
