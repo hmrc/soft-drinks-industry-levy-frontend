@@ -58,3 +58,5 @@ GET         /register/declaration                            sdil.controllers.De
 POST        /register/declaration                            sdil.controllers.DeclarationController.submitDeclaration()
 
 GET         /register/complete                               sdil.controllers.SDILController.displayComplete()
+
+GET         /register/pending                                sdil.controllers.PendingController.displayPending()

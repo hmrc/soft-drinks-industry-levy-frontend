@@ -19,8 +19,7 @@ package sdil.connectors
 import play.api.{Configuration, Environment}
 import sdil.models._
 import sdil.models.backend.Subscription
-import sdil.models.sdilmodels._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
 
@@ -41,6 +40,12 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
 
   def submit(subscription: Subscription)(implicit hc: HeaderCarrier): Future[Unit] = {
     http.POST[Subscription, HttpResponse](s"$sdilUrl/subscription/utr/${subscription.utr}", subscription) map { _ => () }
+  }
+
+  def checkPendingQueue(utr: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    http.GET[HttpResponse](s"$sdilUrl/check-subscription-status/$utr") recover {
+      case _: NotFoundException => HttpResponse(404)
+    }
   }
 
 }
