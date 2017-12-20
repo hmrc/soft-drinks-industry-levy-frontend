@@ -38,14 +38,28 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache
   def addSite = formAction.async { implicit request =>
     //FIXME look up address record
     ProductionSitesPage.expectedPage(request.formData) match {
-      case ProductionSitesPage => Ok(productionSite(form, fakeAddress, request.formData.productionSites.getOrElse(Nil), previousPage(request.formData).show))
+      case ProductionSitesPage => Ok(
+        productionSite(
+          form,
+          request.formData.rosmData.address,
+          request.formData.productionSites.getOrElse(Nil),
+          previousPage(request.formData).show
+        )
+      )
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def validate = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => BadRequest(productionSite(errors, fakeAddress, request.formData.productionSites.getOrElse(Nil), previousPage(request.formData).show)),
+      errors => BadRequest(
+        productionSite(
+          errors,
+          request.formData.rosmData.address,
+          request.formData.productionSites.getOrElse(Nil),
+          previousPage(request.formData).show
+        )
+      ),
       {
         case ProductionSite(_, Some(addr)) =>
           val updated = request.formData.productionSites match {
@@ -82,8 +96,6 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache
       ProductionSitesPage.previousPage(formData)
     }
   }
-
-  private lazy val fakeAddress = Address("an address", "somewhere", "", "", "AA11 1AA")
 }
 
 object ProductionSiteController extends FormHelpers {

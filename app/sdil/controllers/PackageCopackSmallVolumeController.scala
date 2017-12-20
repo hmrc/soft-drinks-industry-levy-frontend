@@ -44,7 +44,7 @@ class PackageCopackSmallVolumeController(val messagesApi: MessagesApi,
     withPackageCopack { pcv =>
       page.expectedPage(request.formData) match {
         case `page` => Ok(litreagePage(
-          form(pcv),
+          request.formData.packageCopackSmallVol.fold(form(pcv))(form(pcv).fill),
           "packageCopackSmallVol",
           page.previousPage(request.formData).show,
           nextLink = Some(routes.PackageCopackSmallVolumeController.validate())

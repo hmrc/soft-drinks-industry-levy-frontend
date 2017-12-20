@@ -41,7 +41,10 @@ class RadioFormController(val messagesApi: MessagesApi,
     val page = getPage(pageName)
 
     page.expectedPage(request.formData) match {
-      case `page` => Ok(register.radio_button(form, pageName, page.previousPage(request.formData).show))
+      case `page` => Ok(register.radio_button(
+        filledForm(page, request.formData),
+        pageName, page.previousPage(request.formData).show
+      ))
       case otherPage => Redirect(otherPage.show)
     }
   }
@@ -70,6 +73,13 @@ class RadioFormController(val messagesApi: MessagesApi,
     case PackageCopackSmallPage => formData.copy(packageCopackSmall = Some(choice), packageCopackSmallVol = None)
     case CopackedPage => formData.copy(copacked = Some(choice), copackedVolume = None)
     case ImportPage => formData.copy(imports = Some(choice), importVolume = None)
+    case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
+  }
+
+  private def filledForm(page: Page, formData: RegistrationFormData): Form[Boolean] = page match {
+    case PackageCopackSmallPage => formData.packageCopackSmall.fold(form)(form.fill)
+    case CopackedPage => formData.copacked.fold(form)(form.fill)
+    case ImportPage => formData.imports.fold(form)(form.fill)
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
   }
 

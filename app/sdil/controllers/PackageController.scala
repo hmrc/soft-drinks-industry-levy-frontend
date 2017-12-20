@@ -36,7 +36,7 @@ class PackageController(val messagesApi: MessagesApi, cache: SessionCache, formA
 
   def displayPackage(): Action[AnyContent] = formAction.async { implicit request =>
     PackagePage.expectedPage(request.formData) match {
-      case PackagePage => Ok(register.packagePage(form))
+      case PackagePage => Ok(register.packagePage(request.formData.packaging.fold(form)(form.fill)))
       case otherPage => Redirect(otherPage.show)
     }
   }
