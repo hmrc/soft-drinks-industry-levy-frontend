@@ -19,7 +19,7 @@ package sdil.models.backend
 import play.api.libs.json.{Format, Json}
 import sdil.models.Address
 
-case class UkAddress(lines: Seq[String], postCode: String, country: String = "GB")
+case class UkAddress(lines: Seq[String], postCode: String)
 
 object UkAddress {
   implicit val format: Format[UkAddress] = Json.format[UkAddress]
