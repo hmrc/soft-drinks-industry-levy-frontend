@@ -24,15 +24,25 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.Address
 import sdil.models.DetailsCorrect.DifferentAddress
+import uk.gov.hmrc.http.HttpResponse
 
 class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /verify" should {
-    "always return 200 Ok and the verify page" in {
+    "always return 200 Ok and the verify page when submission isn't pending" in {
+      when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(NOT_FOUND))
       val res = testController.verify()(FakeRequest())
 
       status(res) mustBe OK
       contentAsString(res) must include (Messages("sdil.verify.heading"))
+    }
+
+    "always return 303 Redirect and the pending page when submission is pending" in {
+      when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(OK))
+      val res = testController.verify()(FakeRequest())
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).get mustBe routes.PendingController.displayPending().url
     }
   }
 
