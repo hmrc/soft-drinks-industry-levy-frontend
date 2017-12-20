@@ -39,7 +39,7 @@ class LitreageController(val messagesApi: MessagesApi,
     val page = getPage(pageName)
 
     page.expectedPage(request.formData) match {
-      case `page` => Ok(litreagePage(form, pageName, page.previousPage(request.formData).show))
+      case `page` => Ok(litreagePage(filledForm(page, request.formData), pageName, page.previousPage(request.formData).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
@@ -70,6 +70,14 @@ class LitreageController(val messagesApi: MessagesApi,
     case PackageCopackPage => formData.copy(packageCopack = Some(litreage))
     case CopackedVolumePage => formData.copy(copackedVolume = Some(litreage))
     case ImportVolumePage => formData.copy(importVolume = Some(litreage))
+    case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
+  }
+
+  private def filledForm(page: Page, formData: RegistrationFormData): Form[Litreage] = page match {
+    case PackageOwnPage => formData.packageOwn.fold(form)(form.fill)
+    case PackageCopackPage => formData.packageCopack.fold(form)(form.fill)
+    case CopackedVolumePage => formData.copackedVolume.fold(form)(form.fill)
+    case ImportVolumePage => formData.importVolume.fold(form)(form.fill)
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
   }
 }

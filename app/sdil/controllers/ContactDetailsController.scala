@@ -38,7 +38,7 @@ class ContactDetailsController(val messagesApi: MessagesApi, cache: SessionCache
 
   def displayContactDetails: Action[AnyContent] = formAction.async { implicit request =>
     ContactDetailsPage.expectedPage(request.formData) match {
-      case ContactDetailsPage => Ok(register.contact_details(form))
+      case ContactDetailsPage => Ok(register.contact_details(request.formData.contactDetails.fold(form)(form.fill)))
       case otherPage => Redirect(otherPage.show)
     }
   }
