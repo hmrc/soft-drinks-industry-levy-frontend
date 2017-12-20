@@ -61,7 +61,7 @@ trait TestWiring extends MockitoSugar {
 
   lazy val mockSdilConnector: SoftDrinksIndustryLevyConnector = {
     val m = mock[SoftDrinksIndustryLevyConnector]
-    when(m.submit(any())(any())).thenReturn(Future.successful(()))
+    when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))
     m
   }
 

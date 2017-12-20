@@ -19,7 +19,6 @@ package sdil.connectors
 import play.api.{Configuration, Environment}
 import sdil.models._
 import sdil.models.backend.Subscription
-import sdil.models.sdilmodels._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -39,8 +38,8 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
     http.GET[Option[RosmRegistration]](s"$sdilUrl/rosm-registration/lookup/$utr")
   }
 
-  def submit(subscription: Subscription)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POST[Subscription, HttpResponse](s"$sdilUrl/subscription/utr/${subscription.utr}", subscription) map { _ => () }
+  def submit(subscription: Subscription, safeId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+    http.POST[Subscription, HttpResponse](s"$sdilUrl/subscription/utr/${subscription.utr}/${safeId}", subscription) map { _ => () }
   }
 
 }
