@@ -44,7 +44,7 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache, for
         cache.cache("formData", updated) map { _ =>
           Redirect(StartDatePage.nextPage(updated).show)
         }
-      case StartDatePage => Ok(start_date(form, StartDatePage.previousPage(request.formData).show))
+      case StartDatePage => Ok(start_date(request.formData.startDate.fold(form)(form.fill), StartDatePage.previousPage(request.formData).show))
       case otherPage => Redirect(otherPage.show)
     }
   }

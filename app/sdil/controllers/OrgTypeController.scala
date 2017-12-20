@@ -39,7 +39,7 @@ class OrgTypeController(val messagesApi: MessagesApi, cache: SessionCache, formA
 
   def displayOrgType(): Action[AnyContent] = formAction.async { implicit request =>
     OrgTypePage.expectedPage(request.formData) match {
-      case OrgTypePage => Ok(register.organisation_type(form))
+      case OrgTypePage => Ok(register.organisation_type(request.formData.orgType.fold(form)(form.fill)))
       case otherPage => Redirect(otherPage.show)
     }
   }
