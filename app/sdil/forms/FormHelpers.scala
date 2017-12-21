@@ -30,7 +30,7 @@ trait FormHelpers {
     case "" => Invalid("error.postcode.required")
     case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
     case _ => Valid
-  }})
+  }}).transform(_.toUpperCase, identity)
 
   lazy val addressMapping: Mapping[Address] = mapping(
     "line1" -> mandatoryAddressLine("line1"),
