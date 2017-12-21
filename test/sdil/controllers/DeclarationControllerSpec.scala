@@ -74,7 +74,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         )
       )
 
-      verify(mockSdilConnector, times(1)).submit(matching(expected))(any())
+      verify(mockSdilConnector, times(1)).submit(matching(expected), any())(any())
     }
 
     "redirect to the Contact Details page on POST if a required form page is missing" in {
@@ -122,7 +122,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         val res = testController.submitDeclaration()(FakeRequest())
         status(res) mustBe SEE_OTHER
 
-        verify(mockSdilConnector, times(1)).submit(matching(expected.copy(orgType = enumValue)))(any())
+        verify(mockSdilConnector, times(1)).submit(matching(expected.copy(orgType = enumValue)), any())(any())
       }
     }
   }

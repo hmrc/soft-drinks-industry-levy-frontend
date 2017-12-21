@@ -42,7 +42,7 @@ class DeclarationController(val messagesApi: MessagesApi,
 
   def submitDeclaration(): Action[AnyContent] = formAction.async { implicit request =>
     Subscription.fromFormData(request.formData) match {
-      case Some(s) => softDrinksIndustryLevyConnector.submit(s) map { _ => Redirect(routes.SDILController.displayComplete()) }
+      case Some(s) => softDrinksIndustryLevyConnector.submit(s, request.formData.rosmData.safeId) map { _ => Redirect(routes.SDILController.displayComplete()) }
       case None => Redirect(ContactDetailsPage.expectedPage(request.formData).show)
     }
   }
