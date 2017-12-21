@@ -51,7 +51,7 @@ object Subscription {
         utr = formData.utr,
         orgName = formData.rosmData.organisation.organisationName,
         orgType = toEnum(orgType),
-        address = UkAddress.fromAddress(formData.rosmData.address),
+        address = UkAddress.fromAddress(formData.primaryAddress),
         activity = Activity(
           formData.packageOwn,
           formData.importVolume,

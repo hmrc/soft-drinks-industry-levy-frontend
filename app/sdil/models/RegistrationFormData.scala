@@ -36,7 +36,15 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 startDate: Option[LocalDate] = None,
                                 productionSites: Option[Seq[Address]] = None,
                                 secondaryWarehouses: Option[Seq[Address]] = None,
-                                contactDetails: Option[ContactDetails] = None)
+                                contactDetails: Option[ContactDetails] = None) {
+
+  lazy val primaryAddress: Address = {
+    verify match {
+      case Some(DetailsCorrect.DifferentAddress(a)) => a
+      case _ => rosmData.address
+    }
+  }
+}
 
 object RegistrationFormData {
   implicit val format: Format[RegistrationFormData] = Json.format[RegistrationFormData]
