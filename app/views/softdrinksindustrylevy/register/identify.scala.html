@@ -31,7 +31,7 @@
 
         @inputText(identifyForm("utr"), Messages("sdil.identify.utr"))
 
-        @inputText(identifyForm("postcode"), Messages("sdil.identify.postcode"))
+        @inputText(identifyForm("postcode"), Messages("sdil.identify.postcode"), '_inputClass -> "input--cleared caps")
 
         <input class="button" value="@Messages("sdil.common.continue")" type="submit">
     }
