@@ -43,19 +43,15 @@ class IdentifyController(val messagesApi: MessagesApi,
   }
 
   def getUtr = authorisedAction.async { implicit request =>
-    getUtrFromEnrolments match {
-      case Some(utr) => softDrinksIndustryLevyConnector.getRosmRegistration(utr.value) flatMap {
-        case Some(reg) => cache.cache("formData", RegistrationFormData(reg, utr.value)) map { _ =>
+    request.utr match {
+      case Some(utr) => softDrinksIndustryLevyConnector.getRosmRegistration(utr) flatMap {
+        case Some(reg) => cache.cache("formData", RegistrationFormData(reg, utr)) map { _ =>
           Redirect(routes.VerifyController.verify())
         }
         case None => Redirect(routes.IdentifyController.show())
       }
       case None => Redirect(routes.IdentifyController.show())
     }
-  }
-
-  private def getUtrFromEnrolments(implicit request: EnrolmentRequest[_]): Option[EnrolmentIdentifier] = {
-    request.enrolments.getEnrolment("IR-CT").orElse(request.enrolments.getEnrolment("IR-SA")).flatMap(_.getIdentifier("UTR"))
   }
 
   def validate = authorisedAction.async { implicit request =>

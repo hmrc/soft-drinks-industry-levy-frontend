@@ -15,11 +15,14 @@
  *@
 
 @import sdil.config.AppConfig
+@import play.api.libs.json.JsValue
+@import play.api.libs.json.Json
 
-@()(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(rawJson: JsValue)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.common.title")) {
-    <h1 class="heading-large">@Messages("sdil.already-enrolled.heading")</h1>
+    <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
 
-    <a href="@sdil.controllers.routes.ServicePageController.show()" class="button">@Messages("sdil.service-page.link")</a>
+    <p>Raw json response:</p>
+    <pre>@Json.prettyPrint(rawJson)</pre>
 }

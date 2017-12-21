@@ -194,6 +194,9 @@ sdil.complete.title=Registration submitted
 sdil.complete.what-happens.title=What happens next?
 sdil.complete.what-happens.content=You don’t need to do anything else. We''ll contact you with a registration number.
 
+#Service page
+sdil.service-page.title=Placeholder service page
+
 #Already registered
 sdil.already-enrolled.heading=You have already registered for this service
 sdil.service-page.link=Go to service page
