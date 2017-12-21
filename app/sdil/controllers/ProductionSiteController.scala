@@ -36,12 +36,11 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: SessionCache
   import ProductionSiteController.form
 
   def addSite = formAction.async { implicit request =>
-    //FIXME look up address record
     ProductionSitesPage.expectedPage(request.formData) match {
       case ProductionSitesPage => Ok(
         productionSite(
           form,
-          request.formData.rosmData.address,
+          request.formData.primaryAddress,
           request.formData.productionSites.getOrElse(Nil),
           previousPage(request.formData).show
         )
