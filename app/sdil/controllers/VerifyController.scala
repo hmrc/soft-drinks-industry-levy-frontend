@@ -16,30 +16,43 @@
 
 package sdil.controllers
 
+import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.FormAction
 import sdil.config.AppConfig
+import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
 import sdil.models.{DetailsCorrect, VerifyPage}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 import views.html.softdrinksindustrylevy.register
 
-class VerifyController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
+class VerifyController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction,
+                       sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import VerifyController._
 
   def verify = formAction.async { implicit request =>
     val data = request.formData
-    val f = data.verify.fold(form)(form.fill)
 
-    VerifyPage.expectedPage(data) match {
-      case VerifyPage => Ok(register.verify(f, data.utr, data.rosmData.organisation.organisationName, data.rosmData.address))
-      case otherPage => Redirect(otherPage.show)
+    sdilConnector.checkPendingQueue(data.utr) map {
+      result =>
+        result.status match {
+          case OK => Redirect(routes.PendingController.displayPending())
+          case _ => VerifyPage.expectedPage(data) match {
+            case VerifyPage => Ok(register.verify(
+              data.verify.fold(form)(form.fill),
+              data.utr,
+              data.rosmData.organisation.organisationName,
+              data.rosmData.address
+            ))
+            case otherPage => Redirect(otherPage.show)
+          }
+        }
     }
   }
 

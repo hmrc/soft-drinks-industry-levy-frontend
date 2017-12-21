@@ -153,6 +153,22 @@ class IdentifyControllerSpec extends ControllerSpec {
       redirectLocation(res).value mustBe routes.VerifyController.verify().url
     }
 
+    "match against the BPR postcode if the entered postcode does not contain a space" in {
+      val request = FakeRequest().withFormUrlEncodedBody("utr" -> "1122334455", "postcode" -> "AA111AA")
+      val res = testController.validate()(request)
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.VerifyController.verify().url
+    }
+
+    "match against the BPR postcode if the entered postcode is lower case" in {
+      val request = FakeRequest().withFormUrlEncodedBody("utr" -> "1122334455", "postcode" -> "aa11 1aa")
+      val res = testController.validate()(request)
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.VerifyController.verify().url
+    }
+
     "store the UTR and business partner record in keystore if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("utr" -> "1234567890", "postcode" -> "AA11 1AA")
       val res = testController.validate()(request)
