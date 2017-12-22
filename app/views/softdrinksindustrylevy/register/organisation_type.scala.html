@@ -26,7 +26,7 @@
 
     <h1 class="heading-large">@Messages("sdil.organisation-type.heading")</h1>
 
-    @govHelpers.errorSummary(Messages("error.radio-form.choose-option.summary"), orgTypeForm)
+    @govHelpers.errorSummary(Messages("sdil.common.errorSummary"), orgTypeForm)
 
     @govHelpers.form(sdil.controllers.routes.OrgTypeController.submitOrgType()) {
         <div class = "form-group">

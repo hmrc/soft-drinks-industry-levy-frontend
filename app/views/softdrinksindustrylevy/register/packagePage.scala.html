@@ -47,7 +47,7 @@
     <a class="link-back" href="@sdil.controllers.routes.OrgTypeController.displayOrgType()">@Messages("sdil.common.back")</a>
 
     <h1 class="heading-large">@Messages("sdil.package.heading")</h1>
-    @govHelpers.errorSummary(Messages("error.radio-form.choose-option.summary"), packageForm)
+    @govHelpers.errorSummary(Messages("sdil.common.errorSummary"), packageForm)
     @govHelpers.form(action = sdil.controllers.routes.PackageController.submitPackage()) {
 
         <div class="form-group">

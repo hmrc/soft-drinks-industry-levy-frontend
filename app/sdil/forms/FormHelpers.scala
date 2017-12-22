@@ -25,19 +25,29 @@ import scala.util.Try
 
 trait FormHelpers {
   private lazy val postcodeRegex = """^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z]))))\s?[0-9][A-Za-z]{2})$"""
+  private lazy val specialRegex = """^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"""
+  lazy val postcode: Mapping[String] = text.verifying(Constraint { x: String =>
+    x match {
+      case "" => Invalid("error.postcode.required")
+      case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
+      case _ => Valid
+    }
+  })
 
-  lazy val postcode: Mapping[String] = text.verifying(Constraint { x: String => x match {
-    case "" => Invalid("error.postcode.required")
-    case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
-    case _ => Valid
-  }})
-
+  lazy val verifyPostcode: Mapping[String] = text.verifying(Constraint { x: String =>
+    x match {
+      case "" => Invalid("error.postcode.empty")
+      case s if !s.matches(specialRegex) => Invalid("error.postcode.special")
+      case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
+      case _ => Valid
+    }
+  })
   lazy val addressMapping: Mapping[Address] = mapping(
     "line1" -> mandatoryAddressLine("line1"),
     "line2" -> mandatoryAddressLine("line2"),
-    "line3" -> optionalAddressLine,
-    "line4" -> optionalAddressLine,
-    "postcode" -> postcode
+    "line3" -> optionalAddressLine("line3"),
+    "line4" -> optionalAddressLine("line4"),
+    "postcode" -> verifyPostcode
   )(Address.apply)(Address.unapply)
 
   def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
@@ -46,16 +56,15 @@ trait FormHelpers {
   }
 
   private def mandatoryAddressLine(key: String): Mapping[String] = {
-    text.verifying(combine(required(key), optionalAddressLineConstraint))
+    text.verifying(combine(required(key), optionalAddressLineConstraint(key)))
   }
 
-  private lazy val optionalAddressLine: Mapping[String] = {
-    text.verifying(optionalAddressLineConstraint)
+  private def optionalAddressLine(key: String): Mapping[String] = {
+    text.verifying(optionalAddressLineConstraint(key))
   }
 
-  private lazy val optionalAddressLineConstraint: Constraint[String] = Constraint {
-    case a if a.length > 35 => Invalid("error.address-line.length")
-    case a if !a.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") => Invalid("error.address-line.invalid")
+  private def optionalAddressLineConstraint(key: String): Constraint[String] = Constraint {
+    case a if !a.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") => Invalid(s"error.$key.invalid")
     case _ => Valid
   }
 

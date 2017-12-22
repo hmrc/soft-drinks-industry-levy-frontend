@@ -60,6 +60,6 @@ class OrgTypeController(val messagesApi: MessagesApi, cache: SessionCache, formA
 object OrgTypeController extends FormHelpers {
 
   val form: Form[String] = Form(single(
-    "orgType" -> oneOf(Seq("limitedCompany", "limitedLiabilityPartnership", "partnership", "soleTrader", "unincorporatedBody"), "error.radio-form.choose-one-option")
+    "orgType" -> oneOf(Seq("limitedCompany", "limitedLiabilityPartnership", "partnership", "soleTrader", "unincorporatedBody"), "error.radio-form.choose-option")
   ))
 }

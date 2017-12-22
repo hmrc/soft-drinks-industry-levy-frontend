@@ -83,9 +83,11 @@ object IdentifyController extends FormHelpers {
         case "" => Invalid("error.utr.required")
         case utr if utr.exists(!_.isDigit) => Invalid("error.utr.invalid")
         case utr if utr.length != 10 => Invalid("error.utr.length")
+          //TODO No business partner record exists for the UTR = This is not a valid UTR
         case _ => Valid
       }}),
       "postcode" -> postcode
+      //TODO Postcode doesn't match the business partner record = This UTR and postcode do not match our records
     )(Identification.apply)(Identification.unapply)
   )
 }

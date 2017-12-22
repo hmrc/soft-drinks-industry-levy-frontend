@@ -29,7 +29,7 @@
 
         @errorSummary(Messages("sdil.common.errorSummary"), litreageForm)
 
-        @form(nextLink.getOrElse(routes.LitreageController.validate(pageName))) {
+        @form(nextLink.getOrElse(routes.LitreageController.validate(pageName)), 'novalidate -> "") {
             <div class="form-group form-litres">
                 @inputText(
                     litreageForm("lowerRateLitres"),
