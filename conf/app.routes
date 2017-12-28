@@ -1,8 +1,6 @@
 # microservice specific routes
 GET         /assets/*file                                    controllers.Assets.at(path="/public", file)
 
-GET         /auth-test                                       sdil.controllers.SDILController.testAuth
-
 GET         /register/utr                                    sdil.controllers.IdentifyController.getUtr
 GET         /register/identify                               sdil.controllers.IdentifyController.show()
 POST        /register/identify                               sdil.controllers.IdentifyController.validate()
@@ -57,6 +55,6 @@ POST        /register/contact-details                        sdil.controllers.Co
 GET         /register/declaration                            sdil.controllers.DeclarationController.displayDeclaration
 POST        /register/declaration                            sdil.controllers.DeclarationController.submitDeclaration()
 
-GET         /register/complete                               sdil.controllers.SDILController.displayComplete()
+GET         /register/complete                               sdil.controllers.CompleteController.displayComplete()
 
 GET         /register/pending                                sdil.controllers.PendingController.displayPending()
