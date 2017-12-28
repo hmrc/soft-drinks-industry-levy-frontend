@@ -12,6 +12,7 @@ POST        /register/verify                                 sdil.controllers.Ve
 
 GET         /register/organisation-type                      sdil.controllers.OrgTypeController.displayOrgType()
 POST        /register/organisation-type                      sdil.controllers.OrgTypeController.submitOrgType()
+GET         /register/partnerships                           sdil.controllers.OrgTypeController.displayPartnerships()
 
 GET         /register/package                                sdil.controllers.PackageController.displayPackage()
 POST        /register/package                                sdil.controllers.PackageController.submitPackage()

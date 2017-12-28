@@ -16,11 +16,9 @@
 
 package sdil.controllers
 
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status, _}
-import play.i18n.MessagesApi
 
 class OrgTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
   "OrgType controller" should {
@@ -48,6 +46,22 @@ class OrgTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.PackageController.displayPackage().url
+    }
+
+    "return Status: See Other for valid organisation as partnership and redirect to partnerships page" in {
+      val request = FakeRequest().withFormUrlEncodedBody(
+        "orgType" -> "partnership")
+      val response = testController.submitOrgType().apply(request)
+
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.OrgTypeController.displayPartnerships().url
+    }
+
+    "return Status: OK for partnership page with correct title" in {
+      val response = testController.displayPartnerships().apply(FakeRequest())
+
+      status(response) mustBe OK
+      contentAsString(response) must include(messagesApi("sdil.partnership.heading"))
     }
     lazy val testController = wire[OrgTypeController]
   }
