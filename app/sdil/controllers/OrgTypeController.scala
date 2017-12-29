@@ -49,11 +49,18 @@ class OrgTypeController(val messagesApi: MessagesApi, cache: SessionCache, formA
       errors => Future.successful(BadRequest(register.organisation_type(errors))),
       orgType =>
         cache.cache("formData", request.formData.copy(orgType = Some(orgType))) map { _ =>
-          if (orgType == "partnership") Redirect("noPartnerships")
+          if (orgType == "partnership") Redirect(routes.OrgTypeController.displayPartnerships())
           else
             Redirect(routes.PackageController.displayPackage())
         }
     )
+  }
+
+  def displayPartnerships(): Action[AnyContent] = formAction.async { implicit request =>
+    request.formData.orgType match {
+      case Some("partnership") => Ok(register.partnerships())
+      case _ => Redirect(routes.OrgTypeController.displayOrgType())
+    }
   }
 }
 

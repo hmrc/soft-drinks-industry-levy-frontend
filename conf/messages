@@ -52,6 +52,10 @@ sdil.organisation-type.partnership=Partnership
 sdil.organisation-type.sole-trader=Sole Trader
 sdil.organisation-type.unincorporated-body=Unincorporated Body
 
+#Partnership page
+sdil.partnership.heading=Call HMRC
+sdil.partnership.info=As your organisation is a partnership you must call this number to register for the Soft Drinks Industry Levy
+
 #Package
 sdil.package.heading=Will you package liable drinks at a production site you operate?
 sdil.package.who-for=Who will you package liable drinks for?
