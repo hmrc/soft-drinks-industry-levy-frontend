@@ -56,8 +56,11 @@ class OrgTypeController(val messagesApi: MessagesApi, cache: SessionCache, formA
     )
   }
 
-  def displayPartnerships() = Action.async { implicit request =>
-    Ok(register.partnerships())
+  def displayPartnerships(): Action[AnyContent] = formAction.async { implicit request =>
+    request.formData.orgType match {
+      case Some("partnership") => Ok(register.partnerships())
+      case _ => Redirect(routes.OrgTypeController.displayOrgType())
+    }
   }
 }
 
