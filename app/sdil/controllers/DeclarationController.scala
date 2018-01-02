@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class DeclarationController(val messagesApi: MessagesApi,
 
   def displayDeclaration: Action[AnyContent] = formAction.async { implicit request =>
     request.formData.contactDetails match {
-      case Some(details) => Ok(register.declaration(request.formData.utr, request.formData.rosmData.address.nonEmptyLines.mkString(", "), details))
+      case Some(details) => Ok(register.declaration(request.formData))
       case None => Redirect(routes.ContactDetailsController.displayContactDetails())
     }
   }

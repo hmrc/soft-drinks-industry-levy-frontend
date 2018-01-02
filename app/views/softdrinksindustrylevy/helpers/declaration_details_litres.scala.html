@@ -14,19 +14,35 @@
  * limitations under the License.
  *@
 
-@(questionKey: String, changeRoute: Option[Call], rowData: String, args: (Symbol, String)*)(implicit messages: Messages, request: Request[_])
+@import sdil.models.Litreage
+@(questionKey: String, changeRoute: Call, rowData: Litreage)(implicit messages: Messages, request: Request[_])
 <tr>
-    <td @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
+    <td rowspan="2">
         @Messages(s"sdil.declaration.$questionKey")
     </td>
     <td>
-        @rowData
+    @Messages("sdil.declaration.low-band")
     </td>
-    @changeRoute.map { route =>
-        <td class="change-answer">
-            <a href="@route">
-            @Messages("sdil.declaration.change-link")
-            </a>
-        </td>
-    }
+    <td>
+    @rowData.atLowRate
+    </td>
+    <td class="change-answer">
+        <a href="@changeRoute">
+        @Messages("sdil.declaration.change-link")
+        </a>
+    </td>
+</tr>
+
+<tr>
+    <td>
+    @Messages("sdil.declaration.high-band")
+    </td>
+    <td>
+    @rowData.atHighRate
+    </td>
+    <td class="change-answer">
+        <a href="@changeRoute">
+        @Messages("sdil.declaration.change-link")
+        </a>
+    </td>
 </tr>
