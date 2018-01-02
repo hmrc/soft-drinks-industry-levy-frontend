@@ -38,7 +38,7 @@ trait RoutesWiring extends CommonWiring {
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
   lazy val formAction: FormAction = wire[FormAction]
   lazy val assets: Assets = wire[Assets]
-  lazy val sdilController: SDILController = wire[SDILController]
+  lazy val completeController: CompleteController = wire[CompleteController]
   lazy val orgTypeController: OrgTypeController = wire[OrgTypeController]
   lazy val identifyController: IdentifyController = wire[IdentifyController]
   lazy val verifyController: VerifyController = wire[VerifyController]

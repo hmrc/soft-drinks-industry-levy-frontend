@@ -42,7 +42,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val result = testController.submitDeclaration().apply(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.SDILController.displayComplete().url
+      redirectLocation(result).get mustBe routes.CompleteController.displayComplete().url
     }
 
     "submit a valid Subscription to the backend on POST if all required form pages are complete" in {
