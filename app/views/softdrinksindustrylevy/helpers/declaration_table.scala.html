@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package sdil.models.backend
+@(tableHeading: String)(rowContent: Html)(implicit messages: Messages, request: Request[_])
 
-import play.api.libs.json.{Format, Json}
-import sdil.models.Address
+<table class="check-your-answers">
+    <thead>
+        <tr>
+            <th colspan="2">
+                <h2 class="heading-medium">
+                    @Messages(s"sdil.declaration.$tableHeading")
+                </h2>
+            </th>
+            <th colspan="2"></th>
+        </tr>
+    </thead>
 
-case class UkAddress(lines: Seq[String], postCode: String)
-
-object UkAddress {
-  implicit val format: Format[UkAddress] = Json.format[UkAddress]
-
-  def fromAddress(address: Address): UkAddress = {
-    UkAddress(
-      Seq(address.line1, address.line2, address.line3, address.line4).filter(_.nonEmpty),
-      address.postcode
-    )
-  }
-}
+    <tbody>
+    @rowContent
+    </tbody>
+</table>
