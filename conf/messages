@@ -172,6 +172,7 @@ sdil.declaration.small-producers=Annual litres for small producers
 sdil.declaration.third-party=Will you use third party packagers?
 sdil.declaration.third-party-produced=Annual litres packaged by third parties
 sdil.declaration.import=Will you bring liable drinks into the UK?
+sdil.declaration.import-volume=Annual litres brought into the UK
 
 sdil.declaration.liable-date=Soft Drinks Levy liability date
 sdil.declaration.date=Date liable from

@@ -31,13 +31,13 @@
     <h1 class="heading-large">@Messages("sdil.declaration.heading")</h1>
 
     @declaration_table("your-business") {
-        @declaration_details_table_row("utr", None, formData.utr)
+        @declaration_details_table_row("utr", None, formData.utr, '_colspan -> "2")
 
         @declaration_details_table_row("business-name", None,
-            formData.rosmData.organisation.organisationName)
+            formData.rosmData.organisation.organisationName, '_colspan -> "2")
 
         <tr>
-            <td>@Messages("sdil.declaration.address")</td>
+            <td colspan = "2">@Messages("sdil.declaration.address")</td>
             <td>
                 <div>@formData.rosmData.address.line1</div>
                 <div>@formData.rosmData.address.line2</div>
@@ -95,7 +95,7 @@
 
             @if(imports) {
                 @formData.importVolume.map { volumes =>
-                    @declaration_details_litres("third-party-produced",
+                    @declaration_details_litres("import-volume",
                         sdil.controllers.routes.LitreageController.show(pageName = "importVolume"), volumes)
                 }
             }
