@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ trait FormSpec extends PlaySpec {
     mustRequire(s"$prefix.line2")(form, data, requiredError = "error.line2.required")
     mustNotRequire(s"$prefix.line3")(form, data)
     mustNotRequire(s"$prefix.line4")(form, data)
-    mustRequire(s"$prefix.postcode")(form, data, requiredError = "error.postcode.required")
+    mustRequire(s"$prefix.postcode")(form, data, requiredError = "error.postcode.empty")
 
     Seq("line1", "line2", "line3", "line4") map { l =>
       val line = s"$prefix.$l"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(response) mustBe BAD_REQUEST
       contentType(response).get mustBe HTML
-      contentAsString(response) must include(messagesApi("error.radio-form.choose-option.summary"))
+      contentAsString(response) must include(messagesApi("sdil.common.errorSummary"))
     }
 
     "return status See Other and redirect to the org type page when the org type page is not complete" in {

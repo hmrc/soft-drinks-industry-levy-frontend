@@ -1,5 +1,5 @@
 @*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@
 
     <h1 class="heading-large">@Messages(s"sdil.$pageName.heading")</h1>
 
-    @govHelpers.errorSummary(Messages("error.radio-form.choose-option.summary"), form)
+    @govHelpers.errorSummary(Messages("sdil.common.errorSummary"), form)
 
     @govHelpers.form(sdil.controllers.routes.RadioFormController.submit(pageName)) {
         <div class = "form-group">
