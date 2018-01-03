@@ -62,12 +62,11 @@ object ContactDetailsController extends FormHelpers {
         .verifying("error.position.required", _.nonEmpty),
       "phoneNumber" -> text.verifying(Constraint { x: String => x match {
         case "" => Invalid("error.phoneNumber.required")
-        case name if name.length > 24 => Invalid("error.phoneNumber.length")
-        case name if !name.matches("^[0-9 ()+--]{1,24}$") => Invalid("error.phoneNumber.invalid")
+        case number if number.length > 24 => Invalid("error.phoneNumber.length")
+        case number if !number.matches("^[0-9 ()+--]{1,24}$") => Invalid("error.phoneNumber.invalid")
         case _ => Valid
       }}),
       "email" -> text
-        .verifying("error.email.length", _.length <= 132)
         .verifying(combine(required("email"), Constraints.emailAddress))
     )(ContactDetails.apply)(ContactDetails.unapply)
   )
