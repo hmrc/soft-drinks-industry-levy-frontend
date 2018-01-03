@@ -66,6 +66,7 @@ trait FormHelpers {
 
   private def optionalAddressLineConstraint(key: String): Constraint[String] = Constraint {
     case a if !a.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") => Invalid(s"error.$key.invalid")
+    case b if b.length >= 35 => Invalid(s"error.$key.over")
     case _ => Valid
   }
 

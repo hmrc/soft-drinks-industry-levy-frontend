@@ -67,6 +67,7 @@ object ContactDetailsController extends FormHelpers {
         case _ => Valid
       }}),
       "email" -> text
+        .verifying("error.email.length", _.length <= 132)
         .verifying(combine(required("email"), Constraints.emailAddress))
     )(ContactDetails.apply)(ContactDetails.unapply)
   )

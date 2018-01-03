@@ -50,6 +50,26 @@ class ContactDetailsFormSpec extends FormSpec {
       mustRequire(keys.email)(form, validData, "error.email.required")
     }
 
+    "require the email address to be no more than 132 characters" in {
+      {
+        val belowMax = (1 until 132 - 6).map(_ => 'a').mkString + "@aa.aa"
+        val f = form.bind(validData.updated(keys.email, belowMax))
+        mustContainNoError(f, keys.email)
+      }
+
+      {
+        val equalToMax = (1 to 132 - 6).map(_ => 'b').mkString + "@bb.bb"
+        val f = form.bind(validData.updated(keys.email, equalToMax))
+        mustContainNoError(f, keys.email)
+      }
+
+      {
+        val overMax = (1 to 132 - 5).map(_ => 'c').mkString + "@cc.cc"
+        val f = form.bind(validData.updated(keys.email, overMax))
+        mustContainError(f, keys.email, "error.email.length")
+      }
+    }
+
     "require the email address to be valid" in {
       Seq("not an email", "123456", "aa@@aa.aa") map { invalid =>
         val f = form.bind(validData.updated(keys.email, invalid))
