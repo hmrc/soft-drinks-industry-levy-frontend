@@ -108,7 +108,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       ))
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messagesApi("error.radio-form.choose-option.summary"))
+      contentAsString(result) must include(messagesApi("sdil.common.errorSummary"))
     }
 
     "return Status: BAD_REQUEST for invalid form input for copacked form submission" in {
@@ -117,7 +117,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       ))
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messagesApi("error.radio-form.choose-option.summary"))
+      contentAsString(result) must include(messagesApi("sdil.common.errorSummary"))
     }
 
     "return Status: BAD_REQUEST for invalid form input for import small form submission" in {
@@ -126,7 +126,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       ))
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messagesApi("error.radio-form.choose-option.summary"))
+      contentAsString(result) must include(messagesApi("sdil.common.errorSummary"))
     }
 
     "generate correct back link for copack small page with false for packaging" in {

@@ -20,10 +20,13 @@
     <label class="form-label" for="@field.name">
         @field.errors.map { error =>
             <span class="error-notification" role="tooltip" data-journey="search-page:error:@field.name">
-                @Messages(error.message, error.args:_*)
+            @Messages(error.message, error.args: _*)
             </span>
         }
         @label
     </label>
-    <input class="form-control @args.toMap.get('_inputClass)" id="@field.name" name="@field.name" value="@field.value" @args.toMap.get('_inputType).map(t => s"""type=$t""")>
+    <input class="form-control
+        @args.toMap.get('_inputClass)" id="@field.name" name="@field.name" value="@field.value"
+        @args.toMap.get('_inputType).map(t => s"""type=$t""")
+        @args.toMap.get('_maxLength).map(t => s"maxLength=$t")>
 </div>

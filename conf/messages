@@ -2,7 +2,7 @@ sdil.common.title = Soft Drinks Industry Levy
 sdil.common.continue=Continue
 sdil.common.back=Back
 sdil.common.save-continue=Save and continue
-sdil.common.errorSummary=Something you’ve entered is not valid
+sdil.common.errorSummary=There’s a problem
 sdil.common.alpha=ALPHA
 sdil.common.alpha-info=<span>This is a new service – your <a href="{0}">feedback</a> will help us to improve it.</span>
 sdil.common.or=Or
@@ -17,15 +17,15 @@ sdil.address.line3=Address line 3
 sdil.address.line4=Address line 4
 sdil.address.postcode=Postcode
 
-error.utr.required=Enter a valid UTR
+error.utr.required=Enter a UTR
 error.utr.length=UTR must be 10 digits long
-error.utr.invalid=UTR must only contain digits
+error.utr.invalid=UTR must be a number
 
 #Identify
 sdil.identify.heading=Enter your Unique Tax Reference number and postcode
 sdil.identify.utr=Unique Tax Reference number (UTR)
 sdil.identify.postcode=Registered business postcode
-error.utr.no-record=No record matching your UTR and postcode were found
+error.utr.no-record=This UTR and postcode do not match our records
 
 #Verify
 sdil.verify.heading=Is this the business you want to register?
@@ -66,8 +66,8 @@ sdil.who-for.option2=Your customers
 error.packaging.none-selected=Choose at least one option
 
 #Package copack page
-error.copack-small.lower-greater-than-total-lower=This must be less than the total litres copacked at the low rate
-error.copack-small.higher-greater-than-total-higher=This must be less than the total litres copacked at the high rate
+error.copack-small.lower-greater-than-total-lower=Number of litres for small producers must be less than the total number of litres
+error.copack-small.higher-greater-than-total-higher=Number of litres for small producers must be less than the total number of litres
 
 #Litreage pages
 sdil.packageOwn.heading=How many litres of liable drink per year will you package for your own brand or brands you have the rights to manufacture?
@@ -82,7 +82,7 @@ sdil.litrage.rates.content=The low rate is from 5 grams to 7.9 grams of sugar pe
 
 error.litreage.required=Number of litres must be 0 or more
 error.litreage.numeric=Number of litres must be a whole number
-error.litreage.max=Must be less than or equal to 9,999,999,999,999
+error.litreage.max=Number of litres must be less than 14 digits
 error.litreage.min=Number of litres must be 0 or more
 
 #Production sites
@@ -129,8 +129,8 @@ error.year.required=Enter a year
 error.start-day.invalid=Enter a valid day
 error.start-month.invalid=Enter a valid month
 error.start-year.invalid=Enter a valid year
-error.start-date.before-tax-start=Date must be after 6 April 2018
-error.start-date.in-future=Date must not be in the future
+error.start-date.before-tax-start=Date cannot be before 06 04 2018
+error.start-date.in-future=Date cannot be in the future
 error.date.invalid=Enter a valid date
 
 #Contact details
@@ -144,11 +144,7 @@ error.fullName.required=Enter a name
 error.position.required=Enter a position
 error.phoneNumber.required=Enter a telephone number
 error.email.required=Enter an email address
-error.email.length=Email must be fewer than 132 characters
-error.fullName.length=Name must be fewer than 40 characters
-error.phoneNumber.length=Telephone number must be fewer than 24 characters
-error.phoneNumber.invalid=Telephone number must only contain numbers and ()+,-
-error.position.length=Position must be fewer than 155 characters
+error.phoneNumber.invalid=Telephone number must not contain special characters
 
 # Declaration
 sdil.declaration.heading=Check your answers
@@ -204,15 +200,19 @@ sdil.invalid-role.title=Government Gateway assistants cannot register for Soft D
 #Common errors
 error.line1.required=Address line 1 must not be empty
 error.line2.required=Address line 2 must not be empty
-error.address-line.invalid=This can only contain numbers, letters, and -,.&'/
+error.line1.invalid=Address line 1 must not contain special characters
+error.line2.invalid=Address line 2 must not contain special characters
+error.line3.invalid=Address line 3 must not contain special characters
+error.line4.invalid=Address line 4 must not contain special characters
 error.address-line.length=This must be no more than 35 characters
-error.postcode.required=Postcode must not be empty
+error.postcode.required=Enter a postcode
+error.postcode.empty=Postcode must not be empty
 error.postcode.invalid=Enter a valid postcode
+error.postcode.special=Postcode must not contain special characters
 error.number.negative=Must be greater than or equal to 0
 error.full-name.invalid=Enter a name
 error.position.invalid=Enter a position
 error.phone-number.invalid=Enter a valid phone number
-error.email=Enter a valid email
-error.radio-form.choose-option=Choose one option
+error.email=Enter a valid email address
+error.radio-form.choose-option=Choose an option
 error.radio-form.choose-one-option=Choose at least one option
-error.radio-form.choose-option.summary=You haven’t chosen an option

@@ -29,14 +29,14 @@ class OrgTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       contentAsString(response) must include(messagesApi("sdil.organisation-type.heading"))
     }
 
-    "return Status: Bad Request for invalid organisation form POST request and show choose one option error" in {
+    "return Status: Bad Request for invalid organisation form POST request and show choose option error" in {
       val request = FakeRequest().withFormUrlEncodedBody(
         "orgType" -> "badCompany")
       val response = testController.submitOrgType().apply(request)
 
       status(response) mustBe BAD_REQUEST
       contentType(response).get mustBe HTML
-      contentAsString(response) must include(messagesApi("error.radio-form.choose-one-option"))
+      contentAsString(response) must include(messagesApi("error.radio-form.choose-option"))
     }
 
     "return Status: See Other for valid organisation form POST request and redirect to packaging page" in {

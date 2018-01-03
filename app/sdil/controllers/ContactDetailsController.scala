@@ -57,11 +57,9 @@ object ContactDetailsController extends FormHelpers {
   val form = Form(
     mapping(
       "fullName" -> text
-        .verifying("error.fullName.required", _.nonEmpty)
-        .verifying("error.fullName.length", _.length <= 40),
+        .verifying("error.fullName.required", _.nonEmpty),
       "position" -> text
-        .verifying("error.position.required", _.nonEmpty)
-        .verifying("error.position.length", _.length <= 155),
+        .verifying("error.position.required", _.nonEmpty),
       "phoneNumber" -> text.verifying(Constraint { x: String => x match {
         case "" => Invalid("error.phoneNumber.required")
         case name if name.length > 24 => Invalid("error.phoneNumber.length")
