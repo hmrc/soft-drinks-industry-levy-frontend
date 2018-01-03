@@ -14,19 +14,21 @@
  * limitations under the License.
  *@
 
-@(questionKey: String, changeRoute: Option[Call], rowData: String, args: (Symbol, String)*)(implicit messages: Messages, request: Request[_])
-<tr>
-    <td @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
-        @Messages(s"sdil.declaration.$questionKey")
-    </td>
-    <td>
-        @rowData
-    </td>
-    @changeRoute.map { route =>
-        <td class="change-answer">
-            <a href="@route">
-            @Messages("sdil.declaration.change-link")
-            </a>
-        </td>
-    }
-</tr>
+@(tableHeading: String)(rowContent: Html)(implicit messages: Messages, request: Request[_])
+
+<table class="check-your-answers">
+    <thead>
+        <tr>
+            <th colspan="2">
+                <h2 class="heading-medium">
+                    @Messages(s"sdil.declaration.$tableHeading")
+                </h2>
+            </th>
+            <th colspan="2"></th>
+        </tr>
+    </thead>
+
+    <tbody>
+    @rowContent
+    </tbody>
+</table>

@@ -35,14 +35,14 @@ class DeclarationController(val messagesApi: MessagesApi,
 
   def displayDeclaration: Action[AnyContent] = formAction.async { implicit request =>
     request.formData.contactDetails match {
-      case Some(details) => Ok(register.declaration(request.formData.utr, request.formData.rosmData.address.nonEmptyLines.mkString(", "), details))
+      case Some(details) => Ok(register.declaration(request.formData))
       case None => Redirect(routes.ContactDetailsController.displayContactDetails())
     }
   }
 
   def submitDeclaration(): Action[AnyContent] = formAction.async { implicit request =>
     Subscription.fromFormData(request.formData) match {
-      case Some(s) => softDrinksIndustryLevyConnector.submit(s) map { _ => Redirect(routes.SDILController.displayComplete()) }
+      case Some(s) => softDrinksIndustryLevyConnector.submit(s, request.formData.rosmData.safeId) map { _ => Redirect(routes.CompleteController.displayComplete()) }
       case None => Redirect(ContactDetailsPage.expectedPage(request.formData).show)
     }
   }

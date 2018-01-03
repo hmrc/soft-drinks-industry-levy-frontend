@@ -42,7 +42,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val result = testController.submitDeclaration().apply(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.SDILController.displayComplete().url
+      redirectLocation(result).get mustBe routes.CompleteController.displayComplete().url
     }
 
     "submit a valid Subscription to the backend on POST if all required form pages are complete" in {
@@ -74,7 +74,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         )
       )
 
-      verify(mockSdilConnector, times(1)).submit(matching(expected))(any())
+      verify(mockSdilConnector, times(1)).submit(matching(expected), any())(any())
     }
 
     "redirect to the Contact Details page on POST if a required form page is missing" in {
@@ -122,7 +122,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         val res = testController.submitDeclaration()(FakeRequest())
         status(res) mustBe SEE_OTHER
 
-        verify(mockSdilConnector, times(1)).submit(matching(expected.copy(orgType = enumValue)))(any())
+        verify(mockSdilConnector, times(1)).submit(matching(expected.copy(orgType = enumValue)), any())(any())
       }
     }
   }

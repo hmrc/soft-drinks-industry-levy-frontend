@@ -14,19 +14,13 @@
  * limitations under the License.
  *@
 
-@(questionKey: String, changeRoute: Option[Call], rowData: String, args: (Symbol, String)*)(implicit messages: Messages, request: Request[_])
-<tr>
-    <td @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
-        @Messages(s"sdil.declaration.$questionKey")
-    </td>
-    <td>
-        @rowData
-    </td>
-    @changeRoute.map { route =>
-        <td class="change-answer">
-            <a href="@route">
-            @Messages("sdil.declaration.change-link")
-            </a>
-        </td>
-    }
-</tr>
+@import sdil.config.AppConfig
+
+@()(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@views.html.main_template(Messages("sdil.common.title")) {
+    <a class="link-back" href="@sdil.controllers.routes.OrgTypeController.displayOrgType()">@Messages("sdil.common.back")</a>
+    <h1 class="heading-large">@Messages("sdil.partnership.heading")</h1>
+    <p >@Messages("sdil.partnership.info")</p>
+
+}

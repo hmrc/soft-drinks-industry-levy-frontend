@@ -52,6 +52,10 @@ sdil.organisation-type.partnership=Partnership
 sdil.organisation-type.sole-trader=Sole Trader
 sdil.organisation-type.unincorporated-body=Unincorporated Body
 
+#Partnership page
+sdil.partnership.heading=Call HMRC
+sdil.partnership.info=As your organisation is a partnership you must call this number to register for the Soft Drinks Industry Levy
+
 #Package
 sdil.package.heading=Will you package liable drinks at a production site you operate?
 sdil.package.who-for=Who will you package liable drinks for?
@@ -143,16 +147,42 @@ error.email.required=Enter an email address
 error.phoneNumber.invalid=Telephone number must not contain special characters
 
 # Declaration
-sdil.declaration.heading=Declaration
-sdil.declaration.info=By continuing you''re confirming that the details provided are true and complete.
-sdil.declaration.subtitle=Check your details
+sdil.declaration.heading=Check your answers
 sdil.declaration.change-link=Change
-sdil.declaration.utr=UTR
+sdil.declaration.true=Yes
+sdil.declaration.false=No
+
+sdil.declaration.your-business=Your business
+sdil.declaration.utr=Unique Taxpayer Reference (UTR)
+sdil.declaration.business-name=Business name
 sdil.declaration.address=Address
+sdil.declaration.uk=UK
+
+sdil.declaration.liable-activity=Liable activity
+sdil.declaration.low-band=Low band
+sdil.declaration.high-band=High band
+sdil.declaration.packaging=Will you package at your own site?
+sdil.declaration.package-own=Annual litres for your own brands
+sdil.declaration.customers=Annual litres for your customers
+sdil.declaration.small-producers=Annual litres for small producers
+sdil.declaration.third-party=Will you use third party packagers?
+sdil.declaration.third-party-produced=Annual litres packaged by third parties
+sdil.declaration.import=Will you bring liable drinks into the UK?
+sdil.declaration.import-volume=Annual litres brought into the UK
+
+sdil.declaration.liable-date=Soft Drinks Levy liability date
+sdil.declaration.date=Date liable from
+
+sdil.declaration.registered-sites=Registered sites
+sdil.declaration.production-sites=Additional production sites
+sdil.declaration.warehouses=Warehouses
+
+sdil.declaration.contact-details=Soft Drinks Levy contact
 sdil.declaration.name=Name
 sdil.declaration.position=Position
 sdil.declaration.phone-number=Phone number
 sdil.declaration.email=Email
+sdil.declaration.confirmation=By continuing you’re confirming that the details provided are true and complete.
 sdil.declaration.continue=Accept and continue
 
 #Complete

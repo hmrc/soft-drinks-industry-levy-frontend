@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(questionKey: String, changeRoute: Option[Call], rowData: String, args: (Symbol, String)*)(implicit messages: Messages, request: Request[_])
-<tr>
-    <td @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
-        @Messages(s"sdil.declaration.$questionKey")
-    </td>
-    <td>
-        @rowData
-    </td>
-    @changeRoute.map { route =>
-        <td class="change-answer">
-            <a href="@route">
-            @Messages("sdil.declaration.change-link")
-            </a>
-        </td>
+package sdil.controllers
+
+import org.scalatest.BeforeAndAfterEach
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+
+class CompleteControllerSpec extends ControllerSpec with BeforeAndAfterEach {
+
+  "Complete controller" should {
+    "return Status: OK for displaying complete page" in {
+      val result = testController.displayComplete().apply(FakeRequest())
+
+      status(result) mustBe OK
+      contentAsString(result) must include(messagesApi("sdil.complete.title"))
     }
-</tr>
+  }
+
+  val testController: CompleteController = wire[CompleteController]
+
+}

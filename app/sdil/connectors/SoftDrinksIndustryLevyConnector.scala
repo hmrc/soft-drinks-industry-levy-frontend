@@ -38,8 +38,8 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
     http.GET[Option[RosmRegistration]](s"$sdilUrl/rosm-registration/lookup/$utr")
   }
 
-  def submit(subscription: Subscription)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POST[Subscription, HttpResponse](s"$sdilUrl/subscription/utr/${subscription.utr}", subscription) map { _ => () }
+  def submit(subscription: Subscription, safeId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+    http.POST[Subscription, HttpResponse](s"$sdilUrl/subscription/utr/${subscription.utr}/${safeId}", subscription) map { _ => () }
   }
 
   def checkPendingQueue(utr: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {

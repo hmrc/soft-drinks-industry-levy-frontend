@@ -42,6 +42,7 @@ trait FormHelpers {
       case _ => Valid
     }
   })
+
   lazy val addressMapping: Mapping[Address] = mapping(
     "line1" -> mandatoryAddressLine("line1"),
     "line2" -> mandatoryAddressLine("line2"),

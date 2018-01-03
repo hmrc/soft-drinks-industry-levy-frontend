@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(questionKey: String, changeRoute: Option[Call], rowData: String, args: (Symbol, String)*)(implicit messages: Messages, request: Request[_])
-<tr>
-    <td @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
-        @Messages(s"sdil.declaration.$questionKey")
-    </td>
-    <td>
-        @rowData
-    </td>
-    @changeRoute.map { route =>
-        <td class="change-answer">
-            <a href="@route">
-            @Messages("sdil.declaration.change-link")
-            </a>
-        </td>
-    }
-</tr>
+package sdil.controllers
+
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc._
+import sdil.config.AppConfig
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.softdrinksindustrylevy._
+
+class CompleteController(val messagesApi: MessagesApi)
+                        (implicit config: AppConfig) extends FrontendController with I18nSupport {
+
+
+  def displayComplete(): Action[AnyContent] = Action.async { implicit request =>
+    Ok(register.complete())
+  }
+
+}
