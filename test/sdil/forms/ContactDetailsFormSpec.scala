@@ -26,16 +26,8 @@ class ContactDetailsFormSpec extends FormSpec {
       mustRequire(keys.fullName)(form, validData, "error.fullName.required")
     }
 
-    "require the full name to be no more than 40 characters" in {
-      mustHaveMaxLength(keys.fullName, 40)(form, validData, "error.fullName.length")
-    }
-
     "require a position" in {
       mustRequire(keys.position)(form, validData, "error.position.required")
-    }
-
-    "require the position to be no more than 155 characters" in {
-      mustHaveMaxLength(keys.position, 155)(form, validData, "error.position.length")
     }
 
     "require a phone number" in {

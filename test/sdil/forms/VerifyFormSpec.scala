@@ -34,10 +34,6 @@ class VerifyFormSpec extends FormSpec {
       mustContainError(f, detailsCorrect, "error.radio-form.choose-option")
     }
 
-    "validate the address if the user wants to register a different address" in {
-      mustValidateAddress(form, "alternativeAddress", altAddressData)
-    }
-
     "bind to VerifiedDetails if the details are correct and an alternative address is not provided" in {
       val f = form.bind(Map(detailsCorrect -> "yes"))
 

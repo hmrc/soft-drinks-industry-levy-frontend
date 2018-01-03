@@ -28,10 +28,6 @@ class WarehouseFormSpec extends FormSpec {
       mustContainError(f, hasWarehouse, "error.radio-form.choose-option")
     }
 
-    "validate the address if there is a warehouse" in {
-      mustValidateAddress(form, "warehouseAddress", secondaryWarehouseData)
-    }
-
     "bind to SecondaryWarehouse if there is no warehouse" in {
       val f = form.bind(Map(hasWarehouse -> "false"))
 
