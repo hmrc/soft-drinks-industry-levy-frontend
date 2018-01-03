@@ -29,7 +29,7 @@ trait FormHelpers {
   lazy val postcode: Mapping[String] = text.verifying(Constraint { x: String =>
     x match {
       case "" => Invalid("error.postcode.required")
-      case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
+      case pc if !pc.toUpperCase.matches(postcodeRegex) => Invalid("error.postcode.invalid")
       case _ => Valid
     }
   })
