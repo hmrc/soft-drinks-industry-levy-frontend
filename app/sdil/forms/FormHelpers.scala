@@ -29,7 +29,7 @@ trait FormHelpers {
   lazy val postcode: Mapping[String] = text.verifying(Constraint { x: String =>
     x match {
       case "" => Invalid("error.postcode.required")
-      case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
+      case pc if !pc.toUpperCase.matches(postcodeRegex) => Invalid("error.postcode.invalid")
       case _ => Valid
     }
   })
@@ -66,6 +66,7 @@ trait FormHelpers {
 
   private def optionalAddressLineConstraint(key: String): Constraint[String] = Constraint {
     case a if !a.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") => Invalid(s"error.$key.invalid")
+    case b if b.length > 35 => Invalid(s"error.$key.over")
     case _ => Valid
   }
 
