@@ -141,9 +141,13 @@ sdil.contact-details.phone-number=Telephone number
 sdil.contact-details.email=Email
 
 error.fullName.required=Enter a name
+error.fullName.over=Name must not be more than 40 characters
 error.position.required=Enter a position
+error.position.over=Position must not be more than 155 characters
 error.phoneNumber.required=Enter a telephone number
+error.phoneNumber.over=Telephone number must not be more than 24 characters
 error.email.required=Enter an email address
+error.email.over=Email must not be more than 132 characters
 error.phoneNumber.invalid=Telephone number must not contain special characters
 
 # Declaration

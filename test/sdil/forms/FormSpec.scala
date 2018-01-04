@@ -42,13 +42,13 @@ trait FormSpec extends PlaySpec {
     Seq("line1", "line2", "line3", "line4") map { l =>
       val line = s"$prefix.$l"
 
-      mustHaveMaxLength(line, 35)(form, data, "error.address-line.length")
+      mustHaveMaxLength(line, 35)(form, data, s"error.$l.over")
 
       val validLine = "Aa0-,.&'/"
       mustContainNoError(form.bind(data.updated(line, validLine)), line)
 
       val invalidLine = "the;place"
-      mustContainError(form.bind(data.updated(line, invalidLine)), line, s"error.address-line.invalid")
+      mustContainError(form.bind(data.updated(line, invalidLine)), line, s"error.$l.invalid")
     }
   }
 

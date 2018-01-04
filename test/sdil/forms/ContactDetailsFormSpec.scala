@@ -25,17 +25,23 @@ class ContactDetailsFormSpec extends FormSpec {
     "require a full name" in {
       mustRequire(keys.fullName)(form, validData, "error.fullName.required")
     }
+    "require the full name to be no more than 40 characters" in {
+      mustHaveMaxLength(keys.fullName, 40)(form, validData, "error.fullName.over")
+    }
 
     "require a position" in {
       mustRequire(keys.position)(form, validData, "error.position.required")
     }
 
+    "require the position to be no more than 155 characters" in {
+      mustHaveMaxLength(keys.position, 155)(form, validData, "error.position.over")
+    }
+
     "require a phone number" in {
       mustRequire(keys.phoneNumber)(form, validData, "error.phoneNumber.required")
     }
-
     "require the phone number to be no more than 24 characters" in {
-      mustHaveMaxLength(keys.phoneNumber, 24)(form, validData, "error.phoneNumber.length")
+      mustHaveMaxLength(keys.phoneNumber, 24)(form, validData, "error.phoneNumber.over")
     }
 
     "require the phone number to only contain numbers, spaces, and ()+,-" in {
@@ -66,7 +72,7 @@ class ContactDetailsFormSpec extends FormSpec {
       {
         val overMax = (1 to 132 - 5).map(_ => 'c').mkString + "@cc.cc"
         val f = form.bind(validData.updated(keys.email, overMax))
-        mustContainError(f, keys.email, "error.email.length")
+        mustContainError(f, keys.email, "error.email.over")
       }
     }
 
