@@ -34,6 +34,10 @@ class WarehouseFormSpec extends FormSpec {
       f.value mustBe Some(SecondaryWarehouse(false, None))
     }
 
+    "validate the address if there is a warehouse" in {
+      mustValidateAddress(form, "warehouseAddress", secondaryWarehouseData)
+    }
+
     "bind to SecondaryWarehouse if there is a warehouse and an address is provided" in {
       val f = form.bind(secondaryWarehouseData)
 

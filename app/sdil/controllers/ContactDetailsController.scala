@@ -57,16 +57,21 @@ object ContactDetailsController extends FormHelpers {
   val form = Form(
     mapping(
       "fullName" -> text
+        .verifying("error.fullName.over", _.length <= 40)
         .verifying("error.fullName.required", _.nonEmpty),
       "position" -> text
+        .verifying("error.position.over", _.length <= 155)
         .verifying("error.position.required", _.nonEmpty),
-      "phoneNumber" -> text.verifying(Constraint { x: String => x match {
-        case "" => Invalid("error.phoneNumber.required")
-        case number if number.length > 24 => Invalid("error.phoneNumber.length")
-        case number if !number.matches("^[0-9 ()+--]{1,24}$") => Invalid("error.phoneNumber.invalid")
-        case _ => Valid
-      }}),
+      "phoneNumber" -> text.verifying(Constraint { x: String =>
+        x match {
+          case "" => Invalid("error.phoneNumber.required")
+          case number if number.length > 24 => Invalid("error.phoneNumber.over")
+          case number if !number.matches("^[0-9 ()+--]{1,24}$") => Invalid("error.phoneNumber.invalid")
+          case _ => Valid
+        }
+      }),
       "email" -> text
+        .verifying("error.email.over", _.length <= 132)
         .verifying(combine(required("email"), Constraints.emailAddress))
     )(ContactDetails.apply)(ContactDetails.unapply)
   )

@@ -141,9 +141,13 @@ sdil.contact-details.phone-number=Telephone number
 sdil.contact-details.email=Email
 
 error.fullName.required=Enter a name
+error.fullName.over=Name must not be more than 40 characters
 error.position.required=Enter a position
+error.position.over=Position must not be more than 155 characters
 error.phoneNumber.required=Enter a telephone number
+error.phoneNumber.over=Telephone number must not be more than 24 characters
 error.email.required=Enter an email address
+error.email.over=Email must not be more than 132 characters
 error.phoneNumber.invalid=Telephone number must not contain special characters
 
 # Declaration
@@ -204,6 +208,10 @@ error.line1.invalid=Address line 1 must not contain special characters
 error.line2.invalid=Address line 2 must not contain special characters
 error.line3.invalid=Address line 3 must not contain special characters
 error.line4.invalid=Address line 4 must not contain special characters
+error.line1.over=Address line 1 must not contain more than 35 characters
+error.line2.over=Address line 2 must not contain more than 35 characters
+error.line3.over=Address line 3 must not contain more than 35 characters
+error.line4.over=Address line 4 must not contain more than 35 characters
 error.address-line.length=This must be no more than 35 characters
 error.postcode.required=Enter a postcode
 error.postcode.empty=Postcode must not be empty
