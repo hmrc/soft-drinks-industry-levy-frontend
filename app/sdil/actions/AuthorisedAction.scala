@@ -33,7 +33,7 @@ import scala.language.implicitConversions
 
 class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: MessagesApi)
                       (implicit config: AppConfig, ec: ExecutionContext)
-  extends ActionRefiner[Request, EnrolmentRequest] with ActionBuilder[EnrolmentRequest] with AuthorisedFunctions with I18nSupport {
+  extends ActionRefiner[Request, EnrolmentRequest] with ActionBuilder[EnrolmentRequest] with AuthorisedFunctions with I18nSupport with ActionHelpers {
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, EnrolmentRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
@@ -41,19 +41,14 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
     authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments and credentialRole) { case ~(enrolments, role) =>
       val error: Option[Result] = duplicateEnrolment(enrolments)(request) orElse invalidRole(role)(request)
 
-      Future.successful(error.toLeft(EnrolmentRequest(enrolments, request)))
+      Future.successful(error.toLeft(EnrolmentRequest(getUtr(enrolments), request)))
     } recover {
       case _: NoActiveSession => Left(Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName))))
     }
   }
 
   private def duplicateEnrolment(enrolments: Enrolments)(implicit request: Request[_]): Option[Result] = {
-    for {
-      enrolment <- enrolments.getEnrolment("HMRC-ORG-OBTDS")
-      sdil <- enrolment.identifiers.find(id => id.key == "EtmpRegistrationNumber" && id.value.slice(2, 4) == "SD")
-    } yield {
-      Forbidden(errors.already_registered())
-    }
+    getSdilEnrolment(enrolments) map { _ => Forbidden(errors.already_registered()) }
   }
 
   private def invalidRole(credentialRole: Option[CredentialRole])(implicit request: Request[_]): Option[Result] = {
@@ -63,4 +58,4 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
   }
 }
 
-case class EnrolmentRequest[A](enrolments: Enrolments, request: Request[A]) extends WrappedRequest(request)
+case class EnrolmentRequest[A](utr: Option[String], request: Request[A]) extends WrappedRequest(request)
