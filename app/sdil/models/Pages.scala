@@ -182,7 +182,7 @@ case object CopackedVolumePage extends MidJourneyPage {
 case object ImportPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData): Page = formData.imports match {
     case Some(true) => ImportVolumePage
-    case Some(false) => StartDatePage
+    case Some(false) => RegistrationTypePage
     case None => ImportPage
   }
 
@@ -197,13 +197,26 @@ case object ImportPage extends MidJourneyPage {
 }
 
 case object ImportVolumePage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = StartDatePage
+  override def nextPage(formData: RegistrationFormData): Page = RegistrationTypePage
 
   override def previousPage(formData: RegistrationFormData): Page = ImportPage
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.importVolume.isDefined
 
   override def show: Call = routes.LitreageController.show("importVolume")
+}
+
+case object RegistrationTypePage extends MidJourneyPage {
+  override def previousPage(formData: RegistrationFormData): Page = formData.imports match {
+    case Some(true) => ImportVolumePage
+    case _ => ImportPage
+  }
+
+  override def nextPage(formData: RegistrationFormData): Page = StartDatePage
+
+  override def isComplete(formData: RegistrationFormData): Boolean = true
+
+  override def show: Call = routes.RegistrationTypeController.continue()
 }
 
 case object StartDatePage extends MidJourneyPage {
