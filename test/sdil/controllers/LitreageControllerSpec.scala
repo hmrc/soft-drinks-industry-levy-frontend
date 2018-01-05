@@ -224,12 +224,12 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       contentAsString(res) must include(Messages("sdil.importVolume.heading"))
     }
 
-    "redirect to the start date page if the form data is valid" in {
+    "redirect to the registration type controller if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "7", "higherRateLitres" -> "6")
       val res = testController.validate("importVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.StartDateController.displayStartDate().url)
+      redirectLocation(res) mustBe Some(routes.RegistrationTypeController.continue().url)
     }
 
     "store the form data in keystore if it is valid" in {

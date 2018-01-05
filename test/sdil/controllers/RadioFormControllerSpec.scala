@@ -93,13 +93,13 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(result).get mustBe routes.LitreageController.show("importVolume").url
     }
 
-    "return Status: SEE_OTHER and redirect to the start date page with false value for import page" in {
+    "return Status: SEE_OTHER and redirect to the registration type controller with false value for import page" in {
       val result = importSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "false"
       ))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.StartDateController.displayStartDate().url)
+      redirectLocation(result) mustBe Some(routes.RegistrationTypeController.continue().url)
     }
 
     "return Status: BAD_REQUEST for invalid form input for copacked small form submission" in {

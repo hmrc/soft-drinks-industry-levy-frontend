@@ -20,12 +20,11 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import sdil.actions.{AuthorisedAction, EnrolmentRequest}
+import sdil.actions.AuthorisedAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
 import sdil.models.{Address, Identification, RegistrationFormData}
-import uk.gov.hmrc.auth.core.EnrolmentIdentifier
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
