@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.FormAction
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models._
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.litreagePage
 
 class LitreageController(val messagesApi: MessagesApi,
-                         cache: SessionCache,
+                         cache: FormDataCache,
                          formAction: FormAction)
                         (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
@@ -50,7 +50,7 @@ class LitreageController(val messagesApi: MessagesApi,
       errors => BadRequest(litreagePage(errors, pageName, page.nextPage(request.formData).show)),
       litreage => {
         val updated = update(litreage, request.formData, page)
-        cache.cache("formData", updated) map { _ =>
+        cache.cache(request.internalId, updated) map { _ =>
           Redirect(page.nextPage(updated).show)
         }
       }

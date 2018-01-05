@@ -22,7 +22,7 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.FormAction
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models._
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -31,7 +31,7 @@ import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.register.secondaryWarehouse
 
 class WarehouseController(val messagesApi: MessagesApi,
-                          cache: SessionCache,
+                          cache: FormDataCache,
                           formAction: FormAction)
                          (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
@@ -54,13 +54,13 @@ class WarehouseController(val messagesApi: MessagesApi,
             case Some(addrs) => Some(addrs :+ addr)
             case _ => Some(Seq(addr))
           }
-          cache.cache("formData", request.formData.copy(secondaryWarehouses = updatedSites)) map { _ =>
+          cache.cache(request.internalId, request.formData.copy(secondaryWarehouses = updatedSites)) map { _ =>
             Redirect(routes.WarehouseController.show())
           }
         case _ =>
           request.formData.secondaryWarehouses match {
             case Some(_) => Redirect(WarehouseSitesPage.nextPage(request.formData).show)
-            case _ => cache.cache("formData", request.formData.copy(secondaryWarehouses = Some(Nil))) map { _ =>
+            case _ => cache.cache(request.internalId, request.formData.copy(secondaryWarehouses = Some(Nil))) map { _ =>
               Redirect(WarehouseSitesPage.nextPage(request.formData).show)
             }
           }
@@ -72,7 +72,7 @@ class WarehouseController(val messagesApi: MessagesApi,
     val updatedSites = request.formData.secondaryWarehouses map {
       addr => addr.take(idx) ++ addr.drop(idx + 1)
     }
-    cache.cache("formData", request.formData.copy(secondaryWarehouses = updatedSites)) map { _ =>
+    cache.cache(request.internalId, request.formData.copy(secondaryWarehouses = updatedSites)) map { _ =>
       Redirect(routes.WarehouseController.show())
     }
   }

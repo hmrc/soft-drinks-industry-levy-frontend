@@ -21,7 +21,7 @@ import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models.{OrgTypePage, RegistrationFormData}
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -32,7 +32,7 @@ import views.html.softdrinksindustrylevy.register
 import scala.concurrent.Future
 
 
-class OrgTypeController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
+class OrgTypeController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import OrgTypeController.form
@@ -48,7 +48,7 @@ class OrgTypeController(val messagesApi: MessagesApi, cache: SessionCache, formA
     form.bindFromRequest().fold(
       errors => Future.successful(BadRequest(register.organisation_type(errors))),
       orgType =>
-        cache.cache("formData", request.formData.copy(orgType = Some(orgType))) map { _ =>
+        cache.cache(request.internalId, request.formData.copy(orgType = Some(orgType))) map { _ =>
           if (orgType == "partnership") Redirect(routes.OrgTypeController.displayPartnerships())
           else
             Redirect(routes.PackageController.displayPackage())

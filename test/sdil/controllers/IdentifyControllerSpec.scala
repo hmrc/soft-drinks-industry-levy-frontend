@@ -34,7 +34,7 @@ class IdentifyControllerSpec extends ControllerSpec {
     "look up the business partner record in ROSM if the user has an existing UTR enrolment" in {
       val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1122334455")), "Active")))
 
-      stubAuthResult(Future.successful(new ~(irctEnrolment, Some(User))))
+      stubAuthResult(new ~(irctEnrolment, Some(User)))
 
       val res = testController.getUtr()(FakeRequest())
       status(res) mustBe SEE_OTHER
@@ -45,7 +45,7 @@ class IdentifyControllerSpec extends ControllerSpec {
     "redirect to the verify page if the user has a IR-CT enrolment" in {
       val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1234567891")), "Active")))
 
-      stubAuthResult(Future.successful(new ~(irctEnrolment, Some(User))))
+      stubAuthResult(new ~(irctEnrolment, Some(User)))
 
       val res = testController.getUtr()(FakeRequest())
       status(res) mustBe SEE_OTHER
@@ -55,7 +55,7 @@ class IdentifyControllerSpec extends ControllerSpec {
     "store the UTR and BPR in keystore if the user has an IR-CT enrolment" in {
       val ctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1234567892")), "Active")))
 
-      stubAuthResult(Future.successful(new ~(ctEnrolment, Some(User))))
+      stubAuthResult(new ~(ctEnrolment, Some(User)))
 
       val res = testController.getUtr()(FakeRequest())
       status(res) mustBe SEE_OTHER
@@ -66,7 +66,7 @@ class IdentifyControllerSpec extends ControllerSpec {
     "redirect to the verify page if the user has an IR-SA enrolment" in {
       val saEnrolment = Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567893")), "Active")))
 
-      stubAuthResult(Future.successful(new ~(saEnrolment, Some(User))))
+      stubAuthResult(new ~(saEnrolment, Some(User)))
 
       val res = testController.getUtr()(FakeRequest())
       status(res) mustBe SEE_OTHER
@@ -76,7 +76,7 @@ class IdentifyControllerSpec extends ControllerSpec {
     "store the UTR and BPR in keystore if the user has an IR-SA enrolment" in {
       val saEnrolment = Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567894")), "Active")))
 
-      stubAuthResult(Future.successful(new ~(saEnrolment, Some(User))))
+      stubAuthResult(new ~(saEnrolment, Some(User)))
 
       val res = testController.getUtr()(FakeRequest())
       status(res) mustBe SEE_OTHER
@@ -85,7 +85,7 @@ class IdentifyControllerSpec extends ControllerSpec {
     }
 
     "redirect to the identify page if the user does not have a UTR enrolment" in {
-      stubAuthResult(Future.successful(new ~(Enrolments(Set.empty), Some(User))))
+      stubAuthResult(new ~(Enrolments(Set.empty), Some(User)))
 
       val res = testController.getUtr()(FakeRequest())
       status(res) mustBe SEE_OTHER
@@ -96,7 +96,7 @@ class IdentifyControllerSpec extends ControllerSpec {
     "redirect to the identify page if the user has a UTR enrolment, but no record in ROSM" in {
       val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "3344556677")), "Active")))
 
-      stubAuthResult(Future.successful(new ~(irctEnrolment, Some(User))))
+      stubAuthResult(new ~(irctEnrolment, Some(User)))
       when(mockSdilConnector.getRosmRegistration(matching("3344556677"))(any())).thenReturn(Future.successful(None))
 
       val res = testController.getUtr()(FakeRequest())
@@ -176,15 +176,17 @@ class IdentifyControllerSpec extends ControllerSpec {
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1)).cache(
-        matching("formData"),
+        matching("internal id"),
         matching(RegistrationFormData(defaultRosmData, "1234567890"))
-      )(any(), any(), any())
+      )(any(), any())
     }
   }
 
   lazy val testController = wire[IdentifyController]
 
-  def stubAuthResult(res: Future[~[Enrolments, Option[CredentialRole]]]) = {
-    when(mockAuthConnector.authorise[~[Enrolments, Option[CredentialRole]]](any(), any())(any(), any())).thenReturn(res)
+  def stubAuthResult(res: Enrolments ~ Option[CredentialRole]) = {
+    when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
+      Future.successful[Retrieval](new ~(res, Some("internal id")))
+    }
   }
 }

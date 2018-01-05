@@ -19,7 +19,7 @@ package sdil.controllers
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.ContactDetailsPage
 import sdil.models.backend.Subscription
@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
 class DeclarationController(val messagesApi: MessagesApi,
-                            cache: SessionCache,
+                            cache: FormDataCache,
                             formAction: FormAction,
                             softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
@@ -42,7 +42,12 @@ class DeclarationController(val messagesApi: MessagesApi,
 
   def submitDeclaration(): Action[AnyContent] = formAction.async { implicit request =>
     Subscription.fromFormData(request.formData) match {
-      case Some(s) => softDrinksIndustryLevyConnector.submit(s, request.formData.rosmData.safeId) map { _ => Redirect(routes.CompleteController.displayComplete()) }
+      case Some(s) => for {
+        _ <- softDrinksIndustryLevyConnector.submit(s, request.formData.rosmData.safeId)
+        _ <- cache.clear(request.internalId)
+      } yield {
+        Redirect(routes.CompleteController.displayComplete())
+      }
       case None => Redirect(ContactDetailsPage.expectedPage(request.formData).show)
     }
   }

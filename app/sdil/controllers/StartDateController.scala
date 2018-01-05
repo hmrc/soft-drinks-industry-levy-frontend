@@ -23,7 +23,7 @@ import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models.StartDatePage
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -32,7 +32,7 @@ import views.html.softdrinksindustrylevy.register.start_date
 
 import scala.util.Try
 
-class StartDateController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
+class StartDateController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import StartDateController._
@@ -41,7 +41,7 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache, for
     StartDatePage.expectedPage(request.formData) match {
       case StartDatePage if LocalDate.now isBefore config.taxStartDate =>
         val updated = request.formData.copy(startDate = Some(config.taxStartDate))
-        cache.cache("formData", updated) map { _ =>
+        cache.cache(request.internalId, updated) map { _ =>
           Redirect(StartDatePage.nextPage(updated).show)
         }
       case StartDatePage => Ok(start_date(request.formData.startDate.fold(form)(form.fill), StartDatePage.previousPage(request.formData).show))
@@ -54,7 +54,7 @@ class StartDateController(val messagesApi: MessagesApi, cache: SessionCache, for
       errors => BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors, StartDatePage.previousPage(request.formData).show)),
       startDate => {
         val updated = request.formData.copy(startDate = Some(startDate))
-        cache.cache("formData", updated) map { _ =>
+        cache.cache(request.internalId, updated) map { _ =>
           Redirect(StartDatePage.nextPage(updated).show)
         }
       }

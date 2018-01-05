@@ -25,9 +25,7 @@ import views.html.softdrinksindustrylevy._
 class CompleteController(val messagesApi: MessagesApi)
                         (implicit config: AppConfig) extends FrontendController with I18nSupport {
 
-
   def displayComplete(): Action[AnyContent] = Action.async { implicit request =>
     Ok(register.complete())
   }
-
 }

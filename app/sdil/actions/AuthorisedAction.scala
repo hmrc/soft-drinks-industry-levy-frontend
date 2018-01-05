@@ -33,15 +33,18 @@ import scala.language.implicitConversions
 
 class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: MessagesApi)
                       (implicit config: AppConfig, ec: ExecutionContext)
-  extends ActionRefiner[Request, EnrolmentRequest] with ActionBuilder[EnrolmentRequest] with AuthorisedFunctions with I18nSupport with ActionHelpers {
+  extends ActionRefiner[Request, AuthorisedRequest] with ActionBuilder[AuthorisedRequest] with AuthorisedFunctions with I18nSupport with ActionHelpers {
 
-  override protected def refine[A](request: Request[A]): Future[Either[Result, EnrolmentRequest[A]]] = {
+  override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments and credentialRole) { case ~(enrolments, role) =>
+    val retrieval = allEnrolments and credentialRole and internalId
+
+    authorised(AuthProviders(GovernmentGateway)).retrieve(retrieval) { case enrolments ~ role ~ id =>
       val error: Option[Result] = duplicateEnrolment(enrolments)(request) orElse invalidRole(role)(request)
 
-      Future.successful(error.toLeft(EnrolmentRequest(getUtr(enrolments), request)))
+      val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
+      Future.successful(error.toLeft(AuthorisedRequest(getUtr(enrolments), internalId, request)))
     } recover {
       case _: NoActiveSession => Left(Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName))))
     }
@@ -58,4 +61,4 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
   }
 }
 
-case class EnrolmentRequest[A](utr: Option[String], request: Request[A]) extends WrappedRequest(request)
+case class AuthorisedRequest[A](utr: Option[String], internalId: String, request: Request[A]) extends WrappedRequest(request)

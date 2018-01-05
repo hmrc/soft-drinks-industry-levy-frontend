@@ -21,7 +21,7 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Result
 import sdil.actions.{FormAction, RegistrationFormRequest}
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models.{Litreage, MidJourneyPage, PackageCopackSmallPage, PackageCopackSmallVolPage}
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -31,7 +31,7 @@ import views.html.softdrinksindustrylevy.register.litreagePage
 import scala.concurrent.Future
 
 class PackageCopackSmallVolumeController(val messagesApi: MessagesApi,
-                                         cache: SessionCache,
+                                         cache: FormDataCache,
                                          formAction: FormAction)
                                         (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
@@ -65,7 +65,7 @@ class PackageCopackSmallVolumeController(val messagesApi: MessagesApi,
         )),
         litreage => {
           val updated = request.formData.copy(packageCopackSmallVol = Some(litreage))
-          cache.cache("formData", updated) map { _ =>
+          cache.cache(request.internalId, updated) map { _ =>
             Redirect(page.nextPage(updated).show)
           }
         }
