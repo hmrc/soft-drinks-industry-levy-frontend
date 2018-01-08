@@ -33,7 +33,9 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
 
   "AuthorisedAction" should {
     "redirect to the gg sign in page if the user is not logged in" in {
-      stubAuthResult(Future.failed(MissingBearerToken()))
+      when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())) thenReturn {
+        Future.failed(MissingBearerToken())
+      }
 
       val res = testAction(FakeRequest())
       status(res) mustBe SEE_OTHER
@@ -45,7 +47,7 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
       val enrolments = Enrolments(Set(new Enrolment("HMRC-ORG-OBTDS", Seq(sdilEnrolment), "Active")))
 
-      stubAuthResult(Future.successful(new ~(enrolments, Some(User))))
+      stubAuthResult(new ~(enrolments, Some(User)))
 
       val res = testAction(FakeRequest())
       status(res) mustBe FORBIDDEN
@@ -53,7 +55,7 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
     }
 
     "show the 'invalid role' error page if the user is an assistant" in {
-      stubAuthResult(Future.successful(new ~(Enrolments(Set.empty), Some(Assistant))))
+      stubAuthResult(new ~(Enrolments(Set.empty), Some(Assistant)))
       val res = testAction(FakeRequest())
 
       status(res) mustBe FORBIDDEN
@@ -61,7 +63,7 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
     }
 
     "invoke the block if the user is logged in and not registered in SDIL" in {
-      stubAuthResult(Future.successful(new ~(Enrolments(Set.empty), Some(User))))
+      stubAuthResult(new ~(Enrolments(Set.empty), Some(User)))
       val res = testAction(FakeRequest())
 
       status(res) mustBe OK
@@ -71,7 +73,7 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
       val someOtherEnrolment = EnrolmentIdentifier("SomeIdentifier", "SomeValue")
       val enrolments = Enrolments(Set(new Enrolment("HMRC-ORG-OBTDS", Seq(someOtherEnrolment), "Active")))
 
-      stubAuthResult(Future.successful(new ~(enrolments, Some(User))))
+      stubAuthResult(new ~(enrolments, Some(User)))
       val res = testAction(FakeRequest())
 
       status(res) mustBe OK
@@ -81,7 +83,7 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
       val someOtherEtmpEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "NotSDIL")
       val enrolments = Enrolments(Set(new Enrolment("HMRC-ORG-OBTDS", Seq(someOtherEtmpEnrolment), "Active")))
 
-      stubAuthResult(Future.successful(new ~(enrolments, Some(Admin))))
+      stubAuthResult(new ~(enrolments, Some(Admin)))
       val res = testAction(FakeRequest())
 
       status(res) mustBe OK
@@ -97,7 +99,9 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
     "?continue=http%3A%2F%2Flocalhost%3A8700%2Fsoft-drinks-industry-levy%2Fregister%2Fidentify" +
     "&origin=soft-drinks-industry-levy-frontend"
 
-  def stubAuthResult(res: Future[~[Enrolments, Option[CredentialRole]]]) = {
-    when(mockAuthConnector.authorise[~[Enrolments, Option[CredentialRole]]](any(), any())(any(), any())).thenReturn(res)
+  def stubAuthResult(res: => Enrolments ~ Option[CredentialRole]) = {
+    when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())) thenReturn {
+      Future.successful[Retrieval](new ~(res, Some("internal id")))
+    }
   }
 }

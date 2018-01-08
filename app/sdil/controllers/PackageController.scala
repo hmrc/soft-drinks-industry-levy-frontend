@@ -22,14 +22,14 @@ import play.api.data.{Form, FormError, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models.{PackagePage, Packaging}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
-class PackageController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
+class PackageController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import PackageController._
@@ -46,7 +46,7 @@ class PackageController(val messagesApi: MessagesApi, cache: SessionCache, formA
       formWithErrors => BadRequest(register.packagePage(formWithErrors)),
       packaging => {
         val updated = request.formData.copy(packaging = Some(packaging), packageOwn = None, packageCopack = None, productionSites = None)
-        cache.cache("formData", updated) map { _ =>
+        cache.cache(request.internalId, updated) map { _ =>
           Redirect(PackagePage.nextPage(updated).show)
         }
       }

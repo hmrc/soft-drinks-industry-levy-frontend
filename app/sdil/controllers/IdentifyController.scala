@@ -21,7 +21,7 @@ import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.AuthorisedAction
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
 import sdil.models.{Address, Identification, RegistrationFormData}
@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
 class IdentifyController(val messagesApi: MessagesApi,
-                         cache: SessionCache,
+                         cache: FormDataCache,
                          authorisedAction: AuthorisedAction,
                          softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
@@ -44,7 +44,7 @@ class IdentifyController(val messagesApi: MessagesApi,
   def getUtr = authorisedAction.async { implicit request =>
     request.utr match {
       case Some(utr) => softDrinksIndustryLevyConnector.getRosmRegistration(utr) flatMap {
-        case Some(reg) => cache.cache("formData", RegistrationFormData(reg, utr)) map { _ =>
+        case Some(reg) => cache.cache(request.internalId, RegistrationFormData(reg, utr)) map { _ =>
           Redirect(routes.VerifyController.verify())
         }
         case None => Redirect(routes.IdentifyController.show())
@@ -58,7 +58,7 @@ class IdentifyController(val messagesApi: MessagesApi,
       errors => BadRequest(register.identify(errors)),
       identification => softDrinksIndustryLevyConnector.getRosmRegistration(identification.utr) flatMap {
         case Some(reg) if postcodesMatch(reg.address, identification) =>
-          cache.cache("formData", RegistrationFormData(reg, identification.utr)) map { _ =>
+          cache.cache(request.internalId, RegistrationFormData(reg, identification.utr)) map { _ =>
             Redirect(routes.VerifyController.verify())
           }
         case _ => BadRequest(register.identify(form.withError("utr", "error.utr.no-record")))

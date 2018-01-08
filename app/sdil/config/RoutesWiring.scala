@@ -32,7 +32,7 @@ trait RoutesWiring extends CommonWiring {
   val applicationLifecycle: DefaultApplicationLifecycle
   val httpClient: HttpClient
   val authConnector: AuthConnector
-  val cache: SessionCache
+  val cache: FormDataCache
   val sdilConnector: SoftDrinksIndustryLevyConnector
 
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]

@@ -20,22 +20,19 @@ import java.time.LocalDate
 
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
-import org.mockito.stubbing.OngoingStubbing
 import sdil.models._
 import sdil.utils.FakeApplicationSpec
-import uk.gov.hmrc.auth.core.InvalidBearerToken
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait ControllerSpec extends FakeApplicationSpec {
 
-  def stubCacheEntry[T](key: String, value: Option[T]) = {
-    when(mockCache.fetchAndGetEntry[T](matching(key))(any(), any(), any())).thenReturn(Future.successful(value))
+  def stubCacheEntry(value: Option[RegistrationFormData]) = {
+    when(mockCache.get(matching("internal id"))(any(), any())).thenReturn(Future.successful(value))
   }
 
   def verifyDataCached(formData: RegistrationFormData) = {
-    verify(mockCache, times(1)).cache(matching("formData"), matching(formData))(any(), any(), any())
+    verify(mockCache, times(1)).cache(matching("internal id"), matching(formData))(any(), any())
   }
 
   def stubFormPage(rosmData: RosmRegistration = defaultRosmData,
@@ -56,7 +53,7 @@ trait ControllerSpec extends FakeApplicationSpec {
                    secondaryWarehouses: Option[Seq[Address]] = defaultFormData.secondaryWarehouses,
                    contactDetails: Option[ContactDetails] = defaultFormData.contactDetails) = {
 
-    stubCacheEntry[RegistrationFormData]("formData", Some(RegistrationFormData(
+    stubCacheEntry(Some(RegistrationFormData(
       rosmData,
       utr,
       verify,
@@ -77,18 +74,8 @@ trait ControllerSpec extends FakeApplicationSpec {
     )))
   }
 
-  def sdilAuthMock(returnValue: Future[Option[String]]): OngoingStubbing[Future[Option[String]]] =
-    when(mockAuthConnector.authorise(any(), any[Retrieval[Option[String]]]())(any(), any[ExecutionContext]))
-      .thenReturn(returnValue)
-
-  val userWithUtr: Future[Option[String]] = Future successful Some("UTR")
-  val userNoUtr: Future[Option[String]] = Future successful None
-
-  val notLoggedIn: Future[Option[String]] = Future failed new InvalidBearerToken
-
   def stubFilledInForm = {
     stubCacheEntry(
-      "formData",
       Some(defaultFormData)
     )
   }

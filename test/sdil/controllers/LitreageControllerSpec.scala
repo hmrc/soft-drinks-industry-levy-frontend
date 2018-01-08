@@ -77,9 +77,9 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(res) mustBe SEE_OTHER
       verify(mockCache, once).cache(
-        matching("formData"),
+        matching("internal id"),
         matching(defaultFormData.copy(packageOwn = Some(Litreage(2, 3))))
-      )(any(), any(), any())
+      )(any(), any())
     }
   }
 
@@ -148,9 +148,9 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(res) mustBe SEE_OTHER
       verify(mockCache, once).cache(
-        matching("formData"),
+        matching("internal id"),
         matching(defaultFormData.copy(packageCopack = Some(Litreage(4, 3))))
-      )(any(), any(), any())
+      )(any(), any())
     }
   }
 
@@ -193,9 +193,9 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(res) mustBe SEE_OTHER
       verify(mockCache, once).cache(
-        matching("formData"),
+        matching("internal id"),
         matching(defaultFormData.copy(copackedVolume = Some(Litreage(5, 6))))
-      )(any(), any(), any())
+      )(any(), any())
     }
   }
 
@@ -238,9 +238,9 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(res) mustBe SEE_OTHER
       verify(mockCache, once).cache(
-        matching("formData"),
+        matching("internal id"),
         matching(defaultFormData.copy(importVolume = Some(Litreage(6, 7))))
-      )(any(), any(), any())
+      )(any(), any())
     }
   }
 

@@ -137,9 +137,9 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1)).cache(
-        matching("formData"),
+        matching("internal id"),
         matching(defaultFormData.copy(productionSites = Some(Seq(Address("line 2", "line 3", "", "", "AA12 2AA")))))
-      )(any(), any(), any())
+      )(any(), any())
     }
   }
 
@@ -154,9 +154,9 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1)).cache(
-        matching("formData"),
+        matching("internal id"),
         matching(defaultFormData.copy(productionSites = Some(Seq(Address("1", "2", "", "", "AA11 1AA")))))
-      )(any(), any(), any())
+      )(any(), any())
     }
 
     "always redirect to the production site page" in {

@@ -18,11 +18,10 @@ package sdil.controllers
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.FormAction
-import sdil.config.AppConfig
-import uk.gov.hmrc.http.cache.client.SessionCache
+import sdil.config.{AppConfig, FormDataCache}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-class PendingController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
+class PendingController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)(implicit config: AppConfig)
     extends FrontendController with I18nSupport {
 
   def displayPending = TODO

@@ -107,10 +107,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return 400 Bad Request and the add secondary warehouse page if other warehouses have been added and the form data is invalid" in {
-      stubCacheEntry[RegistrationFormData](
-        "formData",
-        Some(defaultFormData.copy(secondaryWarehouses = Some(Seq(Address("1", "", "", "", "AA11 1AA")))))
-      )
+      stubFormPage(secondaryWarehouses = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
       val res = testController.validate()(FakeRequest())
       status(res) mustBe BAD_REQUEST
@@ -155,9 +152,9 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       verify(mockCache, times(1))
         .cache(
-          matching("formData"),
+          matching("internal id"),
           matching(defaultFormData.copy(secondaryWarehouses = Some(Seq(Address("line 2", "line 3", "line 4", "line 5", "AA11 1AA")))))
-        )(any(), any(), any())
+        )(any(), any())
     }
   }
 
@@ -174,9 +171,9 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1)).cache(
-        matching("formData"),
+        matching("internal id"),
         matching(defaultFormData.copy(secondaryWarehouses = Some(Seq(Address("2", "", "", "", "AA12 2AA")))))
-      )(any(), any(), any())
+      )(any(), any())
     }
 
     "always redirect to the secondary warehouse page" in {

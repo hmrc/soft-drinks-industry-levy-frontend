@@ -16,29 +16,29 @@
 
 package sdil.actions
 
-import play.api.mvc.{ActionBuilder, Request, Result, WrappedRequest}
-import sdil.models.RegistrationFormData
-import uk.gov.hmrc.http.cache.client.SessionCache
 import play.api.mvc.Results._
+import play.api.mvc.{ActionBuilder, Request, Result, WrappedRequest}
+import sdil.config.FormDataCache
 import sdil.controllers.routes
+import sdil.models.RegistrationFormData
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FormAction(cache: SessionCache, authorisedAction: AuthorisedAction)(implicit ec: ExecutionContext)
+class FormAction(cache: FormDataCache, authorisedAction: AuthorisedAction)(implicit ec: ExecutionContext)
   extends ActionBuilder[RegistrationFormRequest] {
 
   type Body[A] = RegistrationFormRequest[A] => Future[Result]
 
-  override def invokeBlock[A](request: Request[A], block: Body[A]): Future[Result] = authorisedAction.invokeBlock[A](request, { _ =>
+  override def invokeBlock[A](request: Request[A], block: Body[A]): Future[Result] = authorisedAction.invokeBlock[A](request, { req =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    cache.fetchAndGetEntry[RegistrationFormData]("formData") flatMap {
-      case Some(data) => block(RegistrationFormRequest(request, data))
+    cache.get(req.internalId) flatMap {
+      case Some(data) => block(RegistrationFormRequest(request, data, req.internalId))
       case None => Future.successful(Redirect(routes.IdentifyController.getUtr()))
     }
   })
 }
 
-case class RegistrationFormRequest[T](request: Request[T], formData: RegistrationFormData) extends WrappedRequest[T](request)
+case class RegistrationFormRequest[T](request: Request[T], formData: RegistrationFormData, internalId: String) extends WrappedRequest[T](request)

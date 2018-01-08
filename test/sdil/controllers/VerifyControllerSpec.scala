@@ -86,7 +86,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       val expectedBody = defaultFormData.copy(verify = Some(DifferentAddress(Address("line1", "line2", "line3", "line4", "AA11 1AA"))))
 
-      verify(mockCache, times(1)).cache(matching("formData"), matching(expectedBody))(any(), any(), any())
+      verify(mockCache, times(1)).cache(matching("internal id"), matching(expectedBody))(any(), any())
     }
   }
 

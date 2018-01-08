@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.single
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.FormAction
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models._
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -30,7 +30,7 @@ import views.html.softdrinksindustrylevy.register
 
 class RadioFormController(val messagesApi: MessagesApi,
                           errorHandler: FrontendErrorHandler,
-                          cache: SessionCache,
+                          cache: FormDataCache,
                           formAction: FormAction)
                          (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
@@ -55,7 +55,7 @@ class RadioFormController(val messagesApi: MessagesApi,
       errors => BadRequest(register.radio_button(errors, pageName, page.previousPage(request.formData).show)),
       choice => {
         val updated = update(choice, request.formData, page)
-        cache.cache("formData", updated) map { _ =>
+        cache.cache(request.internalId, updated) map { _ =>
           Redirect(page.nextPage(updated).show)
         }
       }

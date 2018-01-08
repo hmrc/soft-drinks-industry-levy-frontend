@@ -17,13 +17,17 @@
 package sdil.config
 
 import com.softwaremill.macwire.wire
-import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.crypto.{ApplicationCryptoDI, CompositeSymmetricCrypto}
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
 
 trait ConfigWiring extends CommonWiring {
   val httpClient: HttpClient
 
   implicit lazy val appConfig: AppConfig = wire[FrontendAppConfig]
-  lazy val cache: SessionCache = wire[FormDataCache]
+  private lazy val applicationCrypto: ApplicationCryptoDI = wire[ApplicationCryptoDI]
+  private implicit lazy val crypto: CompositeSymmetricCrypto = applicationCrypto.JsonCrypto
+  lazy val shortLivedCaching: ShortLivedHttpCaching = wire[SDILShortLivedCaching]
+  lazy val cache: FormDataCache = wire[FormDataCache]
   lazy val errorHandler: FrontendErrorHandler = wire[SDILErrorHandler]
 }

@@ -20,17 +20,15 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.FormAction
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
 import sdil.models.{DetailsCorrect, VerifyPage}
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 import views.html.softdrinksindustrylevy.register
 
-class VerifyController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction,
+class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction,
                        sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
@@ -61,7 +59,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: SessionCache, formAc
       errors => BadRequest(register.verify(errors, request.formData.utr, request.formData.rosmData.organisation.organisationName, request.formData.rosmData.address)),
       detailsCorrect => {
         val updated = request.formData.copy(verify = Some(detailsCorrect))
-        cache.cache("formData", updated) map { _ =>
+        cache.cache(request.internalId, updated) map { _ =>
           Redirect(VerifyPage.nextPage(updated).show)
         }
       }

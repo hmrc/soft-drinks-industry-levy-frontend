@@ -22,16 +22,15 @@ import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models.{ContactDetails, ContactDetailsPage}
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class ContactDetailsController(val messagesApi: MessagesApi, cache: SessionCache, formAction: FormAction)(implicit config: AppConfig)
+class ContactDetailsController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import ContactDetailsController._
@@ -46,7 +45,7 @@ class ContactDetailsController(val messagesApi: MessagesApi, cache: SessionCache
   def submitContactDetails: Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest().fold(
       formWithErrors => Future successful BadRequest(register.contact_details(formWithErrors)),
-      details => cache.cache("formData", request.formData.copy(contactDetails = Some(details))) map { _ =>
+      details => cache.cache(request.internalId, request.formData.copy(contactDetails = Some(details))) map { _ =>
         Redirect(routes.DeclarationController.displayDeclaration())
       }
     )

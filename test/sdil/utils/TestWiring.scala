@@ -27,10 +27,11 @@ import play.api.libs.concurrent.Execution.defaultContext
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
 import sdil.actions.{AuthorisedAction, FormAction}
+import sdil.config.FormDataCache
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core.{AuthConnector, CredentialRole, Enrolments, User}
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,10 +41,11 @@ trait TestWiring extends MockitoSugar {
   //local alias for macwire macro to avoid having to import it manually everywhere
   def wire[T]: T = macro MacwireMacros.wire_impl[T]
 
-  val mockCache: SessionCache = {
-    val m = mock[SessionCache]
-    when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
-    when(m.fetchAndGetEntry(any())(any(), any(), any())).thenReturn(Future.successful(None))
+  val mockCache: FormDataCache = {
+    val m = mock[FormDataCache]
+    when(m.cache(anyString(), any())(any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
+    when(m.get(anyString())(any(), any())).thenReturn(Future.successful(None))
+    when(m.clear(anyString())(any(), any())).thenReturn(Future.successful(()))
     m
   }
 
@@ -65,10 +67,12 @@ trait TestWiring extends MockitoSugar {
     m
   }
 
+  type Retrieval = Enrolments ~ Option[CredentialRole] ~ Option[String]
+
   lazy val mockAuthConnector: AuthConnector = {
     val m = mock[AuthConnector]
-    when(m.authorise[~[Enrolments, Option[CredentialRole]]](any(), any())(any(), any())).thenReturn {
-      Future.successful(new ~[Enrolments, Option[CredentialRole]](Enrolments(Set.empty), Some(User)))
+    when(m.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
+      Future.successful[Retrieval](new ~(new ~(Enrolments(Set.empty), Some(Admin)), Some("internal id")))
     }
     m
   }

@@ -19,14 +19,14 @@ package sdil.controllers
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import sdil.actions.FormAction
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, FormDataCache}
 import sdil.models._
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.registration_not_required
 
 class RegistrationTypeController(val messagesApi: MessagesApi,
-                                 cache: SessionCache,
+                                 cache: FormDataCache,
                                  formAction: FormAction)
                                 (implicit appConfig: AppConfig)
   extends FrontendController with I18nSupport {
