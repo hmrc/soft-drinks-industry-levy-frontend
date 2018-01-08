@@ -39,9 +39,9 @@
         <tr>
             <td colspan = "2">@Messages("sdil.declaration.address")</td>
             <td>
-                <div>@formData.rosmData.address.line1</div>
-                <div>@formData.rosmData.address.line2</div>
-                <div>@formData.rosmData.address.postcode</div>
+                @formData.primaryAddress.nonEmptyLines.map { l =>
+                  <div>@l</div>
+                }
                 <div>@Messages("sdil.declaration.uk")</div>
             </td>
         </tr>
