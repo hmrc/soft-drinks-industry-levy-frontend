@@ -38,7 +38,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "always return 303 Redirect and the pending page when submission is pending" in {
-      when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(OK))
+      when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(ACCEPTED))
       val res = testController.verify()(FakeRequest())
 
       status(res) mustBe SEE_OTHER

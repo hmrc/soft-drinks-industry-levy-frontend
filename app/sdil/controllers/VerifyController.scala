@@ -42,7 +42,8 @@ class VerifyController(val messagesApi: MessagesApi, cache: SessionCache, formAc
     sdilConnector.checkPendingQueue(data.utr) map {
       result =>
         result.status match {
-          case OK => Redirect(routes.PendingController.displayPending())
+//          case OK => Redirect(routes.PendingController.displayPending())
+          case ACCEPTED => Redirect(routes.PendingController.displayPending())
           case _ => VerifyPage.expectedPage(data) match {
             case VerifyPage => Ok(register.verify(
               data.verify.fold(form)(form.fill),
