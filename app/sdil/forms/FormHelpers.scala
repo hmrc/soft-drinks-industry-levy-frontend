@@ -26,15 +26,15 @@ import scala.util.Try
 trait FormHelpers {
   private lazy val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$"
   private lazy val specialRegex = """^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"""
-  lazy val postcode: Mapping[String] = text.verifying(Constraint { x: String =>
+  lazy val postcode: Mapping[String] = text.transform[String](_.toUpperCase, s => s).verifying(Constraint { x: String =>
     x match {
       case "" => Invalid("error.postcode.required")
-      case pc if !pc.toUpperCase.matches(postcodeRegex) => Invalid("error.postcode.invalid")
+      case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
       case _ => Valid
     }
   })
 
-  lazy val verifyPostcode: Mapping[String] = text.verifying(Constraint { x: String =>
+  lazy val verifyPostcode: Mapping[String] = text.transform[String](_.toUpperCase, s => s).verifying(Constraint { x: String =>
     x match {
       case "" => Invalid("error.postcode.empty")
       case s if !s.matches(specialRegex) => Invalid("error.postcode.special")
