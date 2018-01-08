@@ -38,7 +38,7 @@ trait FormHelpers {
     x match {
       case "" => Invalid("error.postcode.empty")
       case s if !s.matches(specialRegex) => Invalid("error.postcode.special")
-      case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
+      case pc if !pc.toUpperCase.matches(postcodeRegex) => Invalid("error.postcode.invalid")
       case _ => Valid
     }
   })

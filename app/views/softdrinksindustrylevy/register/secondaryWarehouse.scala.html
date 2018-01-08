@@ -34,7 +34,7 @@
         @warehouses.zipWithIndex.map { case (addr, i) =>
             <div>
                 <h2 class="heading-small">@Messages("sdil.warehouse.address", i + 1)</h2>
-                @Seq(addr.line1, addr.line2, addr.line3, addr.line4, addr.postcode).filter(_.nonEmpty).map { l =>
+                @Seq(addr.line1, addr.line2, addr.line3, addr.line4, addr.postcode.toUpperCase).filter(_.nonEmpty).map { l =>
                   <p>@l</p>
                 }
                 <p class="font-xsmall">
