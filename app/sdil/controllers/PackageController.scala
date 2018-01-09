@@ -24,8 +24,7 @@ import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
-import sdil.models.{PackagePage, Packaging}
-import uk.gov.hmrc.http.cache.client.SessionCache
+import sdil.models.{PackagePage, Packaging, RegistrationFormData}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
@@ -45,12 +44,23 @@ class PackageController(val messagesApi: MessagesApi, cache: FormDataCache, form
     form.bindFromRequest.fold(
       formWithErrors => BadRequest(register.packagePage(formWithErrors)),
       packaging => {
-        val updated = request.formData.copy(packaging = Some(packaging), packageOwn = None, packageCopack = None, productionSites = None)
+        val updated = updateData(request.formData, packaging)
         cache.cache(request.internalId, updated) map { _ =>
           Redirect(PackagePage.nextPage(updated).show)
         }
       }
     )
+  }
+
+  //clear unneeded data from session cache when the user's answers change
+  private def updateData(formData: RegistrationFormData, packaging: Packaging) = packaging match {
+    case Packaging(false, _, _) =>
+      formData.copy(packaging = Some(packaging), packageOwn = None, packageCopack = None, productionSites = None)
+    case Packaging(true, true, false) =>
+      formData.copy(packaging = Some(packaging), packageCopack = None)
+    case Packaging(true, false, true) =>
+      formData.copy(packaging = Some(packaging), packageOwn = None)
+    case _ => formData.copy(packaging = Some(packaging))
   }
 
 }
