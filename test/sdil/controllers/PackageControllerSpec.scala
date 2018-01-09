@@ -103,8 +103,52 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(res) mustBe Some(routes.OrgTypeController.displayOrgType().url)
     }
 
-    "update the keystore record with the form data, and purge the package own, package copack, and production sites data, " +
-      "when the form data is valid" in {
+    "store the form data, and purge the package own, package copack, and production sites data, " +
+      "if the user does not package liable drinks" in {
+
+      stubFormPage(utr = "6667778889")
+
+      val request = FakeRequest().withFormUrlEncodedBody(
+        "isLiable" -> "false",
+        "ownBrands" -> "false",
+        "customers" -> "false"
+      )
+
+      val res = controller.submitPackage()(request)
+      status(res) mustBe SEE_OTHER
+
+      verifyDataCached(defaultFormData.copy(
+        utr = "6667778889",
+        packaging = Some(Packaging(false, false, false)),
+        packageOwn = None,
+        packageCopack = None,
+        productionSites = None
+      ))
+    }
+
+    "store the form data and purge the package own data if the user does not package their own drinks" in {
+      stubFormPage(utr = "7778889990")
+
+      val request = FakeRequest().withFormUrlEncodedBody(
+        "isLiable" -> "true",
+        "ownBrands" -> "false",
+        "customers" -> "true"
+      )
+
+      val res = controller.submitPackage()(request)
+      status(res) mustBe SEE_OTHER
+
+      verifyDataCached(defaultFormData.copy(
+        utr = "7778889990",
+        packaging = Some(Packaging(true, false, true)),
+        packageOwn = None
+      ))
+    }
+
+    "store the form data and purge the package copack data if the user does not package for others" in {
+
+      stubFormPage(utr = "8889990001")
+
       val request = FakeRequest().withFormUrlEncodedBody(
         "isLiable" -> "true",
         "ownBrands" -> "true",
@@ -115,12 +159,12 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(res) mustBe SEE_OTHER
 
       verifyDataCached(defaultFormData.copy(
+        utr = "8889990001",
         packaging = Some(Packaging(true, true, false)),
-        packageOwn = None,
-        packageCopack = None,
-        productionSites = None
+        packageCopack = None
       ))
     }
+
   }
 
   lazy val controller = wire[PackageController]

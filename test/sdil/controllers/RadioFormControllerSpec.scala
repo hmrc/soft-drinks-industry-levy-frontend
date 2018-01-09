@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.Packaging
+import sdil.models.{Litreage, Packaging}
 
 class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -48,7 +48,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       contentAsString(result) must include(messagesApi("sdil.import.heading"))
     }
 
-    "return Status: SEE_OTHER and redirect to package copack small volume with true value for copack small page" in {
+    "return Status: SEE_OTHER and redirect to the package copack small volume page if the user copacks for small producers" in {
       val result = copackSmallSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "true"
       ))
@@ -57,7 +57,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(result).get mustBe routes.PackageCopackSmallVolumeController.show.url
     }
 
-    "return Status: SEE_OTHER and redirect to copacked with false value for copack small page" in {
+    "return Status: SEE_OTHER and redirect to the copacked page if the user does not copack for small producers" in {
       val result = copackSmallSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "false"
       ))
@@ -66,7 +66,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       routes.RadioFormController.display(copacked).url must include(redirectLocation(result).get)
     }
 
-    "return Status: SEE_OTHER and redirect to copacked volume with true value for copacked page" in {
+    "return Status: SEE_OTHER and redirect to the copacked volume page if the user uses copackers" in {
       val result = copackedSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "true"
       ))
@@ -75,7 +75,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(result).get mustBe routes.LitreageController.show("copackedVolume").url
     }
 
-    "return Status: SEE_OTHER and redirect to import with false value for copacked page" in {
+    "return Status: SEE_OTHER and redirect to the import page if the user does not use copackers" in {
       val result = copackedSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "false"
       ))
@@ -84,7 +84,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       routes.RadioFormController.display(imports).url must include(redirectLocation(result).get)
     }
 
-    "return Status: SEE_OTHER and redirect to import volume with true value for import page" in {
+    "return Status: SEE_OTHER and redirect to the import volume page if the user imports liable drinks" in {
       val result = importSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "true"
       ))
@@ -93,7 +93,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(result).get mustBe routes.LitreageController.show("importVolume").url
     }
 
-    "return Status: SEE_OTHER and redirect to the registration type controller with false value for import page" in {
+    "return Status: SEE_OTHER and redirect to the registration type page if the user does not import liable drinks" in {
       val result = importSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "false"
       ))
@@ -247,22 +247,49 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(res) mustBe Some(routes.LitreageController.show("copackedVolume").url)
     }
 
-    "store the form data in keystore, and purge the package copack small volume data, when the package copack small form data is valid" in {
-      stubFormPage(startDate = Some(LocalDate.of(2018, 4, 7)))
+    "store the form data and purge the package copack small volume data when the user does not copack for small producers" in {
+      stubFormPage(utr = "2223334445")
 
       val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false")
       val res = controller.submit(copackSmall)(request)
 
       status(res) mustBe SEE_OTHER
       verifyDataCached(defaultFormData.copy(
+        utr = "2223334445",
         packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
-        startDate = Some(LocalDate.of(2018, 4, 7))
+        packageCopackSmallVol = None
       ))
     }
 
-    "store the form data in keystore, and purge the copacked volume data, when the copacked form data is valid" in {
-      stubFormPage(startDate = Some(LocalDate.of(2018, 4, 7)))
+    "store the form data and not overwrite the package copack small volume data when the user does copack for small producers" in {
+      stubFormPage(packageCopackSmallVol = Some(Litreage(-999, -888)))
+
+      val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "true")
+      val res = controller.submit(copackSmall)(request)
+
+      status(res) mustBe SEE_OTHER
+      verifyDataCached(defaultFormData.copy(
+        packageCopackSmall = Some(true),
+        packageCopackSmallVol = Some(Litreage(-999, -888))
+      ))
+    }
+
+    "store the form data and purge the copacked volume data when the user does not use copackers" in {
+      stubFormPage(utr = "3334445556")
+
+      val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false")
+      val res = controller.submit(copacked)(request)
+
+      status(res) mustBe SEE_OTHER
+      verifyDataCached(defaultFormData.copy(
+        utr = "3334445556",
+        copacked = Some(false),
+        copackedVolume = None
+      ))
+    }
+
+    "store the form data and not overwrite the copacked volume data when the user uses copackers" in {
+      stubFormPage(copackedVolume = Some(Litreage(-777, -666)))
 
       val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "true")
       val res = controller.submit(copacked)(request)
@@ -270,13 +297,12 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(res) mustBe SEE_OTHER
       verifyDataCached(defaultFormData.copy(
         copacked = Some(true),
-        copackedVolume = None,
-        startDate = Some(LocalDate.of(2018, 4, 7))
+        copackedVolume = Some(Litreage(-777, -666))
       ))
     }
 
-    "store the form data in keystore, and purge the import volume data, when the import form data is valid" in {
-      stubFormPage(startDate = Some(LocalDate.of(2018, 4, 7)))
+    "store the form data and purge the import volume data when the user does not import liable drinks" in {
+      stubFormPage(utr = "4445556667")
 
       val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false")
       val res = controller.submit(imports)(request)
@@ -284,8 +310,20 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(res) mustBe SEE_OTHER
       verifyDataCached(defaultFormData.copy(
         imports = Some(false),
-        importVolume = None,
-        startDate = Some(LocalDate.of(2018, 4, 7))
+        importVolume = None
+      ))
+    }
+
+    "store the form data and not overwrite the import volume data when the user imports liable drinks" in {
+      stubFormPage(importVolume = Some(Litreage(-555, -444)))
+
+      val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "true")
+      val res = controller.submit(imports)(request)
+
+      status(res) mustBe SEE_OTHER
+      verifyDataCached(defaultFormData.copy(
+        imports = Some(true),
+        importVolume = Some(Litreage(-555, -444))
       ))
     }
   }

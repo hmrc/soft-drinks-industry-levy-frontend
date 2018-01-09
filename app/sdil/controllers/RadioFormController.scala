@@ -70,8 +70,12 @@ class RadioFormController(val messagesApi: MessagesApi,
   }
 
   private def update(choice: Boolean, formData: RegistrationFormData, page: Page): RegistrationFormData = page match {
+    case PackageCopackSmallPage if choice => formData.copy(packageCopackSmall = Some(choice))
+    //clear volumes if user changes their answer from "Yes" to "No"
     case PackageCopackSmallPage => formData.copy(packageCopackSmall = Some(choice), packageCopackSmallVol = None)
+    case CopackedPage if choice => formData.copy(copacked = Some(choice))
     case CopackedPage => formData.copy(copacked = Some(choice), copackedVolume = None)
+    case ImportPage if choice => formData.copy(imports = Some(choice))
     case ImportPage => formData.copy(imports = Some(choice), importVolume = None)
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
   }

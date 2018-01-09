@@ -44,14 +44,14 @@ object FrontendBuild extends Build {
       scoverageSettings,
       libraryDependencies ++= Seq(
         ws,
-        "uk.gov.hmrc" %% "bootstrap-play-25" % "1.0.0",
-        "uk.gov.hmrc" %% "govuk-template" % "5.15.0",
-        "uk.gov.hmrc" %% "play-ui" % "7.9.0",
+        "uk.gov.hmrc" %% "bootstrap-play-25" % "1.2.0",
+        "uk.gov.hmrc" %% "govuk-template" % "5.17.0",
+        "uk.gov.hmrc" %% "play-ui" % "7.13.0",
         "uk.gov.hmrc" %% "play-partials" % "6.1.0",
         "com.typesafe.play" %% "play-json" % "2.5.12",
         "org.scalactic" %% "scalactic" % "3.0.1",
-        "uk.gov.hmrc" %% "auth-client" % "2.3.0",
-        "uk.gov.hmrc" %% "http-caching-client" % "7.0.0",
+        "uk.gov.hmrc" %% "auth-client" % "2.5.0",
+        "uk.gov.hmrc" %% "http-caching-client" % "7.1.0",
         "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0",
         "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided",
         "com.softwaremill.macwire" %% "macrosakka" % "2.3.0" % "provided",
@@ -59,7 +59,7 @@ object FrontendBuild extends Build {
         "com.softwaremill.macwire" %% "proxy" % "2.3.0",
 
         // test dependencies
-        "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % "test",
+        "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % "test",
         "org.scalatest" %% "scalatest" % "3.0.1" % "test",
         "org.pegdown" % "pegdown" % "1.6.0" % "test",
         "org.jsoup" % "jsoup" % "1.8.1" % "test",
