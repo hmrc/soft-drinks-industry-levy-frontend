@@ -20,6 +20,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc._
 import sdil.config.AppConfig
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
@@ -38,10 +39,12 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
   override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    val retrieval = allEnrolments and credentialRole and internalId
+    val retrieval = allEnrolments and credentialRole and internalId and affinityGroup
 
-    authorised(AuthProviders(GovernmentGateway)).retrieve(retrieval) { case enrolments ~ role ~ id =>
-      val error: Option[Result] = duplicateEnrolment(enrolments)(request) orElse invalidRole(role)(request)
+    authorised(AuthProviders(GovernmentGateway)).retrieve(retrieval) { case enrolments ~ role ~ id ~ affinity =>
+      val error: Option[Result] = duplicateEnrolment(enrolments)(request)
+        .orElse(invalidRole(role)(request))
+        .orElse(invalidAffinityGroup(affinity)(request))
 
       val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
       Future.successful(error.toLeft(AuthorisedRequest(getUtr(enrolments), internalId, request)))
@@ -57,6 +60,13 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
   private def invalidRole(credentialRole: Option[CredentialRole])(implicit request: Request[_]): Option[Result] = {
     credentialRole collect {
       case Assistant => Forbidden(errors.invalid_role())
+    }
+  }
+
+  private def invalidAffinityGroup(affinityGroup: Option[AffinityGroup])(implicit request: Request[_]): Option[Result] = {
+    affinityGroup match {
+      case Some(Agent) | None => Some(Forbidden(errors.invalid_affinity()))
+      case _ => None
     }
   }
 }

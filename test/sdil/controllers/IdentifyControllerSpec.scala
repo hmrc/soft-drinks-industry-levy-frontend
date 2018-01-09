@@ -22,6 +22,7 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.RegistrationFormData
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 
@@ -186,7 +187,7 @@ class IdentifyControllerSpec extends ControllerSpec {
 
   def stubAuthResult(res: Enrolments ~ Option[CredentialRole]) = {
     when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
-      Future.successful[Retrieval](new ~(res, Some("internal id")))
+      Future.successful(new ~(new ~(res, Some("internal id")), Some(Organisation)))
     }
   }
 }
