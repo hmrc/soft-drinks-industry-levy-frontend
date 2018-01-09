@@ -44,7 +44,7 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
   }
 
   def checkPendingQueue(utr: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    http.GET[HttpResponse](s"$sdilUrl/check-subscription-status/$utr") recover {
+    http.GET[HttpResponse](s"$sdilUrl/check-enrolment-status/$utr") recover {
       case _: NotFoundException => HttpResponse(404)
     }
   }
