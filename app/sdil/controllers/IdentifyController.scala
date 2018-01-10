@@ -16,17 +16,22 @@
 
 package sdil.controllers
 
+import cats.data.OptionT
+import cats.implicits._
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import sdil.actions.AuthorisedAction
+import play.api.mvc.Result
+import sdil.actions.{AuthorisedAction, AuthorisedRequest}
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
 import sdil.models.{Address, Identification, RegistrationFormData}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
+
+import scala.concurrent.Future
 
 class IdentifyController(val messagesApi: MessagesApi,
                          cache: FormDataCache,
@@ -40,18 +45,34 @@ class IdentifyController(val messagesApi: MessagesApi,
     Ok(register.identify(form))
   }
 
-  def getUtr = authorisedAction.async { implicit request =>
-    cache.get(request.internalId) flatMap {
-      case Some(_) => Redirect(routes.VerifyController.verify())
-      case None => request.utr match {
-        case Some(utr) => softDrinksIndustryLevyConnector.getRosmRegistration(utr) flatMap {
-          case Some(reg) => cache.cache(request.internalId, RegistrationFormData(reg, utr)) map { _ =>
-            Redirect(routes.VerifyController.verify())
-          }
-          case None => Redirect(routes.IdentifyController.show())
-        }
-        case None => Redirect(routes.IdentifyController.show())
-      }
+  def start = authorisedAction.async { implicit request =>
+    restoreSession
+      .orElse(retrieveRosmData)
+      .getOrElse(Redirect(routes.IdentifyController.show))
+  }
+
+  private def enforceWhitelist(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] = {
+    OptionT.fromOption(request.utr match {
+      case Some(utr) if config.whitelistEnabled && config.isWhitelisted(utr) => None
+      case _ if !config.whitelistEnabled => None
+      case _ => Some(Forbidden(views.html.softdrinksindustrylevy.errors.not_whitelisted()))
+    })
+  }
+
+  private def restoreSession(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] = {
+    OptionT(cache.get(request.internalId) map {
+      case Some(_) => Some(Redirect(routes.VerifyController.verify()))
+      case None => None
+    })
+  }
+
+  private def retrieveRosmData(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] = {
+    for {
+      utr <- OptionT.fromOption[Future](request.utr)
+      rosmData <- OptionT(softDrinksIndustryLevyConnector.getRosmRegistration(utr))
+      _ <- OptionT.liftF(cache.cache(request.internalId, RegistrationFormData(rosmData, utr)))
+    } yield {
+      Redirect(routes.VerifyController.verify())
     }
   }
 
