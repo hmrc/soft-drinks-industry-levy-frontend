@@ -24,6 +24,7 @@ import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.utils.FakeApplicationSpec
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core._
 
@@ -52,6 +53,16 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
       val res = testAction(FakeRequest())
       status(res) mustBe FORBIDDEN
       contentAsString(res) must include (Messages("sdil.already-enrolled.heading"))
+    }
+
+    "show the 'invalid affinity group' error page if the user is an agent" in {
+      when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())) thenReturn {
+        Future.successful(new ~(new ~(new ~(Enrolments(Set.empty), Some(User)), Some("internal id")), Some(Agent)))
+      }
+
+      val res = testAction(FakeRequest())
+      status(res) mustBe FORBIDDEN
+      contentAsString(res) must include (Messages("sdil.invalid-affinity.title"))
     }
 
     "show the 'invalid role' error page if the user is an assistant" in {
@@ -101,7 +112,7 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
 
   def stubAuthResult(res: => Enrolments ~ Option[CredentialRole]) = {
     when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())) thenReturn {
-      Future.successful[Retrieval](new ~(res, Some("internal id")))
+      Future.successful(new ~(new ~(res, Some("internal id")), Some(Organisation)))
     }
   }
 }

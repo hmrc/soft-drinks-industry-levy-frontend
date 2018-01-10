@@ -29,6 +29,7 @@ import play.api.{Configuration, Environment}
 import sdil.actions.{AuthorisedAction, FormAction}
 import sdil.config.FormDataCache
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.cache.client.CacheMap
@@ -67,12 +68,12 @@ trait TestWiring extends MockitoSugar {
     m
   }
 
-  type Retrieval = Enrolments ~ Option[CredentialRole] ~ Option[String]
+  type Retrieval = Enrolments ~ Option[CredentialRole] ~ Option[String] ~ Option[AffinityGroup]
 
   lazy val mockAuthConnector: AuthConnector = {
     val m = mock[AuthConnector]
     when(m.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
-      Future.successful[Retrieval](new ~(new ~(Enrolments(Set.empty), Some(Admin)), Some("internal id")))
+      Future.successful(new ~(new ~(new ~(Enrolments(Set.empty), Some(Admin)), Some("internal id")), Some(Organisation)))
     }
     m
   }
