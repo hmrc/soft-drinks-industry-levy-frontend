@@ -32,6 +32,19 @@ class IdentifyControllerSpec extends ControllerSpec {
 
   "GET /utr" should {
 
+    "redirect to the verify page if the user has a previous session" in {
+      stubFilledInForm
+
+      stubAuthResult(new ~(Enrolments(Set.empty), Some(User)))
+
+      val res = testController.getUtr()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      redirectLocation(res).value mustBe routes.VerifyController.verify().url
+
+      stubCacheEntry(None)
+    }
+
     "look up the business partner record in ROSM if the user has an existing UTR enrolment" in {
       val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1122334455")), "Active")))
 
