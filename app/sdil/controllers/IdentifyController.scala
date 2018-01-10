@@ -25,7 +25,6 @@ import sdil.config.{AppConfig, FormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
 import sdil.models.{Address, Identification, RegistrationFormData}
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
@@ -42,14 +41,17 @@ class IdentifyController(val messagesApi: MessagesApi,
   }
 
   def getUtr = authorisedAction.async { implicit request =>
-    request.utr match {
-      case Some(utr) => softDrinksIndustryLevyConnector.getRosmRegistration(utr) flatMap {
-        case Some(reg) => cache.cache(request.internalId, RegistrationFormData(reg, utr)) map { _ =>
-          Redirect(routes.VerifyController.verify())
+    cache.get(request.internalId) flatMap {
+      case Some(_) => Redirect(routes.VerifyController.verify())
+      case None => request.utr match {
+        case Some(utr) => softDrinksIndustryLevyConnector.getRosmRegistration(utr) flatMap {
+          case Some(reg) => cache.cache(request.internalId, RegistrationFormData(reg, utr)) map { _ =>
+            Redirect(routes.VerifyController.verify())
+          }
+          case None => Redirect(routes.IdentifyController.show())
         }
         case None => Redirect(routes.IdentifyController.show())
       }
-      case None => Redirect(routes.IdentifyController.show())
     }
   }
 
