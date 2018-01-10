@@ -18,7 +18,7 @@ package sdil.controllers
 
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
@@ -87,5 +87,6 @@ object LitreageController extends FormHelpers {
     mapping(
       "lowerRateLitres" -> litreage,
       "higherRateLitres" -> litreage
-    )(Litreage.apply)(Litreage.unapply))
+    )
+    (Litreage.apply)(Litreage.unapply).verifying(Messages("error.litreage.zero"), _ != Litreage(0, 0)))
 }

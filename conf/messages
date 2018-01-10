@@ -84,6 +84,7 @@ error.litreage.required=Number of litres must be 0 or more
 error.litreage.numeric=Number of litres must be a whole number
 error.litreage.max=Number of litres must be less than 14 digits
 error.litreage.min=Number of litres must be 0 or more
+error.litreage.zero=Both inputs cannot sum to 0
 
 #Production sites
 sdil.productionSite.heading=Will you package liable drinks at a production site in the UK other than:
