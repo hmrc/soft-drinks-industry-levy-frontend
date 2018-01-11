@@ -66,8 +66,8 @@ sdil.who-for.option2=Your customers
 error.packaging.none-selected=Choose at least one option
 
 #Package copack page
-error.copack-small.lower-greater-than-total-lower=Number of litres for small producers cannot be more than the total number of litres
-error.copack-small.higher-greater-than-total-higher=Number of litres for small producers cannot be more than the total number of litres
+error.copack-small.lower-greater-than-total-lower=Litres for small producers must be less than total litres for customers
+error.copack-small.higher-greater-than-total-higher=Litres for small producers must be less than total litres for customers
 
 #Litreage pages
 sdil.packageOwn.heading=How many litres of liable drink per year will you package for your own brand or brands you have the rights to manufacture?
