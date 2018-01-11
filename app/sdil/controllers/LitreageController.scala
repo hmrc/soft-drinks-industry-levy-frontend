@@ -88,5 +88,5 @@ object LitreageController extends FormHelpers {
       "lowerRateLitres" -> litreage,
       "higherRateLitres" -> litreage
     )
-    (Litreage.apply)(Litreage.unapply).verifying(Messages("error.litreage.zero"), _ != Litreage(0, 0)))
+    (Litreage.apply)(Litreage.unapply).verifying("error.litreage.zero", _ != Litreage(0, 0)))
 }
