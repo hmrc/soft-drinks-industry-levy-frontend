@@ -39,7 +39,7 @@ class RegisteredAction(val authConnector: AuthConnector, sdilConnector: SoftDrin
       Future.successful {
         getSdilEnrolment(enrolments) match {
           case Some(e) => Right(RegisteredRequest(e, request))
-          case None => Left(Redirect(sdil.controllers.routes.IdentifyController.getUtr()))
+          case None => Left(Redirect(sdil.controllers.routes.IdentifyController.start()))
         }
       }
     }

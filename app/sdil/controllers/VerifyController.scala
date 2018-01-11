@@ -26,7 +26,7 @@ import sdil.forms.FormHelpers
 import sdil.models.{DetailsCorrect, VerifyPage}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
-import views.html.softdrinksindustrylevy.register
+import views.html.softdrinksindustrylevy.{errors, register}
 
 class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction,
                        sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
@@ -38,19 +38,18 @@ class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formA
     val data = request.formData
 
     sdilConnector.checkPendingQueue(data.utr) map {
-      result =>
-        result.status match {
-          case OK | ACCEPTED => Redirect(routes.PendingController.displayPending())
-          case _ => VerifyPage.expectedPage(data) match {
-            case VerifyPage => Ok(register.verify(
-              data.verify.fold(form)(form.fill),
-              data.utr,
-              data.rosmData.organisation.organisationName,
-              data.rosmData.address
-            ))
-            case otherPage => Redirect(otherPage.show)
-          }
+      _.status match {
+        case OK | ACCEPTED => Redirect(routes.PendingController.displayPending())
+        case _ => VerifyPage.expectedPage(data) match {
+          case VerifyPage => Ok(register.verify(
+            data.verify.fold(form)(form.fill),
+            data.utr,
+            data.rosmData.organisation.organisationName,
+            data.rosmData.address
+          ))
+          case otherPage => Redirect(otherPage.show)
         }
+      }
     }
   }
 

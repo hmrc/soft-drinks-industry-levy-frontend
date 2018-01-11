@@ -3,7 +3,7 @@ GET         /assets/*file                                    controllers.Assets.
 
 GET         /home                                            sdil.controllers.ServicePageController.show
 
-GET         /register/utr                                    sdil.controllers.IdentifyController.getUtr
+GET         /register/start                                  sdil.controllers.IdentifyController.start
 GET         /register/identify                               sdil.controllers.IdentifyController.show()
 POST        /register/identify                               sdil.controllers.IdentifyController.validate()
 

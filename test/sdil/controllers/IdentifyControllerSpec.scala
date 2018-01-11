@@ -37,7 +37,7 @@ class IdentifyControllerSpec extends ControllerSpec {
 
       stubAuthResult(new ~(Enrolments(Set.empty), Some(User)))
 
-      val res = testController.getUtr()(FakeRequest())
+      val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
 
       redirectLocation(res).value mustBe routes.VerifyController.verify().url
@@ -50,7 +50,7 @@ class IdentifyControllerSpec extends ControllerSpec {
 
       stubAuthResult(new ~(irctEnrolment, Some(User)))
 
-      val res = testController.getUtr()(FakeRequest())
+      val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
 
       verify(mockSdilConnector, times(1)).getRosmRegistration(matching("1122334455"))(any())
@@ -61,7 +61,7 @@ class IdentifyControllerSpec extends ControllerSpec {
 
       stubAuthResult(new ~(irctEnrolment, Some(User)))
 
-      val res = testController.getUtr()(FakeRequest())
+      val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.VerifyController.verify().url
     }
@@ -71,7 +71,7 @@ class IdentifyControllerSpec extends ControllerSpec {
 
       stubAuthResult(new ~(ctEnrolment, Some(User)))
 
-      val res = testController.getUtr()(FakeRequest())
+      val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
 
       verifyDataCached(RegistrationFormData(defaultRosmData, "1234567892"))
@@ -82,7 +82,7 @@ class IdentifyControllerSpec extends ControllerSpec {
 
       stubAuthResult(new ~(saEnrolment, Some(User)))
 
-      val res = testController.getUtr()(FakeRequest())
+      val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.VerifyController.verify().url
     }
@@ -92,7 +92,7 @@ class IdentifyControllerSpec extends ControllerSpec {
 
       stubAuthResult(new ~(saEnrolment, Some(User)))
 
-      val res = testController.getUtr()(FakeRequest())
+      val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
 
       verifyDataCached(RegistrationFormData(defaultRosmData, "1234567894"))
@@ -101,7 +101,7 @@ class IdentifyControllerSpec extends ControllerSpec {
     "redirect to the identify page if the user does not have a UTR enrolment" in {
       stubAuthResult(new ~(Enrolments(Set.empty), Some(User)))
 
-      val res = testController.getUtr()(FakeRequest())
+      val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
 
       redirectLocation(res).value mustBe routes.IdentifyController.show().url
@@ -113,7 +113,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       stubAuthResult(new ~(irctEnrolment, Some(User)))
       when(mockSdilConnector.getRosmRegistration(matching("3344556677"))(any())).thenReturn(Future.successful(None))
 
-      val res = testController.getUtr()(FakeRequest())
+      val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
 
       redirectLocation(res).value mustBe routes.IdentifyController.show().url

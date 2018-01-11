@@ -36,7 +36,7 @@ class FormAction(cache: FormDataCache, authorisedAction: AuthorisedAction)(impli
 
     cache.get(req.internalId) flatMap {
       case Some(data) => block(RegistrationFormRequest(request, data, req.internalId))
-      case None => Future.successful(Redirect(routes.IdentifyController.getUtr()))
+      case None => Future.successful(Redirect(routes.IdentifyController.start()))
     }
   })
 }

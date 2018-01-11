@@ -216,6 +216,9 @@ sdil.invalid-role.title=Government Gateway assistants cannot register for Soft D
 #Invalid affinity group
 sdil.invalid-affinity.title=Agents cannot register for Soft Drinks Industry Levy
 
+#Not whitelisted
+sdil.not-whitelisted.title=You can’t register for Soft Drinks Industry Levy
+
 #Common errors
 error.line1.required=Address line 1 must not be empty
 error.line2.required=Address line 2 must not be empty

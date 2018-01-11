@@ -40,4 +40,18 @@ class TestConfig extends AppConfig {
   def resetTaxStartDate(): Unit = {
     _taxStartDate = LocalDate.of(2018, 4, 6)
   }
+
+  private var _whitelist: Seq[String] = Nil
+
+  def enableWhitelist(utrs: String*): Unit = {
+    _whitelist = utrs
+  }
+
+  def disableWhitelist(): Unit = {
+    _whitelist = Nil
+  }
+
+  override def isWhitelisted(utr: String): Boolean = _whitelist.contains(utr)
+
+  override def whitelistEnabled: Boolean = _whitelist.nonEmpty
 }
