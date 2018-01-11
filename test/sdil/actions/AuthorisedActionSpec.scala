@@ -46,7 +46,7 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
 
     "show the 'already registered' error page if the user is already registered in SDIL" in {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
-      val enrolments = Enrolments(Set(new Enrolment("HMRC-ORG-OBTDS", Seq(sdilEnrolment), "Active")))
+      val enrolments = Enrolments(Set(new Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active")))
 
       stubAuthResult(new ~(enrolments, Some(User)))
 
@@ -80,9 +80,9 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
       status(res) mustBe OK
     }
 
-    "invoke the block if the user is enrolled in HMRC-ORG-OBTDS but does not have an SDIL identifier" in {
+    "invoke the block if the user is enrolled in HMRC-OBTDS-ORG but does not have an SDIL identifier" in {
       val someOtherEnrolment = EnrolmentIdentifier("SomeIdentifier", "SomeValue")
-      val enrolments = Enrolments(Set(new Enrolment("HMRC-ORG-OBTDS", Seq(someOtherEnrolment), "Active")))
+      val enrolments = Enrolments(Set(new Enrolment("HMRC-OBTDS-ORG", Seq(someOtherEnrolment), "Active")))
 
       stubAuthResult(new ~(enrolments, Some(User)))
       val res = testAction(FakeRequest())
@@ -92,7 +92,7 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
 
     "invoke the block if the user has an ETMP registration, but not an SDIL registration" in {
       val someOtherEtmpEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "NotSDIL")
-      val enrolments = Enrolments(Set(new Enrolment("HMRC-ORG-OBTDS", Seq(someOtherEtmpEnrolment), "Active")))
+      val enrolments = Enrolments(Set(new Enrolment("HMRC-OBTDS-ORG", Seq(someOtherEtmpEnrolment), "Active")))
 
       stubAuthResult(new ~(enrolments, Some(Admin)))
       val res = testAction(FakeRequest())

@@ -21,7 +21,7 @@ import uk.gov.hmrc.auth.core.{EnrolmentIdentifier, Enrolments}
 trait ActionHelpers {
   protected def getSdilEnrolment(enrolments: Enrolments): Option[EnrolmentIdentifier] = {
     for {
-      enrolment <- enrolments.getEnrolment("HMRC-ORG-OBTDS")
+      enrolment <- enrolments.getEnrolment("HMRC-OBTDS-ORG")
       sdil <- enrolment.getIdentifier("EtmpRegistrationNumber") if sdil.value.slice(2, 4) == "SD"
     } yield {
       sdil
