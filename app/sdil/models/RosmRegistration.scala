@@ -45,16 +45,8 @@ object RosmRegistration {
   implicit val format: Format[RosmRegistration] = Json.format[RosmRegistration]
 }
 
-case class OrganisationDetails(organisationName: String, organisationType: Option[RosmOrganisationType.Value])
+case class OrganisationDetails(organisationName: String)
 
 object OrganisationDetails {
   implicit val format: Format[OrganisationDetails] = Json.format[OrganisationDetails]
-}
-
-object RosmOrganisationType extends Enumeration {
-  val Unknown, Partnership, LLP = Value
-  val CorporateBody = Value("Corporate body")
-  val UnincorporatedBody = Value("Unincorporated body")
-
-  implicit val format: Format[Value] = Format(Reads.enumNameReads(this), Writes.enumNameWrites)
 }
