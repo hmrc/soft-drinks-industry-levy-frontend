@@ -51,14 +51,6 @@ class IdentifyController(val messagesApi: MessagesApi,
       .getOrElse(Redirect(routes.IdentifyController.show))
   }
 
-  private def enforceWhitelist(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] = {
-    OptionT.fromOption(request.utr match {
-      case Some(utr) if config.whitelistEnabled && config.isWhitelisted(utr) => None
-      case _ if !config.whitelistEnabled => None
-      case _ => Some(Forbidden(views.html.softdrinksindustrylevy.errors.not_whitelisted()))
-    })
-  }
-
   private def restoreSession(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] = {
     OptionT(cache.get(request.internalId) map {
       case Some(_) => Some(Redirect(routes.VerifyController.verify()))
