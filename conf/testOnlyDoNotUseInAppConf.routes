@@ -11,4 +11,4 @@
 
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes
-GET        /test-only/reset           sdil.controllers.test.TestingController.resetStore
+GET        /soft-drinks-industry-levy/test-only/reset           sdil.controllers.test.TestingController.resetStore
