@@ -9,6 +9,7 @@ sdil.common.or=Or
 sdil.common.yes=Yes
 sdil.common.no=No
 sdil.common.print=Print
+sdil.common.sign-out=Sign out
 
 #Address lines
 sdil.address.line1=Address line 1

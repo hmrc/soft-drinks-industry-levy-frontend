@@ -45,6 +45,9 @@
 }
 
 @headerNavLinks = {
+    <li>
+        <a href="@sdil.controllers.routes.SignoutController.signOut()">@Messages("sdil.common.sign-out")</a>
+    </li>
 }
 
 @insideHeader = {
@@ -76,8 +79,8 @@
             @Html(Messages("sdil.common.alpha-info", appConfig.betaFeedbackUrlAuth))
         </p>
     </div>
-}  
-  
+}
+
 @serviceInfo = {
     @uiLayouts.serviceInfo(
       betaBanner = betaBanner,
