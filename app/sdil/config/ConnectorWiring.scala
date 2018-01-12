@@ -17,6 +17,7 @@
 package sdil.config
 
 import com.softwaremill.macwire.wire
+import play.api.libs.ws.WSClient
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -25,6 +26,8 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, HttpClient}
 
 trait ConnectorWiring extends CommonWiring {
+  val wsClient: WSClient
+
   lazy val auditConnector: AuditConnector = wire[DefaultAuditConnector]
   lazy val httpClient: HttpClient = wire[DefaultHttpClient]
   lazy val authConnector: AuthConnector = wire[DefaultAuthConnector]
