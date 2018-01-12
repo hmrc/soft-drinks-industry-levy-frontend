@@ -64,3 +64,5 @@ POST        /register/declaration                            sdil.controllers.De
 GET         /register/complete                               sdil.controllers.CompleteController.displayComplete()
 
 GET         /register/pending                                sdil.controllers.PendingController.displayPending()
+
+GET         /sign-out                                        sdil.controllers.SignoutController.signOut
