@@ -24,9 +24,9 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import scala.concurrent.{ExecutionContext, Future}
 
 class TestConnector(http: HttpClient,
-                                      environment: Environment,
-                                      val runModeConfiguration: Configuration
-                                     )(implicit ec: ExecutionContext) extends ServicesConfig {
+                    environment: Environment,
+                    val runModeConfiguration: Configuration)
+                   (implicit ec: ExecutionContext) extends ServicesConfig {
 
   lazy val testUrl: String = baseUrl("soft-drinks-industry-levy")
 
