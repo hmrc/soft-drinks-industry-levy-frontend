@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package sdil.models
+@import sdil.config.AppConfig
 
-import play.api.libs.json.{Format, Json}
+@()(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-package object sdilmodels {
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
+@main_template(Messages("sdil.common.title")) {
+    <h1 class="heading-large">@Messages("sdil.registration-pending.title")</h1>
+
+    <p>@Messages("sdil.registration-pending.p1")</p>
+    <p>@Messages("sdil.registration-pending.p2")</p>
+    <p>@Messages("sdil.registration-pending.p3")</p>
 }
