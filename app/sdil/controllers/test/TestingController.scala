@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
-package sdil.models
+package sdil.controllers.test
 
-case class DesSubmissionResult(valid: Boolean)
+import play.api.mvc.{Action, AnyContent}
+import sdil.connectors.TestConnector
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+
+
+class TestingController (testConnector: TestConnector) extends FrontendController {
+
+  def resetStore: Action[AnyContent] = Action.async {
+    implicit request =>
+      testConnector.resetStore map {
+        x => Status(x.status)
+      }
+  }
+
+}

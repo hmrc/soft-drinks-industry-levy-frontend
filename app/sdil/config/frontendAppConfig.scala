@@ -29,8 +29,11 @@ trait AppConfig {
   val betaFeedbackUrlAuth: String
   def taxStartDate: LocalDate
   val ggLoginUrl: String
+  val signoutUrl: String
   val sdilHomePage: String
   val appName: String
+  def isWhitelisted(utr: String): Boolean
+  def whitelistEnabled: Boolean
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, environment: Environment) extends AppConfig with ServicesConfig {
@@ -53,6 +56,12 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   private lazy val companyAuthSignInPath = getConfString("company-auth.sign-in-path", "")
   private lazy val companyAuthSignOutPath = getConfString("company-auth.sign-out-path", "")
   lazy val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
+  lazy val signoutUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
   lazy val taxStartDate: LocalDate = LocalDate.parse(loadConfig("tax-start-date"))
+
+  override def isWhitelisted(utr: String): Boolean = whitelistedUtrs.isEmpty || whitelistedUtrs.contains(utr)
+
+  override val whitelistEnabled: Boolean = getBoolean("whitelist.enabled")
+  private lazy val whitelistedUtrs: Seq[String] = getString("whitelist.utrs").split(",").map(_.trim)
 }

@@ -42,14 +42,25 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
     val retrieval = allEnrolments and credentialRole and internalId and affinityGroup
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(retrieval) { case enrolments ~ role ~ id ~ affinity =>
-      val error: Option[Result] = duplicateEnrolment(enrolments)(request)
+      val maybeUtr = getUtr(enrolments)
+
+      val error: Option[Result] = notWhitelisted(maybeUtr)(request)
+        .orElse(duplicateEnrolment(enrolments)(request))
         .orElse(invalidRole(role)(request))
         .orElse(invalidAffinityGroup(affinity)(request))
 
       val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
-      Future.successful(error.toLeft(AuthorisedRequest(getUtr(enrolments), internalId, request)))
+      Future.successful(error.toLeft(AuthorisedRequest(maybeUtr, internalId, request)))
     } recover {
       case _: NoActiveSession => Left(Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName))))
+    }
+  }
+
+  private def notWhitelisted(maybeUtr: Option[String])(implicit request: Request[_]): Option[Result] = {
+    maybeUtr match {
+      case Some(utr) if config.whitelistEnabled && config.isWhitelisted(utr) => None
+      case _ if !config.whitelistEnabled => None
+      case _ => Some(Forbidden(views.html.softdrinksindustrylevy.errors.not_whitelisted()))
     }
   }
 

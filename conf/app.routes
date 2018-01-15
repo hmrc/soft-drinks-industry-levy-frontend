@@ -3,7 +3,7 @@ GET         /assets/*file                                    controllers.Assets.
 
 GET         /home                                            sdil.controllers.ServicePageController.show
 
-GET         /register/utr                                    sdil.controllers.IdentifyController.getUtr
+GET         /register/start                                  sdil.controllers.IdentifyController.start
 GET         /register/identify                               sdil.controllers.IdentifyController.show()
 POST        /register/identify                               sdil.controllers.IdentifyController.validate()
 
@@ -67,3 +67,5 @@ POST        /register/declaration                            sdil.controllers.De
 GET         /register/complete                               sdil.controllers.CompleteController.displayComplete()
 
 GET         /register/pending                                sdil.controllers.PendingController.displayPending()
+
+GET         /sign-out                                        sdil.controllers.SignoutController.signOut

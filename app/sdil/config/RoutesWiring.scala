@@ -20,11 +20,12 @@ import com.kenshoo.play.metrics.{Metrics, MetricsController, MetricsImpl}
 import com.softwaremill.macwire.wire
 import controllers.Assets
 import play.api.inject.DefaultApplicationLifecycle
+import play.api.routing.Router
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
-import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.connectors.{SoftDrinksIndustryLevyConnector, TestConnector}
 import sdil.controllers._
+import sdil.controllers.test.TestingController
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
 
 trait RoutesWiring extends CommonWiring {
@@ -34,6 +35,7 @@ trait RoutesWiring extends CommonWiring {
   val authConnector: AuthConnector
   val cache: FormDataCache
   val sdilConnector: SoftDrinksIndustryLevyConnector
+  val testConnector: TestConnector
 
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
   lazy val formAction: FormAction = wire[FormAction]
@@ -56,15 +58,33 @@ trait RoutesWiring extends CommonWiring {
   lazy val radioFormController: RadioFormController = wire[RadioFormController]
   lazy val pendingController: PendingController = wire[PendingController]
   lazy val smallProducerConfirmController: SmallProducerConfirmController = wire[SmallProducerConfirmController]
+  lazy val signoutController: SignoutController = wire[SignoutController]
+  lazy val testController: TestingController = wire[TestingController]
 
   private lazy val appRoutes: app.Routes = wire[app.Routes]
   private lazy val healthRoutes = new health.Routes()
   private lazy val templateRoutes = new template.Routes()
+  private lazy val prodRoutes: prod.Routes = wire[prod.Routes]
+
+  private lazy val testOnlyRoutes: testOnlyDoNotUseInAppConf.Routes = wire[testOnlyDoNotUseInAppConf.Routes]
 
   lazy val metrics: Metrics = wire[MetricsImpl]
   lazy val metricsController: MetricsController = wire[MetricsController]
 
   lazy val prefix: String = ""
 
-  def router: prod.Routes = wire[prod.Routes]
+  /* hacky way to allow the router to be overridden to the test-only router
+   *
+   * uses the underlying Config class, as `Configuration.getString` will throw an exception if `play.http.router` is not set
+   *
+   * can't use reflection (like `Router.load` does) as this needs to bind to specific wired instances of the routers
+   */
+  def router: Router = {
+    if (configuration.underlying.hasPath("play.http.router")) {
+      configuration.getString("play.http.router") match {
+        case Some("testOnlyDoNotUseInAppConf.routes") => testOnlyRoutes
+        case _ => prodRoutes
+      }
+    } else prodRoutes
+  }
 }

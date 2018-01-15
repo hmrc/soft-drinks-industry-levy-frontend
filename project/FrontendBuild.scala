@@ -44,7 +44,7 @@ object FrontendBuild extends Build {
       scoverageSettings,
       libraryDependencies ++= Seq(
         ws,
-        "uk.gov.hmrc" %% "bootstrap-play-25" % "1.2.0",
+        "uk.gov.hmrc" %% "bootstrap-play-25" % "1.3.0",
         "uk.gov.hmrc" %% "govuk-template" % "5.17.0",
         "uk.gov.hmrc" %% "play-ui" % "7.13.0",
         "uk.gov.hmrc" %% "play-partials" % "6.1.0",
@@ -57,6 +57,7 @@ object FrontendBuild extends Build {
         "com.softwaremill.macwire" %% "macrosakka" % "2.3.0" % "provided",
         "com.softwaremill.macwire" %% "util" % "2.3.0",
         "com.softwaremill.macwire" %% "proxy" % "2.3.0",
+        "org.typelevel" %% "cats-core" % "1.0.1",
 
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % "test",

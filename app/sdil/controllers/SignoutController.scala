@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-package sdil.models
+package sdil.controllers
 
-import play.api.libs.json.{Format, Json}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
+import sdil.actions.FormAction
+import sdil.config.AppConfig
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-package object sdilmodels {
-  implicit val desSubmissionresultFormat: Format[DesSubmissionResult] = Json.format[DesSubmissionResult]
+class SignoutController(val messagesApi: MessagesApi,
+                        formAction: FormAction)
+                       (implicit config: AppConfig)
+  extends FrontendController with I18nSupport {
+
+  def signOut: Action[AnyContent] = Action.async { implicit request =>
+    Redirect(config.signoutUrl).withNewSession
+  }
 }

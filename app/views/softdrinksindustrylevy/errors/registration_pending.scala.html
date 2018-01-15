@@ -14,11 +14,14 @@
  * limitations under the License.
  *@
 
-@import sdil.models.DesSubmissionResult
 @import sdil.config.AppConfig
-@(desSubmissionResult: Option[DesSubmissionResult] = None)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@views.html.main_template(title = "Hello from soft-drinks-industry-levy-frontend", bodyClasses = None) {
-    <h1>@Messages("sdil.common.title")</h1>
-    <p>Return result is: @desSubmissionResult.getOrElse(DesSubmissionResult(false)).valid </p>
+@()(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@main_template(Messages("sdil.common.title")) {
+    <h1 class="heading-large">@Messages("sdil.registration-pending.title")</h1>
+
+    <p>@Messages("sdil.registration-pending.p1")</p>
+    <p>@Messages("sdil.registration-pending.p2")</p>
+    <p>@Messages("sdil.registration-pending.p3")</p>
 }
