@@ -126,8 +126,9 @@ sdil.registration-not-required.p3=If this is not accurate, you need to <a href="
 
 #Small Producer Confrim
 sdil.small-prod-confirm.heading=Small producer exemption confirmation
-
-
+sdil.small-prod-confirm.lede=The volumes you’ve entered show that you will package, or have packaged on your behalf, less than one million litres of liable drink per year.
+sdil.small-prod-confirm.panel=By continuing you confirm that you intend to register as a small producer.
+sdil.small-prod-confirm.body=If this is not accurate, you need to <a href=@sdil.controllers.routes.PackageController.displayPackage()>go back and enter the volumes again</a>.
 
 #Start date
 sdil.start-date.heading=What date did or will you become liable for the Soft Drinks Industry Levy?

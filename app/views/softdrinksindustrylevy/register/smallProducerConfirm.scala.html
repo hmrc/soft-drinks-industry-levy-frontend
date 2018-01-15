@@ -26,14 +26,15 @@
         <h1 class="heading-large">@Messages("sdil.small-prod-confirm.heading")</h1>
     </legend>
     <p class="lede">
-        The volumes you’ve entered show that you will package, or have packaged on your behalf, less than one million litres of liable drink per year.
+        @Messages("sdil.small-prod-confirm.lede")
+
     </p>
     <p></p>
     <p>
-        If this is not accurate, you need to <a href=@sdil.controllers.routes.PackageController.displayPackage()>go back and enter the volumes again</a>.
+        @Messages("sdil.small-prod-confirm.body")
     </p>
     <div class="panel panel-border-wide">
-        <p>By continuing you confirm that you intend to register as a small producer.</p>
+        <p>@Messages("sdil.small-prod-confirm.panel")</p>
     </div>
 
     @form(sdil.controllers.routes.SmallProducerConfirmController.submitSmallProducerConfirm()) {
