@@ -45,6 +45,12 @@ sdil.verify.address.line3=Address line 3
 sdil.verify.address.line4=Address line 4
 sdil.verify.postcode=Postcode
 
+#Registration pending
+sdil.registration-pending.title=You’ve already submitted an application
+sdil.registration-pending.p1=You’ve already submitted an application to register for the Soft Drinks Levy.
+sdil.registration-pending.p2=If you haven’t got your registration number within 14 days, you’ll need to call the Soft Drinks Levy Helpline on 0300 200 3700.
+sdil.registration-pending.p3=If there’s a problem with your application we’ll contact you using the information you provided.
+
 #Organisation Type
 sdil.organisation-type.heading=What organisation type is your business?
 sdil.organisation-type.limited-company=Limited Company
