@@ -30,4 +30,11 @@ class TestingController (testConnector: TestConnector) extends FrontendControlle
       }
   }
 
+  def resetDb: Action[AnyContent] = Action.async {
+    implicit request =>
+      testConnector.resetDb map {
+        x => Status(x.status)
+      }
+  }
+
 }

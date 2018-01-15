@@ -36,4 +36,8 @@ class TestConnector(http: HttpClient,
     http.GET[HttpResponse](s"$testUrl/test-only/reset")
   }
 
+  def resetDb(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+    http.GET[HttpResponse](s"$testUrl/test-only/resetDb")
+  }
+
 }
