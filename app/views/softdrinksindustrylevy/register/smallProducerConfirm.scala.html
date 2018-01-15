@@ -1,0 +1,43 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.play.views.html.helpers._
+@import sdil.config.AppConfig
+
+@(backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@views.html.main_template(Messages("sdil.common.title")) {
+    <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
+
+    <legend>
+        <h1 class="heading-large">@Messages("sdil.small-prod-confirm.heading")</h1>
+    </legend>
+    <p class="lede">
+        The volumes you’ve entered show that you will package, or have packaged on your behalf, less than one million litres of liable drink per year.
+    </p>
+    <p></p>
+    <p>
+        If this is not accurate, you need to <a href=@sdil.controllers.routes.PackageController.displayPackage()>go back and enter the volumes again</a>.
+    </p>
+    <div class="panel panel-border-wide">
+        <p>By continuing you confirm that you intend to register as a small producer.</p>
+    </div>
+
+    @form(sdil.controllers.routes.SmallProducerConfirmController.submitSmallProducerConfirm()) {
+        <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+    }
+
+}

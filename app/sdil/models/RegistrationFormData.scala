@@ -36,7 +36,8 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 startDate: Option[LocalDate] = None,
                                 productionSites: Option[Seq[Address]] = None,
                                 secondaryWarehouses: Option[Seq[Address]] = None,
-                                contactDetails: Option[ContactDetails] = None) {
+                                contactDetails: Option[ContactDetails] = None,
+                                smallProducerConfirmFlag: Option[Boolean] = None){
 
   lazy val primaryAddress: Address = {
     verify match {

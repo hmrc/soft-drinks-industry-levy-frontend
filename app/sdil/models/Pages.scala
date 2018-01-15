@@ -267,3 +267,16 @@ case object ContactDetailsPage extends PageWithPreviousPage {
 
   override def show: Call = routes.ContactDetailsController.displayContactDetails()
 }
+
+case object SmallProducerConfirmPage extends MidJourneyPage {
+  override def nextPage(formData: RegistrationFormData): Page = StartDatePage
+
+  override def previousPage(formData: RegistrationFormData): Page = formData.imports match {
+    case Some(true) => ImportVolumePage
+    case _ => ImportPage
+  }
+
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.smallProducerConfirmFlag.isDefined
+
+  override def show: Call = routes.SmallProducerConfirmController.displaySmallProducerConfirm()
+}

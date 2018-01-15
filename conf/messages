@@ -124,6 +124,11 @@ sdil.registration-not-required.li2=packaging liable drink for a customer
 sdil.registration-not-required.li3=bringing liable drinks into the UK
 sdil.registration-not-required.p3=If this is not accurate, you need to <a href="{0}">go back and change your answers.</a>
 
+#Small Producer Confrim
+sdil.small-prod-confirm.heading=Small producer exemption confirmation
+
+
+
 #Start date
 sdil.start-date.heading=What date did or will you become liable for the Soft Drinks Industry Levy?
 sdil.start-date.example=For example, 6 4 2018

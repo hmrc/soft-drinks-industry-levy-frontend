@@ -77,7 +77,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       val res = testController.continue()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.StartDateController.displayStartDate().url
+      redirectLocation(res).value mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
     }
 
     "redirect to the start date page if the user produces fewer 1 million litres, but imports liable drinks" in {
@@ -95,15 +95,44 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       val res = testController.continue()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.StartDateController.displayStartDate().url
+      redirectLocation(res).value mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
     }
 
     "redirect to the confirm exemption page if the registration is voluntary only" in {
-      pending
+      stubFormPage(
+        packaging = Some(Packaging(true, true, false)),
+        packageOwn = Some(Litreage(10000, 2)),
+        packageCopackSmall = Some(false),
+        packageCopackSmallVol = None,
+        copacked = Some(true),
+        copackedVolume = Some(Litreage(10000, 2)),
+        imports = Some(false),
+        importVolume = None
+      )
+
+      val res = testController.continue()(FakeRequest())
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
     }
 
     "redirect to the confirm exemption and mandatory obligations page if the registration is voluntary/mandatory" in {
-      pending
+      stubFormPage(
+        packaging = Some(Packaging(true, true, false)),
+        packageOwn = Some(Litreage(10000, 2)),
+        packageCopackSmall = Some(false),
+        packageCopackSmallVol = None,
+        copacked = Some(true),
+        copackedVolume = Some(Litreage(10000, 2)),
+        imports = Some(false),
+        importVolume = None
+      )
+
+      val res = testController.continue()(FakeRequest())
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
+
     }
   }
 

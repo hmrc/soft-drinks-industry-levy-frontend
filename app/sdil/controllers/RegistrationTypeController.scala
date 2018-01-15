@@ -36,8 +36,8 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
       case RegistrationTypePage => registrationType(request.formData) match {
         case RegistrationNotRequired => Redirect(routes.RegistrationTypeController.registrationNotRequired())
         case MandatoryOnly => Redirect(routes.StartDateController.displayStartDate())
-        case VoluntaryOnly => NotImplemented(views.html.defaultpages.todo())
-        case MandatoryAndVoluntary => NotImplemented(views.html.defaultpages.todo())
+        case VoluntaryOnly => Redirect(routes.SmallProducerConfirmController.displaySmallProducerConfirm())
+        case MandatoryAndVoluntary => Redirect(routes.SmallProducerConfirmController.displaySmallProducerConfirm())
       }
       case other => Redirect(other.show)
     }
@@ -55,10 +55,14 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
 
     (formData.packageOwn, formData.copackedVolume, formData.packaging, formData.imports) match {
       case (p, b, Some(Packaging(_, _, c)), Some(i))
-        if isMandatory(p, b, c, i) && isVoluntary(p, b) => MandatoryAndVoluntary
-      case (p, b, Some(Packaging(_, _, c)), Some(i)) if isMandatory(p, b, c, i) => MandatoryOnly
-      case (p, b, _, _) if isVoluntary(p, b) => VoluntaryOnly
-      case _ => RegistrationNotRequired
+        if total(p,b) > 0 && total(p,b) < 1000000 && (b.exists(_.total == 0)||b.isEmpty) && !isMandatory(p, b, c, i) => RegistrationNotRequired
+      case (p, b, Some(Packaging(_, _, c)), Some(i))
+        if total(p,b) > 0 && total(p,b) < 1000000 && (b.exists(_.total == 0)||b.isEmpty) && isMandatory(p, b, c, i) => MandatoryAndVoluntary
+      case (p, b, Some(Packaging(_, _, c)), Some(i))
+        if total(p,b) > 0 && isVoluntary(p,b) => VoluntaryOnly
+      case (p, b, _,_)
+        if total(p,b) == 0 => RegistrationNotRequired
+      case _ => MandatoryOnly
     }
   }
 
