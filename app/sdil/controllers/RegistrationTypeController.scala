@@ -21,7 +21,6 @@ import play.api.mvc.Action
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.models._
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.registration_not_required
 
@@ -35,9 +34,8 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
     RegistrationTypePage.expectedPage(request.formData) match {
       case RegistrationTypePage => registrationType(request.formData) match {
         case RegistrationNotRequired => Redirect(routes.RegistrationTypeController.registrationNotRequired())
-        case MandatoryOnly => Redirect(routes.StartDateController.displayStartDate())
-        case VoluntaryOnly => Redirect(routes.SmallProducerConfirmController.displaySmallProducerConfirm())
-        case MandatoryAndVoluntary => Redirect(routes.SmallProducerConfirmController.displaySmallProducerConfirm())
+        case Mandatory => Redirect(routes.StartDateController.displayStartDate())
+        case Voluntary => Redirect(routes.SmallProducerConfirmController.displaySmallProducerConfirm())
       }
       case other => Redirect(other.show)
     }
@@ -50,29 +48,24 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
   private def registrationType(formData: RegistrationFormData): RegistrationType = {
     def total(p: Option[Litreage], b: Option[Litreage]) = p.fold[BigDecimal](0)(_.total) + b.fold[BigDecimal](0)(_.total)
 
-    def isMandatory(p: Option[Litreage], b: Option[Litreage], c: Boolean, i: Boolean) = total(p, b) >= 1000000 || c || i
-    def isVoluntary(p: Option[Litreage], b: Option[Litreage]) = total(p, b) < 1000000 && b.exists(_.total != 0)
+    def isNotMandatory(p: Option[Litreage], b: Option[Litreage], c: Boolean, i: Boolean) = {
+      isSmallProducer(p, b) && b.forall(_.total == 0) && !c && !i
+    }
+
+    def isSmallProducer(p: Option[Litreage], b: Option[Litreage]) = total(p, b) < 1000000
 
     (formData.packageOwn, formData.copackedVolume, formData.packaging, formData.imports) match {
-      case (p, b, Some(Packaging(_, _, c)), Some(i))
-        if total(p,b) > 0 && total(p,b) < 1000000 && (b.exists(_.total == 0)||b.isEmpty) && !isMandatory(p, b, c, i) => RegistrationNotRequired
-      case (p, b, Some(Packaging(_, _, c)), Some(i))
-        if total(p,b) > 0 && total(p,b) < 1000000 && (b.exists(_.total == 0)||b.isEmpty) && isMandatory(p, b, c, i) => MandatoryAndVoluntary
-      case (p, b, Some(Packaging(_, _, c)), Some(i))
-        if total(p,b) > 0 && isVoluntary(p,b) => VoluntaryOnly
-      case (p, b, _,_)
-        if total(p,b) == 0 => RegistrationNotRequired
-      case _ => MandatoryOnly
+      case (p, b, Some(Packaging(_, _, c)), Some(i)) if isNotMandatory(p, b, c, i) => RegistrationNotRequired
+      case (p, b, _, _) if isSmallProducer(p, b) => Voluntary
+      case _ => Mandatory
     }
   }
 
   sealed trait RegistrationType
 
-  case object MandatoryOnly extends RegistrationType
+  case object Mandatory extends RegistrationType
 
-  case object VoluntaryOnly extends RegistrationType
-
-  case object MandatoryAndVoluntary extends RegistrationType
+  case object Voluntary extends RegistrationType
 
   case object RegistrationNotRequired extends RegistrationType
 }

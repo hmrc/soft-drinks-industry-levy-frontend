@@ -62,7 +62,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       redirectLocation(res).value mustBe routes.StartDateController.displayStartDate().url
     }
 
-    "redirect to the start date page if the user produces fewer 1 million litres, but copacks for others" in {
+    "redirect to the confirm small producer exemption page if the user produces fewer than 1 million litres, but copacks for others" in {
       stubFormPage(
         packaging = Some(Packaging(true, true, true)),
         packageOwn = Some(Litreage(1, 2)),
@@ -80,7 +80,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       redirectLocation(res).value mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
     }
 
-    "redirect to the start date page if the user produces fewer 1 million litres, but imports liable drinks" in {
+    "redirect to the confirm small producer exemption page if the user produces fewer than 1 million litres, but imports liable drinks" in {
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
         packageOwn = Some(Litreage(1, 2)),
@@ -98,14 +98,14 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       redirectLocation(res).value mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
     }
 
-    "redirect to the confirm exemption page if the registration is voluntary only" in {
+    "redirect to the confirm small producer exemption page if the user produces fewer than 1 million litres, but uses a copacker" in {
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
-        packageOwn = Some(Litreage(10000, 2)),
+        packageOwn = Some(Litreage(1, 2)),
         packageCopackSmall = Some(false),
         packageCopackSmallVol = None,
         copacked = Some(true),
-        copackedVolume = Some(Litreage(10000, 2)),
+        copackedVolume = Some(Litreage(3, 4)),
         imports = Some(false),
         importVolume = None
       )
@@ -116,14 +116,14 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       redirectLocation(res).value mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
     }
 
-    "redirect to the confirm exemption and mandatory obligations page if the registration is voluntary/mandatory" in {
+    "redirect to the registration not required page if the registration is voluntary only" in {
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
         packageOwn = Some(Litreage(10000, 2)),
         packageCopackSmall = Some(false),
         packageCopackSmallVol = None,
-        copacked = Some(true),
-        copackedVolume = Some(Litreage(10000, 2)),
+        copacked = Some(false),
+        copackedVolume = None,
         imports = Some(false),
         importVolume = None
       )
@@ -131,8 +131,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       val res = testController.continue()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
-
+      redirectLocation(res).value mustBe routes.RegistrationTypeController.registrationNotRequired().url
     }
   }
 
