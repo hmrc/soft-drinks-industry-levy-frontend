@@ -31,6 +31,9 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
   extends FrontendController with I18nSupport {
 
   def continue = formAction.async { implicit request =>
+
+    request.formData.copy(smallProducerConfirmFlag = None)
+
     RegistrationTypePage.expectedPage(request.formData) match {
       case RegistrationTypePage => registrationType(request.formData) match {
         case RegistrationNotRequired => Redirect(routes.RegistrationTypeController.registrationNotRequired())
