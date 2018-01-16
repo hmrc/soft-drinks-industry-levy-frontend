@@ -90,3 +90,11 @@ html .font-xsmall {
 .check-your-answers td {
     vertical-align: top;
 }
+
+.lede {
+    font-family: "nta",Arial,sans-serif !important;
+    font-size: 24px !important;
+    line-height: 1.25 !important;
+    font-weight: 400 !important;
+    text-transform: none !important;
+}

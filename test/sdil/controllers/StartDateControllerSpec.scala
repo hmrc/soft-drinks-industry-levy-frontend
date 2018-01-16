@@ -81,6 +81,16 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
     }
 
+    "return a page with a link back to the small producer exception page if the user confirmed exception" in {
+      stubFormPage(smallProducerConfirmFlag = Some(true))
+
+      val response = controller.displayStartDate(FakeRequest())
+      status(response) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(response))
+      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
+    }
+
     "return a page with a link back to the imports page if the user does not import liable drinks" in {
       stubFormPage(imports = Some(false))
 
