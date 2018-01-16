@@ -14,8 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers._
 @import sdil.config.AppConfig
+@import uk.gov.hmrc.play.views.html.helpers._
 
 @(backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
@@ -29,9 +29,8 @@
         @Messages("sdil.small-prod-confirm.lede")
 
     </p>
-    <p></p>
     <p>
-        @Messages("sdil.small-prod-confirm.body")
+        @Html(Messages("sdil.small-prod-confirm.body", sdil.controllers.routes.PackageController.displayPackage()))
     </p>
     <div class="panel panel-border-wide">
         <p>@Messages("sdil.small-prod-confirm.panel")</p>

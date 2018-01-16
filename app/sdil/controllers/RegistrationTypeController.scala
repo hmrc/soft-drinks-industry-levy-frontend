@@ -48,11 +48,11 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
   private def registrationType(formData: RegistrationFormData): RegistrationType = {
     def total(p: Option[Litreage], b: Option[Litreage]) = p.fold[BigDecimal](0)(_.total) + b.fold[BigDecimal](0)(_.total)
 
-    def isNotMandatory(p: Option[Litreage], b: Option[Litreage], c: Boolean, i: Boolean) = {
-      isSmallProducer(p, b) && b.forall(_.total == 0) && !c && !i
+    def isNotMandatory(packageOwn: Option[Litreage], copackedVolume: Option[Litreage], customers: Boolean, imports: Boolean) = {
+      isSmallProducer(packageOwn, copackedVolume) && copackedVolume.forall(_.total == 0) && !customers && !imports
     }
 
-    def isSmallProducer(p: Option[Litreage], b: Option[Litreage]) = total(p, b) < 1000000
+    def isSmallProducer(packageOwn: Option[Litreage], copackedVolume: Option[Litreage]) = total(packageOwn, copackedVolume) < 1000000
 
     (formData.packageOwn, formData.copackedVolume, formData.packaging, formData.imports) match {
       case (p, b, Some(Packaging(_, _, c)), Some(i)) if isNotMandatory(p, b, c, i) => RegistrationNotRequired

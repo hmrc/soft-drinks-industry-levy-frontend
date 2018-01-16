@@ -226,8 +226,9 @@ case object StartDatePage extends MidJourneyPage {
     case None => PackagePage
   }
 
-  override def previousPage(formData: RegistrationFormData): Page = formData.imports match {
-    case Some(true) => ImportVolumePage
+  override def previousPage(formData: RegistrationFormData): Page = formData match {
+    case form if form.smallProducerConfirmFlag.isDefined => SmallProducerConfirmPage
+    case form if form.imports.contains(true) => ImportVolumePage
     case _ => ImportPage
   }
 

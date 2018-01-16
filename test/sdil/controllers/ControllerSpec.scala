@@ -51,7 +51,8 @@ trait ControllerSpec extends FakeApplicationSpec {
                    startDate: Option[LocalDate] = defaultFormData.startDate,
                    productionSites: Option[Seq[Address]] = defaultFormData.productionSites,
                    secondaryWarehouses: Option[Seq[Address]] = defaultFormData.secondaryWarehouses,
-                   contactDetails: Option[ContactDetails] = defaultFormData.contactDetails) = {
+                   contactDetails: Option[ContactDetails] = defaultFormData.contactDetails,
+                   smallProducerConfirmFlag: Option[Boolean] = defaultFormData.smallProducerConfirmFlag) = {
 
     stubCacheEntry(Some(RegistrationFormData(
       rosmData,
@@ -70,7 +71,8 @@ trait ControllerSpec extends FakeApplicationSpec {
       startDate,
       productionSites,
       secondaryWarehouses,
-      contactDetails
+      contactDetails,
+      smallProducerConfirmFlag
     )))
   }
 
