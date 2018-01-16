@@ -55,7 +55,7 @@ class PackageController(val messagesApi: MessagesApi, cache: FormDataCache, form
   //clear unneeded data from session cache when the user's answers change
   private def updateData(formData: RegistrationFormData, packaging: Packaging) = packaging match {
     case Packaging(false, _, _) =>
-      formData.copy(packaging = Some(packaging), packageOwn = None, packageCopack = None, productionSites = None)
+      formData.copy(packaging = Some(Packaging(false, false, false)), packageOwn = None, packageCopack = None, productionSites = None)
     case Packaging(true, true, false) =>
       formData.copy(packaging = Some(packaging), packageCopack = None)
     case Packaging(true, false, true) =>
