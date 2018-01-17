@@ -221,7 +221,6 @@ case object RegistrationTypePage extends MidJourneyPage {
 
 case object StartDatePage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData): Page = formData.packaging match {
-
     case Some(p) if p.isLiable => ProductionSitesPage
     case Some(p) => WarehouseSitesPage
     case None => PackagePage
