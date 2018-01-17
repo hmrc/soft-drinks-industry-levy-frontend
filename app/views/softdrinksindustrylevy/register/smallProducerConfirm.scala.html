@@ -26,11 +26,10 @@
         <h1 class="heading-large">@Messages("sdil.small-prod-confirm.heading")</h1>
     </legend>
     <p class="lede">
-        @Messages("sdil.small-prod-confirm.lede")
-
+    @Messages("sdil.small-prod-confirm.lede")
     </p>
     <p>
-        @Html(Messages("sdil.small-prod-confirm.body", sdil.controllers.routes.PackageController.displayPackage()))
+    @Html(Messages("sdil.small-prod-confirm.body", sdil.controllers.routes.PackageController.displayPackage()))
     </p>
     <div class="panel panel-border-wide">
         <p>@Messages("sdil.small-prod-confirm.panel")</p>
@@ -39,5 +38,4 @@
     @form(sdil.controllers.routes.SmallProducerConfirmController.submitSmallProducerConfirm()) {
         <input class="button" value="@Messages("sdil.small-prod-confirm.continue")" type="submit">
     }
-
 }

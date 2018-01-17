@@ -55,7 +55,8 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
       isSmallProducer(packageOwn, copackedVolume) && copackedVolume.forall(_.total == 0) && !customers && !imports
     }
 
-    def isSmallProducer(packageOwn: Option[Litreage], copackedVolume: Option[Litreage]) = total(packageOwn, copackedVolume) < 1000000
+    def isSmallProducer(packageOwn: Option[Litreage], copackedVolume: Option[Litreage]) =
+      total(packageOwn, copackedVolume) < 1000000 && total(packageOwn, copackedVolume) > 0
 
     (formData.packageOwn, formData.copackedVolume, formData.packaging, formData.imports) match {
       case (p, b, Some(Packaging(_, _, c)), Some(i)) if isNotMandatory(p, b, c, i) => RegistrationNotRequired
