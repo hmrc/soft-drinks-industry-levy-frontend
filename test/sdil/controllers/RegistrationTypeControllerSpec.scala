@@ -134,16 +134,16 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       redirectLocation(res).value mustBe routes.RegistrationTypeController.registrationNotRequired().url
     }
 
-    "redirect to the Liability Start Date If Import only" in {
+    "redirect to the start date page if the user only imports" in {
       stubFormPage(
-        packaging = Some(Packaging(false,false,false)),
+        packaging = Some(Packaging(false, false, false)),
         packageOwn = None,
         packageCopackSmall = Some(false),
         packageCopackSmallVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(true),
-        importVolume = Some(Litreage(1,2))
+        importVolume = Some(Litreage(1, 2))
       )
 
       val res = testController.continue()(FakeRequest())
@@ -152,11 +152,11 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       redirectLocation(res).value mustBe routes.StartDateController.displayStartDate().url
     }
 
-    "redirect to the Liability Start Date If Co-Packer only" in {
+    "redirect to the start date page if the user only copacks" in {
       stubFormPage(
-        packaging = Some(Packaging(false,false,false)),
+        packaging = Some(Packaging(false, false, true)),
         packageOwn = None,
-        packageCopack = Some(Litreage(1,2)),
+        packageCopack = Some(Litreage(1, 2)),
         packageCopackSmall = Some(false),
         packageCopackSmallVol = None,
         copacked = Some(false),
@@ -169,6 +169,24 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.StartDateController.displayStartDate().url
+    }
+
+    "redirect to the do not register page if the user does not package, import, copack, or have drinks packaged for them" in {
+      stubFormPage(
+        packaging = Some(Packaging(false, false, false)),
+        packageOwn = None,
+        packageCopack = None,
+        packageCopackSmall = Some(false),
+        packageCopackSmallVol = None,
+        copacked = Some(false),
+        copackedVolume = None,
+        imports = Some(false),
+        importVolume = None
+      )
+
+      val res = testController.continue()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.RegistrationTypeController.registrationNotRequired().url
     }
   }
 
