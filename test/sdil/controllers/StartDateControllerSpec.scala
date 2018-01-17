@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.Packaging
+import sdil.models.{Litreage, Packaging}
 
 class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -148,6 +148,24 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = controller.displayStartDate()(FakeRequest())
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.LitreageController.show("importVolume").url)
+    }
+
+    "redirect to the contact details page when voluntary only" in {
+      stubFormPage(
+        packaging = Some(Packaging(true, true, true)),
+        packageOwn = Some(Litreage(1, 2)),
+        packageCopackSmall = Some(false),
+        packageCopackSmallVol = None,
+        copacked = Some(true),
+        copackedVolume = Some(Litreage(3, 4)),
+        imports = Some(false),
+        importVolume = None
+      )
+
+      val res = controller.submitStartDate()(FakeRequest())
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.ContactDetailsController.displayContactDetails().url
     }
   }
 
