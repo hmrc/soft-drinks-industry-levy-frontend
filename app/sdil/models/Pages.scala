@@ -222,10 +222,10 @@ case object RegistrationTypePage extends MidJourneyPage {
 case object StartDatePage extends MidJourneyPage {
   private def total(p: Option[Litreage], b: Option[Litreage]) = p.fold[BigDecimal](0)(_.total) + b.fold[BigDecimal](0)(_.total)
 
-  override def nextPage(formData: RegistrationFormData): Page = (formData.packaging, formData.packageOwn, formData.copackedVolume) match {
-    case (Some(p),o,v) if p.isLiable && p.ownBrands && total(o, v) < 1000000 && v.exists(_.total != 0) => ContactDetailsPage
-    case (Some(p),_,_) if p.isLiable => ProductionSitesPage
-    case (Some(p),_,_) => WarehouseSitesPage
+  override def nextPage(formData: RegistrationFormData): Page = (formData, formData.packaging) match {
+    case (f,_) if  f.isVoluntary => ContactDetailsPage
+    case (_,Some(p)) if p.isLiable => ProductionSitesPage
+    case (_,Some(p)) => WarehouseSitesPage
     case _ => PackagePage
   }
 
@@ -265,7 +265,10 @@ case object WarehouseSitesPage extends MidJourneyPage {
 }
 
 case object ContactDetailsPage extends PageWithPreviousPage {
-  override def previousPage(formData: RegistrationFormData): Page = WarehouseSitesPage
+  override def previousPage(formData: RegistrationFormData): Page = formData match {
+    case f if f.isVoluntary => StartDatePage
+    case _ => WarehouseSitesPage
+  }
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.contactDetails.isDefined
 

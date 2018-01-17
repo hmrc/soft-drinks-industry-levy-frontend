@@ -38,7 +38,14 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return Status: See Other for start date form POST with valid date and redirect to add site page" in {
-      stubFormPage(packaging = Some(packagingIsLiable))
+      stubFormPage(
+        packaging = Some(Packaging(true, true, false)),
+        packageOwn = Some(Litreage(18888888, 24444)),
+        copacked = Some(true),
+        copackedVolume = Some(Litreage(344444, 44444444)),
+        imports = Some(false),
+        importVolume = None
+      )
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
 
@@ -49,7 +56,14 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return Status: See Other for start date form POST with valid date and redirect to secondary warehouse page" in {
-      stubFormPage(packaging = Some(packagingIsntLiable))
+      stubFormPage(
+        packaging = Some(packagingIsntLiable),
+        packageOwn = None,
+        copacked = Some(false),
+        copackedVolume = None,
+        imports = Some(false),
+        importVolume = None
+      )
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
       val response = controller.submitStartDate().apply(request)
@@ -102,7 +116,14 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return Status: See Other for start date form GET with valid date and Liable booleans with redirect to add site page" in {
-      stubFormPage(packaging = Some(packagingIsLiable))
+      stubFormPage(
+        packaging = Some(Packaging(true, true, false)),
+        packageOwn = Some(Litreage(18888888, 24444)),
+        copacked = Some(true),
+        copackedVolume = Some(Litreage(344444, 44444444)),
+        imports = Some(false),
+        importVolume = None
+      )
       testConfig.setTaxStartDate(tomorrow)
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
@@ -113,7 +134,14 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return Status: See Other for start date form GET with valid date and no Liable booleans with redirect to display Package page" in {
-      stubFormPage(packaging = None)
+      stubFormPage(
+        packaging = None,
+        packageOwn = None,
+        copacked = None,
+        copackedVolume = None,
+        imports = None,
+        importVolume = None
+      )
       testConfig.setTaxStartDate(tomorrow)
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
@@ -124,7 +152,14 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return Status: See Other for start date form GET with valid date and isnt Liable booleans with redirect to secondary warehouse page" in {
-      stubFormPage(packaging = Some(packagingIsntLiable))
+      stubFormPage(
+        packaging = Some(packagingIsntLiable),
+        packageOwn = None,
+        copacked = Some(false),
+        copackedVolume = None,
+        imports = Some(false),
+        importVolume = None
+      )
       testConfig.setTaxStartDate(tomorrow)
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
@@ -152,17 +187,16 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "redirect to the contact details page when voluntary only" in {
       stubFormPage(
-        packaging = Some(Packaging(true, true, true)),
+        packaging = Some(Packaging(true, true, false)),
         packageOwn = Some(Litreage(1, 2)),
-        packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
         copacked = Some(true),
         copackedVolume = Some(Litreage(3, 4)),
         imports = Some(false),
         importVolume = None
       )
+      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
 
-      val res = controller.submitStartDate()(FakeRequest())
+      val res = controller.submitStartDate().apply(request)
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.ContactDetailsController.displayContactDetails().url

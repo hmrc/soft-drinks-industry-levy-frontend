@@ -39,6 +39,12 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 contactDetails: Option[ContactDetails] = None,
                                 smallProducerConfirmFlag: Option[Boolean] = None){
 
+  lazy val isVoluntary: Boolean = {
+    total(packageOwn, copackedVolume) < 1000000 && copackedVolume.exists(_.total != 0)
+  }
+
+  private def total(p: Option[Litreage], b: Option[Litreage]) = p.fold[BigDecimal](0)(_.total) + b.fold[BigDecimal](0)(_.total)
+
   lazy val primaryAddress: Address = {
     verify match {
       case Some(DetailsCorrect.DifferentAddress(a)) => a

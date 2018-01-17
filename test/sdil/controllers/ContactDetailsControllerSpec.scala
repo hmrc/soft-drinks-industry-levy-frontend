@@ -16,9 +16,11 @@
 
 package sdil.controllers
 
+import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.models.Packaging
 
 class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -55,6 +57,24 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include(messagesApi("error.full-name.invalid"))
     }
+
+    "return a page with a link back to the import volume page if the user imports liable drinks" in {
+      stubFormPage(
+        packaging = Some(Packaging(true, true, true),
+        packageOwn = None,
+        copacked = Some(false),
+        copackedVolume = None,
+        imports = Some(false),
+        importVolume = None
+      ))
+
+      val response = controller.displayStartDate(FakeRequest())
+      status(response) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(response))
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
+    }
+
   }
 
   lazy val testController: ContactDetailsController = wire[ContactDetailsController]
