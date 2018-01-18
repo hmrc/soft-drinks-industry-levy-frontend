@@ -16,11 +16,14 @@
 
 package sdil.controllers
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.Packaging
+import sdil.models.{Litreage, Packaging}
 
 class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -58,26 +61,107 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       contentAsString(result) must include(messagesApi("error.full-name.invalid"))
     }
 
-    "return a page with a link back to the import volume page if the user imports liable drinks" in {
+    "return a page with a link back to the warehouse page if the user is mandatory" in {
       stubFormPage(
-        packaging = Some(Packaging(true, true, true),
-        packageOwn = None,
-        copacked = Some(false),
-        copackedVolume = None,
+        packaging = Some(Packaging(true, true, true)),
+        packageOwn = Some(Litreage(1000000, 1000000)),
+        copacked = Some(true),
+        copackedVolume = Some(Litreage(100000, 1000000)),
+        imports = Some(true),
+        importVolume = Some(Litreage(100000, 1000000))
+      )
+
+      val response = testController.displayContactDetails(FakeRequest())
+      status(response) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(response))
+      html.select("a.link-back").attr("href") mustBe routes.WarehouseController.show().url
+    }
+
+    "return a page with a link back to the start date page if the user is voluntary only and it is after the tax start dare" in {
+      stubFormPage(
+        packaging = Some(Packaging(true, true, false)),
+        packageOwn = Some(Litreage(1, 2)),
+        copacked = Some(true),
+        copackedVolume = Some(Litreage(3, 4)),
         imports = Some(false),
         importVolume = None
-      ))
+      )
 
-      val response = controller.displayStartDate(FakeRequest())
+      val response = testController.displayContactDetails(FakeRequest())
+      status(response) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(response))
+      html.select("a.link-back").attr("href") mustBe routes.StartDateController.displayStartDate().url
+    }
+
+    "return the small producer exemption page when they are volunatry and it is before the tax start date" in {
+      testConfig.setTaxStartDate(LocalDate.now plusYears (2))
+      stubFilledInForm
+      stubFormPage(
+        packaging = Some(Packaging(true, true, false)),
+        packageOwn = Some(Litreage(1, 2)),
+        copacked = Some(true),
+        copackedVolume = Some(Litreage(3, 4)),
+        imports = Some(false),
+        importVolume = None,
+        smallProducerConfirmFlag = Some(true)
+      )
+      val response = testController.displayContactDetails(FakeRequest())
+      status(response) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(response))
+      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
+    }
+
+    "return the import volume page when they are volunatry and it is before the tax start date and they import an amount" in {
+      testConfig.setTaxStartDate(LocalDate.now plusYears (2))
+      stubFilledInForm
+      stubFormPage(
+        packaging = Some(Packaging(true, true, false)),
+        packageOwn = Some(Litreage(1, 2)),
+        copacked = Some(true),
+        copackedVolume = Some(Litreage(35, 45)),
+        imports = Some(true),
+        importVolume = Some(Litreage(1, 2))
+      )
+      val response = testController.displayContactDetails(FakeRequest())
       status(response) mustBe OK
 
       val html = Jsoup.parse(contentAsString(response))
       html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
     }
 
+    "return the import volume page when they are volunatry and it is before the tax start date and they do not import " in {
+      testConfig.setTaxStartDate(LocalDate.now plusYears (2))
+      stubFilledInForm
+      stubFormPage(
+        packaging = Some(Packaging(true, true, false)),
+        packageOwn = Some(Litreage(1, 2)),
+        copacked = Some(true),
+        copackedVolume = Some(Litreage(35, 45)),
+        imports = Some(false),
+        importVolume = None
+      )
+      val response = testController.displayContactDetails(FakeRequest())
+      status(response) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(response))
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display("import").url
+    }
+
+
+  }
+  lazy val yesterday: LocalDate = LocalDate.now minusDays 1
+  override protected def beforeEach(): Unit = {
+    testConfig.setTaxStartDate(yesterday)
+    stubFilledInForm
+  }
+
+  override protected def afterEach(): Unit = {
+    testConfig.resetTaxStartDate()
   }
 
   lazy val testController: ContactDetailsController = wire[ContactDetailsController]
 
-  override protected def beforeEach(): Unit = stubFilledInForm
 }
