@@ -68,4 +68,5 @@ GET         /register/complete                               sdil.controllers.Co
 
 GET         /register/pending                                sdil.controllers.PendingController.displayPending()
 
-GET         /sign-out                                        sdil.controllers.SignoutController.signOut
+GET         /sign-in                                         sdil.controllers.AuthenticationController.signIn()
+GET         /sign-out                                        sdil.controllers.AuthenticationController.signOut()

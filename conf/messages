@@ -10,6 +10,7 @@ sdil.common.yes=Yes
 sdil.common.no=No
 sdil.common.print=Print
 sdil.common.sign-out=Sign out
+sdil.common.return-to-sign-in=Return to Government Gateway sign in
 
 #Address lines
 sdil.address.line1=Address line 1
@@ -84,8 +85,8 @@ sdil.copackedVolume.heading=How many litres of liable drink per year will you ha
 sdil.importVolume.heading=How many litres of liable drink per year will you bring into the UK?
 sdil.litreage.lowRate=Litres at the low rate
 sdil.litreage.highRate=Litres at the high rate
-sdil.litrage.rates.help=What are the rates?
-sdil.litrage.rates.content=The low rate is from 5 grams to 7.9 grams of sugar per 100 millilitres. The high rate is 8 grams of sugar or more per 100 millilitres.
+sdil.litreage.rates.help=What are the rates?
+sdil.litreage.rates.content=The low rate is from 5 grams to 7.9 grams of sugar per 100 millilitres. The high rate is 8 grams of sugar or more per 100 millilitres.
 
 error.litreage.required=Number of litres must be 0 or more
 error.litreage.numeric=Number of litres must be a whole number
@@ -225,10 +226,14 @@ sdil.already-enrolled.heading=You have already registered for this service
 sdil.service-page.link=Go to service page
 
 #Invalid role
-sdil.invalid-role.title=Government Gateway assistants cannot register for Soft Drinks Industry Levy
+sdil.invalid-affinity.title=You can’t register using this Government Gateway account
+sdil.invalid-affinity.p1=You’ve signed in as an agent. Unfortunately, you can’t register for the Soft Drinks Levy using this account.
+sdil.invalid-affinity.p2=The business or individual you’re representing must apply to register themselves.
 
 #Invalid affinity group
-sdil.invalid-affinity.title=Agents cannot register for Soft Drinks Industry Levy
+sdil.invalid-role.title=You can’t register using this Government Gateway account
+sdil.invalid-role.p1=You’ve signed in as an assistant. Unfortunately, you can’t register for the Soft Drinks Levy using this account.
+sdil.invalid-role.p2=The business or individual you’re representing must apply to register themselves.
 
 #Not whitelisted
 sdil.not-whitelisted.title=You can’t register for Soft Drinks Industry Levy

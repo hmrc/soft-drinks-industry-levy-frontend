@@ -189,6 +189,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
         packageOwn = Some(Litreage(1, 2)),
+        packageCopack = None,
         copacked = Some(true),
         copackedVolume = Some(Litreage(3, 4)),
         imports = Some(false),

@@ -20,4 +20,9 @@
 
 @main_template(Messages("sdil.common.title")) {
     <h1>@Messages("sdil.invalid-affinity.title")</h1>
+
+    <p>@Messages("sdil.invalid-affinity.p1")</p>
+    <p>@Messages("sdil.invalid-affinity.p2")</p>
+
+    <p><a href="@sdil.controllers.routes.AuthenticationController.signIn()">@Messages("sdil.common.return-to-sign-in")</a></p>
 }

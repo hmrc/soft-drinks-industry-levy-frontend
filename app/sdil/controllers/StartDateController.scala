@@ -26,7 +26,6 @@ import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models.StartDatePage
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.start_date
 
