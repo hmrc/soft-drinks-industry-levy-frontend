@@ -220,10 +220,12 @@ case object RegistrationTypePage extends MidJourneyPage {
 }
 
 case object StartDatePage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = formData.packaging match {
-    case Some(p) if p.isLiable => ProductionSitesPage
-    case Some(p) => WarehouseSitesPage
-    case None => PackagePage
+
+  override def nextPage(formData: RegistrationFormData): Page = (formData, formData.packaging) match {
+    case (f, _) if f.isVoluntary => ContactDetailsPage
+    case (_, Some(p)) if p.isLiable => ProductionSitesPage
+    case (_, Some(p)) => WarehouseSitesPage
+    case _ => PackagePage
   }
 
   override def previousPage(formData: RegistrationFormData): Page = formData match {
@@ -262,7 +264,10 @@ case object WarehouseSitesPage extends MidJourneyPage {
 }
 
 case object ContactDetailsPage extends PageWithPreviousPage {
-  override def previousPage(formData: RegistrationFormData): Page = WarehouseSitesPage
+  override def previousPage(formData: RegistrationFormData): Page = formData match {
+    case f if f.isVoluntary => StartDatePage
+    case _ => WarehouseSitesPage
+  }
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.contactDetails.isDefined
 

@@ -18,10 +18,10 @@
 @import views.html.softdrinksindustrylevy.helpers.inputText
 @import sdil.config.AppConfig
 
-@(contactForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(contactForm: Form[_], backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title")) {
-    <a class="link-back" href="@sdil.controllers.routes.WarehouseController.show()">@Messages("sdil.common.back")</a>
+    <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
     <h1 class="heading-large">@Messages("sdil.contact-details.heading")</h1>
 
     @if(contactForm.hasErrors) {
