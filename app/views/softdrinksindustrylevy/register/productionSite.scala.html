@@ -30,16 +30,9 @@
     @errorSummary(Messages("sdil.common.errorSummary"), siteForm)
 
     @if(otherSites.nonEmpty) {
-        <h2 class="heading-small">@Messages("sdil.productionSite.address", 1)</h2>
-        <div class="form-group">
-            @mainSite.nonEmptyLines.map { l =>
-                <div>@l</div>
-            }
-        </div>
 
         @otherSites.zipWithIndex.map { case (addr, idx) =>
-            <hr>
-            <h2 class="heading-small">@Messages("sdil.productionSite.address", idx + 2)</h2>
+            <h2 class="heading-small">@Messages("sdil.productionSite.address", idx + 1)</h2>
             <div class="form-group">
                 @addr.nonEmptyLines.map { l =>
                     <div>@l</div>
@@ -51,19 +44,15 @@
         }
 
         <br/>
-    } else {
-        <div class="form-group">
-            @mainSite.nonEmptyLines.map { l =>
-                <div>@l</div>
-            }
-        </div>
     }
 
     @form(sdil.controllers.routes.ProductionSiteController.validate()) {
         @radioButtonWithConditionalContent(
             field = siteForm("hasOtherSite"),
             radioOptions = Seq(
-                ("true", (yesLabel, Some(addressFields(siteForm, "otherSiteAddress", "sdil.otherSite.address")))),
+                ("true", (yesLabel, Some(addressFields(siteForm, "otherSiteAddress", "sdil.otherSite.address",
+                    otherSites.isEmpty)
+                ))),
                 ("false", (Messages("sdil.common.no"), None))
             ),
             '_labelClass -> "block-label",

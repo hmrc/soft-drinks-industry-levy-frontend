@@ -116,7 +116,11 @@ sdil.warehouse.remove=Remove?
 #Package Copack Small
 sdil.package-copack-small.heading=Will you package liable drinks for any small producers?
 sdil.package-copack-small.whatis.header=What is a small producer?
-sdil.package-copack-small.whatis.body=A business is considered a small producer if it produces less than one million litres of liable drink per year and does not expect to exceed that amount within the next 30 days.
+sdil.package-copack-small.whatis.body=A business is a small producer if it produces less than one million litres of \
+  liable drink per year. If you package on behalf of these businesses you can claim an exemption for the liable \
+  drinks you package for them as long as they: <ul class="list list-bullet"><li>are registered as a small producer</li>\
+  <li>give you their reference number</li></ul> You’ll need to enter their reference number against the liable drinks\
+   you’ve packaged for them when filing your return.
 
 #Co Packed
 sdil.copacked.heading=Will you use any third parties in the UK to package liable drinks on your behalf?
@@ -184,6 +188,9 @@ sdil.declaration.utr=Unique Taxpayer Reference (UTR)
 sdil.declaration.business-name=Business name
 sdil.declaration.address=Address
 sdil.declaration.uk=UK
+
+sdil.declaration.small-producer-exemption=Small producer exemption
+sdil.declaration.confirm-small-producer-exemption=Confirm small producer exemption?
 
 sdil.declaration.liable-activity=Liable activity
 sdil.declaration.low-band=Low band
