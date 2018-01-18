@@ -52,7 +52,7 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
       val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
       Future.successful(error.toLeft(AuthorisedRequest(maybeUtr, internalId, request)))
     } recover {
-      case _: NoActiveSession => Left(Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName))))
+      case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
     }
   }
 

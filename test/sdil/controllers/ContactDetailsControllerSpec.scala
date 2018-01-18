@@ -17,7 +17,6 @@
 package sdil.controllers
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
@@ -82,6 +81,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
         packageOwn = Some(Litreage(1, 2)),
+        packageCopack = None,
         copacked = Some(true),
         copackedVolume = Some(Litreage(3, 4)),
         imports = Some(false),
@@ -95,12 +95,13 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       html.select("a.link-back").attr("href") mustBe routes.StartDateController.displayStartDate().url
     }
 
-    "return the small producer exemption page when they are volunatry and it is before the tax start date" in {
-      testConfig.setTaxStartDate(LocalDate.now plusYears (2))
-      stubFilledInForm
+    "return the small producer exemption page when they are voluntary and it is before the tax start date" in {
+      testConfig.setTaxStartDate(LocalDate.now plusYears 2)
+
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
         packageOwn = Some(Litreage(1, 2)),
+        packageCopack = None,
         copacked = Some(true),
         copackedVolume = Some(Litreage(3, 4)),
         imports = Some(false),
@@ -114,30 +115,13 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
     }
 
-    "return the import volume page when they are volunatry and it is before the tax start date and they import an amount" in {
-      testConfig.setTaxStartDate(LocalDate.now plusYears (2))
-      stubFilledInForm
+    "return the import volume page when they are voluntary and it is before the tax start date and they do not import" in {
+      testConfig.setTaxStartDate(LocalDate.now plusYears 2)
+
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
         packageOwn = Some(Litreage(1, 2)),
-        copacked = Some(true),
-        copackedVolume = Some(Litreage(35, 45)),
-        imports = Some(true),
-        importVolume = Some(Litreage(1, 2))
-      )
-      val response = testController.displayContactDetails(FakeRequest())
-      status(response) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(response))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
-    }
-
-    "return the import volume page when they are volunatry and it is before the tax start date and they do not import " in {
-      testConfig.setTaxStartDate(LocalDate.now plusYears (2))
-      stubFilledInForm
-      stubFormPage(
-        packaging = Some(Packaging(true, true, false)),
-        packageOwn = Some(Litreage(1, 2)),
+        packageCopack = None,
         copacked = Some(true),
         copackedVolume = Some(Litreage(35, 45)),
         imports = Some(false),
@@ -149,10 +133,10 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       val html = Jsoup.parse(contentAsString(response))
       html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display("import").url
     }
-
-
   }
+
   lazy val yesterday: LocalDate = LocalDate.now minusDays 1
+
   override protected def beforeEach(): Unit = {
     testConfig.setTaxStartDate(yesterday)
     stubFilledInForm

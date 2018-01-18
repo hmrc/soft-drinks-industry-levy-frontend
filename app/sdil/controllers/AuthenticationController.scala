@@ -18,16 +18,18 @@ package sdil.controllers
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import sdil.actions.FormAction
 import sdil.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-class SignoutController(val messagesApi: MessagesApi,
-                        formAction: FormAction)
-                       (implicit config: AppConfig)
+class AuthenticationController(val messagesApi: MessagesApi)
+                              (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  def signOut: Action[AnyContent] = Action.async { implicit request =>
+  def signIn = Action { implicit request =>
+    Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName)))
+  }
+
+  def signOut: Action[AnyContent] = Action { implicit request =>
     Redirect(config.signoutUrl).withNewSession
   }
 }

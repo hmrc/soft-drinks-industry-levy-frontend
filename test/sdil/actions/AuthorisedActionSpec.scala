@@ -41,7 +41,7 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
       val res = testAction(FakeRequest())
       status(res) mustBe SEE_OTHER
 
-      redirectLocation(res).value mustBe ggSignInUrl
+      redirectLocation(res).value mustBe sdil.controllers.routes.AuthenticationController.signIn().url
     }
 
     "show the 'already registered' error page if the user is already registered in SDIL" in {
@@ -104,11 +104,6 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
   lazy val testAuthorisedAction: AuthorisedAction = wire[AuthorisedAction]
 
   lazy val testAction: Action[AnyContent] = testAuthorisedAction(_ => Ok)
-
-  lazy val ggSignInUrl =
-    "http://localhost:9025/gg/sign-in" +
-    "?continue=http%3A%2F%2Flocalhost%3A8700%2Fsoft-drinks-industry-levy%2Fregister%2Fidentify" +
-    "&origin=soft-drinks-industry-levy-frontend"
 
   def stubAuthResult(res: => Enrolments ~ Option[CredentialRole]) = {
     when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())) thenReturn {

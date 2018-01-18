@@ -20,4 +20,9 @@
 
 @main_template(Messages("sdil.common.title")) {
     <h1 class="heading-large">@Messages("sdil.invalid-role.title")</h1>
+
+    <p>@Messages("sdil.invalid-role.p1")</p>
+    <p>@Messages("sdil.invalid-role.p2")</p>
+
+    <p><a href="@sdil.controllers.routes.AuthenticationController.signIn()">@Messages("sdil.common.return-to-sign-in")</a></p>
 }
