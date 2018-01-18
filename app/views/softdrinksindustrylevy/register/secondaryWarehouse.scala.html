@@ -50,7 +50,9 @@
         @radioButtonWithConditionalContent(
             field = warehouseForm("hasWarehouse"),
             radioOptions = Seq(
-                ("true", (yesLabel, Some(addressFields(warehouseForm, "warehouseAddress", "sdil.warehouse.address")))),
+                ("true", (yesLabel, Some(addressFields(warehouseForm, "warehouseAddress", "sdil.warehouse.address",
+                    warehouses.isEmpty)
+                ))),
                 ("false", (Messages("sdil.common.no"), None))
             ),
             '_labelClass -> "block-label",
