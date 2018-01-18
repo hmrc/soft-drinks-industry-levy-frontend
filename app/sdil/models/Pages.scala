@@ -220,12 +220,11 @@ case object RegistrationTypePage extends MidJourneyPage {
 }
 
 case object StartDatePage extends MidJourneyPage {
-  private def total(p: Option[Litreage], b: Option[Litreage]) = p.fold[BigDecimal](0)(_.total) + b.fold[BigDecimal](0)(_.total)
 
   override def nextPage(formData: RegistrationFormData): Page = (formData, formData.packaging) match {
-    case (f,_) if  f.isVoluntary => ContactDetailsPage
-    case (_,Some(p)) if p.isLiable => ProductionSitesPage
-    case (_,Some(p)) => WarehouseSitesPage
+    case (f, _) if f.isVoluntary => ContactDetailsPage
+    case (_, Some(p)) if p.isLiable => ProductionSitesPage
+    case (_, Some(p)) => WarehouseSitesPage
     case _ => PackagePage
   }
 
