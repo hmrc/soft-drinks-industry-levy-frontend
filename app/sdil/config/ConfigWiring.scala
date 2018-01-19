@@ -30,4 +30,5 @@ trait ConfigWiring extends CommonWiring {
   lazy val shortLivedCaching: ShortLivedHttpCaching = wire[SDILShortLivedCaching]
   lazy val cache: FormDataCache = wire[FormDataCache]
   lazy val errorHandler: FrontendErrorHandler = wire[SDILErrorHandler]
+  lazy val keystore: SDILSessionCache = wire[SDILSessionCache]
 }

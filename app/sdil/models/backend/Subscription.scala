@@ -44,7 +44,7 @@ object Subscription {
       imports <- formData.imports
       startDate <- formData.startDate
       productionSites = formData.productionSites.getOrElse(Nil)
-      secondaryWarehouses <- formData.secondaryWarehouses
+      secondaryWarehouses = formData.secondaryWarehouses.getOrElse(Nil)
       contactDetails <- formData.contactDetails
     } yield {
       Subscription(

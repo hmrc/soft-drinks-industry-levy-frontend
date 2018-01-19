@@ -16,12 +16,14 @@
 
 package sdil.controllers
 
+import java.time.LocalDateTime
+
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.ContactDetailsPage
+import sdil.models.{ContactDetailsPage, SubmissionData}
 import sdil.models.backend.Subscription
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -30,7 +32,9 @@ import views.html.softdrinksindustrylevy.register
 class DeclarationController(val messagesApi: MessagesApi,
                             cache: FormDataCache,
                             formAction: FormAction,
-                            softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
+                            sdilConnector: SoftDrinksIndustryLevyConnector,
+                            keystore: SessionCache)
+                           (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def displayDeclaration: Action[AnyContent] = formAction.async { implicit request =>
@@ -43,7 +47,8 @@ class DeclarationController(val messagesApi: MessagesApi,
   def submitDeclaration(): Action[AnyContent] = formAction.async { implicit request =>
     Subscription.fromFormData(request.formData) match {
       case Some(s) => for {
-        _ <- softDrinksIndustryLevyConnector.submit(s, request.formData.rosmData.safeId)
+        _ <- sdilConnector.submit(s, request.formData.rosmData.safeId)
+        _ <- keystore.cache("submissionData", SubmissionData(s.contact.email, LocalDateTime.now))
         _ <- cache.clear(request.internalId)
       } yield {
         Redirect(routes.CompleteController.displayComplete())

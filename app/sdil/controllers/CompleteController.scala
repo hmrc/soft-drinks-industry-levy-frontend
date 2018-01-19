@@ -16,16 +16,29 @@
 
 package sdil.controllers
 
+import java.time.format.DateTimeFormatter
+
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import sdil.config.AppConfig
+import sdil.models.SubmissionData
+import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.softdrinksindustrylevy._
 
-class CompleteController(val messagesApi: MessagesApi)
+class CompleteController(val messagesApi: MessagesApi,
+                         keystore: SessionCache,
+                         errorHandler: FrontendErrorHandler)
                         (implicit config: AppConfig) extends FrontendController with I18nSupport {
 
   def displayComplete(): Action[AnyContent] = Action.async { implicit request =>
-    Ok(register.complete())
+    keystore.fetchAndGetEntry[SubmissionData]("submissionData") map {
+      case Some(SubmissionData(e, ts)) => Ok(register.complete(e, ts.format(dateFormatter), ts.format(timeFormatter)))
+      case None => BadRequest(errorHandler.badRequestTemplate)
+    }
   }
+
+  lazy val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
+  lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 }

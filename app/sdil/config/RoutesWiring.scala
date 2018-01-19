@@ -26,6 +26,7 @@ import sdil.connectors.{SoftDrinksIndustryLevyConnector, TestConnector}
 import sdil.controllers._
 import sdil.controllers.test.TestingController
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
 
 trait RoutesWiring extends CommonWiring {
@@ -36,6 +37,7 @@ trait RoutesWiring extends CommonWiring {
   val cache: FormDataCache
   val sdilConnector: SoftDrinksIndustryLevyConnector
   val testConnector: TestConnector
+  val keystore: SessionCache
 
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
   lazy val formAction: FormAction = wire[FormAction]
