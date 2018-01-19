@@ -16,14 +16,24 @@
 
 package sdil.controllers
 
+import java.time.LocalDateTime
+
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{eq => matching, _}
+import sdil.models.SubmissionData
+
+import scala.concurrent.Future
 
 class CompleteControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "Complete controller" should {
     "return Status: OK for displaying complete page" in {
+      when(mockKeystore.fetchAndGetEntry[SubmissionData](matching("submissionData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(SubmissionData("aa@bb.cc", LocalDateTime.now))))
+
       val result = testController.displayComplete().apply(FakeRequest())
 
       status(result) mustBe OK

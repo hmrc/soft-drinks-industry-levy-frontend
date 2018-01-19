@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import sdil.config.AppConfig
+package sdil.models
 
-@()(implicit request: Request[_], messages: Messages, config: AppConfig)
+import java.time.LocalDateTime
 
-@main_template(Messages("sdil.common.title")) {
-    <h1 class="heading-large">@Messages("sdil.invalid-affinity.title")</h1>
+import play.api.libs.json.{Format, Json}
 
-    <p>@Messages("sdil.invalid-affinity.p1")</p>
-    <p>@Messages("sdil.invalid-affinity.p2")</p>
+case class SubmissionData(email: String, submissionDate: LocalDateTime)
 
-    <p><a href="@sdil.controllers.routes.AuthenticationController.signIn()">@Messages("sdil.common.return-to-sign-in")</a></p>
+object SubmissionData {
+  implicit val format: Format[SubmissionData] = Json.format[SubmissionData]
 }

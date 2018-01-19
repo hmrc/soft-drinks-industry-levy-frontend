@@ -32,7 +32,7 @@ import sdil.connectors.SoftDrinksIndustryLevyConnector
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.http.cache.client.CacheMap
+import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,6 +47,13 @@ trait TestWiring extends MockitoSugar {
     when(m.cache(anyString(), any())(any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
     when(m.get(anyString())(any(), any())).thenReturn(Future.successful(None))
     when(m.clear(anyString())(any(), any())).thenReturn(Future.successful(()))
+    m
+  }
+
+  val mockKeystore: SessionCache = {
+    val m = mock[SessionCache]
+    when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
+    when(m.fetchAndGetEntry[Any](anyString())(any(), any(), any())).thenReturn(Future.successful(None))
     m
   }
 

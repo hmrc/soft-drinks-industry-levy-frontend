@@ -15,8 +15,9 @@
  *@
 
 @import sdil.config.AppConfig
+@import java.time.LocalDateTime
 
-@()(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(email: String, submissionDate: String, submissionTime: String)(implicit messages: Messages, request: Request[_], config: AppConfig)
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
 
@@ -26,10 +27,16 @@
 
     <div class="govuk-box-highlight">
         <h1 class="heading-xlarge">@Messages("sdil.complete.title")</h1>
+
+        <p class="font-large">@Messages("sdil.complete.subheading")</p>
     </div>
+
+    <p>@Messages("sdil.complete.p1", submissionDate, submissionTime)</p>
 
     <h2 class="heading-medium">@Messages("sdil.complete.what-happens.title")</h2>
 
-    <p>@Messages("sdil.complete.what-happens.content")</p>
+    <p>@Messages("sdil.complete.what-happens.p1", email)</p>
+    <p>@Messages("sdil.complete.what-happens.p2")</p>
+    <p>@Messages("sdil.complete.what-happens.p3")</p>
 }
 

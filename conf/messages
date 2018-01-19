@@ -221,9 +221,13 @@ sdil.declaration.confirmation=By continuing you’re confirming that the details
 sdil.declaration.continue=Accept and continue
 
 #Complete
-sdil.complete.title=Registration submitted
+sdil.complete.title=Application complete
+sdil.complete.subheading=We’ve received your application to register for the Soft Drinks Levy
+sdil.complete.p1=Your application to register for the Soft Drinks Levy was submitted on {0} at {1}
 sdil.complete.what-happens.title=What happens next?
-sdil.complete.what-happens.content=You don’t need to do anything else. We''ll contact you with a registration number.
+sdil.complete.what-happens.p1=You don’t need to do anything else. We’ll send your reference number to {0} within 24 hours.
+sdil.complete.what-happens.p2=If you don’t get your reference number within 14 days or you need to make a change to your registration, you need to call the Soft Drinks Levy Helpline on 0300 200 3700.
+sdil.complete.what-happens.p3=Fixed quarterly returns are due in July, September, December and March.
 
 #Service page
 sdil.service-page.title=Placeholder service page
