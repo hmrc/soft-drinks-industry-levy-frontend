@@ -16,7 +16,8 @@
 
 @import sdil.config.AppConfig
 
-@()(implicit request: Request[_], messages: Messages, config: AppConfig)
+@import sdil.models.RosmRegistration
+@(rosmRegistration: RosmRegistration)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.common.title")) {
     <h1 class="heading-large">@Messages("sdil.already-enrolled.heading")</h1>

@@ -235,6 +235,11 @@ sdil.service-page.title=Placeholder service page
 #Already registered
 sdil.already-enrolled.heading=You have already registered for this service
 sdil.service-page.link=Go to service page
+sdil.already.received.for.utr.title=We’ve already received an application for this business
+sdil.already.received.for.utr.info=<p>An application to register for the Soft Drinks Levy has already been submitted \
+  for this business.</p><p>If you want to check the status of the registration you need to sign in using the same \
+  Government Gateway account used to submit the application.</p><p>If this isn’t the business you wanted to register,\
+   you need to <a href="{0}">go back and enter a different UTR and postcode</a>.</p>
 
 #Invalid role
 sdil.invalid-affinity.title=You can’t register using this Government Gateway account
