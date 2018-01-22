@@ -50,7 +50,7 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
         .orElse(invalidAffinityGroup(affinity)(request))
 
       val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
-      Future.successful(error.toLeft(AuthorisedRequest(maybeUtr, internalId, request)))
+      Future.successful(error.toLeft(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
     } recover {
       case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
     }
@@ -82,4 +82,8 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
   }
 }
 
-case class AuthorisedRequest[A](utr: Option[String], internalId: String, request: Request[A]) extends WrappedRequest(request)
+case class AuthorisedRequest[A](utr: Option[String],
+                                internalId: String,
+                                enrolments: Enrolments,
+                                request: Request[A])
+  extends WrappedRequest(request)
