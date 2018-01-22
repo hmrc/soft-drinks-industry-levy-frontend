@@ -55,7 +55,7 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
       maybeUtr match {
         case Some(utr) =>
           sdilConnector.getRosmRegistration(utr) map {
-            case Some(a) if getSdilEnrolment(enrolments).nonEmpty => Left(Forbidden(errors.already_registered(a)))
+            case Some(a) if getSdilEnrolment(enrolments).nonEmpty => Left(Forbidden(errors.already_registered(utr, a.organisation.organisationName, a.address)))
             case _ if error.nonEmpty => Left(error.get)
             case _ =>
               Right(AuthorisedRequest(maybeUtr, internalId, request))

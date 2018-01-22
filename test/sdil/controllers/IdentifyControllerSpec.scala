@@ -46,14 +46,14 @@ class IdentifyControllerSpec extends ControllerSpec {
     }
 
     "look up the business partner record in ROSM if the user has an existing UTR enrolment" in {
-      val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1122334455")), "Active")))
+      val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1122334456")), "Active")))
 
       stubAuthResult(new ~(irctEnrolment, Some(User)))
 
       val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
 
-      verify(mockSdilConnector, times(1)).getRosmRegistration(matching("1122334455"))(any())
+      verify(mockSdilConnector, times(1)).getRosmRegistration(matching("1122334456"))(any())
     }
 
     "redirect to the verify page if the user has a IR-CT enrolment" in {
