@@ -32,8 +32,8 @@ error.utr.no-record=This UTR and postcode do not match our records
 #Verify
 sdil.verify.heading=Is this the business you want to register?
 sdil.verify.table.caption=Your business record in HMRC
-sdil.verify.utr=UTR
-sdil.verify.organisation=Organisation
+sdil.verify.utr=Unique Taxpayer Reference (UTR)
+sdil.verify.organisation=Business name
 sdil.verify.address=Address
 sdil.verify.detailsCorrect.yes=Yes - this is the business and the address I want to register
 sdil.verify.detailsCorrect.differentAddress=Yes - but I want to register a different address for the Soft Drinks Industry Levy
