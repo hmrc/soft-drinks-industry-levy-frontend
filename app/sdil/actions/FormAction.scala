@@ -21,6 +21,7 @@ import play.api.mvc.{ActionBuilder, Request, Result, WrappedRequest}
 import sdil.config.FormDataCache
 import sdil.controllers.routes
 import sdil.models.RegistrationFormData
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
@@ -35,10 +36,13 @@ class FormAction(cache: FormDataCache, authorisedAction: AuthorisedAction)(impli
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     cache.get(req.internalId) flatMap {
-      case Some(data) => block(RegistrationFormRequest(request, data, req.internalId))
+      case Some(data) => block(RegistrationFormRequest(request, data, req.internalId, req.enrolments))
       case None => Future.successful(Redirect(routes.IdentifyController.start()))
     }
   })
 }
 
-case class RegistrationFormRequest[T](request: Request[T], formData: RegistrationFormData, internalId: String) extends WrappedRequest[T](request)
+case class RegistrationFormRequest[T](request: Request[T],
+                                      formData: RegistrationFormData,
+                                      internalId: String,
+                                      enrolments: Enrolments) extends WrappedRequest[T](request)

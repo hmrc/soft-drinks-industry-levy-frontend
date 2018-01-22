@@ -16,17 +16,54 @@
 
 package sdil.controllers
 
+import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, status, _}
+import play.api.test.Helpers._
+import org.mockito.ArgumentMatchers._
+import org.mockito.Mockito._
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
+import uk.gov.hmrc.auth.core.{Admin, Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.~
+
+import scala.collection.JavaConverters._
+import scala.concurrent.Future
 
 class OrgTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
+
   "OrgType controller" should {
     "always return 200 Ok and the organisation type page" in {
       val request = FakeRequest("GET", "/organisation-type")
       val response = testController.displayOrgType().apply(request)
       status(response) mustBe OK
       contentAsString(response) must include(messagesApi("sdil.organisation-type.heading"))
+    }
+
+    "hide the sole trader org type option if the user has a CT-UTR" in {
+      lazy val ctUtrEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "9876543210")), "Active")))
+
+      when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())) thenReturn {
+        Future.successful(new ~(new ~(new ~(ctUtrEnrolment, Some(Admin)), Some("internal id")), Some(Organisation)))
+      }
+
+      val res = testController.displayOrgType()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      val options = html.select("""input[name="orgType"]""").asScala.map(_.`val`)
+
+      options must contain theSameElementsAs Seq("limitedCompany", "limitedLiabilityPartnership", "partnership", "unincorporatedBody")
+    }
+
+    "return 400 Bad Request if the user selects sole trader, but has a CT-UTR" in {
+      lazy val ctUtrEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "9876543210")), "Active")))
+
+      when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())) thenReturn {
+        Future.successful(new ~(new ~(new ~(ctUtrEnrolment, Some(Admin)), Some("internal id")), Some(Organisation)))
+      }
+
+      val res = testController.submitOrgType()(FakeRequest().withFormUrlEncodedBody("orgType" -> "soleTrader"))
+      status(res) mustBe BAD_REQUEST
     }
 
     "return Status: Bad Request for invalid organisation form POST request and show choose option error" in {
@@ -40,8 +77,7 @@ class OrgTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return Status: See Other for valid organisation form POST request and redirect to packaging page" in {
-      val request = FakeRequest().withFormUrlEncodedBody(
-        "orgType" -> "soleTrader")
+      val request = FakeRequest().withFormUrlEncodedBody("orgType" -> "limitedCompany")
       val response = testController.submitOrgType().apply(request)
 
       status(response) mustBe SEE_OTHER
@@ -63,9 +99,11 @@ class OrgTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(response) mustBe OK
       contentAsString(response) must include(messagesApi("sdil.partnership.heading"))
     }
-    lazy val testController = wire[OrgTypeController]
-  }
-  override protected def beforeEach(): Unit = stubFilledInForm
 
+  }
+
+  lazy val testController = wire[OrgTypeController]
+
+  override protected def beforeEach(): Unit = stubFilledInForm
 }
 
