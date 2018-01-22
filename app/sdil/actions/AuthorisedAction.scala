@@ -50,20 +50,19 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
         .orElse(invalidRole(role)(request))
         .orElse(invalidAffinityGroup(affinity)(request))
 
+      val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
+
       maybeUtr match {
         case Some(utr) =>
           sdilConnector.getRosmRegistration(utr) map {
             case Some(a) if getSdilEnrolment(enrolments).nonEmpty => Left(Forbidden(errors.already_registered(a)))
             case _ if error.nonEmpty => Left(error.get)
             case _ =>
-              val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
               Right(AuthorisedRequest(maybeUtr, internalId, request))
           }
         case _ =>
-          val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
           Future.successful(error.toLeft(AuthorisedRequest(maybeUtr, internalId, request)))
       }
-
 
     } recover {
       case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
