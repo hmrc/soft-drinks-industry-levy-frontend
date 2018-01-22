@@ -34,12 +34,12 @@ sdil.verify.heading=Is this the business you want to register?
 sdil.verify.table.caption=Your business record in HMRC
 sdil.verify.utr=Unique Taxpayer Reference (UTR)
 sdil.verify.organisation=Business name
-sdil.verify.address=Address
+sdil.verify.address=Business Address
 sdil.verify.detailsCorrect.yes=Yes - this is the business and the address I want to register
-sdil.verify.detailsCorrect.differentAddress=Yes - but I want to register a different address for the Soft Drinks Industry Levy
-sdil.verify.detailsCorrect.no=No - enter a different UTR and postcode
-sdil.verify.address.heading=Enter an address for the Soft Drinks Industry Levy:
-sdil.verify.address.legend=Enter an address for the Soft Drinks Industry Levy:
+sdil.verify.detailsCorrect.differentAddress=Yes - but I want to add a new primary address for the Soft Drinks Levy
+sdil.verify.detailsCorrect.no=No - I need to enter a different UTR and postcode
+sdil.verify.address.heading=Enter an primary address for the Soft Drinks Industry Levy
+sdil.verify.address.legend=Enter an primary address for the Soft Drinks Industry Levy
 sdil.verify.address.line1=Address line 1
 sdil.verify.address.line2=Address line 2
 sdil.verify.address.line3=Address line 3
@@ -53,23 +53,23 @@ sdil.registration-pending.p2=If you haven’t got your registration number withi
 sdil.registration-pending.p3=If there’s a problem with your application we’ll contact you using the information you provided.
 
 #Organisation Type
-sdil.organisation-type.heading=What organisation type is your business?
+sdil.organisation-type.heading=Which of these best describes your business?
 sdil.organisation-type.limited-company=Limited Company
-sdil.organisation-type.llp=Limited Liability Partnership
+sdil.organisation-type.llp=Limited Liability Partnership (LLP)
 sdil.organisation-type.partnership=Partnership
 sdil.organisation-type.sole-trader=Sole Trader
 sdil.organisation-type.unincorporated-body=Unincorporated Body
 
 #Partnership page
-sdil.partnership.heading=Call HMRC
-sdil.partnership.info=As your organisation is a partnership you must call this number to register for the Soft Drinks Industry Levy
+sdil.partnership.heading=Please call us
+sdil.partnership.info=We’r1e sorry, but you cannot register online as a partnership. You''ll need to call us on 0300 200 3700 to submit your application to register for the Soft Drinks Levy.
 
 #Package
 sdil.package.heading=Will you package liable drinks at a production site you operate?
 sdil.package.who-for=Who will you package liable drinks for?
 sdil.who-for.instruction=Select one or both
-sdil.who-for.option1=Your own brand or brands you have the rights to manufacture
-sdil.who-for.option2=Your customers
+sdil.who-for.option1=Our own brand or brands we have the rights to manufacture
+sdil.who-for.option2=Our customers
 
 error.packaging.none-selected=Choose at least one option
 
@@ -78,15 +78,15 @@ error.copack-small.lower-greater-than-total-lower=Litres for small producers mus
 error.copack-small.higher-greater-than-total-higher=Litres for small producers must be less than total litres for customers
 
 #Litreage pages
-sdil.packageOwn.heading=How many litres of liable drink per year will you package for your own brand or brands you have the rights to manufacture?
-sdil.packageCopack.heading=How many litres of liable drink per year will you package for your customers?
+sdil.packageOwn.heading=In the next year, how many litres of liable drink do you expect to package for brands you own or have the rights to manufacture?
+sdil.packageCopack.heading=In total, how many litres of liable drink do you expect to package for all of your customers in the next year?
 sdil.packageCopackSmallVol.heading=How many litres of liable drink per year will you package for small producers?
-sdil.copackedVolume.heading=How many litres of liable drink per year will you have packaged by third parties in the UK?
-sdil.importVolume.heading=How many litres of liable drink per year will you bring into the UK?
-sdil.litreage.lowRate=Litres at the low rate
-sdil.litreage.highRate=Litres at the high rate
-sdil.litreage.rates.help=What are the rates?
-sdil.litreage.rates.content=The low rate is from 5 grams to 7.9 grams of sugar per 100 millilitres. The high rate is 8 grams of sugar or more per 100 millilitres.
+sdil.copackedVolume.heading=In the next year, how many litres of liable drink do you expect to claim a small producer exemption for?
+sdil.importVolume.heading=In the next year, how many litres of liable drink do you expect to have packaged by third parties in the UK?
+sdil.litreage.lowRate=Litres in the low band
+sdil.litreage.highRate=Litres in the high band
+sdil.litreage.rates.help=What are the bands?
+sdil.litreage.rates.content=The low band is from 5 grams to 7.9 grams of sugar per 100 millilitres. The high band is 8 grams of sugar or more per 100 millilitres.
 
 error.litreage.required=Number of litres must be 0 or more
 error.litreage.numeric=Number of litres must be a whole number
@@ -97,15 +97,15 @@ error.litreage.zero=Number of litres must be 1 or more
 #Production sites
 sdil.productionSite.heading=Will you package liable drinks at a production site in the UK other than:
 sdil.productionSite.add.heading=Will you have another liable drink production site in the UK?
-sdil.otherSite.address.heading=Enter a production site
+sdil.otherSite.address.heading=Enter a packaging site
 sdil.otherSite.address.hint=You can enter more sites later if you need to
-sdil.otherSite.address.legend=An additional production site address
+sdil.otherSite.address.legend=An additional packaging site address
 sdil.productionSite.address=Address {0}
 sdil.productionSite.remove=Remove?
-sdil.otherSite.add=Yes - add another address
+sdil.otherSite.add=Yes
 
 #Secondary warehouse
-sdil.warehouse.heading=Do you want to register any of the warehouses you will use to store liable drinks?
+sdil.warehouse.heading=Do you want to register any of the warehouses you’ll use to store liable drinks?
 sdil.warehouse.add.heading=Does the business have another secondary warehouse to declare?
 sdil.warehouse.address.heading=Enter a warehouse site
 sdil.warehouse.address.hint=You can enter more sites later if you need to
