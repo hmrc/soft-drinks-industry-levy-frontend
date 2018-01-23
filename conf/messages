@@ -233,7 +233,10 @@ sdil.complete.what-happens.p3=Fixed quarterly returns are due in July, September
 sdil.service-page.title=Placeholder service page
 
 #Already registered
-sdil.already-enrolled.heading=You have already registered for this service
+sdil.already-enrolled.heading=You’re already registered
+sdil.already-enrolled.p1=You’re already registered for the Soft Drinks Levy.
+sdil.already-enrolled.p2=To view your registration details, go to
+sdil.already-enrolled.p3= your Soft Drinks Levy home.
 sdil.service-page.link=Go to service page
 sdil.already.received.for.utr.title=We’ve already received an application for this business
 sdil.already.received.for.utr.info=<p>An application to register for the Soft Drinks Levy has already been submitted \
