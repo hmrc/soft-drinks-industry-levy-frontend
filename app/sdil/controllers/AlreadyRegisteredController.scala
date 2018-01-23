@@ -30,7 +30,7 @@ class AlreadyRegisteredController(val messagesApi: MessagesApi,
 
   def show(utr: String): Action[AnyContent] = Action.async { implicit request =>
     sdilConnector.getRosmRegistration(utr) map {
-      case Some(a) => Forbidden(errors.already_registered(a))
+      case Some(a) => Forbidden(errors.already_registered(utr, a.organisation.organisationName, a.address))
       case _ => Redirect(routes.AuthenticationController.signIn())
     }
   }

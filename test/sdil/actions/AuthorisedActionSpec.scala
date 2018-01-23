@@ -45,14 +45,19 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
     }
 
     "show the 'already registered' error page if the user is already registered in SDIL" in {
+      val utr = "1111111111"
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
-      val enrolments = Enrolments(Set(new Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active")))
+      val saEnrolment = EnrolmentIdentifier("UTR", utr)
+      val enrolments = Enrolments(Set(
+        new Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"),
+        new Enrolment("IR-SA", Seq(saEnrolment), "Active")
+      ))
 
       stubAuthResult(new ~(enrolments, Some(User)))
 
       val res = testAction(FakeRequest())
-      status(res) mustBe FORBIDDEN
-      contentAsString(res) must include (Messages("sdil.already-enrolled.heading"))
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe sdil.controllers.routes.AlreadyRegisteredController.show(utr).url
     }
 
     "show the 'invalid affinity group' error page if the user is an agent" in {
