@@ -53,17 +53,14 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
       val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
 
       maybeUtr match {
-        case Some(utr) =>
-          sdilConnector.getRosmRegistration(utr) map {
-            case Some(a) if getSdilEnrolment(enrolments).nonEmpty => Left(Forbidden(errors.already_registered(a)))
-            case _ if error.nonEmpty => Left(error.get)
-            case _ =>
-              Right(AuthorisedRequest(maybeUtr, internalId, request))
-          }
+        case Some(utr) if getSdilEnrolment(enrolments).nonEmpty =>
+          Future(Left(Redirect(sdil.controllers.routes.AlreadyRegisteredController.show(utr))))
+        case _ if error.nonEmpty =>
+          Future(Left(error.get))
         case _ =>
-          Future.successful(error.toLeft(AuthorisedRequest(maybeUtr, internalId, request)))
+          Future(Right(AuthorisedRequest(maybeUtr, internalId, request)))
       }
-
+        
     } recover {
       case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
     }
