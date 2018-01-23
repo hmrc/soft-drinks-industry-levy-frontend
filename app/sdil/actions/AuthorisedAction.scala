@@ -20,6 +20,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc._
 import sdil.config.AppConfig
+import sdil.connectors.SoftDrinksIndustryLevyConnector
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
@@ -32,11 +33,12 @@ import views.html.softdrinksindustrylevy.errors
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 
-class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: MessagesApi)
+class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: MessagesApi, sdilConnector: SoftDrinksIndustryLevyConnector)
                       (implicit config: AppConfig, ec: ExecutionContext)
   extends ActionRefiner[Request, AuthorisedRequest] with ActionBuilder[AuthorisedRequest] with AuthorisedFunctions with I18nSupport with ActionHelpers {
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
+    implicit val req: Request[A] = request
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     val retrieval = allEnrolments and credentialRole and internalId and affinityGroup
@@ -45,12 +47,20 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
       val maybeUtr = getUtr(enrolments)
 
       val error: Option[Result] = notWhitelisted(maybeUtr)(request)
-        .orElse(duplicateEnrolment(enrolments)(request))
         .orElse(invalidRole(role)(request))
         .orElse(invalidAffinityGroup(affinity)(request))
 
       val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
-      Future.successful(error.toLeft(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
+
+      maybeUtr match {
+        case Some(utr) if getSdilEnrolment(enrolments).nonEmpty =>
+          Future(Left(Redirect(sdil.controllers.routes.AlreadyRegisteredController.show(utr))))
+        case _ if error.nonEmpty =>
+          Future(Left(error.get))
+        case _ =>
+          Future(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
+      }
+        
     } recover {
       case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
     }
@@ -62,10 +72,6 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
       case _ if !config.whitelistEnabled => None
       case _ => Some(Forbidden(views.html.softdrinksindustrylevy.errors.not_whitelisted()))
     }
-  }
-
-  private def duplicateEnrolment(enrolments: Enrolments)(implicit request: Request[_]): Option[Result] = {
-    getSdilEnrolment(enrolments) map { _ => Forbidden(errors.already_registered()) }
   }
 
   private def invalidRole(credentialRole: Option[CredentialRole])(implicit request: Request[_]): Option[Result] = {

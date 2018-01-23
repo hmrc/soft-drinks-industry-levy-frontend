@@ -19,13 +19,19 @@
 @import sdil.config.AppConfig
 @import sdil.models.Address
 
-@(verifyForm: Form[_], utr: String, organisation: String, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(verifyForm: Form[_], utr: String, organisation: String, address: Address, alreadyRegistered: Boolean = false)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
     @main_template(Messages("sdil.common.title")) {
 
         <a class="link-back" href="@sdil.controllers.routes.IdentifyController.show()">@Messages("sdil.common.back")</a>
 
-        <h1 class="heading-large">@Messages("sdil.verify.heading")</h1>
+        <h1 class="heading-large">
+            @if(!alreadyRegistered) {
+                @Messages("sdil.verify.heading")
+            } else {
+                @Messages("sdil.already.received.for.utr.title")
+            }
+        </h1>
 
         @errorSummary(Messages("sdil.common.errorSummary"), verifyForm)
 
@@ -33,15 +39,15 @@
             <caption class="heading-small visuallyhidden">@Messages("sdil.verify.table.caption")</caption>
             <tbody>
                 <tr>
-                    <th scope="row">@Messages("sdil.verify.utr")</th>
+                    <td scope="row">@Messages("sdil.verify.utr")</td>
                     <td>@utr</td>
                 </tr>
                 <tr>
-                    <th scope="row">@Messages("sdil.verify.organisation")</th>
+                    <td scope="row">@Messages("sdil.verify.organisation")</td>
                     <td class="org">@organisation</td>
                 </tr>
                 <tr>
-                    <th scope="row">@Messages("sdil.verify.address")</th>
+                    <td scope="row">@Messages("sdil.verify.address")</td>
                     <td>
                         @address.line1,<br/>
                         @if(address.line2.nonEmpty) { @address.line2,<br/> }
@@ -53,20 +59,32 @@
             </tbody>
         </table>
 
-        @form(sdil.controllers.routes.VerifyController.validate()) {
-            @radioButtonWithConditionalContent(
-                field = verifyForm("detailsCorrect"),
-                radioOptions = Seq(
-                    ("yes", (Messages("sdil.verify.detailsCorrect.yes"), None)),
-                    ("differentAddress", (Messages("sdil.verify.detailsCorrect.differentAddress"), Some(addressFields(verifyForm, "alternativeAddress", "sdil.verify.address", showHint = false)))),
-                    ("no", (Messages("sdil.verify.detailsCorrect.no"), None))
-                ),
-                '_labelClass -> "block-label",
-                '_labelAfter -> true,
-                '_groupClass -> "form-field-group",
-                '_dataTargetTrue -> "something"
-            )
+        @if(!alreadyRegistered) {
+            @form(sdil.controllers.routes.VerifyController.validate()) {
+                @radioButtonWithConditionalContent(
+                    field = verifyForm("detailsCorrect"),
+                    radioOptions = Seq(
+                        ("yes", (Messages("sdil.verify.detailsCorrect.yes"), None)),
+                        ("differentAddress", (Messages("sdil.verify.detailsCorrect.differentAddress"), Some(addressFields(verifyForm, "alternativeAddress", "sdil.verify.address", showHint = false))))
+                    ),
+                    '_labelClass -> "block-label",
+                    '_labelAfter -> true,
+                    '_groupClass -> "form-field-group",
+                    '_dataTargetTrue -> "something"
+                )
 
-            <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+                @radioButtonWithConditionalContent(
+                    field = verifyForm("detailsCorrect"),
+                    radioOptions = Seq(("no", (Messages("sdil.verify.detailsCorrect.no"), None))),
+                    '_labelClass -> "block-label",
+                    '_labelAfter -> true,
+                    '_groupClass -> "form-field-group",
+                    '_dataTargetTrue -> "altAddress"
+                )
+
+                <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+            }
+        } else {
+            @Html(Messages("sdil.already.received.for.utr.info", sdil.controllers.routes.IdentifyController.show()))
         }
     }
