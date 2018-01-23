@@ -58,7 +58,7 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
         case _ if error.nonEmpty =>
           Future(Left(error.get))
         case _ =>
-          Future(Right(AuthorisedRequest(maybeUtr, internalId, request)))
+          Future(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
       }
         
     } recover {
@@ -88,4 +88,8 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
   }
 }
 
-case class AuthorisedRequest[A](utr: Option[String], internalId: String, request: Request[A]) extends WrappedRequest(request)
+case class AuthorisedRequest[A](utr: Option[String],
+                                internalId: String,
+                                enrolments: Enrolments,
+                                request: Request[A])
+  extends WrappedRequest(request)
