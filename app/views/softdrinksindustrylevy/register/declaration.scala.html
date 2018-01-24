@@ -102,7 +102,7 @@
         }
     }
 
-    @if(formData.isVoluntary) {
+    @if(formData.isVoluntary || formData.isEntitledToSmallProducerExemption) {
         @declaration_table("small-producer-exemption") {
             @formData.smallProducerConfirmFlag.map { flag =>
                 @declaration_details_table_row("confirm-small-producer-exemption",
