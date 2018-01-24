@@ -24,8 +24,8 @@ error.utr.length=UTR must be 10 digits long
 error.utr.invalid=UTR must be a number
 
 #Identify
-sdil.identify.heading=Enter your Unique Tax Reference number and postcode
-sdil.identify.utr=Unique Tax Reference number (UTR)
+sdil.identify.heading=Enter your Unique Taxpayer Reference number and postcode
+sdil.identify.utr=Unique Taxpayer Reference number (UTR)
 sdil.identify.postcode=Registered business postcode
 error.utr.no-record=This UTR and postcode do not match our records
 
@@ -34,12 +34,12 @@ sdil.verify.heading=Is this the business you want to register?
 sdil.verify.table.caption=Your business record in HMRC
 sdil.verify.utr=Unique Taxpayer Reference (UTR)
 sdil.verify.organisation=Business name
-sdil.verify.address=Business Address
+sdil.verify.address=Business address
 sdil.verify.detailsCorrect.yes=Yes - this is the business and the address I want to register
 sdil.verify.detailsCorrect.differentAddress=Yes - but I want to add a new primary address for the Soft Drinks Levy
 sdil.verify.detailsCorrect.no=No - I need to enter a different UTR and postcode
-sdil.verify.address.heading=Enter an primary address for the Soft Drinks Industry Levy
-sdil.verify.address.legend=Enter an primary address for the Soft Drinks Industry Levy
+sdil.verify.address.heading=Enter a primary address for the Soft Drinks Levy
+sdil.verify.address.legend=Enter a primary address for the Soft Drinks Levy
 sdil.verify.address.line1=Address line 1
 sdil.verify.address.line2=Address line 2
 sdil.verify.address.line3=Address line 3
@@ -62,10 +62,11 @@ sdil.organisation-type.unincorporated-body=Unincorporated Body
 
 #Partnership page
 sdil.partnership.heading=Please call us
-sdil.partnership.info=We’re sorry, but you cannot register online as a partnership. You’ll need to call us on 0300 200 3700 to submit your application to register for the Soft Drinks Levy.
+sdil.partnership.info.p1=We’re sorry, but you cannot register online as a partnership.
+sdil.partnership.info.p2=You’ll need to call us on 0300 200 3700 to submit your application to register for the Soft Drinks Levy.
 
 #Package
-sdil.package.heading=Will you package liable drinks at a production site you operate?
+sdil.package.heading=Will you package liable drinks at a packaging site you operate?
 sdil.package.who-for=Who will you package liable drinks for?
 sdil.who-for.instruction=Select one or both
 sdil.who-for.option1=Our own brand or brands we have the rights to manufacture
@@ -80,13 +81,14 @@ error.copack-small.higher-greater-than-total-higher=Litres for small producers m
 #Litreage pages
 sdil.packageOwn.heading=In the next year, how many litres of liable drink do you expect to package for brands you own or have the rights to manufacture?
 sdil.packageCopack.heading=In total, how many litres of liable drink do you expect to package for all of your customers in the next year?
-sdil.packageCopackSmallVol.heading=How many litres of liable drink per year will you package for small producers?
-sdil.copackedVolume.heading=In the next year, how many litres of liable drink do you expect to claim a small producer exemption for?
-sdil.importVolume.heading=In the next year, how many litres of liable drink do you expect to have packaged by third parties in the UK?
+sdil.packageCopackSmallVol.heading=How many litres of liable drink per year do you expect to claim a small producer exemption for?
+sdil.copackedVolume.heading=In the next year, how many litres of liable drink do you expect to have packaged by third parties in the UK?
+sdil.importVolume.heading=In the next year, how many litres of liable drink do you expect to bring into the UK?
 sdil.litreage.lowRate=Litres in the low band
 sdil.litreage.highRate=Litres in the high band
 sdil.litreage.rates.help=What are the bands?
-sdil.litreage.rates.content=The low band is from 5 grams to 7.9 grams of sugar per 100 millilitres. The high band is 8 grams of sugar or more per 100 millilitres.
+sdil.litreage.rates.content.p1=The low band is from 5 grams to 7.9 grams of sugar per 100 millilitres.
+sdil.litreage.rates.content.p2=The high band is 8 grams of sugar or more per 100 millilitres.
 
 error.litreage.required=Number of litres must be 0 or more
 error.litreage.numeric=Number of litres must be a whole number
@@ -95,8 +97,8 @@ error.litreage.min=Number of litres must be 0 or more
 error.litreage.zero=Number of litres must be 1 or more
 
 #Production sites
-sdil.productionSite.heading=Will you package liable drinks at a production site in the UK other than:
-sdil.productionSite.add.heading=Will you have another liable drink production site in the UK?
+sdil.productionSite.heading=Have you got any packaging sites you haven’t already told us about?
+sdil.productionSite.add.heading=Do you want to register another packaging site in the UK?
 sdil.otherSite.address.heading=Enter a packaging site
 sdil.otherSite.address.hint=You can enter more sites later if you need to
 sdil.otherSite.address.legend=An additional packaging site address
@@ -121,7 +123,7 @@ sdil.package-copack-small.heading=Do you expect to claim a small producer exempt
 sdil.package-copack-small.whatis.header=What’s a small producer exemption?
 sdil.package-copack-small.whatis.body.p1=A business is a small producer if it produces less than one million litres of \
   liable drink per year. If you package on behalf of these businesses, you can claim an exemption for the liable drinks \
-  you package for them as long as they are registered as a small producer and give you their reference number.
+  you package for them as long as they:<ul class="list list-bullet"><li>are registered as a small producer</li><li>give you their reference number</li></ul>
 sdil.package-copack-small.whatis.body.p2=You''ll need to enter their reference number against the liable drinks you''ve packaged for them when filing your return.
 
 #Co Packed

@@ -29,7 +29,6 @@
     @errorSummary(Messages("sdil.common.errorSummary"), warehouseForm)
 
     @if(warehouses.nonEmpty) {
-        <hr>
 
         @warehouses.zipWithIndex.map { case (addr, i) =>
             <div>

@@ -55,6 +55,7 @@ details summary:not([tabindex]) {
 
 table th, table td {
     font-size: 19px;
+    font-weight: 400;
 }
 
 hr {
@@ -97,4 +98,8 @@ html .font-xsmall {
     line-height: 1.25 !important;
     font-weight: 400 !important;
     text-transform: none !important;
+}
+
+.content__body{
+    width: 66.666667% !important;
 }
