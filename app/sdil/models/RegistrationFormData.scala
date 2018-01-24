@@ -39,11 +39,33 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 contactDetails: Option[ContactDetails] = None,
                                 smallProducerConfirmFlag: Option[Boolean] = None) {
 
-  lazy val isVoluntary: Boolean = {
-    total(packageOwn, copackedVolume) < 1000000 && copackedVolume.exists(_.total != 0) && imports.contains(false) && packageCopack.isEmpty
+  lazy val isSmall: Boolean = {
+    total(packageOwn, copackedVolume) < 1000000
   }
 
-  private def total(pack: Option[Litreage], copack: Option[Litreage]) = pack.fold[BigDecimal](0)(_.total) + copack.fold[BigDecimal](0)(_.total)
+  lazy val isCopacked: Boolean = {
+    copackedVolume.exists(_.total != 0)
+  }
+
+  lazy val isImporter: Boolean = {
+    imports.contains(true)
+  }
+
+  lazy val isCopacker: Boolean = {
+    packageCopack.nonEmpty
+  }
+
+  lazy val isVoluntary: Boolean = {
+     isSmall && isCopacked && !isImporter && !isCopacker
+  }
+
+  lazy val isEntitledToSmallProducerExemption: Boolean = {
+    isSmall && isCopacked
+  }
+
+  def total(n: Option[Litreage]*): BigDecimal = {
+    (n map { x => x.fold[BigDecimal](0)(_.total)}).sum
+  }
 
   lazy val primaryAddress: Address = {
     verify match {
