@@ -16,21 +16,18 @@
 
 package sdil.controllers
 
+import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
-import sdil.models.{OrgTypePage, RegistrationFormData}
-import uk.gov.hmrc.http.cache.client.SessionCache
+import sdil.models.OrgTypePage
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.play.views.html.helpers.form
 import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
-
 
 class OrgTypeController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
@@ -38,15 +35,20 @@ class OrgTypeController(val messagesApi: MessagesApi, cache: FormDataCache, form
   import OrgTypeController.form
 
   def displayOrgType(): Action[AnyContent] = formAction.async { implicit request =>
+    val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
+    val f = request.formData.orgType.fold(form(hasCTEnrolment))(form(hasCTEnrolment).fill)
+
     OrgTypePage.expectedPage(request.formData) match {
-      case OrgTypePage => Ok(register.organisation_type(request.formData.orgType.fold(form)(form.fill)))
+      case OrgTypePage => Ok(register.organisation_type(f, hasCTEnrolment))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def submitOrgType(): Action[AnyContent] = formAction.async { implicit request =>
-    form.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(register.organisation_type(errors))),
+    val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
+
+    form(hasCTEnrolment).bindFromRequest().fold(
+      errors => Future.successful(BadRequest(register.organisation_type(errors, hasCTEnrolment))),
       orgType =>
         cache.cache(request.internalId, request.formData.copy(orgType = Some(orgType))) map { _ =>
           if (orgType == "partnership") Redirect(routes.OrgTypeController.displayPartnerships())
@@ -66,7 +68,18 @@ class OrgTypeController(val messagesApi: MessagesApi, cache: FormDataCache, form
 
 object OrgTypeController extends FormHelpers {
 
-  val form: Form[String] = Form(single(
-    "orgType" -> oneOf(Seq("limitedCompany", "limitedLiabilityPartnership", "partnership", "soleTrader", "unincorporatedBody"), "error.radio-form.choose-option")
+  def form(hasCTEnrolment: Boolean): Form[String] = Form(single(
+    "orgType" -> oneOf(options(hasCTEnrolment), "error.radio-form.choose-option")
   ))
+
+  private def options(hasCTEnrolment: Boolean): Seq[String] = {
+    val soleTrader: Seq[String] = if (hasCTEnrolment) Nil else Seq("soleTrader")
+
+    Seq(
+      "limitedCompany",
+      "limitedLiabilityPartnership",
+      "partnership",
+      "unincorporatedBody"
+    ) ++ soleTrader
+  }
 }

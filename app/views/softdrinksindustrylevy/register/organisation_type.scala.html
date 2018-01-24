@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.play.views.html.{helpers => govHelpers}
 @import views.html.helper._
 
-@(orgTypeForm: Form[_])(implicit messages: Messages, request: Request[_], configuration: AppConfig)
+@(orgTypeForm: Form[_], hasCTEnrolment: Boolean)(implicit messages: Messages, request: Request[_], configuration: AppConfig)
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
 
@@ -30,18 +30,13 @@
 
     @govHelpers.form(sdil.controllers.routes.OrgTypeController.submitOrgType()) {
         <div class = "form-group">
-            <fieldset class = "form-field-group">
             @govHelpers.inputRadioGroup(
                 orgTypeForm("orgType"),
-                options("limitedCompany" -> Messages("sdil.organisation-type.limited-company"),
-                        "limitedLiabilityPartnership" -> Messages("sdil.organisation-type.llp"),
-                        "partnership" -> Messages("sdil.organisation-type.partnership"),
-                        "soleTrader" -> Messages("sdil.organisation-type.sole-trader"),
-                        "unincorporatedBody" -> Messages("sdil.organisation-type.unincorporated-body")),
+                options(orgTypes:_*),
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
-                '_groupClass -> "form-field-group")
-            </fieldset>
+                '_groupClass -> "form-field-group"
+            )
 
             <button class="button" type="submit" id="continue-button">
             @Messages("sdil.common.continue")
@@ -50,4 +45,21 @@
 
     }
 
+}
+
+@orgTypes = @{
+    val soleTrader: Seq[(String, String)] = if(hasCTEnrolment) {
+        Seq.empty
+    } else {
+        Seq("soleTrader" -> Messages("sdil.organisation-type.sole-trader"))
+    }
+
+    val options = Seq(
+        "limitedCompany" -> Messages("sdil.organisation-type.limited-company"),
+        "limitedLiabilityPartnership" -> Messages("sdil.organisation-type.llp"),
+        "partnership" -> Messages("sdil.organisation-type.partnership"),
+        "unincorporatedBody" -> Messages("sdil.organisation-type.unincorporated-body")
+    ) ++ soleTrader
+
+    options.sortWith(_._1 < _._1)
 }
