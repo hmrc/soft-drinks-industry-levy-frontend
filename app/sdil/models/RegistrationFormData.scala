@@ -47,16 +47,8 @@ case class RegistrationFormData(rosmData: RosmRegistration,
     copackedVolume.exists(_.total != 0)
   }
 
-  lazy val isImporter: Boolean = {
-    imports.contains(true)
-  }
-
-  lazy val isCopacker: Boolean = {
-    packageCopack.nonEmpty
-  }
-
   lazy val isVoluntary: Boolean = {
-     isSmall && isCopacked && !isImporter && !isCopacker
+     isSmall && isCopacked && imports.contains(false) && packageCopack.isEmpty
   }
 
   lazy val isEntitledToSmallProducerExemption: Boolean = {
