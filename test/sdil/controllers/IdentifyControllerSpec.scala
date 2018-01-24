@@ -124,7 +124,7 @@ class IdentifyControllerSpec extends ControllerSpec {
     "always return 200 Ok and the identify page" in {
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
-      contentAsString(res) must include("Enter your Unique Tax Reference number and postcode")
+      contentAsString(res) must include(Messages("sdil.identify.heading"))
     }
   }
 
@@ -134,7 +134,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       val res = testController.validate()(request)
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include("Enter your Unique Tax Reference number and postcode")
+      contentAsString(res) must include(Messages("sdil.identify.heading"))
     }
 
     "return 400 - Bad Request and the identify page if there is no record in ROSM for the entered UTR" in {
