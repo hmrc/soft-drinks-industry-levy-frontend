@@ -20,8 +20,14 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
 case class RosmRegistration(safeId: String,
-                            organisation: OrganisationDetails,
-                            address: Address)
+                            organisation: Option[OrganisationDetails],
+                            individual: Option[IndividualDetails],
+                            address: Address) {
+
+  lazy val organisationName: String = {
+    organisation.map(_.organisationName).orElse(individual.map(i => s"${i.firstName} ${i.lastName}")).getOrElse("")
+  }
+}
 
 object RosmRegistration {
   private val addressReads: Reads[Address] = (
@@ -49,4 +55,10 @@ case class OrganisationDetails(organisationName: String)
 
 object OrganisationDetails {
   implicit val format: Format[OrganisationDetails] = Json.format[OrganisationDetails]
+}
+
+case class IndividualDetails(firstName: String, lastName: String)
+
+object IndividualDetails {
+  implicit val format: Format[IndividualDetails] = Json.format[IndividualDetails]
 }
