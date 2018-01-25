@@ -58,7 +58,6 @@ trait RoutesWiring extends CommonWiring {
   lazy val declarationController: DeclarationController = wire[DeclarationController]
   lazy val packageController: PackageController = wire[PackageController]
   lazy val radioFormController: RadioFormController = wire[RadioFormController]
-  lazy val pendingController: PendingController = wire[PendingController]
   lazy val smallProducerConfirmController: SmallProducerConfirmController = wire[SmallProducerConfirmController]
   lazy val signoutController: AuthenticationController = wire[AuthenticationController]
   lazy val alreadyRegisteredController: AlreadyRegisteredController = wire[AlreadyRegisteredController]

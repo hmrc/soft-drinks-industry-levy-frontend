@@ -15,12 +15,17 @@
  *@
 
 @import sdil.config.AppConfig
+@import sdil.models.Address
+@import views.html.softdrinksindustrylevy.helpers._
 
-@()(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(utr: String, organisation: String, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.common.title")) {
+
     <h1 class="heading-large">@Messages("sdil.registration-pending.title")</h1>
 
+    @businessDetails(utr, organisation, address)
+    
     <p>@Messages("sdil.registration-pending.p1")</p>
     <p>@Messages("sdil.registration-pending.p2")</p>
     <p>@Messages("sdil.registration-pending.p3")</p>
