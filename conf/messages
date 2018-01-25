@@ -260,7 +260,6 @@ sdil.not-whitelisted.title=Service temporarily unavailable
 sdil.not-whitelisted.p1=We’re sorry, but the Soft Drinks Levy service is currently unavailable.
 sdil.not-whitelisted.p2=Please try again later.
 
-
 #Common errors
 error.line1.required=Address line 1 must not be empty
 error.line2.required=Address line 2 must not be empty
