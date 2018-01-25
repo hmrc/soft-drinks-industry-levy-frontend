@@ -42,22 +42,29 @@
                 @radioButtonWithConditionalContent(
                     field = verifyForm("detailsCorrect"),
                     radioOptions = Seq(
-                        ("yes", (Messages("sdil.verify.detailsCorrect.yes"), None)),
-                        ("differentAddress", (Messages("sdil.verify.detailsCorrect.differentAddress"), Some(addressFields(verifyForm, "alternativeAddress", "sdil.verify.address", showHint = false))))
+                        ("yes",
+                                (Messages("sdil.verify.detailsCorrect.yes"),
+                                        None)
+                        ),
+                        ("differentAddress",
+                                (Messages("sdil.verify.detailsCorrect.differentAddress"),
+                                        Some(
+                                            addressFields(
+                                                verifyForm,
+                                                "alternativeAddress",
+                                                "sdil.verify.address",
+                                                showHint = false)
+                                        )
+                                )
+                        ),
+                        ("no",
+                                (Messages("sdil.verify.detailsCorrect.no"),
+                                        None))
                     ),
                     '_labelClass -> "block-label",
                     '_labelAfter -> true,
                     '_groupClass -> "form-field-group",
                     '_dataTargetTrue -> "something"
-                )
-
-                @radioButtonWithConditionalContent(
-                    field = verifyForm("detailsCorrect"),
-                    radioOptions = Seq(("no", (Messages("sdil.verify.detailsCorrect.no"), None))),
-                    '_labelClass -> "block-label",
-                    '_labelAfter -> true,
-                    '_groupClass -> "form-field-group",
-                    '_dataTargetTrue -> "altAddress"
                 )
 
                 <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">

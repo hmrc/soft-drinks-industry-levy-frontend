@@ -34,7 +34,7 @@
         @declaration_details_table_row("utr", None, formData.utr, '_colspan -> "2")
 
         @declaration_details_table_row("business-name", None,
-            formData.rosmData.organisation.organisationName, '_colspan -> "2")
+            formData.rosmData.organisationName, '_colspan -> "2")
 
         <tr>
             <td colspan = "2">@Messages("sdil.declaration.address")</td>
@@ -102,7 +102,7 @@
         }
     }
 
-    @if(formData.isVoluntary) {
+    @if(formData.isSmall) {
         @declaration_table("small-producer-exemption") {
             @formData.smallProducerConfirmFlag.map { flag =>
                 @declaration_details_table_row("confirm-small-producer-exemption",

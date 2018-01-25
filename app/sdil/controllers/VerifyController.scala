@@ -44,7 +44,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formA
           case VerifyPage => Ok(register.verify(
             data.verify.fold(form)(form.fill),
             data.utr,
-            data.rosmData.organisation.organisationName,
+            data.rosmData.organisationName,
             data.rosmData.address,
             true
           ))
@@ -54,7 +54,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formA
           case VerifyPage => Ok(register.verify(
             data.verify.fold(form)(form.fill),
             data.utr,
-            data.rosmData.organisation.organisationName,
+            data.rosmData.organisationName,
             data.rosmData.address
           ))
           case otherPage => Redirect(otherPage.show)
@@ -65,7 +65,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formA
 
   def validate = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => BadRequest(register.verify(errors, request.formData.utr, request.formData.rosmData.organisation.organisationName, request.formData.rosmData.address)),
+      errors => BadRequest(register.verify(errors, request.formData.utr, request.formData.rosmData.organisationName, request.formData.rosmData.address)),
       detailsCorrect => {
         val updated = request.formData.copy(verify = Some(detailsCorrect))
         cache.cache(request.internalId, updated) map { _ =>
