@@ -34,7 +34,7 @@
             <div>
                 <h2 class="heading-small">@Messages("sdil.warehouse.address", i + 1)</h2>
                 @Seq(addr.line1, addr.line2, addr.line3, addr.line4, addr.postcode.toUpperCase).filter(_.nonEmpty).map { l =>
-                  <p>@l</p>
+                  <div>@l</div>
                 }
                 <p class="font-xsmall">
                     <a href="@sdil.controllers.routes.WarehouseController.remove(i)">@Messages("sdil.warehouse.remove")</a>
