@@ -44,11 +44,6 @@ class DeclarationController(val messagesApi: MessagesApi,
       case a if a.contactDetails.nonEmpty => Ok(register.declaration(request.formData))
       case a if a.contactDetails.isEmpty => Redirect(routes.ContactDetailsController.displayContactDetails())
     }
-
-//    request.formData.contactDetails match {
-//      case Some(details) => Ok(register.declaration(request.formData))
-//      case None => Redirect(routes.ContactDetailsController.displayContactDetails())
-//    }
   }
 
   def submitDeclaration(): Action[AnyContent] = formAction.async { implicit request =>
