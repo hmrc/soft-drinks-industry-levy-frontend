@@ -39,20 +39,25 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 contactDetails: Option[ContactDetails] = None,
                                 smallProducerConfirmFlag: Option[Boolean] = None) {
 
+  lazy val isNotMandatory: Boolean = {
+    total(packageOwn, copackedVolume) < 1000000 &&
+      copackedVolume.forall(_.total == 0) &&
+      !packaging.exists(_.customers) &&
+      !imports.getOrElse(false)
+  }
+
   lazy val isSmall: Boolean = {
-    total(packageOwn, copackedVolume) < 1000000
+    val q = total(packageOwn, copackedVolume)
+    q < 1000000 && q > 0
   }
 
   lazy val isCopacked: Boolean = {
     copackedVolume.exists(_.total != 0)
   }
 
+  // TODO rename - this function's logic differs from that used in RegistrationTypeController
   lazy val isVoluntary: Boolean = {
      isSmall && isCopacked && imports.contains(false) && packageCopack.isEmpty
-  }
-
-  lazy val isEntitledToSmallProducerExemption: Boolean = {
-    isSmall && isCopacked
   }
 
   def total(n: Option[Litreage]*): BigDecimal = {
