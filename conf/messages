@@ -250,10 +250,14 @@ sdil.already.received.for.utr.info=<p>An application to register for the Soft Dr
    you need to <a href="{0}">go back and enter a different UTR and postcode</a>.</p>
 
 #Invalid role
-sdil.invalid-affinity.title=Government Gateway assistants cannot register for Soft Drinks Industry Levy
+sdil.invalid-affinity.title=You can’t register using this Government Gateway account
+sdil.invalid-affinity.p1=You’ve signed in as an agent. Unfortunately, you can’t register for the Soft Drinks Levy using this account.
+sdil.invalid-affinity.p2=The business or individual you’re representing must apply to register themselves.
 
 #Invalid affinity group
-sdil.invalid-role.title=Agents cannot register for Soft Drinks Industry Levy
+sdil.invalid-role.title=You can’t register using this Government Gateway account
+sdil.invalid-role.p1=You’ve signed in as an assistant. Unfortunately, you can’t register for the Soft Drinks Levy using this account.
+sdil.invalid-role.p2=The business or individual you’re representing must apply to register themselves.
 
 #Not whitelisted
 sdil.not-whitelisted.title=Service temporarily unavailable
