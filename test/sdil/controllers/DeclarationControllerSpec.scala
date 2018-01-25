@@ -23,7 +23,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.Litreage
+import sdil.models.{Litreage, Packaging}
 import sdil.models.backend._
 
 class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
@@ -35,6 +35,25 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.declaration.heading"))
+    }
+
+    "redirect to the registration not required page if they only produce for themselves, and the volume is fewer than 1 million litres" in {
+      stubFormPage(
+        packaging = Some(Packaging(true, true, false)),
+        packageOwn = Some(Litreage(1, 2)),
+        packageCopack = None,
+        packageCopackSmall = Some(false),
+        packageCopackSmallVol = None,
+        copacked = Some(false),
+        copackedVolume = None,
+        imports = Some(false),
+        importVolume = None
+      )
+
+      val res = testController.displayDeclaration()(FakeRequest("GET", "/declaration"))
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.RegistrationTypeController.registrationNotRequired().url
     }
 
     "return Status: See Other when POST from declaration" in {
