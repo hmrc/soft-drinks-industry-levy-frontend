@@ -39,7 +39,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formA
 
     sdilConnector.checkPendingQueue(data.utr) map {
       _.status match {
-        case ACCEPTED => Ok(errors.registration_pending(data.utr, data.rosmData.organisation.organisationName, data.rosmData.address))
+        case ACCEPTED => Ok(errors.registration_pending(data.utr, data.rosmData.organisationName, data.rosmData.address))
         case OK => VerifyPage.expectedPage(data) match {
           case VerifyPage => Ok(register.verify(
             data.verify.fold(form)(form.fill),
