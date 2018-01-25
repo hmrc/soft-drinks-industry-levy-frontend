@@ -41,8 +41,8 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(ACCEPTED))
       val res = testController.verify()(FakeRequest())
 
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res).get mustBe routes.PendingController.displayPending().url
+      status(res) mustBe OK
+      contentAsString(res) must include (Messages("sdil.registration-pending.p1"))
     }
   }
 

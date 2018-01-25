@@ -16,40 +16,13 @@
 
 @import sdil.config.AppConfig
 @import sdil.models.Address
+@import views.html.softdrinksindustrylevy.helpers._
 
 @(utr: String, organisation: String, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.common.title")) {
     <h1 class="heading-large">@Messages("sdil.already-enrolled.heading")</h1>
-    <table>
-        <caption class="heading-small visuallyhidden">@Messages("sdil.verify.table.caption")</caption>
-        <tbody>
-            <tr>
-                <td scope="row">@Messages("sdil.verify.utr")</td>
-                <td>@utr</td>
-            </tr>
-            <tr>
-                <td scope="row">@Messages("sdil.verify.organisation")</td>
-                <td class="org">@organisation</td>
-            </tr>
-            <tr>
-                <td scope="row">@Messages("sdil.verify.address")</td>
-                <td>
-                    @address.line1,<br/>
-                    @if(address.line2.nonEmpty) {
-                        @address.line2,<br/>
-                    }
-                    @if(address.line3.nonEmpty) {
-                        @address.line3,<br/>
-                    }
-                    @if(address.line4.nonEmpty) {
-                        @address.line4,<br/>
-                    }
-                    @address.postcode
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    @businessDetails(utr, organisation, address)
     <p>@Messages("sdil.already-enrolled.p1")</p>
     <p>@Messages("sdil.already-enrolled.p2")
         <a href="@sdil.controllers.routes.ServicePageController.show()">

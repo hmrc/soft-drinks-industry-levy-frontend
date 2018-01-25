@@ -4,6 +4,7 @@ sdil.common.back=Back
 sdil.common.save-continue=Save and continue
 sdil.common.errorSummary=There’s a problem
 sdil.common.alpha=ALPHA
+sdil.common.beta=BETA
 sdil.common.alpha-info=<span>This is a new service – your <a href="{0}">feedback</a> will help us to improve it.</span>
 sdil.common.or=Or
 sdil.common.yes=Yes
@@ -49,7 +50,7 @@ sdil.verify.postcode=Postcode
 #Registration pending
 sdil.registration-pending.title=You’ve already submitted an application
 sdil.registration-pending.p1=You’ve already submitted an application to register for the Soft Drinks Levy.
-sdil.registration-pending.p2=If you haven’t got your registration number within 14 days, you’ll need to call the Soft Drinks Levy Helpline on 0300 200 3700.
+sdil.registration-pending.p2=If you haven’t got your registration number within 24 hours, you’ll need to call the Soft Drinks Levy Helpline on 0300 200 3700.
 sdil.registration-pending.p3=If there’s a problem with your application we’ll contact you using the information you provided.
 
 #Organisation Type
@@ -81,7 +82,7 @@ error.copack-small.higher-greater-than-total-higher=Litres for small producers m
 #Litreage pages
 sdil.packageOwn.heading=In the next year, how many litres of liable drink do you expect to package for brands you own or have the rights to manufacture?
 sdil.packageCopack.heading=In total, how many litres of liable drink do you expect to package for all of your customers in the next year?
-sdil.packageCopackSmallVol.heading=How many litres of liable drink per year do you expect to claim a small producer exemption for?
+sdil.packageCopackSmallVol.heading=In the next year, how many litres of liable drink do you expect to claim a small producer exemption for?
 sdil.copackedVolume.heading=In the next year, how many litres of liable drink do you expect to have packaged by third parties in the UK?
 sdil.importVolume.heading=In the next year, how many litres of liable drink do you expect to bring into the UK?
 sdil.litreage.lowRate=Litres in the low band
@@ -124,7 +125,8 @@ sdil.package-copack-small.whatis.header=What’s a small producer exemption?
 sdil.package-copack-small.whatis.body.p1=A business is a small producer if it produces less than one million litres of \
   liable drink per year. If you package on behalf of these businesses, you can claim an exemption for the liable drinks \
   you package for them as long as they:<ul class="list list-bullet"><li>are registered as a small producer</li><li>give you their reference number</li></ul>
-sdil.package-copack-small.whatis.body.p2=You''ll need to enter their reference number against the liable drinks you''ve packaged for them when filing your return.
+sdil.package-copack-small.whatis.body.p2=You’ll need to enter their reference number against the liable drinks you’ve packaged for them when filing your return.
+
 
 #Co Packed
 sdil.copacked.heading=Will you use any third parties in the UK to package liable drinks on your behalf?
@@ -142,9 +144,9 @@ sdil.registration-not-required.p3=If this is not accurate, you need to <a href="
 
 #Small Producer Confrim
 sdil.small-prod-confirm.heading=Confirm you’re a small producer
-sdil.small-prod-confirm.lede=The volumes you’ve entered show that you will package, or have packaged on your behalf, less than one million litres of liable drink per year.
+sdil.small-prod-confirm.lede=The volumes you’ve entered show that you’ll package, or have packaged on your behalf, less than one million litres of liable drink per year.
 sdil.small-prod-confirm.panel=By continuing you confirm that you’re registering as a small producer.
-sdil.small-prod-confirm.body=If this is not accurate, you need to <a href="{0}">go back and enter the volumes again</a>.
+sdil.small-prod-confirm.body=If this is not accurate, you need to <a href="{0}">go back and change your answers</a>.
 sdil.small-prod-confirm.continue=Accept and continue
 
 #Start date
@@ -167,13 +169,13 @@ error.date.invalid=Enter a valid date
 #Contact details
 sdil.contact-details.heading=Who will be your business’s contact for the Soft Drinks Levy?
 sdil.contact-details.full-name=Full name
-sdil.contact-details.position=Position
+sdil.contact-details.position=Job title
 sdil.contact-details.phone-number=Telephone number
 sdil.contact-details.email=Email
 
 error.fullName.required=Enter a name
 error.fullName.over=Name must not be more than 40 characters
-error.position.required=Enter a position
+error.position.required=Enter a job title
 error.position.over=Position must not be more than 155 characters
 error.phoneNumber.required=Enter a telephone number
 error.phoneNumber.over=Telephone number must not be more than 24 characters
@@ -212,12 +214,12 @@ sdil.declaration.liable-date=Soft Drinks Levy liability date
 sdil.declaration.date=Date liable from
 
 sdil.declaration.registered-sites=Registered sites
-sdil.declaration.production-sites=Additional packaging sites
+sdil.declaration.production-sites=Packaging sites
 sdil.declaration.warehouses=Warehouses
 
 sdil.declaration.contact-details=Contact details
 sdil.declaration.name=Name
-sdil.declaration.position=Position
+sdil.declaration.position=Job title
 sdil.declaration.phone-number=Telephone
 sdil.declaration.email=Email
 sdil.declaration.confirmation=By continuing you’re confirming that the details provided are true and complete.
@@ -229,8 +231,8 @@ sdil.complete.subheading=We’ve received your application to register for the S
 sdil.complete.p1=Your application to register for the Soft Drinks Levy was submitted on {0} at {1}
 sdil.complete.what-happens.title=What happens next?
 sdil.complete.what-happens.p1=You don’t need to do anything else. We’ll send your reference number to {0} within 24 hours.
-sdil.complete.what-happens.p2=If you don’t get your reference number within 14 days or you need to make a change to your registration, you need to call the Soft Drinks Levy Helpline on 0300 200 3700.
-sdil.complete.what-happens.p3=There will be fixed quarterly returns, ending June, September, December and March.
+sdil.complete.what-happens.p2=If you don’t get your reference number or you need to make a change to your registration, you need to call the Soft Drinks Levy Helpline on 0300 200 3700.
+sdil.complete.what-happens.p3=Returns will be due for fixed quarters ending June, September, December and March.
 
 #Service page
 sdil.service-page.title=Placeholder service page
@@ -254,7 +256,9 @@ sdil.invalid-affinity.title=Government Gateway assistants cannot register for So
 sdil.invalid-role.title=Agents cannot register for Soft Drinks Industry Levy
 
 #Not whitelisted
-sdil.not-whitelisted.title=You can’t register for Soft Drinks Industry Levy
+sdil.not-whitelisted.title=Service temporarily unavailable
+sdil.not-whitelisted.p1=We’re sorry, but the Soft Drinks Levy service is currently unavailable.
+sdil.not-whitelisted.p2=Please try again later.
 
 #Common errors
 error.line1.required=Address line 1 must not be empty
