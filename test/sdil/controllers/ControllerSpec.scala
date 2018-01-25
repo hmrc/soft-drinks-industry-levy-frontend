@@ -130,11 +130,12 @@ trait ControllerSpec extends FakeApplicationSpec {
     )
   }
 
-  lazy val defaultRosmData = RosmRegistration(
+  lazy val defaultRosmData: RosmRegistration = RosmRegistration(
     "some-safe-id",
-    OrganisationDetails(
+    Some(OrganisationDetails(
       "an organisation"
-    ),
+    )),
+    None,
     Address("1", "The Road", "", "", "AA11 1AA")
   )
 }

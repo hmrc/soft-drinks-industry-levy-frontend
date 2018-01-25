@@ -49,7 +49,7 @@ object Subscription {
     } yield {
       Subscription(
         utr = formData.utr,
-        orgName = formData.rosmData.organisation.organisationName,
+        orgName = formData.rosmData.organisationName,
         orgType = toEnum(orgType),
         address = UkAddress.fromAddress(formData.primaryAddress),
         activity = Activity(
