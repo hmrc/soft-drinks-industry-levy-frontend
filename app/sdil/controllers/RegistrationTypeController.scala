@@ -17,7 +17,7 @@
 package sdil.controllers
 
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Action
+import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.models._
@@ -30,7 +30,7 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
                                 (implicit appConfig: AppConfig)
   extends FrontendController with I18nSupport {
 
-  def continue = formAction.async { implicit request =>
+  def continue: Action[AnyContent] = formAction.async { implicit request =>
     cache.cache(request.internalId, request.formData.copy(smallProducerConfirmFlag = None)) flatMap { _ =>
       RegistrationTypePage.expectedPage(request.formData) match {
         case RegistrationTypePage => registrationType(request.formData) match {
@@ -43,24 +43,14 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
     }
   }
 
-  def registrationNotRequired = Action { implicit request =>
+  def registrationNotRequired: Action[AnyContent] = Action { implicit request =>
     Ok(registration_not_required())
   }
 
   private def registrationType(formData: RegistrationFormData): RegistrationType = {
-    def total(p: Option[Litreage], b: Option[Litreage]) = p.fold[BigDecimal](0)(_.total) + b.fold[BigDecimal](0)(_.total)
-
-    def isNotMandatory(packageOwn: Option[Litreage], copackedVolume: Option[Litreage], customers: Boolean, imports: Boolean) = {
-      total(packageOwn, copackedVolume) < 1000000 && copackedVolume.forall(_.total == 0) && !customers && !imports
-    }
-
-    def isSmallProducer(packageOwn: Option[Litreage], copackedVolume: Option[Litreage]) = {
-      total(packageOwn, copackedVolume) < 1000000 && total(packageOwn, copackedVolume) > 0
-    }
-
-    (formData.packageOwn, formData.copackedVolume, formData.packaging, formData.imports) match {
-      case (p, b, Some(Packaging(_, _, c)), Some(i)) if isNotMandatory(p, b, c, i) => RegistrationNotRequired
-      case (p, b, _, _) if isSmallProducer(p, b) => Voluntary
+    formData match {
+      case a if a.isNotMandatory => RegistrationNotRequired
+      case a if a.isSmall => Voluntary
       case _ => Mandatory
     }
   }
