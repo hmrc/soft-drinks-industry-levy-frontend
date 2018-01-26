@@ -50,8 +50,8 @@ object FrontendBuild extends Build {
         "uk.gov.hmrc" %% "govuk-template" % "5.17.0",
         "uk.gov.hmrc" %% "play-ui" % "7.13.0",
         "uk.gov.hmrc" %% "play-partials" % "6.1.0",
-        "com.typesafe.play" %% "play-json" % "2.5.12",
-        "org.scalactic" %% "scalactic" % "3.0.1",
+        "com.typesafe.play" %% "play-json" % "2.5.18",
+        "org.scalactic" %% "scalactic" % "3.0.4",
         "uk.gov.hmrc" %% "auth-client" % "2.5.0",
         "uk.gov.hmrc" %% "http-caching-client" % "7.1.0",
         "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0",
@@ -65,10 +65,10 @@ object FrontendBuild extends Build {
         "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % "test",
         "org.scalatest" %% "scalatest" % "3.0.1" % "test",
         "org.pegdown" % "pegdown" % "1.6.0" % "test",
-        "org.jsoup" % "jsoup" % "1.8.1" % "test",
+        "org.jsoup" % "jsoup" % "1.11.2" % "test",
         "com.typesafe.play" %% "play-test" % PlayVersion.current % "test",
-        "org.mockito" % "mockito-core" % "2.7.22" % "test",
-        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % "test"
+        "org.mockito" % "mockito-core" % "2.13.0" % "test",
+        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % "test"
       ),
       retrieveManaged := true,
       resolvers ++= Seq(
