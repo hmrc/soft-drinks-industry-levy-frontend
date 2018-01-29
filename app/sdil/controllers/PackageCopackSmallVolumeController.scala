@@ -86,6 +86,6 @@ object PackageCopackSmallVolumeController extends FormHelpers {
     mapping(
       "lowerRateLitres" -> litreage.verifying("error.copack-small.lower-greater-than-total-lower", _ <= packageCopackVol.atLowRate),
       "higherRateLitres" -> litreage.verifying("error.copack-small.higher-greater-than-total-higher", _ <= packageCopackVol.atHighRate)
-    )(Litreage.apply)(Litreage.unapply)
+    )(Litreage.apply)(Litreage.unapply).verifying("error.litreage.zero", _ != Litreage(0, 0))
   )
 }
