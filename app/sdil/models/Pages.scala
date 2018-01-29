@@ -257,7 +257,7 @@ case object ProductionSitesPage extends MidJourneyPage {
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.productionSites.isDefined
 
-  override def show: Call = routes.ProductionSiteController.addSite()
+  override def show: Call = routes.ProductionSiteController.show()
 }
 
 case object WarehouseSitesPage extends MidJourneyPage {

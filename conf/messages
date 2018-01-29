@@ -98,14 +98,17 @@ error.litreage.min=Number of litres must be 0 or more
 error.litreage.zero=Number of litres must be 1 or more
 
 #Production sites
-sdil.productionSite.heading=Have you got any packaging sites you haven’t already told us about?
-sdil.productionSite.add.heading=Do you want to register another packaging site in the UK?
-sdil.otherSite.address.heading=Enter a packaging site
-sdil.otherSite.address.hint=You can enter more sites later if you need to
-sdil.otherSite.address.legend=An additional packaging site address
-sdil.productionSite.address=Address {0}
-sdil.productionSite.remove=Remove?
-sdil.otherSite.add=Yes
+sdil.productionSite.heading=Tell us about the sites your business operates to package liable drinks
+sdil.production-sites.select-applicable=Select all that apply
+label.production-sites.add=I need to add another packaging site
+sdil.production-site.add.heading=Enter a packaging site
+sdil.production-site.add.hint=You can enter more sites after if you need to
+sdil.production-site.add.legend=Enter a packaging site address
+sdil.production-site.add=Add address to list
+sdil.production-site.help.summary=If you have more than one packaging site
+sdil.production-site.help.p1=You need to tell us the addresses of all of the packaging sites you operate to package liable drinks.
+sdil.production-site.help.p2=If you’ve got more packaging sites you can add them next.
+error.no-production-sites=Choose at least one option
 
 #Secondary warehouse
 sdil.warehouse.heading=Do you want to register any of the warehouses you’ll use to store liable drinks?
@@ -190,7 +193,7 @@ sdil.declaration.true=Yes
 sdil.declaration.false=No
 
 sdil.declaration.small-producer-exemption=Small producer exemption
-sdil.declaration.confirm-small-producer-exemption=Confirm small producer exemption? 
+sdil.declaration.confirm-small-producer-exemption=Confirm small producer exemption?
 
 sdil.declaration.your-business=Business details
 sdil.declaration.utr=Unique Taxpayer Reference (UTR)

@@ -19,64 +19,81 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import sdil.config.AppConfig
 
-@(siteForm: Form[_], mainSite: Address, otherSites: Seq[Address], backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(siteForm: Form[_],
+        bprAddress: Address,
+        primaryPlaceOfBusiness: Option[Address],
+        otherSites: Seq[Address],
+        backLink: Call
+)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.common.title")) {
 
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
-    <h1 class="heading-large">@heading</h1>
+    <h1 class="heading-large">@Messages("sdil.productionSite.heading")</h1>
 
     @errorSummary(Messages("sdil.common.errorSummary"), siteForm)
 
-    @if(otherSites.nonEmpty) {
+    @form(sdil.controllers.routes.ProductionSiteController.submit()) {
 
-        @otherSites.zipWithIndex.map { case (addr, idx) =>
-            <h2 class="heading-small">@Messages("sdil.productionSite.address", idx + 1)</h2>
+        <fieldset>
             <div class="form-group">
-                @addr.nonEmptyLines.map { l =>
-                    <div>@l</div>
+                <span class="form-hint">@Messages("sdil.production-sites.select-applicable")</span>
+
+                @addressCheckbox("bprAddress", bprAddress)
+
+                @primaryPlaceOfBusiness.map { ppob =>
+                    @addressCheckbox("ppobAddress", ppob)
                 }
+
+                @*avoid duplicating bpr address/ppob address*@
+                @otherSites.filterNot(a => a == bprAddress || primaryPlaceOfBusiness.contains(a)).zipWithIndex.map { case (site, idx) =>
+                    @addressCheckbox(s"additionalSites[$idx]", site)
+                }
+
+                <div class="multiple-choice" data-target="add_address_lines">
+                    <input type="checkbox"
+                           id="add_address"
+                           name="addAddress"
+                           value="true"
+                           @if(siteForm("addAddress").value.contains("true")) { checked="checked" }>
+
+                    <label for="add_address">
+                        @Messages("label.production-sites.add")
+                    </label>
+                </div>
+
+                <div class="panel panel-border-narrow js-hidden" id="add_address_lines">
+                    @addressFields(siteForm, "additionalAddress", "sdil.production-site.add")
+
+                    <br/>
+                    @* note that nested forms are not allowed in HTML, so both buttons must use the same action *@
+                    <input class="button button-secondary" value="@Messages("sdil.production-site.add")" type="submit">
+                </div>
             </div>
-            <p class="font-xsmall">
-                <a href="@sdil.controllers.routes.ProductionSiteController.remove(idx)">@Messages("sdil.productionSite.remove")</a>
-            </p>
-        }
+        </fieldset>
 
-        <br/>
-    }
-
-    @form(sdil.controllers.routes.ProductionSiteController.validate()) {
-        @radioButtonWithConditionalContent(
-            field = siteForm("hasOtherSite"),
-            radioOptions = Seq(
-                ("true", (yesLabel, Some(addressFields(siteForm, "otherSiteAddress", "sdil.otherSite.address",
-                    otherSites.isEmpty)
-                ))),
-                ("false", (Messages("sdil.common.no"), None))
-            ),
-            '_labelClass -> "block-label",
-            '_labelAfter -> true,
-            '_groupClass -> "form-field-group",
-            '_dataTargetTrue -> "otherSite"
-        )
+        <details role="group">
+            <summary role="button" aria-controls="details-content-0">
+                <span class="summary">@Messages("sdil.production-site.help.summary")</span>
+            </summary>
+            <div class="panel panel-border-narrow" id="details-content-0">
+                <p>@Messages("sdil.production-site.help.p1")</p>
+                <p>@Messages("sdil.production-site.help.p2")</p>
+            </div>
+        </details>
 
         <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
     }
 }
 
-@heading = @{
-    if(otherSites.nonEmpty) {
-        Messages("sdil.productionSite.add.heading")
-    } else {
-        Messages("sdil.productionSite.heading")
-    }
-}
-
-@yesLabel = @{
-    if(otherSites.nonEmpty) {
-        Messages("sdil.otherSite.add")
-    } else {
-        Messages("sdil.common.yes")
-    }
+@addressCheckbox(name: String, address: Address) = {
+    <div class="multiple-choice">
+        <input type="checkbox" id="@name" name="@name" value="@address.nonEmptyLines.mkString(",")" checked="checked">
+        <label for="@name">
+            @address.nonEmptyLines.map { l =>
+                <div>@l</div>
+            }
+        </label>
+    </div>
 }

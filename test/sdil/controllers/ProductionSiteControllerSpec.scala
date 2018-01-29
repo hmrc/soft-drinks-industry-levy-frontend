@@ -25,7 +25,10 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Address, Litreage}
+import sdil.models.DetailsCorrect.DifferentAddress
+import sdil.models.{Address, OrganisationDetails, RosmRegistration, Litreage}
+
+import scala.collection.JavaConverters._
 
 class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -35,25 +38,58 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
         imports = Some(false),
         smallProducerConfirmFlag = Some(true))
 
-      val res = testController.addSite()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
       contentAsString(res) must include(Messages("sdil.productionSite.heading"))
     }
 
-    "return 200 Ok and the add production site page if another site has been added" in {
-      stubFormPage(productionSites = Some(Seq(Address("1", "2", "", "", "AA11 1AA"))),
-        imports = Some(false),
-        smallProducerConfirmFlag = Some(true))
+    "return a page including the company's registered address" in {
+      val bprAddress = Address("1 The Place", "Somewhere", "", "", "AA11 1AA")
+      val orgDetails = OrganisationDetails("a company")
 
-      val res = testController.addSite()(FakeRequest())
+      stubFormPage(rosmData = RosmRegistration("a-safe-id", Some(orgDetails), None, bprAddress), productionSites = Some(Nil))
+
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
-      contentAsString(res) must include(Messages("sdil.productionSite.add.heading"))
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("#bprAddress").next("label").text mustBe bprAddress.nonEmptyLines.mkString(" ")
+    }
+
+    "return a page including the company's primary place of business if it differs from their registered address" in {
+      val ppob = Address("2 The Place", "Somewhere else", "", "", "AA11 1AA")
+      stubFormPage(verify = Some(DifferentAddress(ppob)), productionSites = Some(Nil))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("#ppobAddress").next("label").text mustBe ppob.nonEmptyLines.mkString(" ")
+    }
+
+    "return a page including all production sites added so far" in {
+      val sites = Seq(
+        Address("3 The Place", "Another place", "", "", "AA11 1AA"),
+        Address("4 The Place", "Another place", "", "", "AA12 2AA"),
+        Address("5 The Place", "Another place", "", "", "AA13 3AA")
+      )
+
+      stubFormPage(productionSites = Some(sites))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      val checkboxLabels = html.select(""".multiple-choice input[type="checkbox"]""")
+        .asScala.filter(_.id.startsWith("additionalSites")).map(_.nextElementSibling().text)
+
+      checkboxLabels must contain theSameElementsAs sites.map(_.nonEmptyLines.mkString(" "))
     }
 
     "return a page with a link back to the start date page if the date is after the sugar tax start date" in {
       testConfig.setTaxStartDate(yesterday)
 
-      val res = testController.addSite()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
@@ -71,7 +107,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
         importVolume = Some(Litreage(5, 5)))
 
 
-      val res = testController.addSite()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
@@ -84,7 +120,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       stubFormPage(packageOwn = Some(Litreage(10000000L, 10000000L)),
         imports = Some(false))
 
-      val res = testController.addSite()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
@@ -96,7 +132,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       testConfig.setTaxStartDate(tomorrow)
       stubFormPage(smallProducerConfirmFlag = Some(true))
 
-      val res = testController.addSite()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
@@ -105,39 +141,35 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
   }
 
   "POST /production-site" should {
-    "return 400 Bad Request and the production site page if no other sites have been added and the form data is invalid" in {
-      stubFormPage(productionSites = Some(Nil))
+    "return 400 Bad Request and the production sites page if the user says they need to add another address, " +
+      "but do not fill in the address form" in {
 
-      val res = testController.validate()(FakeRequest())
+      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody("addAddress" -> "true"))
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include(Messages("sdil.productionSite.heading"))
     }
 
-    "return 400 Bad Request and the add production site page if another site has been added and the form data is invalid" in {
-      stubFormPage(productionSites = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
-
-      val res = testController.validate()(FakeRequest())
+    "return 400 Bad Request when the user selects no production sites and does not add a new site" in {
+      val res = testController.submit()(FakeRequest())
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include(Messages("sdil.productionSite.add.heading"))
     }
 
-    "redirect to the add production site page if another site has been added and the form data is valid" in {
+    "redirect to the production sites page if another site has been added and the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody(
-        "hasOtherSite" -> "true",
-        "otherSiteAddress.line1" -> "line 1",
-        "otherSiteAddress.line2" -> "line 2",
-        "otherSiteAddress.line3" -> "",
-        "otherSiteAddress.line4" -> "",
-        "otherSiteAddress.postcode" -> "AA11 1AA"
+        "addAddress" -> "true",
+        "additionalAddress.line1" -> "line 1",
+        "additionalAddress.line2" -> "line 2",
+        "additionalAddress.line3" -> "",
+        "additionalAddress.line4" -> "",
+        "additionalAddress.postcode" -> "AA11 1AA"
       )
 
-      val res = testController.validate()(request)
+      val res = testController.submit()(request)
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.ProductionSiteController.addSite().url)
+      redirectLocation(res) mustBe Some(routes.ProductionSiteController.show().url)
     }
 
     "redirect to the warehouse page if another site has not been added and the form data is valid" in {
-      val res = testController.validate()(FakeRequest().withFormUrlEncodedBody("hasOtherSite" -> "false"))
+      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody("bprAddress" -> "true"))
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.WarehouseController.show().url)
     }
@@ -146,15 +178,15 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       stubFormPage(productionSites = Some(Nil))
 
       val request = FakeRequest().withFormUrlEncodedBody(
-        "hasOtherSite" -> "true",
-        "otherSiteAddress.line1" -> "line 2",
-        "otherSiteAddress.line2" -> "line 3",
-        "otherSiteAddress.line3" -> "",
-        "otherSiteAddress.line4" -> "",
-        "otherSiteAddress.postcode" -> "AA12 2AA"
+        "addAddress" -> "true",
+        "additionalAddress.line1" -> "line 2",
+        "additionalAddress.line2" -> "line 3",
+        "additionalAddress.line3" -> "",
+        "additionalAddress.line4" -> "",
+        "additionalAddress.postcode" -> "AA12 2AA"
       )
 
-      val res = testController.validate()(request)
+      val res = testController.submit()(request)
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1)).cache(
@@ -162,33 +194,43 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
         matching(defaultFormData.copy(productionSites = Some(Seq(Address("line 2", "line 3", "", "", "AA12 2AA")))))
       )(any(), any())
     }
-  }
 
-  "GET /production-site/remove" should {
-    "remove the production site address from keystore" in {
-      stubFormPage(productionSites = Some(Seq(
-        Address("1", "2", "", "", "AA11 1AA"),
-        Address("2", "3", "", "", "AA12 2AA")
-      )))
+    "store all selected addresses in keystore when no site is added" in {
+      val bprAddress = Address("1", "Company Street", "", "", "AA11 1AA")
+      val ppobAddress = Address("Somewhere", "Totally different", "", "", "AA11 1AA")
+      val rosmRegistration = RosmRegistration(
+        "another safe id",
+        Some(OrganisationDetails("company inc. ltd llc intl")),
+        None,
+        bprAddress
+      )
 
-      val res = testController.remove(1)(FakeRequest())
+      stubFormPage(
+        rosmData = rosmRegistration,
+        verify = Some(DifferentAddress(ppobAddress)),
+        productionSites = Some(Seq(
+          Address("1", "2", "3", "4", "AA11 1AA"),
+          Address("2", "3", "4", "5", "AA12 2AA")
+        ))
+      )
+
+      val request = FakeRequest().withFormUrlEncodedBody(
+        "bprAddress" -> bprAddress.nonEmptyLines.mkString(","),
+        "ppobAddress" -> ppobAddress.nonEmptyLines.mkString(","),
+        "additionalSites[1]" -> "2,3,4,5,AA12 2AA"
+      )
+
+      val res = testController.submit()(request)
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1)).cache(
         matching("internal id"),
-        matching(defaultFormData.copy(productionSites = Some(Seq(Address("1", "2", "", "", "AA11 1AA")))))
+        matching(defaultFormData.copy(
+          rosmData = rosmRegistration,
+          verify = Some(DifferentAddress(ppobAddress)),
+          productionSites = Some(Seq(bprAddress, ppobAddress, Address("2", "3", "4", "5", "AA12 2AA"))))
+        )
       )(any(), any())
-    }
-
-    "always redirect to the production site page" in {
-      stubFormPage(productionSites = Some(Seq(
-        Address("1", "2", "", "", "AA11 1AA"),
-        Address("2", "3", "", "", "AA12 2AA")
-      )))
-
-      val res = testController.remove(1)(FakeRequest())
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.ProductionSiteController.addSite().url)
     }
   }
 

@@ -51,7 +51,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.ProductionSiteController.addSite().url
+      html.select("a.link-back").attr("href") mustBe routes.ProductionSiteController.show().url
     }
 
     "return a page with a link back to the start date page if the user does not package liable drinks" +

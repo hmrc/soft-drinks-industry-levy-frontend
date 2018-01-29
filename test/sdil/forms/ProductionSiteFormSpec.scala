@@ -16,46 +16,55 @@
 
 package sdil.forms
 
-import sdil.models.{Address, ProductionSite}
-import sdil.controllers.ProductionSiteController.form
+import play.api.data.FormError
+import sdil.controllers.ProductionSiteController.{ProductionSites, form}
+import sdil.models.Address
 
 class ProductionSiteFormSpec extends FormSpec {
 
   "The production site form" should {
-    "require a selection for 'do you have another production site'" in {
-      val f = form.bind(otherSiteData - hasOtherSite)
-
-      mustContainError(f, hasOtherSite, "error.radio-form.choose-option")
-    }
-
-    "require the postcode is there is another site" in {
-      val f = form.bind(otherSiteData - postcode)
+    "require the postcode if there is another site" in {
+      val f = form.bind(productionSitesData - postcode)
 
       mustContainError(f, postcode, "error.required")
     }
 
-    "bind to ProductionSite if there is not another site" in {
-      val f = form.bind(Map(hasOtherSite -> "false"))
+    "require the first address line if there is another site" in {
+      val f = form.bind(productionSitesData - line1)
 
-      f.value mustBe Some(ProductionSite(false, None))
+      mustContainError(f, line1, "error.required")
     }
 
-    "bind to ProductionSite if there is another site and an address is provided" in {
-      val f = form.bind(otherSiteData)
+    "require at least one production site to be selected" in {
+      val f = form.bind(Map.empty[String, String])
 
-      f.value mustBe Some(ProductionSite(true, Some(Address("line 1", "line 2", "line 3", "line 4", "AA11 1AA"))))
+      f.errors mustBe Seq(FormError("", "error.no-production-sites"))
+    }
+
+    "bind to ProductionSites if there is not another site" in {
+      val f = form.bind(productionSitesData - addSite - line1 - "additionalSite.line2" - "additionalSite.line3" - "additionalSite.line4" - postcode)
+
+      f.value mustBe Some(ProductionSites(Some("1,1,AA11 1AA"), Some("2,2,AA22 2AA"), Nil, false, None))
+    }
+
+    "bind to ProductionSites if there is another site and an address is provided" in {
+      val f = form.bind(productionSitesData)
+
+      f.value mustBe Some(ProductionSites(Some("1,1,AA11 1AA"), Some("2,2,AA22 2AA"), Nil, true, Some(Address("line 1", "line 2", "line 3", "line 4", "AA11 1AA"))))
     }
   }
 
-  lazy val otherSiteData = Map(
-    hasOtherSite -> "true",
+  lazy val productionSitesData = Map(
+    "bprAddress" -> "1,1,AA11 1AA",
+    "ppobAddress" -> "2,2,AA22 2AA",
+    addSite -> "true",
     line1 -> "line 1",
-    "otherSiteAddress.line2" -> "line 2",
-    "otherSiteAddress.line3" -> "line 3",
-    "otherSiteAddress.line4" -> "line 4",
+    "additionalAddress.line2" -> "line 2",
+    "additionalAddress.line3" -> "line 3",
+    "additionalAddress.line4" -> "line 4",
     postcode -> "AA11 1AA"
   )
-  lazy val hasOtherSite = "hasOtherSite"
-  lazy val line1 = "otherSiteAddress.line1"
-  lazy val postcode = "otherSiteAddress.postcode"
+  lazy val addSite = "addAddress"
+  lazy val line1 = "additionalAddress.line1"
+  lazy val postcode = "additionalAddress.postcode"
 }

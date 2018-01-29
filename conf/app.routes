@@ -50,9 +50,8 @@ POST        /register/small-producer-confirm                 sdil.controllers.Sm
 GET         /register/start-date                             sdil.controllers.StartDateController.displayStartDate()
 POST        /register/start-date                             sdil.controllers.StartDateController.submitStartDate()
 
-GET         /register/production-sites                       sdil.controllers.ProductionSiteController.addSite()
-POST        /register/production-sites                       sdil.controllers.ProductionSiteController.validate()
-GET         /register/production-sites/remove/:idx           sdil.controllers.ProductionSiteController.remove(idx: Int)
+GET         /register/production-sites                       sdil.controllers.ProductionSiteController.show()
+POST        /register/production-sites                       sdil.controllers.ProductionSiteController.submit()
 
 GET         /register/secondary-warehouse                    sdil.controllers.WarehouseController.show()
 POST        /register/secondary-warehouse                    sdil.controllers.WarehouseController.validate()
