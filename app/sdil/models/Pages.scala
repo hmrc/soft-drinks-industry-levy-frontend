@@ -16,21 +16,28 @@
 
 package sdil.models
 
+import java.time.LocalDate
+
 import play.api.mvc.Call
 import sdil.controllers.routes
+import sdil.config.AppConfig
+import sdil.models
+
+
 
 sealed trait Page {
+
   def isComplete(formData: RegistrationFormData): Boolean
 
-  def expectedPage(formData: RegistrationFormData): Page = this
+  def expectedPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = this
 
   def show: Call
 }
 
 sealed trait PageWithPreviousPage extends Page {
-  def previousPage(formData: RegistrationFormData): Page
+  def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page
 
-  override def expectedPage(formData: RegistrationFormData): Page = {
+  override def expectedPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = {
     previousPage(formData) match {
       case page if page.isComplete(formData) => this
       case page => page.expectedPage(formData)
@@ -39,13 +46,13 @@ sealed trait PageWithPreviousPage extends Page {
 }
 
 sealed trait PageWithNextPage extends Page {
-  def nextPage(formData: RegistrationFormData): Page
+  def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page
 }
 
 sealed trait MidJourneyPage extends PageWithPreviousPage with PageWithNextPage
 
 case object IdentifyPage extends PageWithNextPage {
-  override def nextPage(formData: RegistrationFormData): Page = VerifyPage
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = VerifyPage
 
   override def isComplete(formData: RegistrationFormData): Boolean = true
 
@@ -53,13 +60,13 @@ case object IdentifyPage extends PageWithNextPage {
 }
 
 case object VerifyPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = formData.verify match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.verify match {
     case Some(DetailsCorrect.No) => IdentifyPage
     case Some(_) => OrgTypePage
     case None => VerifyPage
   }
 
-  override def previousPage(formData: RegistrationFormData): Page = IdentifyPage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = IdentifyPage
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.verify.isDefined
 
@@ -67,12 +74,12 @@ case object VerifyPage extends MidJourneyPage {
 }
 
 case object OrgTypePage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = formData.orgType match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.orgType match {
     case Some(_) => PackagePage
     case None => OrgTypePage
   }
 
-  override def previousPage(formData: RegistrationFormData): Page = VerifyPage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = VerifyPage
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.orgType.isDefined
 
@@ -80,14 +87,14 @@ case object OrgTypePage extends MidJourneyPage {
 }
 
 case object PackagePage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = formData.packaging match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.packaging match {
     case Some(p) if p.isLiable && p.ownBrands => PackageOwnPage
     case Some(p) if p.isLiable && p.customers => PackageCopackPage
     case Some(p) => CopackedPage
     case None => PackagePage
   }
 
-  override def previousPage(formData: RegistrationFormData): Page = OrgTypePage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = OrgTypePage
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.packaging.isDefined
 
@@ -95,13 +102,13 @@ case object PackagePage extends MidJourneyPage {
 }
 
 case object PackageOwnPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = formData.packaging match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.packaging match {
     case Some(p) if p.isLiable && p.customers => PackageCopackPage
     case Some(p) => CopackedPage
     case None => PackagePage
   }
 
-  override def previousPage(formData: RegistrationFormData): Page = PackagePage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = PackagePage
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.packageOwn.isDefined
 
@@ -109,9 +116,9 @@ case object PackageOwnPage extends MidJourneyPage {
 }
 
 case object PackageCopackPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = PackageCopackSmallPage
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = PackageCopackSmallPage
 
-  override def previousPage(formData: RegistrationFormData): Page = formData.packaging match {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.packaging match {
     case Some(p) if p.isLiable && p.ownBrands => PackageOwnPage
     case _ => PackagePage
   }
@@ -122,13 +129,13 @@ case object PackageCopackPage extends MidJourneyPage {
 }
 
 case object PackageCopackSmallPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = formData.packageCopackSmall match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.packageCopackSmall match {
     case Some(true) => PackageCopackSmallVolPage
     case Some(false) => CopackedPage
     case None => PackageCopackPage
   }
 
-  override def previousPage(formData: RegistrationFormData): Page = formData.packaging match {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.packaging match {
     case Some(p) if p.isLiable && p.customers => PackageCopackPage
     case Some(p) if p.isLiable && p.ownBrands => PackageOwnPage
     case _ => PackagePage
@@ -140,9 +147,9 @@ case object PackageCopackSmallPage extends MidJourneyPage {
 }
 
 case object PackageCopackSmallVolPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = CopackedPage
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = CopackedPage
 
-  override def previousPage(formData: RegistrationFormData): Page = PackageCopackSmallPage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = PackageCopackSmallPage
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.packageCopackSmallVol.isDefined
 
@@ -150,13 +157,13 @@ case object PackageCopackSmallVolPage extends MidJourneyPage {
 }
 
 case object CopackedPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = formData.copacked match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.copacked match {
     case Some(true) => CopackedVolumePage
     case Some(false) => ImportPage
     case None => CopackedPage
   }
 
-  override def previousPage(formData: RegistrationFormData): Page = formData.packaging match {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.packaging match {
     case Some(p) if p.customers && formData.packageCopackSmall.contains(true) => PackageCopackSmallVolPage
     case Some(p) if p.customers && !formData.packageCopackSmall.contains(true) => PackageCopackSmallPage
     case Some(p) if p.ownBrands && !p.customers => PackageOwnPage
@@ -170,9 +177,9 @@ case object CopackedPage extends MidJourneyPage {
 }
 
 case object CopackedVolumePage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = ImportPage
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = ImportPage
 
-  override def previousPage(formData: RegistrationFormData): Page = CopackedPage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = CopackedPage
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.copackedVolume.isDefined
 
@@ -180,13 +187,13 @@ case object CopackedVolumePage extends MidJourneyPage {
 }
 
 case object ImportPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = formData.imports match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.imports match {
     case Some(true) => ImportVolumePage
     case Some(false) => RegistrationTypePage
     case None => ImportPage
   }
 
-  override def previousPage(formData: RegistrationFormData): Page = formData.copacked match {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.copacked match {
     case Some(true) => CopackedVolumePage
     case _ => CopackedPage
   }
@@ -197,9 +204,9 @@ case object ImportPage extends MidJourneyPage {
 }
 
 case object ImportVolumePage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = RegistrationTypePage
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = RegistrationTypePage
 
-  override def previousPage(formData: RegistrationFormData): Page = ImportPage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = ImportPage
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.importVolume.isDefined
 
@@ -207,12 +214,12 @@ case object ImportVolumePage extends MidJourneyPage {
 }
 
 case object RegistrationTypePage extends MidJourneyPage {
-  override def previousPage(formData: RegistrationFormData): Page = formData.imports match {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.imports match {
     case Some(true) => ImportVolumePage
     case _ => ImportPage
   }
 
-  override def nextPage(formData: RegistrationFormData): Page = StartDatePage
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = StartDatePage
 
   override def isComplete(formData: RegistrationFormData): Boolean = true
 
@@ -221,14 +228,14 @@ case object RegistrationTypePage extends MidJourneyPage {
 
 case object StartDatePage extends MidJourneyPage {
 
-  override def nextPage(formData: RegistrationFormData): Page = (formData, formData.packaging) match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = (formData, formData.packaging) match {
     case (f, _) if f.isVoluntary => ContactDetailsPage
     case (_, Some(p)) if p.isLiable => ProductionSitesPage
     case (_, Some(p)) => WarehouseSitesPage
     case _ => PackagePage
   }
 
-  override def previousPage(formData: RegistrationFormData): Page = formData match {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData match {
     case form if form.smallProducerConfirmFlag.isDefined => SmallProducerConfirmPage
     case form if form.imports.contains(true) => ImportVolumePage
     case _ => ImportPage
@@ -240,9 +247,17 @@ case object StartDatePage extends MidJourneyPage {
 }
 
 case object ProductionSitesPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = WarehouseSitesPage
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = WarehouseSitesPage
 
-  override def previousPage(formData: RegistrationFormData): Page = StartDatePage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = {
+    val showStartDate = LocalDate.now isAfter config.taxStartDate
+    (formData.imports, formData.isSmall, showStartDate) match {
+      case (Some(true), false, false)  => ImportVolumePage
+      case (_, true, false) => SmallProducerConfirmPage
+      case (_, false, false) => ImportPage
+      case (_, _, true) => StartDatePage
+    }
+  }
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.productionSites.isDefined
 
@@ -250,9 +265,9 @@ case object ProductionSitesPage extends MidJourneyPage {
 }
 
 case object WarehouseSitesPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = ContactDetailsPage
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = ContactDetailsPage
 
-  override def previousPage(formData: RegistrationFormData): Page = formData.packaging match {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.packaging match {
     case Some(p) if p.isLiable => ProductionSitesPage
     case Some(_) => StartDatePage
     case None => PackagePage
@@ -264,7 +279,7 @@ case object WarehouseSitesPage extends MidJourneyPage {
 }
 
 case object ContactDetailsPage extends PageWithPreviousPage {
-  override def previousPage(formData: RegistrationFormData): Page = formData match {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData match {
     case f if f.isVoluntary => StartDatePage
     case _ => WarehouseSitesPage
   }
@@ -275,9 +290,16 @@ case object ContactDetailsPage extends PageWithPreviousPage {
 }
 
 case object SmallProducerConfirmPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData): Page = StartDatePage
 
-  override def previousPage(formData: RegistrationFormData): Page = formData.imports match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = {
+    if (config.taxStartDate isBefore LocalDate.now){
+      StartDatePage
+    }
+    else{
+      ProductionSitesPage
+    }
+  }
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.imports match {
     case Some(true) => ImportVolumePage
     case _ => ImportPage
   }
