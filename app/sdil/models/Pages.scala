@@ -17,13 +17,9 @@
 package sdil.models
 
 import java.time.LocalDate
-
 import play.api.mvc.Call
 import sdil.controllers.routes
 import sdil.config.AppConfig
-import sdil.models
-
-
 
 sealed trait Page {
 
@@ -292,12 +288,10 @@ case object ContactDetailsPage extends PageWithPreviousPage {
 case object SmallProducerConfirmPage extends MidJourneyPage {
 
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = {
-    if (config.taxStartDate isBefore LocalDate.now){
+    if (config.taxStartDate isBefore LocalDate.now)
       StartDatePage
-    }
-    else{
+    else
       ProductionSitesPage
-    }
   }
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = formData.imports match {
     case Some(true) => ImportVolumePage
