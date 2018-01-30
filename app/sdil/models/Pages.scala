@@ -37,7 +37,7 @@ sealed trait Page {
 sealed trait PageWithPreviousPage extends Page {
   def previousPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page
 
-  override def expectedPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = {
+  override def  expectedPage(formData: RegistrationFormData)(implicit config: AppConfig) : Page = {
     previousPage(formData) match {
       case page if page.isComplete(formData) => this
       case page => page.expectedPage(formData)

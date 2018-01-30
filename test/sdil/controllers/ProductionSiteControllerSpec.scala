@@ -25,13 +25,15 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.Address
+import sdil.models.{Address, Litreage}
 
 class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /production-site" should {
     "return 200 Ok and the production site page if no other sites have been added" in {
-      stubFormPage(productionSites = Some(Nil))
+      stubFormPage(productionSites = None,
+        imports = Some(false),
+        smallProducerConfirmFlag = Some(true))
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -39,7 +41,9 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
     }
 
     "return 200 Ok and the add production site page if another site has been added" in {
-      stubFormPage(productionSites = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
+      stubFormPage(productionSites = Some(Seq(Address("1", "2", "", "", "AA11 1AA"))),
+        imports = Some(false),
+        smallProducerConfirmFlag = Some(true))
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -47,7 +51,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
     }
 
     "return a page with a link back to the start date page if the date is after the sugar tax start date" in {
-      testConfig.setTaxStartDate(LocalDate.now minusDays 1)
+      testConfig.setTaxStartDate(yesterday)
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -60,8 +64,12 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
     "return a page with a link back to the import volume page if the date is before the sugar tax start date " +
       "and the user is importing liable drinks" in {
-      testConfig.setTaxStartDate(LocalDate.now plusDays 1)
-      stubFormPage(imports = Some(true))
+      testConfig.setTaxStartDate(tomorrow)
+      stubFormPage(
+        packageOwn = Some(Litreage(10000000L, 10000000L)),
+        imports = Some(true),
+        importVolume = Some(Litreage(5, 5)))
+
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
@@ -72,14 +80,27 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
     "return a page with a link back to the import page if the date is before the sugar tax start date " +
       "and the user is not importing liable drinks" in {
-      testConfig.setTaxStartDate(LocalDate.now plusDays 1)
-      stubFormPage(imports = Some(false))
+      testConfig.setTaxStartDate(tomorrow)
+      stubFormPage(packageOwn = Some(Litreage(10000000L, 10000000L)),
+        imports = Some(false))
 
       val res = testController.addSite()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display("import").url
+    }
+
+    "return a page with a link back to the small producer exemption page if the date is before the sugar tax start date " +
+      "and the user is not importing liable drinks" in {
+      testConfig.setTaxStartDate(tomorrow)
+      stubFormPage(smallProducerConfirmFlag = Some(true))
+
+      val res = testController.addSite()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
     }
   }
 
@@ -123,7 +144,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
     "store the new address in keystore if another site has been added and the form data is valid" in {
       stubFormPage(productionSites = Some(Nil))
-      
+
       val request = FakeRequest().withFormUrlEncodedBody(
         "hasOtherSite" -> "true",
         "otherSiteAddress.line1" -> "line 2",
@@ -173,5 +194,16 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
   lazy val testController = wire[ProductionSiteController]
 
-  override protected def beforeEach(): Unit = stubFilledInForm
+  lazy val tomorrow = LocalDate.now plusDays 1
+  lazy val yesterday: LocalDate = LocalDate.now minusDays 1
+
+
+  override protected def beforeEach(): Unit = {
+    testConfig.setTaxStartDate(yesterday)
+    stubFilledInForm
+  }
+
+  override protected def afterEach(): Unit = {
+    testConfig.resetTaxStartDate()
+  }
 }
