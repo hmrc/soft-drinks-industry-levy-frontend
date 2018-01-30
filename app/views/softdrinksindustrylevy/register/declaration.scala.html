@@ -127,7 +127,7 @@
             @if(formData.productionSites.exists(_.nonEmpty)) {
                 @formData.productionSites.map { sites =>
                     @declaration_details_table_row("production-sites",
-                        Some(sdil.controllers.routes.ProductionSiteController.addSite()), sites.size.toString)
+                        Some(sdil.controllers.routes.ProductionSiteController.show()), sites.size.toString)
                 }
             }
             @if(formData.secondaryWarehouses.exists(_.nonEmpty)) {

@@ -52,7 +52,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val response = controller.submitStartDate()(request)
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.ProductionSiteController.addSite().url
+      redirectLocation(response).get mustBe routes.ProductionSiteController.show().url
     }
 
     "return Status: See Other for start date form POST with valid date and redirect to secondary warehouse page" in {
@@ -130,7 +130,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       val response = controller.displayStartDate().apply(request)
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.ProductionSiteController.addSite().url
+      redirectLocation(response).get mustBe routes.ProductionSiteController.show().url
     }
 
     "return Status: See Other for start date form GET with valid date and no Liable booleans with redirect to display Package page" in {

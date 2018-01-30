@@ -23,5 +23,12 @@ case class Address(line1: String, line2: String, line3: String, line4: String, p
 }
 
 object Address {
+  def fromString(s: String): Address = {
+    def getLine(n: Int) = lines.init.lift(n).getOrElse("")
+    lazy val lines = s.split(",")
+
+    Address(getLine(0), getLine(1), getLine(2), getLine(3), lines.lastOption.getOrElse(""))
+  }
+
   implicit val address: OFormat[Address] = Json.format[Address]
 }
