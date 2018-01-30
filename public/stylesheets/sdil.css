@@ -112,3 +112,7 @@ html .font-xsmall {
     background-color: #dee0e2;
     color: inherit;
 }
+
+.button-secondary:disabled {
+    background-color: #a1a9ad !important;
+}

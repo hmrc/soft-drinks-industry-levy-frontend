@@ -113,15 +113,14 @@ error.no-production-sites=Choose at least one option
 
 #Secondary warehouse
 sdil.warehouse.heading=Do you want to register any of the warehouses you’ll use to store liable drinks?
+label.warehouse-sites.add=I want to add another warehouse site
 sdil.warehouse.register.help=Why register a warehouse?
 sdil.warehouse.register.help.content=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses you use to store them.
 sdil.warehouse.add.heading=Do you want to register another warehouse?
-sdil.warehouse.address.heading=Enter a warehouse site
-sdil.warehouse.address.hint=You can enter more sites later if you need to
-sdil.warehouse.address.legend=A warehouse site address
-sdil.warehouse.add=Yes
-sdil.warehouse.address=Address {0}
-sdil.warehouse.remove=Remove?
+sdil.warehouse-site.add.heading=Enter a warehouse site
+sdil.warehouse-site.add.hint=You can enter more sites later if you need to
+sdil.warehouse-site.add.legend=A warehouse site address
+sdil.warehouse-site.add=Add address to list
 
 #Package Copack Small
 sdil.package-copack-small.heading=Do you expect to claim a small producer exemption for any of your customers?

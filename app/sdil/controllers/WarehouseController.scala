@@ -19,13 +19,12 @@ package sdil.controllers
 import java.time.LocalDate
 
 import play.api.data.Form
-import play.api.data.Forms.mapping
+import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models._
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.register.secondaryWarehouse
@@ -45,11 +44,11 @@ class WarehouseController(val messagesApi: MessagesApi,
     }
   }
 
-  def validate = formAction.async { implicit request =>
+  def submit = formAction.async { implicit request =>
     form.bindFromRequest().fold(
       errors => BadRequest(secondaryWarehouse(errors, request.formData.secondaryWarehouses.getOrElse(Nil), previousPage(request.formData).show)),
       {
-        case SecondaryWarehouse(_, Some(addr)) =>
+        case SecondaryWarehouses(_, _, Some(addr)) =>
           val updatedSites = request.formData.secondaryWarehouses match {
             case Some(addrs) => Some(addrs :+ addr)
             case _ => Some(Seq(addr))
@@ -57,24 +56,12 @@ class WarehouseController(val messagesApi: MessagesApi,
           cache.cache(request.internalId, request.formData.copy(secondaryWarehouses = updatedSites)) map { _ =>
             Redirect(routes.WarehouseController.show())
           }
-        case _ =>
-          request.formData.secondaryWarehouses match {
-            case Some(_) => Redirect(WarehouseSitesPage.nextPage(request.formData).show)
-            case _ => cache.cache(request.internalId, request.formData.copy(secondaryWarehouses = Some(Nil))) map { _ =>
-              Redirect(WarehouseSitesPage.nextPage(request.formData).show)
-            }
+        case SecondaryWarehouses(addresses, _, _) =>
+          cache.cache(request.internalId, request.formData.copy(secondaryWarehouses = Some(addresses.map(Address.fromString)))) map { _ =>
+            Redirect(WarehouseSitesPage.nextPage(request.formData).show)
           }
       }
     )
-  }
-
-  def remove(idx: Int) = formAction.async { implicit request =>
-    val updatedSites = request.formData.secondaryWarehouses map {
-      addr => addr.take(idx) ++ addr.drop(idx + 1)
-    }
-    cache.cache(request.internalId, request.formData.copy(secondaryWarehouses = updatedSites)) map { _ =>
-      Redirect(routes.WarehouseController.show())
-    }
   }
 
   private def previousPage(formData: RegistrationFormData) = WarehouseSitesPage.previousPage(formData) match {
@@ -84,10 +71,14 @@ class WarehouseController(val messagesApi: MessagesApi,
 }
 
 object WarehouseController extends FormHelpers {
-  val form: Form[SecondaryWarehouse] = Form(
+  val form: Form[SecondaryWarehouses] = Form(
     mapping(
-      "hasWarehouse" -> mandatoryBoolean,
-      "warehouseAddress" -> mandatoryIfTrue("hasWarehouse", addressMapping)
-    )(SecondaryWarehouse.apply)(SecondaryWarehouse.unapply)
+      "warehouseSites" -> seq(text),
+      "addWarehouse" -> boolean,
+      "additionalAddress" -> mandatoryIfTrue("addWarehouse", addressMapping)
+    )(SecondaryWarehouses.apply)(SecondaryWarehouses.unapply)
   )
+
+  case class SecondaryWarehouses(addresses: Seq[String], addWarehouse: Boolean, additionalAddress: Option[Address])
+
 }

@@ -51,50 +51,24 @@
                     @addressCheckbox(s"additionalSites[$idx]", site)
                 }
 
-                <div class="multiple-choice" data-target="add_address_lines">
-                    <input type="checkbox"
-                           id="add_address"
-                           name="addAddress"
-                           value="true"
-                           @if(siteForm("addAddress").value.contains("true")) { checked="checked" }>
-
-                    <label for="add_address">
-                        @Messages("label.production-sites.add")
-                    </label>
-                </div>
-
-                <div class="panel panel-border-narrow js-hidden" id="add_address_lines">
+                @expandableCheckbox(siteForm, "addAddress", "label.production-sites.add") {
                     @addressFields(siteForm, "additionalAddress", "sdil.production-site.add")
 
                     <br/>
                     @* note that nested forms are not allowed in HTML, so both buttons must use the same action *@
                     <input class="button button-secondary" value="@Messages("sdil.production-site.add")" type="submit">
-                </div>
+                }
+                
             </div>
         </fieldset>
 
-        <details role="group">
-            <summary role="button" aria-controls="details-content-0">
-                <span class="summary">@Messages("sdil.production-site.help.summary")</span>
-            </summary>
-            <div class="panel panel-border-narrow" id="details-content-0">
-                <p>@Messages("sdil.production-site.help.p1")</p>
-                <p>@Messages("sdil.production-site.help.p2")</p>
-            </div>
-        </details>
+        @details("sdil.production-site.help.summary") {
+            <p>@Messages("sdil.production-site.help.p1")</p>
+            <p>@Messages("sdil.production-site.help.p2")</p>
+        }
 
         <p>@Messages("sdil.production-site.adding-multiple-sites")</p>
 
         <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
     }
-}
-
-@addressCheckbox(name: String, address: Address) = {
-    <div class="multiple-choice">
-        <input type="checkbox" id="@name" name="@name" value="@address.nonEmptyLines.mkString(",")" checked="checked">
-        <label for="@name">
-            <div>@address.line1, @address.line2,</div>
-            <div>@if(address.line3.nonEmpty) { @address.line3, } @if(address.line4.nonEmpty) { @address.line4, }@address.postcode</div>
-        </label>
-    </div>
 }

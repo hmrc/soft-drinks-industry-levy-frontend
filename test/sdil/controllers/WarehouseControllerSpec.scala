@@ -25,7 +25,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Address, Packaging, RegistrationFormData}
+import sdil.models.{Address, Packaging}
 
 class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -98,39 +98,31 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
   }
 
   "POST /secondary-warehouse" should {
-    "return 400 Bad Request and the secondary warehouse page if no secondary warehouses have been added and the form data is invalid" in {
-      stubFormPage(secondaryWarehouses = Some(Nil))
-
-      val res = testController.validate()(FakeRequest())
-      status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include(Messages("sdil.warehouse.heading"))
-    }
-
-    "return 400 Bad Request and the add secondary warehouse page if other warehouses have been added and the form data is invalid" in {
+    "return 400 Bad Request if the user says they have a warehouse and does not fill in the address form" in {
       stubFormPage(secondaryWarehouses = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
-      val res = testController.validate()(FakeRequest())
+      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody("addWarehouse" -> "true"))
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include(Messages("sdil.warehouse.add.heading"))
     }
 
     "redirect to the add secondary warehouse page if a warehouse has been added" in {
       val request = FakeRequest().withFormUrlEncodedBody(
-        "hasWarehouse" -> "true",
-        "warehouseAddress.line1" -> "line 1",
-        "warehouseAddress.line2" -> "line 2",
-        "warehouseAddress.line3" -> "line 3",
-        "warehouseAddress.line4" -> "line 4",
-        "warehouseAddress.postcode" -> "AA11 1AA"
+        "addWarehouse" -> "true",
+        "additionalAddress.line1" -> "line 1",
+        "additionalAddress.line2" -> "line 2",
+        "additionalAddress.line3" -> "line 3",
+        "additionalAddress.line4" -> "line 4",
+        "additionalAddress.postcode" -> "AA11 1AA"
       )
 
-      val res = testController.validate()(request)
+      val res = testController.submit()(request)
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.WarehouseController.show().url)
     }
 
     "redirect to the contact details page if a warehouse is not added" in {
-      val res = testController.validate()(FakeRequest().withFormUrlEncodedBody("hasWarehouse" -> "false"))
+      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody("hasWarehouse" -> "false"))
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.ContactDetailsController.displayContactDetails().url)
     }
@@ -139,15 +131,15 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       stubFormPage(secondaryWarehouses = Some(Nil))
 
       val request = FakeRequest().withFormUrlEncodedBody(
-        "hasWarehouse" -> "true",
-        "warehouseAddress.line1" -> "line 2",
-        "warehouseAddress.line2" -> "line 3",
-        "warehouseAddress.line3" -> "line 4",
-        "warehouseAddress.line4" -> "line 5",
-        "warehouseAddress.postcode" -> "AA11 1AA"
+        "addWarehouse" -> "true",
+        "additionalAddress.line1" -> "line 2",
+        "additionalAddress.line2" -> "line 3",
+        "additionalAddress.line3" -> "line 4",
+        "additionalAddress.line4" -> "line 5",
+        "additionalAddress.postcode" -> "AA11 1AA"
       )
 
-      val res = testController.validate()(request)
+      val res = testController.submit()(request)
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1))
@@ -155,33 +147,6 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           matching("internal id"),
           matching(defaultFormData.copy(secondaryWarehouses = Some(Seq(Address("line 2", "line 3", "line 4", "line 5", "AA11 1AA")))))
         )(any(), any())
-    }
-  }
-
-  "GET /secondary-warehouse/remove" should {
-    "remove the warehouse address from keystore" in {
-      val addresses = Seq(
-        Address("1", "", "", "", "AA11 1AA"),
-        Address("2", "", "", "", "AA12 2AA")
-      )
-
-      stubFormPage(secondaryWarehouses = Some(addresses))
-
-      val res = testController.remove(0)(FakeRequest())
-      status(res) mustBe SEE_OTHER
-
-      verify(mockCache, times(1)).cache(
-        matching("internal id"),
-        matching(defaultFormData.copy(secondaryWarehouses = Some(Seq(Address("2", "", "", "", "AA12 2AA")))))
-      )(any(), any())
-    }
-
-    "always redirect to the secondary warehouse page" in {
-      stubFormPage(secondaryWarehouses = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
-
-      val res = testController.remove(0)(FakeRequest())
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.WarehouseController.show().url)
     }
   }
 

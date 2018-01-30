@@ -54,8 +54,7 @@ GET         /register/production-sites                       sdil.controllers.Pr
 POST        /register/production-sites                       sdil.controllers.ProductionSiteController.submit()
 
 GET         /register/secondary-warehouse                    sdil.controllers.WarehouseController.show()
-POST        /register/secondary-warehouse                    sdil.controllers.WarehouseController.validate()
-GET         /register/secondary-warehouse/remove/:idx        sdil.controllers.WarehouseController.remove(idx: Int)
+POST        /register/secondary-warehouse                    sdil.controllers.WarehouseController.submit()
 
 GET         /register/contact-details                        sdil.controllers.ContactDetailsController.displayContactDetails
 POST        /register/contact-details                        sdil.controllers.ContactDetailsController.submitContactDetails

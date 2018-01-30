@@ -28,45 +28,44 @@
 
     @errorSummary(Messages("sdil.common.errorSummary"), warehouseForm)
 
-    @if(warehouses.nonEmpty) {
+    @form(sdil.controllers.routes.WarehouseController.submit()) {
+        @if(warehouses.isEmpty) {
+            @radioButtonWithConditionalContent(
+                field = warehouseForm("addWarehouse"),
+                radioOptions = Seq(
+                    ("true", (Messages("sdil.common.yes"), Some(
+                        addressFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add", warehouses.isEmpty)
+                    ))),
+                    ("false", (Messages("sdil.common.no"), None))
+                ),
+                '_labelClass -> "block-label",
+                '_labelAfter -> true,
+                '_groupClass -> "form-field-group",
+                '_dataTargetTrue -> "warehouse"
+            )
+        } else {
+            <fieldset>
+                <div class="form-group">
+                    <span class="form-hint">@Messages("sdil.production-sites.select-applicable")</span>
 
-        @warehouses.zipWithIndex.map { case (addr, i) =>
-            <div>
-                <h2 class="heading-small">@Messages("sdil.warehouse.address", i + 1)</h2>
-                @Seq(addr.line1, addr.line2, addr.line3, addr.line4, addr.postcode.toUpperCase).filter(_.nonEmpty).map { l =>
-                  <div>@l</div>
-                }
-                <p class="font-xsmall">
-                    <a href="@sdil.controllers.routes.WarehouseController.remove(i)">@Messages("sdil.warehouse.remove")</a>
-                </p>
-            </div>
+                    @warehouses.zipWithIndex.map { case (address, idx) =>
+                      @addressCheckbox(s"warehouseSites[$idx]", address)
+                    }
 
-            <br/>
+                    @expandableCheckbox(warehouseForm, "addWarehouse", "label.warehouse-sites.add") {
+                        @addressFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add")
+
+                        <br/>
+                        @* note that nested forms are not allowed in HTML, so both buttons must use the same action *@
+                        <input class="button button-secondary" value="@Messages("sdil.warehouse-site.add")" type="submit">
+                    }
+                </div>
+            </fieldset>
         }
-    }
 
-    @form(sdil.controllers.routes.WarehouseController.validate()) {
-        @radioButtonWithConditionalContent(
-            field = warehouseForm("hasWarehouse"),
-            radioOptions = Seq(
-                ("true", (yesLabel, Some(addressFields(warehouseForm, "warehouseAddress", "sdil.warehouse.address",
-                    warehouses.isEmpty)
-                ))),
-                ("false", (Messages("sdil.common.no"), None))
-            ),
-            '_labelClass -> "block-label",
-            '_labelAfter -> true,
-            '_groupClass -> "form-field-group",
-            '_dataTargetTrue -> "warehouse"
-        )
-        <details role="group">
-            <summary role="button">
-                <span class="summary">@Messages("sdil.warehouse.register.help")</span>
-            </summary>
-            <div class="panel-border-narrow panel" id="details-content-0">
-                <p>@Messages("sdil.warehouse.register.help.content")</p>
-            </div>
-        </details>
+        @details("sdil.warehouse.register.help") {
+            <p>@Messages("sdil.warehouse.register.help.content")</p>
+        }
 
         <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
     }
@@ -77,13 +76,5 @@
         Messages("sdil.warehouse.add.heading")
     } else {
         Messages("sdil.warehouse.heading")
-    }
-}
-
-@yesLabel = @{
-    if(warehouses.nonEmpty) {
-        Messages("sdil.warehouse.add")
-    } else {
-        Messages("sdil.common.yes")
     }
 }
