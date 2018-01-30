@@ -42,7 +42,7 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: FormDataCach
           form,
           request.formData.primaryAddress,
           request.formData.productionSites.getOrElse(Nil),
-          previousPage(request.formData).show
+          ProductionSitesPage.previousPage(request.formData).show
         )
       )
       case otherPage => Redirect(otherPage.show)
@@ -56,7 +56,7 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: FormDataCach
           errors,
           request.formData.rosmData.address,
           request.formData.productionSites.getOrElse(Nil),
-          previousPage(request.formData).show
+          ProductionSitesPage.previousPage(request.formData).show
         )
       ),
       {
@@ -85,14 +85,6 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: FormDataCach
     }
     cache.cache(request.internalId, request.formData.copy(productionSites = updatedSites)) map { _ =>
       Redirect(routes.ProductionSiteController.addSite())
-    }
-  }
-
-  private def previousPage(formData: RegistrationFormData) = {
-    if (LocalDate.now isBefore config.taxStartDate) {
-      StartDatePage.previousPage(formData)
-    } else {
-      ProductionSitesPage.previousPage(formData)
     }
   }
 }
