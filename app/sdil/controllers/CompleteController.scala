@@ -34,7 +34,7 @@ class CompleteController(val messagesApi: MessagesApi,
 
   def displayComplete(): Action[AnyContent] = Action.async { implicit request =>
     keystore.fetchAndGetEntry[SubmissionData]("submissionData") map {
-      case Some(SubmissionData(e, ts)) => Ok(register.complete(e, ts.format(dateFormatter), ts.format(timeFormatter)))
+      case Some(SubmissionData(e, ts, iv)) => Ok(register.complete(e, ts.format(dateFormatter), ts.format(timeFormatter), iv))
       case None => BadRequest(errorHandler.badRequestTemplate)
     }
   }
