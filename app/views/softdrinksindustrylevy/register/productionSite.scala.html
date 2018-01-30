@@ -91,9 +91,8 @@
     <div class="multiple-choice">
         <input type="checkbox" id="@name" name="@name" value="@address.nonEmptyLines.mkString(",")" checked="checked">
         <label for="@name">
-            @address.nonEmptyLines.map { l =>
-                <div>@l</div>
-            }
+            <div>@address.line1, @address.line2,</div>
+            <div>@if(address.line3.nonEmpty) { @address.line3, } @if(address.line4.nonEmpty) { @address.line4, }@address.postcode</div>
         </label>
     </div>
 }

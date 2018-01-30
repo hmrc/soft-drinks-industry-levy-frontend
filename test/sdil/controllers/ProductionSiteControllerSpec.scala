@@ -53,7 +53,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("#bprAddress").next("label").text mustBe bprAddress.nonEmptyLines.mkString(" ")
+      html.select("#bprAddress").next("label").text mustBe bprAddress.nonEmptyLines.mkString(", ")
     }
 
     "return a page including the company's primary place of business if it differs from their registered address" in {
@@ -64,7 +64,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("#ppobAddress").next("label").text mustBe ppob.nonEmptyLines.mkString(" ")
+      html.select("#ppobAddress").next("label").text mustBe ppob.nonEmptyLines.mkString(", ")
     }
 
     "return a page including all production sites added so far" in {
@@ -83,7 +83,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       val checkboxLabels = html.select(""".multiple-choice input[type="checkbox"]""")
         .asScala.filter(_.id.startsWith("additionalSites")).map(_.nextElementSibling().text)
 
-      checkboxLabels must contain theSameElementsAs sites.map(_.nonEmptyLines.mkString(" "))
+      checkboxLabels must contain theSameElementsAs sites.map(_.nonEmptyLines.mkString(", "))
     }
 
     "return a page with a link back to the start date page if the date is after the sugar tax start date" in {
