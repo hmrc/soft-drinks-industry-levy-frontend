@@ -108,6 +108,7 @@ sdil.production-site.add=Add address to list
 sdil.production-site.help.summary=If you have more than one packaging site
 sdil.production-site.help.p1=You need to tell us the addresses of all of the packaging sites you operate to package liable drinks.
 sdil.production-site.help.p2=If you’ve got more packaging sites you can add them next.
+sdil.production-site.adding-multiple-sites=When you’ve added all your packaging sites you can save and continue.
 error.no-production-sites=Choose at least one option
 
 #Secondary warehouse
