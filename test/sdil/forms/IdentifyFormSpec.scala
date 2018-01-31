@@ -61,7 +61,7 @@ class IdentifyFormSpec extends UnitSpec {
 
       val f = form.bind(emptyPostcode)
 
-      errorFor(f, postcode) shouldBe "error.postcode.required"
+      errorFor(f, postcode) shouldBe "error.postcode.empty"
     }
 
     "require the postcode to be valid" in {

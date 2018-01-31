@@ -26,18 +26,11 @@ import scala.util.Try
 trait FormHelpers {
   private lazy val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$"
   private lazy val specialRegex = """^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"""
-  lazy val postcode: Mapping[String] = text.transform[String](_.toUpperCase, s => s).verifying(Constraint { x: String =>
-    x match {
-      case "" => Invalid("error.postcode.required")
-      case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
-      case _ => Valid
-    }
-  })
 
-  lazy val verifyPostcode: Mapping[String] = text.transform[String](_.toUpperCase, s => s).verifying(Constraint { x: String =>
+  lazy val postcode: Mapping[String] = text.transform[String](_.toUpperCase.trim, s => s).verifying(Constraint { x: String =>
     x match {
       case "" => Invalid("error.postcode.empty")
-      case s if !s.matches(specialRegex) => Invalid("error.postcode.special")
+      case pc if !pc.matches(specialRegex) => Invalid("error.postcode.special")
       case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
       case _ => Valid
     }
@@ -48,7 +41,7 @@ trait FormHelpers {
     "line2" -> mandatoryAddressLine("line2"),
     "line3" -> optionalAddressLine("line3"),
     "line4" -> optionalAddressLine("line4"),
-    "postcode" -> verifyPostcode
+    "postcode" -> postcode
   )(Address.apply)(Address.unapply)
 
   def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
@@ -57,11 +50,11 @@ trait FormHelpers {
   }
 
   private def mandatoryAddressLine(key: String): Mapping[String] = {
-    text.verifying(combine(required(key), optionalAddressLineConstraint(key)))
+    text.transform[String](_.trim, s => s).verifying(combine(required(key), optionalAddressLineConstraint(key)))
   }
 
   private def optionalAddressLine(key: String): Mapping[String] = {
-    text.verifying(optionalAddressLineConstraint(key))
+    text.transform[String](_.trim, s => s).verifying(optionalAddressLineConstraint(key))
   }
 
   private def optionalAddressLineConstraint(key: String): Constraint[String] = Constraint {

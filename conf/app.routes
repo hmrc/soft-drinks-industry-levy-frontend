@@ -53,8 +53,9 @@ POST        /register/start-date                             sdil.controllers.St
 GET         /register/production-sites                       sdil.controllers.ProductionSiteController.show()
 POST        /register/production-sites                       sdil.controllers.ProductionSiteController.submit()
 
-GET         /register/secondary-warehouse                    sdil.controllers.WarehouseController.show()
-POST        /register/secondary-warehouse                    sdil.controllers.WarehouseController.submit()
+GET         /register/secondary-warehouses                   sdil.controllers.WarehouseController.show()
+POST        /register/secondary-warehouses                   sdil.controllers.WarehouseController.addSingleSite()
+POST        /register/secondary-warehouses/select-sites      sdil.controllers.WarehouseController.addMultipleSites()
 
 GET         /register/contact-details                        sdil.controllers.ContactDetailsController.displayContactDetails
 POST        /register/contact-details                        sdil.controllers.ContactDetailsController.submitContactDetails

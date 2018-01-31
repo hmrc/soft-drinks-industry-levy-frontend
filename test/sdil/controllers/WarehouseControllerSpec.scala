@@ -29,7 +29,7 @@ import sdil.models.{Address, Packaging}
 
 class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
-  "GET /secondary-warehouse" should {
+  "GET /secondary-warehouses" should {
     "return 200 Ok and the secondary warehouse page if no secondary warehouses have been added" in {
       stubFormPage(secondaryWarehouses = Some(Nil))
 
@@ -109,11 +109,53 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
   }
 
-  "POST /secondary-warehouse" should {
+  "POST /secondary-warehouses" should {
+    "return 400 Bad Request if the no radio button is selected" in {
+      stubFormPage(secondaryWarehouses = None)
+
+      val res = testController.addSingleSite()(FakeRequest())
+      status(res) mustBe BAD_REQUEST
+      contentAsString(res) must include(Messages("sdil.warehouse.heading"))
+    }
+
+    "return 400 Bad Request if the user adds a warehouse, but does not supply the address" in {
+      stubFormPage(secondaryWarehouses = None)
+
+      val res = testController.addSingleSite()(FakeRequest().withFormUrlEncodedBody("addWarehouse" -> "true"))
+      status(res) mustBe BAD_REQUEST
+    }
+
+    "redirect to the add secondary warehouse page if the user adds a warehouse" in {
+      stubFormPage(secondaryWarehouses = None)
+
+      val res = testController.addSingleSite()(FakeRequest().withFormUrlEncodedBody(
+        "addWarehouse" -> "true",
+        "additionalAddress.line1" -> "line 3",
+        "additionalAddress.line2" -> "line 4",
+        "additionalAddress.line3" -> "line 5",
+        "additionalAddress.line4" -> "line 6",
+        "additionalAddress.postcode" -> "AA11 1AA"
+      ))
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.WarehouseController.show().url
+    }
+
+    "redirect to the contact details page if the user has no warehouses" in {
+      stubFormPage(secondaryWarehouses = None)
+
+      val res = testController.addSingleSite()(FakeRequest().withFormUrlEncodedBody("addWarehouse" -> "false"))
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.ContactDetailsController.displayContactDetails().url
+    }
+  }
+
+  "POST /secondary-warehouses/select-sites" should {
     "return 400 Bad Request if the user says they have a warehouse and does not fill in the address form" in {
       stubFormPage(secondaryWarehouses = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
 
-      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody("addWarehouse" -> "true"))
+      val res = testController.addMultipleSites()(FakeRequest().withFormUrlEncodedBody("addWarehouse" -> "true"))
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include(Messages("sdil.warehouse.add.heading"))
     }
@@ -128,13 +170,13 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "additionalAddress.postcode" -> "AA11 1AA"
       )
 
-      val res = testController.submit()(request)
+      val res = testController.addMultipleSites()(request)
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.WarehouseController.show().url)
     }
 
     "redirect to the contact details page if a warehouse is not added" in {
-      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody("hasWarehouse" -> "false"))
+      val res = testController.addMultipleSites()(FakeRequest().withFormUrlEncodedBody("hasWarehouse" -> "false"))
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.ContactDetailsController.displayContactDetails().url)
     }
@@ -151,7 +193,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "additionalAddress.postcode" -> "AA11 1AA"
       )
 
-      val res = testController.submit()(request)
+      val res = testController.addMultipleSites()(request)
       status(res) mustBe SEE_OTHER
 
       verify(mockCache, times(1))
