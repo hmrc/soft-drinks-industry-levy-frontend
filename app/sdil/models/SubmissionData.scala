@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 
 import play.api.libs.json.{Format, Json}
 
-case class SubmissionData(email: String, submissionDate: LocalDateTime)
+case class SubmissionData(email: String, submissionDate: LocalDateTime, isVoluntary: Boolean)
 
 object SubmissionData {
   implicit val format: Format[SubmissionData] = Json.format[SubmissionData]
