@@ -232,7 +232,7 @@ case object StartDatePage extends MidJourneyPage {
   }
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
-    case form if form.smallProducerConfirmFlag.isDefined => SmallProducerConfirmPage
+    case form if formData.isSmall => SmallProducerConfirmPage
     case form if form.imports.contains(true) => ImportVolumePage
     case _ => ImportPage
   }

@@ -115,7 +115,8 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
     }
 
-    "return the import volume page when they are voluntary and it is before the tax start date and they do not import" in {
+    "return page with back link to small producer confirm page when they are voluntary and it is before the tax start" +
+      " date and they do not import" in {
       testConfig.setTaxStartDate(LocalDate.now plusYears 2)
 
       stubFormPage(
@@ -131,7 +132,8 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(response) mustBe OK
 
       val html = Jsoup.parse(contentAsString(response))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display("import").url
+      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController
+        .displaySmallProducerConfirm().url
     }
   }
 

@@ -30,6 +30,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "StartDateController" should {
     "return Status: 200 when user is logged in and loads start date page" in {
+      stubFormPage(smallProducerConfirmFlag = Some(true))
       val request = FakeRequest("GET", "/start-date")
       val result = controller.displayStartDate.apply(request)
 
@@ -86,7 +87,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return a page with a link back to the import volume page if the user imports liable drinks" in {
-      stubFormPage(imports = Some(true))
+      stubFormPage(imports = Some(true), packageOwn = Some(Litreage(1000000L,0L)))
 
       val response = controller.displayStartDate(FakeRequest())
       status(response) mustBe OK
@@ -106,7 +107,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return a page with a link back to the imports page if the user does not import liable drinks" in {
-      stubFormPage(imports = Some(false))
+      stubFormPage(imports = Some(false), packageOwn = Some(Litreage(1000000L,0L)))
 
       val response = controller.displayStartDate(FakeRequest())
       status(response) mustBe OK
