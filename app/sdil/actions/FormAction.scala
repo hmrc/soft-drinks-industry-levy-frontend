@@ -21,7 +21,7 @@ import play.api.mvc.{ActionBuilder, Request, Result, WrappedRequest}
 import sdil.config.FormDataCache
 import sdil.controllers.routes
 import sdil.models.RegistrationFormData
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 

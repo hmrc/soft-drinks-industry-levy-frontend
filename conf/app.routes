@@ -65,7 +65,5 @@ POST        /register/declaration                            sdil.controllers.De
 
 GET         /register/complete                               sdil.controllers.CompleteController.displayComplete()
 
-GET         /register/already-registered/:utr                sdil.controllers.AlreadyRegisteredController.show(utr:String)
-
 GET         /sign-in                                         sdil.controllers.AuthenticationController.signIn()
 GET         /sign-out                                        sdil.controllers.AuthenticationController.signOut()

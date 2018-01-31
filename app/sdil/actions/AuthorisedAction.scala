@@ -21,6 +21,7 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.controllers.routes
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
@@ -54,15 +55,24 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
 
       maybeUtr match {
         case Some(utr) if getSdilEnrolment(enrolments).nonEmpty =>
-          Future(Left(Redirect(sdil.controllers.routes.AlreadyRegisteredController.show(utr))))
+          alreadyRegistered(utr).map(Left.apply)
         case _ if error.nonEmpty =>
-          Future(Left(error.get))
+          Future.successful(Left(error.get))
         case _ =>
-          Future(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
+          Future.successful(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
       }
         
     } recover {
       case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
+    }
+  }
+
+  private def alreadyRegistered(utr: String)(implicit request: Request[_]): Future[Result] = {
+    val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+
+    sdilConnector.getRosmRegistration(utr)(hc) map {
+      case Some(a) => Forbidden(errors.already_registered(utr, a.organisationName, a.address))
+      case _ => Redirect(routes.AuthenticationController.signIn())
     }
   }
 
