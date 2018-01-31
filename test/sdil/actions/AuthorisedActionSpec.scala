@@ -16,13 +16,14 @@
 
 package sdil.actions
 
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import play.api.i18n.Messages
 import play.api.mvc.Results._
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.models.{Address, OrganisationDetails, RosmRegistration}
 import sdil.utils.FakeApplicationSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -53,11 +54,16 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
         new Enrolment("IR-SA", Seq(saEnrolment), "Active")
       ))
 
+      when(mockSdilConnector.getRosmRegistration(anyString())(any()))
+        .thenReturn(Future.successful(Some(
+          RosmRegistration("safeId", Some(OrganisationDetails("orgName")), None, Address("", "", "", "", ""))))
+        )
+
       stubAuthResult(new ~(enrolments, Some(User)))
 
       val res = testAction(FakeRequest())
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe sdil.controllers.routes.AlreadyRegisteredController.show(utr).url
+      status(res) mustBe FORBIDDEN
+      contentAsString(res) must include (Messages("sdil.already-enrolled.heading"))
     }
 
     "show the 'invalid affinity group' error page if the user is an agent" in {
