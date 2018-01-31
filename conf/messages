@@ -25,9 +25,9 @@ error.utr.length=UTR must be 10 digits long
 error.utr.invalid=UTR must be a number
 
 #Identify
-sdil.identify.heading=Enter your Unique Taxpayer Reference number and postcode
+sdil.identify.heading=Enter the Unique Taxpayer Reference number and postcode for your business
 sdil.identify.utr=Unique Taxpayer Reference number (UTR)
-sdil.identify.postcode=Registered business postcode
+sdil.identify.postcode=Postcode
 error.utr.no-record=This UTR and postcode do not match our records
 
 #Verify
@@ -113,12 +113,12 @@ error.no-production-sites=Choose at least one option
 
 #Secondary warehouse
 sdil.warehouse.heading=Do you want to register any of the warehouses you’ll use to store liable drinks?
-label.warehouse-sites.add=I want to add another warehouse site
+label.warehouse-sites.add=I want to register another warehouse
 sdil.warehouse.register.help=Why register a warehouse?
 sdil.warehouse.register.help.content=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses you use to store them.
 sdil.warehouse.add.heading=Do you want to register another warehouse?
 sdil.warehouse-site.add.heading=Enter a warehouse site
-sdil.warehouse-site.add.hint=You can enter more sites later if you need to
+sdil.warehouse-site.add.hint=You can enter more sites after if you need to
 sdil.warehouse-site.add.legend=A warehouse site address
 sdil.warehouse-site.add=Add address to list
 
