@@ -21,13 +21,17 @@ import java.time.LocalDate
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import sdil.actions.FormAction
+import play.api.mvc.Result
+import sdil.actions.{FormAction, RegistrationFormRequest}
 import sdil.config.{AppConfig, FormDataCache}
+import sdil.controllers.WarehouseController.selectSitesForm
 import sdil.forms.FormHelpers
 import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.register.secondaryWarehouse
+
+import scala.concurrent.Future
 
 class WarehouseController(val messagesApi: MessagesApi,
                           cache: FormDataCache,
@@ -39,14 +43,22 @@ class WarehouseController(val messagesApi: MessagesApi,
 
   def show = formAction.async { implicit request =>
     WarehouseSitesPage.expectedPage(request.formData) match {
-      case WarehouseSitesPage => Ok(secondaryWarehouse(form, request.formData.secondaryWarehouses.getOrElse(Nil), previousPage(request.formData).show))
+      case WarehouseSitesPage => Ok(secondaryWarehouse(selectSitesForm, secondaryWarehouses, previousPage(request.formData).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
-  def submit = formAction.async { implicit request =>
+  def addSingleSite = formAction.async { implicit request =>
+    validateWith(initialForm)
+  }
+
+  def addMultipleSites = formAction.async { implicit request =>
+    validateWith(selectSitesForm)
+  }
+
+  private def validateWith(form: Form[SecondaryWarehouses])(implicit request: RegistrationFormRequest[_]): Future[Result] = {
     form.bindFromRequest().fold(
-      errors => BadRequest(secondaryWarehouse(errors, request.formData.secondaryWarehouses.getOrElse(Nil), previousPage(request.formData).show)),
+      errors => BadRequest(secondaryWarehouse(errors, secondaryWarehouses, previousPage(request.formData).show)),
       {
         case SecondaryWarehouses(_, _, Some(addr)) =>
           val updatedSites = request.formData.secondaryWarehouses match {
@@ -64,6 +76,10 @@ class WarehouseController(val messagesApi: MessagesApi,
     )
   }
 
+  private def secondaryWarehouses(implicit request: RegistrationFormRequest[_]): Seq[Address] = {
+    request.formData.secondaryWarehouses.getOrElse(Nil)
+  }
+
   private def previousPage(formData: RegistrationFormData) = WarehouseSitesPage.previousPage(formData) match {
     case StartDatePage if LocalDate.now isBefore config.taxStartDate => StartDatePage.previousPage(formData)
     case other => other
@@ -71,7 +87,18 @@ class WarehouseController(val messagesApi: MessagesApi,
 }
 
 object WarehouseController extends FormHelpers {
-  val form: Form[SecondaryWarehouses] = Form(
+
+  /* when the user first lands on the page and sees the radio button (and must choose an option) */
+  val initialForm: Form[SecondaryWarehouses] = Form(
+    mapping(
+      "warehouseSites" -> ignored(Seq.empty[String]),
+      "addWarehouse" -> mandatoryBoolean,
+      "additionalAddress" -> mandatoryIfTrue("addWarehouse", addressMapping)
+    )(SecondaryWarehouses.apply)(SecondaryWarehouses.unapply)
+  )
+
+  /* after the user has selected at least one warehouse site, and doesn't have to select any of them */
+  val selectSitesForm: Form[SecondaryWarehouses] = Form(
     mapping(
       "warehouseSites" -> seq(text),
       "addWarehouse" -> boolean,

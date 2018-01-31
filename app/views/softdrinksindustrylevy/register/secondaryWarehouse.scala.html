@@ -28,7 +28,7 @@
 
     @errorSummary(Messages("sdil.common.errorSummary"), warehouseForm)
 
-    @form(sdil.controllers.routes.WarehouseController.submit()) {
+    @form(submissionUrl) {
         @if(warehouses.isEmpty) {
             @radioButtonWithConditionalContent(
                 field = warehouseForm("addWarehouse"),
@@ -76,5 +76,13 @@
         Messages("sdil.warehouse.add.heading")
     } else {
         Messages("sdil.warehouse.heading")
+    }
+}
+
+@submissionUrl = @{
+    if(warehouses.isEmpty) {
+        sdil.controllers.routes.WarehouseController.addSingleSite()
+    } else {
+        sdil.controllers.routes.WarehouseController.addMultipleSites()
     }
 }
