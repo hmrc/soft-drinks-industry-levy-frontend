@@ -53,7 +53,7 @@ class IdentifyController(val messagesApi: MessagesApi,
 
   private def restoreSession(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] = {
     OptionT(cache.get(request.internalId) map {
-      case Some(_) => Some(Redirect(routes.VerifyController.verify()))
+      case Some(_) => Some(Redirect(routes.VerifyController.show()))
       case None => None
     })
   }
@@ -64,7 +64,7 @@ class IdentifyController(val messagesApi: MessagesApi,
       rosmData <- OptionT(softDrinksIndustryLevyConnector.getRosmRegistration(utr))
       _ <- OptionT.liftF(cache.cache(request.internalId, RegistrationFormData(rosmData, utr)))
     } yield {
-      Redirect(routes.VerifyController.verify())
+      Redirect(routes.VerifyController.show())
     }
   }
 
@@ -74,7 +74,7 @@ class IdentifyController(val messagesApi: MessagesApi,
       identification => softDrinksIndustryLevyConnector.getRosmRegistration(identification.utr) flatMap {
         case Some(reg) if postcodesMatch(reg.address, identification) =>
           cache.cache(request.internalId, RegistrationFormData(reg, identification.utr)) map { _ =>
-            Redirect(routes.VerifyController.verify())
+            Redirect(routes.VerifyController.show())
           }
         case _ => BadRequest(register.identify(form.withError("utr", "error.utr.no-record")))
       }

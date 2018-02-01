@@ -7,7 +7,7 @@ GET         /register/start                                  sdil.controllers.Id
 GET         /register/identify                               sdil.controllers.IdentifyController.show()
 POST        /register/identify                               sdil.controllers.IdentifyController.validate()
 
-GET         /register/verify                                 sdil.controllers.VerifyController.verify()
+GET         /register/verify                                 sdil.controllers.VerifyController.show()
 POST        /register/verify                                 sdil.controllers.VerifyController.validate()
 
 GET         /register/organisation-type                      sdil.controllers.OrgTypeController.displayOrgType()
