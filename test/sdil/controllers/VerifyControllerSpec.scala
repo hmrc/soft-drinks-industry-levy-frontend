@@ -31,7 +31,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
   "GET /verify" should {
     "always return 200 Ok and the verify page when submission isn't pending" in {
       when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(NOT_FOUND))
-      val res = testController.verify()(FakeRequest())
+      val res = testController.show()(FakeRequest())
 
       status(res) mustBe OK
       contentAsString(res) must include (Messages("sdil.verify.heading"))
@@ -39,7 +39,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "always return 303 Redirect and the pending page when submission is pending" in {
       when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(ACCEPTED))
-      val res = testController.verify()(FakeRequest())
+      val res = testController.show()(FakeRequest())
 
       status(res) mustBe OK
       contentAsString(res) must include (Messages("sdil.registration-pending.p1"))

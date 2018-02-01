@@ -34,7 +34,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formA
 
   import VerifyController._
 
-  def verify = formAction.async { implicit request =>
+  def show = formAction.async { implicit request =>
     val data = request.formData
 
     sdilConnector.checkPendingQueue(data.utr) map {

@@ -40,7 +40,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
 
-      redirectLocation(res).value mustBe routes.VerifyController.verify().url
+      redirectLocation(res).value mustBe routes.VerifyController.show().url
 
       stubCacheEntry(None)
     }
@@ -63,7 +63,7 @@ class IdentifyControllerSpec extends ControllerSpec {
 
       val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.VerifyController.verify().url
+      redirectLocation(res).value mustBe routes.VerifyController.show().url
     }
 
     "store the UTR and BPR in keystore if the user has an IR-CT enrolment" in {
@@ -84,7 +84,7 @@ class IdentifyControllerSpec extends ControllerSpec {
 
       val res = testController.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.VerifyController.verify().url
+      redirectLocation(res).value mustBe routes.VerifyController.show().url
     }
 
     "store the UTR and BPR in keystore if the user has an IR-SA enrolment" in {
@@ -164,7 +164,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       val res = testController.validate()(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.VerifyController.verify().url
+      redirectLocation(res).value mustBe routes.VerifyController.show().url
     }
 
     "match against the BPR postcode if the entered postcode does not contain a space" in {
@@ -172,7 +172,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       val res = testController.validate()(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.VerifyController.verify().url
+      redirectLocation(res).value mustBe routes.VerifyController.show().url
     }
 
     "match against the BPR postcode if the entered postcode is lower case" in {
@@ -180,7 +180,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       val res = testController.validate()(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.VerifyController.verify().url
+      redirectLocation(res).value mustBe routes.VerifyController.show().url
     }
 
     "store the UTR and business partner record in keystore if the form data is valid" in {

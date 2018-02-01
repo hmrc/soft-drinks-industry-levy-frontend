@@ -66,7 +66,7 @@ case object VerifyPage extends MidJourneyPage {
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.verify.isDefined
 
-  override def show: Call = routes.VerifyController.verify()
+  override def show: Call = routes.VerifyController.show()
 }
 
 case object OrgTypePage extends MidJourneyPage {

@@ -16,7 +16,6 @@
 
 package sdil.actions
 
-import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -48,9 +47,7 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
     authorised(AuthProviders(GovernmentGateway)).retrieve(retrieval) { case enrolments ~ role ~ id ~ affinity =>
       val maybeUtr = getUtr(enrolments)
 
-      val error: Option[Result] = notWhitelisted(maybeUtr)(request)
-        .orElse(invalidRole(role)(request))
-        .orElse(invalidAffinityGroup(affinity)(request))
+      val error: Option[Result] = invalidRole(role)(request).orElse(invalidAffinityGroup(affinity)(request))
 
       val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
 
@@ -74,19 +71,6 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
     sdilConnector.getRosmRegistration(utr)(hc) map {
       case Some(a) => Forbidden(errors.already_registered(utr, a.organisationName, a.address))
       case _ => Redirect(routes.AuthenticationController.signIn())
-    }
-  }
-
-  private def notWhitelisted(maybeUtr: Option[String])(implicit request: Request[_]): Option[Result] = {
-    maybeUtr match {
-      case Some(utr) if config.whitelistEnabled && config.isWhitelisted(utr) => None
-      case Some(utr) if config.whitelistEnabled && !config.isWhitelisted(utr) =>
-        Logger.warn("Login attempt blocked due to non-whitelisted UTR")
-        Some(Forbidden(views.html.softdrinksindustrylevy.errors.not_whitelisted()))
-      case _ if !config.whitelistEnabled => None
-      case _ if config.whitelistEnabled =>
-        Logger.warn("Login attempt blocked due to missing UTR enrolment")
-        Some(Forbidden(views.html.softdrinksindustrylevy.errors.not_whitelisted()))
     }
   }
 
