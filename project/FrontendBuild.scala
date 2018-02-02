@@ -10,6 +10,10 @@ import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import uk.gov.hmrc.versioning.SbtGitVersioning
+import com.typesafe.sbt.web.Import._
+import net.ground5hark.sbt.concat.Import._
+import com.typesafe.sbt.uglify.Import._
+import com.typesafe.sbt.web.SbtWeb
 
 object FrontendBuild extends Build {
 
@@ -77,6 +81,18 @@ object FrontendBuild extends Build {
       )
     )
     .settings(PlayKeys.playDefaultPort := 8700)
+    .settings(
+      // concatenate js
+      Concat.groups := Seq(
+        "javascripts/sdil-frontend-app.js" -> group(Seq(
+          "javascripts/show-hide-content.js",
+          "javascripts/application.js",
+          "javascripts/ie-cc-check.js"
+        ))
+      ),
+      // below line required to force asset pipeline to operate in dev rather than only prod
+      pipelineStages in Assets := Seq(concat)
+    )
     .configs(IntegrationTest)
     .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
 }
