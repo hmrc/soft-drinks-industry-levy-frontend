@@ -72,9 +72,21 @@
             </label>
         </div>
     @if(extra.nonEmpty) {
-        <div class="panel panel-border-narrow js-hidden" id="@target">
-        @extra
-        </div>
+        @* the show/hide js doesn't work properly in IE 8/9,
+         * but the conditional content is hidden by the js-hidden class,
+         * so the conditional html doesn't include it
+         *@
+        <!--[if lte IE 9]>
+            <div class="panel panel-border-narrow" id="@target">
+                @extra
+            </div>
+        <![endif]-->
+
+        <!--[if !IE]><!-->
+            <div class="panel panel-border-narrow js-hidden" id="@target">
+                @extra
+            </div>
+        <!--<![endif]-->
     }
     }
 }

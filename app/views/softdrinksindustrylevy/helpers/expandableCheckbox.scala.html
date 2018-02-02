@@ -33,6 +33,14 @@
     </label>
 </div>
 
+<!--[if lte IE 9]>
+<div class="panel panel-border-narrow" id="@{fieldName}_expand">
+    @expandHtml
+</div>
+<![endif]-->
+
+<!--[if !IE]><!-->
 <div class="panel panel-border-narrow js-hidden" id="@{fieldName}_expand">
     @expandHtml
 </div>
+<!--<![endif]-->
