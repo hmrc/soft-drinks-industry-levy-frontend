@@ -200,7 +200,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         .cache(
           matching("internal id"),
           matching(defaultFormData.copy(secondaryWarehouses = Some(Seq(Address("line 2", "line 3", "line 4", "line 5", "AA11 1AA")))))
-        )(any(), any())
+        )(any())
     }
   }
 

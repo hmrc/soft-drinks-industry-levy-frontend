@@ -44,9 +44,9 @@ trait TestWiring extends MockitoSugar {
 
   val mockCache: FormDataCache = {
     val m = mock[FormDataCache]
-    when(m.cache(anyString(), any())(any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
-    when(m.get(anyString())(any(), any())).thenReturn(Future.successful(None))
-    when(m.clear(anyString())(any(), any())).thenReturn(Future.successful(()))
+    when(m.cache(anyString(), any())(any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
+    when(m.get(anyString())(any())).thenReturn(Future.successful(None))
+    when(m.clear(anyString())(any())).thenReturn(Future.successful(()))
     m
   }
 

@@ -25,8 +25,9 @@ import uk.gov.hmrc.http.cache.client.{CacheMap, ShortLivedCache, ShortLivedHttpC
 import uk.gov.hmrc.play.bootstrap.config.AppName
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class FormDataCache(val runModeConfiguration: Configuration,
                     val shortLiveCache: ShortLivedHttpCaching,
@@ -37,16 +38,16 @@ class FormDataCache(val runModeConfiguration: Configuration,
   override protected def mode: Mode = environment.mode
 
   def cache(internalId: String, body: RegistrationFormData)
-           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CacheMap] = {
+           (implicit hc: HeaderCarrier): Future[CacheMap] = {
     cache(s"$internalId-sdil-registration", "formData", body)
   }
 
   def get(internalId: String)
-         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[RegistrationFormData]] = {
+         (implicit hc: HeaderCarrier): Future[Option[RegistrationFormData]] = {
     fetchAndGetEntry[RegistrationFormData](s"$internalId-sdil-registration", "formData")
   }
 
-  def clear(internalId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  def clear(internalId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
     remove(s"$internalId-sdil-registration") map { _ => () }
   }
 }

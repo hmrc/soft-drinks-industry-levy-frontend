@@ -192,7 +192,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       verify(mockCache, times(1)).cache(
         matching("internal id"),
         matching(RegistrationFormData(defaultRosmData, "1234567890"))
-      )(any(), any())
+      )(any())
     }
   }
 

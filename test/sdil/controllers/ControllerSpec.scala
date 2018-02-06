@@ -28,11 +28,11 @@ import scala.concurrent.Future
 trait ControllerSpec extends FakeApplicationSpec {
 
   def stubCacheEntry(value: Option[RegistrationFormData]) = {
-    when(mockCache.get(matching("internal id"))(any(), any())).thenReturn(Future.successful(value))
+    when(mockCache.get(matching("internal id"))(any())).thenReturn(Future.successful(value))
   }
 
   def verifyDataCached(formData: RegistrationFormData) = {
-    verify(mockCache, times(1)).cache(matching("internal id"), matching(formData))(any(), any())
+    verify(mockCache, times(1)).cache(matching("internal id"), matching(formData))(any())
   }
 
   def stubFormPage(rosmData: RosmRegistration = defaultRosmData,

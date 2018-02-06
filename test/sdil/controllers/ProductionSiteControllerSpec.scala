@@ -192,7 +192,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       verify(mockCache, times(1)).cache(
         matching("internal id"),
         matching(defaultFormData.copy(productionSites = Some(Seq(Address("line 2", "line 3", "", "", "AA12 2AA")))))
-      )(any(), any())
+      )(any())
     }
 
     "store all selected addresses in keystore when no site is added" in {
@@ -230,7 +230,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
           verify = Some(DifferentAddress(ppobAddress)),
           productionSites = Some(Seq(bprAddress, ppobAddress, Address("2", "3", "4", "5", "AA12 2AA"))))
         )
-      )(any(), any())
+      )(any())
     }
   }
 
