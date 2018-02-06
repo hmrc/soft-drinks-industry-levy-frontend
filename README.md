@@ -13,7 +13,7 @@ The Soft Drinks Industry Levy (SDIL) digital service is split into a number of d
 
 **Stub** - Microservice that is used to mimic the DES APIs when running services locally or in the development and staging environments.
 
-This is the main frontend, currently containing the registration form.
+This is the main frontend, currently containing the registration form. 
 
 For details about the sugar tax see [the GOV.UK guidance](https://www.gov.uk/guidance/soft-drinks-industry-levy)
 
