@@ -28,11 +28,12 @@ import sdil.models.RegistrationFormData
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class FormAction(val messagesApi: MessagesApi, cache: FormDataCache, authorisedAction: AuthorisedAction)
-                (implicit config: AppConfig, ec: ExecutionContext)
+                (implicit config: AppConfig)
   extends ActionBuilder[RegistrationFormRequest] with I18nSupport {
 
   type Body[A] = RegistrationFormRequest[A] => Future[Result]
@@ -53,7 +54,8 @@ class FormAction(val messagesApi: MessagesApi, cache: FormDataCache, authorisedA
     })
   }
 
-  private def notWhitelisted(maybeUtr: OptionT[Future, String])(implicit request: Request[_]): OptionT[Future, Result] = {
+  private def notWhitelisted(maybeUtr: OptionT[Future, String])
+                            (implicit request: Request[_], ec: ExecutionContext): OptionT[Future, Result] = {
     maybeUtr transform {
       case Some(utr) if config.whitelistEnabled && config.isWhitelisted(utr) => None
       case Some(utr) if config.whitelistEnabled && !config.isWhitelisted(utr) =>

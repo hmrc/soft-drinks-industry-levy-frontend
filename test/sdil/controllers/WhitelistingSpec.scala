@@ -110,7 +110,7 @@ class WhitelistingSpec extends ControllerSpec with BeforeAndAfterAll {
   }
 
   override protected def beforeAll(): Unit = {
-    when(mockCache.get(anyString)(any(), any()))
+    when(mockCache.get(anyString)(any()))
       .thenReturn(Future.successful(Some(RegistrationFormData(
         rosmData = RosmRegistration("some safe id", Some(OrganisationDetails(";DROP TABLE companies;--")), None, Address("", "", "", "", "")),
         utr = "9876543210"

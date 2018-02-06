@@ -25,11 +25,12 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class RegisteredAction(val authConnector: AuthConnector, sdilConnector: SoftDrinksIndustryLevyConnector)
-                      (implicit config: AppConfig, ec: ExecutionContext)
+                      (implicit config: AppConfig)
   extends ActionRefiner[Request, RegisteredRequest] with ActionBuilder[RegisteredRequest] with AuthorisedFunctions with ActionHelpers {
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, RegisteredRequest[A]]] = {

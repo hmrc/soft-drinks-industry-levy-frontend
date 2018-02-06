@@ -20,23 +20,23 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class TestConnector(http: HttpClient,
                     environment: Environment,
-                    val runModeConfiguration: Configuration)
-                   (implicit ec: ExecutionContext) extends ServicesConfig {
+                    val runModeConfiguration: Configuration) extends ServicesConfig {
 
   lazy val testUrl: String = baseUrl("soft-drinks-industry-levy")
 
   override protected def mode = environment.mode
 
-  def resetStore(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+  def resetStore(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     http.GET[HttpResponse](s"$testUrl/test-only/reset")
   }
 
-  def resetDb(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+  def resetDb(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     http.GET[HttpResponse](s"$testUrl/test-only/reset-pending")
   }
 

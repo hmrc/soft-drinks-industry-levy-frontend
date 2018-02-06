@@ -23,13 +23,13 @@ import sdil.models.backend.Subscription
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class SoftDrinksIndustryLevyConnector(http: HttpClient,
                                       environment: Environment,
-                                      val runModeConfiguration: Configuration
-                                     )(implicit ec: ExecutionContext) extends ServicesConfig {
+                                      val runModeConfiguration: Configuration) extends ServicesConfig {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
 

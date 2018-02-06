@@ -29,13 +29,14 @@ import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 import views.html.softdrinksindustrylevy.errors
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.language.implicitConversions
 
 class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: MessagesApi, sdilConnector: SoftDrinksIndustryLevyConnector)
-                      (implicit config: AppConfig, ec: ExecutionContext)
+                      (implicit config: AppConfig)
   extends ActionRefiner[Request, AuthorisedRequest] with ActionBuilder[AuthorisedRequest] with AuthorisedFunctions with I18nSupport with ActionHelpers {
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
@@ -66,7 +67,7 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
   }
 
   private def alreadyRegistered(utr: String)(implicit request: Request[_]): Future[Result] = {
-    val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     sdilConnector.getRosmRegistration(utr)(hc) map {
       case Some(a) => Forbidden(errors.already_registered(utr, a.organisationName, a.address))
