@@ -17,6 +17,7 @@
 package sdil.controllers
 
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -29,10 +30,11 @@ class ServicePageController(val messagesApi: MessagesApi,
                            (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  def show = registeredAction.async { implicit request =>
+  def show: Action[AnyContent] = registeredAction.async { implicit request =>
     sdilConnector.retrieveSubscription(request.sdilEnrolment.value) map {
-      case Some(s) => val addr = Address.fromString(s.address.lines.mkString(","))
-        Ok(views.html.softdrinksindustrylevy.service_page(s, addr))
+      case Some(s) =>
+        val addr = Address.fromString(s.address.lines.mkString(","))
+        Ok(views.html.softdrinksindustrylevy.service_page(addr, request.sdilEnrolment.value, s))
       case None => NotFound
     }
   }

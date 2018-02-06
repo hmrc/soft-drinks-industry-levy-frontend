@@ -60,6 +60,10 @@ case class RegistrationFormData(rosmData: RosmRegistration,
      isSmall && isCopacked && imports.contains(false) && packageCopack.isEmpty
   }
 
+  lazy val isLargeCopackee: Boolean = {
+    copackedVolume.exists(_.total > 1000000) && packaging.isEmpty && imports.isEmpty
+  }
+
   def total(n: Option[Litreage]*): BigDecimal = {
     (n map { x => x.fold[BigDecimal](0)(_.total)}).sum
   }
