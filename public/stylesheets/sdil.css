@@ -120,3 +120,30 @@ html .font-xsmall {
 .button-secondary:disabled {
     background-color: #a1a9ad !important;
 }
+
+.notice {
+    position: relative;
+}
+
+.notice .icon {
+    position: absolute;
+    top: 50%;
+    margin-top: -17px;
+}
+
+.icon {
+    display: inline-block;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+}
+
+.icon-important {
+    width: 35px;
+    height: 35px;
+}
+
+.notice strong {
+    display: block;
+    padding-left: 65px;
+    margin-left: -15px;
+}

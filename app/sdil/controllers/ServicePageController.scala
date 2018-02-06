@@ -20,6 +20,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.models.Address
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 class ServicePageController(val messagesApi: MessagesApi,
@@ -30,7 +31,8 @@ class ServicePageController(val messagesApi: MessagesApi,
 
   def show = registeredAction.async { implicit request =>
     sdilConnector.retrieveSubscription(request.sdilEnrolment.value) map {
-      case Some(rawJson) => Ok(views.html.softdrinksindustrylevy.service_page(rawJson))
+      case Some(s) => val addr = Address.fromString(s.address.lines.mkString(","))
+        Ok(views.html.softdrinksindustrylevy.service_page(s, addr))
       case None => NotFound
     }
   }

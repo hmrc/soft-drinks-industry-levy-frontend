@@ -238,7 +238,11 @@ sdil.complete.what-happens.p2=If you don’t get your reference number or you ne
 sdil.complete.what-happens.p3=Returns will be due for fixed quarters ending June, September, December and March.
 
 #Service page
-sdil.service-page.title=Placeholder service page
+sdil.service-page.title=Soft Drinks Levy details
+sdil.servoce-page.warning=The Soft Drink Levy is effective from 6 April 2018. 
+sdil.servoce-page.p1=Your Soft Drinks Levy reference is: 
+
+
 
 #Already registered
 sdil.already-enrolled.heading=You’re already registered

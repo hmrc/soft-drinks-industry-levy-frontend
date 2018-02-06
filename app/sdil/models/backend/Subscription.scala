@@ -23,7 +23,7 @@ import sdil.models.RegistrationFormData
 
 case class Subscription(utr: String,
                         orgName: String,
-                        orgType: String,
+                        orgType: Option[String],
                         address: UkAddress,
                         activity: Activity,
                         liabilityDate: LocalDate,
@@ -37,7 +37,6 @@ object Subscription {
   def fromFormData(formData: RegistrationFormData): Option[Subscription] = {
     for {
       verify <- formData.verify
-      orgType <- formData.orgType
       packaging <- formData.packaging
       packageCopackSmall = formData.packageCopackSmall.getOrElse(false)
       copacked <- formData.copacked
@@ -50,7 +49,7 @@ object Subscription {
       Subscription(
         utr = formData.utr,
         orgName = formData.rosmData.organisationName,
-        orgType = toEnum(orgType),
+        orgType = toEnum(formData.orgType),
         address = UkAddress.fromAddress(formData.primaryAddress),
         activity = Activity(
           formData.packageOwn,
@@ -72,12 +71,12 @@ object Subscription {
     }
   }
 
-  private def toEnum: String => String = {
-    case "soleTrader" => "1"
-    case "limitedLiabilityPartnership" => "2"
-    case "partnership" => "3"
-    case "unincorporatedBody" => "5"
-    case "limitedCompany" => "7"
+  private def toEnum: Option[String] => Option[String] = {
+    case Some("soleTrader") => Some("1")
+    case Some("limitedLiabilityPartnership") => Some("2")
+    case Some("partnership") => Some("3")
+    case Some("unincorporatedBody") => Some("5")
+    case Some("limitedCompany") => Some("7")
     case other => throw new IllegalArgumentException(s"Unexpected orgType $other")
   }
 }
