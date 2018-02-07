@@ -33,11 +33,14 @@
         @Messages("sdil.service-page.warning")
         </strong>
     </div>
+
+    <br>
     <p class="lede">
         @Messages("sdil.service-page.p1")
         <br>
         @sdilReference
     </p>
+
     @if(subscription.activity.voluntaryRegistration) {
         <div class="panel panel-border-wide">
             <p>
@@ -45,5 +48,73 @@
             </p>
         </div>
     }
+
+    <th colspan="2">
+        <h2 class="heading-medium">
+        @Messages("sdil.service-page.business-details.title")
+        </h2>
+    </th>
+
     @businessDetails(subscription.utr, subscription.orgName, address)
+    <table class="check-your-answers">
+        <thead>
+            <th colspan="2">
+                <h2 class="heading-medium">
+                @Messages("sdil.service-page.contact-details.title")
+                </h2>
+            </th>
+        </thead>
+        <tbody>
+            <tr>
+                <td scope="row">@Messages("sdil.service-page.contact-details.name")</td>
+                <td>@subscription.contact.name</td>
+            </tr>
+            <tr>
+                <td scope="row">@Messages("sdil.service-page.contact-details.job-title")</td>
+                <td>@subscription.contact.positionInCompany</td>
+            </tr>
+            <tr>
+                <td scope="row">@Messages("sdil.service-page.contact-details.telephone")</td>
+                <td>@subscription.contact.phoneNumber</td>
+            </tr>
+            <tr>
+                <td scope="row">@Messages("sdil.service-page.contact-details.email")</td>
+                <td>@subscription.contact.email</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
+    <p>@Messages("sdil.service-page.registered-address.p1")</p>
+
+    @if(subscription.productionSites.nonEmpty) {
+        @details("sdil.service-page.packaging-address.subtitle") {
+            <div class="form-group">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <h2 class="heading-small">
+                                    Address line 1
+                                </h2>
+                            </th>
+                            <th>
+                                <h2 class="heading-small">
+                                    Postcode
+                                </h2>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @subscription.productionSites.map { site =>
+                            <tr>
+                                <td>@site.address.lines.head</td>
+                                <td>@site.address.postCode</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
 }
