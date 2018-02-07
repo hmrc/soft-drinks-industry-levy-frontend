@@ -24,150 +24,187 @@
 @import sdil.models.retrieved.RetrievedSubscription
 @(address: Address, sdilReference: String, subscription: RetrievedSubscription)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.common.title")) {
+@main_template(Messages("sdil.common.title"), dontHaveArticlePleaseIDontWantIt = true) {
     <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
-    <div class="notice">
-        <i class="icon icon-important">
-        </i>
-        <strong class="bold-small">
-        @Messages("sdil.service-page.warning")
-        </strong>
-    </div>
+    <div class="grid-row">
+        <div class="column-two-thirds">
 
-    <br>
-    <p class="lede">
-        @Messages("sdil.service-page.p1")
-        <br>
-        @sdilReference
-    </p>
+            <div class="notice">
+                <i class="icon icon-important">
+                </i>
+                <strong class="bold-small">
+                @Messages("sdil.service-page.warning")
+                </strong>
+            </div>
 
-    @if(subscription.activity.voluntaryRegistration) {
-        <div class="panel panel-border-wide">
-            <p>
-            @Messages("sdli.service-page.p2.voluntary-only")
+            <br>
+            <p class="lede">
+                @Messages("sdil.service-page.p1")
+                <br>
+                @sdilReference
             </p>
+
+            @if(subscription.activity.voluntaryRegistration) {
+                <div class="panel panel-border-wide">
+                    <p>
+                    @Messages("sdli.service-page.p2.voluntary-only")
+                    </p>
+                </div>
+            }
+
+            <table class="check-your-answers">
+                <thead>
+                    <th colspan="2">
+                        <h2 class="heading-medium">
+                        @Messages("sdil.service-page.business-details.title")
+                        </h2>
+                    </th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td scope="row">@Messages("sdil.verify.utr")</td>
+                        <td>@subscription.utr</td>
+                    </tr>
+                    <tr>
+                        <td scope="row">@Messages("sdil.verify.organisation")</td>
+                        <td>@subscription.orgName</td>
+                    </tr>
+                    <tr>
+                        <td scope="row">@Messages("sdil.verify.address")</td>
+                        <td>
+                            @address.line1,<br/>
+                            @if(address.line2.nonEmpty) {
+                                @address.line2,<br/>
+                            }
+                            @if(address.line3.nonEmpty) {
+                                @address.line3,<br/>
+                            }
+                            @if(address.line4.nonEmpty) {
+                                @address.line4,<br/>
+                            }
+                            @address.postcode
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="check-your-answers">
+                <thead>
+                    <th colspan="2">
+                        <h2 class="heading-medium">
+                        @Messages("sdil.service-page.contact-details.title")
+                        </h2>
+                    </th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td scope="row">@Messages("sdil.service-page.contact-details.name")</td>
+                        <td>@subscription.contact.name</td>
+                    </tr>
+                    <tr>
+                        <td scope="row">@Messages("sdil.service-page.contact-details.job-title")</td>
+                        <td>@subscription.contact.positionInCompany</td>
+                    </tr>
+                    <tr>
+                        <td scope="row">@Messages("sdil.service-page.contact-details.telephone")</td>
+                        <td>@subscription.contact.phoneNumber</td>
+                    </tr>
+                    <tr>
+                        <td scope="row">@Messages("sdil.service-page.contact-details.email")</td>
+                        <td>@subscription.contact.email</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
+            <p>@Messages("sdil.service-page.registered-address.p1")</p>
+
+            @if(subscription.productionSites.nonEmpty) {
+                @details("sdil.service-page.packaging-address.subtitle") {
+                    <div class="form-group">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <h2 class="heading-small">
+                                            Address line 1
+                                        </h2>
+                                    </th>
+                                    <th>
+                                        <h2 class="heading-small">
+                                            Postcode
+                                        </h2>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            @subscription.productionSites.map { site =>
+                                <tr>
+                                    <td>@site.address.lines.head</td>
+                                    <td>@site.address.postCode</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            }
+
+            @if(subscription.warehouseSites.nonEmpty) {
+                @details("sdil.service-page.warehouse-address.subtitle") {
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <h2 class="heading-small">
+                                        @Messages("sdil.service-page.address-line-1")
+                                        </h2>
+                                    </th>
+                                    <th>
+                                        <h2 class="heading-small">
+                                        @Messages("sdil.service-page.postcode")
+                                        </h2>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            @subscription.warehouseSites.map { site =>
+                                <tr>
+                                    <td>@site.address.lines.head</td>
+                                    <td>@site.address.postCode</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            }
+
+        <div class="column-one-third">
+            <div class="section--blue-top sidebar--hidden-sm"></div>
+            <h2 class="heading-small">@Messages("sdil.verify.utr")</h2>
+            <p>@subscription.utr</p>
+
+            <h2 class="heading-small">@Messages("sdil.service-page.support.title1")</h2>
+            <p>@Messages("sdil.service-page.support.p1")</p>
+            <p>@Messages("sdil.service-page.support.p2")</p>
+
+            <h2 class="heading-small">@Messages("sdil.service-page.support.title2")</h2>
+
+            <ul class="list">
+                <li>
+                    <a href=@Messages("sdil.service-page.support.link1")>
+                    @Messages("sdil.service-page.support.p3")
+                    </a>
+                </li>
+                <li>
+                    <a href=@Messages("sdil.service-page.support.link2")>
+                        @Messages("sdil.service-page.support.p4")
+                    </a>
+                </li>
+            </ul>
         </div>
-    }
-
-    <th colspan="2">
-        <h2 class="heading-medium">
-        @Messages("sdil.service-page.business-details.title")
-        </h2>
-    </th>
-
-    @businessDetails(subscription.utr, subscription.orgName, address)
-    <table class="check-your-answers">
-        <thead>
-            <th colspan="2">
-                <h2 class="heading-medium">
-                @Messages("sdil.service-page.contact-details.title")
-                </h2>
-            </th>
-        </thead>
-        <tbody>
-            <tr>
-                <td scope="row">@Messages("sdil.service-page.contact-details.name")</td>
-                <td>@subscription.contact.name</td>
-            </tr>
-            <tr>
-                <td scope="row">@Messages("sdil.service-page.contact-details.job-title")</td>
-                <td>@subscription.contact.positionInCompany</td>
-            </tr>
-            <tr>
-                <td scope="row">@Messages("sdil.service-page.contact-details.telephone")</td>
-                <td>@subscription.contact.phoneNumber</td>
-            </tr>
-            <tr>
-                <td scope="row">@Messages("sdil.service-page.contact-details.email")</td>
-                <td>@subscription.contact.email</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
-    <p>@Messages("sdil.service-page.registered-address.p1")</p>
-
-    @if(subscription.productionSites.nonEmpty) {
-        @details("sdil.service-page.packaging-address.subtitle") {
-            <div class="form-group">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>
-                                <h2 class="heading-small">
-                                    Address line 1
-                                </h2>
-                            </th>
-                            <th>
-                                <h2 class="heading-small">
-                                    Postcode
-                                </h2>
-                            </th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                    @subscription.productionSites.map { site =>
-                        <tr>
-                            <td>@site.address.lines.head</td>
-                            <td>@site.address.postCode</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        }
-    }
-
-    @if(subscription.warehouseSites.nonEmpty) {
-        @details("sdil.service-page.warehouse-address.subtitle") {
-            <div class="form-group">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>
-                                <h2 class="heading-small">
-                                @Messages("sdil.service-page.address-line-1")
-                                </h2>
-                            </th>
-                            <th>
-                                <h2 class="heading-small">
-                                @Messages("sdil.service-page.postcode")
-                                </h2>
-                            </th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                    @subscription.warehouseSites.map { site =>
-                        <tr>
-                            <td>@site.address.lines.head</td>
-                            <td>@site.address.postCode</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        }
-    }
-
-    <div class="column-one-third">
-        <div class="section--blue-top sidebar--hidden-sm"></div>
-        <h2 class="heading-small">Unique Taxpayer Reference (UTR)</h2>
-        <p>0123456789</p>
-
-        <h2 class="heading-small">Make a change</h2>
-        <p>Contact Soft Drinks Levy support.</p>
-        <p>Telephone: 0300 200 3700</p>
-
-        <h2 class="heading-small">More options</h2>
-
-        <ul class="list">
-            <li><a href="https://www.gov.uk/guidance/soft-drinks-industry-levy">Soft Drinks Levy guidance</a></li>
-            <li><a href="https://www.gov.uk/government/consultations/draft-legislation-soft-drinks-industry-levy">
-                Draft legislation: Soft Drinks Industry Levy</a></li>
-            <li><a href=""></a></li>
-            <li><a href=""></a></li>
-        </ul>
     </div>
 }

@@ -256,6 +256,14 @@ sdil.service-page.packaging-address.subtitle=Your registered packaging sites
 sdil.service-page.warehouse-address.subtitle=Your registered warehouses
 sdil.service-page.address-line-1=Address line 1
 sdil.service-page.postcode=Postcode
+sdil.service-page.support.title1=Make a change
+sdil.service-page.support.p1=Contact Soft Drinks Levy support.
+sdil.service-page.support.p2=Telephone: 0300 200 3700
+sdil.service-page.support.title2=More options
+sdil.service-page.support.link1=https://www.gov.uk/guidance/soft-drinks-industry-levy
+sdil.service-page.support.p3=Soft Drinks Levy guidance
+sdil.service-page.support.link2=https://www.gov.uk/government/consultations/draft-legislation-soft-drinks-industry-levy
+sdil.service-page.support.p4=Draft legislation: Soft Drinks Industry Levy
 
 
 #Already registered

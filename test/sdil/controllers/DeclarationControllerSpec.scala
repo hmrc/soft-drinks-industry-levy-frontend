@@ -73,7 +73,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val expected = Subscription(
         "1112223334",
         "an organisation",
-        "3",
+        Some("3"),
         UkAddress(Seq("1", "The Road"), "AA11 1AA"),
         Activity(
           Some(Litreage(1, 2)),
@@ -108,7 +108,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       lazy val expected = Subscription(
         "1112223335",
         "an organisation",
-        "3",
+        Some("3"),
         UkAddress(Seq("1", "The Road"), "AA11 1AA"),
         Activity(
           Some(Litreage(1, 2)),
@@ -141,7 +141,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         val res = testController.submitDeclaration()(FakeRequest())
         status(res) mustBe SEE_OTHER
 
-        verify(mockSdilConnector, times(1)).submit(matching(expected.copy(orgType = enumValue)), any())(any())
+        verify(mockSdilConnector, times(1)).submit(matching(expected.copy(orgType = Some(enumValue))), any())(any())
       }
     }
   }
