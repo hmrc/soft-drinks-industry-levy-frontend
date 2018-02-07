@@ -37,16 +37,24 @@
     padding-right: 0;
 }
 
-.form-litres {
-    width: 50%;
+@media (min-width: 640px) {
+    .form-litres {
+        width: 50%;
+    }
+
+    .form-control-1-4 {
+        width: 25%;
+    }
+}
+
+@media (max-width: 640px) {
+    .button {
+        width: 100%;
+    }
 }
 
 details summary:not([tabindex]) {
     display: list-item;
-}
-
-.form-control-1-4 {
-    width: 25%;
 }
 
 .form-postcode .form-control {
@@ -98,10 +106,6 @@ html .font-xsmall {
     line-height: 1.25 !important;
     font-weight: 400 !important;
     text-transform: none !important;
-}
-
-.content__body{
-    width: 66.666667% !important;
 }
 
 .button-secondary:hover, .button-secondary:focus {
