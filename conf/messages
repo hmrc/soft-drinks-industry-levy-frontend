@@ -253,8 +253,10 @@ sdil.service-page.contact-details.email=Email
 sdil.service-page.registered-address.title=Registered address
 sdil.service-page.registered-address.p1=You need to keep these up to date. To add or remove an address, you need to contact us.
 sdil.service-page.packaging-address.subtitle=Your registered packaging sites
-sdil.service-page.registered-address.=Your registered packaging sites
-sdil.service-page.registered-address.subtitle2=Your registered warehouses
+sdil.service-page.warehouse-address.subtitle=Your registered warehouses
+sdil.service-page.address-line-1=Address line 1
+sdil.service-page.postcode=Postcode
+
 
 #Already registered
 sdil.already-enrolled.heading=You’re already registered

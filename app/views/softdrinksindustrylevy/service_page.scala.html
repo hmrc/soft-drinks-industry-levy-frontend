@@ -105,16 +105,69 @@
                             </th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        @subscription.productionSites.map { site =>
-                            <tr>
-                                <td>@site.address.lines.head</td>
-                                <td>@site.address.postCode</td>
-                            </tr>
-                        }
+                    @subscription.productionSites.map { site =>
+                        <tr>
+                            <td>@site.address.lines.head</td>
+                            <td>@site.address.postCode</td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
         }
     }
+
+    @if(subscription.warehouseSites.nonEmpty) {
+        @details("sdil.service-page.warehouse-address.subtitle") {
+            <div class="form-group">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <h2 class="heading-small">
+                                @Messages("sdil.service-page.address-line-1")
+                                </h2>
+                            </th>
+                            <th>
+                                <h2 class="heading-small">
+                                @Messages("sdil.service-page.postcode")
+                                </h2>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    @subscription.warehouseSites.map { site =>
+                        <tr>
+                            <td>@site.address.lines.head</td>
+                            <td>@site.address.postCode</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+
+    <div class="column-one-third">
+        <div class="section--blue-top sidebar--hidden-sm"></div>
+        <h2 class="heading-small">Unique Taxpayer Reference (UTR)</h2>
+        <p>0123456789</p>
+
+        <h2 class="heading-small">Make a change</h2>
+        <p>Contact Soft Drinks Levy support.</p>
+        <p>Telephone: 0300 200 3700</p>
+
+        <h2 class="heading-small">More options</h2>
+
+        <ul class="list">
+            <li><a href="https://www.gov.uk/guidance/soft-drinks-industry-levy">Soft Drinks Levy guidance</a></li>
+            <li><a href="https://www.gov.uk/government/consultations/draft-legislation-soft-drinks-industry-levy">
+                Draft legislation: Soft Drinks Industry Levy</a></li>
+            <li><a href=""></a></li>
+            <li><a href=""></a></li>
+        </ul>
+    </div>
 }
