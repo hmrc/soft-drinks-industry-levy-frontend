@@ -24,15 +24,15 @@
     <tbody>
         <tr>
             <td scope="row">@Messages("sdil.verify.utr")</td>
-            <td class="answer">@utr</td>
+            <td class="table-row-answer">@utr</td>
         </tr>
         <tr>
             <td scope="row">@Messages("sdil.verify.organisation")</td>
-            <td class="answer">@organisation</td>
+            <td class="table-row-answer">@organisation</td>
         </tr>
         <tr>
             <td scope="row">@Messages("sdil.verify.address")</td>
-            <td class="answer">
+            <td class="table-row-answer">
                 @address.line1,<br/>
                 @if(address.line2.nonEmpty) { @address.line2,<br/> }
                 @if(address.line3.nonEmpty) { @address.line3,<br/> }
