@@ -109,6 +109,10 @@ html .font-xsmall {
     padding-bottom: 0;
 }
 
+.answer {
+    word-break: break-all;
+}
+
 .check-your-answers td {
     vertical-align: top;
 }
