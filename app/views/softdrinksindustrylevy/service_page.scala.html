@@ -24,7 +24,7 @@
 @import sdil.models.retrieved.RetrievedSubscription
 @(address: Address, sdilReference: String, subscription: RetrievedSubscription)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.common.title"), dontHaveArticlePleaseIDontWantIt = true) {
+@main_template(Messages("sdil.common.title"), noArticle = true) {
     <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
     <div class="grid-row">
         <div class="column-two-thirds">
