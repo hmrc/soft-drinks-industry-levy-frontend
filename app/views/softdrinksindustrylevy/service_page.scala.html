@@ -47,7 +47,7 @@
             @if(subscription.activity.voluntaryRegistration) {
                 <div class="panel panel-border-wide">
                     <p>
-                    @Messages("sdli.service-page.p2.voluntary-only")
+                    @Messages("sdil.service-page.p2.voluntary-only")
                     </p>
                 </div>
             }
@@ -116,8 +116,8 @@
                 </tbody>
             </table>
 
-            <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
-            <p>@Messages("sdil.service-page.registered-address.p1")</p>
+                <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
+                <p>@Messages("sdil.service-page.registered-address.p1")</p>
 
             @if(subscription.productionSites.nonEmpty) {
                 @details("sdil.service-page.packaging-address.subtitle") {
@@ -127,12 +127,12 @@
                                 <tr>
                                     <th>
                                         <h2 class="heading-small">
-                                            Address line 1
+                                        @Messages("sdil.service-page.address-line-1")
                                         </h2>
                                     </th>
                                     <th>
                                         <h2 class="heading-small">
-                                            Postcode
+                                        @Messages("sdil.service-page.postcode")
                                         </h2>
                                     </th>
                                 </tr>
