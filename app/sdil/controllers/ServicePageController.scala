@@ -33,7 +33,7 @@ class ServicePageController(val messagesApi: MessagesApi,
   def show: Action[AnyContent] = registeredAction.async { implicit request =>
     sdilConnector.retrieveSubscription(request.sdilEnrolment.value) map {
       case Some(s) =>
-        val addr = Address.fromString(s.address.lines.mkString(","))
+        val addr = Address.fromUkAddress(s.address)
         Ok(views.html.softdrinksindustrylevy.service_page(addr, request.sdilEnrolment.value, s))
       case None => NotFound
     }

@@ -42,7 +42,7 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       }
 
       when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"))(any())).thenReturn {
-        Future.successful(validRetrievedSubscription)
+        Future.successful(Some(validRetrievedSubscription))
       }
 
       val request = FakeRequest("GET", "/home")
@@ -60,7 +60,7 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       }
 
       when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"))(any())).thenReturn {
-        Future.successful(validVoluntaryRetrievedSubscription)
+        Future.successful(Some(validVoluntaryRetrievedSubscription))
       }
       val request = FakeRequest("GET", "/home")
       val result = testController.show.apply(request)
@@ -76,13 +76,14 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       }
 
       when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"))(any())).thenReturn {
-        Future.successful(validPackagingRetrievedSubscription)
+        Future.successful(Some(validPackagingRetrievedSubscription))
       }
       val request = FakeRequest("GET", "/home")
       val result = testController.show.apply(request)
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.service-page.packaging-address.subtitle"))
+      contentAsString(result) mustNot include(messagesApi("sdil.service-page.warehouse-address.subtitle"))
     }
 
     "return Status: OK for displaying service page and warehouses for users who registered them" in {
@@ -92,13 +93,14 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       }
 
       when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"))(any())).thenReturn {
-        Future.successful(validWarehouseRetrievedSubscription)
+        Future.successful(Some(validWarehouseRetrievedSubscription))
       }
       val request = FakeRequest("GET", "/home")
       val result = testController.show.apply(request)
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.service-page.warehouse-address.subtitle"))
+      contentAsString(result) mustNot include(messagesApi("sdil.service-page.packaging-address.subtitle"))
     }
 
     "return Status: NOT_FOUND for displaying service page with no enrolment" in {
@@ -117,7 +119,7 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     }
   }
 
-  val validRetrievedSubscription = Some(RetrievedSubscription(
+  val validRetrievedSubscription = RetrievedSubscription(
     "111222333",
     "Cliff's Limonard",
     Some("3"),
@@ -131,55 +133,13 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       Some("A position"),
       "1234",
       "aa@bb.cc")
-  ))
+  )
 
-  val validVoluntaryRetrievedSubscription = Some(RetrievedSubscription(
-    "111222333",
-    "Cliff's Limonard",
-    Some("3"),
-    UkAddress(Seq("1", "The Road"), "AA11 1AA"),
-    RetrievedActivity(false, true, true, false, true),
-    LocalDate.of(2018, 4, 6),
-    List(Site(UkAddress(Seq("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
-    List(Site(UkAddress(Seq("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
-    Contact(
-      Some("A person"),
-      Some("A position"),
-      "1234",
-      "aa@bb.cc")
-  ))
+  val validVoluntaryRetrievedSubscription = validRetrievedSubscription.copy(activity = RetrievedActivity(false, true, true, false, true))
 
-  val validPackagingRetrievedSubscription = Some(RetrievedSubscription(
-    "111222333",
-    "Cliff's Limonard",
-    Some("3"),
-    UkAddress(Seq("1", "The Road"), "AA11 1AA"),
-    RetrievedActivity(false, true, true, false, true),
-    LocalDate.of(2018, 4, 6),
-    List(Site(UkAddress(Seq("", ""), ""))),
-    List(Site(UkAddress(Seq("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
-    Contact(
-      Some("A person"),
-      Some("A position"),
-      "1234",
-      "aa@bb.cc")
-  ))
+  val validPackagingRetrievedSubscription = validRetrievedSubscription.copy(warehouseSites = Nil)
 
-  val validWarehouseRetrievedSubscription = Some(RetrievedSubscription(
-    "111222333",
-    "Cliff's Limonard",
-    Some("3"),
-    UkAddress(Seq("1", "The Road"), "AA11 1AA"),
-    RetrievedActivity(false, true, true, false, true),
-    LocalDate.of(2018, 4, 6),
-    List(Site(UkAddress(Seq("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
-    List(Site(UkAddress(Seq("", ""), ""))),
-    Contact(
-      Some("A person"),
-      Some("A position"),
-      "1234",
-      "aa@bb.cc")
-  ))
+  val validWarehouseRetrievedSubscription = validRetrievedSubscription.copy(productionSites = Nil)
 
   lazy val registeredAction: RegisteredAction = wire[RegisteredAction]
   lazy val testController: ServicePageController = wire[ServicePageController]

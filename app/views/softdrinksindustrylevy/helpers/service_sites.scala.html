@@ -14,4 +14,38 @@
  * limitations under the License.
  *@
 
-@(titleKey: String, addressKey: String)
+@import views.html.softdrinksindustrylevy.helpers._
+@import sdil.models.backend.Site
+
+@import sdil.config.AppConfig
+@(sites: List[Site], siteType: String)(implicit request: Request[_], messages: Messages,config: AppConfig)
+
+@if(sites.nonEmpty) {
+    @details(s"sdil.service-page.$siteType-address.subtitle") {
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h2 class="heading-small">
+                        @Messages("sdil.service-page.address-line-1")
+                        </h2>
+                    </th>
+                    <th>
+                        <h2 class="heading-small">
+                        @Messages("sdil.service-page.postcode")
+                        </h2>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+            @sites.map { site =>
+                <tr>
+                    <td>@site.address.lines.head</td>
+                    <td>@site.address.postCode</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+}

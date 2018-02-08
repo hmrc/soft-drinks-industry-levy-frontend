@@ -54,33 +54,22 @@
 
             <table class="check-your-answers">
                 <thead>
-                    <th colspan="2">
-                        <h2 class="heading-medium">
-                        @Messages("sdil.service-page.business-details.title")
-                        </h2>
-                    </th>
+                    <tr>
+                        <th colspan="2">
+                            <h2 class="heading-medium">
+                            @Messages("sdil.service-page.business-details.title")
+                            </h2>
+                        </th>
+                    </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td scope="row">@Messages("sdil.verify.utr")</td>
-                        <td>@subscription.utr</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">@Messages("sdil.verify.organisation")</td>
-                        <td>@subscription.orgName</td>
-                    </tr>
+                    @table_row("sdil.verify.utr", subscription.utr)
+                    @table_row("sdil.verify.organisation", subscription.orgName)
                     <tr>
                         <td scope="row">@Messages("sdil.verify.address")</td>
                         <td>
-                            @address.line1,<br/>
-                            @if(address.line2.nonEmpty) {
-                                @address.line2,<br/>
-                            }
-                            @if(address.line3.nonEmpty) {
-                                @address.line3,<br/>
-                            }
-                            @if(address.line4.nonEmpty) {
-                                @address.line4,<br/>
+                            @address.nonEmptyLines.init.map { l =>
+                                @l,<br/>
                             }
                             @address.postcode
                         </td>
@@ -90,94 +79,28 @@
 
             <table class="check-your-answers">
                 <thead>
-                    <th colspan="2">
-                        <h2 class="heading-medium">
-                        @Messages("sdil.service-page.contact-details.title")
-                        </h2>
-                    </th>
+                    <tr>
+                        <th colspan="2">
+                            <h2 class="heading-medium">
+                            @Messages("sdil.service-page.contact-details.title")
+                            </h2>
+                        </th>
+                    </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td scope="row">@Messages("sdil.service-page.contact-details.name")</td>
-                        <td>@subscription.contact.name</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">@Messages("sdil.service-page.contact-details.job-title")</td>
-                        <td>@subscription.contact.positionInCompany</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">@Messages("sdil.service-page.contact-details.telephone")</td>
-                        <td>@subscription.contact.phoneNumber</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">@Messages("sdil.service-page.contact-details.email")</td>
-                        <td>@subscription.contact.email</td>
-                    </tr>
+                    @table_row("sdil.service-page.contact-details.name", subscription.contact.name)
+                    @table_row("sdil.service-page.contact-details.job-title", subscription.contact.positionInCompany)
+                    @table_row("sdil.service-page.contact-details.telephone", subscription.contact.phoneNumber)
+                    @table_row("sdil.service-page.contact-details.email", subscription.contact.email)
                 </tbody>
             </table>
 
             <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
             <p>@Messages("sdil.service-page.registered-address.p1")</p>
 
-            @if(subscription.productionSites.nonEmpty) {
-                @details("sdil.service-page.packaging-address.subtitle") {
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>
-                                    <h2 class="heading-small">
-                                    @Messages("sdil.service-page.address-line-1")
-                                    </h2>
-                                </th>
-                                <th>
-                                    <h2 class="heading-small">
-                                    @Messages("sdil.service-page.postcode")
-                                    </h2>
-                                </th>
-                            </tr>
-                        </thead>
+            @service_sites(subscription.productionSites, "packaging")
+            @service_sites(subscription.warehouseSites, "warehouse")
 
-                        <tbody>
-                        @subscription.productionSites.map { site =>
-                            <tr>
-                                <td>@site.address.lines.head</td>
-                                <td>@site.address.postCode</td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                }
-            }
-
-            @if(subscription.warehouseSites.nonEmpty) {
-                @details("sdil.service-page.warehouse-address.subtitle") {
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>
-                                    <h2 class="heading-small">
-                                    @Messages("sdil.service-page.address-line-1")
-                                    </h2>
-                                </th>
-                                <th>
-                                    <h2 class="heading-small">
-                                    @Messages("sdil.service-page.postcode")
-                                    </h2>
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                        @subscription.warehouseSites.map { site =>
-                            <tr>
-                                <td>@site.address.lines.head</td>
-                                <td>@site.address.postCode</td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                }
-            }
         </div>
 
         <div class="column-one-third">
