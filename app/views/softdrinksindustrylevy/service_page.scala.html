@@ -116,71 +116,69 @@
                 </tbody>
             </table>
 
-                <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
-                <p>@Messages("sdil.service-page.registered-address.p1")</p>
+            <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
+            <p>@Messages("sdil.service-page.registered-address.p1")</p>
 
             @if(subscription.productionSites.nonEmpty) {
                 @details("sdil.service-page.packaging-address.subtitle") {
-                    <div class="form-group">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <h2 class="heading-small">
-                                        @Messages("sdil.service-page.address-line-1")
-                                        </h2>
-                                    </th>
-                                    <th>
-                                        <h2 class="heading-small">
-                                        @Messages("sdil.service-page.postcode")
-                                        </h2>
-                                    </th>
-                                </tr>
-                            </thead>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    <h2 class="heading-small">
+                                    @Messages("sdil.service-page.address-line-1")
+                                    </h2>
+                                </th>
+                                <th>
+                                    <h2 class="heading-small">
+                                    @Messages("sdil.service-page.postcode")
+                                    </h2>
+                                </th>
+                            </tr>
+                        </thead>
 
-                            <tbody>
-                            @subscription.productionSites.map { site =>
-                                <tr>
-                                    <td>@site.address.lines.head</td>
-                                    <td>@site.address.postCode</td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
-                    </div>
+                        <tbody>
+                        @subscription.productionSites.map { site =>
+                            <tr>
+                                <td>@site.address.lines.head</td>
+                                <td>@site.address.postCode</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
                 }
             }
 
             @if(subscription.warehouseSites.nonEmpty) {
                 @details("sdil.service-page.warehouse-address.subtitle") {
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <h2 class="heading-small">
-                                        @Messages("sdil.service-page.address-line-1")
-                                        </h2>
-                                    </th>
-                                    <th>
-                                        <h2 class="heading-small">
-                                        @Messages("sdil.service-page.postcode")
-                                        </h2>
-                                    </th>
-                                </tr>
-                            </thead>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    <h2 class="heading-small">
+                                    @Messages("sdil.service-page.address-line-1")
+                                    </h2>
+                                </th>
+                                <th>
+                                    <h2 class="heading-small">
+                                    @Messages("sdil.service-page.postcode")
+                                    </h2>
+                                </th>
+                            </tr>
+                        </thead>
 
-                            <tbody>
-                            @subscription.warehouseSites.map { site =>
-                                <tr>
-                                    <td>@site.address.lines.head</td>
-                                    <td>@site.address.postCode</td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
-                    </div>
+                        <tbody>
+                        @subscription.warehouseSites.map { site =>
+                            <tr>
+                                <td>@site.address.lines.head</td>
+                                <td>@site.address.postCode</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
                 }
             }
+        </div>
 
         <div class="column-one-third">
             <div class="section--blue-top sidebar--hidden-sm"></div>
@@ -201,7 +199,7 @@
                 </li>
                 <li>
                     <a href=@Messages("sdil.service-page.support.link2")>
-                        @Messages("sdil.service-page.support.p4")
+                    @Messages("sdil.service-page.support.p4")
                     </a>
                 </li>
             </ul>
