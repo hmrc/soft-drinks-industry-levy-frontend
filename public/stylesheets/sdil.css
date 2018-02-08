@@ -54,11 +54,21 @@
     .form-control-1-4 {
         width: 25%;
     }
+
+    table th, table td {
+        font-size: 19px;
+        font-weight: 400;
+    }
 }
 
 @media (max-width: 640px) {
     .button {
         width: 100%;
+    }
+
+    table th, table td {
+        font-size: 16px;
+        font-weight: 400;
     }
 
     h2 {
