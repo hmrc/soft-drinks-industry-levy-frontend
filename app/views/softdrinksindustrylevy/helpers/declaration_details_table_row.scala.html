@@ -14,10 +14,10 @@
  * limitations under the License.
  *@
 
-@(questionKey: String, changeRoute: Option[Call], rowData: String, args: (Symbol, String)*)(implicit messages: Messages, request: Request[_])
+@(pageRef: String, questionKey: String, changeRoute: Option[Call], rowData: String, args: (Symbol, String)*)(implicit messages: Messages, request: Request[_])
 <tr>
     <td @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
-        @Messages(s"sdil.declaration.$questionKey")
+        @Messages(s"sdil.$pageRef.$questionKey")
     </td>
     <td>
         @rowData

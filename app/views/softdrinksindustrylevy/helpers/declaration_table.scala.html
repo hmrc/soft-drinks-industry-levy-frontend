@@ -14,21 +14,20 @@
  * limitations under the License.
  *@
 
-@(tableHeading: String)(rowContent: Html)(implicit messages: Messages, request: Request[_])
+@(pageRef: String, tableHeading: String)(rowContent: Html)(implicit messages: Messages, request: Request[_])
 
 <table class="check-your-answers">
     <thead>
         <tr>
             <th colspan="2">
                 <h2 class="heading-medium">
-                    @Messages(s"sdil.declaration.$tableHeading")
+                    @Messages(s"sdil.$pageRef.$tableHeading")
                 </h2>
             </th>
             <th colspan="2"></th>
         </tr>
     </thead>
-
     <tbody>
-    @rowContent
+        @rowContent
     </tbody>
 </table>

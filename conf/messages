@@ -246,10 +246,10 @@ sdil.service-page.p2.voluntary-only= You’re registered as a small producer onl
  they package for you. You need to contact us if your situation changes.
 sdil.service-page.business-details.title=Registered business details
 sdil.service-page.contact-details.title=Contact details 
-sdil.service-page.contact-details.name=Name
-sdil.service-page.contact-details.job-title=Job Title
-sdil.service-page.contact-details.telephone=Telephone
-sdil.service-page.contact-details.email=Email
+sdil.service-page.name=Name
+sdil.service-page.job-title=Job Title
+sdil.service-page.telephone=Telephone
+sdil.service-page.email=Email
 sdil.service-page.registered-address.title=Registered address
 sdil.service-page.registered-address.p1=You need to keep these up to date. To add or remove an address, you need to contact us.
 sdil.service-page.packaging-address.subtitle=Your registered packaging sites
