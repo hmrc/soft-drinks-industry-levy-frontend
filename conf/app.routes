@@ -1,7 +1,7 @@
 # microservice specific routes
 GET         /assets/*file                                    controllers.Assets.at(path="/public", file)
 
-#GET         /home                                            sdil.controllers.ServicePageController.show
+GET         /home                                            sdil.controllers.ServicePageController.show
 
 GET         /register/start                                  sdil.controllers.IdentifyController.start
 GET         /register/identify                               sdil.controllers.IdentifyController.show()

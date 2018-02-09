@@ -14,22 +14,9 @@
  * limitations under the License.
  *@
 
-@(pageRef: String, questionKey: String, changeRoute: Option[Call], rowData: String, args: (Symbol, String)*)(implicit messages: Messages, request: Request[_])
-
-@wrap = @{rowData.split(" ").map(_.length).max > 3}
+@(labelKey: String, value: Any)(implicit messages: Messages)
 
 <tr>
-    <td @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
-        @Messages(s"sdil.$pageRef.$questionKey")
-    </td>
-    <td class="table-row-answer@if(wrap) { word-break}">
-        @rowData
-    </td>
-    @changeRoute.map { route =>
-        <td class="change-answer">
-            <a href="@route">
-            @Messages("sdil.declaration.change-link")
-            </a>
-        </td>
-    }
+    <td scope="row">@Messages(labelKey)</td>
+    <td>@value</td>
 </tr>
