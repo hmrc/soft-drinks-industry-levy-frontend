@@ -43,6 +43,8 @@ class RegisteredAction(val authConnector: AuthConnector, sdilConnector: SoftDrin
           case None => Left(Redirect(sdil.controllers.routes.IdentifyController.start()))
         }
       }
+    } recover {
+      case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
     }
   }
 }

@@ -15,10 +15,8 @@
  *@
 
 @import uk.gov.hmrc.play.views.html.helpers._
-@import views.html.softdrinksindustrylevy.helpers.inputText
+@import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
-
-
 
 @(contactForm: Form[_], backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
@@ -26,9 +24,7 @@
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
     <h1 class="heading-large">@Messages("sdil.contact-details.heading")</h1>
 
-    @if(contactForm.hasErrors) {
-        @errorSummary(Messages("sdil.common.errorSummary"), contactForm)
-    }
+    @error_summary(contactForm)
 
     @form(sdil.controllers.routes.ContactDetailsController.submitContactDetails()) {
 

@@ -15,8 +15,9 @@
  *@
 
 @import sdil.config.AppConfig
-@import uk.gov.hmrc.play.views.html.{helpers => govHelpers}
-@import views.html.helper._
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.softdrinksindustrylevy.helpers._
+@import views.html.helper.options
 
 @(orgTypeForm: Form[_], hasCTEnrolment: Boolean)(implicit messages: Messages, request: Request[_], configuration: AppConfig)
 
@@ -26,11 +27,11 @@
 
     <h1 class="heading-large">@Messages("sdil.organisation-type.heading")</h1>
 
-    @govHelpers.errorSummary(Messages("sdil.common.errorSummary"), orgTypeForm)
+    @error_summary(orgTypeForm)
 
-    @govHelpers.form(sdil.controllers.routes.OrgTypeController.submitOrgType()) {
+    @form(sdil.controllers.routes.OrgTypeController.submitOrgType()) {
         <div class = "form-group">
-            @govHelpers.inputRadioGroup(
+            @inputRadioGroup(
                 orgTypeForm("orgType"),
                 options(orgTypes:_*),
                 '_labelClass -> "block-label",

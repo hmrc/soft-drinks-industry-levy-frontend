@@ -14,9 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.{helpers => govHelpers}
-@import views.html.helper._
-@import views.html.softdrinksindustrylevy.helpers.{radioButtonWithConditionalContent, checkbox}
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 
 @(packageForm: Form[_])(implicit messages: Messages, request: Request[_], config: AppConfig)
@@ -48,9 +47,10 @@
     <a class="link-back" href="@sdil.controllers.routes.OrgTypeController.displayOrgType()">@Messages("sdil.common.back")</a>
 
     <h1 class="heading-large">@Messages("sdil.package.heading")</h1>
-    @govHelpers.errorSummary(Messages("sdil.common.errorSummary"), packageForm)
-    @govHelpers.form(action = sdil.controllers.routes.PackageController.submitPackage()) {
 
+    @error_summary(packageForm)
+
+    @form(action = sdil.controllers.routes.PackageController.submitPackage()) {
         <div class="form-group">
             @radioButtonWithConditionalContent(
                 packageForm("isLiable"),

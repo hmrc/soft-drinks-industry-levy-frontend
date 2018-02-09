@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.play.views.html.helpers._
-@import views.html.softdrinksindustrylevy.helpers.inputText
+@import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 
 @(startDateForm: Form[_], backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
@@ -25,9 +25,7 @@
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
     <h1 class="heading-large">@Messages("sdil.start-date.heading")</h1>
 
-    @if(startDateForm.hasErrors) {
-        @errorSummary(Messages("sdil.common.errorSummary"), startDateForm)
-    }
+    @error_summary(startDateForm)
 
     @form(sdil.controllers.routes.StartDateController.submitStartDate()) {
         <span class="form-hint">@Messages("sdil.start-date.example")</span>
