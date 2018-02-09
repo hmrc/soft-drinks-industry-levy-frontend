@@ -19,7 +19,7 @@
     <td @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
         @Messages(s"sdil.$pageRef.$questionKey")
     </td>
-    <td>
+    <td class="table-row-answer">
         @rowData
     </td>
     @changeRoute.map { route =>
