@@ -15,11 +15,14 @@
  *@
 
 @(questionKey: String, changeRoute: Option[Call], rowData: String, args: (Symbol, String)*)(implicit messages: Messages, request: Request[_])
+
+@wrap = @{rowData.split(" ").map(_.length).max > 3}
+
 <tr>
     <td @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
         @Messages(s"sdil.declaration.$questionKey")
     </td>
-    <td class="table-row-answer">
+    <td class="table-row-answer@if(wrap) { word-break}">
         @rowData
     </td>
     @changeRoute.map { route =>
