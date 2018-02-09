@@ -1,3 +1,7 @@
+body {
+    overflow-x: hidden;
+}
+
 .black-border {
     border: 2px solid #0b0c0c;
 }
@@ -109,7 +113,7 @@ html .font-xsmall {
     padding-bottom: 0;
 }
 
-.table-row-answer {
+.table-row-answer.word-break {
     word-break: break-all;
 }
 
