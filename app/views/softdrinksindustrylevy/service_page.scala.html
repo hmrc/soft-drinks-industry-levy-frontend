@@ -24,11 +24,12 @@
 @import sdil.models.retrieved.RetrievedSubscription
 @(address: Address, sdilReference: String, subscription: RetrievedSubscription)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
+
 @main_template(Messages("sdil.registered.title"), noArticle = true) {
     <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
     <div class="grid-row">
         <div class="column-two-thirds">
-
+            <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
             <div class="notice">
                 <i class="icon icon-important">
                 </i>
@@ -95,11 +96,13 @@
 
             @service_sites(subscription.productionSites, "packaging")
             @service_sites(subscription.warehouseSites, "warehouse")
-
         </div>
 
+        <br>
+        <br>
+
         <div class="column-one-third">
-            <div class="section--blue-top sidebar--hidden-sm"></div>
+            <div class="section--blue-top"></div>
             <h2 class="heading-small">@Messages("sdil.verify.utr")</h2>
             <p>@subscription.utr</p>
 
