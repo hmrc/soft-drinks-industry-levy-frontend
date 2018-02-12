@@ -26,7 +26,7 @@
 
     <h1 class="heading-large">@heading</h1>
 
-    @errorSummary(Messages("sdil.common.errorSummary"), warehouseForm)
+    @error_summary(warehouseForm)
 
     @form(submissionUrl) {
         @if(warehouses.isEmpty) {
@@ -57,7 +57,7 @@
 
                         <br/>
                         @* note that nested forms are not allowed in HTML, so both buttons must use the same action *@
-                        <input class="button button-secondary" value="@Messages("sdil.warehouse-site.add")" type="submit">
+                        <input class="button--secondary" value="@Messages("sdil.warehouse-site.add")" type="submit">
                     }
                 </div>
             </fieldset>

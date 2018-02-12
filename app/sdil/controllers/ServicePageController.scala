@@ -23,10 +23,12 @@ import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.Address
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 class ServicePageController(val messagesApi: MessagesApi,
                             sdilConnector: SoftDrinksIndustryLevyConnector,
-                            registeredAction: RegisteredAction)
+                            registeredAction: RegisteredAction,
+                            errorHandler: FrontendErrorHandler)
                            (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
@@ -35,7 +37,7 @@ class ServicePageController(val messagesApi: MessagesApi,
       case Some(s) =>
         val addr = Address.fromUkAddress(s.address)
         Ok(views.html.softdrinksindustrylevy.service_page(addr, request.sdilEnrolment.value, s))
-      case None => NotFound
+      case None => NotFound(errorHandler.notFoundTemplate)
     }
   }
 }

@@ -33,9 +33,11 @@
             }
         </h1>
 
-        @errorSummary(Messages("sdil.common.errorSummary"), verifyForm)
+        @error_summary(verifyForm)
 
     @businessDetails(utr, organisation, address)
+
+    <br/>
 
         @if(!alreadyRegistered) {
             @form(sdil.controllers.routes.VerifyController.validate()) {

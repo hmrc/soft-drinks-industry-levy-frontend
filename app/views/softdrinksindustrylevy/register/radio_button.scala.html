@@ -15,10 +15,11 @@
  *@
 
 @import sdil.config.AppConfig
-@import uk.gov.hmrc.play.views.html.{helpers => govHelpers}
-@import views.html.helper._
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.helper.options
+@import views.html.softdrinksindustrylevy.helpers._
 
-@(form: Form[Boolean], pageName: String, back: Call)(implicit messages: Messages, request: Request[_], configuration: AppConfig)
+@(radio_form: Form[Boolean], pageName: String, back: Call)(implicit messages: Messages, request: Request[_], configuration: AppConfig)
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
 
@@ -26,13 +27,13 @@
 
     <h1 class="heading-large">@Messages(s"sdil.$pageName.heading")</h1>
 
-    @govHelpers.errorSummary(Messages("sdil.common.errorSummary"), form)
+    @error_summary(radio_form)
 
-    @govHelpers.form(sdil.controllers.routes.RadioFormController.submit(pageName)) {
+    @form(sdil.controllers.routes.RadioFormController.submit(pageName)) {
         <div class = "form-group">
             <fieldset class = "form-field-group">
-            @govHelpers.inputRadioGroup(
-                form("yesOrNo"),
+            @inputRadioGroup(
+                radio_form("yesOrNo"),
                 options("true" -> Messages("sdil.common.yes"), "false" -> Messages("sdil.common.no")),
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,

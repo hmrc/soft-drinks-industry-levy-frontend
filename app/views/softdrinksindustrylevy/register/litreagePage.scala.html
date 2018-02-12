@@ -27,7 +27,7 @@
 
         <h1 class="heading-large">@Messages(s"sdil.$pageName.heading")</h1>
 
-        @errorSummary(Messages("sdil.common.errorSummary"), litreageForm)
+        @error_summary(litreageForm)
 
         @form(nextLink.getOrElse(routes.LitreageController.validate(pageName)), 'novalidate -> "") {
             <div class="form-group form-litres">

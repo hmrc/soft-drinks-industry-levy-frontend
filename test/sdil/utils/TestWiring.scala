@@ -26,6 +26,7 @@ import play.api.i18n.{DefaultLangs, DefaultMessagesApi, Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.defaultContext
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
+import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, FormAction}
 import sdil.config.FormDataCache
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -59,7 +60,11 @@ trait TestWiring extends MockitoSugar {
 
   implicit lazy val testConfig: TestConfig = new TestConfig
 
-  lazy val mockErrorHandler = mock[FrontendErrorHandler]
+  lazy val mockErrorHandler = {
+    val m = mock[FrontendErrorHandler]
+    when(m.notFoundTemplate(any())).thenReturn(Html("not found"))
+    m
+  }
 
   lazy val env: Environment = Environment.simple(new File("."))
   //scala will not compile implicit conversion from Boolean → AnyRef

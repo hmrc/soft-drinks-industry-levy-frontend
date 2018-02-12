@@ -15,22 +15,13 @@
  *@
 
 @import sdil.config.AppConfig
-@import sdil.models.Address
-@import views.html.softdrinksindustrylevy.helpers._
+@import uk.gov.hmrc.play.views.html.helpers.errorSummary
 
-@(utr: String, organisation: String, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(form: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.common.title")) {
-    <h1 class="heading-large">@Messages("sdil.already-enrolled.heading")</h1>
-
-    @businessDetails(utr, organisation, address)
-
-    <br/>
-
-    <p>@Messages("sdil.already-enrolled.p1")</p>
-    <p>@Messages("sdil.already-enrolled.p2")
-        <a href="@sdil.controllers.routes.ServicePageController.show()">
-        @Messages("sdil.already-enrolled.p3")
-        </a>
-    </p>
+@* the error summary is supposed to be hidden when there's no errors,
+ * but the assets-frontend v3/play-ui classes don't match
+ *@
+@if(form.errors.nonEmpty) {
+    @errorSummary(Messages("sdil.common.errorSummary"), form: Form[_])
 }
