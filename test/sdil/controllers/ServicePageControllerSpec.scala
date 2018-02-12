@@ -49,7 +49,9 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       val result = testController.show.apply(request)
 
       status(result) mustBe OK
+      contentAsString(result) must include(messagesApi("sdil.registered.title"))
       contentAsString(result) must include(messagesApi("sdil.service-page.title"))
+      contentAsString(result) mustNot include(messagesApi("sdil.common.title"))
       contentAsString(result) mustNot include(messagesApi("sdil.service-page.p2.voluntary-only"))
     }
 
