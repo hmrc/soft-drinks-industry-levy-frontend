@@ -1,4 +1,4 @@
-sdil.common.title = Soft Drinks Industry Levy
+sdil.common.title=Register for the Soft Drinks Levy
 sdil.common.continue=Continue
 sdil.common.back=Back
 sdil.common.save-continue=Save and continue
@@ -12,6 +12,7 @@ sdil.common.no=No
 sdil.common.print=Print
 sdil.common.sign-out=Sign out
 sdil.common.return-to-sign-in=Return to Government Gateway sign in
+sdil.registered.title=Soft Drinks Levy
 
 #Address lines
 sdil.address.line1=Address line 1
