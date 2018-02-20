@@ -43,7 +43,13 @@ class WarehouseController(val messagesApi: MessagesApi,
 
   def show = formAction.async { implicit request =>
     WarehouseSitesPage.expectedPage(request.formData) match {
-      case WarehouseSitesPage => Ok(secondaryWarehouse(selectSitesForm, secondaryWarehouses, previousPage(request.formData).show))
+      case WarehouseSitesPage =>
+        val fillInitialForm = request.formData.secondaryWarehouses match {
+          case Some(Nil) => initialForm.fill(SecondaryWarehouses(Nil, false, None))
+          case Some(_) => selectSitesForm
+          case None => initialForm
+        }
+        Ok(secondaryWarehouse(fillInitialForm, secondaryWarehouses, previousPage(request.formData).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
