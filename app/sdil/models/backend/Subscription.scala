@@ -37,11 +37,11 @@ object Subscription {
   def fromFormData(formData: RegistrationFormData): Option[Subscription] = {
     for {
       verify <- formData.verify
-      orgType <- formData.orgType
+      orgType <- formData.organisationType
       packaging <- formData.packaging
-      packageCopackSmall = formData.packageCopackSmall.getOrElse(false)
-      copacked <- formData.copacked
-      imports <- formData.imports
+      packageCopackSmall = formData.packagesForSmallProducers.getOrElse(false)
+      copacked <- formData.usesCopacker
+      imports <- formData.isImporter
       startDate <- formData.startDate
       productionSites = formData.productionSites.getOrElse(Nil)
       secondaryWarehouses = formData.secondaryWarehouses.getOrElse(Nil)
@@ -53,11 +53,11 @@ object Subscription {
         orgType = toEnum(orgType),
         address = UkAddress.fromAddress(formData.primaryAddress),
         activity = Activity(
-          formData.packageOwn,
+          formData.volumeForOwnBrand,
           formData.importVolume,
-          formData.packageCopack,
-          formData.packageCopackSmallVol,
-          formData.copackedVolume
+          formData.volumeForCustomerBrands,
+          formData.volumeForSmallProducers,
+          formData.volumeByCopackers
         ),
         liabilityDate = startDate,
         productionSites = productionSites.map(Site.fromAddress),

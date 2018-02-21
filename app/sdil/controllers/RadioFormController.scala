@@ -23,7 +23,6 @@ import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models._
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.softdrinksindustrylevy.register
@@ -37,7 +36,7 @@ class RadioFormController(val messagesApi: MessagesApi,
 
   import RadioFormController._
 
-  def display(pageName: String) = formAction.async { implicit request =>
+  def show(pageName: String) = formAction.async { implicit request =>
     val page = getPage(pageName)
 
     page.expectedPage(request.formData) match {
@@ -70,20 +69,20 @@ class RadioFormController(val messagesApi: MessagesApi,
   }
 
   private def update(choice: Boolean, formData: RegistrationFormData, page: Page): RegistrationFormData = page match {
-    case PackageCopackSmallPage if choice => formData.copy(packageCopackSmall = Some(choice))
+    case PackageCopackSmallPage if choice => formData.copy(packagesForSmallProducers = Some(choice))
     //clear volumes if user changes their answer from "Yes" to "No"
-    case PackageCopackSmallPage => formData.copy(packageCopackSmall = Some(choice), packageCopackSmallVol = None)
-    case CopackedPage if choice => formData.copy(copacked = Some(choice))
-    case CopackedPage => formData.copy(copacked = Some(choice), copackedVolume = None)
-    case ImportPage if choice => formData.copy(imports = Some(choice))
-    case ImportPage => formData.copy(imports = Some(choice), importVolume = None)
+    case PackageCopackSmallPage => formData.copy(packagesForSmallProducers = Some(choice), volumeForSmallProducers = None)
+    case CopackedPage if choice => formData.copy(usesCopacker = Some(choice))
+    case CopackedPage => formData.copy(usesCopacker = Some(choice), volumeByCopackers = None)
+    case ImportPage if choice => formData.copy(isImporter = Some(choice))
+    case ImportPage => formData.copy(isImporter = Some(choice), importVolume = None)
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
   }
 
   private def filledForm(page: Page, formData: RegistrationFormData): Form[Boolean] = page match {
-    case PackageCopackSmallPage => formData.packageCopackSmall.fold(form)(form.fill)
-    case CopackedPage => formData.copacked.fold(form)(form.fill)
-    case ImportPage => formData.imports.fold(form)(form.fill)
+    case PackageCopackSmallPage => formData.packagesForSmallProducers.fold(form)(form.fill)
+    case CopackedPage => formData.usesCopacker.fold(form)(form.fill)
+    case ImportPage => formData.isImporter.fold(form)(form.fill)
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
   }
 

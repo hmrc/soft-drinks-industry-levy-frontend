@@ -29,7 +29,7 @@
 
         @error_summary(litreageForm)
 
-        @form(nextLink.getOrElse(routes.LitreageController.validate(pageName)), 'novalidate -> "") {
+        @form(nextLink.getOrElse(routes.LitreageController.submit(pageName)), 'novalidate -> "") {
             <div class="form-group form-litres">
                 @inputText(
                     litreageForm("lowerRateLitres"),

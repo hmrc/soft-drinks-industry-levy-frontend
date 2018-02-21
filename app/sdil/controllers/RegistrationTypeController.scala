@@ -31,12 +31,12 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
   extends FrontendController with I18nSupport {
 
   def continue: Action[AnyContent] = formAction.async { implicit request =>
-    cache.cache(request.internalId, request.formData.copy(smallProducerConfirmFlag = None)) flatMap { _ =>
+    cache.cache(request.internalId, request.formData.copy(confirmedSmallProducer = None)) flatMap { _ =>
       RegistrationTypePage.expectedPage(request.formData) match {
         case RegistrationTypePage => registrationType(request.formData) match {
           case RegistrationNotRequired => Redirect(routes.RegistrationTypeController.registrationNotRequired())
-          case Mandatory => Redirect(routes.StartDateController.displayStartDate())
-          case Voluntary => Redirect(routes.SmallProducerConfirmController.displaySmallProducerConfirm())
+          case Mandatory => Redirect(routes.StartDateController.show())
+          case Voluntary => Redirect(routes.SmallProducerConfirmController.show())
         }
         case other => Redirect(other.show)
       }

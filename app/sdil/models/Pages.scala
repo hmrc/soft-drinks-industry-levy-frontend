@@ -70,22 +70,22 @@ case object VerifyPage extends MidJourneyPage {
 }
 
 case object OrgTypePage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.orgType match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.organisationType match {
     case Some(_) => PackagePage
     case None => OrgTypePage
   }
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = VerifyPage
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.orgType.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.organisationType.isDefined
 
-  override def show: Call = routes.OrgTypeController.displayOrgType()
+  override def show: Call = routes.OrganisationTypeController.show
 }
 
 case object PackagePage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-    case Some(p) if p.isLiable && p.ownBrands => PackageOwnPage
-    case Some(p) if p.isLiable && p.customers => PackageCopackPage
+    case Some(p) if p.isPackager && p.packagesOwnBrand => PackageOwnPage
+    case Some(p) if p.isPackager && p.packagesCustomerBrands => PackageCopackPage
     case Some(p) => CopackedPage
     case None => PackagePage
   }
@@ -94,19 +94,19 @@ case object PackagePage extends MidJourneyPage {
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.packaging.isDefined
 
-  override def show: Call = routes.PackageController.displayPackage()
+  override def show: Call = routes.PackageController.show()
 }
 
 case object PackageOwnPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-    case Some(p) if p.isLiable && p.customers => PackageCopackPage
+    case Some(p) if p.isPackager && p.packagesCustomerBrands => PackageCopackPage
     case Some(p) => CopackedPage
     case None => PackagePage
   }
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = PackagePage
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.packageOwn.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.volumeForOwnBrand.isDefined
 
   override def show: Call = routes.LitreageController.show("packageOwn")
 }
@@ -115,31 +115,31 @@ case object PackageCopackPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = PackageCopackSmallPage
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-    case Some(p) if p.isLiable && p.ownBrands => PackageOwnPage
+    case Some(p) if p.isPackager && p.packagesOwnBrand => PackageOwnPage
     case _ => PackagePage
   }
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.packageCopack.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.volumeForCustomerBrands.isDefined
 
   override def show: Call = routes.LitreageController.show("packageCopack")
 }
 
 case object PackageCopackSmallPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packageCopackSmall match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packagesForSmallProducers match {
     case Some(true) => PackageCopackSmallVolPage
     case Some(false) => CopackedPage
     case None => PackageCopackPage
   }
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-    case Some(p) if p.isLiable && p.customers => PackageCopackPage
-    case Some(p) if p.isLiable && p.ownBrands => PackageOwnPage
+    case Some(p) if p.isPackager && p.packagesCustomerBrands => PackageCopackPage
+    case Some(p) if p.isPackager && p.packagesOwnBrand => PackageOwnPage
     case _ => PackagePage
   }
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.packageCopackSmall.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.packagesForSmallProducers.isDefined
 
-  override def show: Call = routes.RadioFormController.display("package-copack-small")
+  override def show: Call = routes.RadioFormController.show("package-copack-small")
 }
 
 case object PackageCopackSmallVolPage extends MidJourneyPage {
@@ -147,29 +147,29 @@ case object PackageCopackSmallVolPage extends MidJourneyPage {
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = PackageCopackSmallPage
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.packageCopackSmallVol.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.volumeForSmallProducers.isDefined
 
-  override def show: Call = routes.PackageCopackSmallVolumeController.show
+  override def show: Call = routes.VolumeForSmallProducersController.show
 }
 
 case object CopackedPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.copacked match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.usesCopacker match {
     case Some(true) => CopackedVolumePage
     case Some(false) => ImportPage
     case None => CopackedPage
   }
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-    case Some(p) if p.customers && formData.packageCopackSmall.contains(true) => PackageCopackSmallVolPage
-    case Some(p) if p.customers && !formData.packageCopackSmall.contains(true) => PackageCopackSmallPage
-    case Some(p) if p.ownBrands && !p.customers => PackageOwnPage
-    case Some(p) if p.customers => PackageCopackPage
+    case Some(p) if p.packagesCustomerBrands && formData.packagesForSmallProducers.contains(true) => PackageCopackSmallVolPage
+    case Some(p) if p.packagesCustomerBrands && !formData.packagesForSmallProducers.contains(true) => PackageCopackSmallPage
+    case Some(p) if p.packagesOwnBrand && !p.packagesCustomerBrands => PackageOwnPage
+    case Some(p) if p.packagesCustomerBrands => PackageCopackPage
     case _ => PackagePage
   }
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.copacked.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.usesCopacker.isDefined
 
-  override def show: Call = routes.RadioFormController.display("copacked")
+  override def show: Call = routes.RadioFormController.show("copacked")
 }
 
 case object CopackedVolumePage extends MidJourneyPage {
@@ -177,26 +177,26 @@ case object CopackedVolumePage extends MidJourneyPage {
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = CopackedPage
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.copackedVolume.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.volumeByCopackers.isDefined
 
   override def show: Call = routes.LitreageController.show("copackedVolume")
 }
 
 case object ImportPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.imports match {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.isImporter match {
     case Some(true) => ImportVolumePage
     case Some(false) => RegistrationTypePage
     case None => ImportPage
   }
 
-  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.copacked match {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.usesCopacker match {
     case Some(true) => CopackedVolumePage
     case _ => CopackedPage
   }
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.imports.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.isImporter.isDefined
 
-  override def show: Call = routes.RadioFormController.display("import")
+  override def show: Call = routes.RadioFormController.show("import")
 }
 
 case object ImportVolumePage extends MidJourneyPage {
@@ -210,7 +210,7 @@ case object ImportVolumePage extends MidJourneyPage {
 }
 
 case object RegistrationTypePage extends MidJourneyPage {
-  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.imports match {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.isImporter match {
     case Some(true) => ImportVolumePage
     case _ => ImportPage
   }
@@ -226,20 +226,20 @@ case object StartDatePage extends MidJourneyPage {
 
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = (formData, formData.packaging) match {
     case (f, _) if f.isVoluntary => ContactDetailsPage
-    case (_, Some(p)) if p.isLiable => ProductionSitesPage
+    case (_, Some(p)) if p.isPackager => ProductionSitesPage
     case (_, Some(p)) => WarehouseSitesPage
     case _ => PackagePage
   }
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
     case form if formData.isSmall => SmallProducerConfirmPage
-    case form if form.imports.contains(true) => ImportVolumePage
+    case form if form.isImporter.contains(true) => ImportVolumePage
     case _ => ImportPage
   }
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.startDate.isDefined
 
-  override def show: Call = routes.StartDateController.displayStartDate()
+  override def show: Call = routes.StartDateController.show()
 }
 
 case object ProductionSitesPage extends MidJourneyPage {
@@ -247,7 +247,7 @@ case object ProductionSitesPage extends MidJourneyPage {
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
     val showStartDate = LocalDate.now isAfter config.taxStartDate
-    (formData.imports, formData.isSmall, showStartDate) match {
+    (formData.isImporter, formData.isSmall, showStartDate) match {
       case (Some(true), false, false)  => ImportVolumePage
       case (_, true, false) => SmallProducerConfirmPage
       case (_, false, false) => ImportPage
@@ -264,7 +264,7 @@ case object WarehouseSitesPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = ContactDetailsPage
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-    case Some(p) if p.isLiable => ProductionSitesPage
+    case Some(p) if p.isPackager => ProductionSitesPage
     case Some(_) => StartDatePage
     case None => PackagePage
   }
@@ -282,7 +282,7 @@ case object ContactDetailsPage extends PageWithPreviousPage {
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.contactDetails.isDefined
 
-  override def show: Call = routes.ContactDetailsController.displayContactDetails()
+  override def show: Call = routes.ContactDetailsController.show()
 }
 
 case object SmallProducerConfirmPage extends MidJourneyPage {
@@ -293,12 +293,12 @@ case object SmallProducerConfirmPage extends MidJourneyPage {
     else
       ProductionSitesPage
   }
-  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.imports match {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.isImporter match {
     case Some(true) => ImportVolumePage
     case _ => ImportPage
   }
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.smallProducerConfirmFlag.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.confirmedSmallProducer.isDefined
 
-  override def show: Call = routes.SmallProducerConfirmController.displaySmallProducerConfirm()
+  override def show: Call = routes.SmallProducerConfirmController.show()
 }

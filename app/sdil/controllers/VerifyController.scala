@@ -63,7 +63,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formA
     }
   }
 
-  def validate = formAction.async { implicit request =>
+  def submit = formAction.async { implicit request =>
     form.bindFromRequest().fold(
       errors => BadRequest(register.verify(errors, request.formData.utr, request.formData.rosmData.organisationName, request.formData.rosmData.address)),
       detailsCorrect => {

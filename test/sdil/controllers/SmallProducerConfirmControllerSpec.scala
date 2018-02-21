@@ -25,17 +25,17 @@ class SmallProducerConfirmControllerSpec extends ControllerSpec with BeforeAndAf
   "SmallProducerConfirm controller" should {
     "return Status: 200 when loading confirm page" in {
       val request = FakeRequest("GET", "/small-producer-confirm")
-      val result = testController.displaySmallProducerConfirm.apply(request)
+      val result = testController.show.apply(request)
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.small-prod-confirm.heading"))
     }
     "Confirm redirect to StartDate when user confirm exemption" in {
       val request = FakeRequest("POST", "/small-producer-confirm")
-      val result = testController.submitSmallProducerConfirm().apply(request)
+      val result = testController.submit().apply(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.StartDateController.displayStartDate().url
+      redirectLocation(result).get mustBe routes.StartDateController.show().url
     }
   }
     lazy val testController: SmallProducerConfirmController = wire[SmallProducerConfirmController]

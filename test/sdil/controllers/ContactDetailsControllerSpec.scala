@@ -28,7 +28,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
   "Contact details controller" should {
     "return Status: OK for displaying contact details page" in {
-      val result = testController.displayContactDetails.apply(FakeRequest())
+      val result = testController.show.apply(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.contact-details.heading"))
@@ -41,10 +41,10 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
         "phoneNumber" -> "+4411111111111",
         "email" -> "a@a.com"
       )
-      val result = testController.submitContactDetails.apply(request)
+      val result = testController.submit.apply(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.DeclarationController.displayDeclaration().url
+      redirectLocation(result).get mustBe routes.DeclarationController.show().url
     }
 
     "return Status: BAD_REQUEST for invalid full name for contact details form submission" in {
@@ -54,7 +54,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
         "phoneNumber" -> "+4411111111111",
         "email" -> "a@a.com"
       )
-      val result = testController.submitContactDetails.apply(request)
+      val result = testController.submit.apply(request)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include(messagesApi("error.full-name.invalid"))
@@ -70,7 +70,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
         importVolume = Some(Litreage(100000, 1000000))
       )
 
-      val response = testController.displayContactDetails(FakeRequest())
+      val response = testController.show(FakeRequest())
       status(response) mustBe OK
 
       val html = Jsoup.parse(contentAsString(response))
@@ -88,11 +88,11 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
         importVolume = None
       )
 
-      val response = testController.displayContactDetails(FakeRequest())
+      val response = testController.show(FakeRequest())
       status(response) mustBe OK
 
       val html = Jsoup.parse(contentAsString(response))
-      html.select("a.link-back").attr("href") mustBe routes.StartDateController.displayStartDate().url
+      html.select("a.link-back").attr("href") mustBe routes.StartDateController.show().url
     }
 
     "return the small producer exemption page when they are voluntary and it is before the tax start date" in {
@@ -108,11 +108,11 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
         importVolume = None,
         smallProducerConfirmFlag = Some(true)
       )
-      val response = testController.displayContactDetails(FakeRequest())
+      val response = testController.show(FakeRequest())
       status(response) mustBe OK
 
       val html = Jsoup.parse(contentAsString(response))
-      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
+      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.show().url
     }
 
     "return page with back link to small producer confirm page when they are voluntary and it is before the tax start" +
@@ -128,12 +128,11 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
         imports = Some(false),
         importVolume = None
       )
-      val response = testController.displayContactDetails(FakeRequest())
+      val response = testController.show(FakeRequest())
       status(response) mustBe OK
 
       val html = Jsoup.parse(contentAsString(response))
-      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController
-        .displaySmallProducerConfirm().url
+      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.show().url
     }
   }
 

@@ -31,7 +31,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
   "Declaration controller" should {
     "return Status: 200 when user is logged in and loads declaration page" in {
       val request = FakeRequest("GET", "/declaration")
-      val result = testController.displayDeclaration.apply(request)
+      val result = testController.show.apply(request)
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.declaration.heading"))
@@ -50,7 +50,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         importVolume = None
       )
 
-      val res = testController.displayDeclaration()(FakeRequest("GET", "/declaration"))
+      val res = testController.show()(FakeRequest("GET", "/declaration"))
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.RegistrationTypeController.registrationNotRequired().url
@@ -58,15 +58,15 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return Status: See Other when POST from declaration" in {
       val request = FakeRequest("POST", "/declaration")
-      val result = testController.submitDeclaration().apply(request)
+      val result = testController.submit().apply(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.CompleteController.displayComplete().url
+      redirectLocation(result).get mustBe routes.CompleteController.show().url
     }
 
     "submit a valid Subscription to the backend on POST if all required form pages are complete" in {
       stubFormPage(utr = "1112223334")
-      val res = testController.submitDeclaration()(FakeRequest())
+      val res = testController.submit()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
 
@@ -99,9 +99,9 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "redirect to the Contact Details page on POST if a required form page is missing" in {
       stubFormPage(contactDetails = None)
 
-      val res = testController.submitDeclaration()(FakeRequest())
+      val res = testController.submit()(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.ContactDetailsController.displayContactDetails().url
+      redirectLocation(res).value mustBe routes.ContactDetailsController.show().url
     }
 
     "translate the organisation type field to the correct enum value" in {
@@ -138,7 +138,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       ) foreach { case (orgType, enumValue) =>
         stubFormPage(utr = "1112223335", orgType = Some(orgType))
 
-        val res = testController.submitDeclaration()(FakeRequest())
+        val res = testController.submit()(FakeRequest())
         status(res) mustBe SEE_OTHER
 
         verify(mockSdilConnector, times(1)).submit(matching(expected.copy(orgType = enumValue)), any())(any())

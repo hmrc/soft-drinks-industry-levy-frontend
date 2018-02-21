@@ -38,21 +38,21 @@ trait ControllerSpec extends FakeApplicationSpec {
   def stubFormPage(rosmData: RosmRegistration = defaultRosmData,
                    utr: String = defaultFormData.utr,
                    verify: Option[DetailsCorrect] = defaultFormData.verify,
-                   orgType: Option[String] = defaultFormData.orgType,
+                   orgType: Option[String] = defaultFormData.organisationType,
                    packaging: Option[Packaging] = defaultFormData.packaging,
-                   packageOwn: Option[Litreage] = defaultFormData.packageOwn,
-                   packageCopack: Option[Litreage] = defaultFormData.packageCopack,
-                   packageCopackSmall: Option[Boolean] = defaultFormData.packageCopackSmall,
-                   packageCopackSmallVol: Option[Litreage] = defaultFormData.packageCopackSmallVol,
-                   copacked: Option[Boolean] = defaultFormData.copacked,
-                   copackedVolume: Option[Litreage] = defaultFormData.copackedVolume,
-                   imports: Option[Boolean] = defaultFormData.imports,
+                   packageOwn: Option[Litreage] = defaultFormData.volumeForOwnBrand,
+                   packageCopack: Option[Litreage] = defaultFormData.volumeForCustomerBrands,
+                   packageCopackSmall: Option[Boolean] = defaultFormData.packagesForSmallProducers,
+                   packageCopackSmallVol: Option[Litreage] = defaultFormData.volumeForSmallProducers,
+                   copacked: Option[Boolean] = defaultFormData.usesCopacker,
+                   copackedVolume: Option[Litreage] = defaultFormData.volumeByCopackers,
+                   imports: Option[Boolean] = defaultFormData.isImporter,
                    importVolume: Option[Litreage] = defaultFormData.importVolume,
                    startDate: Option[LocalDate] = defaultFormData.startDate,
                    productionSites: Option[Seq[Address]] = defaultFormData.productionSites,
                    secondaryWarehouses: Option[Seq[Address]] = defaultFormData.secondaryWarehouses,
                    contactDetails: Option[ContactDetails] = defaultFormData.contactDetails,
-                   smallProducerConfirmFlag: Option[Boolean] = defaultFormData.smallProducerConfirmFlag) = {
+                   smallProducerConfirmFlag: Option[Boolean] = defaultFormData.confirmedSmallProducer) = {
 
     stubCacheEntry(Some(RegistrationFormData(
       rosmData,
@@ -68,11 +68,11 @@ trait ControllerSpec extends FakeApplicationSpec {
       copackedVolume,
       imports,
       importVolume,
+      smallProducerConfirmFlag,
       startDate,
       productionSites,
       secondaryWarehouses,
-      contactDetails,
-      smallProducerConfirmFlag
+      contactDetails
     )))
   }
 
@@ -89,31 +89,31 @@ trait ControllerSpec extends FakeApplicationSpec {
       rosmData = defaultRosmData,
       utr = "1234567890",
       verify = Some(DetailsCorrect.Yes),
-      orgType = Some("partnership"),
+      organisationType = Some("partnership"),
       packaging = Some(Packaging(
-        isLiable = true,
-        ownBrands = true,
-        customers = true
+        isPackager = true,
+        packagesOwnBrand = true,
+        packagesCustomerBrands = true
       )),
-      packageOwn = Some(Litreage(
+      volumeForOwnBrand = Some(Litreage(
         atLowRate = 1,
         atHighRate = 2
       )),
-      packageCopack = Some(Litreage(
+      volumeForCustomerBrands = Some(Litreage(
         atLowRate = 3,
         atHighRate = 4
       )),
-      packageCopackSmall = Some(true),
-      packageCopackSmallVol = Some(Litreage(
+      packagesForSmallProducers = Some(true),
+      volumeForSmallProducers = Some(Litreage(
         atLowRate = 5,
         atHighRate = 6
       )),
-      copacked = Some(true),
-      copackedVolume = Some(Litreage(
+      usesCopacker = Some(true),
+      volumeByCopackers = Some(Litreage(
         atLowRate = 7,
         atHighRate = 8
       )),
-      imports = Some(true),
+      isImporter = Some(true),
       importVolume = Some(Litreage(
         atLowRate = 9,
         atHighRate = 10

@@ -44,13 +44,13 @@
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
 
-    <a class="link-back" href="@sdil.controllers.routes.OrgTypeController.displayOrgType()">@Messages("sdil.common.back")</a>
+    <a class="link-back" href="@sdil.controllers.routes.OrganisationTypeController.show()">@Messages("sdil.common.back")</a>
 
     <h1 class="heading-large">@Messages("sdil.package.heading")</h1>
 
     @error_summary(packageForm)
 
-    @form(action = sdil.controllers.routes.PackageController.submitPackage()) {
+    @form(action = sdil.controllers.routes.PackageController.submit()) {
         <div class="form-group">
             @radioButtonWithConditionalContent(
                 packageForm("isLiable"),

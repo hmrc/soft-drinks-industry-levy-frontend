@@ -19,7 +19,7 @@
 @()(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.common.title")) {
-    <a class="link-back" href=@sdil.controllers.routes.RadioFormController.display("import")>@Messages("sdil.common.back")</a>
+    <a class="link-back" href=@sdil.controllers.routes.RadioFormController.show("import")>@Messages("sdil.common.back")</a>
     <h1 class="heading-large">@Messages("sdil.registration-not-required.heading")</h1>
 
     <p>@Messages("sdil.registration-not-required.p1")</p>
@@ -31,5 +31,5 @@
         <li>@Messages("sdil.registration-not-required.li3")</li>
     </ul>
 
-    <p>@Html(Messages("sdil.registration-not-required.p3", sdil.controllers.routes.PackageController.displayPackage()))</p>
+    <p>@Html(Messages("sdil.registration-not-required.p3", sdil.controllers.routes.PackageController.show()))</p>
 }

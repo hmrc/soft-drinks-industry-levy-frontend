@@ -34,7 +34,7 @@ class CompleteControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       when(mockKeystore.fetchAndGetEntry[SubmissionData](matching("submissionData"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(SubmissionData("aa@bb.cc", LocalDateTime.now, true))))
 
-      val result = testController.displayComplete().apply(FakeRequest())
+      val result = testController.show().apply(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.complete.title"))

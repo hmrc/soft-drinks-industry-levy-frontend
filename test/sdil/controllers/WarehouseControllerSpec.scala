@@ -63,7 +63,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.StartDateController.displayStartDate().url
+      html.select("a.link-back").attr("href") mustBe routes.StartDateController.show().url
 
       testConfig.resetTaxStartDate()
     }
@@ -103,7 +103,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display("import").url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("import").url
 
       testConfig.resetTaxStartDate()
     }
@@ -147,7 +147,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = testController.addSingleSite()(FakeRequest().withFormUrlEncodedBody("addWarehouse" -> "false"))
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.ContactDetailsController.displayContactDetails().url
+      redirectLocation(res).value mustBe routes.ContactDetailsController.show().url
     }
   }
 
@@ -178,7 +178,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "redirect to the contact details page if a warehouse is not added" in {
       val res = testController.addMultipleSites()(FakeRequest().withFormUrlEncodedBody("hasWarehouse" -> "false"))
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.ContactDetailsController.displayContactDetails().url)
+      redirectLocation(res) mustBe Some(routes.ContactDetailsController.show().url)
     }
 
     "store the new address in keystore if a warehouse is added" in {

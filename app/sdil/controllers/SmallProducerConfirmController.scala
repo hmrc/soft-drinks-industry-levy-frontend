@@ -30,17 +30,17 @@ class SmallProducerConfirmController(val messagesApi: MessagesApi,
                                      formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  def displaySmallProducerConfirm: Action[AnyContent] = formAction.async { implicit request =>
+  def show: Action[AnyContent] = formAction.async { implicit request =>
     SmallProducerConfirmPage.expectedPage(request.formData) match {
       case SmallProducerConfirmPage => Ok(register.smallProducerConfirm(SmallProducerConfirmPage.previousPage(request.formData).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
-  def submitSmallProducerConfirm(): Action[AnyContent] = formAction.async { implicit request =>
-    val updated = request.formData.copy(smallProducerConfirmFlag = Some(true))
+  def submit(): Action[AnyContent] = formAction.async { implicit request =>
+    val updated = request.formData.copy(confirmedSmallProducer = Some(true))
     cache.cache(request.internalId, updated) map { _ =>
-      Redirect(routes.StartDateController.displayStartDate())
+      Redirect(routes.StartDateController.show())
     }
   }
 }

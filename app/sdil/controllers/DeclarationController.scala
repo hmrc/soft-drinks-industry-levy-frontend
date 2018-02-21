@@ -37,23 +37,23 @@ class DeclarationController(val messagesApi: MessagesApi,
                            (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  def displayDeclaration: Action[AnyContent] = formAction.async { implicit request =>
+  def show: Action[AnyContent] = formAction.async { implicit request =>
 
     request.formData match {
       case a if a.isNotMandatory => Redirect(routes.RegistrationTypeController.registrationNotRequired())
       case a if a.contactDetails.nonEmpty => Ok(register.declaration(request.formData))
-      case a if a.contactDetails.isEmpty => Redirect(routes.ContactDetailsController.displayContactDetails())
+      case a if a.contactDetails.isEmpty => Redirect(routes.ContactDetailsController.show())
     }
   }
 
-  def submitDeclaration(): Action[AnyContent] = formAction.async { implicit request =>
+  def submit(): Action[AnyContent] = formAction.async { implicit request =>
     Subscription.fromFormData(request.formData) match {
       case Some(s) => for {
         _ <- sdilConnector.submit(s, request.formData.rosmData.safeId)
         _ <- keystore.cache("submissionData", SubmissionData(s.contact.email, LocalDateTime.now, request.formData.isVoluntary))
         _ <- cache.clear(request.internalId)
       } yield {
-        Redirect(routes.CompleteController.displayComplete())
+        Redirect(routes.CompleteController.show())
       }
       case None => Redirect(ContactDetailsPage.expectedPage(request.formData).show)
     }

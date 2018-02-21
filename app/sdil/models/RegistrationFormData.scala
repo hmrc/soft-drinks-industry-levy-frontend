@@ -18,50 +18,50 @@ package sdil.models
 
 import java.time.LocalDate
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 case class RegistrationFormData(rosmData: RosmRegistration,
                                 utr: String,
                                 verify: Option[DetailsCorrect] = None,
-                                orgType: Option[String] = None,
+                                organisationType: Option[String] = None,
                                 packaging: Option[Packaging] = None,
-                                packageOwn: Option[Litreage] = None,
-                                packageCopack: Option[Litreage] = None,
-                                packageCopackSmall: Option[Boolean] = None,
-                                packageCopackSmallVol: Option[Litreage] = None,
-                                copacked: Option[Boolean] = None,
-                                copackedVolume: Option[Litreage] = None,
-                                imports: Option[Boolean] = None,
+                                volumeForOwnBrand: Option[Litreage] = None,
+                                volumeForCustomerBrands: Option[Litreage] = None,
+                                packagesForSmallProducers: Option[Boolean] = None,
+                                volumeForSmallProducers: Option[Litreage] = None,
+                                usesCopacker: Option[Boolean] = None,
+                                volumeByCopackers: Option[Litreage] = None,
+                                isImporter: Option[Boolean] = None,
                                 importVolume: Option[Litreage] = None,
+                                confirmedSmallProducer: Option[Boolean] = None,
                                 startDate: Option[LocalDate] = None,
                                 productionSites: Option[Seq[Address]] = None,
                                 secondaryWarehouses: Option[Seq[Address]] = None,
-                                contactDetails: Option[ContactDetails] = None,
-                                smallProducerConfirmFlag: Option[Boolean] = None) {
+                                contactDetails: Option[ContactDetails] = None) {
 
   lazy val isNotMandatory: Boolean = {
-    total(packageOwn, copackedVolume) < 1000000 &&
-      copackedVolume.forall(_.total == 0) &&
-      !packaging.exists(_.customers) &&
-      !imports.getOrElse(false)
+    total(volumeForOwnBrand, volumeByCopackers) < 1000000 &&
+      volumeByCopackers.forall(_.total == 0) &&
+      !packaging.exists(_.packagesCustomerBrands) &&
+      !isImporter.getOrElse(false)
   }
 
   lazy val isSmall: Boolean = {
-    val q = total(packageOwn, copackedVolume)
+    val q = total(volumeForOwnBrand, volumeByCopackers)
     q < 1000000 && q > 0
   }
 
   lazy val isCopacked: Boolean = {
-    copackedVolume.exists(_.total != 0)
+    volumeByCopackers.exists(_.total != 0)
   }
 
-  // TODO rename - this function's logic differs from that used in RegistrationTypeController
   lazy val isVoluntary: Boolean = {
-     isSmall && isCopacked && imports.contains(false) && packageCopack.isEmpty
+    isSmall && isCopacked && isImporter.contains(false) && volumeForCustomerBrands.isEmpty
   }
 
   def total(n: Option[Litreage]*): BigDecimal = {
-    (n map { x => x.fold[BigDecimal](0)(_.total)}).sum
+    (n map { x => x.fold[BigDecimal](0)(_.total) }).sum
   }
 
   lazy val primaryAddress: Address = {
@@ -73,5 +73,25 @@ case class RegistrationFormData(rosmData: RosmRegistration,
 }
 
 object RegistrationFormData {
-  implicit val format: Format[RegistrationFormData] = Json.format[RegistrationFormData]
+  // to be able to read existing save4later session data
+  implicit val format: Format[RegistrationFormData] = (
+    (__ \ "rosmData").format[RosmRegistration] and
+      (__ \ "utr").format[String] and
+      (__ \ "verify").formatNullable[DetailsCorrect] and
+      (__ \ "orgType").formatNullable[String] and
+      (__ \ "packaging").formatNullable[Packaging] and
+      (__ \ "packageOwn").formatNullable[Litreage] and
+      (__ \ "packageCopack").formatNullable[Litreage] and
+      (__ \ "packageCopackSmall").formatNullable[Boolean] and
+      (__ \ "packageCopackSmallVol").formatNullable[Litreage] and
+      (__ \ "copacked").formatNullable[Boolean] and
+      (__ \ "copackedVolume").formatNullable[Litreage] and
+      (__ \ "imports").formatNullable[Boolean] and
+      (__ \ "importVolume").formatNullable[Litreage] and
+      (__ \ "smallProducerConfirmFlag").formatNullable[Boolean] and
+      (__ \ "startDate").formatNullable[LocalDate] and
+      (__ \ "productionSites").formatNullable[Seq[Address]] and
+      (__ \ "secondaryWarehouses").formatNullable[Seq[Address]] and
+      (__ \ "contactDetails").formatNullable[ContactDetails]
+    ) (RegistrationFormData.apply, unlift(RegistrationFormData.unapply))
 }
