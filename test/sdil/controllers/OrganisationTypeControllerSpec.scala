@@ -29,12 +29,12 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import scala.collection.JavaConverters._
 import scala.concurrent.Future
 
-class OrgTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
+class OrganisationTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "OrgType controller" should {
     "always return 200 Ok and the organisation type page" in {
       val request = FakeRequest("GET", "/organisation-type")
-      val response = testController.displayOrgType().apply(request)
+      val response = testController.show().apply(request)
       status(response) mustBe OK
       contentAsString(response) must include(messagesApi("sdil.organisation-type.heading"))
     }
@@ -46,7 +46,7 @@ class OrgTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         Future.successful(new ~(new ~(new ~(ctUtrEnrolment, Some(Admin)), Some("internal id")), Some(Organisation)))
       }
 
-      val res = testController.displayOrgType()(FakeRequest())
+      val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
@@ -62,14 +62,14 @@ class OrgTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         Future.successful(new ~(new ~(new ~(ctUtrEnrolment, Some(Admin)), Some("internal id")), Some(Organisation)))
       }
 
-      val res = testController.submitOrgType()(FakeRequest().withFormUrlEncodedBody("orgType" -> "soleTrader"))
+      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody("orgType" -> "soleTrader"))
       status(res) mustBe BAD_REQUEST
     }
 
     "return Status: Bad Request for invalid organisation form POST request and show choose option error" in {
       val request = FakeRequest().withFormUrlEncodedBody(
         "orgType" -> "badCompany")
-      val response = testController.submitOrgType().apply(request)
+      val response = testController.submit().apply(request)
 
       status(response) mustBe BAD_REQUEST
       contentType(response).get mustBe HTML
@@ -78,23 +78,23 @@ class OrgTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return Status: See Other for valid organisation form POST request and redirect to packaging page" in {
       val request = FakeRequest().withFormUrlEncodedBody("orgType" -> "limitedCompany")
-      val response = testController.submitOrgType().apply(request)
+      val response = testController.submit().apply(request)
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.PackageController.displayPackage().url
+      redirectLocation(response).get mustBe routes.PackageController.show().url
     }
 
     "return Status: See Other for valid organisation as partnership and redirect to partnerships page" in {
       val request = FakeRequest().withFormUrlEncodedBody(
         "orgType" -> "partnership")
-      val response = testController.submitOrgType().apply(request)
+      val response = testController.submit().apply(request)
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.OrgTypeController.displayPartnerships().url
+      redirectLocation(response).get mustBe routes.OrganisationTypeController.displayPartnerships().url
     }
 
     "return Status: OK for partnership page with correct title" in {
-      val response = testController.displayPartnerships().apply(FakeRequest())
+      val response = testController.displayPartnerships()(FakeRequest())
 
       status(response) mustBe OK
       contentAsString(response) must include(messagesApi("sdil.partnership.heading"))
@@ -102,7 +102,7 @@ class OrgTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   }
 
-  lazy val testController = wire[OrgTypeController]
+  lazy val testController = wire[OrganisationTypeController]
 
   override protected def beforeEach(): Unit = stubFilledInForm
 }

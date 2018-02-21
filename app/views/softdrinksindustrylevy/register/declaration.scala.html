@@ -24,7 +24,7 @@
 @(formData: RegistrationFormData)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title")) {
-    <a class="link-back" href="@sdil.controllers.routes.ContactDetailsController.displayContactDetails()">@Messages("sdil.common.back")</a>
+    <a class="link-back" href="@sdil.controllers.routes.ContactDetailsController.show()">@Messages("sdil.common.back")</a>
 
     <p class="float--right"><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
 
@@ -50,47 +50,47 @@
     @declaration_table("declaration","liable-activity") {
         @formData.packaging.map { packaging =>
             @declaration_details_table_row("declaration", "packaging",
-                Some(sdil.controllers.routes.PackageController.displayPackage()),
-                Messages(s"sdil.declaration.${packaging.isLiable}"), '_colspan -> "2")
+                Some(sdil.controllers.routes.PackageController.submit()),
+                Messages(s"sdil.declaration.${packaging.isPackager}"), '_colspan -> "2")
 
-            @if(packaging.ownBrands) {
-                @formData.packageOwn.map { volumes =>
+            @if(packaging.packagesOwnBrand) {
+                @formData.volumeForOwnBrand.map { volumes =>
                     @declaration_details_litres("package-own",
                         sdil.controllers.routes.LitreageController.show("packageOwn"), volumes)
                 }
             }
 
-            @if(packaging.customers) {
-                @formData.packageCopack.map { volumes =>
+            @if(packaging.packagesCustomerBrands) {
+                @formData.volumeForCustomerBrands.map { volumes =>
                     @declaration_details_litres("customers",
                         sdil.controllers.routes.LitreageController.show("packageCopack"), volumes)
                 }
             }
         }
 
-        @if(formData.packageCopackSmall.contains(true)) {
-            @formData.packageCopackSmallVol.map { volumes =>
+        @if(formData.packagesForSmallProducers.contains(true)) {
+            @formData.volumeForSmallProducers.map { volumes =>
                 @declaration_details_litres("small-producers",
-                    sdil.controllers.routes.PackageCopackSmallVolumeController.show(), volumes)
+                    sdil.controllers.routes.VolumeForSmallProducersController.show(), volumes)
             }
         }
 
-        @formData.copacked.map { copacked =>
+        @formData.usesCopacker.map { copacked =>
             @declaration_details_table_row("declaration", "third-party",
-                Some(sdil.controllers.routes.RadioFormController.display(page = "copacked")),
+                Some(sdil.controllers.routes.RadioFormController.show(page = "copacked")),
                 Messages(s"sdil.declaration.${copacked}"), '_colspan -> "2")
 
             @if(copacked) {
-                @formData.copackedVolume.map { volumes =>
+                @formData.volumeByCopackers.map { volumes =>
                     @declaration_details_litres("third-party-produced",
                         sdil.controllers.routes.LitreageController.show(pageName = "copackedVolume"), volumes)
                 }
             }
         }
 
-        @formData.imports.map { imports =>
+        @formData.isImporter.map { imports =>
             @declaration_details_table_row("declaration", "import",
-                Some(sdil.controllers.routes.RadioFormController.display(page = "import")),
+                Some(sdil.controllers.routes.RadioFormController.show(page = "import")),
                 Messages(s"sdil.declaration.${imports}"), '_colspan -> "2")
 
             @if(imports) {
@@ -104,9 +104,9 @@
 
     @if(formData.isSmall) {
         @declaration_table("declaration", "small-producer-exemption") {
-            @formData.smallProducerConfirmFlag.map { flag =>
+            @formData.confirmedSmallProducer.map { flag =>
                 @declaration_details_table_row("declaration", "confirm-small-producer-exemption",
-                    Some(sdil.controllers.routes.SmallProducerConfirmController.displaySmallProducerConfirm()), Messages
+                    Some(sdil.controllers.routes.SmallProducerConfirmController.show()), Messages
                             (s"sdil.declaration.$flag"))
             }
         }
@@ -116,7 +116,7 @@
         @declaration_table("declaration", "liable-date") {
             @formData.startDate.map { date =>
                 @declaration_details_table_row("declaration", "date",
-                    Some(sdil.controllers.routes.StartDateController.displayStartDate()),
+                    Some(sdil.controllers.routes.StartDateController.show()),
                     date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
             }
         }
@@ -142,13 +142,13 @@
     @declaration_table("declaration", "contact-details") {
         @formData.contactDetails.map { details =>
             @declaration_details_table_row("declaration", "name",
-                Some(sdil.controllers.routes.ContactDetailsController.displayContactDetails()), details.fullName)
+                Some(sdil.controllers.routes.ContactDetailsController.show()), details.fullName)
             @declaration_details_table_row("declaration", "position",
-                Some(sdil.controllers.routes.ContactDetailsController.displayContactDetails()), details.position)
+                Some(sdil.controllers.routes.ContactDetailsController.show()), details.position)
             @declaration_details_table_row("declaration", "phone-number",
-                Some(sdil.controllers.routes.ContactDetailsController.displayContactDetails()), details.phoneNumber)
+                Some(sdil.controllers.routes.ContactDetailsController.show()), details.phoneNumber)
             @declaration_details_table_row("declaration", "email",
-                Some(sdil.controllers.routes.ContactDetailsController.displayContactDetails()), details.email)
+                Some(sdil.controllers.routes.ContactDetailsController.show()), details.email)
         }
     }
 
@@ -158,7 +158,7 @@
         <p>@Messages("sdil.declaration.confirmation")</p>
     </div>
 
-    @form(sdil.controllers.routes.DeclarationController.submitDeclaration()) {
+    @form(sdil.controllers.routes.DeclarationController.submit()) {
         <input class="button" value="@Messages("sdil.declaration.continue")" type="submit">
     }
 

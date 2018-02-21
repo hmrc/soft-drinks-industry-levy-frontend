@@ -40,7 +40,7 @@
     <br/>
 
         @if(!alreadyRegistered) {
-            @form(sdil.controllers.routes.VerifyController.validate()) {
+            @form(sdil.controllers.routes.VerifyController.submit()) {
                 @radioButtonWithConditionalContent(
                     field = verifyForm("detailsCorrect"),
                     radioOptions = Seq(

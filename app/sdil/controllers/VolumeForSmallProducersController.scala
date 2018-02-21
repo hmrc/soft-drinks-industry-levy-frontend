@@ -24,19 +24,18 @@ import sdil.actions.{FormAction, RegistrationFormRequest}
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models.{Litreage, MidJourneyPage, PackageCopackSmallPage, PackageCopackSmallVolPage}
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.litreagePage
 
 import scala.concurrent.Future
 
-class PackageCopackSmallVolumeController(val messagesApi: MessagesApi,
-                                         cache: FormDataCache,
-                                         formAction: FormAction)
-                                        (implicit config: AppConfig)
+class VolumeForSmallProducersController(val messagesApi: MessagesApi,
+                                        cache: FormDataCache,
+                                        formAction: FormAction)
+                                       (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  import PackageCopackSmallVolumeController.form
+  import VolumeForSmallProducersController.form
 
   private lazy val page: MidJourneyPage = PackageCopackSmallVolPage
 
@@ -44,27 +43,27 @@ class PackageCopackSmallVolumeController(val messagesApi: MessagesApi,
     withPackageCopack { pcv =>
       page.expectedPage(request.formData) match {
         case `page` => Ok(litreagePage(
-          request.formData.packageCopackSmallVol.fold(form(pcv))(form(pcv).fill),
+          request.formData.volumeForSmallProducers.fold(form(pcv))(form(pcv).fill),
           "packageCopackSmallVol",
           page.previousPage(request.formData).show,
-          nextLink = Some(routes.PackageCopackSmallVolumeController.validate())
+          nextLink = Some(routes.VolumeForSmallProducersController.submit())
         ))
         case otherPage => Redirect(otherPage.show)
       }
     }
   }
 
-  def validate = formAction.async { implicit request =>
+  def submit = formAction.async { implicit request =>
     withPackageCopack { pcv =>
       form(pcv).bindFromRequest().fold(
         errors => BadRequest(litreagePage(
           errors,
           "packageCopackSmallVol",
           page.previousPage(request.formData).show,
-          nextLink = Some(routes.PackageCopackSmallVolumeController.validate())
+          nextLink = Some(routes.VolumeForSmallProducersController.submit())
         )),
         litreage => {
-          val updated = request.formData.copy(packageCopackSmallVol = Some(litreage))
+          val updated = request.formData.copy(volumeForSmallProducers = Some(litreage))
           cache.cache(request.internalId, updated) map { _ =>
             Redirect(page.nextPage(updated).show)
           }
@@ -74,14 +73,14 @@ class PackageCopackSmallVolumeController(val messagesApi: MessagesApi,
   }
 
   private def withPackageCopack(body: Litreage => Future[Result])(implicit request: RegistrationFormRequest[_]): Future[Result] = {
-    request.formData.packageCopack match {
+    request.formData.volumeForCustomerBrands match {
       case Some(pcv) => body(pcv)
       case None => Redirect(PackageCopackSmallPage.show)
     }
   }
 }
 
-object PackageCopackSmallVolumeController extends FormHelpers {
+object VolumeForSmallProducersController extends FormHelpers {
   def form(packageCopackVol: Litreage): Form[Litreage] = Form(
     mapping(
       "lowerRateLitres" -> litreage.verifying("error.copack-small.lower-greater-than-total-lower", _ <= packageCopackVol.atLowRate),

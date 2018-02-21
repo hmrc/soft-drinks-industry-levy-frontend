@@ -25,7 +25,7 @@
 
     @error_summary(identifyForm)
 
-    @form(sdil.controllers.routes.IdentifyController.validate()) {
+    @form(sdil.controllers.routes.IdentifyController.submit()) {
 
         @inputText(identifyForm("utr"), Messages("sdil.identify.utr"))
 

@@ -32,7 +32,7 @@ class CompleteController(val messagesApi: MessagesApi,
                          errorHandler: FrontendErrorHandler)
                         (implicit config: AppConfig) extends FrontendController with I18nSupport {
 
-  def displayComplete(): Action[AnyContent] = Action.async { implicit request =>
+  def show(): Action[AnyContent] = Action.async { implicit request =>
     keystore.fetchAndGetEntry[SubmissionData]("submissionData") map {
       case Some(SubmissionData(e, ts, iv)) => Ok(register.complete(e, ts.format(dateFormatter), ts.format(timeFormatter), iv))
       case None => BadRequest(errorHandler.badRequestTemplate)

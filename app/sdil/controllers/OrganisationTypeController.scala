@@ -29,14 +29,15 @@ import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class OrgTypeController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)(implicit config: AppConfig)
+class OrganisationTypeController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)
+                                (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  import OrgTypeController.form
+  import OrganisationTypeController.form
 
-  def displayOrgType(): Action[AnyContent] = formAction.async { implicit request =>
+  def show(): Action[AnyContent] = formAction.async { implicit request =>
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
-    val f = request.formData.orgType.fold(form(hasCTEnrolment))(form(hasCTEnrolment).fill)
+    val f = request.formData.organisationType.fold(form(hasCTEnrolment))(form(hasCTEnrolment).fill)
 
     OrgTypePage.expectedPage(request.formData) match {
       case OrgTypePage => Ok(register.organisation_type(f, hasCTEnrolment))
@@ -44,29 +45,29 @@ class OrgTypeController(val messagesApi: MessagesApi, cache: FormDataCache, form
     }
   }
 
-  def submitOrgType(): Action[AnyContent] = formAction.async { implicit request =>
+  def submit(): Action[AnyContent] = formAction.async { implicit request =>
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
 
     form(hasCTEnrolment).bindFromRequest().fold(
       errors => Future.successful(BadRequest(register.organisation_type(errors, hasCTEnrolment))),
       orgType =>
-        cache.cache(request.internalId, request.formData.copy(orgType = Some(orgType))) map { _ =>
-          if (orgType == "partnership") Redirect(routes.OrgTypeController.displayPartnerships())
+        cache.cache(request.internalId, request.formData.copy(organisationType = Some(orgType))) map { _ =>
+          if (orgType == "partnership") Redirect(routes.OrganisationTypeController.displayPartnerships())
           else
-            Redirect(routes.PackageController.displayPackage())
+            Redirect(routes.PackageController.show())
         }
     )
   }
 
   def displayPartnerships(): Action[AnyContent] = formAction.async { implicit request =>
-    request.formData.orgType match {
+    request.formData.organisationType match {
       case Some("partnership") => Ok(register.partnerships())
-      case _ => Redirect(routes.OrgTypeController.displayOrgType())
+      case _ => Redirect(routes.OrganisationTypeController.show())
     }
   }
 }
 
-object OrgTypeController extends FormHelpers {
+object OrganisationTypeController extends FormHelpers {
 
   def form(hasCTEnrolment: Boolean): Form[String] = Form(single(
     "orgType" -> oneOf(options(hasCTEnrolment), "error.radio-form.choose-option")

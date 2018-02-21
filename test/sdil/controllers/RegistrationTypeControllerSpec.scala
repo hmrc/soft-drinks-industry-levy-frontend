@@ -59,7 +59,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       val res = testController.continue()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.StartDateController.displayStartDate().url
+      redirectLocation(res).value mustBe routes.StartDateController.show().url
     }
 
     "redirect to the confirm small producer exemption page if the user produces fewer than 1 million litres, but copacks for others" in {
@@ -77,7 +77,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       val res = testController.continue()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
+      redirectLocation(res).value mustBe routes.SmallProducerConfirmController.show().url
     }
 
     "redirect to the confirm small producer exemption page if the user produces fewer than 1 million litres, but imports liable drinks" in {
@@ -95,7 +95,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       val res = testController.continue()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
+      redirectLocation(res).value mustBe routes.SmallProducerConfirmController.show().url
     }
 
     "redirect to the confirm small producer exemption page if the user produces fewer than 1 million litres, but uses a copacker" in {
@@ -113,7 +113,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       val res = testController.continue()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
+      redirectLocation(res).value mustBe routes.SmallProducerConfirmController.show().url
     }
 
     "redirect to the registration not required page if the registration is voluntary only" in {
@@ -149,7 +149,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       val res = testController.continue()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.StartDateController.displayStartDate().url
+      redirectLocation(res).value mustBe routes.StartDateController.show().url
     }
 
     "redirect to the start date page if the user only copacks" in {
@@ -168,7 +168,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       val res = testController.continue()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.StartDateController.displayStartDate().url
+      redirectLocation(res).value mustBe routes.StartDateController.show().url
     }
 
     "redirect to the do not register page if the user does not package, import, copack, or have drinks packaged for them" in {

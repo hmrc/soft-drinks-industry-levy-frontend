@@ -36,7 +36,7 @@ class StartDateController(val messagesApi: MessagesApi, cache: FormDataCache, fo
 
   import StartDateController._
 
-  def displayStartDate: Action[AnyContent] = formAction.async { implicit request =>
+  def show: Action[AnyContent] = formAction.async { implicit request =>
     StartDatePage.expectedPage(request.formData) match {
       case StartDatePage if LocalDate.now isBefore config.taxStartDate =>
         val updated = request.formData.copy(startDate = Some(config.taxStartDate))
@@ -48,7 +48,7 @@ class StartDateController(val messagesApi: MessagesApi, cache: FormDataCache, fo
     }
   }
 
-  def submitStartDate: Action[AnyContent] = formAction.async { implicit request =>
+  def submit: Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest().fold(
       errors => BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors, StartDatePage.previousPage(request.formData).show)),
       startDate => {

@@ -93,7 +93,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.StartDateController.displayStartDate().url
+      html.select("a.link-back").attr("href") mustBe routes.StartDateController.show().url
 
       testConfig.resetTaxStartDate()
     }
@@ -124,7 +124,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.display("import").url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("import").url
     }
 
     "return a page with a link back to the small producer exemption page if the date is before the sugar tax start date " +
@@ -136,7 +136,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.displaySmallProducerConfirm().url
+      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.show().url
     }
   }
 

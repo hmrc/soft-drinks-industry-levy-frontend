@@ -23,7 +23,6 @@ import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models._
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.litreagePage
 
@@ -44,7 +43,7 @@ class LitreageController(val messagesApi: MessagesApi,
     }
   }
 
-  def validate(pageName: String) = formAction.async { implicit request =>
+  def submit(pageName: String) = formAction.async { implicit request =>
     val page = getPage(pageName)
     form.bindFromRequest().fold(
       errors => BadRequest(litreagePage(errors, pageName, page.nextPage(request.formData).show)),
@@ -66,17 +65,17 @@ class LitreageController(val messagesApi: MessagesApi,
   }
 
   private def update(litreage: Litreage, formData: RegistrationFormData, page: Page): RegistrationFormData = page match {
-    case PackageOwnPage => formData.copy(packageOwn = Some(litreage))
-    case PackageCopackPage => formData.copy(packageCopack = Some(litreage))
-    case CopackedVolumePage => formData.copy(copackedVolume = Some(litreage))
+    case PackageOwnPage => formData.copy(volumeForOwnBrand = Some(litreage))
+    case PackageCopackPage => formData.copy(volumeForCustomerBrands = Some(litreage))
+    case CopackedVolumePage => formData.copy(volumeByCopackers = Some(litreage))
     case ImportVolumePage => formData.copy(importVolume = Some(litreage))
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
   }
 
   private def filledForm(page: Page, formData: RegistrationFormData): Form[Litreage] = page match {
-    case PackageOwnPage => formData.packageOwn.fold(form)(form.fill)
-    case PackageCopackPage => formData.packageCopack.fold(form)(form.fill)
-    case CopackedVolumePage => formData.copackedVolume.fold(form)(form.fill)
+    case PackageOwnPage => formData.volumeForOwnBrand.fold(form)(form.fill)
+    case PackageCopackPage => formData.volumeForCustomerBrands.fold(form)(form.fill)
+    case CopackedVolumePage => formData.volumeByCopackers.fold(form)(form.fill)
     case ImportVolumePage => formData.importVolume.fold(form)(form.fill)
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
   }
@@ -87,6 +86,6 @@ object LitreageController extends FormHelpers {
     mapping(
       "lowerRateLitres" -> litreage,
       "higherRateLitres" -> litreage
-    )
-    (Litreage.apply)(Litreage.unapply).verifying("error.litreage.zero", _ != Litreage(0, 0)))
+    )(Litreage.apply)(Litreage.unapply).verifying("error.litreage.zero", _ != Litreage(0, 0))
+  )
 }

@@ -48,7 +48,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "POST /verify" should {
     "return 400 Bad Request and the verify page if the form data is invalid" in {
-      val res = testController.validate()(FakeRequest())
+      val res = testController.submit()(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include (Messages("sdil.verify.heading"))
@@ -56,15 +56,15 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "redirect to the package page if the details are correct" in {
       val request = FakeRequest().withFormUrlEncodedBody("detailsCorrect" -> "yes")
-      val res = testController.validate()(request)
+      val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.OrgTypeController.displayOrgType().url)
+      redirectLocation(res) mustBe Some(routes.OrganisationTypeController.show().url)
     }
 
     "redirect to the identify page if the details are incorrect" in {
       val request = FakeRequest().withFormUrlEncodedBody("detailsCorrect" -> "no")
-      val res = testController.validate()(request)
+      val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.IdentifyController.show().url)
@@ -80,7 +80,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "alternativeAddress.postcode" -> "AA11 1AA"
       )
 
-      val res = testController.validate()(request)
+      val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
 

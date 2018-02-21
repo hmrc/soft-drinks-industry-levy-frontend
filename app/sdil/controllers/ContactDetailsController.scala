@@ -29,7 +29,6 @@ import sdil.forms.FormHelpers
 import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
-import views.html.softdrinksindustrylevy.register.litreagePage
 
 import scala.concurrent.Future
 
@@ -38,21 +37,22 @@ class ContactDetailsController(val messagesApi: MessagesApi, cache: FormDataCach
 
   import ContactDetailsController._
 
-  def displayContactDetails: Action[AnyContent] = formAction.async { implicit request =>
+  def show: Action[AnyContent] = formAction.async { implicit request =>
     ContactDetailsPage.expectedPage(request.formData) match {
       case ContactDetailsPage => Ok(register.contact_details(request.formData.contactDetails.fold(form)(form.fill), previousPage(request.formData).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
-  def submitContactDetails: Action[AnyContent] = formAction.async { implicit request =>
+  def submit: Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest().fold(
       formWithErrors => Future successful BadRequest(register.contact_details(formWithErrors, previousPage(request.formData).show)),
       details => cache.cache(request.internalId, request.formData.copy(contactDetails = Some(details))) map { _ =>
-        Redirect(routes.DeclarationController.displayDeclaration())
+        Redirect(routes.DeclarationController.submit())
       }
     )
   }
+
   private def previousPage(formData: RegistrationFormData) = {
     ContactDetailsPage.previousPage(formData) match {
       case StartDatePage if LocalDate.now isBefore config.taxStartDate => StartDatePage.previousPage(formData)

@@ -41,13 +41,13 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       val res = testController.show("packageOwn")(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.PackageController.displayPackage().url)
+      redirectLocation(res) mustBe Some(routes.PackageController.show().url)
     }
   }
 
   "POST /package-own" should {
     "return 400 Bad Request and the package own page when the form data is invalid" in {
-      val res = testController.validate("packageOwn")(FakeRequest())
+      val res = testController.submit("packageOwn")(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include(Messages("sdil.packageOwn.heading"))
@@ -55,7 +55,7 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "redirect to the copacked volume page if the form data is valid and the user is packaging for their customers" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
-      val res = testController.validate("packageOwn")(request)
+      val res = testController.submit("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopack").url)
@@ -65,20 +65,20 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       stubFormPage(packaging = Some(Packaging(false, false, false)))
 
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "2", "higherRateLitres" -> "1")
-      val res = testController.validate("packageOwn")(request)
+      val res = testController.submit("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display("copacked").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("copacked").url)
     }
 
     "store the form data in keystore if it is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "2", "higherRateLitres" -> "3")
-      val res = testController.validate("packageOwn")(request)
+      val res = testController.submit("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
       verify(mockCache, once).cache(
         matching("internal id"),
-        matching(defaultFormData.copy(packageOwn = Some(Litreage(2, 3))))
+        matching(defaultFormData.copy(volumeForOwnBrand = Some(Litreage(2, 3))))
       )(any())
     }
   }
@@ -96,7 +96,7 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       val res = testController.show("packageCopack")(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.PackageController.displayPackage().url)
+      redirectLocation(res) mustBe Some(routes.PackageController.show().url)
     }
 
     "redirect back to the package-own page if the user packages their own drinks and the package-own page has been skipped" in {
@@ -122,13 +122,13 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.PackageController.displayPackage().url
+      html.select("a.link-back").attr("href") mustBe routes.PackageController.show().url
     }
   }
 
   "POST /package-copack" should {
     "return 400 Bad Request and the package copack page when the form data is invalid" in {
-      val res = testController.validate("packageCopack")(FakeRequest())
+      val res = testController.submit("packageCopack")(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include(Messages("sdil.packageCopack.heading"))
@@ -137,19 +137,19 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "redirect to the package copack small page if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
 
-      val res = testController.validate("packageCopack")(request)
+      val res = testController.submit("packageCopack")(request)
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display("package-copack-small").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("package-copack-small").url)
     }
 
     "store the form data in keystore if it is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "4", "higherRateLitres" -> "3")
-      val res = testController.validate("packageCopack")(request)
+      val res = testController.submit("packageCopack")(request)
 
       status(res) mustBe SEE_OTHER
       verify(mockCache, once).cache(
         matching("internal id"),
-        matching(defaultFormData.copy(packageCopack = Some(Litreage(4, 3))))
+        matching(defaultFormData.copy(volumeForCustomerBrands = Some(Litreage(4, 3))))
       )(any())
     }
   }
@@ -167,13 +167,13 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       val res = testController.show("copackedVolume")(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display("copacked").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("copacked").url)
     }
   }
 
   "POST /copacked-volume" should {
     "return 400 Bad Request and the copacked volume page when the form data is invalid" in {
-      val res = testController.validate("copackedVolume")(FakeRequest())
+      val res = testController.submit("copackedVolume")(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include(Messages("sdil.copackedVolume.heading"))
@@ -181,20 +181,20 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "redirect to the import page if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
-      val res = testController.validate("copackedVolume")(request)
+      val res = testController.submit("copackedVolume")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display("import").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("import").url)
     }
 
     "store the form data in keystore if it is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "5", "higherRateLitres" -> "6")
-      val res = testController.validate("copackedVolume")(request)
+      val res = testController.submit("copackedVolume")(request)
 
       status(res) mustBe SEE_OTHER
       verify(mockCache, once).cache(
         matching("internal id"),
-        matching(defaultFormData.copy(copackedVolume = Some(Litreage(5, 6))))
+        matching(defaultFormData.copy(volumeByCopackers = Some(Litreage(5, 6))))
       )(any())
     }
   }
@@ -212,13 +212,13 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       val res = testController.show("importVolume")(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display("import").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("import").url)
     }
   }
 
   "POST /import-volume" should {
     "return 400 Bad Request and the import volume page when the form data is invalid" in {
-      val res = testController.validate("importVolume")(FakeRequest())
+      val res = testController.submit("importVolume")(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include(Messages("sdil.importVolume.heading"))
@@ -226,7 +226,7 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "redirect to the registration type controller if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "7", "higherRateLitres" -> "6")
-      val res = testController.validate("importVolume")(request)
+      val res = testController.submit("importVolume")(request)
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.RegistrationTypeController.continue().url)
@@ -234,7 +234,7 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "store the form data in keystore if it is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "6", "higherRateLitres" -> "7")
-      val res = testController.validate("importVolume")(request)
+      val res = testController.submit("importVolume")(request)
 
       status(res) mustBe SEE_OTHER
       verify(mockCache, once).cache(

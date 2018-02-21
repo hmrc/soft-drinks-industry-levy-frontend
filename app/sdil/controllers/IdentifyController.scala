@@ -68,7 +68,7 @@ class IdentifyController(val messagesApi: MessagesApi,
     }
   }
 
-  def validate = authorisedAction.async { implicit request =>
+  def submit = authorisedAction.async { implicit request =>
     form.bindFromRequest().fold(
       errors => BadRequest(register.identify(errors)),
       identification => softDrinksIndustryLevyConnector.getRosmRegistration(identification.utr) flatMap {

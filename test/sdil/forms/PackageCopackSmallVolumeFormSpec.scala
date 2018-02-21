@@ -17,7 +17,7 @@
 package sdil.forms
 
 import sdil.models.Litreage
-import sdil.controllers.PackageCopackSmallVolumeController.form
+import sdil.controllers.VolumeForSmallProducersController.form
 
 class PackageCopackSmallVolumeFormSpec extends FormSpec {
 

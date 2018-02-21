@@ -29,12 +29,12 @@
     @Messages("sdil.small-prod-confirm.lede")
     </p>
     <p>
-    @Html(Messages("sdil.small-prod-confirm.body", sdil.controllers.routes.PackageController.displayPackage()))
+    @Html(Messages("sdil.small-prod-confirm.body", sdil.controllers.routes.PackageController.show()))
     </p>
 
     <p>@Messages("sdil.small-prod-confirm.panel")</p>
 
-    @form(sdil.controllers.routes.SmallProducerConfirmController.submitSmallProducerConfirm()) {
+    @form(sdil.controllers.routes.SmallProducerConfirmController.submit()) {
         <input class="button" value="@Messages("sdil.small-prod-confirm.continue")" type="submit">
     }
 }

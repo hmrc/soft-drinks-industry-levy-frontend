@@ -22,7 +22,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import sdil.models.Litreage
 
-class PackageCopackSmallVolumeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
+class VolumeForSmallProducersControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /package-copack-small-vol" should {
     "return 200 Ok and the package copack small vol page if the previous pages have been completed" in {
@@ -37,13 +37,13 @@ class PackageCopackSmallVolumeControllerSpec extends ControllerSpec with BeforeA
 
       val res = testController.show()(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display("package-copack-small").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("package-copack-small").url)
     }
   }
 
   "POST /package-copack-small-vol" should {
     "return 400 Bad Request and the package copack small vol page when the form data is invalid" in {
-      val res = testController.validate()(FakeRequest())
+      val res = testController.submit()(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include(Messages("sdil.packageCopackSmallVol.heading"))
@@ -51,27 +51,27 @@ class PackageCopackSmallVolumeControllerSpec extends ControllerSpec with BeforeA
 
     "redirect to the copacked page if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
-      val res = testController.validate()(request)
+      val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.display("copacked").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("copacked").url)
     }
 
     "store the form data in keystore if it is valid" in {
       stubFormPage(packageCopack = Some(Litreage(999, 999)))
 
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "4", "higherRateLitres" -> "5")
-      val res = testController.validate()(request)
+      val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
       verifyDataCached(defaultFormData.copy(
-        packageCopack = Some(Litreage(999, 999)),
-        packageCopackSmallVol = Some(Litreage(4, 5))
+        volumeForCustomerBrands = Some(Litreage(999, 999)),
+        volumeForSmallProducers = Some(Litreage(4, 5))
       ))
     }
   }
 
-  lazy val testController = wire[PackageCopackSmallVolumeController]
+  lazy val testController = wire[VolumeForSmallProducersController]
 
   override protected def beforeEach(): Unit = stubFilledInForm
 }

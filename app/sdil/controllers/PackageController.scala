@@ -33,14 +33,14 @@ class PackageController(val messagesApi: MessagesApi, cache: FormDataCache, form
 
   import PackageController._
 
-  def displayPackage(): Action[AnyContent] = formAction.async { implicit request =>
+  def show(): Action[AnyContent] = formAction.async { implicit request =>
     PackagePage.expectedPage(request.formData) match {
       case PackagePage => Ok(register.packagePage(request.formData.packaging.fold(form)(form.fill)))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
-  def submitPackage(): Action[AnyContent] = formAction.async { implicit request =>
+  def submit(): Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest.fold(
       formWithErrors => BadRequest(register.packagePage(formWithErrors)),
       packaging => {
@@ -55,11 +55,16 @@ class PackageController(val messagesApi: MessagesApi, cache: FormDataCache, form
   //clear unneeded data from session cache when the user's answers change
   private def updateData(formData: RegistrationFormData, packaging: Packaging) = packaging match {
     case Packaging(false, _, _) =>
-      formData.copy(packaging = Some(Packaging(false, false, false)), packageOwn = None, packageCopack = None, productionSites = None)
+      formData.copy(
+        packaging = Some(Packaging(false, false, false)),
+        volumeForOwnBrand = None,
+        volumeForCustomerBrands = None,
+        productionSites = None
+      )
     case Packaging(true, true, false) =>
-      formData.copy(packaging = Some(packaging), packageCopack = None)
+      formData.copy(packaging = Some(packaging), volumeForCustomerBrands = None)
     case Packaging(true, false, true) =>
-      formData.copy(packaging = Some(packaging), packageOwn = None)
+      formData.copy(packaging = Some(packaging), volumeForOwnBrand = None)
     case _ => formData.copy(packaging = Some(packaging))
   }
 
@@ -78,7 +83,7 @@ object PackageController extends FormHelpers {
     override def bind(data: Map[String, String]): Either[Seq[FormError], Packaging] = {
       underlying.bind(data) match {
         case Left(errs) => Left(errs)
-        case Right(p) if p.isLiable && !(p.ownBrands || p.customers) =>
+        case Right(p) if p.isPackager && !(p.packagesOwnBrand || p.packagesCustomerBrands) =>
           Left(Seq(FormError("manufactureForCheckboxes", "error.packaging.none-selected")))
         case Right(p) => Right(p)
       }

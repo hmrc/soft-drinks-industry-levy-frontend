@@ -26,7 +26,7 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
   "Package controller" should {
     "return Status: 200 when user is logged in and loads package page" in {
       val request = FakeRequest("GET", "/package")
-      val result = controller.displayPackage().apply(request)
+      val result = controller.show().apply(request)
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.package.heading"))
@@ -38,7 +38,7 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "ownBrands" -> "true",
         "customers" -> "true"
       )
-      val response = controller.submitPackage().apply(request)
+      val response = controller.submit().apply(request)
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.LitreageController.show("packageOwn").url
@@ -50,7 +50,7 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "ownBrands" -> "false",
         "customers" -> "true"
       )
-      val response = controller.submitPackage().apply(request)
+      val response = controller.submit().apply(request)
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.LitreageController.show("packageCopack").url
@@ -62,10 +62,10 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "ownBrands" -> "false",
         "customers" -> "false"
       )
-      val response = controller.submitPackage().apply(request)
+      val response = controller.submit().apply(request)
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.RadioFormController.display("copacked").url
+      redirectLocation(response).get mustBe routes.RadioFormController.show("copacked").url
     }
 
     "return Status: Bad Request for invalid liability form POST request and show choose one option error" in {
@@ -74,7 +74,7 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "customers" -> "false",
         "ownBrands" -> "false"
       )
-      val response = controller.submitPackage().apply(request)
+      val response = controller.submit().apply(request)
 
       status(response) mustBe BAD_REQUEST
       contentType(response).get mustBe HTML
@@ -87,7 +87,7 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "customers" -> "false",
         "ownBrands" -> "false"
       )
-      val response = controller.submitPackage().apply(request)
+      val response = controller.submit().apply(request)
 
       status(response) mustBe BAD_REQUEST
       contentType(response).get mustBe HTML
@@ -97,10 +97,10 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return status See Other and redirect to the org type page when the org type page is not complete" in {
       stubFormPage(orgType = None)
 
-      val res = controller.displayPackage()(FakeRequest())
+      val res = controller.show()(FakeRequest())
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.OrgTypeController.displayOrgType().url)
+      redirectLocation(res) mustBe Some(routes.OrganisationTypeController.show().url)
     }
 
     "store the form data, and purge the package own, package copack, and production sites data, " +
@@ -114,14 +114,14 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "customers" -> "false"
       )
 
-      val res = controller.submitPackage()(request)
+      val res = controller.submit()(request)
       status(res) mustBe SEE_OTHER
 
       verifyDataCached(defaultFormData.copy(
         utr = "6667778889",
         packaging = Some(Packaging(false, false, false)),
-        packageOwn = None,
-        packageCopack = None,
+        volumeForOwnBrand = None,
+        volumeForCustomerBrands = None,
         productionSites = None
       ))
     }
@@ -135,13 +135,13 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "customers" -> "true"
       )
 
-      val res = controller.submitPackage()(request)
+      val res = controller.submit()(request)
       status(res) mustBe SEE_OTHER
 
       verifyDataCached(defaultFormData.copy(
         utr = "7778889990",
         packaging = Some(Packaging(true, false, true)),
-        packageOwn = None
+        volumeForOwnBrand = None
       ))
     }
 
@@ -155,13 +155,13 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "customers" -> "false"
       )
 
-      val res = controller.submitPackage()(request)
+      val res = controller.submit()(request)
       status(res) mustBe SEE_OTHER
 
       verifyDataCached(defaultFormData.copy(
         utr = "8889990001",
         packaging = Some(Packaging(true, true, false)),
-        packageCopack = None
+        volumeForCustomerBrands = None
       ))
     }
 
