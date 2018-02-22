@@ -57,13 +57,16 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: FormDataCach
         productionSite(
           errors,
           request.formData.rosmData.address,
-          primaryPlaceOfBusiness,request.formData.productionSites.getOrElse(Nil),
+          primaryPlaceOfBusiness,
+          request.formData.productionSites.getOrElse(Nil),
           ProductionSitesPage.previousPage(request.formData).show)
         )
       },
       {
-        case ProductionSites(_, _, _, true, Some(additionalAddress)) =>
-          val updated = request.formData.productionSites.getOrElse(Nil) :+ additionalAddress
+        case ProductionSites(bprAddress, ppobAddress, _, true, Some(additionalAddress)) =>
+          val updated = Seq(bprAddress, ppobAddress).flatten.map(Address.fromString) ++
+            request.formData.productionSites.getOrElse(Nil) :+
+            additionalAddress
 
           cache.cache(request.internalId, request.formData.copy(productionSites = Some(updated))) map { _ =>
             Redirect(routes.ProductionSiteController.show())

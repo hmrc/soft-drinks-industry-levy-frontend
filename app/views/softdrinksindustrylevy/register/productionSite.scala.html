@@ -40,15 +40,15 @@
             <div class="form-group">
                 <span class="form-hint">@Messages("sdil.production-sites.select-applicable")</span>
 
-                @addressCheckbox("bprAddress", bprAddress)
+                @addressCheckbox("bprAddress", bprAddress, otherSites.contains(bprAddress))
 
                 @primaryPlaceOfBusiness.map { ppob =>
-                    @addressCheckbox("ppobAddress", ppob)
+                    @addressCheckbox("ppobAddress", ppob, otherSites.contains(ppob))
                 }
 
                 @*avoid duplicating bpr address/ppob address*@
                 @otherSites.filterNot(a => a == bprAddress || primaryPlaceOfBusiness.contains(a)).zipWithIndex.map { case (site, idx) =>
-                    @addressCheckbox(s"additionalSites[$idx]", site)
+                    @addressCheckbox(s"additionalSites[$idx]", site, otherSites.contains(site))
                 }
 
                 @expandableCheckbox(siteForm, "addAddress", "label.production-sites.add") {
