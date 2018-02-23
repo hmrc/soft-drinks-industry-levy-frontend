@@ -17,10 +17,15 @@
 @import sdil.config.AppConfig
 @import sdil.models.Address
 
-@(name: String, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(name: String, address: Address, checked: Boolean = false)(implicit request: Request[_], messages: Messages, config:
+AppConfig)
 
 <div class="multiple-choice">
-    <input type="checkbox" id="@name" name="@name" value="@address.nonEmptyLines.mkString(",")" checked="checked">
+    <input type="checkbox"
+           id="@name"
+           name="@name"
+           value="@address.nonEmptyLines.mkString(",")"
+           @if(checked) { checked="checked" }>
     <label for="@name">
         <div>@address.line1, @address.line2,</div>
         <div>@if(address.line3.nonEmpty) { @address.line3, } @if(address.line4.nonEmpty) { @address.line4, }@address.postcode</div>

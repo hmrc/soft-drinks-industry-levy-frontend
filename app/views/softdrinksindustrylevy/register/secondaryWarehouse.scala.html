@@ -49,7 +49,7 @@
                     <span class="form-hint">@Messages("sdil.production-sites.select-applicable")</span>
 
                     @warehouses.zipWithIndex.map { case (address, idx) =>
-                      @addressCheckbox(s"warehouseSites[$idx]", address)
+                      @addressCheckbox(s"warehouseSites[$idx]", address, warehouses.contains(address))
                     }
 
                     @expandableCheckbox(warehouseForm, "addWarehouse", "label.warehouse-sites.add") {
