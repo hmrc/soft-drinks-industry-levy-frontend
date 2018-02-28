@@ -63,5 +63,5 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   override def isWhitelisted(utr: String): Boolean = whitelistedUtrs.isEmpty || whitelistedUtrs.contains(utr)
 
   override val whitelistEnabled: Boolean = getBoolean("whitelist.enabled")
-  private lazy val whitelistedUtrs: Seq[String] = getString("whitelist.utrs").split(",").map(_.trim)
+  private lazy val whitelistedUtrs: Seq[String] = runModeConfiguration.getStringSeq("whitelist.utrs").getOrElse(Nil)
 }
