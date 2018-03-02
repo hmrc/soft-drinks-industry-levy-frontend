@@ -67,7 +67,7 @@ object ContactDetailsController extends FormHelpers {
       "fullName" -> text.verifying(Constraint { x: String =>
         x match {
           case "" => Invalid("error.fullName.required")
-          case name if name.length >= 40 => Invalid("error.fullName.over")
+          case name if name.length > 40 => Invalid("error.fullName.over")
           case name if !name.matches("^[a-zA-Z &`\\-\\'\\.^]{1,40}$") =>
             Invalid("error.fullName.invalid")
           case _ => Valid
@@ -76,7 +76,7 @@ object ContactDetailsController extends FormHelpers {
       "position" -> text.verifying(Constraint { x: String =>
         x match {
           case "" => Invalid("error.position.required")
-          case position if position.length >= 155 => Invalid("error.position.over")
+          case position if position.length > 155 => Invalid("error.position.over")
           case position if !position.matches("^[a-zA-Z &`\\-\\'\\.^]{1,155}$") =>
             Invalid("error.position.invalid")
           case _ => Valid

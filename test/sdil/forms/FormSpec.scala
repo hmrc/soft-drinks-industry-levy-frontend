@@ -61,13 +61,13 @@ trait FormSpec extends PlaySpec {
   }
 
   def mustHaveMaxLength(fieldName: String, max: Int)(f: Form[_], data: Map[String, String], expectedError: String) = {
-    val underMax = (1 until max).map(_ => '1').mkString
+    val underMax = (1 until max).map(_ => 'A').mkString
     mustContainNoError(f.bind(data.updated(fieldName, underMax)), fieldName)
 
-    val equalToMax = (1 to max).map(_ => '2').mkString
+    val equalToMax = (1 to max).map(_ => 'B').mkString
     mustContainNoError(f.bind(data.updated(fieldName, equalToMax)), fieldName)
 
-    val overMax = (1 to max + 1).map(_ => '3').mkString
+    val overMax = (1 to max + 1).map(_ => 'C').mkString
     mustContainError(f.bind(data.updated(fieldName, overMax)), fieldName, expectedError)
   }
 }
