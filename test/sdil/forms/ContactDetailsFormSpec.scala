@@ -45,7 +45,7 @@ class ContactDetailsFormSpec extends FormSpec {
     }
 
     "require the phone number to only contain numbers, spaces, and ()+,-" in {
-      val valid = "123 ()+,-"
+      val valid = "ABC123 ()+-#*"
       mustContainNoError(form.bind(validData.updated(keys.phoneNumber, valid)), keys.phoneNumber)
 
       val invalid = "phone number"
