@@ -64,17 +64,30 @@ class ContactDetailsController(val messagesApi: MessagesApi, cache: FormDataCach
 object ContactDetailsController extends FormHelpers {
   val form = Form(
     mapping(
-      "fullName" -> text
-        .verifying("error.fullName.over", _.length <= 40)
-        .verifying("error.fullName.required", _.nonEmpty),
-      "position" -> text
-        .verifying("error.position.over", _.length <= 155)
-        .verifying("error.position.required", _.nonEmpty),
+      "fullName" -> text.verifying(Constraint { x: String =>
+        x match {
+          case "" => Invalid("error.fullName.required")
+          case name if name.length >= 40 => Invalid("error.fullName.over")
+          case name if !name.matches("^[a-zA-Z &`\\-\\'\\.^]{1,40}$") =>
+            Invalid("error.fullName.invalid")
+          case _ => Valid
+        }
+      }),
+      "position" -> text.verifying(Constraint { x: String =>
+        x match {
+          case "" => Invalid("error.position.required")
+          case position if position.length >= 155 => Invalid("error.position.over")
+          case position if !position.matches("^[a-zA-Z &`\\-\\'\\.^]{1,155}$") =>
+            Invalid("error.position.invalid")
+          case _ => Valid
+        }
+      }),
       "phoneNumber" -> text.verifying(Constraint { x: String =>
         x match {
           case "" => Invalid("error.phoneNumber.required")
-          case number if number.length > 24 => Invalid("error.phoneNumber.over")
-          case number if !number.matches("^[0-9 ()+--]{1,24}$") => Invalid("error.phoneNumber.invalid")
+          case phone if phone.length > 24 => Invalid("error.phoneNumber.over")
+          case phone if !phone.matches("^[A-Z0-9 )/(\\-*#+]{1,24}$") =>
+            Invalid("error.phoneNumber.invalid")
           case _ => Valid
         }
       }),
