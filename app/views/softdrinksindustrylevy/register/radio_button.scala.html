@@ -41,21 +41,14 @@
             </fieldset>
 
             @if(pageName == "package-copack-small") {
-                <details role="group">
-                    <summary role="button" aria-controls="details-content-0"><span class="summary">@Messages("sdil.package-copack-small.whatis.header")</span></summary>
-                    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-
-                        <p id="details-content-1">@Html(Messages("sdil.package-copack-small.whatis.body.p1"))</p>
-                        <p id="details-content-2">@Html(Messages("sdil.package-copack-small.whatis.body.p2"))</p>
-                    </div>
-                    <br>
-                </details>
-                <br>
+                @details("sdil.package-copack-small.whatis.header") {
+                    <p id="details-content-1">@Html(Messages("sdil.package-copack-small.whatis.body.p1"))</p>
+                    <p id="details-content-2">@Html(Messages("sdil.package-copack-small.whatis.body.p2"))</p>
+                }
             }
 
-            <button class="button" type="submit" id="continue-button">
-            @Messages("sdil.common.save-continue")
-            </button>
+            <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+
         </div>
 
     }

@@ -13,3 +13,10 @@ $(document).ready(function () {
 
     showHideContent.init()
 });
+
+window.onload = function () {
+    if(document.getElementsByClassName("flash error-summary error-summary--show").length > 0) {
+        ga('send', 'event', 'validationError', 'error', window.location.pathname);
+    }
+
+};
