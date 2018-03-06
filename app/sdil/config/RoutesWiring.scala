@@ -83,7 +83,7 @@ trait RoutesWiring extends CommonWiring {
   def router: Router = {
     if (configuration.underlying.hasPath("play.http.router")) {
       configuration.getString("play.http.router") match {
-        case Some("testOnlyDoNotUseInAppConf.routes") => testOnlyRoutes
+        case Some("testOnlyDoNotUseInAppConf.routes") | Some("testOnlyDoNotUseInAppConf.Routes") => testOnlyRoutes
         case _ => prodRoutes
       }
     } else prodRoutes

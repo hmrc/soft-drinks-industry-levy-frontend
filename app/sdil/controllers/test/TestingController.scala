@@ -20,8 +20,7 @@ import play.api.mvc.{Action, AnyContent}
 import sdil.connectors.TestConnector
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-
-class TestingController (testConnector: TestConnector) extends FrontendController {
+class TestingController(testConnector: TestConnector) extends FrontendController {
 
   def resetStore: Action[AnyContent] = Action.async {
     implicit request =>
@@ -35,6 +34,21 @@ class TestingController (testConnector: TestConnector) extends FrontendControlle
       testConnector.resetDb map {
         x => Status(x.status)(x.status.toString)
       }
+  }
+
+  def getFile(envelopeId: String, fileId: String) = Action.async { implicit request =>
+    val contentType = fileId match {
+      case "pdf" => "application/pdf"
+      case "xml" => "application/xml"
+      case _ => "application/octet-stream"
+    }
+
+    val actualFileId = fileId match {
+      case "xml" => "xmlDocument"
+      case _ => fileId
+    }
+
+    testConnector.getFile(envelopeId, actualFileId) map { Ok(_).withHeaders("Content-Type" -> contentType) }
   }
 
 }
