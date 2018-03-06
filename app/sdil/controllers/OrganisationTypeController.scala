@@ -54,13 +54,13 @@ class OrganisationTypeController(val messagesApi: MessagesApi, cache: FormDataCa
       errors => Future.successful(BadRequest(register.organisation_type(errors, hasCTEnrolment))),
       orgType => {
         val event = Event("orgType", "selectOrg", orgType)
-        gaConnector.sendEvent(AnalyticsRequest(request.cookies.get("_ga").map(_.value).getOrElse(""), Seq(event))
-        ) flatMap { _ =>
-          cache.cache(request.internalId, request.formData.copy(organisationType = Some(orgType))) map { _ =>
-            if (orgType == "partnership") Redirect(routes.OrganisationTypeController.displayPartnerships())
-            else
-              Redirect(routes.PackageController.show())
-          }
+        gaConnector.sendEvent(AnalyticsRequest(request.cookies.get("_ga").map(_.value).getOrElse(""), Seq(event))) flatMap {
+          _ =>
+            cache.cache(request.internalId, request.formData.copy(organisationType = Some(orgType))) map { _ =>
+              if (orgType == "partnership") Redirect(routes.OrganisationTypeController.displayPartnerships())
+              else
+                Redirect(routes.PackageController.show())
+            }
         }
       }
     )
