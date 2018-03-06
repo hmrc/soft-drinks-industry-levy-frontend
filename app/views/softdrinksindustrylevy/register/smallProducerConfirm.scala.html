@@ -28,11 +28,7 @@
     <p>
     @Messages("sdil.small-prod-confirm.lede")
     </p>
-    @*<p>*@
-    @*If this is not accurate, you need to <a href="@sdil.controllers.routes.PackageController.show()"*@
-    @*onclick="ga('send', 'event', 'smallProducerExemption', 'confirm', 'goBackChange')">*@
-    @*go back and change your answers</a>.*@
-    @*</p>*@
+
     <p>
         @Html(Messages("sdil.small-prod-confirm.body", sdil.controllers.routes.PackageController.show()))
     </p>
