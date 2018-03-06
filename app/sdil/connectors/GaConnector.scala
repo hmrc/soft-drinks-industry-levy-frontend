@@ -38,7 +38,7 @@ class GaConnector(http: HttpClient,
   override protected def mode: Mode = environment.mode
 
   def sendEvent(request: AnalyticsRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    http.POST(serviceUrl, request).map(_ => ()).recover {
+    http.POST(serviceUrl, request).map(_ => ()) recover {
       case e: Exception => Logger.error(s"Couldn't send analytics event $request", e)
     }
   }

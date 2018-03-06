@@ -29,7 +29,7 @@ import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, FormAction}
 import sdil.config.FormDataCache
-import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -87,6 +87,12 @@ trait TestWiring extends MockitoSugar {
     when(m.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
       Future.successful(new ~(new ~(new ~(Enrolments(Set.empty), Some(Admin)), Some("internal id")), Some(Organisation)))
     }
+    m
+  }
+
+  lazy val mockGaConnector: GaConnector = {
+    val m = mock[GaConnector]
+    when(m.sendEvent(any())(any(), any())).thenReturn(Future.successful(()))
     m
   }
 
