@@ -22,6 +22,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
+import sdil.connectors.{AnalyticsRequest, Event, GaConnector}
 import sdil.forms.FormHelpers
 import sdil.models.OrgTypePage
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -29,7 +30,8 @@ import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class OrganisationTypeController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)
+class OrganisationTypeController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction,
+                                 gaConnector: GaConnector)
                                 (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
@@ -50,12 +52,17 @@ class OrganisationTypeController(val messagesApi: MessagesApi, cache: FormDataCa
 
     form(hasCTEnrolment).bindFromRequest().fold(
       errors => Future.successful(BadRequest(register.organisation_type(errors, hasCTEnrolment))),
-      orgType =>
-        cache.cache(request.internalId, request.formData.copy(organisationType = Some(orgType))) map { _ =>
-          if (orgType == "partnership") Redirect(routes.OrganisationTypeController.displayPartnerships())
-          else
-            Redirect(routes.PackageController.show())
+      orgType => {
+        val event = Event("orgType", "selectOrg", orgType)
+        gaConnector.sendEvent(AnalyticsRequest(request.cookies.get("_ga").map(_.value).getOrElse(""), Seq(event))) flatMap {
+          _ =>
+            cache.cache(request.internalId, request.formData.copy(organisationType = Some(orgType))) map { _ =>
+              if (orgType == "partnership") Redirect(routes.OrganisationTypeController.displayPartnerships())
+              else
+                Redirect(routes.PackageController.show())
+            }
         }
+      }
     )
   }
 

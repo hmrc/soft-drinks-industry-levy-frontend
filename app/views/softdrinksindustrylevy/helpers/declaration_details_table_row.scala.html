@@ -27,7 +27,7 @@
     </td>
     @changeRoute.map { route =>
         <td class="change-answer">
-            <a href="@route">
+            <a href="@route" onclick="ga('send', 'event', 'declaration', 'clickChange', '@changeRoute')">
             @Messages("sdil.declaration.change-link")
             </a>
         </td>

@@ -150,7 +150,7 @@ sdil.registration-not-required.p3=If this is not accurate, you need to <a href="
 sdil.small-prod-confirm.heading=Confirm you’re a small producer
 sdil.small-prod-confirm.lede=The volumes you’ve entered show that you’ll package, or have packaged on your behalf, less than one million litres of liable drink per year.
 sdil.small-prod-confirm.panel=By continuing you confirm that you’re registering as a small producer.
-sdil.small-prod-confirm.body=If this is not accurate, you need to <a href="{0}">go back and change your answers</a>.
+sdil.small-prod-confirm.body=If this is not accurate, you need to <a href="{0}" onclick="ga(''send'', ''event'', ''smallProducerExemption'', ''confirm'', ''goBackChange'')">go back and change your answers</a>.
 sdil.small-prod-confirm.continue=Accept and continue
 
 #Start date

@@ -20,7 +20,7 @@
 
 <details role="group">
     <summary role="button">
-        <span class="summary">@Messages(summaryKey)</span>
+        <span class="summary" onclick="ga('send', 'event', 'helpLinks', 'help', '@Messages(summaryKey)')">@Messages(summaryKey)</span>
     </summary>
     <div class="panel-border-narrow panel" id="details-content-0">
         @panelContent

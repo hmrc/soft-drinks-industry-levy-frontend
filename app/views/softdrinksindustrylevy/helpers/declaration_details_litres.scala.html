@@ -27,7 +27,7 @@
     @rowData.atLowRate
     </td>
     <td class="change-answer">
-        <a href="@changeRoute">
+        <a href="@changeRoute" onclick="ga('send', 'event', 'declaration', 'clickChange', '@changeRoute')">
         @Messages("sdil.declaration.change-link")
         </a>
     </td>
@@ -41,7 +41,7 @@
     @rowData.atHighRate
     </td>
     <td class="change-answer">
-        <a href="@changeRoute">
+        <a href="@changeRoute" onclick="ga('send', 'event', 'declaration', 'clickChange', '@changeRoute')">
         @Messages("sdil.declaration.change-link")
         </a>
     </td>
