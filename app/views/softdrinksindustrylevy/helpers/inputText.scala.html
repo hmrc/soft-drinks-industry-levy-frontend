@@ -16,17 +16,24 @@
 
 @(field: Field, label: String, args: (Symbol, String)*)(implicit request: Request[_], messages: Messages)
 
-<div class="form-group form-@field.name @if(field.hasErrors) {form-field--error} @args.toMap.get('_divClass)">
-    <label class="form-label" for="@field.name">
+<div class="form-group form-@field.name @if(field.hasErrors) {form-group-error} @args.toMap.get('_divClass)">
+
+    <label for="@field.name">
+        <span class="form-label">@label</span>
         @field.errors.map { error =>
-            <span class="error-notification" role="tooltip" data-journey="search-page:error:@field.name">
+            <span class="error-message" role="tooltip" data-journey="search-page:error:@field.name">
             @Messages(error.message, error.args: _*)
             </span>
         }
-        @label
     </label>
+    @args.collectFirst { case ('_hint, msg) =>
+        <span class="form-hint">@msg</span>
+    }
     <input class="form-control
-        @args.toMap.get('_inputClass)" id="@field.name" name="@field.name" value="@field.value"
+        @args.toMap.get('_inputClass) @if(field.hasErrors) {form-control-error}"
+        id="@field.name"
+        name="@field.name"
+        value="@field.value"
         @args.toMap.get('_inputType).map(t => s"""type=$t""")
         @args.toMap.get('_maxLength).map(t => s"maxLength=$t")>
 </div>

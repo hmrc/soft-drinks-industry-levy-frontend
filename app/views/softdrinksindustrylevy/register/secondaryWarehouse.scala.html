@@ -21,12 +21,12 @@
 
 @(warehouseForm: Form[_], warehouses: Seq[Address], backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.common.title")) {
+@main_template(Messages("sdil.common.title"), form = Some(warehouseForm)) {
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
-    <h1 class="heading-large">@heading</h1>
-
     @error_summary(warehouseForm)
+
+    <h1 class="heading-large">@heading</h1>
 
     @form(submissionUrl) {
         @if(warehouses.isEmpty) {

@@ -21,13 +21,13 @@
 
 @(litreageForm: Form[_], pageName: String, backLink: Call, nextLink: Option[Call] = None)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-    @main_template(Messages("sdil.common.title")) {
+    @main_template(Messages("sdil.common.title"), form = Some(litreageForm)) {
 
         <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
-        <h1 class="heading-large">@Messages(s"sdil.$pageName.heading")</h1>
-
         @error_summary(litreageForm)
+
+        <h1 class="heading-large">@Messages(s"sdil.$pageName.heading")</h1>
 
         @form(nextLink.getOrElse(routes.LitreageController.submit(pageName)), 'novalidate -> "") {
             <div class="form-group form-litres">

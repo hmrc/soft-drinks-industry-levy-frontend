@@ -19,7 +19,7 @@
 @wrap = @{rowData.split(" ").map(_.length).max > 3}
 
 <tr>
-    <td @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
+    <td class="table-row-question" @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
         @Messages(s"sdil.$pageRef.$questionKey")
     </td>
     <td class="table-row-answer@if(wrap) { word-break}">
@@ -28,7 +28,8 @@
     @changeRoute.map { route =>
         <td class="change-answer">
             <a href="@route" onclick="ga('send', 'event', 'declaration', 'clickChange', '@changeRoute')">
-            @Messages("sdil.declaration.change-link")
+                @Messages("sdil.declaration.change-link")
+                <span class="visuallyhidden">@Messages(s"sdil.$pageRef.$questionKey")</span>
             </a>
         </td>
     }

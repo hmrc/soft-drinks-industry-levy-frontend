@@ -23,7 +23,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
-import sdil.forms.FormHelpers
+import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
 import sdil.models.{PackagePage, Packaging, RegistrationFormData}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
@@ -73,7 +73,7 @@ class PackageController(val messagesApi: MessagesApi, cache: FormDataCache, form
 object PackageController extends FormHelpers {
   val form = Form(packageMapping)
 
-  private lazy val packageMapping = new Mapping[Packaging] {
+  private lazy val packageMapping = new MappingWithExtraConstraint[Packaging] {
     lazy val underlying: Mapping[Packaging] = mapping(
       "isLiable" -> mandatoryBoolean,
       "ownBrands" -> boolean,
@@ -88,16 +88,5 @@ object PackageController extends FormHelpers {
         case Right(p) => Right(p)
       }
     }
-
-    override def unbind(value: Packaging): Map[String, String] = underlying.unbind(value)
-
-    override def unbindAndValidate(value: Packaging): (Map[String, String], Seq[FormError]) = underlying.unbindAndValidate(value)
-
-    //not required
-    override val key: String = ""
-    override val mappings: Seq[Mapping[_]] = Nil
-    override val constraints: Seq[Constraint[Packaging]] = Nil
-    override def withPrefix(prefix: String): Mapping[Packaging] = this
-    override def verifying(constraints: Constraint[Packaging]*): Mapping[Packaging] = this
   }
 }

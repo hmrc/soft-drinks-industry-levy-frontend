@@ -21,16 +21,13 @@
 
 @views.html.main_template(title = Messages("sdil.common.title")) {
 
-    <p class="float--right"><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
-
-    <br/>
-
     <div class="govuk-box-highlight">
         <h1 class="heading-xlarge">@Messages("sdil.complete.title")</h1>
 
         <p class="font-large">@Messages("sdil.complete.subheading")</p>
     </div>
-    <br>
+
+    <p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
     <p>@Messages("sdil.complete.p1", submissionDate, submissionTime)</p>
 
     <h2 class="heading-medium">@Messages("sdil.complete.what-happens.title")</h2>

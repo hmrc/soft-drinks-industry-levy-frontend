@@ -38,7 +38,7 @@ class ProductionSiteFormSpec extends FormSpec {
     "require at least one production site to be selected" in {
       val f = form.bind(Map.empty[String, String])
 
-      f.errors mustBe Seq(FormError("", "error.no-production-sites"))
+      f.errors mustBe Seq(FormError("productionSites", "error.no-production-sites"))
     }
 
     "bind to ProductionSites if there is not another site" in {

@@ -22,13 +22,13 @@
 
 @checkboxes = {
     @packageForm.error("manufactureForCheckboxes").map { err =>
-        <fieldset class="form-field-group form-field--error">
-        <span class="error-notification">@Messages(err.message)</span>
+        <fieldset class="form-field-group form-group-error">
+        <span class="error-message">@Messages(err.message)</span>
     }.getOrElse {
         <fieldset>
     }
 
-    <h2 class="heading-medium">@Messages("sdil.package.who-for")</h2>
+    <span class="heading-medium">@Messages("sdil.package.who-for")</span>
     <p class="form-hint">@Messages("sdil.who-for.instruction")</p>
     @checkbox(
         packageForm("ownBrands"),
@@ -42,13 +42,13 @@
     </fieldset>
 }
 
-@views.html.main_template(title = Messages("sdil.common.title")) {
+@views.html.main_template(title = Messages("sdil.common.title"), form = Some(packageForm)) {
 
     <a class="link-back" href="@sdil.controllers.routes.OrganisationTypeController.show()">@Messages("sdil.common.back")</a>
 
-    <h1 class="heading-large">@Messages("sdil.package.heading")</h1>
-
     @error_summary(packageForm)
+
+    <h1 class="heading-large">@Messages("sdil.package.heading")</h1>
 
     @form(action = sdil.controllers.routes.PackageController.submit()) {
         <div class="form-group">

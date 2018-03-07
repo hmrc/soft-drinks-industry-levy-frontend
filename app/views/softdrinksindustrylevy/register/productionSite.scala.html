@@ -26,18 +26,20 @@
         backLink: Call
 )(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.common.title")) {
+@main_template(Messages("sdil.common.title"), form = Some(siteForm)) {
 
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
-    <h1 class="heading-large">@Messages("sdil.productionSite.heading")</h1>
-
     @error_summary(siteForm)
+
+    <h1 class="heading-large">@Messages("sdil.productionSite.heading")</h1>
 
     @form(sdil.controllers.routes.ProductionSiteController.submit()) {
 
         <fieldset>
-            <div class="form-group">
+
+            <div id="productionSites" class="form-group @if(siteForm.hasErrors){form-group-error}">
+                @siteForm.errors.map { err => <span class="error-message">@Messages(err.message)</span> }
                 <span class="form-hint">@Messages("sdil.production-sites.select-applicable")</span>
 
                 @addressCheckbox("bprAddress", bprAddress, otherSites.contains(bprAddress))
@@ -58,7 +60,7 @@
                     @* note that nested forms are not allowed in HTML, so both buttons must use the same action *@
                     <input class="button--secondary" value="@Messages("sdil.production-site.add")" type="submit">
                 }
-                
+
             </div>
         </fieldset>
 
