@@ -22,7 +22,7 @@ import controllers.Assets
 import play.api.inject.DefaultApplicationLifecycle
 import play.api.routing.Router
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
-import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
+import sdil.connectors.{ContactFrontendConnector, GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
 import sdil.controllers._
 import sdil.controllers.test.TestingController
 import uk.gov.hmrc.auth.core.AuthConnector
@@ -38,6 +38,7 @@ trait RoutesWiring extends CommonWiring {
   val sdilConnector: SoftDrinksIndustryLevyConnector
   val testConnector: TestConnector
   val gaConnector: GaConnector
+  val contactFrontendConnector: ContactFrontendConnector
   val keystore: SessionCache
 
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
@@ -62,6 +63,7 @@ trait RoutesWiring extends CommonWiring {
   lazy val smallProducerConfirmController: SmallProducerConfirmController = wire[SmallProducerConfirmController]
   lazy val signoutController: AuthenticationController = wire[AuthenticationController]
   lazy val testController: TestingController = wire[TestingController]
+  lazy val registerForBetaController: RegisterForBetaController = wire[RegisterForBetaController]
 
   private lazy val appRoutes: app.Routes = wire[app.Routes]
   private lazy val healthRoutes = new health.Routes()

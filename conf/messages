@@ -320,3 +320,18 @@ error.phone-number.invalid=Enter a valid phone number
 error.email=Enter a valid email address
 error.radio-form.choose-option=Choose an option
 error.radio-form.choose-one-option=Choose at least one option
+
+# Beta registration
+sdil.register-for-beta.title=Sign up to register early
+sdil.register-for-beta.fullName=Contact name
+sdil.register-for-beta.businessName=Business name
+sdil.register-for-beta.email=Email
+sdil.register-for-beta.utr=Unique Taxpayer Reference (UTR) number
+sdil.register-for-beta.phone=Telephone number
+sdil.beta.register=Send
+sdil.register-for-beta.p1=We’ve reached the maximum number of businesses that can sign up to register early. However, \
+if you leave your email address we’ll contact you if any more spaces become available.
+
+sdil.beta-registration-confirmed.title=Thank you
+sdil.beta-registration-confirmed.p1=We’ll contact you if more spaces become available.
+error.businessName.required=Enter a business name

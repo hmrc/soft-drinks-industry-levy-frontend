@@ -1,69 +1,72 @@
 # microservice specific routes
-GET         /assets/*file                                    controllers.Assets.at(path="/public", file)
+GET         /assets/*file                                      controllers.Assets.at(path="/public", file)
 
-GET         /home                                            sdil.controllers.ServicePageController.show
+GET         /home                                              sdil.controllers.ServicePageController.show
 
-GET         /register/start                                  sdil.controllers.IdentifyController.start
-GET         /register/identify                               sdil.controllers.IdentifyController.show()
-POST        /register/identify                               sdil.controllers.IdentifyController.submit()
+GET         /register/start                                    sdil.controllers.IdentifyController.start
+GET         /register/identify                                 sdil.controllers.IdentifyController.show()
+POST        /register/identify                                 sdil.controllers.IdentifyController.submit()
 
-GET         /register/verify                                 sdil.controllers.VerifyController.show()
-POST        /register/verify                                 sdil.controllers.VerifyController.submit()
+GET         /register/verify                                   sdil.controllers.VerifyController.show()
+POST        /register/verify                                   sdil.controllers.VerifyController.submit()
 
-GET         /register/organisation-type                      sdil.controllers.OrganisationTypeController.show()
-POST        /register/organisation-type                      sdil.controllers.OrganisationTypeController.submit()
-GET         /register/partnerships                           sdil.controllers.OrganisationTypeController.displayPartnerships()
+GET         /register/organisation-type                        sdil.controllers.OrganisationTypeController.show()
+POST        /register/organisation-type                        sdil.controllers.OrganisationTypeController.submit()
+GET         /register/partnerships                             sdil.controllers.OrganisationTypeController.displayPartnerships()
 
-GET         /register/package                                sdil.controllers.PackageController.show()
-POST        /register/package                                sdil.controllers.PackageController.submit()
+GET         /register/package                                  sdil.controllers.PackageController.show()
+POST        /register/package                                  sdil.controllers.PackageController.submit()
 
-GET         /register/package-own                            sdil.controllers.LitreageController.show(pageName = "packageOwn")
-POST        /register/package-own                            sdil.controllers.LitreageController.submit(pageName = "packageOwn")
+GET         /register/package-own                              sdil.controllers.LitreageController.show(pageName = "packageOwn")
+POST        /register/package-own                              sdil.controllers.LitreageController.submit(pageName = "packageOwn")
 
-GET         /register/package-copack                         sdil.controllers.LitreageController.show(pageName = "packageCopack")
-POST        /register/package-copack                         sdil.controllers.LitreageController.submit(pageName = "packageCopack")
+GET         /register/package-copack                           sdil.controllers.LitreageController.show(pageName = "packageCopack")
+POST        /register/package-copack                           sdil.controllers.LitreageController.submit(pageName = "packageCopack")
 
-GET         /register/package-copack-small                   sdil.controllers.RadioFormController.show(page = "package-copack-small")
-POST        /register/package-copack-small                   sdil.controllers.RadioFormController.submit(page = "package-copack-small")
+GET         /register/package-copack-small                     sdil.controllers.RadioFormController.show(page = "package-copack-small")
+POST        /register/package-copack-small                     sdil.controllers.RadioFormController.submit(page = "package-copack-small")
 
-GET         /register/package-copack-small-vol               sdil.controllers.VolumeForSmallProducersController.show
-POST        /register/package-copack-small-vol               sdil.controllers.VolumeForSmallProducersController.submit
+GET         /register/package-copack-small-vol                 sdil.controllers.VolumeForSmallProducersController.show
+POST        /register/package-copack-small-vol                 sdil.controllers.VolumeForSmallProducersController.submit
 
-GET         /register/copacked                               sdil.controllers.RadioFormController.show(page = "copacked")
-POST        /register/copacked                               sdil.controllers.RadioFormController.submit(page = "copacked")
+GET         /register/copacked                                 sdil.controllers.RadioFormController.show(page = "copacked")
+POST        /register/copacked                                 sdil.controllers.RadioFormController.submit(page = "copacked")
 
-GET         /register/copacked-volume                        sdil.controllers.LitreageController.show(pageName = "copackedVolume")
-POST        /register/copacked-volume                        sdil.controllers.LitreageController.submit(pageName = "copackedVolume")
+GET         /register/copacked-volume                          sdil.controllers.LitreageController.show(pageName = "copackedVolume")
+POST        /register/copacked-volume                          sdil.controllers.LitreageController.submit(pageName = "copackedVolume")
 
-GET         /register/import                                 sdil.controllers.RadioFormController.show(page = "import")
-POST        /register/import                                 sdil.controllers.RadioFormController.submit(page = "import")
+GET         /register/import                                   sdil.controllers.RadioFormController.show(page = "import")
+POST        /register/import                                   sdil.controllers.RadioFormController.submit(page = "import")
 
-GET         /register/import-volume                          sdil.controllers.LitreageController.show(pageName = "importVolume")
-POST        /register/import-volume                          sdil.controllers.LitreageController.submit(pageName = "importVolume")
+GET         /register/import-volume                            sdil.controllers.LitreageController.show(pageName = "importVolume")
+POST        /register/import-volume                            sdil.controllers.LitreageController.submit(pageName = "importVolume")
 
-GET         /register/registration-type                      sdil.controllers.RegistrationTypeController.continue()
-GET         /register/do-not-register                        sdil.controllers.RegistrationTypeController.registrationNotRequired()
+GET         /register/registration-type                        sdil.controllers.RegistrationTypeController.continue()
+GET         /register/do-not-register                          sdil.controllers.RegistrationTypeController.registrationNotRequired()
 
-GET         /register/small-producer-confirm                 sdil.controllers.SmallProducerConfirmController.show()
-POST        /register/small-producer-confirm                 sdil.controllers.SmallProducerConfirmController.submit()
+GET         /register/small-producer-confirm                   sdil.controllers.SmallProducerConfirmController.show()
+POST        /register/small-producer-confirm                   sdil.controllers.SmallProducerConfirmController.submit()
 
-GET         /register/start-date                             sdil.controllers.StartDateController.show()
-POST        /register/start-date                             sdil.controllers.StartDateController.submit()
+GET         /register/start-date                               sdil.controllers.StartDateController.show()
+POST        /register/start-date                               sdil.controllers.StartDateController.submit()
 
-GET         /register/production-sites                       sdil.controllers.ProductionSiteController.show()
-POST        /register/production-sites                       sdil.controllers.ProductionSiteController.submit()
+GET         /register/production-sites                         sdil.controllers.ProductionSiteController.show()
+POST        /register/production-sites                         sdil.controllers.ProductionSiteController.submit()
 
-GET         /register/secondary-warehouses                   sdil.controllers.WarehouseController.show()
-POST        /register/secondary-warehouses                   sdil.controllers.WarehouseController.addSingleSite()
-POST        /register/secondary-warehouses/select-sites      sdil.controllers.WarehouseController.addMultipleSites()
+GET         /register/secondary-warehouses                     sdil.controllers.WarehouseController.show()
+POST        /register/secondary-warehouses                     sdil.controllers.WarehouseController.addSingleSite()
+POST        /register/secondary-warehouses/select-sites        sdil.controllers.WarehouseController.addMultipleSites()
 
-GET         /register/contact-details                        sdil.controllers.ContactDetailsController.show
-POST        /register/contact-details                        sdil.controllers.ContactDetailsController.submit
+GET         /register/contact-details                          sdil.controllers.ContactDetailsController.show
+POST        /register/contact-details                          sdil.controllers.ContactDetailsController.submit
 
-GET         /register/declaration                            sdil.controllers.DeclarationController.show
-POST        /register/declaration                            sdil.controllers.DeclarationController.submit()
+GET         /register/declaration                              sdil.controllers.DeclarationController.show
+POST        /register/declaration                              sdil.controllers.DeclarationController.submit()
 
-GET         /register/complete                               sdil.controllers.CompleteController.show()
+GET         /register/complete                                 sdil.controllers.CompleteController.show()
 
-GET         /sign-in                                         sdil.controllers.AuthenticationController.signIn()
-GET         /sign-out                                        sdil.controllers.AuthenticationController.signOut()
+GET         /sign-in                                           sdil.controllers.AuthenticationController.signIn()
+GET         /sign-out                                          sdil.controllers.AuthenticationController.signOut()
+
+GET         /register-for-beta                                 sdil.controllers.RegisterForBetaController.show
+POST        /register-for-beta                                 sdil.controllers.RegisterForBetaController.submit
