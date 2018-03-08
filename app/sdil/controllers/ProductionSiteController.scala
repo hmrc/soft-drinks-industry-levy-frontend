@@ -16,14 +16,12 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
-import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.{Form, FormError, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.{FormAction, RegistrationFormRequest}
 import sdil.config.{AppConfig, FormDataCache}
-import sdil.forms.FormHelpers
+import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
 import sdil.models.DetailsCorrect.DifferentAddress
 import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -92,19 +90,28 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: FormDataCach
 
 object ProductionSiteController extends FormHelpers {
 
-  val form: Form[ProductionSites] = Form(
-    mapping(
+  val form: Form[ProductionSites] = Form(productionSitesMapping)
+
+  private lazy val productionSitesMapping: Mapping[ProductionSites] = new MappingWithExtraConstraint[ProductionSites] {
+    override val underlying: Mapping[ProductionSites] = mapping(
       "bprAddress" -> optional(text),
       "ppobAddress" -> optional(text),
       "additionalSites" -> seq(text),
       "addAddress" -> boolean,
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(ProductionSites.apply)(ProductionSites.unapply)
-      .verifying("error.no-production-sites", atLeastOneSiteSelected)
-  )
 
-  private lazy val atLeastOneSiteSelected: ProductionSites => Boolean = {
-    p => p.bprAddress.orElse(p.ppobAddress).nonEmpty || p.additionalSites.nonEmpty || p.addAddress
+    override def bind(data: Map[String, String]): Either[Seq[FormError], ProductionSites] = {
+      underlying.bind(data) match {
+        case Left(errs) => Left(errs)
+        case Right(sites) if noSitesSelected(sites) => Left(Seq(FormError("productionSites", "error.no-production-sites")))
+        case Right(sites) => Right(sites)
+      }
+    }
+  }
+
+  private lazy val noSitesSelected: ProductionSites => Boolean = {
+    p => p.bprAddress.isEmpty && p.ppobAddress.isEmpty && p.additionalAddress.isEmpty
   }
 
   case class ProductionSites(bprAddress: Option[String],

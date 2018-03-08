@@ -21,9 +21,11 @@
 
 @(verifyForm: Form[_], utr: String, organisation: String, address: Address, alreadyRegistered: Boolean = false)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-    @main_template(Messages("sdil.common.title")) {
+    @main_template(title = Messages("sdil.common.title"), form = Some(verifyForm)) {
 
         <a class="link-back" href="@sdil.controllers.routes.IdentifyController.show()">@Messages("sdil.common.back")</a>
+
+        @error_summary(verifyForm)
 
         <h1 class="heading-large">
             @if(!alreadyRegistered) {
@@ -32,8 +34,6 @@
                 @Messages("sdil.already.received.for.utr.title")
             }
         </h1>
-
-        @error_summary(verifyForm)
 
     @businessDetails(utr, organisation, address)
 

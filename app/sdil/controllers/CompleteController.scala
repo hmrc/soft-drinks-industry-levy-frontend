@@ -40,5 +40,5 @@ class CompleteController(val messagesApi: MessagesApi,
   }
 
   lazy val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-  lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
+  lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("h:mm a")
 }

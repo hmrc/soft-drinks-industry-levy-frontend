@@ -11,7 +11,14 @@ $(document).ready(function () {
     // to toggle hidden content
     var showHideContent = new GOVUK.ShowHideContent();
 
-    showHideContent.init()
+    showHideContent.init();
+
+    var errorSummary = "#error-summary-display";
+    //focus error summary on page load
+    if(errorSummary.length) {
+        $(document).scrollTop($(errorSummary).offset().top);
+        $(errorSummary).focus();
+    }
 });
 
 window.onload = function () {

@@ -13,6 +13,8 @@ sdil.common.print=Print
 sdil.common.sign-out=Sign out
 sdil.common.return-to-sign-in=Return to Government Gateway sign in
 sdil.registered.title=Soft Drinks Levy
+sdil.hint.optional=Optional
+sdil.common.error=Error
 
 #Address lines
 sdil.address.line1=Address line 1
@@ -37,9 +39,9 @@ sdil.verify.table.caption=Your business record in HMRC
 sdil.verify.utr=Unique Taxpayer Reference (UTR)
 sdil.verify.organisation=Business name
 sdil.verify.address=Business address
-sdil.verify.detailsCorrect.yes=Yes - this is the business and the address I want to register
-sdil.verify.detailsCorrect.differentAddress=Yes - but I want to add a new primary address for the Soft Drinks Levy
-sdil.verify.detailsCorrect.no=No - I need to enter a different UTR and postcode
+sdil.verify.detailsCorrect.yes=Yes, this is the business and the address I want to register
+sdil.verify.detailsCorrect.differentAddress=Yes, but I want to add a new primary address for the Soft Drinks Levy
+sdil.verify.detailsCorrect.no=No, I need to enter a different UTR and postcode
 sdil.verify.address.heading=Enter a primary address for the Soft Drinks Levy
 sdil.verify.address.legend=Enter a primary address for the Soft Drinks Levy
 sdil.verify.address.line1=Address line 1
@@ -56,11 +58,11 @@ sdil.registration-pending.p3=If there’s a problem with your application we’l
 
 #Organisation Type
 sdil.organisation-type.heading=Which of these best describes your business?
-sdil.organisation-type.limited-company=Limited Company
-sdil.organisation-type.llp=Limited Liability Partnership (LLP)
+sdil.organisation-type.limited-company=Limited company
+sdil.organisation-type.llp=Limited liability partnership (LLP)
 sdil.organisation-type.partnership=Partnership
-sdil.organisation-type.sole-trader=Sole Trader
-sdil.organisation-type.unincorporated-body=Unincorporated Body
+sdil.organisation-type.sole-trader=Sole trader
+sdil.organisation-type.unincorporated-body=Unincorporated body
 
 #Partnership page
 sdil.partnership.heading=Please call us
