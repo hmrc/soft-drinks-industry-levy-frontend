@@ -80,6 +80,7 @@ trait FormHelpers {
 
   lazy val litreage: Mapping[BigDecimal] = text
     .verifying("error.litreage.required", _.nonEmpty)
+    .transform[String](_.replaceAll(",", ""), _.toString)
     .verifying("error.litreage.numeric", l => l.isEmpty || Try(BigDecimal.apply(l)).isSuccess) //don't try to parse empty string as a number
     .transform[BigDecimal](BigDecimal.apply, _.toString)
     .verifying("error.litreage.numeric", _.isWhole)
