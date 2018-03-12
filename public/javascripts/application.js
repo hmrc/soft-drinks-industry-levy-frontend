@@ -13,12 +13,26 @@ $(document).ready(function () {
 
     showHideContent.init();
 
+    $('input.volume').keyup(function(event) {
+
+        // skip for arrow keys
+        if(event.which >= 37 && event.which <= 40) return;
+
+        // format number
+        $(this).val(function(index, value) {
+            return value
+                .replace(/\D/g, "")
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        });
+    });
+
     var errorSummary = "#error-summary-display";
     //focus error summary on page load
     if(errorSummary.length) {
         $(document).scrollTop($(errorSummary).offset().top);
         $(errorSummary).focus();
     }
+
 });
 
 window.onload = function () {
