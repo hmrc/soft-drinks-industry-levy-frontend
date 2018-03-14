@@ -101,7 +101,7 @@ error.litreage.min=Number of litres must be 0 or more
 error.litreage.zero=Number of litres must be 1 or more
 
 #Production sites
-sdil.productionSite.heading=Tell us about the packaging sites your business operates in the UK to package liable drinks 
+sdil.productionSite.heading=Tell us about the packaging sites your business operates in the UK to package liable drinks
 sdil.production-sites.select-applicable=Select all that apply
 label.production-sites.add=I need to add another packaging site
 sdil.production-site.add.heading=Enter a packaging site
