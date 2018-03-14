@@ -23,10 +23,10 @@ $(document).ready(function () {
         });
     });
 
-    var errorSummary = "#error-summary-display";
+    var errorSummary = $('#error-summary-display');
     //focus error summary on page load
     if(errorSummary.length) {
-        $(document).scrollTop($(errorSummary).offset().top);
+        $(document).scrollTop(errorSummary.offset().top);
         $(errorSummary).focus();
     }
 

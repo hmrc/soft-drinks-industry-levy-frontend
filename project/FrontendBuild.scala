@@ -85,8 +85,8 @@ object FrontendBuild extends Build {
       // concatenate js
       Concat.groups := Seq(
         "javascripts/sdil-frontend-app.js" -> group(Seq(
-          "javascripts/show-hide-content.js",
-          "javascripts/application.js"
+          "javascripts/application.js",
+          "javascripts/details.polyfill.js"
         ))
       ),
       // below line required to force asset pipeline to operate in dev rather than only prod
