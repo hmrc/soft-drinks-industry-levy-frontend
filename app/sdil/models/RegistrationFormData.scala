@@ -25,6 +25,7 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 utr: String,
                                 verify: Option[DetailsCorrect] = None,
                                 organisationType: Option[String] = None,
+                                producer: Option[Producer] = None,
                                 packaging: Option[Packaging] = None,
                                 volumeForOwnBrand: Option[Litreage] = None,
                                 volumeForCustomerBrands: Option[Litreage] = None,
@@ -79,6 +80,7 @@ object RegistrationFormData {
       (__ \ "utr").format[String] and
       (__ \ "verify").formatNullable[DetailsCorrect] and
       (__ \ "orgType").formatNullable[String] and
+      (__ \ "producer").formatNullable[Producer] and
       (__ \ "packaging").formatNullable[Packaging] and
       (__ \ "packageOwn").formatNullable[Litreage] and
       (__ \ "packageCopack").formatNullable[Litreage] and

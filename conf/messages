@@ -69,6 +69,12 @@ sdil.partnership.heading=Please call us
 sdil.partnership.info.p1=We’re sorry, but you cannot register online as a partnership.
 sdil.partnership.info.p2=You’ll need to call us on 0300 200 3700 to submit your application to register for the Soft Drinks Levy.
 
+#Producer
+sdil.producer.heading=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide?
+sdil.producer.hidden-heading=How many litres worldwide?
+sdil.producer.over-one-million=1 million litres or more
+sdil.producer.under-one-million=Less than 1 million litres
+
 #Package
 sdil.package.heading=Will you package liable drinks at a packaging site you operate?
 sdil.package.who-for=Who will you package liable drinks for?

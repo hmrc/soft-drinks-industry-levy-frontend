@@ -82,6 +82,17 @@ case object OrgTypePage extends MidJourneyPage {
   override def show: Call = routes.OrganisationTypeController.show
 }
 
+case object ProducerPage extends MidJourneyPage {
+  // TODO fix where nextPage goes
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = PackageCopackSmallPage
+
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = OrgTypePage
+
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.producer.isDefined
+
+  override def show: Call = routes.ProducerController.show()
+}
+
 case object PackagePage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
     case Some(p) if p.isPackager && p.packagesOwnBrand => PackageOwnPage

@@ -14,6 +14,9 @@ GET         /register/organisation-type                        sdil.controllers.
 POST        /register/organisation-type                        sdil.controllers.OrganisationTypeController.submit()
 GET         /register/partnerships                             sdil.controllers.OrganisationTypeController.displayPartnerships()
 
+GET         /register/producer                                 sdil.controllers.ProducerController.show()
+POST        /register/produce                                  sdil.controllers.ProducerController.submit()
+
 GET         /register/package                                  sdil.controllers.PackageController.show()
 POST        /register/package                                  sdil.controllers.PackageController.submit()
 
