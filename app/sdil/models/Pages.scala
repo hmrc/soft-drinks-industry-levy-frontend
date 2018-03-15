@@ -71,7 +71,7 @@ case object VerifyPage extends MidJourneyPage {
 
 case object OrgTypePage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.organisationType match {
-    case Some(_) => PackagePage
+    case Some(_) => ProducerPage
     case None => OrgTypePage
   }
 
@@ -83,8 +83,10 @@ case object OrgTypePage extends MidJourneyPage {
 }
 
 case object ProducerPage extends MidJourneyPage {
-  // TODO fix where nextPage goes
-  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = PackageCopackSmallPage
+
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.producer match {
+    case Some(producer) if !producer.isProducer => PackageCopackPage
+  }
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = OrgTypePage
 
@@ -124,8 +126,8 @@ case object PackageCopackPage extends MidJourneyPage {
     case None => PackageCopackPage
   }
 
-  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-    case Some(p) if p.isPackager => PackageOwnPage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.producer match {
+    case Some(p) if !p.isProducer => ProducerPage
     case _ => PackagePage
   }
 

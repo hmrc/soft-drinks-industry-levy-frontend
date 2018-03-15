@@ -45,7 +45,7 @@ class ProducerController(val messagesApi: MessagesApi, cache: FormDataCache, for
       producer => {
         val updated = updateData(request.formData, producer)
         cache.cache(request.internalId, updated) map { _ =>
-          Redirect(PackagePage.nextPage(updated).show)
+          Redirect(ProducerPage.nextPage(updated).show)
         }
       }
     )

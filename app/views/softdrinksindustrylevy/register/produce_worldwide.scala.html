@@ -26,7 +26,7 @@
 @innerRadioButtons = {
     <h2 class="heading-medium">@Messages("sdil.producer.hidden-heading")</h2>
     @inputRadioGroup(
-        producerForm("moreThanMillion"),
+        producerForm("isLarge"),
         options(
             "underOneMillion" -> Messages("sdil.producer.under-one-million"),
             "overOneMillion" -> Messages("sdil.producer.over-one-million")
@@ -45,13 +45,13 @@
 
     <h1 class="heading-large">@Messages("sdil.producer.heading")</h1>
 
-    @form(action = sdil.controllers.routes.PackageController.submit()) {
+    @form(action = sdil.controllers.routes.ProducerController.submit()) {
         <div class="form-group">
             @inlineRadioButtonWithConditionalContent(
                 producerForm("isProducer"),
                 Seq(
-                    "true" -> (Messages("sdil.common.yes"), Some("hiddenTarget")),
-                    "false" -> (Messages("sdil.common.no"), None)
+                    "true" -> ((Messages("sdil.common.yes"), Some("hiddenTarget"))),
+                    "false" -> ((Messages("sdil.common.no"), None))
                 ),
                 Some(innerRadioButtons),
                 '_labelClass -> "block-label",
@@ -59,7 +59,8 @@
                 '_groupClass -> "form-field-group inline",
                 '_label -> "Liable",
                 '_dataTargetTrue -> "millionRadios",
-                '_error -> producerForm("isLiable").error.map(_.withMessage(Messages("error.radio-form.choose-option"))))
+                '_error -> producerForm("isProducer").error.map(_.withMessage(Messages("error.radio-form" +
+                        ".choose-option"))))
             <button class="button" type="submit" id="continue-button">@Messages("sdil.common.save-continue")</button>
         </div>
 
