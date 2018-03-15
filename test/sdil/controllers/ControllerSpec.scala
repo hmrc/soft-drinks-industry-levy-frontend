@@ -41,6 +41,7 @@ trait ControllerSpec extends FakeApplicationSpec {
                    orgType: Option[String] = defaultFormData.organisationType,
                    packaging: Option[Packaging] = defaultFormData.packaging,
                    packageOwn: Option[Litreage] = defaultFormData.volumeForOwnBrand,
+                   packagesForOthers: Option[Boolean] = defaultFormData.packagesForOthers,
                    packageCopack: Option[Litreage] = defaultFormData.volumeForCustomerBrands,
                    packageCopackSmall: Option[Boolean] = defaultFormData.packagesForSmallProducers,
                    packageCopackSmallVol: Option[Litreage] = defaultFormData.volumeForSmallProducers,
@@ -61,6 +62,7 @@ trait ControllerSpec extends FakeApplicationSpec {
       orgType,
       packaging,
       packageOwn,
+      packagesForOthers,
       packageCopack,
       packageCopackSmall,
       packageCopackSmallVol,
@@ -99,6 +101,7 @@ trait ControllerSpec extends FakeApplicationSpec {
         atLowRate = 1,
         atHighRate = 2
       )),
+      packagesForOthers = Some(true),
       volumeForCustomerBrands = Some(Litreage(
         atLowRate = 3,
         atHighRate = 4

@@ -63,7 +63,7 @@
             @if(packaging.packagesCustomerBrands) {
                 @formData.volumeForCustomerBrands.map { volumes =>
                     @declaration_details_litres("customers",
-                        sdil.controllers.routes.LitreageController.show("packageCopack"), volumes)
+                        sdil.controllers.routes.LitreageController.show("packageCopackVol"), volumes)
                 }
             }
         }

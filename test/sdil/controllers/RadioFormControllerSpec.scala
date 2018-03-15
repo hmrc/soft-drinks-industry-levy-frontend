@@ -16,8 +16,6 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
@@ -31,7 +29,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val result = controller.show(copackSmall)(FakeRequest())
 
       status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("sdil.package-copack-small.heading"))
+      contentAsString(result) must include(messagesApi("sdil.packageCopackSmall.heading"))
     }
 
     "return Status: OK when user is logged in and loads copacked page" in {
@@ -152,7 +150,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val result = controller.show(copackSmall)(FakeRequest())
 
       val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageCopack").url
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageCopackVol").url
       status(result) mustBe OK
     }
 
@@ -219,7 +217,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       val res = controller.show(copackSmall)(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopack").url)
+      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopackVol").url)
     }
 
     "redirect to the package copack small volume page from the copacked page if the user copacks for small producers " +
@@ -330,7 +328,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   lazy val controller: RadioFormController = wire[RadioFormController]
 
-  private val copackSmall = "package-copack-small"
+  private val copackSmall = "packageCopackSmall"
   private val copacked = "copacked"
   private val imports = "import"
 
