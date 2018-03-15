@@ -44,18 +44,6 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(response).get mustBe routes.LitreageController.show("packageOwn").url
     }
 
-    "return Status: See Other for package form POST with isLiable & customers and redirect to package copack" in {
-      val request = FakeRequest().withFormUrlEncodedBody(
-        "isLiable" -> "true",
-        "ownBrands" -> "false",
-        "customers" -> "true"
-      )
-      val response = controller.submit().apply(request)
-
-      status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.LitreageController.show("packageCopack").url
-    }
-
     "return Status: See Other for package form POST with isLiable false" in {
       val request = FakeRequest().withFormUrlEncodedBody(
         "isLiable" -> "false",
@@ -65,7 +53,7 @@ class PackageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val response = controller.submit().apply(request)
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.RadioFormController.show("copacked").url
+      redirectLocation(response).get mustBe routes.RadioFormController.show("packageCopack").url
     }
 
     "return Status: Bad Request for invalid liability form POST request and show choose one option error" in {

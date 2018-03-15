@@ -62,13 +62,16 @@ class RadioFormController(val messagesApi: MessagesApi,
   }
 
   private def getPage(pageName: String): MidJourneyPage = pageName match {
-    case "package-copack-small" => PackageCopackSmallPage
+    case "packageCopack" => PackageCopackPage
+    case "packageCopackSmall" => PackageCopackSmallPage
     case "copacked" => CopackedPage
     case "import" => ImportPage
     case other => throw new IllegalArgumentException(s"Invalid radio form page: $other")
   }
 
   private def update(choice: Boolean, formData: RegistrationFormData, page: Page): RegistrationFormData = page match {
+    case PackageCopackPage if choice => formData.copy(packagesForOthers = Some(choice))
+    case PackageCopackPage => formData.copy(packagesForOthers = Some(choice), volumeForCustomerBrands = None)
     case PackageCopackSmallPage if choice => formData.copy(packagesForSmallProducers = Some(choice))
     //clear volumes if user changes their answer from "Yes" to "No"
     case PackageCopackSmallPage => formData.copy(packagesForSmallProducers = Some(choice), volumeForSmallProducers = None)
@@ -80,6 +83,7 @@ class RadioFormController(val messagesApi: MessagesApi,
   }
 
   private def filledForm(page: Page, formData: RegistrationFormData): Form[Boolean] = page match {
+    case PackageCopackPage => formData.packagesForOthers.fold(form)(form.fill)
     case PackageCopackSmallPage => formData.packagesForSmallProducers.fold(form)(form.fill)
     case CopackedPage => formData.usesCopacker.fold(form)(form.fill)
     case ImportPage => formData.isImporter.fold(form)(form.fill)

@@ -20,11 +20,14 @@ POST        /register/package                                  sdil.controllers.
 GET         /register/package-own                              sdil.controllers.LitreageController.show(pageName = "packageOwn")
 POST        /register/package-own                              sdil.controllers.LitreageController.submit(pageName = "packageOwn")
 
-GET         /register/package-copack                           sdil.controllers.LitreageController.show(pageName = "packageCopack")
-POST        /register/package-copack                           sdil.controllers.LitreageController.submit(pageName = "packageCopack")
+GET         /register/package-copack                           sdil.controllers.RadioFormController.show(page = "packageCopack")
+POST        /register/package-copack                           sdil.controllers.RadioFormController.submit(page = "packageCopack")
 
-GET         /register/package-copack-small                     sdil.controllers.RadioFormController.show(page = "package-copack-small")
-POST        /register/package-copack-small                     sdil.controllers.RadioFormController.submit(page = "package-copack-small")
+GET         /register/package-copack-vol                       sdil.controllers.LitreageController.show(pageName = "packageCopackVol")
+POST        /register/package-copack-vol                       sdil.controllers.LitreageController.submit(pageName = "packageCopackVol")
+
+GET         /register/package-copack-small                     sdil.controllers.RadioFormController.show(page = "packageCopackSmall")
+POST        /register/package-copack-small                     sdil.controllers.RadioFormController.submit(page = "packageCopackSmall")
 
 GET         /register/package-copack-small-vol                 sdil.controllers.VolumeForSmallProducersController.show
 POST        /register/package-copack-small-vol                 sdil.controllers.VolumeForSmallProducersController.submit
