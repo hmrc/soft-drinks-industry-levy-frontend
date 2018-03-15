@@ -21,38 +21,40 @@
 
 @(litreageForm: Form[_], pageName: String, backLink: Call, nextLink: Option[Call] = None)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-    @main_template(Messages("sdil.common.title"), form = Some(litreageForm)) {
+@main_template(Messages("sdil.common.title"), form = Some(litreageForm)) {
 
-        <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
+    <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
-        @error_summary(litreageForm)
+    @error_summary(litreageForm)
 
-        <h1 class="heading-large">@Messages(s"sdil.$pageName.heading")</h1>
+    <h1 class="heading-large">@Messages(s"sdil.$pageName.heading")</h1>
 
-        @form(nextLink.getOrElse(routes.LitreageController.submit(pageName)), 'novalidate -> "") {
-            <div class="form-group form-litres">
-                @inputText(
-                    litreageForm("lowerRateLitres"),
-                    Messages("sdil.litreage.lowRate"),
-                    '_inputType -> "text",
-                    '_inputClass -> "input--no-spinner volume"
-                )
-            </div>
+    @form(nextLink.getOrElse(routes.LitreageController.submit(pageName)), 'novalidate -> "") {
+        <div class="form-group form-litres">
+        @inputText(
+            litreageForm("lowerRateLitres"),
+            Messages("sdil.litreage.lowRate"),
+            '_inputType -> "text",
+            '_inputClass -> "input--no-spinner volume"
+        )
+        </div>
 
-            <div class="form-group form-litres">
-                @inputText(
-                    litreageForm("higherRateLitres"),
-                    Messages("sdil.litreage.highRate"),
-                    '_inputType -> "text",
-                    '_inputClass -> "input--no-spinner volume"
-                )
-            </div>
+        <div class="form-group form-litres">
+        @inputText(
+            litreageForm("higherRateLitres"),
+            Messages("sdil.litreage.highRate"),
+            '_inputType -> "text",
+            '_inputClass -> "input--no-spinner volume"
+        )
+        </div>
 
-            @details("sdil.litreage.rates.help") {
-                <p>@Messages("sdil.litreage.rates.content.p1")</p>
-                <p>@Messages("sdil.litreage.rates.content.p2")</p>
-            }
-
-            <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+        @details("sdil.litreage.rates.help") {
+            <p>@Messages("sdil.litreage.rates.content.p1")
+                <br>
+                @Messages("sdil.litreage.rates.content.p2")
+            </p>
         }
+
+        <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
     }
+}
