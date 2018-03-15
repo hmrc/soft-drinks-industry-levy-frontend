@@ -37,7 +37,7 @@ class VolumeForSmallProducersControllerSpec extends ControllerSpec with BeforeAn
 
       val res = testController.show()(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.show("package-copack-small").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("packageCopackSmall").url)
     }
   }
 

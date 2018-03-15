@@ -84,13 +84,16 @@ sdil.who-for.option2=Our customers
 
 error.packaging.none-selected=Choose at least one option
 
-#Package copack page
+#Copacking page
+sdil.packageCopack.heading=Do you operate any packaging sites in the UK to package liable drinks for any customers as a third party?
+
+#Package copack small page
 error.copack-small.lower-greater-than-total-lower=Litres for small producers must be less than total litres for customers
 error.copack-small.higher-greater-than-total-higher=Litres for small producers must be less than total litres for customers
 
 #Litreage pages
 sdil.packageOwn.heading=In the next year, how many litres of liable drink do you expect to package for brands you own or have the rights to manufacture?
-sdil.packageCopack.heading=In total, how many litres of liable drink do you expect to package for all of your customers in the next year?
+sdil.packageCopackVol.heading=In the next 12 months, how many litres of liable drink will you package for your customers at UK packaging sites you operate?
 sdil.packageCopackSmallVol.heading=In the next year, how many litres of liable drink do you expect to claim a small producer exemption for?
 sdil.copackedVolume.heading=In the next year, how many litres of liable drink do you expect to have packaged by third parties in the UK?
 sdil.importVolume.heading=In the next 12 months, how many litres of liable drink will you bring into the UK?
@@ -132,12 +135,12 @@ sdil.warehouse-site.add.legend=A warehouse site address
 sdil.warehouse-site.add=Add address to list
 
 #Package Copack Small
-sdil.package-copack-small.heading=Do you expect to claim a small producer exemption for any of your customers?
-sdil.package-copack-small.whatis.header=What’s a small producer exemption?
-sdil.package-copack-small.whatis.body.p1=A business is a small producer if it produces less than one million litres of \
+sdil.packageCopackSmall.heading=Do you expect to claim a small producer exemption for any of your customers?
+sdil.packageCopackSmall.whatis.header=What’s a small producer exemption?
+sdil.packageCopackSmall.whatis.body.p1=A business is a small producer if it produces less than one million litres of \
   liable drink per year. If you package on behalf of these businesses, you can claim an exemption for the liable drinks \
   you package for them as long as they:<ul class="list list-bullet"><li>are registered as a small producer</li><li>give you their reference number</li></ul>
-sdil.package-copack-small.whatis.body.p2=You’ll need to enter their reference number against the liable drinks you’ve packaged for them when filing your return.
+sdil.packageCopackSmall.whatis.body.p2=You’ll need to enter their reference number against the liable drinks you’ve packaged for them when filing your return.
 
 
 #Co Packed

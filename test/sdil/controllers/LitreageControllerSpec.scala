@@ -53,22 +53,12 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       contentAsString(res) must include(Messages("sdil.packageOwn.heading"))
     }
 
-    "redirect to the copacked volume page if the form data is valid and the user is packaging for their customers" in {
+    "redirect to the packages for others page if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
       val res = testController.submit("packageOwn")(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopack").url)
-    }
-
-    "redirect to the package copack page if the form data is valid and the user is not packaging for their customers" in {
-      stubFormPage(packaging = Some(Packaging(false, false, false)))
-
-      val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "2", "higherRateLitres" -> "1")
-      val res = testController.submit("packageOwn")(request)
-
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.show("copacked").url)
+      redirectLocation(res).value mustBe routes.RadioFormController.show("packageCopack").url
     }
 
     "store the form data in keystore if it is valid" in {
@@ -83,68 +73,51 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
   }
 
-  "GET /package-copack" should {
+  "GET /package-copack-vol" should {
     "return 200 Ok and the package copack page if the previous pages have been completed" in {
-      val res = testController.show("packageCopack")(FakeRequest())
+      val res = testController.show("packageCopackVol")(FakeRequest())
 
       status(res) mustBe OK
-      contentAsString(res) must include(Messages("sdil.packageCopack.heading"))
+      contentAsString(res) must include(Messages("sdil.packageCopackVol.heading"))
     }
 
-    "redirect back to the package page if it has not been completed" in {
-      stubFormPage(packaging = None)
+    "redirect back to the package copack page if it has not been completed" in {
+      stubFormPage(packagesForOthers = None)
 
-      val res = testController.show("packageCopack")(FakeRequest())
+      val res = testController.show("packageCopackVol")(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.PackageController.show().url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("packageCopack").url)
     }
 
-    "redirect back to the package-own page if the user packages their own drinks and the package-own page has been skipped" in {
-      stubFormPage(packaging = Some(Packaging(true, true, true)), packageOwn = None)
-
-      val res = testController.show("packageCopack")(FakeRequest())
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageOwn").url)
-    }
-
-    "return a page with a link back to the package own page if the user packages liable drinks" in {
-      val res = testController.show("packageCopack")(FakeRequest())
+    "return a page with a link back to the package copack page" in {
+      val res = testController.show("packageCopackVol")(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageOwn").url
-    }
-
-    "return a page with a link back to the package page if the user does not package liable drinks" in {
-      stubFormPage(packaging = Some(Packaging(false, false, false)))
-
-      val res = testController.show("packageCopack")(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.PackageController.show().url
+      val backLink = html.select("a.link-back")
+      backLink.attr("href") mustBe routes.RadioFormController.show("packageCopack").url
     }
   }
 
   "POST /package-copack" should {
     "return 400 Bad Request and the package copack page when the form data is invalid" in {
-      val res = testController.submit("packageCopack")(FakeRequest())
+      val res = testController.submit("packageCopackVol")(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include(Messages("sdil.packageCopack.heading"))
+      contentAsString(res) must include(Messages("sdil.packageCopackVol.heading"))
     }
 
     "redirect to the package copack small page if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
 
-      val res = testController.submit("packageCopack")(request)
+      val res = testController.submit("packageCopackVol")(request)
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.show("package-copack-small").url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("packageCopackSmall").url)
     }
 
     "store the form data in keystore if it is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "4", "higherRateLitres" -> "3")
-      val res = testController.submit("packageCopack")(request)
+      val res = testController.submit("packageCopackVol")(request)
 
       status(res) mustBe SEE_OTHER
       verify(mockCache, once).cache(

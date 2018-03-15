@@ -96,8 +96,7 @@ case object ProducerPage extends MidJourneyPage {
 case object PackagePage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
     case Some(p) if p.isPackager && p.packagesOwnBrand => PackageOwnPage
-    case Some(p) if p.isPackager && p.packagesCustomerBrands => PackageCopackPage
-    case Some(p) => CopackedPage
+    case Some(p) => PackageCopackPage
     case None => PackagePage
   }
 
@@ -109,11 +108,7 @@ case object PackagePage extends MidJourneyPage {
 }
 
 case object PackageOwnPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-    case Some(p) if p.isPackager && p.packagesCustomerBrands => PackageCopackPage
-    case Some(p) => CopackedPage
-    case None => PackagePage
-  }
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = PackageCopackPage
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = PackagePage
 
@@ -123,34 +118,48 @@ case object PackageOwnPage extends MidJourneyPage {
 }
 
 case object PackageCopackPage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = PackageCopackSmallPage
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packagesForOthers match {
+    case Some(true) => PackageCopackVolPage
+    case Some(false) => ImportPage
+    case None => PackageCopackPage
+  }
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-    case Some(p) if p.isPackager && p.packagesOwnBrand => PackageOwnPage
+    case Some(p) if p.isPackager => PackageOwnPage
     case _ => PackagePage
   }
 
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.packagesForOthers.isDefined
+
+  override def show: Call = routes.RadioFormController.show("packageCopack")
+}
+
+case object PackageCopackVolPage extends MidJourneyPage {
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = PackageCopackSmallPage
+
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = PackageCopackPage
+
   override def isComplete(formData: RegistrationFormData): Boolean = formData.volumeForCustomerBrands.isDefined
 
-  override def show: Call = routes.LitreageController.show("packageCopack")
+  override def show: Call = routes.LitreageController.show("packageCopackVol")
 }
 
 case object PackageCopackSmallPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packagesForSmallProducers match {
     case Some(true) => PackageCopackSmallVolPage
     case Some(false) => CopackedPage
-    case None => PackageCopackPage
+    case None => PackageCopackVolPage
   }
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-    case Some(p) if p.isPackager && p.packagesCustomerBrands => PackageCopackPage
+    case Some(p) if p.isPackager && p.packagesCustomerBrands => PackageCopackVolPage
     case Some(p) if p.isPackager && p.packagesOwnBrand => PackageOwnPage
     case _ => PackagePage
   }
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.packagesForSmallProducers.isDefined
 
-  override def show: Call = routes.RadioFormController.show("package-copack-small")
+  override def show: Call = routes.RadioFormController.show("packageCopackSmall")
 }
 
 case object PackageCopackSmallVolPage extends MidJourneyPage {
@@ -174,7 +183,7 @@ case object CopackedPage extends MidJourneyPage {
     case Some(p) if p.packagesCustomerBrands && formData.packagesForSmallProducers.contains(true) => PackageCopackSmallVolPage
     case Some(p) if p.packagesCustomerBrands && !formData.packagesForSmallProducers.contains(true) => PackageCopackSmallPage
     case Some(p) if p.packagesOwnBrand && !p.packagesCustomerBrands => PackageOwnPage
-    case Some(p) if p.packagesCustomerBrands => PackageCopackPage
+    case Some(p) if p.packagesCustomerBrands => PackageCopackVolPage
     case _ => PackagePage
   }
 
