@@ -71,8 +71,8 @@ object ProducerController extends FormHelpers {
   import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
   val form: Form[Producer] = Form(
     mapping(
-    "producer" -> mandatoryBoolean,
-    "moreThanMillion" -> mandatoryIfTrue("producer", mandatoryBoolean)
+    "isProducer" -> mandatoryBoolean,
+    "isLarge" -> mandatoryIfTrue("producer", mandatoryBoolean)
   )(Producer.apply)(Producer.unapply))
 
 }
