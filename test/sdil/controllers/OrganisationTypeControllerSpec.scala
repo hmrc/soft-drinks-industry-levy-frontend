@@ -28,6 +28,7 @@ import uk.gov.hmrc.auth.core.retrieve.~
 
 import scala.collection.JavaConverters._
 import scala.concurrent.Future
+import com.softwaremill.macwire._
 
 class OrganisationTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 

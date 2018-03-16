@@ -24,6 +24,7 @@ import play.api.test.Helpers._
 import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import sdil.models.SubmissionData
+import com.softwaremill.macwire._
 
 import scala.concurrent.Future
 

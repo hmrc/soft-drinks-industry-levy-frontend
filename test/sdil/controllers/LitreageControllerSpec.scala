@@ -16,6 +16,7 @@
 
 package sdil.controllers
 
+import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito._
@@ -24,7 +25,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Litreage, Packaging}
+import sdil.models.Litreage
 
 class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -105,14 +106,6 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include(Messages("sdil.packageCopackVol.heading"))
-    }
-
-    "redirect to the package copack small page if the form data is valid" in {
-      val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "1", "higherRateLitres" -> "2")
-
-      val res = testController.submit("packageCopackVol")(request)
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.show("packageCopackSmall").url)
     }
 
     "store the form data in keystore if it is valid" in {

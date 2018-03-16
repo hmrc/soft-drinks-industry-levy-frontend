@@ -29,8 +29,6 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 volumeForOwnBrand: Option[Litreage] = None,
                                 packagesForOthers: Option[Boolean] = None,
                                 volumeForCustomerBrands: Option[Litreage] = None,
-                                packagesForSmallProducers: Option[Boolean] = None,
-                                volumeForSmallProducers: Option[Litreage] = None,
                                 usesCopacker: Option[Boolean] = None,
                                 volumeByCopackers: Option[Litreage] = None,
                                 isImporter: Option[Boolean] = None,
@@ -84,8 +82,6 @@ object RegistrationFormData {
       (__ \ "packageOwn").formatNullable[Litreage] and
       (__ \ "packageCopack").formatNullable[Boolean] and
       (__ \ "packageCopackVol").formatNullable[Litreage] and
-      (__ \ "packageCopackSmall").formatNullable[Boolean] and
-      (__ \ "packageCopackSmallVol").formatNullable[Litreage] and
       (__ \ "copacked").formatNullable[Boolean] and
       (__ \ "copackedVolume").formatNullable[Litreage] and
       (__ \ "imports").formatNullable[Boolean] and
