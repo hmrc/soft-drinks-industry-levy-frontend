@@ -56,10 +56,11 @@ class OrganisationTypeController(val messagesApi: MessagesApi, cache: FormDataCa
         val event = Event("orgType", "selectOrg", orgType)
         gaConnector.sendEvent(AnalyticsRequest(request.cookies.get("_ga").map(_.value).getOrElse(""), Seq(event))) flatMap {
           _ =>
-            cache.cache(request.internalId, request.formData.copy(organisationType = Some(orgType))) map { _ =>
+            val formData = request.formData.copy(organisationType = Some(orgType))
+            cache.cache(request.internalId, formData) map { fd =>
               if (orgType == "partnership") Redirect(routes.OrganisationTypeController.displayPartnerships())
               else
-                Redirect(routes.PackageController.show())
+                Redirect(OrgTypePage.nextPage(formData).show)
             }
         }
       }

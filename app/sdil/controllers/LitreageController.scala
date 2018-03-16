@@ -57,7 +57,7 @@ class LitreageController(val messagesApi: MessagesApi,
   }
 
   private def getPage(pageName: String): MidJourneyPage = pageName match {
-    case "packageOwn" => PackageOwnPage
+    case "packageOwn" => PackageOwnVolPage
     case "packageCopackVol" => PackageCopackVolPage
     case "copackedVolume" => CopackedVolumePage
     case "importVolume" => ImportVolumePage
@@ -65,7 +65,7 @@ class LitreageController(val messagesApi: MessagesApi,
   }
 
   private def update(litreage: Litreage, formData: RegistrationFormData, page: Page): RegistrationFormData = page match {
-    case PackageOwnPage => formData.copy(volumeForOwnBrand = Some(litreage))
+    case PackageOwnVolPage => formData.copy(volumeForOwnBrand = Some(litreage))
     case PackageCopackVolPage => formData.copy(volumeForCustomerBrands = Some(litreage))
     case CopackedVolumePage => formData.copy(volumeByCopackers = Some(litreage))
     case ImportVolumePage => formData.copy(importVolume = Some(litreage))
@@ -73,7 +73,7 @@ class LitreageController(val messagesApi: MessagesApi,
   }
 
   private def filledForm(page: Page, formData: RegistrationFormData): Form[Litreage] = page match {
-    case PackageOwnPage => formData.volumeForOwnBrand.fold(form)(form.fill)
+    case PackageOwnVolPage => formData.volumeForOwnBrand.fold(form)(form.fill)
     case PackageCopackVolPage => formData.volumeForCustomerBrands.fold(form)(form.fill)
     case CopackedVolumePage => formData.volumeByCopackers.fold(form)(form.fill)
     case ImportVolumePage => formData.importVolume.fold(form)(form.fill)

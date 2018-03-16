@@ -66,6 +66,7 @@ class RadioFormController(val messagesApi: MessagesApi,
     case "packageCopackSmall" => PackageCopackSmallPage
     case "copacked" => CopackedPage
     case "import" => ImportPage
+    case "packageOwnUk" => PackageOwnUkPage
     case other => throw new IllegalArgumentException(s"Invalid radio form page: $other")
   }
 
@@ -79,6 +80,8 @@ class RadioFormController(val messagesApi: MessagesApi,
     case CopackedPage => formData.copy(usesCopacker = Some(choice), volumeByCopackers = None)
     case ImportPage if choice => formData.copy(isImporter = Some(choice))
     case ImportPage => formData.copy(isImporter = Some(choice), importVolume = None)
+    case PackageOwnUkPage if choice => formData.copy(isPackagingForSelf = Some(choice))
+    case PackageOwnUkPage => formData.copy(isPackagingForSelf = None)
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
   }
 
@@ -87,7 +90,11 @@ class RadioFormController(val messagesApi: MessagesApi,
     case PackageCopackSmallPage => formData.packagesForSmallProducers.fold(form)(form.fill)
     case CopackedPage => formData.usesCopacker.fold(form)(form.fill)
     case ImportPage => formData.isImporter.fold(form)(form.fill)
+    case PackageOwnUkPage => formData.isPackagingForSelf.fold(form)(form.fill)
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
+
+
+
   }
 
 }

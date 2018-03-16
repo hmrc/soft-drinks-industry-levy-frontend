@@ -55,13 +55,16 @@ class ProducerController(val messagesApi: MessagesApi, cache: FormDataCache, for
   private def updateData(formData: RegistrationFormData, producer: Producer) = producer match {
     case Producer(false, _) =>
       formData.copy(
-        producer = Some(Producer(false, None))
-        //TODO clear downstream data later mater
+        producer = Some(Producer(false, None)),
+        usesCopacker = None,
+        isPackagingForSelf = None,
+        volumeForOwnBrand = None
       )
-//    case Packaging(true, true) =>
-//      formData.copy(packaging = Some(producer), volumeForCustomerBrands = None)
-//    case Packaging(true, false) =>
-//      formData.copy(packaging = Some(producer), volumeForOwnBrand = None)
+    case Producer(true, Some(true)) =>
+      formData.copy(
+        producer = Some(Producer(true, Some(true))),
+        usesCopacker = None
+      )
     case _ => formData.copy(producer = Some(producer))
   }
 }
@@ -72,7 +75,7 @@ object ProducerController extends FormHelpers {
   val form: Form[Producer] = Form(
     mapping(
     "isProducer" -> mandatoryBoolean,
-    "isLarge" -> mandatoryIfTrue("producer", mandatoryBoolean)
+    "isLarge" -> mandatoryIfTrue("isProducer", mandatoryBoolean)
   )(Producer.apply)(Producer.unapply))
 
 }
