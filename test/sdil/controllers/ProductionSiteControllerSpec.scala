@@ -27,6 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.DetailsCorrect.DifferentAddress
 import sdil.models.{Address, OrganisationDetails, RosmRegistration, Litreage}
+import com.softwaremill.macwire._
 
 import scala.collection.JavaConverters._
 

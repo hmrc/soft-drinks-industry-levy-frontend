@@ -19,6 +19,7 @@ package sdil.controllers
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import com.softwaremill.macwire._
 
 class SmallProducerConfirmControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 

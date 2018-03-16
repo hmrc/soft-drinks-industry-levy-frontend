@@ -27,6 +27,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments, User}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HttpResponse
+import com.softwaremill.macwire._
 
 import scala.concurrent.Future
 

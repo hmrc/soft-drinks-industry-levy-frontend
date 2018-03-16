@@ -45,8 +45,6 @@ trait ControllerSpec extends FakeApplicationSpec {
                    packageOwnVol: Option[Litreage] = defaultFormData.volumeForOwnBrand,
                    packagesForOthers: Option[Boolean] = defaultFormData.packagesForOthers,
                    packageCopack: Option[Litreage] = defaultFormData.volumeForCustomerBrands,
-                   packageCopackSmall: Option[Boolean] = defaultFormData.packagesForSmallProducers,
-                   packageCopackSmallVol: Option[Litreage] = defaultFormData.volumeForSmallProducers,
                    copacked: Option[Boolean] = defaultFormData.usesCopacker,
                    copackedVolume: Option[Litreage] = defaultFormData.volumeByCopackers,
                    imports: Option[Boolean] = defaultFormData.isImporter,
@@ -68,8 +66,6 @@ trait ControllerSpec extends FakeApplicationSpec {
       packageOwnVol,
       packagesForOthers,
       packageCopack,
-      packageCopackSmall,
-      packageCopackSmallVol,
       copacked,
       copackedVolume,
       imports,
@@ -109,11 +105,6 @@ trait ControllerSpec extends FakeApplicationSpec {
       volumeForCustomerBrands = Some(Litreage(
         atLowRate = 3,
         atHighRate = 4
-      )),
-      packagesForSmallProducers = Some(true),
-      volumeForSmallProducers = Some(Litreage(
-        atLowRate = 5,
-        atHighRate = 6
       )),
       usesCopacker = Some(true),
       volumeByCopackers = Some(Litreage(

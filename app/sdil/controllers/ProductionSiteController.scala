@@ -111,7 +111,7 @@ object ProductionSiteController extends FormHelpers {
   }
 
   private lazy val noSitesSelected: ProductionSites => Boolean = {
-    p => p.bprAddress.isEmpty && p.ppobAddress.isEmpty && p.additionalAddress.isEmpty
+    p => p.bprAddress.isEmpty && p.ppobAddress.isEmpty && p.additionalAddress.isEmpty && p.additionalSites.isEmpty
   }
 
   case class ProductionSites(bprAddress: Option[String],

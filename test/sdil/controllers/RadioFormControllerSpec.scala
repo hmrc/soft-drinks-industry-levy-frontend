@@ -21,17 +21,11 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.{Litreage, Packaging, Producer}
+import com.softwaremill.macwire._
 
 class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "Radio Form Controller" should {
-    "return Status: OK when user is logged in and loads package copack small page" in {
-      val result = controller.show(copackSmall)(FakeRequest())
-
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("sdil.packageCopackSmall.heading"))
-    }
-
     "return Status: OK when user is logged in and loads copacked page" in {
       stubFormPage(
         producer = Some(Producer(false, None)),
@@ -47,24 +41,6 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.import.heading"))
-    }
-
-    "return Status: SEE_OTHER and redirect to the package copack small volume page if the user copacks for small producers" in {
-      val result = copackSmallSubmit(FakeRequest().withFormUrlEncodedBody(
-        "yesOrNo" -> "true"
-      ))
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.VolumeForSmallProducersController.show.url
-    }
-
-    "return Status: SEE_OTHER and redirect to the copacked page if the user does not copack for small producers" in {
-      val result = copackSmallSubmit(FakeRequest().withFormUrlEncodedBody(
-        "yesOrNo" -> "false"
-      ))
-
-      status(result) mustBe SEE_OTHER
-      routes.RadioFormController.show(copacked).url must include(redirectLocation(result).get)
     }
 
     "return Status: SEE_OTHER and redirect to the copacked volume page if the user uses copackers" in {
@@ -103,15 +79,6 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(result) mustBe Some(routes.RegistrationTypeController.continue().url)
     }
 
-    "return Status: BAD_REQUEST for invalid form input for copacked small form submission" in {
-      val result = copackSmallSubmit(FakeRequest().withFormUrlEncodedBody(
-        "yesOrNo" -> ""
-      ))
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messagesApi("sdil.common.errorSummary"))
-    }
-
     "return Status: BAD_REQUEST for invalid form input for copacked form submission" in {
       val result = copackedSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> ""
@@ -128,53 +95,6 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include(messagesApi("sdil.common.errorSummary"))
-    }
-
-    "generate correct back link for copack small page with false for packaging" in {
-      stubFormPage(producer = Some(Producer(false, None)))
-
-      val result = controller.show(copackSmall)(FakeRequest())
-
-      val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe routes.ProducerController.show().url
-      status(result) mustBe OK
-    }
-
-    "generate correct back link for copack small page with true for packaging and false for customers" in {
-      stubFormPage(packaging = Some(Packaging(true, true, false)))
-      val result = controller.show(copackSmall)(FakeRequest())
-
-      val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageOwnVol").url
-      status(result) mustBe OK
-    }
-
-    "generate correct back link for copack small page with true for packaging and true for customers" in {
-      val result = controller.show(copackSmall)(FakeRequest())
-
-      val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageCopackVol").url
-      status(result) mustBe OK
-    }
-
-    "generate correct back link for copacked page with true for copack small" in {
-      stubFormPage(packageCopackSmall = Some(true))
-
-      val result = controller.show(copacked)(FakeRequest())
-
-      val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe routes.VolumeForSmallProducersController.show.url
-      status(result) mustBe OK
-    }
-
-    "generate correct back link for copacked page with false for copack small" in {
-      stubFormPage(packageCopackSmall = Some(false))
-
-      val result = controller.show(copacked)(FakeRequest())
-
-      val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show(copackSmall).url
-      status(result) mustBe OK
     }
 
     "generate correct back link for import page with true for copacked" in {
@@ -197,41 +117,6 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show(copacked).url
     }
 
-    "redirect to the producer page from the copack small page if the producer page is not complete" in {
-      stubFormPage(producer = None)
-
-      val res = controller.show(copackSmall)(FakeRequest())
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.ProducerController.show().url)
-    }
-
-    "redirect to the package own page from the copack small page if the user packages for their own brand " +
-      "and the package own page is not complete" in {
-      stubFormPage(packaging = Some(Packaging(true, true, false)), packageOwnVol = None)
-
-      val res = controller.show(copackSmall)(FakeRequest())
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageOwnVol").url)
-    }
-
-    "redirect to the package copack page from the copack small page if the user packages for other brands " +
-      "and the package copack page is not complete" in {
-      stubFormPage(packaging = Some(Packaging(true, true, true)), packageCopack = None)
-
-      val res = controller.show(copackSmall)(FakeRequest())
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopackVol").url)
-    }
-
-    "redirect to the package copack small volume page from the copacked page if the user copacks for small producers " +
-      "and the package copack small volume page is not complete" in {
-      stubFormPage(packageCopackSmall = Some(true), packageCopackSmallVol = None)
-
-      val res = controller.show(copacked)(FakeRequest())
-      status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.VolumeForSmallProducersController.show.url)
-    }
-
     "redirect to the copacked page from the import page if the copacked page is not complete" in {
       stubFormPage(copacked = None)
 
@@ -246,33 +131,6 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = controller.show(imports)(FakeRequest())
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.LitreageController.show("copackedVolume").url)
-    }
-
-    "store the form data and purge the package copack small volume data when the user does not copack for small producers" in {
-      stubFormPage(utr = "2223334445")
-
-      val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false")
-      val res = controller.submit(copackSmall)(request)
-
-      status(res) mustBe SEE_OTHER
-      verifyDataCached(defaultFormData.copy(
-        utr = "2223334445",
-        packagesForSmallProducers = Some(false),
-        volumeForSmallProducers = None
-      ))
-    }
-
-    "store the form data and not overwrite the package copack small volume data when the user does copack for small producers" in {
-      stubFormPage(packageCopackSmallVol = Some(Litreage(-999, -888)))
-
-      val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "true")
-      val res = controller.submit(copackSmall)(request)
-
-      status(res) mustBe SEE_OTHER
-      verifyDataCached(defaultFormData.copy(
-        packagesForSmallProducers = Some(true),
-        volumeForSmallProducers = Some(Litreage(-999, -888))
-      ))
     }
 
     "store the form data and purge the copacked volume data when the user does not use copackers" in {

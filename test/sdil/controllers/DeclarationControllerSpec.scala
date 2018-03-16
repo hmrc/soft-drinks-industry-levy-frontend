@@ -25,6 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.{Litreage, Packaging}
 import sdil.models.backend._
+import com.softwaremill.macwire._
 
 class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -42,8 +43,6 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         packaging = Some(Packaging(true, true, false)),
         packageOwnVol = Some(Litreage(1, 2)),
         packageCopack = None,
-        packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),
@@ -79,7 +78,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           Some(Litreage(1, 2)),
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
-          Some(Litreage(5, 6)),
+          None,
           Some(Litreage(7, 8))
         ),
         LocalDate.of(2018, 4, 6),
@@ -114,7 +113,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           Some(Litreage(1, 2)),
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
-          Some(Litreage(5, 6)),
+          None,
           Some(Litreage(7, 8))
         ),
         LocalDate.of(2018, 4, 6),

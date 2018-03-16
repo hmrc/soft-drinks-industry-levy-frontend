@@ -29,12 +29,6 @@ POST        /register/package-copack                           sdil.controllers.
 GET         /register/package-copack-vol                       sdil.controllers.LitreageController.show(pageName = "packageCopackVol")
 POST        /register/package-copack-vol                       sdil.controllers.LitreageController.submit(pageName = "packageCopackVol")
 
-GET         /register/package-copack-small                     sdil.controllers.RadioFormController.show(page = "packageCopackSmall")
-POST        /register/package-copack-small                     sdil.controllers.RadioFormController.submit(page = "packageCopackSmall")
-
-GET         /register/package-copack-small-vol                 sdil.controllers.VolumeForSmallProducersController.show
-POST        /register/package-copack-small-vol                 sdil.controllers.VolumeForSmallProducersController.submit
-
 GET         /register/copacked                                 sdil.controllers.RadioFormController.show(page = "copacked")
 POST        /register/copacked                                 sdil.controllers.RadioFormController.submit(page = "copacked")
 

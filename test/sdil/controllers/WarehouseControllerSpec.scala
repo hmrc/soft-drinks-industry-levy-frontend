@@ -26,6 +26,7 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.{Address, Packaging}
+import com.softwaremill.macwire._
 
 class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 

@@ -20,6 +20,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.{Litreage, Packaging}
+import com.softwaremill.macwire._
 
 class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -29,8 +30,6 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
         packaging = Some(Packaging(true, true, false)),
         packageOwnVol = Some(Litreage(1, 2)),
         packageCopack = None,
-        packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),
@@ -48,8 +47,6 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
         packaging = Some(Packaging(true, true, false)),
         packageOwnVol = Some(Litreage(1000000, 2)),
         packageCopack = None,
-        packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),
@@ -66,8 +63,6 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       stubFormPage(
         packaging = Some(Packaging(true, true, true)),
         packageOwnVol = Some(Litreage(1, 2)),
-        packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),
@@ -84,8 +79,6 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
         packageOwnVol = Some(Litreage(1, 2)),
-        packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(true),
@@ -102,8 +95,6 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
         packageOwnVol = Some(Litreage(1, 2)),
-        packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
         copacked = Some(true),
         copackedVolume = Some(Litreage(3, 4)),
         imports = Some(false),
@@ -120,8 +111,6 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
         packageOwnVol = Some(Litreage(10000, 2)),
-        packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),
@@ -138,8 +127,6 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       stubFormPage(
         packaging = Some(Packaging(false, false, false)),
         packageOwnVol = None,
-        packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(true),
@@ -157,8 +144,6 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
         packaging = Some(Packaging(false, false, true)),
         packageOwnVol = None,
         packageCopack = Some(Litreage(1, 2)),
-        packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),
@@ -176,8 +161,6 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
         packaging = Some(Packaging(false, false, false)),
         packageOwnVol = None,
         packageCopack = None,
-        packageCopackSmall = Some(false),
-        packageCopackSmallVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),

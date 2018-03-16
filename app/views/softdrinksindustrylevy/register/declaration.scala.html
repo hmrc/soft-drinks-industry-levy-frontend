@@ -70,13 +70,6 @@
             *@
         }
 
-        @if(formData.packagesForSmallProducers.contains(true)) {
-            @formData.volumeForSmallProducers.map { volumes =>
-                @declaration_details_litres("small-producers",
-                    sdil.controllers.routes.VolumeForSmallProducersController.show(), volumes)
-            }
-        }
-
         @formData.usesCopacker.map { copacked =>
             @declaration_details_table_row("declaration", "third-party",
                 Some(sdil.controllers.routes.RadioFormController.show(page = "copacked")),

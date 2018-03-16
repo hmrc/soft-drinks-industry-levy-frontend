@@ -23,6 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.{Litreage, Packaging}
+import com.softwaremill.macwire._
 
 class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
