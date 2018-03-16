@@ -136,7 +136,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return Status: See Other for start date form GET with valid date and no Liable booleans with redirect to display Package page" in {
       stubFormPage(
-        packaging = None,
+        producer = None,
         packageOwn = None,
         copacked = None,
         copackedVolume = None,
@@ -149,7 +149,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       val response = controller.show().apply(request)
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.PackageController.show().url
+      redirectLocation(response).get mustBe routes.ProducerController.show().url
     }
 
     "return Status: See Other for start date form GET with valid date and isnt Liable booleans with redirect to secondary warehouse page" in {

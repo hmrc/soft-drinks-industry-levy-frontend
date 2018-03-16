@@ -20,11 +20,8 @@ POST        /register/producer                                 sdil.controllers.
 GET         /register/package-own-uk                           sdil.controllers.RadioFormController.show(page="packageOwnUk")
 POST        /register/package-own-uk                           sdil.controllers.RadioFormController.submit(page ="packageOwnUk")
 
-GET         /register/package                                  sdil.controllers.PackageController.show()
-POST        /register/package                                  sdil.controllers.PackageController.submit()
-
-GET         /register/package-own                              sdil.controllers.LitreageController.show(pageName = "packageOwn")
-POST        /register/package-own                              sdil.controllers.LitreageController.submit(pageName = "packageOwn")
+GET         /register/package-own-vol                          sdil.controllers.LitreageController.show(pageName ="packageOwnVol")
+POST        /register/package-own-vol                          sdil.controllers.LitreageController.submit(pageName ="packageOwnVol")
 
 GET         /register/package-copack                           sdil.controllers.RadioFormController.show(page = "packageCopack")
 POST        /register/package-copack                           sdil.controllers.RadioFormController.submit(page = "packageCopack")

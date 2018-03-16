@@ -21,6 +21,7 @@
 @import sdil.config.AppConfig
 
 @import sdil.models.RegistrationFormData
+@import sdil.models.Producer
 @(formData: RegistrationFormData)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title")) {
@@ -48,12 +49,12 @@
     }
 
     @declaration_table("declaration","liable-activity") {
-        @formData.packaging.map { packaging =>
-            @declaration_details_table_row("declaration", "packaging",
-                Some(sdil.controllers.routes.PackageController.submit()),
-                Messages(s"sdil.declaration.${packaging.isPackager}"), '_colspan -> "2")
-
-            @if(packaging.packagesOwnBrand) {
+        @formData.producer.map { producer: Producer =>
+            @declaration_details_table_row("declaration", "producer",
+                Some(sdil.controllers.routes.ProducerController.submit()),
+                Messages(s"sdil.declaration.${producer.isProducer}"), '_colspan -> "2")
+            @* TODO - when it comes to fixing the declaration
+            @if(producer.isLarge) {
                 @formData.volumeForOwnBrand.map { volumes =>
                     @declaration_details_litres("package-own",
                         sdil.controllers.routes.LitreageController.show("packageOwn"), volumes)
@@ -66,6 +67,7 @@
                         sdil.controllers.routes.LitreageController.show("packageCopackVol"), volumes)
                 }
             }
+            *@
         }
 
         @if(formData.packagesForSmallProducers.contains(true)) {

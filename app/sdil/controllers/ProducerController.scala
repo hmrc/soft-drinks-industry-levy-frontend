@@ -16,13 +16,12 @@
 
 package sdil.controllers
 
-import play.api.data.Forms.mapping
-import play.api.data.{Form, FormError, Mapping}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
-import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
+import sdil.forms.FormHelpers
 import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register

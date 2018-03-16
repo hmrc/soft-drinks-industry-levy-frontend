@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Litreage, Packaging}
+import sdil.models.{Litreage, Packaging, Producer}
 
 class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -128,12 +128,12 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "generate correct back link for copack small page with false for packaging" in {
-      stubFormPage(packaging = Some(Packaging(false, false, false)))
+      stubFormPage(producer = Some(Producer(false, None)))
 
       val result = controller.show(copackSmall)(FakeRequest())
 
       val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe routes.PackageController.show().url
+      html.select("a.link-back").attr("href") mustBe routes.ProducerController.show().url
       status(result) mustBe OK
     }
 
@@ -194,12 +194,12 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show(copacked).url
     }
 
-    "redirect to the package page from the copack small page if the package page is not complete" in {
-      stubFormPage(packaging = None)
+    "redirect to the producer page from the copack small page if the producer page is not complete" in {
+      stubFormPage(producer = None)
 
       val res = controller.show(copackSmall)(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.PackageController.show().url)
+      redirectLocation(res) mustBe Some(routes.ProducerController.show().url)
     }
 
     "redirect to the package own page from the copack small page if the user packages for their own brand " +

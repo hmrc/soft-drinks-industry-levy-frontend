@@ -76,12 +76,12 @@ class OrganisationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       contentAsString(response) must include(messagesApi("error.radio-form.choose-option"))
     }
 
-    "return Status: See Other for valid organisation form POST request and redirect to packaging page" in {
+    "return Status: See Other for valid organisation form POST request and redirect to producer page" in {
       val request = FakeRequest().withFormUrlEncodedBody("orgType" -> "limitedCompany")
       val response = testController.submit().apply(request)
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.PackageController.show().url
+      redirectLocation(response).get mustBe routes.ProducerController.show().url
     }
 
     "return Status: See Other for valid organisation as partnership and redirect to partnerships page" in {

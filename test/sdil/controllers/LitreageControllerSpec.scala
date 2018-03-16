@@ -30,18 +30,18 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /package-own" should {
     "return 200 Ok and the package own page if the package page has been completed" in {
-      val res = testController.show("packageOwn")(FakeRequest())
+      val res = testController.show("packageOwnVol")(FakeRequest())
 
       status(res) mustBe OK
       contentAsString(res) must include(Messages("sdil.packageOwn.heading"))
     }
 
-    "redirect back to the package page if it has not been completed" in {
+    "redirect back to the producer page if it has not been completed" in {
       stubFormPage(packaging = None)
 
       val res = testController.show("packageOwn")(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.PackageController.show().url)
+      redirectLocation(res) mustBe Some(routes.ProducerController.show().url)
     }
   }
 
