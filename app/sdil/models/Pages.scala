@@ -114,6 +114,7 @@ case object CopackedPage extends MidJourneyPage {
 case object PackageOwnUkPage extends MidJourneyPage {
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.producer match {
     case Some(p) if p.isLarge.getOrElse(false) => ProducerPage
+    case None => ProducerPage
     case _ => CopackedPage
   }
 
@@ -126,21 +127,6 @@ case object PackageOwnUkPage extends MidJourneyPage {
 
   override def show: Call = routes.RadioFormController.show("packageOwnUk")
 }
-
-
-//case object PackagePage extends MidJourneyPage {
-//  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-//    case Some(p) if p.isPackager && p.packagesOwnBrand => PackageOwnVolPage
-//    case Some(p) => PackageCopackPage
-//    case None => PackagePage
-//  }
-//
-//  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = OrgTypePage
-//
-//  override def isComplete(formData: RegistrationFormData): Boolean = formData.packaging.isDefined
-//
-//  override def show: Call = routes.PackageController.show()
-//}
 
 case object PackageOwnVolPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = PackageCopackPage

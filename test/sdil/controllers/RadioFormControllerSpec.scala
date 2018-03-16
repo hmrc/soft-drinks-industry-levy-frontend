@@ -33,6 +33,9 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return Status: OK when user is logged in and loads copacked page" in {
+      stubFormPage(
+        producer = Some(Producer(false, None)),
+        copacked = None)
       val result = controller.show(copacked)(FakeRequest())
 
       status(result) mustBe OK
@@ -142,7 +145,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val result = controller.show(copackSmall)(FakeRequest())
 
       val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageOwn").url
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageOwnVol").url
       status(result) mustBe OK
     }
 
@@ -204,11 +207,11 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "redirect to the package own page from the copack small page if the user packages for their own brand " +
       "and the package own page is not complete" in {
-      stubFormPage(packaging = Some(Packaging(true, true, false)), packageOwn = None)
+      stubFormPage(packaging = Some(Packaging(true, true, false)), packageOwnVol = None)
 
       val res = controller.show(copackSmall)(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageOwn").url)
+      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageOwnVol").url)
     }
 
     "redirect to the package copack page from the copack small page if the user packages for other brands " +

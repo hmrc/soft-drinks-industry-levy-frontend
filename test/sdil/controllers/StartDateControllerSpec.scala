@@ -41,7 +41,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return Status: See Other for start date form POST with valid date and redirect to add site page" in {
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
-        packageOwn = Some(Litreage(18888888, 24444)),
+        packageOwnVol = Some(Litreage(18888888, 24444)),
         copacked = Some(true),
         copackedVolume = Some(Litreage(344444, 44444444)),
         imports = Some(false),
@@ -59,7 +59,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return Status: See Other for start date form POST with valid date and redirect to secondary warehouse page" in {
       stubFormPage(
         packaging = Some(packagingIsntLiable),
-        packageOwn = None,
+        packageOwnVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),
@@ -87,7 +87,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return a page with a link back to the import volume page if the user imports liable drinks" in {
-      stubFormPage(imports = Some(true), packageOwn = Some(Litreage(1000000L,0L)))
+      stubFormPage(imports = Some(true), packageOwnVol = Some(Litreage(1000000L,0L)))
 
       val response = controller.show(FakeRequest())
       status(response) mustBe OK
@@ -107,7 +107,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return a page with a link back to the imports page if the user does not import liable drinks" in {
-      stubFormPage(imports = Some(false), packageOwn = Some(Litreage(1000000L,0L)))
+      stubFormPage(imports = Some(false), packageOwnVol = Some(Litreage(1000000L,0L)))
 
       val response = controller.show(FakeRequest())
       status(response) mustBe OK
@@ -119,7 +119,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return Status: See Other for start date form GET with valid date and Liable booleans with redirect to add site page" in {
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
-        packageOwn = Some(Litreage(18888888, 24444)),
+        packageOwnVol = Some(Litreage(18888888, 24444)),
         copacked = Some(true),
         copackedVolume = Some(Litreage(344444, 44444444)),
         imports = Some(false),
@@ -137,7 +137,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return Status: See Other for start date form GET with valid date and no Liable booleans with redirect to display Package page" in {
       stubFormPage(
         producer = None,
-        packageOwn = None,
+        packageOwnVol = None,
         copacked = None,
         copackedVolume = None,
         imports = None,
@@ -155,7 +155,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return Status: See Other for start date form GET with valid date and isnt Liable booleans with redirect to secondary warehouse page" in {
       stubFormPage(
         packaging = Some(packagingIsntLiable),
-        packageOwn = None,
+        packageOwnVol = None,
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),
@@ -189,7 +189,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "redirect to the contact details page when voluntary only" in {
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
-        packageOwn = Some(Litreage(1, 2)),
+        packageOwnVol = Some(Litreage(1, 2)),
         packageCopack = None,
         copacked = Some(true),
         copackedVolume = Some(Litreage(3, 4)),

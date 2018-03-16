@@ -74,7 +74,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         packaging = Some(Packaging(false, false, false)),
         imports = Some(true),
         packageCopack = None,
-        packageOwn = None,
+        packageOwnVol = None,
         copacked = Some(false),
         copackedVolume = None
       )
@@ -95,7 +95,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         packaging = Some(Packaging(false, false, false)),
         imports = Some(false),
         copackedVolume = None,
-        packageOwn = None
+        packageOwnVol = None
       )
       testConfig.setTaxStartDate(LocalDate.now plusDays 1)
 
