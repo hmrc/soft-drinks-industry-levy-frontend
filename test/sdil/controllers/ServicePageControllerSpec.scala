@@ -28,6 +28,7 @@ import sdil.models.backend.{Contact, Site, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
+import com.softwaremill.macwire._
 
 import scala.concurrent.Future
 

@@ -39,7 +39,6 @@ object Subscription {
       verify <- formData.verify
       orgType <- formData.organisationType
       packaging <- formData.packaging
-      packageCopackSmall = formData.packagesForSmallProducers.getOrElse(false)
       copacked <- formData.usesCopacker
       imports <- formData.isImporter
       startDate <- formData.startDate
@@ -56,7 +55,7 @@ object Subscription {
           formData.volumeForOwnBrand,
           formData.importVolume,
           formData.volumeForCustomerBrands,
-          formData.volumeForSmallProducers,
+          None,
           formData.volumeByCopackers
         ),
         liabilityDate = startDate,

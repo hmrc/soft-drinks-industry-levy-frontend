@@ -18,7 +18,7 @@ package sdil.utils
 
 import java.io.File
 
-import com.softwaremill.macwire.MacwireMacros
+import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
@@ -37,12 +37,8 @@ import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.experimental.macros
 
 trait TestWiring extends MockitoSugar {
-  //local alias for macwire macro to avoid having to import it manually everywhere
-  def wire[T]: T = macro MacwireMacros.wire_impl[T]
-
   val mockCache: FormDataCache = {
     val m = mock[FormDataCache]
     when(m.cache(anyString(), any())(any())).thenReturn(Future.successful(CacheMap("", Map.empty)))

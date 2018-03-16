@@ -25,6 +25,7 @@ import play.api.test.Helpers._
 import sdil.models.Address
 import sdil.models.DetailsCorrect.DifferentAddress
 import uk.gov.hmrc.http.HttpResponse
+import com.softwaremill.macwire._
 
 class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
