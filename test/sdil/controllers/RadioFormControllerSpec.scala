@@ -118,7 +118,10 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "redirect to the copacked page from the import page if the copacked page is not complete" in {
-      stubFormPage(copacked = None)
+      stubFormPage(
+        producer = Some(Producer(true, None)),
+        copacked = None
+      )
 
       val res = controller.show(imports)(FakeRequest())
       status(res) mustBe SEE_OTHER
