@@ -25,16 +25,16 @@
 
 @innerRadioButtons = {
     <h2 class="heading-medium">@Messages("sdil.producer.hidden-heading")</h2>
-@inputRadioGroup(
-    producerForm("isLarge"),
-    options(
-        "false" -> Messages("sdil.producer.under-one-million"),
-        "true" -> Messages("sdil.producer.over-one-million")
-    ),
-    '_labelClass -> "block-label",
-    '_labelAfter -> true,
-    '_groupClass -> "form-field-group"
-)
+    @inputRadioGroup(
+        producerForm("isLarge"),
+        options(
+            "false" -> Messages("sdil.producer.under-one-million"),
+            "true" -> Messages("sdil.producer.over-one-million")
+        ),
+        '_labelClass -> "block-label",
+        '_labelAfter -> true,
+        '_groupClass -> "form-field-group"
+    )
 }
 
 @views.html.main_template(title = Messages("sdil.common.title"), form = Some(producerForm)) {
