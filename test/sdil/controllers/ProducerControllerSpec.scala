@@ -17,14 +17,10 @@
 package sdil.controllers
 
 import com.softwaremill.macwire.wire
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{ACCEPTED, NOT_FOUND, OK, contentAsString, status}
-import uk.gov.hmrc.http.HttpResponse
-import play.api.test.Helpers._
+import play.api.test.Helpers.{OK, contentAsString, status, _}
 
 class ProducerControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 

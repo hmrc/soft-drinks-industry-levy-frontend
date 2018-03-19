@@ -87,11 +87,7 @@ class RadioFormController(val messagesApi: MessagesApi,
     case ImportPage => formData.isImporter.fold(form)(form.fill)
     case PackageOwnUkPage => formData.isPackagingForSelf.fold(form)(form.fill)
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
-
-
-
   }
-
 }
 
 object RadioFormController extends FormHelpers {

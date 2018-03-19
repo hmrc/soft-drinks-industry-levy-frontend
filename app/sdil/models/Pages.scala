@@ -119,7 +119,7 @@ case object PackageOwnUkPage extends MidJourneyPage {
   }
 
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.isPackagingForSelf match {
-    case Some(true) => PackageOwnVolPage //TODO rename to PacakageOwnVol
+    case Some(true) => PackageOwnVolPage
     case _ => CopackedPage
   }
 
