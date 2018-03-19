@@ -16,12 +16,12 @@
 
 package sdil.controllers
 
+import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Litreage, Packaging, Producer}
-import com.softwaremill.macwire._
+import sdil.models.{Litreage, Producer}
 
 class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 

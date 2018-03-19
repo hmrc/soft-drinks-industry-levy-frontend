@@ -44,9 +44,6 @@ POST        /register/import-volume                            sdil.controllers.
 GET         /register/registration-type                        sdil.controllers.RegistrationTypeController.continue()
 GET         /register/do-not-register                          sdil.controllers.RegistrationTypeController.registrationNotRequired()
 
-GET         /register/small-producer-confirm                   sdil.controllers.SmallProducerConfirmController.show()
-POST        /register/small-producer-confirm                   sdil.controllers.SmallProducerConfirmController.submit()
-
 GET         /register/start-date                               sdil.controllers.StartDateController.show()
 POST        /register/start-date                               sdil.controllers.StartDateController.submit()
 

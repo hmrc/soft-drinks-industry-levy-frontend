@@ -128,8 +128,9 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("import").url
     }
 
-    "return a page with a link back to the small producer exemption page if the date is before the sugar tax start date " +
-      "and the user is not importing liable drinks" in {
+    "return a page with a link back to the import volume page if the date is before the tax start date, " +
+      "and the user is importing liable drinks" in {
+
       testConfig.setTaxStartDate(tomorrow)
       stubFormPage(smallProducerConfirmFlag = Some(true))
 
@@ -137,7 +138,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.show().url
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
     }
   }
 
