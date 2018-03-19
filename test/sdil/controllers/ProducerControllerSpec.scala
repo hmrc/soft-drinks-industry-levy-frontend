@@ -30,22 +30,44 @@ class ProducerControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "/producer" should {
     "always return 200 Ok and the producer page " in {
-      when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(NOT_FOUND))
       val res = testController.show()(FakeRequest())
 
       status(res) mustBe OK
       contentAsString(res) must include (Messages("sdil.producer.heading"))
     }
 
-//    "return Status: Bad Request for invalid producer form POST request and show choose option error" in {
-//      val request = FakeRequest().withFormUrlEncodedBody(
-//        "isProducer" -> "foo")
-//      val response = testController.submit().apply(request)
-//
-//      status(response) mustBe BAD_REQUEST
-//      contentType(response).get mustBe HTML
-//      contentAsString(response) must include(messagesApi("error.radio-form.choose-option"))
-//    }
+    "return Status: Bad Request for invalid producer form POST request and show choose option error" in {
+      val res = testController.submit()(FakeRequest())
+
+      status(res) mustBe BAD_REQUEST
+      contentAsString(res) must include (Messages("error.radio-form.choose-option"))
+    }
+
+    "return the package-copack page for No" in {
+      val res = testController.submit()(FakeRequest()
+        .withFormUrlEncodedBody("isProducer" -> "false"))
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.RadioFormController.show("packageCopack").url
+    }
+
+    "return the copacked page for Yes and < 1m " in {
+      val res = testController.submit()(FakeRequest()
+        .withFormUrlEncodedBody("isProducer" -> "true", "isLarge" -> "false"))
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.RadioFormController.show("copacked").url
+    }
+
+    "return the package-own page for Yes and > 1m " in {
+      val res = testController.submit()(FakeRequest()
+        .withFormUrlEncodedBody("isProducer" -> "true", "isLarge" -> "true"))
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.RadioFormController.show("packageOwnUk").url
+    }
+
+
   }
 
   lazy val testController = wire[ProducerController]
