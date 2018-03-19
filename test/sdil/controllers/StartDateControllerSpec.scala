@@ -18,12 +18,12 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Litreage, Packaging}
-import com.softwaremill.macwire._
+import sdil.models.{Litreage, Producer}
 
 class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -41,7 +41,6 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return Status: See Other for start date form POST with valid date and redirect to add site page" in {
       stubFormPage(
-//        packaging = Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(18888888, 24444)),
         copacked = Some(true),
         copackedVolume = Some(Litreage(344444, 44444444)),
@@ -57,10 +56,13 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(response).get mustBe routes.ProductionSiteController.show().url
     }
 
-    "return Status: See Other for start date form POST with valid date and redirect to secondary warehouse page" in {
+    "return Status: See Other for start date form POST with valid date and redirect to secondary warehouse page, " +
+      "if the user does not need to register any production sites" in {
+
       stubFormPage(
-//        packaging = Some(packagingIsntLiable),
+        producer = Some(Producer(isProducer = false, isLarge = None)),
         packageOwnVol = None,
+        packagesForOthers = Some(false),
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),
@@ -97,16 +99,6 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
     }
 
-    "return a page with a link back to the small producer exception page if the user confirmed exception" in {
-      stubFormPage(smallProducerConfirmFlag = Some(true))
-
-      val response = controller.show(FakeRequest())
-      status(response) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(response))
-      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.show().url
-    }
-
     "return a page with a link back to the imports page if the user does not import liable drinks" in {
       stubFormPage(imports = Some(false), packageOwnVol = Some(Litreage(1000000L,0L)))
 
@@ -119,7 +111,6 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return Status: See Other for start date form GET with valid date and Liable booleans with redirect to add site page" in {
       stubFormPage(
-//        packaging = Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(18888888, 24444)),
         copacked = Some(true),
         copackedVolume = Some(Litreage(344444, 44444444)),
@@ -153,15 +144,19 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(response).get mustBe routes.ProducerController.show().url
     }
 
-    "return Status: See Other for start date form GET with valid date and isnt Liable booleans with redirect to secondary warehouse page" in {
+    "return Status: See Other for start date page GET if it is before the tax start date, " +
+      "and redirect to secondary warehouse page if the user does not need to register any production sites" in {
+
       stubFormPage(
-//        packaging = Some(packagingIsntLiable),
+        producer = Some(Producer(isProducer = false, isLarge = None)),
         packageOwnVol = None,
+        packagesForOthers = Some(false),
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),
         importVolume = None
       )
+
       testConfig.setTaxStartDate(tomorrow)
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
@@ -189,7 +184,6 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "redirect to the contact details page when voluntary only" in {
       stubFormPage(
-//        packaging = Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(1, 2)),
         packageCopack = None,
         copacked = Some(true),
@@ -205,9 +199,6 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(res).value mustBe routes.ContactDetailsController.show().url
     }
   }
-
-  private lazy val packagingIsLiable = Packaging(true, false)
-  private lazy val packagingIsntLiable = Packaging(false, false)
 
   lazy val tomorrow = LocalDate.now plusDays 1
   lazy val yesterday: LocalDate = LocalDate.now minusDays 1

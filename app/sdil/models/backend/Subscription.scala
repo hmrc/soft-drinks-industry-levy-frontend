@@ -38,9 +38,8 @@ object Subscription {
     for {
 //      verify <- formData.verify
       orgType <- formData.organisationType
-//      packaging <- formData.packaging
-//      copacked <- formData.usesCopacker
-//      imports <- formData.isImporter
+      copacked <- formData.usesCopacker
+      imports <- formData.isImporter
       startDate <- formData.startDate
       productionSites = formData.productionSites.getOrElse(Nil)
       secondaryWarehouses = formData.secondaryWarehouses.getOrElse(Nil)

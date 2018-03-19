@@ -18,14 +18,14 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Litreage, Packaging}
+import sdil.models.Litreage
 import sdil.models.backend._
-import com.softwaremill.macwire._
 
 class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -40,9 +40,9 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "redirect to the registration not required page if they only produce for themselves, and the volume is fewer than 1 million litres" in {
       stubFormPage(
-//        packaging = Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(1, 2)),
         packageCopack = None,
+        packagesForOthers = Some(false),
         copacked = Some(false),
         copackedVolume = None,
         imports = Some(false),

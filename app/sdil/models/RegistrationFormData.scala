@@ -19,7 +19,6 @@ package sdil.models
 import java.time.LocalDate
 
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
 
 case class RegistrationFormData(rosmData: RosmRegistration,
                                 utr: String,
@@ -27,7 +26,6 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 organisationType: Option[String] = None,
                                 producer: Option[Producer] = None,
                                 isPackagingForSelf: Option[Boolean] = None,
-//                                packaging: Option[Packaging] = None,
                                 volumeForOwnBrand: Option[Litreage] = None,
                                 packagesForOthers: Option[Boolean] = None,
                                 volumeForCustomerBrands: Option[Litreage] = None,
@@ -44,9 +42,8 @@ case class RegistrationFormData(rosmData: RosmRegistration,
   lazy val isNotMandatory: Boolean = {
     total(volumeForOwnBrand, volumeByCopackers) < 1000000 &&
       volumeByCopackers.forall(_.total == 0) &&
-      !packagesForOthers.getOrElse(false) &&
-//      !packaging.exists(_.packagesCustomerBrands) &&
-      !isImporter.getOrElse(false)
+      packagesForOthers.contains(false) &&
+      isImporter.contains(false)
   }
 
   lazy val isSmall: Boolean = {
@@ -72,29 +69,10 @@ case class RegistrationFormData(rosmData: RosmRegistration,
       case _ => rosmData.address
     }
   }
+
+  lazy val hasPackagingSites: Boolean = producer.flatMap(_.isLarge).orElse(packagesForOthers).contains(true)
 }
 
 object RegistrationFormData {
-  // to be able to read existing save4later session data
-  implicit val format: Format[RegistrationFormData] = (
-    (__ \ "rosmData").format[RosmRegistration] and
-      (__ \ "utr").format[String] and
-      (__ \ "verify").formatNullable[DetailsCorrect] and
-      (__ \ "orgType").formatNullable[String] and
-      (__ \ "producer").formatNullable[Producer] and
-      (__ \ "isPackagingForSelf").formatNullable[Boolean] and
-//      (__ \ "packaging").formatNullable[Packaging] and
-      (__ \ "packageOwn").formatNullable[Litreage] and
-      (__ \ "packageCopack").formatNullable[Boolean] and
-      (__ \ "packageCopackVol").formatNullable[Litreage] and
-      (__ \ "copacked").formatNullable[Boolean] and
-      (__ \ "copackedVolume").formatNullable[Litreage] and
-      (__ \ "imports").formatNullable[Boolean] and
-      (__ \ "importVolume").formatNullable[Litreage] and
-      (__ \ "smallProducerConfirmFlag").formatNullable[Boolean] and
-      (__ \ "startDate").formatNullable[LocalDate] and
-      (__ \ "productionSites").formatNullable[Seq[Address]] and
-      (__ \ "secondaryWarehouses").formatNullable[Seq[Address]] and
-      (__ \ "contactDetails").formatNullable[ContactDetails]
-    ) (RegistrationFormData.apply, unlift(RegistrationFormData.unapply))
+  implicit val format: Format[RegistrationFormData] = Json.format[RegistrationFormData]
 }

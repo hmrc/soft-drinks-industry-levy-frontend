@@ -18,12 +18,12 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Litreage, Packaging}
-import com.softwaremill.macwire._
+import sdil.models.Litreage
 
 class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -63,7 +63,6 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
     "return a page with a link back to the warehouse page if the user is mandatory" in {
       stubFormPage(
-//        packaging = Some(Packaging(true, true)),
         packageOwnVol = Some(Litreage(1000000, 1000000)),
         copacked = Some(true),
         copackedVolume = Some(Litreage(100000, 1000000)),
@@ -80,7 +79,6 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
     "return a page with a link back to the start date page if the user is voluntary only and it is after the tax start dare" in {
       stubFormPage(
-//        packaging = Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(1, 2)),
         packageCopack = None,
         copacked = Some(true),
@@ -96,32 +94,12 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       html.select("a.link-back").attr("href") mustBe routes.StartDateController.show().url
     }
 
-    "return the small producer exemption page when they are voluntary and it is before the tax start date" in {
+    "return page with back link to the import page when they are voluntary, it is before the tax start date, " +
+      "and they do not import" in {
+
       testConfig.setTaxStartDate(LocalDate.now plusYears 2)
 
       stubFormPage(
-//        packaging = Some(Packaging(true, false)),
-        packageOwnVol = Some(Litreage(1, 2)),
-        packageCopack = None,
-        copacked = Some(true),
-        copackedVolume = Some(Litreage(3, 4)),
-        imports = Some(false),
-        importVolume = None,
-        smallProducerConfirmFlag = Some(true)
-      )
-      val response = testController.show(FakeRequest())
-      status(response) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(response))
-      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.show().url
-    }
-
-    "return page with back link to small producer confirm page when they are voluntary and it is before the tax start" +
-      " date and they do not import" in {
-      testConfig.setTaxStartDate(LocalDate.now plusYears 2)
-
-      stubFormPage(
-//        packaging = Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(1, 2)),
         packageCopack = None,
         copacked = Some(true),
@@ -133,7 +111,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(response) mustBe OK
 
       val html = Jsoup.parse(contentAsString(response))
-      html.select("a.link-back").attr("href") mustBe routes.SmallProducerConfirmController.show().url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("import").url
     }
   }
 

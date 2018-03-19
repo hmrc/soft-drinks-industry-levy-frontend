@@ -22,12 +22,13 @@ import sdil.controllers.routes
 import sdil.config.AppConfig
 
 sealed trait Page {
-
   def isComplete(formData: RegistrationFormData): Boolean
 
   def expectedPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = this
 
   def show: Call
+
+  protected def showStartDate(implicit config: AppConfig): Boolean = LocalDate.now isAfter config.taxStartDate
 }
 
 sealed trait PageWithPreviousPage extends Page {
@@ -218,16 +219,17 @@ case object RegistrationTypePage extends MidJourneyPage {
 
 case object StartDatePage extends MidJourneyPage {
 
-  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
-    case f if f.isVoluntary => ContactDetailsPage
-    case f if f.producer.exists(_.isLarge.getOrElse(false))  => ProductionSitesPage
-    case f if f.packagesForOthers.getOrElse(false) => ProductionSitesPage
-    case f if !f.producer.exists(_.isLarge.getOrElse(false)) => WarehouseSitesPage
-    case _ => ProducerPage
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
+    if (formData.isVoluntary) {
+      ContactDetailsPage
+    } else if (formData.hasPackagingSites) {
+      ProductionSitesPage
+    } else {
+      WarehouseSitesPage
+    }
   }
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
-    case form if formData.isSmall => SmallProducerConfirmPage
     case form if form.isImporter.contains(true) => ImportVolumePage
     case _ => ImportPage
   }
@@ -241,13 +243,7 @@ case object ProductionSitesPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = WarehouseSitesPage
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
-    val showStartDate = LocalDate.now isAfter config.taxStartDate
-    (formData.isImporter, formData.isSmall, showStartDate) match {
-      case (Some(true), false, false)  => ImportVolumePage
-      case (_, true, false) => SmallProducerConfirmPage
-      case (_, false, false) => ImportPage
-      case (_, _, true) => StartDatePage
-    }
+    if (showStartDate) StartDatePage else StartDatePage.previousPage(formData)
   }
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.productionSites.isDefined
@@ -258,10 +254,12 @@ case object ProductionSitesPage extends MidJourneyPage {
 case object WarehouseSitesPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = ContactDetailsPage
 
-  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
-    case f if f.producer.exists(_.isLarge.getOrElse(false)) => ProductionSitesPage
-    case f if f.packagesForOthers.getOrElse(false) => ProductionSitesPage
-    case _ => StartDatePage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
+    formData.isImporter match {
+      case _ if formData.hasPackagingSites => ProductionSitesPage
+      case _ if showStartDate => StartDatePage
+      case _ => StartDatePage.previousPage(formData)
+    }
   }
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.secondaryWarehouses.isDefined
@@ -271,29 +269,12 @@ case object WarehouseSitesPage extends MidJourneyPage {
 
 case object ContactDetailsPage extends PageWithPreviousPage {
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
-    case f if f.isVoluntary => StartDatePage
-    case _ => WarehouseSitesPage
+    case f if !f.isVoluntary => WarehouseSitesPage
+    case _ if showStartDate => StartDatePage
+    case _ => StartDatePage.previousPage(formData)
   }
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.contactDetails.isDefined
 
   override def show: Call = routes.ContactDetailsController.show()
-}
-
-case object SmallProducerConfirmPage extends MidJourneyPage {
-
-  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
-    if (config.taxStartDate isBefore LocalDate.now)
-      StartDatePage
-    else
-      ProductionSitesPage
-  }
-  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.isImporter match {
-    case Some(true) => ImportVolumePage
-    case _ => ImportPage
-  }
-
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.confirmedSmallProducer.isDefined
-
-  override def show: Call = routes.SmallProducerConfirmController.show()
 }
