@@ -17,6 +17,7 @@
 package sdil.controllers
 
 import com.softwaremill.macwire.wire
+import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
@@ -62,7 +63,14 @@ class ProducerControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.RadioFormController.show("packageOwnUk").url
     }
+    "return a page with a link back to the organisation type page" in {
 
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.OrganisationTypeController.show().url
+    }
 
   }
 

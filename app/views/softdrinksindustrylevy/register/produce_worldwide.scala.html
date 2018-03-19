@@ -47,22 +47,26 @@
 
     @form(action = sdil.controllers.routes.ProducerController.submit()) {
         <div class="form-group">
-            @inlineRadioButtonWithConditionalContent(
-                producerForm("isProducer"),
-                Seq(
-                    "true" -> ((Messages("sdil.common.yes"), Some("hiddenTarget"))),
-                    "false" -> ((Messages("sdil.common.no"), None))
-                ),
-                Some(innerRadioButtons),
-                '_labelClass -> "block-label",
-                '_labelAfter -> true,
-                '_groupClass -> "form-field-group inline",
-                '_label -> "Liable",
-                '_dataTargetTrue -> "millionRadios",
-                '_error -> producerForm("isProducer").error.map(_.withMessage(Messages("error.radio-form" +
-                        ".choose-option"))))
-            <button class="button" type="submit" id="continue-button">@Messages("sdil.common.save-continue")</button>
+        @inlineRadioButtonWithConditionalContent(
+            producerForm("isProducer"),
+            Seq(
+                "true" -> ((Messages("sdil.common.yes"), Some("hiddenTarget"))),
+                "false" -> ((Messages("sdil.common.no"), None))
+            ),
+            Some(innerRadioButtons),
+            '_labelClass -> "block-label",
+            '_labelAfter -> true,
+            '_groupClass -> "form-field-group inline",
+            '_label -> "Liable",
+            '_dataTargetTrue -> "millionRadios",
+            '_error -> producerForm("isProducer").error.map(_.withMessage(Messages("error.radio-form" +
+                    ".choose-option"))))
         </div>
+        @details("sdil.producer.details.title") {
+            <p>@Messages("sdil.producer.details.p1")</p>
+        }
+        <br>
+        <button class="button" type="submit" id="continue-button">@Messages("sdil.common.save-continue")</button>
 
     }
 
