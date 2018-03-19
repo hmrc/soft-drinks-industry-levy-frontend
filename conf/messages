@@ -74,6 +74,8 @@ sdil.producer.heading=In the past 12 months, have you packaged or had packaged b
 sdil.producer.hidden-heading=How many litres worldwide?
 sdil.producer.over-one-million=1 million litres or more
 sdil.producer.under-one-million=Less than 1 million litres
+sdil.producer.details.title=What does 'package' mean?
+sdil.producer.details.p1=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute. 
 
 #Package
 sdil.package.heading=Will you package liable drinks at a packaging site you operate?
@@ -206,21 +208,25 @@ sdil.declaration.change-link=Change
 sdil.declaration.true=Yes
 sdil.declaration.false=No
 
-sdil.declaration.small-producer-exemption=Small producer exemption
-sdil.declaration.confirm-small-producer-exemption=Confirm small producer exemption?
-
 sdil.declaration.your-business=Business details
 sdil.declaration.utr=Unique Taxpayer Reference (UTR)
 sdil.declaration.business-name=Business name
 sdil.declaration.address=Business address
 sdil.declaration.uk=UK
 
+sdil.declaration.producer=Did you produce liable drinks?
+sdil.declaration.isLargeProducer=How many litres worldwide?
+sdil.declaration.largeProducer=More than 1 million
+sdil.declaration.smallProducer=Less than 1 million
+
+sdil.declaration.customers=Will you package for any customers?
+
 sdil.declaration.liable-activity=Business activity
 sdil.declaration.low-band=Low band
 sdil.declaration.high-band=High band
-sdil.declaration.packaging=Will you package at your own site?
+sdil.declaration.packaging=Did you package at your own site?
 sdil.declaration.package-own=Annual litres for your own brands
-sdil.declaration.customers=Annual litres for your customers
+sdil.declaration.customerVol=Annual litres for your customers
 sdil.declaration.small-producers=Annual litres for small producers
 sdil.declaration.third-party=Will you use third party packagers?
 sdil.declaration.third-party-produced=Annual litres packaged by third parties

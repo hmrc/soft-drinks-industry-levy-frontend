@@ -49,36 +49,71 @@
     }
 
     @declaration_table("declaration","liable-activity") {
-        @formData.producer.map { producer: Producer =>
-            @declaration_details_table_row("declaration", "producer",
-                Some(sdil.controllers.routes.ProducerController.submit()),
-                Messages(s"sdil.declaration.${producer.isProducer}"), '_colspan -> "2")
-            @* TODO - when it comes to fixing the declaration
-            @if(producer.isLarge) {
-                @formData.volumeForOwnBrand.map { volumes =>
-                    @declaration_details_litres("package-own",
-                        sdil.controllers.routes.LitreageController.show("packageOwn"), volumes)
-                }
+        @formData.producer.map { producer =>
+            @declaration_details_table_row(
+                "declaration",
+                "producer",
+                Some(sdil.controllers.routes.ProducerController.show()),
+                Messages(s"sdil.declaration.${producer.isProducer}"),
+                '_colspan -> "2"
+            )
+            @if(producer.isProducer) {
+                @declaration_details_table_row(
+                    "declaration",
+                    "isLargeProducer",
+                    Some(sdil.controllers.routes.ProducerController.show()),
+                    if(producer.isLarge.contains(true)) {
+                        Messages("sdil.declaration.largeProducer")
+                    } else {
+                        Messages("sdil.declaration.smallProducer")
+                    },
+                    '_colspan -> "2"
+                )
             }
-
-            @if(packaging.packagesCustomerBrands) {
-                @formData.volumeForCustomerBrands.map { volumes =>
-                    @declaration_details_litres("customers",
-                        sdil.controllers.routes.LitreageController.show("packageCopackVol"), volumes)
-                }
-            }
-            *@
         }
 
         @formData.usesCopacker.map { copacked =>
             @declaration_details_table_row("declaration", "third-party",
                 Some(sdil.controllers.routes.RadioFormController.show(page = "copacked")),
-                Messages(s"sdil.declaration.${copacked}"), '_colspan -> "2")
+                Messages(s"sdil.declaration.$copacked"), '_colspan -> "2")
+        }
 
-            @if(copacked) {
-                @formData.volumeByCopackers.map { volumes =>
-                    @declaration_details_litres("third-party-produced",
-                        sdil.controllers.routes.LitreageController.show(pageName = "copackedVolume"), volumes)
+        @formData.isPackagingForSelf.map { packageOwn =>
+            @declaration_details_table_row(
+                "declaration",
+                "packaging",
+                Some(sdil.controllers.routes.RadioFormController.show("packageOwnUk")),
+                Messages(s"sdil.declaration.$packageOwn"),
+                '_colspan -> "2"
+            )
+
+            @if(packageOwn) {
+                @formData.volumeForOwnBrand.map { ownVol =>
+                    @declaration_details_litres(
+                        "package-own",
+                        sdil.controllers.routes.LitreageController.show("packageOwnVol"),
+                        ownVol
+                    )
+                }
+            }
+        }
+
+        @formData.packagesForOthers.map { copacks =>
+            @declaration_details_table_row(
+                "declaration",
+                "customers",
+                Some(sdil.controllers.routes.RadioFormController.show("packageCopack")),
+                Messages(s"sdil.declaration.$copacks"),
+                '_colspan -> "2"
+            )
+
+            @if(copacks) {
+                @formData.volumeForCustomerBrands.map { copackedVol =>
+                    @declaration_details_litres(
+                        "customerVol",
+                        sdil.controllers.routes.LitreageController.show("packageCopackVol"),
+                        copackedVol
+                    )
                 }
             }
         }
