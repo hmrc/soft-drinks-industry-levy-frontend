@@ -218,10 +218,11 @@ case object RegistrationTypePage extends MidJourneyPage {
 
 case object StartDatePage extends MidJourneyPage {
 
-  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = (formData, formData.packaging) match {
-    case (f, _) if f.isVoluntary => ContactDetailsPage
-    case (_, Some(p)) if p.isPackager => ProductionSitesPage
-    case (_, Some(p)) => WarehouseSitesPage
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
+    case f if f.isVoluntary => ContactDetailsPage
+    case f if f.producer.exists(_.isLarge.getOrElse(false))  => ProductionSitesPage
+    case f if f.packagesForOthers.getOrElse(false) => ProductionSitesPage
+    case f if !f.producer.exists(_.isLarge.getOrElse(false)) => WarehouseSitesPage
     case _ => ProducerPage
   }
 
@@ -257,10 +258,10 @@ case object ProductionSitesPage extends MidJourneyPage {
 case object WarehouseSitesPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = ContactDetailsPage
 
-  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packaging match {
-    case Some(p) if p.isPackager => ProductionSitesPage
-    case Some(_) => StartDatePage
-    case None => ProducerPage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
+    case f if f.producer.exists(_.isLarge.getOrElse(false)) => ProductionSitesPage
+    case f if f.packagesForOthers.getOrElse(false) => ProductionSitesPage
+    case _ => StartDatePage
   }
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.secondaryWarehouses.isDefined

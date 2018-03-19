@@ -36,11 +36,11 @@ object Subscription {
 
   def fromFormData(formData: RegistrationFormData): Option[Subscription] = {
     for {
-      verify <- formData.verify
+//      verify <- formData.verify
       orgType <- formData.organisationType
-      packaging <- formData.packaging
-      copacked <- formData.usesCopacker
-      imports <- formData.isImporter
+//      packaging <- formData.packaging
+//      copacked <- formData.usesCopacker
+//      imports <- formData.isImporter
       startDate <- formData.startDate
       productionSites = formData.productionSites.getOrElse(Nil)
       secondaryWarehouses = formData.secondaryWarehouses.getOrElse(Nil)

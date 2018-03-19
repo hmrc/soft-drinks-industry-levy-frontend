@@ -41,7 +41,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return Status: See Other for start date form POST with valid date and redirect to add site page" in {
       stubFormPage(
-        packaging = Some(Packaging(true, true, false)),
+//        packaging = Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(18888888, 24444)),
         copacked = Some(true),
         copackedVolume = Some(Litreage(344444, 44444444)),
@@ -59,7 +59,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return Status: See Other for start date form POST with valid date and redirect to secondary warehouse page" in {
       stubFormPage(
-        packaging = Some(packagingIsntLiable),
+//        packaging = Some(packagingIsntLiable),
         packageOwnVol = None,
         copacked = Some(false),
         copackedVolume = None,
@@ -119,7 +119,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return Status: See Other for start date form GET with valid date and Liable booleans with redirect to add site page" in {
       stubFormPage(
-        packaging = Some(Packaging(true, true, false)),
+//        packaging = Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(18888888, 24444)),
         copacked = Some(true),
         copackedVolume = Some(Litreage(344444, 44444444)),
@@ -155,7 +155,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return Status: See Other for start date form GET with valid date and isnt Liable booleans with redirect to secondary warehouse page" in {
       stubFormPage(
-        packaging = Some(packagingIsntLiable),
+//        packaging = Some(packagingIsntLiable),
         packageOwnVol = None,
         copacked = Some(false),
         copackedVolume = None,
@@ -189,7 +189,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "redirect to the contact details page when voluntary only" in {
       stubFormPage(
-        packaging = Some(Packaging(true, true, false)),
+//        packaging = Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(1, 2)),
         packageCopack = None,
         copacked = Some(true),
@@ -206,8 +206,8 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
   }
 
-  private lazy val packagingIsLiable = Packaging(true, true, false)
-  private lazy val packagingIsntLiable = Packaging(false, false, false)
+  private lazy val packagingIsLiable = Packaging(true, false)
+  private lazy val packagingIsntLiable = Packaging(false, false)
 
   lazy val tomorrow = LocalDate.now plusDays 1
   lazy val yesterday: LocalDate = LocalDate.now minusDays 1

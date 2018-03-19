@@ -19,7 +19,7 @@ package sdil.controllers
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Litreage, Packaging}
+import sdil.models.{Litreage, Packaging, Producer}
 import com.softwaremill.macwire._
 
 class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
@@ -27,7 +27,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
   "The registration type controller" should {
     "redirect to the registration not required page if they only produce for themselves, and the volume is fewer than 1 million litres" in {
       stubFormPage(
-        packaging = Some(Packaging(true, true, false)),
+        producer = Some(Producer(isProducer = true, isLarge = Some(false))),
         packageOwnVol = Some(Litreage(1, 2)),
         packageCopack = None,
         copacked = Some(false),
@@ -44,7 +44,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
     "redirect to the start date page if the user packages, or has packaged on their behalf, more than 1 million litres" in {
       stubFormPage(
-        packaging = Some(Packaging(true, true, false)),
+//        packaging = Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(1000000, 2)),
         packageCopack = None,
         copacked = Some(false),
@@ -61,7 +61,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
     "redirect to the confirm small producer exemption page if the user produces fewer than 1 million litres, but copacks for others" in {
       stubFormPage(
-        packaging = Some(Packaging(true, true, true)),
+        // packaging =Some(Packaging(true, true)),
         packageOwnVol = Some(Litreage(1, 2)),
         copacked = Some(false),
         copackedVolume = None,
@@ -77,7 +77,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
     "redirect to the confirm small producer exemption page if the user produces fewer than 1 million litres, but imports liable drinks" in {
       stubFormPage(
-        packaging = Some(Packaging(true, true, false)),
+        // packaging =Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(1, 2)),
         copacked = Some(false),
         copackedVolume = None,
@@ -93,7 +93,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
     "redirect to the confirm small producer exemption page if the user produces fewer than 1 million litres, but uses a copacker" in {
       stubFormPage(
-        packaging = Some(Packaging(true, true, false)),
+        // packaging =Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(1, 2)),
         copacked = Some(true),
         copackedVolume = Some(Litreage(3, 4)),
@@ -109,7 +109,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
     "redirect to the registration not required page if the registration is voluntary only" in {
       stubFormPage(
-        packaging = Some(Packaging(true, true, false)),
+        // packaging =Some(Packaging(true, false)),
         packageOwnVol = Some(Litreage(10000, 2)),
         copacked = Some(false),
         copackedVolume = None,
@@ -125,7 +125,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
     "redirect to the start date page if the user only imports" in {
       stubFormPage(
-        packaging = Some(Packaging(false, false, false)),
+        // packaging =Some(Packaging(false, false)),
         packageOwnVol = None,
         copacked = Some(false),
         copackedVolume = None,
@@ -141,7 +141,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
     "redirect to the start date page if the user only copacks" in {
       stubFormPage(
-        packaging = Some(Packaging(false, false, true)),
+        // packaging =Some(Packaging(false, true)),
         packageOwnVol = None,
         packageCopack = Some(Litreage(1, 2)),
         copacked = Some(false),
@@ -158,7 +158,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
     "redirect to the do not register page if the user does not package, import, copack, or have drinks packaged for them" in {
       stubFormPage(
-        packaging = Some(Packaging(false, false, false)),
+        // packaging =Some(Packaging(false, false)),
         packageOwnVol = None,
         packageCopack = None,
         copacked = Some(false),

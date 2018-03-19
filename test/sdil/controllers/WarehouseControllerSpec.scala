@@ -57,7 +57,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return a page with a link back to the start date page if the user does not package liable drinks" +
       "and the date is after the tax start date" in {
-      stubFormPage(packaging = Some(Packaging(false, false, false)))
+//      stubFormPage(packaging = Some(Packaging(false, false)))
       testConfig.setTaxStartDate(LocalDate.now minusDays 1)
 
       val res = testController.show()(FakeRequest())
@@ -72,7 +72,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return a page with a link back to the import volume page if the user does not package liable drinks, " +
       "imports liable drinks, and the date is before the tax start date" in {
       stubFormPage(
-        packaging = Some(Packaging(false, false, false)),
+//        packaging = Some(Packaging(false, false)),
         imports = Some(true),
         packageCopack = None,
         packageOwnVol = None,
@@ -93,7 +93,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return a page with a link back to the import page if the user does not package or import liable drinks," +
       "and the date is before the tax start date" in {
       stubFormPage(
-        packaging = Some(Packaging(false, false, false)),
+//        packaging = Some(Packaging(false, false)),
         imports = Some(false),
         copackedVolume = None,
         packageOwnVol = None

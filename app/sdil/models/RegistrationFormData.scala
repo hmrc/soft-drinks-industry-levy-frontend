@@ -27,7 +27,7 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 organisationType: Option[String] = None,
                                 producer: Option[Producer] = None,
                                 isPackagingForSelf: Option[Boolean] = None,
-                                packaging: Option[Packaging] = None,
+//                                packaging: Option[Packaging] = None,
                                 volumeForOwnBrand: Option[Litreage] = None,
                                 packagesForOthers: Option[Boolean] = None,
                                 volumeForCustomerBrands: Option[Litreage] = None,
@@ -44,7 +44,8 @@ case class RegistrationFormData(rosmData: RosmRegistration,
   lazy val isNotMandatory: Boolean = {
     total(volumeForOwnBrand, volumeByCopackers) < 1000000 &&
       volumeByCopackers.forall(_.total == 0) &&
-      !packaging.exists(_.packagesCustomerBrands) &&
+      !packagesForOthers.getOrElse(false) &&
+//      !packaging.exists(_.packagesCustomerBrands) &&
       !isImporter.getOrElse(false)
   }
 
@@ -82,7 +83,7 @@ object RegistrationFormData {
       (__ \ "orgType").formatNullable[String] and
       (__ \ "producer").formatNullable[Producer] and
       (__ \ "isPackagingForSelf").formatNullable[Boolean] and
-      (__ \ "packaging").formatNullable[Packaging] and
+//      (__ \ "packaging").formatNullable[Packaging] and
       (__ \ "packageOwn").formatNullable[Litreage] and
       (__ \ "packageCopack").formatNullable[Boolean] and
       (__ \ "packageCopackVol").formatNullable[Litreage] and

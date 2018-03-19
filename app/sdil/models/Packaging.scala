@@ -19,12 +19,12 @@ package sdil.models
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
-case class Packaging(isPackager: Boolean, packagesOwnBrand: Boolean, packagesCustomerBrands: Boolean)
+case class Packaging(isPackager: Boolean, packagesCustomerBrands: Boolean)
 
 object Packaging {
   implicit val format: Format[Packaging] = (
     (__ \ "isLiable").format[Boolean] and
-      (__ \ "ownBrands").format[Boolean] and
+//      (__ \ "ownBrands").format[Boolean] and // TODO is this used, I think not!!!
       (__ \ "customers").format[Boolean]
   )(Packaging.apply, unlift(Packaging.unapply))
 }
