@@ -20,13 +20,16 @@ import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Litreage, Packaging}
+import sdil.models.{Litreage, Packaging, Producer}
 import com.softwaremill.macwire._
 
 class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "Radio Form Controller" should {
     "return Status: OK when user is logged in and loads copacked page" in {
+      stubFormPage(
+        producer = Some(Producer(false, None)),
+        copacked = None)
       val result = controller.show(copacked)(FakeRequest())
 
       status(result) mustBe OK
@@ -115,7 +118,10 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "redirect to the copacked page from the import page if the copacked page is not complete" in {
-      stubFormPage(copacked = None)
+      stubFormPage(
+        producer = Some(Producer(true, None)),
+        copacked = None
+      )
 
       val res = controller.show(imports)(FakeRequest())
       status(res) mustBe SEE_OTHER

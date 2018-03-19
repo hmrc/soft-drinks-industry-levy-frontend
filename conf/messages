@@ -69,6 +69,12 @@ sdil.partnership.heading=Please call us
 sdil.partnership.info.p1=We’re sorry, but you cannot register online as a partnership.
 sdil.partnership.info.p2=You’ll need to call us on 0300 200 3700 to submit your application to register for the Soft Drinks Levy.
 
+#Producer
+sdil.producer.heading=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide?
+sdil.producer.hidden-heading=How many litres worldwide?
+sdil.producer.over-one-million=1 million litres or more
+sdil.producer.under-one-million=Less than 1 million litres
+
 #Package
 sdil.package.heading=Will you package liable drinks at a packaging site you operate?
 sdil.package.who-for=Who will you package liable drinks for?
@@ -86,7 +92,9 @@ error.copack-small.lower-greater-than-total-lower=Litres for small producers mus
 error.copack-small.higher-greater-than-total-higher=Litres for small producers must be less than total litres for customers
 
 #Litreage pages
-sdil.packageOwn.heading=In the next year, how many litres of liable drink do you expect to package for brands you own or have the rights to manufacture?
+sdil.packageOwnVol.heading=In the past 12 months, how many litres of liable drink did you package for brands you own or\
+   have the rights to manufacture at UK packaging sites you operate?
+sdil.packageOwnUk.heading=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have the rights to manufacture?
 sdil.packageCopackVol.heading=In the next 12 months, how many litres of liable drink will you package for your customers at UK packaging sites you operate?
 sdil.packageCopackSmallVol.heading=In the next year, how many litres of liable drink do you expect to claim a small producer exemption for?
 sdil.copackedVolume.heading=In the next year, how many litres of liable drink do you expect to have packaged by third parties in the UK?
@@ -138,7 +146,7 @@ sdil.packageCopackSmall.whatis.body.p2=You’ll need to enter their reference nu
 
 
 #Co Packed
-sdil.copacked.heading=Will you use any third parties in the UK to package liable drinks on your behalf?
+sdil.copacked.heading=Do you use any third parties in the UK to package liable drinks on your behalf?
 
 #Import
 sdil.import.heading=Do you bring liable drinks into the UK from anywhere outside of the UK?

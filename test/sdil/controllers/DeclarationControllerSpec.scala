@@ -41,7 +41,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "redirect to the registration not required page if they only produce for themselves, and the volume is fewer than 1 million litres" in {
       stubFormPage(
         packaging = Some(Packaging(true, true, false)),
-        packageOwn = Some(Litreage(1, 2)),
+        packageOwnVol = Some(Litreage(1, 2)),
         packageCopack = None,
         copacked = Some(false),
         copackedVolume = None,

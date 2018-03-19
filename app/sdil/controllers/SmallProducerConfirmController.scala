@@ -19,11 +19,10 @@ package sdil.controllers
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
-import sdil.config.FormDataCache
-import sdil.models.{PackagePage, SmallProducerConfirmPage}
+import sdil.config.{AppConfig, FormDataCache}
+import sdil.models.SmallProducerConfirmPage
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
-import sdil.config.AppConfig
 
 class SmallProducerConfirmController(val messagesApi: MessagesApi,
                                      cache: FormDataCache,

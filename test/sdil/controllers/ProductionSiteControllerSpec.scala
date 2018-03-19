@@ -103,7 +103,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       "and the user is importing liable drinks" in {
       testConfig.setTaxStartDate(tomorrow)
       stubFormPage(
-        packageOwn = Some(Litreage(10000000L, 10000000L)),
+        packageOwnVol = Some(Litreage(10000000L, 10000000L)),
         imports = Some(true),
         importVolume = Some(Litreage(5, 5)))
 
@@ -118,7 +118,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
     "return a page with a link back to the import page if the date is before the sugar tax start date " +
       "and the user is not importing liable drinks" in {
       testConfig.setTaxStartDate(tomorrow)
-      stubFormPage(packageOwn = Some(Litreage(10000000L, 10000000L)),
+      stubFormPage(packageOwnVol = Some(Litreage(10000000L, 10000000L)),
         imports = Some(false))
 
       val res = testController.show()(FakeRequest())
