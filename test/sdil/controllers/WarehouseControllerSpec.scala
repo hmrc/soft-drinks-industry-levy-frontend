@@ -18,6 +18,7 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
@@ -25,8 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Address, Packaging}
-import com.softwaremill.macwire._
+import sdil.models.{Address, Producer}
 
 class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -57,7 +57,12 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return a page with a link back to the start date page if the user does not package liable drinks" +
       "and the date is after the tax start date" in {
-      stubFormPage(packaging = Some(Packaging(false, false, false)))
+
+      stubFormPage(
+        producer = Some(Producer(isProducer = false, isLarge = None)),
+        packagesForOthers = Some(false)
+      )
+
       testConfig.setTaxStartDate(LocalDate.now minusDays 1)
 
       val res = testController.show()(FakeRequest())
@@ -71,11 +76,13 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return a page with a link back to the import volume page if the user does not package liable drinks, " +
       "imports liable drinks, and the date is before the tax start date" in {
+
       stubFormPage(
-        packaging = Some(Packaging(false, false, false)),
+        producer = Some(Producer(isProducer = false, isLarge = None)),
         imports = Some(true),
         packageCopack = None,
         packageOwnVol = None,
+        packagesForOthers = Some(false),
         copacked = Some(false),
         copackedVolume = None
       )
@@ -90,10 +97,11 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       testConfig.resetTaxStartDate()
     }
 
-    "return a page with a link back to the import page if the user does not package or import liable drinks," +
+    "return a page with a link back to the import page if the user does not package or import liable drinks, " +
       "and the date is before the tax start date" in {
       stubFormPage(
-        packaging = Some(Packaging(false, false, false)),
+        producer = Some(Producer(isProducer = false, isLarge = None)),
+        packagesForOthers = Some(false),
         imports = Some(false),
         copackedVolume = None,
         packageOwnVol = None

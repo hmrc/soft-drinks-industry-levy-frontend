@@ -97,16 +97,6 @@
         }
     }
 
-    @if(formData.isSmall) {
-        @declaration_table("declaration", "small-producer-exemption") {
-            @formData.confirmedSmallProducer.map { flag =>
-                @declaration_details_table_row("declaration", "confirm-small-producer-exemption",
-                    Some(sdil.controllers.routes.SmallProducerConfirmController.show()), Messages
-                            (s"sdil.declaration.$flag"))
-            }
-        }
-    }
-
     @if(LocalDate.now isAfter config.taxStartDate) {
         @declaration_table("declaration", "liable-date") {
             @formData.startDate.map { date =>

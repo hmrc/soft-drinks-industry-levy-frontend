@@ -33,11 +33,9 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
   def continue: Action[AnyContent] = formAction.async { implicit request =>
     cache.cache(request.internalId, request.formData.copy(confirmedSmallProducer = None)) flatMap { _ =>
       RegistrationTypePage.expectedPage(request.formData) match {
-        case RegistrationTypePage => registrationType(request.formData) match {
-          case RegistrationNotRequired => Redirect(routes.RegistrationTypeController.registrationNotRequired())
-          case Mandatory => Redirect(routes.StartDateController.show())
-          case Voluntary => Redirect(routes.SmallProducerConfirmController.show())
-        }
+        case RegistrationTypePage if request.formData.isNotMandatory =>
+          Redirect(routes.RegistrationTypeController.registrationNotRequired())
+        case RegistrationTypePage => Redirect(routes.StartDateController.show())
         case other => Redirect(other.show)
       }
     }
@@ -46,20 +44,4 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
   def registrationNotRequired: Action[AnyContent] = Action { implicit request =>
     Ok(registration_not_required())
   }
-
-  private def registrationType(formData: RegistrationFormData): RegistrationType = {
-    formData match {
-      case a if a.isNotMandatory => RegistrationNotRequired
-      case a if a.isSmall => Voluntary
-      case _ => Mandatory
-    }
-  }
-
-  sealed trait RegistrationType
-
-  case object Mandatory extends RegistrationType
-
-  case object Voluntary extends RegistrationType
-
-  case object RegistrationNotRequired extends RegistrationType
 }

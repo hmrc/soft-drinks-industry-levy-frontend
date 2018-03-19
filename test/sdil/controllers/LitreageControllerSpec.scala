@@ -25,7 +25,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Litreage, Packaging, Producer}
+import sdil.models.{Litreage, Producer}
 
 class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
