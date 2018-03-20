@@ -43,13 +43,13 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       contentAsString(result) must include(messagesApi("sdil.import.heading"))
     }
 
-    "return Status: SEE_OTHER and redirect to the copacked volume page if the user uses copackers" in {
+    "return Status: SEE_OTHER and redirect to the package own uk page if the user uses copackers" in {
       val result = copackedSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "true"
       ))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.LitreageController.show("copackedVolume").url
+      redirectLocation(result).value mustBe routes.RadioFormController.show("packageOwnUk").url
     }
 
     "return Status: SEE_OTHER and redirect to the import page if the user does not use copackers" in {
@@ -58,7 +58,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       ))
 
       status(result) mustBe SEE_OTHER
-      routes.RadioFormController.show(imports).url must include(redirectLocation(result).get)
+      redirectLocation(result).value mustBe routes.RadioFormController.show("packageOwnUk").url
     }
 
     "return Status: SEE_OTHER and redirect to the import volume page if the user imports liable drinks" in {
@@ -97,43 +97,43 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       contentAsString(result) must include(messagesApi("sdil.common.errorSummary"))
     }
 
-    "generate correct back link for import page with true for copacked" in {
-      stubFormPage(copacked = Some(true))
+    "generate correct back link for import page with true for packagesForOthers" in {
+      stubFormPage(packagesForOthers = Some(true))
 
       val result = controller.show(imports).apply(FakeRequest())
 
       val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("copackedVolume").url
+      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("packageCopackVol").url
       status(result) mustBe OK
     }
 
-    "generate correct back link for copacked page with false for copacked" in {
-      stubFormPage(copacked = Some(false))
+    "generate correct back link for import page with false for packagesForOthers" in {
+      stubFormPage(packagesForOthers = Some(false))
 
       val result = controller.show(imports).apply(FakeRequest())
 
-      status(result) mustBe OK
       val html = Jsoup.parse(contentAsString(result))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show(copacked).url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("packageCopack").url
+      status(result) mustBe OK
     }
 
     "redirect to the copacked page from the import page if the copacked page is not complete" in {
       stubFormPage(
         producer = Some(Producer(true, None)),
-        copacked = None
+        packagesForOthers = None
       )
 
       val res = controller.show(imports)(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.RadioFormController.show(copacked).url)
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("packageCopack").url)
     }
 
     "redirect to the copacked volume page from the import page if the user has copackers and the copacked volume page is not complete" in {
-      stubFormPage(copacked = Some(true), copackedVolume = None)
+      stubFormPage(packagesForOthers = Some(true), packageCopackVol = None)
 
       val res = controller.show(imports)(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.LitreageController.show("copackedVolume").url)
+      redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopackVol").url)
     }
 
     "store the form data and purge the copacked volume data when the user does not use copackers" in {

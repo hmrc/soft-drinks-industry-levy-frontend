@@ -165,16 +165,6 @@ case object PackageCopackVolPage extends MidJourneyPage {
 
   override def show: Call = routes.LitreageController.show("packageCopackVol")
 }
-//
-//case object CopackedVolumePage extends MidJourneyPage {
-//  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = ImportPage
-//
-//  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = CopackedPage
-//
-//  override def isComplete(formData: RegistrationFormData): Boolean = formData.volumeByCopackers.isDefined
-//
-//  override def show: Call = routes.LitreageController.show("copackedVolume")
-//}
 
 case object ImportPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.isImporter match {

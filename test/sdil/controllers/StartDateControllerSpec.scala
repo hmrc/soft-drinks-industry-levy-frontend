@@ -126,12 +126,14 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(response).get mustBe routes.ProductionSiteController.show().url
     }
 
-    "return Status: See Other for start date form GET with valid date and no Liable booleans with redirect to display Package page" in {
+    "return Status: See Other for start date form GET with valid date and no Liable booleans with redirect to " +
+      "producer page" in {
       stubFormPage(
         producer = None,
+        isPackagingForSelf = None,
         packageOwnVol = None,
-        copacked = None,
-        copackedVolume = None,
+        packagesForOthers = None,
+        packageCopackVol = None,
         imports = None,
         importVolume = None
       )
@@ -185,7 +187,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "redirect to the contact details page when voluntary only" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
-        packageCopack = None,
+        packageCopackVol = None,
         copacked = Some(true),
         copackedVolume = Some(Litreage(3, 4)),
         imports = Some(false),

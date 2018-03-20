@@ -80,7 +80,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
     "return a page with a link back to the start date page if the user is voluntary only and it is after the tax start dare" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
-        packageCopack = None,
+        packageCopackVol = None,
         copacked = Some(true),
         copackedVolume = Some(Litreage(3, 4)),
         imports = Some(false),
@@ -101,7 +101,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
-        packageCopack = None,
+        packageCopackVol = None,
         copacked = Some(true),
         copackedVolume = Some(Litreage(35, 45)),
         imports = Some(false),
