@@ -78,7 +78,6 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           Some(Litreage(1, 2)),
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
-          None,
           Some(Litreage(7, 8))
         ),
         LocalDate.of(2018, 4, 6),
@@ -113,7 +112,6 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           Some(Litreage(1, 2)),
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
-          None,
           Some(Litreage(7, 8))
         ),
         LocalDate.of(2018, 4, 6),

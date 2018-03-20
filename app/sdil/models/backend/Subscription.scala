@@ -54,7 +54,6 @@ object Subscription {
           formData.volumeForOwnBrand,
           formData.importVolume,
           formData.volumeForCustomerBrands,
-          None,
           formData.volumeByCopackers
         ),
         liabilityDate = startDate,

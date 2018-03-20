@@ -22,7 +22,6 @@ import sdil.models.Litreage
 case class Activity(ProducedOwnBrand: Option[Litreage],
                     Imported: Option[Litreage],
                     CopackerAll: Option[Litreage],
-                    CopackerSmall: Option[Litreage],
                     Copackee: Option[Litreage])
 
 object Activity {
