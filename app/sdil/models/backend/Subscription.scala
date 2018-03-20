@@ -36,7 +36,7 @@ object Subscription {
 
   def fromFormData(formData: RegistrationFormData): Option[Subscription] = {
     for {
-      verify <- formData.verify
+//      verify <- formData.verify
       orgType <- formData.organisationType
       copacked <- formData.usesCopacker
       imports <- formData.isImporter

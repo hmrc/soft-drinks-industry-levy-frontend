@@ -100,8 +100,7 @@ case object ProducerPage extends MidJourneyPage {
 
 case object CopackedPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.usesCopacker match {
-    case Some(true) => CopackedVolumePage
-    case Some(false) => ImportPage
+    case Some(_) => PackageOwnUkPage
     case None => CopackedPage
   }
 
@@ -121,7 +120,7 @@ case object PackageOwnUkPage extends MidJourneyPage {
 
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.isPackagingForSelf match {
     case Some(true) => PackageOwnVolPage
-    case _ => CopackedPage
+    case _ => PackageCopackPage
   }
 
   override def isComplete(formData: RegistrationFormData) = formData.isPackagingForSelf.isDefined
@@ -167,16 +166,6 @@ case object PackageCopackVolPage extends MidJourneyPage {
   override def show: Call = routes.LitreageController.show("packageCopackVol")
 }
 
-case object CopackedVolumePage extends MidJourneyPage {
-  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = ImportPage
-
-  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = CopackedPage
-
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.volumeByCopackers.isDefined
-
-  override def show: Call = routes.LitreageController.show("copackedVolume")
-}
-
 case object ImportPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.isImporter match {
     case Some(true) => ImportVolumePage
@@ -184,9 +173,9 @@ case object ImportPage extends MidJourneyPage {
     case None => ImportPage
   }
 
-  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.usesCopacker match {
-    case Some(true) => CopackedVolumePage
-    case _ => CopackedPage
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packagesForOthers match {
+    case Some(true) => PackageCopackVolPage
+    case _ => PackageCopackPage
   }
 
   override def isComplete(formData: RegistrationFormData): Boolean = formData.isImporter.isDefined

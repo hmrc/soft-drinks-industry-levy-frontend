@@ -80,7 +80,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       stubFormPage(
         producer = Some(Producer(isProducer = false, isLarge = None)),
         imports = Some(true),
-        packageCopack = None,
+        packageCopackVol = None,
         packageOwnVol = None,
         packagesForOthers = Some(false),
         copacked = Some(false),
