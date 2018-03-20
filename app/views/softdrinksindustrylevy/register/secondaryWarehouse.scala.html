@@ -30,17 +30,16 @@
 
     @form(submissionUrl) {
         @if(warehouses.isEmpty) {
-            @radioButtonWithConditionalContent(
-                field = warehouseForm("addWarehouse"),
-                radioOptions = Seq(
-                    ("true", (Messages("sdil.common.yes"), Some(
-                        addressFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add", warehouses.isEmpty)
-                    ))),
-                    ("false", (Messages("sdil.common.no"), None))
+            @inlineRadioButtonWithConditionalContent(
+                warehouseForm("addWarehouse"),
+                Seq(
+                    "true" -> ((Messages("sdil.common.yes"), Some("hiddenTarget"))),
+                    "false" -> ((Messages("sdil.common.no"), None))
                 ),
+                Some(addressFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add", warehouses.isEmpty)),
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
-                '_groupClass -> "form-field-group",
+                '_groupClass -> "form-field-group inline",
                 '_dataTargetTrue -> "warehouse"
             )
         } else {

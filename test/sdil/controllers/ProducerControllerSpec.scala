@@ -22,6 +22,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, contentAsString, status, _}
+import sdil.models.Producer
 
 class ProducerControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
