@@ -53,17 +53,9 @@ class ProducerController(val messagesApi: MessagesApi, cache: FormDataCache, for
   //clear unneeded data from session cache when the user's answers change
   private def updateData(formData: RegistrationFormData, producer: Producer) = producer match {
     case Producer(false, _) =>
-      formData.copy(
-        producer = Some(Producer(false, None)),
-        usesCopacker = None,
-        isPackagingForSelf = None,
-        volumeForOwnBrand = None
-      )
+      formData.copy(producer = Some(Producer(false, None)), usesCopacker = None)
     case Producer(true, Some(true)) =>
-      formData.copy(
-        producer = Some(Producer(true, Some(true))),
-        usesCopacker = None
-      )
+      formData.copy(producer = Some(producer), usesCopacker = None)
     case _ => formData.copy(producer = Some(producer))
   }
 }

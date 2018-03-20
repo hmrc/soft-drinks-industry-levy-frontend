@@ -22,6 +22,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, contentAsString, status, _}
+import sdil.models.Producer
 
 class ProducerControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -63,15 +64,56 @@ class ProducerControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.RadioFormController.show("packageOwnUk").url
     }
-    "return a page with a link back to the organisation type page" in {
 
+    "save the form data, and purge the copacked data, when the user is not a producer" in {
+      stubFormPage(utr = "9998887776")
+
+      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody("isProducer" -> "false"))
+
+      status(res) mustBe SEE_OTHER
+      verifyDataCached(defaultFormData.copy(
+        utr = "9998887776",
+        producer = Some(Producer(isProducer = false, isLarge = None)),
+        usesCopacker = None
+      ))
+    }
+
+    "save the form data, and purge the copacked data, when the user produced more than 1 million litres" in {
+      stubFormPage(utr = "9998887775")
+
+      val res = testController.submit()(FakeRequest()
+        .withFormUrlEncodedBody("isProducer" -> "true", "isLarge" -> "true")
+      )
+
+      status(res) mustBe SEE_OTHER
+      verifyDataCached(defaultFormData.copy(
+        utr = "9998887775",
+        producer = Some(Producer(isProducer = true, isLarge = Some(true))),
+        usesCopacker = None
+      ))
+    }
+
+    "save the form data when the user produced less than 1 million litres" in {
+      stubFormPage(utr = "9998887774")
+
+      val res = testController.submit()(FakeRequest()
+        .withFormUrlEncodedBody("isProducer" -> "true", "isLarge" -> "false")
+      )
+
+      status(res) mustBe SEE_OTHER
+      verifyDataCached(defaultFormData.copy(
+        utr = "9998887774",
+        producer = Some(Producer(isProducer = true, isLarge = Some(false)))
+      ))
+    }
+
+    "return a page with a link back to the organisation type page" in {
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.OrganisationTypeController.show().url
     }
-
   }
 
   lazy val testController = wire[ProducerController]
