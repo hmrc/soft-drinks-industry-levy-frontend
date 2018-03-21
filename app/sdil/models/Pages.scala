@@ -142,6 +142,7 @@ case object PackageCopackPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.packagesForOthers match {
     case Some(true) => PackageCopackVolPage
     case Some(false) => ImportPage
+    case None => PackageCopackPage
   }
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
