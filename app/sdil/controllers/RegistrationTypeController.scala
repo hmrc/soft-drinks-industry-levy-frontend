@@ -32,7 +32,7 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
 
   def continue: Action[AnyContent] = formAction.async { implicit request =>
     RegistrationTypePage.expectedPage(request.formData) match {
-      case RegistrationTypePage if request.formData.isNotMandatory =>
+      case RegistrationTypePage if request.formData.isNotAllowedToRegister =>
         Redirect(routes.RegistrationTypeController.registrationNotRequired())
       // ensure production sites/warehouses are not stored if they aren't needed
       case RegistrationTypePage if request.formData.isVoluntary =>
