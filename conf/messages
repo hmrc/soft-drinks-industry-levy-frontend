@@ -94,8 +94,8 @@ error.copack-small.lower-greater-than-total-lower=Litres for small producers mus
 error.copack-small.higher-greater-than-total-higher=Litres for small producers must be less than total litres for customers
 
 #Litreage pages
-sdil.packageOwnVol.heading=In the past 12 months, how many litres of liable drink did you package for brands you own or\
-   have the rights to manufacture at UK packaging sites you operate?
+sdil.packageOwnVol.heading=In the next 12 months, how many litres of liable drink do you expect to package for brands \
+  you own or have the rights to manufacture at UK packaging sites you operate?
 sdil.packageOwnUk.heading=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have the rights to manufacture?
 sdil.packageCopackVol.heading=In the next 12 months, how many litres of liable drink do you expect to package for your customers at UK packaging sites you operate?
 sdil.packageCopackSmallVol.heading=In the next year, how many litres of liable drink do you expect to claim a small producer exemption for?

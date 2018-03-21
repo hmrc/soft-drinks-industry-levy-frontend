@@ -12,11 +12,13 @@ body {
     padding-right: 0;
 }
 
-.table-row-question {
-    width: 62%;
-}
 
 @media (min-width: 640px) {
+
+    .table-row-question {
+        width: 62%;
+    }
+
     .check-your-answers td {
         font-size: 19px;
         line-height: 1.31579;
