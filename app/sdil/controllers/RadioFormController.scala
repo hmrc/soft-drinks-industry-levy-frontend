@@ -76,7 +76,8 @@ class RadioFormController(val messagesApi: MessagesApi,
     case CopackedPage => formData.copy(usesCopacker = Some(choice), volumeByCopackers = None)
     case ImportPage if choice => formData.copy(isImporter = Some(choice))
     case ImportPage => formData.copy(isImporter = Some(choice), importVolume = None)
-    case PackageOwnUkPage => formData.copy(isPackagingForSelf = Some(choice))
+    case PackageOwnUkPage if choice => formData.copy(isPackagingForSelf = Some(choice))
+    case PackageOwnUkPage => formData.copy(isPackagingForSelf = Some(choice), volumeForOwnBrand = None)
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
   }
 
