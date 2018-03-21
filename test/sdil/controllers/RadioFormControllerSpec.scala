@@ -29,7 +29,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return Status: OK when user is logged in and loads copacked page" in {
       stubFormPage(
         producer = Some(Producer(false, None)),
-        copacked = None)
+        usesCopacker = None)
       val result = controller.show(copacked)(FakeRequest())
 
       status(result) mustBe OK
@@ -129,14 +129,14 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "redirect to the copacked volume page from the import page if the user has copackers and the copacked volume page is not complete" in {
-      stubFormPage(packagesForOthers = Some(true), packageCopackVol = None)
+      stubFormPage(packagesForOthers = Some(true), volumeForCustomerBrands = None)
 
       val res = controller.show(imports)(FakeRequest())
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopackVol").url)
     }
 
-    "store the form data and purge the copacked volume data when the user does not use copackers" in {
+    "store the form data when the user does not use copackers" in {
       stubFormPage(utr = "3334445556")
 
       val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false")
@@ -145,21 +145,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       status(res) mustBe SEE_OTHER
       verifyDataCached(defaultFormData.copy(
         utr = "3334445556",
-        usesCopacker = Some(false),
-        volumeByCopackers = None
-      ))
-    }
-
-    "store the form data and not overwrite the copacked volume data when the user uses copackers" in {
-      stubFormPage(copackedVolume = Some(Litreage(-777, -666)))
-
-      val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "true")
-      val res = controller.submit(copacked)(request)
-
-      status(res) mustBe SEE_OTHER
-      verifyDataCached(defaultFormData.copy(
-        usesCopacker = Some(true),
-        volumeByCopackers = Some(Litreage(-777, -666))
+        usesCopacker = Some(false)
       ))
     }
 
