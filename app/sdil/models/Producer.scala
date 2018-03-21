@@ -17,13 +17,9 @@
 package sdil.models
 
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
 
 case class Producer(isProducer: Boolean, isLarge: Option[Boolean])
 
 object Producer {
-  implicit val format: Format[Producer] = (
-    (__ \ "isProducer").format[Boolean] and
-      (__ \ "isLarge").formatNullable[Boolean]
-    )(Producer.apply, unlift(Producer.unapply))
+  implicit val format: Format[Producer] = Json.format[Producer]
 }
