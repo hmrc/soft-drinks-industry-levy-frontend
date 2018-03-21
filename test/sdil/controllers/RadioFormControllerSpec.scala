@@ -16,9 +16,11 @@
 
 package sdil.controllers
 
+import com.gargoylesoftware.htmlunit.WebConsole.Logger
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.{Litreage, Producer}
@@ -119,13 +121,49 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "redirect to the copacked page from the import page if the copacked page is not complete" in {
       stubFormPage(
-        producer = Some(Producer(true, None)),
-        packagesForOthers = None
+        producer = Some(Producer(false, None)),
+        packagesForOthers = None,
+        packageCopackVol = None
       )
 
       val res = controller.show(imports)(FakeRequest())
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.RadioFormController.show("packageCopack").url)
+    }
+
+    "return Status: OK when user is logged in and loads packageCopack with producer = No" in {
+      stubFormPage(producer = Some(Producer(false, None)))
+      val res = controller.show("packageCopack")(FakeRequest())
+      status(res) mustBe OK
+      contentAsString(res) must include (Messages("sdil.packageCopack.heading"))
+    }
+
+    "redirect to the copacked page when user is logged in and loads packageCopack with producer = Yes and " +
+      "< 1m litres" in {
+      stubFormPage(
+        producer = Some(Producer(true, Some(false))),
+        copacked = None,
+        packagesForOthers = None,
+        isPackagingForSelf = None,
+        packageOwnVol = None
+      )
+      val res = controller.show("packageCopack")(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("copacked").url)
+    }
+
+    "redirect to the copacked page when user is logged in and loads packageCopack with producer = Yes and " +
+      "> 1m litres" in {
+      stubFormPage(
+        producer = Some(Producer(true, Some(true))),
+        copacked = None,
+        packagesForOthers = None,
+        packageOwnVol = None,
+        isPackagingForSelf = None
+      )
+      val res = controller.show("packageCopack")(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.RadioFormController.show("packageOwnUk").url)
     }
 
     "redirect to the copacked volume page from the import page if the user has copackers and the copacked volume page is not complete" in {
