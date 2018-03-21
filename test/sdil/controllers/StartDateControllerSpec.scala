@@ -42,8 +42,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return Status: See Other for start date form POST with valid date and redirect to add site page" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(18888888, 24444)),
-        copacked = Some(true),
-        copackedVolume = Some(Litreage(344444, 44444444)),
+        usesCopacker = Some(true),
         imports = Some(false),
         importVolume = None
       )
@@ -63,8 +62,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         producer = Some(Producer(isProducer = false, isLarge = None)),
         packageOwnVol = None,
         packagesForOthers = Some(false),
-        copacked = Some(false),
-        copackedVolume = None,
+        usesCopacker = Some(false),
         imports = Some(false),
         importVolume = None
       )
@@ -112,8 +110,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "return Status: See Other for start date form GET with valid date and Liable booleans with redirect to add site page" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(18888888, 24444)),
-        copacked = Some(true),
-        copackedVolume = Some(Litreage(344444, 44444444)),
+        usesCopacker = Some(true),
         imports = Some(false),
         importVolume = None
       )
@@ -133,7 +130,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         isPackagingForSelf = None,
         packageOwnVol = None,
         packagesForOthers = None,
-        packageCopackVol = None,
+        volumeForCustomerBrands = None,
         imports = None,
         importVolume = None
       )
@@ -153,8 +150,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         producer = Some(Producer(isProducer = false, isLarge = None)),
         packageOwnVol = None,
         packagesForOthers = Some(false),
-        copacked = Some(false),
-        copackedVolume = None,
+        usesCopacker = Some(false),
         imports = Some(false),
         importVolume = None
       )
@@ -187,15 +183,15 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "redirect to the contact details page when voluntary only" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
-        packageCopackVol = None,
-        copacked = Some(true),
-        copackedVolume = Some(Litreage(3, 4)),
+        packagesForOthers = Some(false),
+        volumeForCustomerBrands = None,
+        usesCopacker = Some(true),
         imports = Some(false),
         importVolume = None
       )
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
 
-      val res = controller.submit().apply(request)
+      val res = controller.submit()(request)
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.ContactDetailsController.show().url

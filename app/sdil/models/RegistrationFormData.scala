@@ -30,7 +30,6 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 packagesForOthers: Option[Boolean] = None,
                                 volumeForCustomerBrands: Option[Litreage] = None,
                                 usesCopacker: Option[Boolean] = None,
-                                volumeByCopackers: Option[Litreage] = None,
                                 isImporter: Option[Boolean] = None,
                                 importVolume: Option[Litreage] = None,
                                 confirmedSmallProducer: Option[Boolean] = None,
@@ -40,23 +39,16 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 contactDetails: Option[ContactDetails] = None) {
 
   lazy val isNotMandatory: Boolean = {
-    total(volumeForOwnBrand, volumeByCopackers) < 1000000 &&
-      volumeByCopackers.forall(_.total == 0) &&
+    usesCopacker.forall(_ == false) &&
       packagesForOthers.contains(false) &&
       isImporter.contains(false)
   }
 
-  lazy val isSmall: Boolean = {
-    val q = total(volumeForOwnBrand, volumeByCopackers)
-    q < 1000000 && q > 0
-  }
-
-  lazy val isCopacked: Boolean = {
-    volumeByCopackers.exists(_.total != 0)
-  }
-
   lazy val isVoluntary: Boolean = {
-    isSmall && isCopacked && isImporter.contains(false) && volumeForCustomerBrands.isEmpty
+    producer.flatMap(_.isLarge).forall(_ == false) &&
+      usesCopacker.contains(true) &&
+      isImporter.contains(false) &&
+      packagesForOthers.contains(false)
   }
 
   def total(n: Option[Litreage]*): BigDecimal = {

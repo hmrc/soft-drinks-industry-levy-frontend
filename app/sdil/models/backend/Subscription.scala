@@ -19,7 +19,7 @@ package sdil.models.backend
 import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
-import sdil.models.RegistrationFormData
+import sdil.models.{Litreage, RegistrationFormData}
 
 case class Subscription(utr: String,
                         orgName: String,
@@ -36,10 +36,8 @@ object Subscription {
 
   def fromFormData(formData: RegistrationFormData): Option[Subscription] = {
     for {
-//      verify <- formData.verify
       orgType <- formData.organisationType
-      copacked <- formData.usesCopacker
-      imports <- formData.isImporter
+      producer <- formData.producer
       startDate <- formData.startDate
       productionSites = formData.productionSites.getOrElse(Nil)
       secondaryWarehouses = formData.secondaryWarehouses.getOrElse(Nil)
@@ -54,7 +52,8 @@ object Subscription {
           formData.volumeForOwnBrand,
           formData.importVolume,
           formData.volumeForCustomerBrands,
-          formData.volumeByCopackers
+          formData.usesCopacker.collect { case true => Litreage(1, 1) },
+          producer.isLarge.contains(true)
         ),
         liabilityDate = startDate,
         productionSites = productionSites.map(Site.fromAddress),

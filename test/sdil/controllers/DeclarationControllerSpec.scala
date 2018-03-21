@@ -41,10 +41,9 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "redirect to the registration not required page if they only produce for themselves, and the volume is fewer than 1 million litres" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
-        packageCopackVol = None,
+        volumeForCustomerBrands = None,
         packagesForOthers = Some(false),
-        copacked = Some(false),
-        copackedVolume = None,
+        usesCopacker = Some(false),
         imports = Some(false),
         importVolume = None
       )
@@ -78,7 +77,8 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           Some(Litreage(1, 2)),
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
-          Some(Litreage(7, 8))
+          Some(Litreage(1, 1)),
+          isLarge = false
         ),
         LocalDate.of(2018, 4, 6),
         Seq(Site(UkAddress(Seq("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
@@ -112,7 +112,8 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           Some(Litreage(1, 2)),
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
-          Some(Litreage(7, 8))
+          Some(Litreage(1, 1)),
+          isLarge = false
         ),
         LocalDate.of(2018, 4, 6),
         Seq(Site(UkAddress(Seq("1 Production Site St", "Production Site Town"), "AA11 1AA"))),

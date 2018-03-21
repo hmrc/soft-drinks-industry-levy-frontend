@@ -72,8 +72,7 @@ class RadioFormController(val messagesApi: MessagesApi,
   private def update(choice: Boolean, formData: RegistrationFormData, page: Page): RegistrationFormData = page match {
     case PackageCopackPage if choice => formData.copy(packagesForOthers = Some(choice))
     case PackageCopackPage => formData.copy(packagesForOthers = Some(choice), volumeForCustomerBrands = None)
-    case CopackedPage if choice => formData.copy(usesCopacker = Some(choice))
-    case CopackedPage => formData.copy(usesCopacker = Some(choice), volumeByCopackers = None)
+    case CopackedPage => formData.copy(usesCopacker = Some(choice))
     case ImportPage if choice => formData.copy(isImporter = Some(choice))
     case ImportPage => formData.copy(isImporter = Some(choice), importVolume = None)
     case PackageOwnUkPage if choice => formData.copy(isPackagingForSelf = Some(choice))

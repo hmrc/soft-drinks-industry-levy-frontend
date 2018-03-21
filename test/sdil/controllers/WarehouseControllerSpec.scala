@@ -80,11 +80,10 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       stubFormPage(
         producer = Some(Producer(isProducer = false, isLarge = None)),
         imports = Some(true),
-        packageCopackVol = None,
+        volumeForCustomerBrands = None,
         packageOwnVol = None,
         packagesForOthers = Some(false),
-        copacked = Some(false),
-        copackedVolume = None
+        usesCopacker = Some(false)
       )
       testConfig.setTaxStartDate(LocalDate.now plusDays 1)
 
@@ -103,7 +102,6 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         producer = Some(Producer(isProducer = false, isLarge = None)),
         packagesForOthers = Some(false),
         imports = Some(false),
-        copackedVolume = None,
         packageOwnVol = None
       )
       testConfig.setTaxStartDate(LocalDate.now plusDays 1)

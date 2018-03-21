@@ -22,7 +22,8 @@ import sdil.models.Litreage
 case class Activity(ProducedOwnBrand: Option[Litreage],
                     Imported: Option[Litreage],
                     CopackerAll: Option[Litreage],
-                    Copackee: Option[Litreage])
+                    Copackee: Option[Litreage],
+                    isLarge: Boolean)
 
 object Activity {
   private implicit val litreageFormat: Format[Litreage] = new Format[Litreage] {

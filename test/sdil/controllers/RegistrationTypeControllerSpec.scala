@@ -30,9 +30,8 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
         producer = Some(Producer(isProducer = true, isLarge = Some(false))),
         packageOwnVol = Some(Litreage(1, 2)),
         packagesForOthers = Some(false),
-        packageCopackVol = None,
-        copacked = Some(false),
-        copackedVolume = None,
+        volumeForCustomerBrands = None,
+        usesCopacker = Some(false),
         imports = Some(false),
         importVolume = None
       )
@@ -46,9 +45,8 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
     "redirect to the start date page if the user packages, or has packaged on their behalf, more than 1 million litres" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1000000, 2)),
-        packageCopackVol = None,
-        copacked = Some(false),
-        copackedVolume = None,
+        volumeForCustomerBrands = None,
+        usesCopacker = Some(false),
         imports = Some(false),
         importVolume = None
       )
@@ -62,8 +60,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
     "redirect to the start date page if the user produces fewer than 1 million litres, but copacks for others" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
-        copacked = Some(false),
-        copackedVolume = None,
+        usesCopacker = Some(false),
         imports = Some(false),
         importVolume = None
       )
@@ -77,8 +74,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
     "redirect to the start date page if the user produces fewer than 1 million litres, but imports liable drinks" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
-        copacked = Some(false),
-        copackedVolume = None,
+        usesCopacker = Some(false),
         imports = Some(true),
         importVolume = Some(Litreage(1, 2))
       )
@@ -92,8 +88,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
     "redirect to the start date page if the user produces fewer than 1 million litres, but uses a copacker" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
-        copacked = Some(true),
-        copackedVolume = Some(Litreage(3, 4)),
+        usesCopacker = Some(true),
         imports = Some(false),
         importVolume = None
       )
@@ -107,8 +102,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
     "redirect to the start date page if the user only imports" in {
       stubFormPage(
         packageOwnVol = None,
-        copacked = Some(false),
-        copackedVolume = None,
+        usesCopacker = Some(false),
         imports = Some(true),
         importVolume = Some(Litreage(1, 2))
       )
@@ -122,9 +116,8 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
     "redirect to the start date page if the user only copacks" in {
       stubFormPage(
         packageOwnVol = None,
-        packageCopackVol = Some(Litreage(1, 2)),
-        copacked = Some(false),
-        copackedVolume = None,
+        volumeForCustomerBrands = Some(Litreage(1, 2)),
+        usesCopacker = Some(false),
         imports = Some(false),
         importVolume = None
       )
@@ -140,9 +133,8 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
         producer = Some(Producer(isProducer = false, isLarge = None)),
         packageOwnVol = None,
         packagesForOthers = Some(false),
-        packageCopackVol = None,
-        copacked = Some(false),
-        copackedVolume = None,
+        volumeForCustomerBrands = None,
+        usesCopacker = Some(false),
         imports = Some(false),
         importVolume = None
       )

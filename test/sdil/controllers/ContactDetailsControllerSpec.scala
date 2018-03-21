@@ -64,8 +64,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
     "return a page with a link back to the warehouse page if the user is mandatory" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1000000, 1000000)),
-        copacked = Some(true),
-        copackedVolume = Some(Litreage(100000, 1000000)),
+        usesCopacker = Some(true),
         imports = Some(true),
         importVolume = Some(Litreage(100000, 1000000))
       )
@@ -80,9 +79,9 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
     "return a page with a link back to the start date page if the user is voluntary only and it is after the tax start dare" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
-        packageCopackVol = None,
-        copacked = Some(true),
-        copackedVolume = Some(Litreage(3, 4)),
+        packagesForOthers = Some(false),
+        volumeForCustomerBrands = None,
+        usesCopacker = Some(true),
         imports = Some(false),
         importVolume = None
       )
@@ -101,9 +100,9 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
-        packageCopackVol = None,
-        copacked = Some(true),
-        copackedVolume = Some(Litreage(35, 45)),
+        packagesForOthers = Some(false),
+        volumeForCustomerBrands = None,
+        usesCopacker = Some(true),
         imports = Some(false),
         importVolume = None
       )

@@ -89,12 +89,14 @@ class IdentifyController(val messagesApi: MessagesApi,
 object IdentifyController extends FormHelpers {
   val form: Form[Identification] = Form(
     mapping(
-      "utr" -> text.verifying(Constraint { x: String => x match {
-        case "" => Invalid("error.utr.required")
-        case utr if utr.exists(!_.isDigit) => Invalid("error.utr.invalid")
-        case utr if utr.length != 10 => Invalid("error.utr.length")
-        case _ => Valid
-      }}),
+      "utr" -> text.verifying(Constraint { x: String =>
+        x match {
+          case "" => Invalid("error.utr.required")
+          case utr if utr.exists(!_.isDigit) => Invalid("error.utr.invalid")
+          case utr if utr.length != 10 => Invalid("error.utr.length")
+          case _ => Valid
+        }
+      }),
       "postcode" -> postcode
     )(Identification.apply)(Identification.unapply)
   )
