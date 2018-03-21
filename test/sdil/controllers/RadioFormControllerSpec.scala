@@ -122,8 +122,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "redirect to the copacked page from the import page if the copacked page is not complete" in {
       stubFormPage(
         producer = Some(Producer(false, None)),
-        packagesForOthers = None,
-        packageCopackVol = None
+        packagesForOthers = None
       )
 
       val res = controller.show(imports)(FakeRequest())
@@ -142,7 +141,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       "< 1m litres" in {
       stubFormPage(
         producer = Some(Producer(true, Some(false))),
-        copacked = None,
+        usesCopacker = None,
         packagesForOthers = None,
         isPackagingForSelf = None,
         packageOwnVol = None
@@ -156,7 +155,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       "> 1m litres" in {
       stubFormPage(
         producer = Some(Producer(true, Some(true))),
-        copacked = None,
+        usesCopacker = None,
         packagesForOthers = None,
         packageOwnVol = None,
         isPackagingForSelf = None
