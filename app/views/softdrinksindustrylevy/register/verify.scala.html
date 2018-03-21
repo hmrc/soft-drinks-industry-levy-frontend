@@ -37,8 +37,6 @@
 
     @businessDetails(utr, organisation, address)
 
-    <br/>
-
         @if(!alreadyRegistered) {
             @form(sdil.controllers.routes.VerifyController.submit()) {
                 @radioButtonWithConditionalContent(
