@@ -30,13 +30,27 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
   val controller = wire[StartDateController]
 
   "StartDateController" should {
-    "return Status: 200 when user is logged in and loads start date page" in {
-      stubFormPage(smallProducerConfirmFlag = Some(true))
+    "return Status: 200 when user is logged in and loads start date page if they are not a small producer" in {
+      stubFormPage(
+        producer = Some(Producer(true, Some(true))))
       val request = FakeRequest("GET", "/start-date")
       val result = controller.show.apply(request)
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.start-date.heading"))
+    }
+
+    "return Status: See Other and redirected to contact details page if they are a small producer" in {
+      stubFormPage(
+        producer = Some(Producer(true, Some(false))),
+        isPackagingForSelf = Some(false),
+        packagesForOthers = Some(false),
+        imports = Some(false))
+      val request = FakeRequest("GET", "/start-date")
+      val result = controller.show.apply(request)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.ContactDetailsController.show().url
     }
 
     "return Status: See Other for start date form POST with valid date and redirect to add site page" in {
@@ -88,7 +102,10 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return a page with a link back to the import volume page if the user imports liable drinks" in {
-      stubFormPage(imports = Some(true), packageOwnVol = Some(Litreage(1000000L,0L)))
+      stubFormPage(
+        producer = Some(Producer(true, Some(true))),
+        imports = Some(true), packageOwnVol = Some(Litreage(1000000L, 0L))
+      )
 
       val response = controller.show(FakeRequest())
       status(response) mustBe OK
@@ -98,7 +115,10 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return a page with a link back to the imports page if the user does not import liable drinks" in {
-      stubFormPage(imports = Some(false), packageOwnVol = Some(Litreage(1000000L,0L)))
+      stubFormPage(
+        producer = Some(Producer(true, Some(true))),
+        imports = Some(false), packageOwnVol = Some(Litreage(1000000L, 0L))
+      )
 
       val response = controller.show(FakeRequest())
       status(response) mustBe OK
