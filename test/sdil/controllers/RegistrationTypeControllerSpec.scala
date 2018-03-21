@@ -143,6 +143,65 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.RegistrationTypeController.registrationNotRequired().url
     }
+
+    "clear any saved production sites if the user does not package over 1 million litres, and is not a copacker" in {
+      stubFormPage(
+        utr = "112233445",
+        producer = Some(Producer(isProducer = true, isLarge = Some(false))),
+        isPackagingForSelf = Some(true),
+        packageOwnVol = Some(Litreage(12, 21)),
+        packagesForOthers = Some(false),
+        volumeForCustomerBrands = None,
+        imports = Some(true)
+      )
+
+      val res = testController.continue()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      verifyDataCached(
+        defaultFormData.copy(
+          utr = "112233445",
+          producer = Some(Producer(isProducer = true, isLarge = Some(false))),
+          isPackagingForSelf = Some(true),
+          volumeForOwnBrand = Some(Litreage(12, 21)),
+          packagesForOthers = Some(false),
+          volumeForCustomerBrands = None,
+          isImporter = Some(true),
+          productionSites = Some(Nil)
+        )
+      )
+    }
+
+    "clear any saved production sites and warehouse sites if the user is registering voluntarily" in {
+      stubFormPage(
+        utr = "112233446",
+        producer = Some(Producer(isProducer = true, isLarge = Some(false))),
+        isPackagingForSelf = Some(true),
+        packageOwnVol = Some(Litreage(12, 21)),
+        packagesForOthers = Some(false),
+        volumeForCustomerBrands = None,
+        imports = Some(false),
+        importVolume = None
+      )
+
+      val res = testController.continue()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      verifyDataCached(
+        defaultFormData.copy(
+          utr = "112233446",
+          producer = Some(Producer(isProducer = true, isLarge = Some(false))),
+          isPackagingForSelf = Some(true),
+          volumeForOwnBrand = Some(Litreage(12, 21)),
+          packagesForOthers = Some(false),
+          volumeForCustomerBrands = None,
+          isImporter = Some(false),
+          importVolume = None,
+          productionSites = Some(Nil),
+          secondaryWarehouses = Some(Nil)
+        )
+      )
+    }
   }
 
   lazy val testController = wire[RegistrationTypeController]

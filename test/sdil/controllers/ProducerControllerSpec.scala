@@ -74,7 +74,9 @@ class ProducerControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       verifyDataCached(defaultFormData.copy(
         utr = "9998887776",
         producer = Some(Producer(isProducer = false, isLarge = None)),
-        usesCopacker = None
+        usesCopacker = None,
+        isPackagingForSelf = None,
+        volumeForOwnBrand = None
       ))
     }
 

@@ -35,9 +35,10 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
   "GET /production-site" should {
     "return 200 Ok and the production site page if no other sites have been added" in {
-      stubFormPage(productionSites = None,
-        imports = Some(false),
-        smallProducerConfirmFlag = Some(true))
+      stubFormPage(
+        productionSites = None,
+        imports = Some(false)
+      )
 
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
@@ -132,7 +133,6 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       "and the user is importing liable drinks" in {
 
       testConfig.setTaxStartDate(tomorrow)
-      stubFormPage(smallProducerConfirmFlag = Some(true))
 
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
