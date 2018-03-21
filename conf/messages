@@ -1,4 +1,4 @@
-sdil.common.title=Register for the Soft Drinks Levy
+sdil.common.title=Register for the Soft Drinks Industry Levy
 sdil.common.continue=Continue
 sdil.common.back=Back
 sdil.common.save-continue=Save and continue
@@ -12,7 +12,7 @@ sdil.common.no=No
 sdil.common.print=Print
 sdil.common.sign-out=Sign out
 sdil.common.return-to-sign-in=Return to Government Gateway sign in
-sdil.registered.title=Soft Drinks Levy
+sdil.registered.title=Soft Drinks Industry Levy
 sdil.hint.optional=Optional
 sdil.common.error=Error
 
@@ -40,10 +40,10 @@ sdil.verify.utr=Unique Taxpayer Reference (UTR)
 sdil.verify.organisation=Business name
 sdil.verify.address=Business address
 sdil.verify.detailsCorrect.yes=Yes, this is the business and the address I want to register
-sdil.verify.detailsCorrect.differentAddress=Yes, but I want to add a new primary address for the Soft Drinks Levy
+sdil.verify.detailsCorrect.differentAddress=Yes, but I want to add a new primary address for the Soft Drinks Industry Levy
 sdil.verify.detailsCorrect.no=No, I need to enter a different UTR and postcode
-sdil.verify.address.heading=Enter a primary address for the Soft Drinks Levy
-sdil.verify.address.legend=Enter a primary address for the Soft Drinks Levy
+sdil.verify.address.heading=Enter a primary address for the Soft Drinks Industry Levy
+sdil.verify.address.legend=Enter a primary address for the Soft Drinks Industry Levy
 sdil.verify.address.line1=Address line 1
 sdil.verify.address.line2=Address line 2
 sdil.verify.address.line3=Address line 3
@@ -52,8 +52,8 @@ sdil.verify.postcode=Postcode
 
 #Registration pending
 sdil.registration-pending.title=You’ve already submitted an application
-sdil.registration-pending.p1=You’ve already submitted an application to register for the Soft Drinks Levy.
-sdil.registration-pending.p2=If you haven’t got your registration number within 24 hours, you’ll need to call the Soft Drinks Levy Helpline on 0300 200 3700.
+sdil.registration-pending.p1=You’ve already submitted an application to register for the Soft Drinks Industry Levy.
+sdil.registration-pending.p2=If you haven’t got your registration number within 24 hours, you’ll need to call the Soft Drinks Industry Levy Helpline on 0300 200 3700.
 sdil.registration-pending.p3=If there’s a problem with your application we’ll contact you using the information you provided.
 
 #Organisation Type
@@ -67,15 +67,15 @@ sdil.organisation-type.unincorporated-body=Unincorporated body
 #Partnership page
 sdil.partnership.heading=Please call us
 sdil.partnership.info.p1=We’re sorry, but you cannot register online as a partnership.
-sdil.partnership.info.p2=You’ll need to call us on 0300 200 3700 to submit your application to register for the Soft Drinks Levy.
+sdil.partnership.info.p2=You’ll need to call us on 0300 200 3700 to submit your application to register for the Soft Drinks Industry Levy.
 
 #Producer
 sdil.producer.heading=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide?
 sdil.producer.hidden-heading=How many litres worldwide?
 sdil.producer.over-one-million=1 million litres or more
 sdil.producer.under-one-million=Less than 1 million litres
-sdil.producer.details.title=What does 'package' mean?
-sdil.producer.details.p1=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute. 
+sdil.producer.details.title=What does ‘packaged’ mean?
+sdil.producer.details.p1=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
 
 #Package
 sdil.package.heading=Will you package liable drinks at a packaging site you operate?
@@ -124,7 +124,6 @@ sdil.production-site.add=Add address to list
 sdil.production-site.help.summary=If you have more than one packaging site
 sdil.production-site.help.p1=You need to tell us the addresses of all of the packaging sites you operate to package liable drinks.
 sdil.production-site.help.p2=If you’ve got more packaging sites you can add them next.
-sdil.production-site.adding-multiple-sites=When you’ve added all your packaging sites you can save and continue.
 error.no-production-sites=Choose at least one option
 
 #Secondary warehouse
@@ -169,7 +168,7 @@ sdil.small-prod-confirm.body=If this is not accurate, you need to <a href="{0}" 
 sdil.small-prod-confirm.continue=Accept and continue
 
 #Start date
-sdil.start-date.heading=What date did you become liable for the Soft Drinks Levy?
+sdil.start-date.heading=What date did you become liable for the Soft Drinks Industry Levy?
 sdil.start-date.example=For example, 6 4 2018
 sdil.start-date.day=Day
 sdil.start-date.month=Month
@@ -186,7 +185,7 @@ error.start-date.in-future=Date cannot be in the future
 error.date.invalid=Enter a valid date
 
 #Contact details
-sdil.contact-details.heading=Who will be your business’s contact for the Soft Drinks Levy?
+sdil.contact-details.heading=Who will be your business’s contact for the Soft Drinks Industry Levy?
 sdil.contact-details.full-name=Full name
 sdil.contact-details.position=Job title
 sdil.contact-details.phone-number=Telephone number
@@ -233,7 +232,7 @@ sdil.declaration.third-party-produced=Annual litres packaged by third parties
 sdil.declaration.import=Will you bring liable drinks into the UK?
 sdil.declaration.import-volume=Annual litres brought into the UK
 
-sdil.declaration.liable-date=Soft Drinks Levy liability date
+sdil.declaration.liable-date=Soft Drinks Industry Levy liability date
 sdil.declaration.date=Date liable from
 
 sdil.declaration.registered-sites=Registered sites
@@ -250,17 +249,17 @@ sdil.declaration.continue=Accept and continue
 
 #Complete
 sdil.complete.title=Application complete
-sdil.complete.subheading=We’ve received your application to register for the Soft Drinks Levy
-sdil.complete.p1=Your application to register for the Soft Drinks Levy was submitted on {0} at {1}
+sdil.complete.subheading=We’ve received your application to register for the Soft Drinks Industry Levy
+sdil.complete.p1=Your application to register for the Soft Drinks Industry Levy was submitted on {0} at {1}.
 sdil.complete.what-happens.title=What happens next?
 sdil.complete.what-happens.p1=You don’t need to do anything else. We’ll send your reference number to {0} within 24 hours.
-sdil.complete.what-happens.p2=If you don’t get your reference number or you need to make a change to your registration, you need to call the Soft Drinks Levy Helpline on 0300 200 3700.
+sdil.complete.what-happens.p2=If you don’t get your reference number or you need to make a change to your registration, you need to call the Soft Drinks Industry Levy Helpline on 0300 200 3700.
 sdil.complete.what-happens.p3=Returns will be due for fixed quarters ending June, September, December and March.
 
 #Service page
-sdil.service-page.title=Soft Drinks Levy details
+sdil.service-page.title=Soft Drinks Industry Levy details
 sdil.service-page.warning=The Soft Drink Levy is effective from 6 April 2018. 
-sdil.service-page.p1=Your Soft Drinks Levy reference is: 
+sdil.service-page.p1=Your Soft Drinks Industry Levy reference is: 
 sdil.service-page.p2.voluntary-only= You’re registered as a small producer only, which means you don’t have to file returns. You need\
  to give your reference number to your third party packagers so they can claim an exemption for the liable drinks\
  they package for you. You need to contact us if your situation changes.
@@ -277,40 +276,40 @@ sdil.service-page.warehouse-address.subtitle=Your registered warehouses
 sdil.service-page.address-line-1=Address line 1
 sdil.service-page.postcode=Postcode
 sdil.service-page.support.title1=Make a change
-sdil.service-page.support.p1=Contact Soft Drinks Levy support.
+sdil.service-page.support.p1=Contact Soft Drinks Industry Levy support.
 sdil.service-page.support.p2=Telephone: 0300 200 3700
 sdil.service-page.support.title2=More options
 sdil.service-page.support.link1=https://www.gov.uk/guidance/soft-drinks-industry-levy
-sdil.service-page.support.p3=Soft Drinks Levy guidance
+sdil.service-page.support.p3=Soft Drinks Industry Levy guidance
 sdil.service-page.support.link2=https://www.gov.uk/government/consultations/draft-legislation-soft-drinks-industry-levy
 sdil.service-page.support.p4=Draft legislation: Soft Drinks Industry Levy
 
 
 #Already registered
 sdil.already-enrolled.heading=You’re already registered
-sdil.already-enrolled.p1=You’re already registered for the Soft Drinks Levy.
+sdil.already-enrolled.p1=You’re already registered for the Soft Drinks Industry Levy.
 sdil.already-enrolled.p2=To view your registration details, go to
-sdil.already-enrolled.p3= your Soft Drinks Levy home.
+sdil.already-enrolled.p3= your Soft Drinks Industry Levy home.
 sdil.service-page.link=Go to service page
 sdil.already.received.for.utr.title=We’ve already received an application for this business
-sdil.already.received.for.utr.info=<p>An application to register for the Soft Drinks Levy has already been submitted \
+sdil.already.received.for.utr.info=<p>An application to register for the Soft Drinks Industry Levy has already been submitted \
   for this business.</p><p>If you want to check the status of the registration you need to sign in using the same \
   Government Gateway account used to submit the application.</p><p>If this isn’t the business you wanted to register,\
    you need to <a href="{0}">go back and enter a different UTR and postcode</a>.</p>
 
 #Invalid role
 sdil.invalid-affinity.title=You can’t register using this Government Gateway account
-sdil.invalid-affinity.p1=You’ve signed in as an agent. Unfortunately, you can’t register for the Soft Drinks Levy using this account.
+sdil.invalid-affinity.p1=You’ve signed in as an agent. Unfortunately, you can’t register for the Soft Drinks Industry Levy using this account.
 sdil.invalid-affinity.p2=The business or individual you’re representing must apply to register themselves.
 
 #Invalid affinity group
 sdil.invalid-role.title=You can’t register using this Government Gateway account
-sdil.invalid-role.p1=You’ve signed in as an assistant. Unfortunately, you can’t register for the Soft Drinks Levy using this account.
+sdil.invalid-role.p1=You’ve signed in as an assistant. Unfortunately, you can’t register for the Soft Drinks Industry Levy using this account.
 sdil.invalid-role.p2=The business or individual you’re representing must apply to register themselves.
 
 #Not whitelisted
 sdil.not-whitelisted.title=Service temporarily unavailable
-sdil.not-whitelisted.p1=We’re sorry, but the Soft Drinks Levy service is currently unavailable.
+sdil.not-whitelisted.p1=We’re sorry, but the Soft Drinks Industry Levy service is currently unavailable.
 sdil.not-whitelisted.p2=Please try again later.
 
 #Common errors
