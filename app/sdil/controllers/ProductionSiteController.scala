@@ -51,15 +51,14 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: FormDataCach
 
   def submit = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => {BadRequest(
+      errors => BadRequest(
         productionSite(
           errors,
           request.formData.rosmData.address,
           primaryPlaceOfBusiness,
           request.formData.productionSites.getOrElse(Nil),
           ProductionSitesPage.previousPage(request.formData).show)
-        )
-      },
+        ),
       {
         case ProductionSites(bprAddress, ppobAddress, _, true, Some(additionalAddress)) =>
           val updated = Seq(bprAddress, ppobAddress).flatten.map(Address.fromString) ++
