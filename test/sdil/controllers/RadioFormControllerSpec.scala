@@ -136,7 +136,34 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(res) mustBe Some(routes.LitreageController.show("packageCopackVol").url)
     }
 
-    "store the form data when the user does not use copackers" in {
+    "store the form data and purge the package own volume when the user will not produce their own drinks" in {
+      stubFormPage(utr = "3334445554")
+
+      val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false")
+      val res = controller.submit("packageOwnUk")(request)
+
+      status(res) mustBe SEE_OTHER
+      verifyDataCached(defaultFormData.copy(
+        utr = "3334445554",
+        isPackagingForSelf = Some(false),
+        volumeForOwnBrand = None
+      ))
+    }
+
+    "store the form data and not overwrite the package own volume when the user will produce their own drinks" in {
+      stubFormPage(utr = "3334445555")
+
+      val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "true")
+      val res = controller.submit("packageOwnUk")(request)
+
+      status(res) mustBe SEE_OTHER
+      verifyDataCached(defaultFormData.copy(
+        utr = "3334445555",
+        isPackagingForSelf = Some(true)
+      ))
+    }
+
+    "store the form data and purge the copacked volume data when the user does not use copackers" in {
       stubFormPage(utr = "3334445556")
 
       val request = FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false")
@@ -178,11 +205,9 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   lazy val controller: RadioFormController = wire[RadioFormController]
 
-  private val copackSmall = "packageCopackSmall"
   private val copacked = "copacked"
   private val imports = "import"
 
-  private val copackSmallSubmit = controller.submit(copackSmall)
   private val copackedSubmit = controller.submit(copacked)
   private val importSubmit = controller.submit(imports)
 
