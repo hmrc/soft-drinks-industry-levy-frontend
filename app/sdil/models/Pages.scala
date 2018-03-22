@@ -245,11 +245,7 @@ case object WarehouseSitesPage extends MidJourneyPage {
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
     formData match {
       case fd if fd.hasPackagingSites => ProductionSitesPage
-      case fd if fd.producer.flatMap(_.isLarge).forall(_ == false)
-                 && fd.isImporter.getOrElse(false)
-                 && !showStartDate =>
-                   ImportVolumePage
-      case _ if showStartDate => StartDatePage
+      case _ if showStartDate && !isVoluntary => StartDatePage
       case _ => StartDatePage.previousPage(formData)
     }
   }
