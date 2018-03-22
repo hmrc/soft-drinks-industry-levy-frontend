@@ -85,7 +85,7 @@ case object OrgTypePage extends MidJourneyPage {
 case object ProducerPage extends MidJourneyPage {
 
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.producer match {
-    case Some(Producer(false,_)) => PackageCopackPage
+    case Some(Producer(false, _)) => PackageCopackPage
     case Some(Producer(true, Some(false))) => CopackedPage
     case _ => PackageOwnUkPage
   }
@@ -243,9 +243,9 @@ case object WarehouseSitesPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = ContactDetailsPage
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
-    formData.isImporter match {
-      case _ if formData.hasPackagingSites => ProductionSitesPage
-      case _ if showStartDate => StartDatePage
+    formData match {
+      case fd if fd.hasPackagingSites => ProductionSitesPage
+      case fd if showStartDate && !fd.isVoluntary => StartDatePage
       case _ => StartDatePage.previousPage(formData)
     }
   }
@@ -261,7 +261,7 @@ case object ContactDetailsPage extends MidJourneyPage {
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
     case f if !f.isVoluntary => WarehouseSitesPage
-    case _ if showStartDate => StartDatePage
+    case f if f.isVoluntary => ImportPage
     case _ => StartDatePage.previousPage(formData)
   }
 
