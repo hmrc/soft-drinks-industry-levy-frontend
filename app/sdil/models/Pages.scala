@@ -34,7 +34,7 @@ sealed trait Page {
 sealed trait PageWithPreviousPage extends Page {
   def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page
 
-  override def  expectedPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
+  override def expectedPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
     previousPage(formData) match {
       case page if page.isComplete(formData) => this
       case page => page.expectedPage(formData)
@@ -86,7 +86,7 @@ case object OrgTypePage extends MidJourneyPage {
 case object ProducerPage extends MidJourneyPage {
 
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData.producer match {
-    case Some(Producer(false,_)) => PackageCopackPage
+    case Some(Producer(false, _)) => PackageCopackPage
     case Some(Producer(true, Some(false))) => CopackedPage
     case _ => PackageOwnUkPage
   }
@@ -244,8 +244,12 @@ case object WarehouseSitesPage extends MidJourneyPage {
   override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = ContactDetailsPage
 
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
-    formData.isImporter match {
-      case _ if formData.hasPackagingSites => ProductionSitesPage
+    formData match {
+      case fd if fd.hasPackagingSites => ProductionSitesPage
+      case fd if fd.producer.flatMap(_.isLarge).forall(_ == false)
+                 && fd.isImporter.getOrElse(false)
+                 && !showStartDate =>
+                   ImportVolumePage
       case _ if showStartDate => StartDatePage
       case _ => StartDatePage.previousPage(formData)
     }
@@ -259,6 +263,7 @@ case object WarehouseSitesPage extends MidJourneyPage {
 case object ContactDetailsPage extends PageWithPreviousPage {
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
     case f if !f.isVoluntary => WarehouseSitesPage
+    case f if f.isVoluntary => ImportPage
     case _ if showStartDate => StartDatePage
     case _ => StartDatePage.previousPage(formData)
   }

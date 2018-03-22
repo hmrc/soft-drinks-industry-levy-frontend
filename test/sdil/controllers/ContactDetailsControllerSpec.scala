@@ -76,7 +76,8 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       html.select("a.link-back").attr("href") mustBe routes.WarehouseController.show().url
     }
 
-    "return a page with a link back to the start date page if the user is voluntary only and it is after the tax start dare" in {
+    "return a page with a link back to the import page if the user is voluntary only and it is after the tax start " +
+      "dare" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
         packagesForOthers = Some(false),
@@ -90,7 +91,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       status(response) mustBe OK
 
       val html = Jsoup.parse(contentAsString(response))
-      html.select("a.link-back").attr("href") mustBe routes.StartDateController.show().url
+      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("import").url
     }
 
     "return page with back link to the import page when they are voluntary, it is before the tax start date, " +

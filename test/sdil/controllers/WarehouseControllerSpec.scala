@@ -55,7 +55,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       html.select("a.link-back").attr("href") mustBe routes.ProductionSiteController.show().url
     }
 
-    "return a page with a link back to the start date page if the user does not package liable drinks" +
+    "return a page with a link back to the start date page if the user does not package liable drinks " +
       "and the date is after the tax start date" in {
 
       stubFormPage(

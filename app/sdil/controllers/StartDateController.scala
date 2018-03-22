@@ -43,7 +43,7 @@ class StartDateController(val messagesApi: MessagesApi, cache: FormDataCache, fo
         cache.cache(request.internalId, updated) map { _ =>
           Redirect(StartDatePage.nextPage(updated).show)
         }
-      case StartDatePage if request.formData.producer.exists(_.isLarge.contains(false)) =>
+      case StartDatePage if request.formData.isVoluntary =>
         val updated = request.formData.copy(startDate = Some(LocalDate.now))
         cache.cache(request.internalId, updated) map { _ =>
           Redirect(StartDatePage.nextPage(updated).show)
