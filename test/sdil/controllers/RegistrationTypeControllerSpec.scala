@@ -44,7 +44,9 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
     "redirect to the start date page if the user packages, or has packaged on their behalf, more than 1 million litres" in {
       stubFormPage(
+        producer = Some(Producer(isProducer = true, isLarge = Some(true))),
         packageOwnVol = Some(Litreage(1000000, 2)),
+        packagesForOthers = Some(false),
         volumeForCustomerBrands = None,
         usesCopacker = Some(false),
         imports = Some(false),
@@ -101,6 +103,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
     "redirect to the start date page if the user only imports" in {
       stubFormPage(
+        isPackagingForSelf = Some(false),
         packageOwnVol = None,
         usesCopacker = Some(false),
         imports = Some(true),
@@ -115,6 +118,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
 
     "redirect to the start date page if the user only copacks" in {
       stubFormPage(
+        isPackagingForSelf = Some(false),
         packageOwnVol = None,
         volumeForCustomerBrands = Some(Litreage(1, 2)),
         usesCopacker = Some(false),

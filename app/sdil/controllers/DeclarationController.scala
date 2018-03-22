@@ -23,7 +23,7 @@ import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.{ContactDetailsPage, SubmissionData}
+import sdil.models.{ContactDetailsPage, DeclarationPage, SubmissionData}
 import sdil.models.backend.Subscription
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -38,11 +38,11 @@ class DeclarationController(val messagesApi: MessagesApi,
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = formAction.async { implicit request =>
-
-    request.formData match {
-      case a if a.isNotMandatory => Redirect(routes.RegistrationTypeController.registrationNotRequired())
-      case a if a.contactDetails.nonEmpty => Ok(register.declaration(request.formData))
-      case a if a.contactDetails.isEmpty => Redirect(routes.ContactDetailsController.show())
+    DeclarationPage.expectedPage(request.formData) match {
+      case DeclarationPage if request.formData.isNotAllowedToRegister =>
+        Redirect(routes.RegistrationTypeController.registrationNotRequired())
+      case DeclarationPage => Ok(register.declaration(request.formData))
+      case other => Redirect(other.show)
     }
   }
 

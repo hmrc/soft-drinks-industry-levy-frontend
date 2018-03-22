@@ -34,11 +34,10 @@ sealed trait Page {
 sealed trait PageWithPreviousPage extends Page {
   def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page
 
-  override def  expectedPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
-    previousPage(formData) match {
-      case page if page.isComplete(formData) => this
-      case page => page.expectedPage(formData)
-    }
+  override def expectedPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
+    val expectedPreviousPage = previousPage(formData).expectedPage(formData)
+
+    if (expectedPreviousPage.isComplete(formData)) this else expectedPreviousPage
   }
 }
 
@@ -256,7 +255,10 @@ case object WarehouseSitesPage extends MidJourneyPage {
   override def show: Call = routes.WarehouseController.show()
 }
 
-case object ContactDetailsPage extends PageWithPreviousPage {
+case object ContactDetailsPage extends MidJourneyPage {
+
+  override def nextPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = DeclarationPage
+
   override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = formData match {
     case f if !f.isVoluntary => WarehouseSitesPage
     case _ if showStartDate => StartDatePage
@@ -266,4 +268,12 @@ case object ContactDetailsPage extends PageWithPreviousPage {
   override def isComplete(formData: RegistrationFormData): Boolean = formData.contactDetails.isDefined
 
   override def show: Call = routes.ContactDetailsController.show()
+}
+
+case object DeclarationPage extends PageWithPreviousPage {
+  override def previousPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = ContactDetailsPage
+
+  override def isComplete(formData: RegistrationFormData): Boolean = true
+
+  override def show: Call = routes.DeclarationController.show()
 }
