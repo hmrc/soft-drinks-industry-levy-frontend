@@ -84,7 +84,7 @@ html .font-xsmall {
 }
 
 .table-row-answer.word-break {
-    word-break: break-word;
+    word-break: break-all;
 }
 
 .check-your-answers td {
