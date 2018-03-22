@@ -47,14 +47,17 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(retrieval) { case enrolments ~ role ~ id ~ affinity =>
       val maybeUtr = getUtr(enrolments)
+      val maybeSdil = getSdilEnrolment(enrolments)
 
       val error: Option[Result] = invalidRole(role)(request).orElse(invalidAffinityGroup(affinity)(request))
 
       val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
 
-      maybeUtr match {
-        case Some(utr) if getSdilEnrolment(enrolments).nonEmpty =>
+      (maybeUtr, maybeSdil) match {
+        case (Some(utr), Some(sdil)) =>
           alreadyRegistered(utr).map(Left.apply)
+        case (None, Some(sdil)) =>
+          Future.successful(Left(Redirect(routes.ServicePageController.show())))
         case _ if error.nonEmpty =>
           Future.successful(Left(error.get))
         case _ =>

@@ -46,6 +46,20 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
       redirectLocation(res).value mustBe sdil.controllers.routes.AuthenticationController.signIn().url
     }
 
+    "redirect to the service page if the user has an SDIL enrolment, but no UTR enrolment" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100108")
+
+      val enrolments = Enrolments(Set(
+        new Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active")
+      ))
+
+      stubAuthResult(new ~(enrolments, Some(User)))
+
+      val res = testAction(FakeRequest())
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe sdil.controllers.routes.ServicePageController.show().url
+    }
+
     "show the 'already registered' error page if the user is already registered in SDIL" in {
       val utr = "1111111111"
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
