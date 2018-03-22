@@ -52,9 +52,8 @@ sdil.verify.postcode=Postcode
 
 #Registration pending
 sdil.registration-pending.title=You’ve already submitted an application
-sdil.registration-pending.p1=You’ve already submitted an application to register for the Soft Drinks Industry Levy.
-sdil.registration-pending.p2=If you haven’t got your registration number within 24 hours, you’ll need to call the Soft Drinks Industry Levy Helpline on 0300 200 3700.
-sdil.registration-pending.p3=If there’s a problem with your application we’ll contact you using the information you provided.
+sdil.registration-pending.p1=If you haven’t got your registration number within 24 hours you need to call the Soft Drinks Industry Levy Helpline on 0300 200 3700.
+sdil.registration-pending.p2=We'll contact you using the information you gave in your application if there’s a problem.
 
 #Organisation Type
 sdil.organisation-type.heading=Which of these best describes your business?
@@ -65,12 +64,11 @@ sdil.organisation-type.sole-trader=Sole trader
 sdil.organisation-type.unincorporated-body=Unincorporated body
 
 #Partnership page
-sdil.partnership.heading=Please call us
-sdil.partnership.info.p1=We’re sorry, but you cannot register online as a partnership.
-sdil.partnership.info.p2=You’ll need to call us on 0300 200 3700 to submit your application to register for the Soft Drinks Industry Levy.
+sdil.partnership.heading=You can't register online as a partnership
+sdil.partnership.info.p1=You need to call 0300 200 3700 to register.
 
 #Producer
-sdil.producer.heading=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide?
+sdil.producer.heading=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink for brands you own or have the rights to manufacture, worldwide?
 sdil.producer.hidden-heading=How many litres worldwide?
 sdil.producer.over-one-million=1 million litres or more
 sdil.producer.under-one-million=Less than 1 million litres
@@ -87,7 +85,7 @@ sdil.who-for.option2=Our customers
 error.packaging.none-selected=Choose at least one option
 
 #Copacking page
-sdil.packageCopack.heading=Do you operate any packaging sites in the UK to package liable drinks for any customers as a third party?
+sdil.packageCopack.heading=Do you operate any packaging sites in the UK to package liable drinks for your customers as a third party?
 
 #Package copack small page
 error.copack-small.lower-greater-than-total-lower=Litres for small producers must be less than total litres for customers
@@ -100,7 +98,7 @@ sdil.packageOwnUk.heading=Do you operate any packaging sites in the UK to packag
 sdil.packageCopackVol.heading=In the next 12 months, how many litres of liable drink do you expect to package for your customers at UK packaging sites you operate?
 sdil.packageCopackSmallVol.heading=In the next year, how many litres of liable drink do you expect to claim a small producer exemption for?
 sdil.copackedVolume.heading=In the next year, how many litres of liable drink do you expect to have packaged by third parties in the UK?
-sdil.importVolume.heading=In the next 12 months, how many litres of liable drink will you bring into the UK?
+sdil.importVolume.heading=In the next 12 months, how many litres of liable drink do you expect to bring into the UK?
 sdil.litreage.lowRate=Litres in the low band
 sdil.litreage.highRate=Litres in the high band
 sdil.litreage.rates.help=What are the bands?
@@ -122,15 +120,16 @@ sdil.production-site.add.hint=You can enter more sites after if you need to
 sdil.production-site.add.legend=Enter a packaging site address
 sdil.production-site.add=Add address to list
 sdil.production-site.help.summary=If you have more than one packaging site
-sdil.production-site.help.p1=You need to tell us the addresses of all of the packaging sites you operate to package liable drinks.
+sdil.production-site.help.p1=You need to tell us the addresses of all of the packaging sites you operate in the UK to package liable drinks.
 sdil.production-site.help.p2=If you’ve got more packaging sites you can add them next.
 error.no-production-sites=Choose at least one option
 
 #Secondary warehouse
-sdil.warehouse.heading=Do you want to register any of the warehouses you’ll use to store liable drinks?
+sdil.warehouse.heading=Do you want to register any of the UK warehouses you use to store liable drinks?
 label.warehouse-sites.add=I want to register another warehouse
 sdil.warehouse.register.help=Why register a warehouse?
-sdil.warehouse.register.help.content=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses you use to store them.
+sdil.warehouse.register.help.content-1=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses you use to store them.
+sdil.warehouse.register.help.content-2=You don’t need to register an address as a warehouse if you’ve already registered it as a packaging site.
 sdil.warehouse.add.heading=Do you want to register another warehouse?
 sdil.warehouse-site.add.heading=Enter a warehouse site
 sdil.warehouse-site.add.hint=You can enter more sites after if you need to
@@ -185,8 +184,8 @@ error.start-date.in-future=Date cannot be in the future
 error.date.invalid=Enter a valid date
 
 #Contact details
-sdil.contact-details.heading=Who will be your business’s contact for the Soft Drinks Industry Levy?
-sdil.contact-details.full-name=Full name
+sdil.contact-details.heading=Who is your contact for the Soft Drinks Industry Levy?
+sdil.contact-details.full-name=Name
 sdil.contact-details.position=Job title
 sdil.contact-details.phone-number=Telephone number
 sdil.contact-details.email=Email
@@ -299,13 +298,13 @@ sdil.already.received.for.utr.info=<p>An application to register for the Soft Dr
 
 #Invalid role
 sdil.invalid-affinity.title=You can’t register using this Government Gateway account
-sdil.invalid-affinity.p1=You’ve signed in as an agent. Unfortunately, you can’t register for the Soft Drinks Industry Levy using this account.
-sdil.invalid-affinity.p2=The business or individual you’re representing must apply to register themselves.
+sdil.invalid-affinity.p1=You’ve signed in as an agent. You can’t register for the Soft Drinks Industry Levy using this account.
+sdil.invalid-affinity.p2=The organisation or individual you’re representing must apply to register themselves.
 
 #Invalid affinity group
 sdil.invalid-role.title=You can’t register using this Government Gateway account
-sdil.invalid-role.p1=You’ve signed in as an assistant. Unfortunately, you can’t register for the Soft Drinks Industry Levy using this account.
-sdil.invalid-role.p2=The business or individual you’re representing must apply to register themselves.
+sdil.invalid-role.p1=You’ve signed in as an assistant. You can’t register for the Soft Drinks Industry Levy using this account.
+sdil.invalid-role.p2=The organisation or individual you’re representing must apply to register themselves.
 
 #Not whitelisted
 sdil.not-whitelisted.title=Service temporarily unavailable
