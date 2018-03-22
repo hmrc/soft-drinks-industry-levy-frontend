@@ -77,7 +77,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
     }
 
     "return a page with a link back to the import page if the user is voluntary only and it is after the tax start " +
-      "dare" in {
+      "date" in {
       stubFormPage(
         packageOwnVol = Some(Litreage(1, 2)),
         packagesForOthers = Some(false),
