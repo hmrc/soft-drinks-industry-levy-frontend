@@ -34,23 +34,10 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       stubFormPage(
         producer = Some(Producer(true, Some(true))))
       val request = FakeRequest("GET", "/start-date")
-      val result = controller.show.apply(request)
+      val result = controller.show(request)
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.start-date.heading"))
-    }
-
-    "return Status: See Other and redirected to contact details page if they are a small producer" in {
-      stubFormPage(
-        producer = Some(Producer(true, Some(false))),
-        isPackagingForSelf = Some(false),
-        packagesForOthers = Some(false),
-        imports = Some(false))
-      val request = FakeRequest("GET", "/start-date")
-      val result = controller.show.apply(request)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ContactDetailsController.show().url
     }
 
     "return Status: See Other for start date form POST with valid date and redirect to add site page" in {
@@ -82,7 +69,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       )
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
-      val response = controller.submit().apply(request)
+      val response = controller.submit()(request)
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.WarehouseController.show().url
@@ -134,7 +121,7 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "startDate.month" -> "08",
         "startDate.year" -> "2017"
       )
-      val response = controller.submit().apply(request)
+      val response = controller.submit()(request)
 
       status(response) mustBe BAD_REQUEST
       contentType(response).get mustBe HTML
@@ -167,59 +154,22 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("import").url
     }
 
-    "return Status: See Other for start date form GET with valid date and Liable booleans with redirect to add site page" in {
-      stubFormPage(
-        packageOwnVol = Some(Litreage(18888888, 24444)),
-        usesCopacker = Some(true),
-        imports = Some(false),
-        importVolume = None
-      )
-      testConfig.setTaxStartDate(tomorrow)
-
-      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
-
-      val response = controller.show().apply(request)
-      status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.ProductionSiteController.show().url
-    }
-
-    "return Status: See Other for start date form GET with valid date and no Liable booleans with redirect to " +
-      "producer page" in {
-      stubFormPage(
-        producer = None,
-        isPackagingForSelf = None,
-        packageOwnVol = None,
-        packagesForOthers = None,
-        volumeForCustomerBrands = None,
-        imports = None,
-        importVolume = None
-      )
-      testConfig.setTaxStartDate(tomorrow)
-
-      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
-
-      val response = controller.show().apply(request)
-      status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.ProducerController.show().url
-    }
-
     "return Status: See Other for start date page GET if it is before the tax start date, " +
       "and redirect to secondary warehouse page if the user does not need to register any production sites" in {
 
       stubFormPage(
         producer = Some(Producer(isProducer = false, isLarge = None)),
+        isPackagingForSelf = None,
         packageOwnVol = None,
         packagesForOthers = Some(false),
         usesCopacker = Some(false),
-        imports = Some(false),
-        importVolume = None
+        imports = Some(true),
+        importVolume = Some(Litreage(1000000, 2000000))
       )
-
-      testConfig.setTaxStartDate(tomorrow)
 
       val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
 
-      val response = controller.show().apply(request)
+      val response = controller.submit()(request)
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.WarehouseController.show().url
     }

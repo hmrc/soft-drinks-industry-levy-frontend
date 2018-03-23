@@ -32,32 +32,28 @@ import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class ContactDetailsController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)(implicit config: AppConfig)
+class ContactDetailsController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)
+                              (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import ContactDetailsController._
 
   def show: Action[AnyContent] = formAction.async { implicit request =>
-    ContactDetailsPage.expectedPage(request.formData) match {
-      case ContactDetailsPage => Ok(register.contact_details(request.formData.contactDetails.fold(form)(form.fill), previousPage(request.formData).show))
+    Journey.expectedPage(ContactDetailsPage) match {
+      case ContactDetailsPage =>
+        val filledForm = request.formData.contactDetails.fold(form)(form.fill)
+        Ok(register.contact_details(filledForm, Journey.previousPage(ContactDetailsPage).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def submit: Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      formWithErrors => Future successful BadRequest(register.contact_details(formWithErrors, previousPage(request.formData).show)),
+      formWithErrors => Future.successful(BadRequest(register.contact_details(formWithErrors, Journey.previousPage(ContactDetailsPage).show))),
       details => cache.cache(request.internalId, request.formData.copy(contactDetails = Some(details))) map { _ =>
         Redirect(routes.DeclarationController.submit())
       }
     )
-  }
-
-  private def previousPage(formData: RegistrationFormData) = {
-    ContactDetailsPage.previousPage(formData) match {
-      case StartDatePage if LocalDate.now isBefore config.taxStartDate => StartDatePage.previousPage(formData)
-      case other => other
-    }
   }
 }
 

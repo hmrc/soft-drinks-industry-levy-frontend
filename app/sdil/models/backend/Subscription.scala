@@ -38,7 +38,7 @@ object Subscription {
     for {
       orgType <- formData.organisationType
       producer <- formData.producer
-      startDate <- formData.startDate
+      startDate = formData.startDate.getOrElse(LocalDate.now)
       productionSites = formData.productionSites.getOrElse(Nil)
       secondaryWarehouses = formData.secondaryWarehouses.getOrElse(Nil)
       contactDetails <- formData.contactDetails

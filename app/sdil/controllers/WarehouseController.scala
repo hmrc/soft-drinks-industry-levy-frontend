@@ -42,14 +42,14 @@ class WarehouseController(val messagesApi: MessagesApi,
   import WarehouseController._
 
   def show = formAction.async { implicit request =>
-    WarehouseSitesPage.expectedPage(request.formData) match {
+    Journey.expectedPage(WarehouseSitesPage) match {
       case WarehouseSitesPage =>
         val fillInitialForm = request.formData.secondaryWarehouses match {
           case Some(Nil) => initialForm.fill(SecondaryWarehouses(Nil, false, None))
           case Some(_) => selectSitesForm
           case None => initialForm
         }
-        Ok(secondaryWarehouse(fillInitialForm, secondaryWarehouses, previousPage(request.formData).show))
+        Ok(secondaryWarehouse(fillInitialForm, secondaryWarehouses, Journey.previousPage(WarehouseSitesPage).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
@@ -64,7 +64,7 @@ class WarehouseController(val messagesApi: MessagesApi,
 
   private def validateWith(form: Form[SecondaryWarehouses])(implicit request: RegistrationFormRequest[_]): Future[Result] = {
     form.bindFromRequest().fold(
-      errors => BadRequest(secondaryWarehouse(errors, secondaryWarehouses, previousPage(request.formData).show)),
+      errors => BadRequest(secondaryWarehouse(errors, secondaryWarehouses, Journey.previousPage(WarehouseSitesPage).show)),
       {
         case SecondaryWarehouses(_, _, Some(addr)) =>
           val updatedSites = request.formData.secondaryWarehouses match {
@@ -75,8 +75,10 @@ class WarehouseController(val messagesApi: MessagesApi,
             Redirect(routes.WarehouseController.show())
           }
         case SecondaryWarehouses(addresses, _, _) =>
-          cache.cache(request.internalId, request.formData.copy(secondaryWarehouses = Some(addresses.map(Address.fromString)))) map { _ =>
-            Redirect(WarehouseSitesPage.nextPage(request.formData).show)
+          val updated = request.formData.copy(secondaryWarehouses = Some(addresses.map(Address.fromString)))
+
+          cache.cache(request.internalId, updated) map { _ =>
+            Redirect(Journey.nextPage(WarehouseSitesPage, updated).show)
           }
       }
     )
@@ -84,11 +86,6 @@ class WarehouseController(val messagesApi: MessagesApi,
 
   private def secondaryWarehouses(implicit request: RegistrationFormRequest[_]): Seq[Address] = {
     request.formData.secondaryWarehouses.getOrElse(Nil)
-  }
-
-  private def previousPage(formData: RegistrationFormData) = WarehouseSitesPage.previousPage(formData) match {
-    case StartDatePage if LocalDate.now isBefore config.taxStartDate => StartDatePage.previousPage(formData)
-    case other => other
   }
 }
 

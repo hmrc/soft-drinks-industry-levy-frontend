@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.forms.FormHelpers
-import sdil.models.StartDatePage
+import sdil.models.{Journey, StartDatePage}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.start_date
 
@@ -37,29 +37,21 @@ class StartDateController(val messagesApi: MessagesApi, cache: FormDataCache, fo
   import StartDateController._
 
   def show: Action[AnyContent] = formAction.async { implicit request =>
-    StartDatePage.expectedPage(request.formData) match {
-      case StartDatePage if LocalDate.now isBefore config.taxStartDate =>
-        val updated = request.formData.copy(startDate = Some(config.taxStartDate))
-        cache.cache(request.internalId, updated) map { _ =>
-          Redirect(StartDatePage.nextPage(updated).show)
-        }
-      case StartDatePage if request.formData.isVoluntary =>
-        val updated = request.formData.copy(startDate = Some(LocalDate.now))
-        cache.cache(request.internalId, updated) map { _ =>
-          Redirect(StartDatePage.nextPage(updated).show)
-        }
-      case StartDatePage => Ok(start_date(request.formData.startDate.fold(form)(form.fill), StartDatePage.previousPage(request.formData).show))
+    Journey.expectedPage(StartDatePage) match {
+      case StartDatePage =>
+        val filled = request.formData.startDate.fold(form)(form.fill)
+        Ok(start_date(filled, Journey.previousPage(StartDatePage).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def submit: Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => BadRequest(views.html.softdrinksindustrylevy.register.start_date(errors, StartDatePage.previousPage(request.formData).show)),
+      errors => BadRequest(start_date(errors, Journey.previousPage(StartDatePage).show)),
       startDate => {
         val updated = request.formData.copy(startDate = Some(startDate))
         cache.cache(request.internalId, updated) map { _ =>
-          Redirect(StartDatePage.nextPage(updated).show)
+          Redirect(Journey.nextPage(StartDatePage, updated).show)
         }
       }
     )

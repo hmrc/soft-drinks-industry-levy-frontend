@@ -24,7 +24,7 @@ import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.connectors.{AnalyticsRequest, Event, GaConnector}
 import sdil.forms.FormHelpers
-import sdil.models.OrgTypePage
+import sdil.models.{Journey, OrganisationTypePage}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
@@ -41,8 +41,8 @@ class OrganisationTypeController(val messagesApi: MessagesApi, cache: FormDataCa
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
     val f = request.formData.organisationType.fold(form(hasCTEnrolment))(form(hasCTEnrolment).fill)
 
-    OrgTypePage.expectedPage(request.formData) match {
-      case OrgTypePage => Ok(register.organisation_type(f, hasCTEnrolment))
+    Journey.expectedPage(OrganisationTypePage) match {
+      case OrganisationTypePage => Ok(register.organisation_type(f, hasCTEnrolment))
       case otherPage => Redirect(otherPage.show)
     }
   }
@@ -56,11 +56,11 @@ class OrganisationTypeController(val messagesApi: MessagesApi, cache: FormDataCa
         val event = Event("orgType", "selectOrg", orgType)
         gaConnector.sendEvent(AnalyticsRequest(request.cookies.get("_ga").map(_.value).getOrElse(""), Seq(event))) flatMap {
           _ =>
-            val formData = request.formData.copy(organisationType = Some(orgType))
-            cache.cache(request.internalId, formData) map { fd =>
+            val updated = request.formData.copy(organisationType = Some(orgType))
+            cache.cache(request.internalId, updated) map { fd =>
               if (orgType == "partnership") Redirect(routes.OrganisationTypeController.displayPartnerships())
               else
-                Redirect(OrgTypePage.nextPage(formData).show)
+                Redirect(Journey.nextPage(OrganisationTypePage, updated).show)
             }
         }
       }

@@ -35,14 +35,14 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: FormDataCach
   import ProductionSiteController._
 
   def show = formAction.async { implicit request =>
-    ProductionSitesPage.expectedPage(request.formData) match {
+    Journey.expectedPage(ProductionSitesPage) match {
       case ProductionSitesPage => Ok(
         productionSite(
           form,
           request.formData.rosmData.address,
           primaryPlaceOfBusiness,
           request.formData.productionSites.getOrElse(Nil),
-          ProductionSitesPage.previousPage(request.formData).show
+          Journey.previousPage(ProductionSitesPage).show
         )
       )
       case otherPage => Redirect(otherPage.show)
@@ -57,8 +57,9 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: FormDataCach
           request.formData.rosmData.address,
           primaryPlaceOfBusiness,
           request.formData.productionSites.getOrElse(Nil),
-          ProductionSitesPage.previousPage(request.formData).show)
-        ),
+          Journey.previousPage(ProductionSitesPage).show
+        )
+      ),
       {
         case ProductionSites(bprAddress, ppobAddress, _, true, Some(additionalAddress)) =>
           val updated = Seq(bprAddress, ppobAddress).flatten.map(Address.fromString) ++
@@ -71,9 +72,10 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: FormDataCach
 
         case p =>
           val addresses = (Seq(p.bprAddress, p.ppobAddress).flatten ++ p.additionalSites).map(Address.fromString)
+          val updated = request.formData.copy(productionSites = Some(addresses))
 
-          cache.cache(request.internalId, request.formData.copy(productionSites = Some(addresses))) map { _ =>
-            Redirect(ProductionSitesPage.nextPage(request.formData).show)
+          cache.cache(request.internalId, updated) map { _ =>
+            Redirect(Journey.nextPage(ProductionSitesPage, updated).show)
           }
       }
     )

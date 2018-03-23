@@ -16,7 +16,8 @@
 
 package sdil.controllers
 
-import com.gargoylesoftware.htmlunit.WebConsole.Logger
+import java.time.LocalDate
+
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
@@ -30,8 +31,9 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
   "Radio Form Controller" should {
     "return Status: OK when user is logged in and loads copacked page" in {
       stubFormPage(
-        producer = Some(Producer(false, None)),
-        usesCopacker = None)
+        producer = Some(Producer(isProducer = true, isLarge = Some(false))),
+        usesCopacker = None
+      )
       val result = controller.show(copacked)(FakeRequest())
 
       status(result) mustBe OK
@@ -63,31 +65,51 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(result).value mustBe routes.RadioFormController.show("packageOwnUk").url
     }
 
+    "return Status: BAD_REQUEST for invalid form input for copacked form submission" in {
+      val result = copackedSubmit(FakeRequest().withFormUrlEncodedBody(
+      "yesOrNo" -> ""
+      ))
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) must include(messagesApi("sdil.common.errorSummary"))
+    }
+
     "return Status: SEE_OTHER and redirect to the import volume page if the user imports liable drinks" in {
       val result = importSubmit(FakeRequest().withFormUrlEncodedBody(
         "yesOrNo" -> "true"
       ))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.LitreageController.show("importVolume").url
+      redirectLocation(result).value mustBe routes.LitreageController.show("importVolume").url
     }
 
-    "return Status: SEE_OTHER and redirect to the registration type page if the user does not import liable drinks" in {
-      val result = importSubmit(FakeRequest().withFormUrlEncodedBody(
-        "yesOrNo" -> "false"
-      ))
+    "redirect to the start date page if the user does not import liable drinks and is non-voluntary" in {
+      testConfig.setTaxStartDate(LocalDate.now.minusDays(1))
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.RegistrationTypeController.continue().url)
+      val res = importSubmit(FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false"))
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.StartDateController.show().url
+
+      testConfig.resetTaxStartDate()
     }
 
-    "return Status: BAD_REQUEST for invalid form input for copacked form submission" in {
-      val result = copackedSubmit(FakeRequest().withFormUrlEncodedBody(
-        "yesOrNo" -> ""
-      ))
+    "redirect to the contact details page if the user does not import liable drinks, and is voluntary" in {
+      stubFormPage(
+        producer = Some(Producer(isProducer = true, isLarge = Some(false))),
+        isPackagingForSelf = Some(false),
+        packageOwnVol = None,
+        usesCopacker = Some(true),
+        packagesForOthers = Some(false),
+        volumeForCustomerBrands = None,
+        imports = Some(false),
+        importVolume = None
+      )
 
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messagesApi("sdil.common.errorSummary"))
+      val res = importSubmit(FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false"))
+
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res).value mustBe routes.ContactDetailsController.show().url
     }
 
     "return Status: BAD_REQUEST for invalid form input for import small form submission" in {
@@ -221,6 +243,7 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(res) mustBe SEE_OTHER
       verifyDataCached(defaultFormData.copy(
+        utr = "4445556667",
         isImporter = Some(false),
         importVolume = None
       ))

@@ -51,7 +51,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = testController.show()(FakeRequest("GET", "/declaration"))
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.RegistrationTypeController.registrationNotRequired().url
+      redirectLocation(res).value mustBe routes.RegistrationNotRequiredController.show().url
     }
 
     "return Status: See Other when POST from declaration" in {
@@ -141,6 +141,38 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
         verify(mockSdilConnector, times(1)).submit(matching(expected.copy(orgType = enumValue)), any())(any())
       }
+    }
+
+    "set the liability start date to the current date if it is not set" in {
+      lazy val expected = Subscription(
+        "2223334445",
+        "an organisation",
+        "3",
+        UkAddress(Seq("1", "The Road"), "AA11 1AA"),
+        Activity(
+          Some(Litreage(1, 2)),
+          Some(Litreage(9, 10)),
+          Some(Litreage(3, 4)),
+          Some(Litreage(1, 1)),
+          isLarge = false
+        ),
+        LocalDate.now,
+        Seq(Site(UkAddress(Seq("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(Seq("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
+        Contact(
+          Some("A person"),
+          Some("A position"),
+          "1234",
+          "aa@bb.cc"
+        )
+      )
+
+      stubFormPage(utr = "2223334445", startDate = None)
+
+      val res = testController.submit()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      verify(mockSdilConnector, times(1)).submit(matching(expected), any())(any())
     }
   }
 
