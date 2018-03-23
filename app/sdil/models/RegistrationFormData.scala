@@ -74,7 +74,9 @@ case class RegistrationFormData(rosmData: RosmRegistration,
     }
   }
 
-  lazy val hasPackagingSites: Boolean = producer.flatMap(_.isLarge).contains(true) || packagesForOthers.contains(true)
+  lazy val hasPackagingSites: Boolean =
+    Seq(producer.flatMap(_.isLarge), isPackagingForSelf).forall(_.contains(true)) ||
+      packagesForOthers.contains(true)
 }
 
 object RegistrationFormData {

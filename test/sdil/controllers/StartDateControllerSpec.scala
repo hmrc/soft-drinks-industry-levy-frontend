@@ -88,6 +88,46 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(response).get mustBe routes.WarehouseController.show().url
     }
 
+    "return Status: See Other for start date form POST with valid date and redirect to secondary warehouse page, " +
+      "if the user does not need to register any production sites despite being a large producer" in {
+
+      stubFormPage(
+        producer = Some(Producer(isProducer = true, isLarge = Some(true))),
+        isPackagingForSelf = Some(false),
+        packageOwnVol = None,
+        packagesForOthers = Some(false),
+        usesCopacker = Some(false),
+        imports = Some(false),
+        importVolume = None
+      )
+
+      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
+      val response = controller.submit().apply(request)
+
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.WarehouseController.show().url
+    }
+
+    "return Status: See Other for start date form POST with valid date and redirect to production sites page, " +
+      "if the user does package" in {
+
+      stubFormPage(
+        producer = Some(Producer(isProducer = true, isLarge = Some(true))),
+        isPackagingForSelf = Some(true),
+        packageOwnVol = None,
+        packagesForOthers = Some(false),
+        usesCopacker = Some(false),
+        imports = Some(false),
+        importVolume = None
+      )
+
+      val request = FakeRequest().withFormUrlEncodedBody(validStartDateForm: _*)
+      val response = controller.submit().apply(request)
+
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.ProductionSiteController.show().url
+    }
+
     "return Status: Bad Request for invalid start date form POST request with day too low and display field hint" in {
       val request = FakeRequest().withFormUrlEncodedBody(
         "startDate.day" -> "-2",
