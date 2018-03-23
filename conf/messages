@@ -51,9 +51,9 @@ sdil.verify.address.line4=Address line 4
 sdil.verify.postcode=Postcode
 
 #Registration pending
-sdil.registration-pending.title=You’ve already submitted an application
+sdil.registration-pending.title=You’ve already sent an application
 sdil.registration-pending.p1=If you haven’t got your registration number within 24 hours you need to call the Soft Drinks Industry Levy Helpline on 0300 200 3700.
-sdil.registration-pending.p2=We'll contact you using the information you gave in your application if there’s a problem.
+sdil.registration-pending.p2=We’ll contact you using the information you gave in your application if there’s a problem.
 
 #Organisation Type
 sdil.organisation-type.heading=Which of these best describes your business?
@@ -64,7 +64,7 @@ sdil.organisation-type.sole-trader=Sole trader
 sdil.organisation-type.unincorporated-body=Unincorporated body
 
 #Partnership page
-sdil.partnership.heading=You can't register online as a partnership
+sdil.partnership.heading=You can’t register online as a partnership
 sdil.partnership.info.p1=You need to call 0300 200 3700 to register.
 
 #Producer
@@ -130,7 +130,7 @@ label.warehouse-sites.add=I want to register another warehouse
 sdil.warehouse.register.help=Why register a warehouse?
 sdil.warehouse.register.help.content-1=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses you use to store them.
 sdil.warehouse.register.help.content-2=You don’t need to register an address as a warehouse if you’ve already registered it as a packaging site.
-sdil.warehouse.add.heading=Do you want to register another warehouse?
+sdil.warehouse.add.heading=Do you want to register another UK warehouse?
 sdil.warehouse-site.add.heading=Enter a warehouse site
 sdil.warehouse-site.add.hint=You can enter more sites after if you need to
 sdil.warehouse-site.add.legend=A warehouse site address
