@@ -34,6 +34,7 @@ import scala.collection.JavaConverters._
 class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /production-site" should {
+
     "return 200 Ok and the production site page if no other sites have been added" in {
       stubFormPage(
         productionSites = None,
