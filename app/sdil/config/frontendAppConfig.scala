@@ -56,7 +56,8 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   private lazy val companyAuthSignInPath = getConfString("company-auth.sign-in-path", "")
   private lazy val companyAuthSignOutPath = getConfString("company-auth.sign-out-path", "")
   lazy val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
-  lazy val signoutUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath"
+  lazy val feedbackSurveyUrl: String = loadConfig("microservice.services.feedback-survey.url")
+  lazy val signoutUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath?continue=$feedbackSurveyUrl?origin=SDIL"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
   lazy val taxStartDate: LocalDate = LocalDate.parse(loadConfig("tax-start-date"))
 
