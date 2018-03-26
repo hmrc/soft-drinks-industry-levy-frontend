@@ -201,8 +201,8 @@ class RegistrationTypeControllerSpec extends ControllerSpec with BeforeAndAfterE
           volumeForCustomerBrands = None,
           isImporter = Some(false),
           importVolume = None,
-          productionSites = Some(Nil),
-          secondaryWarehouses = Some(Nil)
+          productionSites = None,
+          secondaryWarehouses = None
         )
       )
     }

@@ -37,7 +37,9 @@ class RegistrationTypeController(val messagesApi: MessagesApi,
       // ensure production sites/warehouses are not stored if they aren't needed
       case RegistrationTypePage if request.formData.isVoluntary =>
         cache.cache(request.internalId, request.formData.copy(
-          productionSites = Some(Nil), secondaryWarehouses = Some(Nil))
+          productionSites = None,
+          secondaryWarehouses = None
+        )
         ) map { _ =>
           Redirect(routes.StartDateController.show())
         }

@@ -37,7 +37,10 @@ sealed trait PageWithPreviousPage extends Page {
   override def expectedPage(formData: RegistrationFormData)(implicit config: AppConfig): Page = {
     val expectedPreviousPage = previousPage(formData).expectedPage(formData)
 
-    if (expectedPreviousPage.isComplete(formData)) this else expectedPreviousPage
+    if (expectedPreviousPage.isComplete(formData))
+      this
+    else
+      expectedPreviousPage
   }
 }
 
@@ -234,7 +237,7 @@ case object ProductionSitesPage extends MidJourneyPage {
     if (showStartDate) StartDatePage else StartDatePage.previousPage(formData)
   }
 
-  override def isComplete(formData: RegistrationFormData): Boolean = formData.productionSites.isDefined
+  override def isComplete(formData: RegistrationFormData): Boolean = formData.productionSites.exists(_.nonEmpty)
 
   override def show: Call = routes.ProductionSiteController.show()
 }
