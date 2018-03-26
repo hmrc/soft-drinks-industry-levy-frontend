@@ -73,7 +73,7 @@ sdil.producer.hidden-heading=How many litres worldwide?
 sdil.producer.over-one-million=1 million litres or more
 sdil.producer.under-one-million=Less than 1 million litres
 sdil.producer.details.title=What does ‘packaged’ mean?
-sdil.producer.details.p1=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
+sdil.producer.details.p1=A liable drink is 'packaged' if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
 
 #Package
 sdil.package.heading=Will you package liable drinks at a packaging site you operate?
