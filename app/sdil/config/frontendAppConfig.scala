@@ -62,6 +62,7 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
 
   override def isWhitelisted(utr: String): Boolean = whitelistedUtrs.isEmpty || whitelistedUtrs.contains(utr)
 
-  override val whitelistEnabled: Boolean = getBoolean("whitelist.enabled")
+  // disable whitelist filter on 6th April
+  override val whitelistEnabled: Boolean = getBoolean("whitelist.enabled") && taxStartDate.isAfter(LocalDate.now)
   private lazy val whitelistedUtrs: Seq[String] = runModeConfiguration.getStringSeq("whitelist.utrs").getOrElse(Nil)
 }
