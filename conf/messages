@@ -68,12 +68,33 @@ sdil.partnership.heading=You can’t register online as a partnership
 sdil.partnership.info.p1=You need to call 0300 200 3700 to register.
 
 #Producer
-sdil.producer.heading=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink for brands you own or have the rights to manufacture, worldwide?
+sdil.producer.heading=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink for\
+   brands you own or have the rights to manufacture, worldwide?
 sdil.producer.hidden-heading=How many litres worldwide?
 sdil.producer.over-one-million=1 million litres or more
 sdil.producer.under-one-million=Less than 1 million litres
 sdil.producer.details.title=What does ‘packaged’ mean?
-sdil.producer.details.p1=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
+sdil.producer.details.p1=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready \
+  to either drink or dilute.
+sdil.producer.liable-drinks.title=What is a liable drink?
+sdil.producer.liable-drinks.h1=Liable drinks
+sdil.producer.liable-drinks.p1=A drink is liable if it meets all the following conditions:
+sdil.producer.liable-drinks.li1=it has a content of 1.2% alcohol by volume or less
+sdil.producer.liable-drinks.li2=it’s either ready to drink, or to be drunk it must be diluted with water, mixed with \
+  crushed ice or processed to make crushed ice, mixed with carbon dioxide or a combination of these
+sdil.producer.liable-drinks.li3=it’s packaged ready for sale
+sdil.producer.liable-drinks.li4=it has had sugar added during production, including pure cane sugars like sucrose and\
+   glucose as well as substances (other than fruit juice, vegetable juice and milk) that contain sugar, such as honey
+sdil.producer.liable-drinks.li5=it contains at least 5 grams (g) of sugar per 100 millilitres (ml) in its ready to\
+   drink or diluted form
+sdil.producer.exempt-drinks.h1=Exempt drinks
+sdil.producer.exempt-drinks.p1=A drink is exempt if it meets one of the following conditions:
+sdil.producer.exempt-drinks.li1=it contains at least 75% milk
+sdil.producer.exempt-drinks.li2=it’s a milk-substitute which contains at least 120 milligrams of calcium per 100ml,\
+   for example soya or almond milk
+sdil.producer.exempt-drinks.li3=it’s an alcohol replacement drink, for example de-alcoholised beer or wine
+sdil.producer.exempt-drinks.li4=it’s infant formula, follow-on formula, baby foods, formulated food intended as a\
+   total diet replacement or dietary food used for special medical purposes
 
 #Package
 sdil.package.heading=Will you package liable drinks at a packaging site you operate?
@@ -94,16 +115,22 @@ error.copack-small.higher-greater-than-total-higher=Litres for small producers m
 #Litreage pages
 sdil.packageOwnVol.heading=In the next 12 months, how many litres of liable drink do you expect to package for brands \
   you own or have the rights to manufacture at UK packaging sites you operate?
-sdil.packageOwnUk.heading=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have the rights to manufacture?
-sdil.packageCopackVol.heading=In the next 12 months, how many litres of liable drink do you expect to package for your customers at UK packaging sites you operate?
-sdil.packageCopackSmallVol.heading=In the next year, how many litres of liable drink do you expect to claim a small producer exemption for?
-sdil.copackedVolume.heading=In the next year, how many litres of liable drink do you expect to have packaged by third parties in the UK?
+sdil.packageOwnUk.heading=Do you operate any packaging sites in the UK to package liable drinks for brands you own or\
+   have the rights to manufacture?
+sdil.packageCopackVol.heading=In the next 12 months, how many litres of liable drink do you expect to package for your \
+  customers at UK packaging sites you operate?
+sdil.packageCopackSmallVol.heading=In the next year, how many litres of liable drink do you expect to claim a small \
+  producer exemption for?
+sdil.copackedVolume.heading=In the next year, how many litres of liable drink do you expect to have packaged by third \
+  parties in the UK?
 sdil.importVolume.heading=In the next 12 months, how many litres of liable drink do you expect to bring into the UK?
 sdil.litreage.lowRate=Litres in the low band
 sdil.litreage.highRate=Litres in the high band
 sdil.litreage.rates.help=What are the bands?
 sdil.litreage.rates.content.p1=The low band is from 5 grams to 7.9 grams of sugar per 100 millilitres.
 sdil.litreage.rates.content.p2=The high band is 8 grams of sugar or more per 100 millilitres.
+sdil.litreage.volumes.help=I don’t know these volumes
+sdil.litreage.volumes.content.p1=If you don’t have exact volumes, enter an estimate. Your exact liability will be calculated when you submit your returns.
 
 error.litreage.required=Number of litres must be 0 or more
 error.litreage.numeric=Number of litres must be a whole number
@@ -152,18 +179,14 @@ sdil.copacked.heading=Do you use any third parties in the UK to package liable d
 sdil.import.heading=Do you bring liable drinks into the UK from anywhere outside of the UK?
 
 sdil.registration-not-required.heading= You don’t need to register
-sdil.registration-not-required.p1=You don’t need to register now. You must register within 30 days of the:
+sdil.registration-not-required.p1=You must register within 30 days of the:
 sdil.registration-not-required.li1=end of the month in which you packaged liable drinks for someone else
-sdil.registration-not-required.li2=date in which you know you’re going to package liable drinks for someone else in \
-  the next 30 days
+sdil.registration-not-required.li2=date you know you’re going to package liable drinks for someone else
 sdil.registration-not-required.li3=end of the month in which you brought liable drinks into the UK
-sdil.registration-not-required.li4=date on which you know you’re going to bring liable drinks into the UK in the next\
-   30 days
-sdil.registration-not-required.li5=end of the month if you’ve produced over one million litres of liable drinks in\
-  the past 12 months
-sdil.registration-not-required.li6=date on which you know that in the next 30 days you’ll produce over one million\
-  litres of liable drinks in the past 12 months
-sdil.registration-not-required.p3=If this is not accurate, you need to <a href="{0}">go back and change your answers.</a>
+sdil.registration-not-required.li4=date you know you’re going to bring liable drinks into the UK
+sdil.registration-not-required.li5=end of the month if you’ve produced over 1 million litres of liable drinks in the past 12 months
+sdil.registration-not-required.li6=date you know that in the next 30 days you will produce over 1 million litres of liable drinks in the next 30 days
+sdil.registration-not-required.p3=If this isn’t right you need to <a href="{0}">go back and change your answers.</a>
 
 #Small Producer Confrim
 sdil.small-prod-confirm.heading=Confirm you’re a small producer
@@ -178,6 +201,14 @@ sdil.start-date.example=For example, 6 4 2018
 sdil.start-date.day=Day
 sdil.start-date.month=Month
 sdil.start-date.year=Year
+sdil.start-date.help-heading=How do I know when I became liable?
+sdil.start-date.help-p1=The date you became liable is the date that you first:
+sdil.start-date.help-li1=packaged liable drinks for someone else
+sdil.start-date.help-li2=knew you were going to package liable drinks for someone else
+sdil.start-date.help-li3=brought liable drinks into the UK
+sdil.start-date.help-li4=knew you were going to bring liable drinks into the UK
+sdil.start-date.help-li5=produced more than 1 million litres of liable drink over the past 12 months
+sdil.start-date.help-li6=knew you would produce more than 1 million litres of liable drink in the next 30 days
 
 error.day.required=Enter a day
 error.month.required=Enter a month
