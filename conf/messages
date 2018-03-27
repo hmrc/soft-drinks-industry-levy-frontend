@@ -19,8 +19,8 @@ sdil.common.error=Error
 #Address lines
 sdil.address.line1=Address line 1
 sdil.address.line2=Address line 2
-sdil.address.line3=Address line 3
-sdil.address.line4=Address line 4
+sdil.address.line3=Address line 3 (optional)
+sdil.address.line4=Address line 4 (optional)
 sdil.address.postcode=Postcode
 
 error.utr.required=Enter a UTR
@@ -131,7 +131,7 @@ sdil.litreage.rates.help=What are the bands?
 sdil.litreage.rates.content.p1=The low band is from 5 grams to 7.9 grams of sugar per 100 millilitres.
 sdil.litreage.rates.content.p2=The high band is 8 grams of sugar or more per 100 millilitres.
 sdil.litreage.volumes.help=I don’t know these volumes
-sdil.litreage.volumes.content.p1=If you don’t have exact volumes, enter an estimate. Your exact liability will be calculated when you submit your returns.
+sdil.litreage.volumes.content.p1=If you don’t have the exact volumes you can enter an estimate.
 
 error.litreage.required=Number of litres must be 0 or more
 error.litreage.numeric=Number of litres must be a whole number
@@ -180,13 +180,15 @@ sdil.copacked.heading=Do you use any third parties in the UK to package liable d
 sdil.import.heading=Do you bring liable drinks into the UK from anywhere outside of the UK?
 
 sdil.registration-not-required.heading= You don’t need to register
-sdil.registration-not-required.p1=You must register within 30 days of the:
-sdil.registration-not-required.li1=end of the month in which you packaged liable drinks for someone else
-sdil.registration-not-required.li2=date you know you’re going to package liable drinks for someone else
-sdil.registration-not-required.li3=end of the month in which you brought liable drinks into the UK
-sdil.registration-not-required.li4=date you know you’re going to bring liable drinks into the UK
-sdil.registration-not-required.li5=end of the month if you’ve produced over 1 million litres of liable drinks in the past 12 months
-sdil.registration-not-required.li6=date you know that in the next 30 days you will produce over 1 million litres of liable drinks in the next 30 days
+sdil.registration-not-required.p1=Based on your answers you don’t need to register. You’ll need to register within 30 days of the:
+sdil.registration-not-required.li1=end of the month if you’ve produced over 1 million litres of liable drinks in the \
+  past 12 months
+sdil.registration-not-required.li2=date you know that you will produce over 1 million litres of liable drinks in the \
+  next 30 days
+sdil.registration-not-required.li3=end of the month in which you packaged liable drinks for someone else
+sdil.registration-not-required.li4=date you know you’re going to package liable drinks for someone else
+sdil.registration-not-required.li5=end of the month in which you brought liable drinks into the UK
+sdil.registration-not-required.li6=date you know you’re going to bring liable drinks into the UK
 sdil.registration-not-required.p3=If this isn’t right you need to <a href="{0}">go back and change your answers.</a>
 
 #Small Producer Confrim
@@ -204,12 +206,12 @@ sdil.start-date.month=Month
 sdil.start-date.year=Year
 sdil.start-date.help-heading=How do I know when I became liable?
 sdil.start-date.help-p1=The date you became liable is the date that you first:
-sdil.start-date.help-li1=packaged liable drinks for someone else
-sdil.start-date.help-li2=knew you were going to package liable drinks for someone else
-sdil.start-date.help-li3=brought liable drinks into the UK
-sdil.start-date.help-li4=knew you were going to bring liable drinks into the UK
-sdil.start-date.help-li5=produced more than 1 million litres of liable drink over the past 12 months
-sdil.start-date.help-li6=knew you would produce more than 1 million litres of liable drink in the next 30 days
+sdil.start-date.help-li1=produced more than 1 million litres of liable drink over the past 12 months
+sdil.start-date.help-li2=knew you would produce more than 1 million litres of liable drink in the next 30 days
+sdil.start-date.help-li3=packaged liable drinks for someone else
+sdil.start-date.help-li4=knew you were going to package liable drinks for someone else
+sdil.start-date.help-li5=brought liable drinks into the UK
+sdil.start-date.help-li6=knew you were going to bring liable drinks into the UK
 
 error.day.required=Enter a day
 error.month.required=Enter a month
