@@ -154,11 +154,15 @@ sdil.import.heading=Do you bring liable drinks into the UK from anywhere outside
 sdil.registration-not-required.heading= You don’t need to register
 sdil.registration-not-required.p1=You don’t need to register now. You must register within 30 days of the:
 sdil.registration-not-required.li1=end of the month in which you packaged liable drinks for someone else
-sdil.registration-not-required.li2=date in which you know you’re going to package liable drinks for someone else in the next 30 days
+sdil.registration-not-required.li2=date in which you know you’re going to package liable drinks for someone else in \
+  the next 30 days
 sdil.registration-not-required.li3=end of the month in which you brought liable drinks into the UK
-sdil.registration-not-required.li4=date on which you know you’re going to bring liable drinks into the UK in the next 30 day
-sdil.registration-not-required.li5=end of the month if you’ve produced over one million litres of liable drinks in the past 12 months
-sdil.registration-not-required.li6=date on which you know that in the next 30 days you’ll produce over one million litres of liable drinks in the past 12 months
+sdil.registration-not-required.li4=date on which you know you’re going to bring liable drinks into the UK in the next\
+   30 days
+sdil.registration-not-required.li5=end of the month if you’ve produced over one million litres of liable drinks in\
+  the past 12 months
+sdil.registration-not-required.li6=date on which you know that in the next 30 days you’ll produce over one million\
+  litres of liable drinks in the past 12 months
 sdil.registration-not-required.p3=If this is not accurate, you need to <a href="{0}">go back and change your answers.</a>
 
 #Small Producer Confrim
