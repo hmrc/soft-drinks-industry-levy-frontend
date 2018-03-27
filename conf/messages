@@ -250,24 +250,24 @@ sdil.declaration.business-name=Business name
 sdil.declaration.address=Business address
 sdil.declaration.uk=UK
 
-sdil.declaration.producer=Did you produce liable drinks?
+sdil.declaration.producer=Own brand packaged in past 12 months?
 sdil.declaration.isLargeProducer=How many litres worldwide?
-sdil.declaration.largeProducer=More than 1 million
+sdil.declaration.largeProducer=1 million or more
 sdil.declaration.smallProducer=Less than 1 million
 
-sdil.declaration.customers=Will you package for any customers?
+sdil.declaration.customers=Package for customers at your own sites?
 
 sdil.declaration.liable-activity=Business activity
 sdil.declaration.low-band=Low band
 sdil.declaration.high-band=High band
-sdil.declaration.packaging=Did you package at your own site?
-sdil.declaration.package-own=Annual litres for your own brands
-sdil.declaration.customerVol=Annual litres for your customers
+sdil.declaration.packaging=Package your own brand at your own sites?
+sdil.declaration.package-own=Litres in next 12 months
+sdil.declaration.customerVol=Litres in next 12 months
 sdil.declaration.small-producers=Annual litres for small producers
-sdil.declaration.third-party=Will you use third party packagers?
+sdil.declaration.third-party=Use third party packagers?
 sdil.declaration.third-party-produced=Annual litres packaged by third parties
-sdil.declaration.import=Will you bring liable drinks into the UK?
-sdil.declaration.import-volume=Annual litres brought into the UK
+sdil.declaration.import=Bring liable drinks into the UK?
+sdil.declaration.import-volume=Litres in next 12 months
 
 sdil.declaration.liable-date=Soft Drinks Industry Levy liability date
 sdil.declaration.date=Date liable from
@@ -282,7 +282,7 @@ sdil.declaration.position=Job title
 sdil.declaration.phone-number=Telephone
 sdil.declaration.email=Email
 sdil.declaration.confirmation=By continuing you’re confirming that the details provided are true and complete.
-sdil.declaration.continue=Accept and continue
+sdil.declaration.continue=Confirm and send
 
 #Complete
 sdil.complete.title=Application complete
