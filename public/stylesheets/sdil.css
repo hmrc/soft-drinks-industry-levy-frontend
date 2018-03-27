@@ -13,7 +13,11 @@ body {
 }
 
 
-@media (min-width: 640px) {
+@media (min-width: 641px) {
+
+    .table-row-answer.word-break {
+        word-break: break-word;
+    }
 
     .table-row-question {
         width: 62%;
@@ -45,6 +49,11 @@ body {
 }
 
 @media (max-width: 640px) {
+
+    .table-row-answer.word-break {
+        word-break: break-all;
+    }
+
     .button {
         width: 100%;
     }
@@ -81,10 +90,6 @@ html .font-xsmall {
 
 .panel-border-narrow {
     padding-bottom: 0;
-}
-
-.table-row-answer.word-break {
-    word-break: break-all;
 }
 
 .check-your-answers td {
