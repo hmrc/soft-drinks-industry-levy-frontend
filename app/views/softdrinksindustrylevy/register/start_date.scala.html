@@ -41,7 +41,7 @@
                     <label for="startDate.day" class="form-group form-group-day">
                         <span>@Messages("sdil.start-date.day")</span>
 
-                        <input type="number" class="input--xxsmall input--no-spinner @if(startDateForm("startDate.day").hasErrors) {error-field}"
+                        <input type="number" class="input--xxsmall input--no-spinner form-control @if(startDateForm("startDate.day").hasErrors) {error-field}"
                         name="startDate.day" id="startDate.day" value="@startDateForm("startDate.day").value">
 
                     </label>
@@ -50,14 +50,14 @@
 
                         <span>@Messages("sdil.start-date.month")</span>
 
-                        <input type="number" class="input--xxsmall input--no-spinner @if(startDateForm("startDate.month").hasErrors) {error-field}"
+                        <input type="number" class="input--xxsmall input--no-spinner form-control @if(startDateForm("startDate.month").hasErrors) {error-field}"
                         name="startDate.month" id="startDate.month" value="@startDateForm("startDate.month").value">
                     </label>
 
                     <label for="startDate.year" class="form-group form-group-year">
                         <span>@Messages("sdil.start-date.year")</span>
 
-                        <input type="number" class="input--small input--no-spinner @if(startDateForm("startDate.year").hasErrors) {error-field}"
+                        <input type="number" class="input--small input--no-spinner form-control @if(startDateForm("startDate.year").hasErrors) {error-field}"
                         name="startDate.year" id="startDate.year" value="@startDateForm("startDate.year").value">
                     </label>
                 </fieldset>
