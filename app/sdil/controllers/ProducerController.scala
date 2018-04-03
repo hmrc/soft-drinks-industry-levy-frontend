@@ -32,7 +32,7 @@ class ProducerController(val messagesApi: MessagesApi, cache: FormDataCache, for
   import ProducerController._
 
   def show(): Action[AnyContent] = formAction.async { implicit request =>
-    ProducerPage.expectedPage(request.formData) match {
+    Journey.expectedPage(ProducerPage) match {
       case ProducerPage => Ok(register.produce_worldwide(request.formData.producer.fold(form)(form.fill)))
       case otherPage => Redirect(otherPage.show)
     }
@@ -44,7 +44,7 @@ class ProducerController(val messagesApi: MessagesApi, cache: FormDataCache, for
       producer => {
         val updated = updateData(request.formData, producer)
         cache.cache(request.internalId, updated) map { _ =>
-          Redirect(ProducerPage.nextPage(updated).show)
+          Redirect(Journey.nextPage(ProducerPage, updated).show)
         }
       }
     )

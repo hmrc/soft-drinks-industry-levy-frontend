@@ -23,7 +23,7 @@ import sdil.actions.FormAction
 import sdil.config.{AppConfig, FormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
-import sdil.models.{DetailsCorrect, VerifyPage}
+import sdil.models.{DetailsCorrect, Journey, VerifyPage}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 import views.html.softdrinksindustrylevy.{errors, register}
@@ -37,28 +37,23 @@ class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formA
   def show = formAction.async { implicit request =>
     val data = request.formData
 
-    sdilConnector.checkPendingQueue(data.utr) map {
-      _.status match {
-        case ACCEPTED => Ok(errors.registration_pending(data.utr, data.rosmData.organisationName, data.rosmData.address))
-        case OK => VerifyPage.expectedPage(data) match {
-          case VerifyPage => Ok(register.verify(
+    sdilConnector.checkPendingQueue(data.utr) map { res =>
+      (res.status, Journey.expectedPage(VerifyPage)) match {
+        case (ACCEPTED, _) => Ok(errors.registration_pending(data.utr, data.rosmData.organisationName, data.rosmData.address))
+        case (OK, VerifyPage) => Ok(register.verify(
             data.verify.fold(form)(form.fill),
             data.utr,
             data.rosmData.organisationName,
             data.rosmData.address,
-            true
+            alreadyRegistered = true
           ))
-          case otherPage => Redirect(otherPage.show)
-        }
-        case _ => VerifyPage.expectedPage(data) match {
-          case VerifyPage => Ok(register.verify(
+        case (_, VerifyPage) => Ok(register.verify(
             data.verify.fold(form)(form.fill),
             data.utr,
             data.rosmData.organisationName,
             data.rosmData.address
           ))
-          case otherPage => Redirect(otherPage.show)
-        }
+        case (_, otherPage) => Redirect(otherPage.show)
       }
     }
   }
@@ -66,11 +61,13 @@ class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formA
   def submit = formAction.async { implicit request =>
     form.bindFromRequest().fold(
       errors => BadRequest(register.verify(errors, request.formData.utr, request.formData.rosmData.organisationName, request.formData.rosmData.address)),
-      detailsCorrect => {
-        val updated = request.formData.copy(verify = Some(detailsCorrect))
-        cache.cache(request.internalId, updated) map { _ =>
-          Redirect(VerifyPage.nextPage(updated).show)
-        }
+      {
+        case DetailsCorrect.No => Redirect(routes.IdentifyController.show())
+        case detailsCorrect =>
+          val updated = request.formData.copy(verify = Some(detailsCorrect))
+          cache.cache(request.internalId, updated) map { _ =>
+            Redirect(Journey.nextPage(VerifyPage, updated).show)
+          }
       }
     )
   }

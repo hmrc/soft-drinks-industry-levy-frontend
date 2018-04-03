@@ -79,11 +79,12 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       stubFormPage(
         producer = Some(Producer(isProducer = false, isLarge = None)),
-        imports = Some(true),
-        volumeForCustomerBrands = None,
+        isPackagingForSelf = None,
         packageOwnVol = None,
+        volumeForCustomerBrands = None,
         packagesForOthers = Some(false),
-        usesCopacker = Some(false)
+        usesCopacker = Some(false),
+        imports = Some(true)
       )
       testConfig.setTaxStartDate(LocalDate.now plusDays 1)
 
@@ -92,25 +93,6 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
-
-      testConfig.resetTaxStartDate()
-    }
-
-    "return a page with a link back to the import page if the user does not package or import liable drinks, " +
-      "and the date is before the tax start date" in {
-      stubFormPage(
-        producer = Some(Producer(isProducer = false, isLarge = None)),
-        packagesForOthers = Some(false),
-        imports = Some(false),
-        packageOwnVol = None
-      )
-      testConfig.setTaxStartDate(LocalDate.now plusDays 1)
-
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("import").url
 
       testConfig.resetTaxStartDate()
     }

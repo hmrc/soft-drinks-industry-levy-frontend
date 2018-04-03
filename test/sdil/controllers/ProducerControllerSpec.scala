@@ -41,9 +41,8 @@ class ProducerControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       contentAsString(res) must include (Messages("error.radio-form.choose-option"))
     }
 
-    "return the package-copack page for No" in {
-      val res = testController.submit()(FakeRequest()
-        .withFormUrlEncodedBody("isProducer" -> "false"))
+    "redirect to the package copack page if the user is not a producer" in {
+      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody("isProducer" -> "false"))
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.RadioFormController.show("packageCopack").url

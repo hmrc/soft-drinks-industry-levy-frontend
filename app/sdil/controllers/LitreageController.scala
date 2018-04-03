@@ -37,26 +37,28 @@ class LitreageController(val messagesApi: MessagesApi,
   def show(pageName: String) = formAction.async { implicit request =>
     val page = getPage(pageName)
 
-    page.expectedPage(request.formData) match {
-      case `page` => Ok(litreagePage(filledForm(page, request.formData), pageName, page.previousPage(request.formData).show))
+    Journey.expectedPage(page) match {
+      case `page` => Ok(litreagePage(filledForm(page, request.formData), pageName, Journey.previousPage(page).show))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def submit(pageName: String) = formAction.async { implicit request =>
     val page = getPage(pageName)
+
     form.bindFromRequest().fold(
-      errors => BadRequest(litreagePage(errors, pageName, page.previousPage(request.formData).show)),
+      errors => BadRequest(litreagePage(errors, pageName, Journey.previousPage(page).show)),
       litreage => {
         val updated = update(litreage, request.formData, page)
+
         cache.cache(request.internalId, updated) map { _ =>
-          Redirect(page.nextPage(updated).show)
+          Redirect(Journey.nextPage(page, updated).show)
         }
       }
     )
   }
 
-  private def getPage(pageName: String): MidJourneyPage = pageName match {
+  private def getPage(pageName: String): Page = pageName match {
     case "packageOwnVol" => PackageOwnVolPage
     case "packageCopackVol" => PackageCopackVolPage
     case "importVolume" => ImportVolumePage

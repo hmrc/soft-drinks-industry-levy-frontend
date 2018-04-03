@@ -41,8 +41,7 @@ POST        /register/import                                   sdil.controllers.
 GET         /register/import-volume                            sdil.controllers.LitreageController.show(pageName = "importVolume")
 POST        /register/import-volume                            sdil.controllers.LitreageController.submit(pageName = "importVolume")
 
-GET         /register/registration-type                        sdil.controllers.RegistrationTypeController.continue()
-GET         /register/do-not-register                          sdil.controllers.RegistrationTypeController.registrationNotRequired()
+GET         /register/do-not-register                          sdil.controllers.RegistrationNotRequiredController.show()
 
 GET         /register/start-date                               sdil.controllers.StartDateController.show()
 POST        /register/start-date                               sdil.controllers.StartDateController.submit()

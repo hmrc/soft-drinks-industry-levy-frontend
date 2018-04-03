@@ -68,7 +68,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.IdentifyController.show().url)
+      redirectLocation(res).value mustBe routes.IdentifyController.show().url
     }
 
     "store the form data in keystore if it is valid" in {

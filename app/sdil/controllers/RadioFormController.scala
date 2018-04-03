@@ -39,10 +39,10 @@ class RadioFormController(val messagesApi: MessagesApi,
   def show(pageName: String) = formAction.async { implicit request =>
     val page = getPage(pageName)
 
-    page.expectedPage(request.formData) match {
+    Journey.expectedPage(page) match {
       case `page` => Ok(register.radio_button(
         filledForm(page, request.formData),
-        pageName, page.previousPage(request.formData).show
+        pageName, Journey.previousPage(page).show
       ))
       case otherPage => Redirect(otherPage.show)
     }
@@ -50,18 +50,20 @@ class RadioFormController(val messagesApi: MessagesApi,
 
   def submit(pageName: String) = formAction.async { implicit request =>
     val page = getPage(pageName)
+
     form.bindFromRequest().fold(
-      errors => BadRequest(register.radio_button(errors, pageName, page.previousPage(request.formData).show)),
+      errors => BadRequest(register.radio_button(errors, pageName, Journey.previousPage(page).show)),
       choice => {
         val updated = update(choice, request.formData, page)
+
         cache.cache(request.internalId, updated) map { _ =>
-          Redirect(page.nextPage(updated).show)
+          Redirect(Journey.nextPage(page, updated).show)
         }
       }
     )
   }
 
-  private def getPage(pageName: String): MidJourneyPage = pageName match {
+  private def getPage(pageName: String): Page = pageName match {
     case "packageCopack" => PackageCopackPage
     case "copacked" => CopackedPage
     case "import" => ImportPage
@@ -74,10 +76,23 @@ class RadioFormController(val messagesApi: MessagesApi,
     case PackageCopackPage => formData.copy(packagesForOthers = Some(choice), volumeForCustomerBrands = None)
     case CopackedPage => formData.copy(usesCopacker = Some(choice))
     case ImportPage if choice => formData.copy(isImporter = Some(choice))
-    case ImportPage => formData.copy(isImporter = Some(choice), importVolume = None)
+    case ImportPage =>
+      val updated = formData.copy(isImporter = Some(choice), importVolume = None)
+      clearUnneededData(updated)
     case PackageOwnUkPage if choice => formData.copy(isPackagingForSelf = Some(choice))
     case PackageOwnUkPage => formData.copy(isPackagingForSelf = Some(choice), volumeForOwnBrand = None)
     case other => throw new IllegalArgumentException(s"Unexpected page name: $other")
+  }
+
+  // remove production sites/warehouse sites if user changes from voluntary -> mandatory
+  private def clearUnneededData(formData: RegistrationFormData): RegistrationFormData = {
+    if (formData.isVoluntary) {
+      formData.copy(productionSites = None, secondaryWarehouses = None)
+    } else if (!formData.hasPackagingSites) {
+      formData.copy(productionSites = None)
+    } else {
+      formData
+    }
   }
 
   private def filledForm(page: Page, formData: RegistrationFormData): Form[Boolean] = page match {

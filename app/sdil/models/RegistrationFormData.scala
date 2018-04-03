@@ -63,10 +63,6 @@ case class RegistrationFormData(rosmData: RosmRegistration,
       packagesForOthers.contains(false)
   }
 
-  def total(n: Option[Litreage]*): BigDecimal = {
-    (n map { x => x.fold[BigDecimal](0)(_.total) }).sum
-  }
-
   lazy val primaryAddress: Address = {
     verify match {
       case Some(DetailsCorrect.DifferentAddress(a)) => a
