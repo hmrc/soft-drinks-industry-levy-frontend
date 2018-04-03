@@ -66,3 +66,5 @@ GET         /sign-out                                          sdil.controllers.
 
 GET         /register-for-beta                                 sdil.controllers.RegisterForBetaController.show
 POST        /register-for-beta                                 sdil.controllers.RegisterForBetaController.submit
+
+->          /variations                                        variations.Routes

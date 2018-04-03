@@ -1,0 +1,66 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import sdil.config.AppConfig
+@import sdil.models.retrieved.RetrievedSubscription
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.softdrinksindustrylevy.helpers._
+
+@(retrievedSubscription: RetrievedSubscription)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@views.html.main_template(Messages("sdil.common.title")) {
+    <a class="link-back" href="@sdil.controllers.routes.ContactDetailsController.show()">@Messages("sdil.common.back")</a>
+
+    <h1 class="heading-large">@Messages("sdil.declaration.heading")</h1>
+
+    @declaration_table("declaration", "your-business") {
+        @declaration_details_table_row("declaration", "utr", None, retrievedSubscription.utr, '_colspan -> "2")
+
+        @declaration_details_table_row("declaration", "business-name", None,
+            retrievedSubscription.orgName, '_colspan -> "2")
+
+        <tr>
+            <td colspan = "2">@Messages("sdil.declaration.address")</td>
+            <td>
+                @retrievedSubscription.address.lines.map { l =>
+                    <div>@l</div>
+                }
+                <div>@retrievedSubscription.address.postCode</div>
+                <div>@Messages("sdil.declaration.uk")</div>
+            </td>
+        </tr>
+    }
+    @declaration_table("variation", "actor-status") {
+        @if(retrievedSubscription.activity.smallProducer||retrievedSubscription.activity.largeProducer) {
+            @declaration_details_table_row("variation",
+                "large-producer",
+                None,
+                Messages(s"sdil.declaration.${retrievedSubscription.activity.largeProducer}"),
+                '_colspan -> "2")
+            @declaration_details_table_row("variation",
+                "copacker",
+                None,
+                Messages(s"sdil.declaration.${retrievedSubscription.activity.contractPacker}"),
+                '_colspan -> "2")
+        } else {
+            @declaration_details_table_row("variation",
+                "producer",
+                None,
+                Messages(s"sdil.declaration.false"),
+                '_colspan -> "2")
+        }
+    }
+}

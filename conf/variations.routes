@@ -1,0 +1,1 @@
+GET     /           sdil.controllers.variation.VariationsController.show
