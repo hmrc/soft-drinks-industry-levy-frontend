@@ -22,18 +22,22 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 class TestingController(testConnector: TestConnector) extends FrontendController {
 
-  def resetStore: Action[AnyContent] = Action.async {
-    implicit request =>
-      testConnector.resetStore map {
-        x => Status(x.status)
-      }
+  def resetRegistrations: Action[AnyContent] = Action.async { implicit request =>
+    testConnector.resetRegistrations map {
+      x => Status(x.status)
+    }
   }
 
-  def resetDb: Action[AnyContent] = Action.async {
-    implicit request =>
-      testConnector.resetDb map {
-        x => Status(x.status)(x.status.toString)
-      }
+  def resetReturns: Action[AnyContent] = Action.async { implicit request =>
+    testConnector.resetReturns map {
+      x => Status(x.status)
+    }
+  }
+
+  def resetDb: Action[AnyContent] = Action.async { implicit request =>
+    testConnector.resetDb map {
+      x => Status(x.status)(x.status.toString)
+    }
   }
 
   def getFile(envelopeId: String, fileId: String) = Action.async { implicit request =>
@@ -48,7 +52,9 @@ class TestingController(testConnector: TestConnector) extends FrontendController
       case _ => fileId
     }
 
-    testConnector.getFile(envelopeId, actualFileId) map { Ok(_).withHeaders("Content-Type" -> contentType) }
+    testConnector.getFile(envelopeId, actualFileId) map {
+      Ok(_).withHeaders("Content-Type" -> contentType)
+    }
   }
 
 }
