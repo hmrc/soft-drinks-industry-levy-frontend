@@ -34,6 +34,7 @@ trait AppConfig {
   val appName: String
   def isWhitelisted(utr: String): Boolean
   def whitelistEnabled: Boolean
+  def variationsEnabled: Boolean
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, environment: Environment) extends AppConfig with ServicesConfig {
@@ -66,4 +67,6 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   // disable whitelist filter on 6th April
   override val whitelistEnabled: Boolean = getBoolean("whitelist.enabled") && taxStartDate.isAfter(LocalDate.now)
   private lazy val whitelistedUtrs: Seq[String] = runModeConfiguration.getStringSeq("whitelist.utrs").getOrElse(Nil)
+
+  override val variationsEnabled: Boolean = getBoolean("variations.enabled")
 }

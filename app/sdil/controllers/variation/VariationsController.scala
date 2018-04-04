@@ -21,21 +21,36 @@ import play.api.mvc.{Action, AnyContent}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.Address
-import uk.gov.hmrc.play.bootstrap.controller.{BaseController, FrontendController}
+import sdil.models.variations.VariationData
+import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+
+import scala.concurrent.Future
 
 class VariationsController(val messagesApi: MessagesApi,
                            sdilConnector: SoftDrinksIndustryLevyConnector,
                            registeredAction: RegisteredAction,
-                           errorHandler: FrontendErrorHandler)
+                           errorHandler: FrontendErrorHandler,
+                           cache: SessionCache)
                           (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  def show: Action[AnyContent] = registeredAction.async { implicit request =>
-    sdilConnector.retrieveSubscription(request.sdilEnrolment.value) map {
+  def start: Action[AnyContent] = registeredAction.async { implicit request =>
+    sdilConnector.retrieveSubscription(request.sdilEnrolment.value) flatMap {
       case Some(s) =>
-        Ok(views.html.softdrinksindustrylevy.variations.retrieve_summary(s))
+        val data = VariationData(s)
+        cache.cache("variationData", data) map { _ =>
+          Redirect(routes.VariationsController.show())
+        }
+      case None => Future.successful(NotFound(errorHandler.notFoundTemplate))
+    }
+  }
+
+  def show: Action[AnyContent] = registeredAction.async { implicit request =>
+    cache.fetchAndGetEntry[VariationData]("variationData") map {
+      case Some(s) =>
+        Ok(views.html.softdrinksindustrylevy.variations.retrieve_summary(s.original, s))
       case None => NotFound(errorHandler.notFoundTemplate)
     }
   }

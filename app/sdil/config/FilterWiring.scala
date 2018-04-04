@@ -21,6 +21,7 @@ import com.softwaremill.macwire.{wire, wireWith}
 import play.api.http.HttpConfiguration
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
+import sdil.filters.{SdilFilters, VariationsFilter}
 import uk.gov.hmrc.crypto.ApplicationCryptoDI
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.ControllerConfigs
@@ -28,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.filters._
 import uk.gov.hmrc.play.bootstrap.filters.frontend._
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.{CookieCryptoFilter, DefaultCookieCryptoFilter, SessionCookieCrypto}
 import uk.gov.hmrc.play.bootstrap.filters.frontend.deviceid.{DefaultDeviceIdFilter, DeviceIdFilter}
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 trait FilterWiring extends CommonWiring {
   val httpConfiguration: HttpConfiguration
@@ -35,9 +37,11 @@ trait FilterWiring extends CommonWiring {
   val csrfFilter: CSRFFilter
   val auditConnector: AuditConnector
   val metrics: Metrics
+  val errorHandler: FrontendErrorHandler
 
-  lazy val filters: FrontendFilters = wire[FrontendFilters]
+  lazy val filters: FrontendFilters = wire[SdilFilters]
 
+  lazy val variationsFilter: VariationsFilter = wire[VariationsFilter]
   lazy val loggingFilter: LoggingFilter = wire[DefaultLoggingFilter]
   lazy val headersFilter: HeadersFilter = wire[HeadersFilter]
   lazy val frontendAuditFilter: FrontendAuditFilter = wire[DefaultFrontendAuditFilter]

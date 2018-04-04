@@ -2,6 +2,7 @@ sdil.common.title=Register for the Soft Drinks Industry Levy
 sdil.common.continue=Continue
 sdil.common.back=Back
 sdil.common.save-continue=Save and continue
+sdil.common.save=Save
 sdil.common.errorSummary=There’s a problem
 sdil.common.alpha=ALPHA
 sdil.common.beta=BETA
@@ -397,3 +398,8 @@ sdil.variation.voluntary-registration=
 sdil.variation.large-producer=Do you produce more than 1 million litres?
 sdil.variation.copacker=Do you contract pack for others?
 sdil.variation.producer=Do you produce liable drinks for yourselves or others?
+sdil.variation.importer=Do you import any liable drink from outside of the UK?
+
+#Update business details
+sdil.variation.tradingName=Trading name
+sdil.variation.address.heading=Business address

@@ -25,7 +25,7 @@ import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.connectors.{ContactFrontendConnector, GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
 import sdil.controllers._
 import sdil.controllers.test.TestingController
-import sdil.controllers.variation.VariationsController
+import sdil.controllers.variation.{BusinessDetailsController, VariationsController}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
@@ -64,6 +64,7 @@ trait RoutesWiring extends CommonWiring {
   lazy val registerForBetaController: RegisterForBetaController = wire[RegisterForBetaController]
   lazy val producerController: ProducerController = wire[ProducerController]
   lazy val variationsController: VariationsController = wire[VariationsController]
+  lazy val businessDetailsController: BusinessDetailsController = wire[BusinessDetailsController]
 
   private lazy val appRoutes: app.Routes = wire[app.Routes]
   private lazy val healthRoutes = new health.Routes()

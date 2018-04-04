@@ -51,7 +51,6 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
   }
 
   def retrieveSubscription(sdilNumber: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
-    http.GET[Option[JsValue]](s"$sdilUrl/subscription/sdil/$sdilNumber") map { js => Logger.info(Json.prettyPrint(js.get)); Some(js.get.as[RetrievedSubscription])}
+    http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/sdil/$sdilNumber")
   }
-
 }
