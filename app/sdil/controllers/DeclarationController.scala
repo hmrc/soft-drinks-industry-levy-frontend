@@ -16,7 +16,7 @@
 
 package sdil.controllers
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZoneId}
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -48,7 +48,10 @@ class DeclarationController(val messagesApi: MessagesApi,
     Subscription.fromFormData(request.formData) match {
       case Some(s) => for {
         _ <- sdilConnector.submit(s, request.formData.rosmData.safeId)
-        _ <- keystore.cache("submissionData", SubmissionData(s.contact.email, LocalDateTime.now, request.formData.isVoluntary))
+        _ <- keystore.cache(
+          "submissionData",
+          SubmissionData(s.contact.email, LocalDateTime.now(ZoneId.of("Europe/London")), request.formData.isVoluntary)
+        )
         _ <- cache.clear(request.internalId)
       } yield {
         Redirect(routes.CompleteController.show())
