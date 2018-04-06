@@ -125,7 +125,6 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
   val validRetrievedSubscription = RetrievedSubscription(
     "111222333",
     "Cliff's Limonard",
-    Some("3"),
     UkAddress(Seq("1", "The Road"), "AA11 1AA"),
     RetrievedActivity(false, false, true, false, false),
     LocalDate.of(2018, 4, 6),
@@ -144,7 +143,5 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
   val validWarehouseRetrievedSubscription = validRetrievedSubscription.copy(productionSites = Nil)
 
-  lazy val registeredAction: RegisteredAction = wire[RegisteredAction]
   lazy val testController: ServicePageController = wire[ServicePageController]
-
 }

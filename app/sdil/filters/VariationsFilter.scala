@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-package sdil
+package sdil.filters
+
+import akka.stream.Materializer
+import play.api.mvc.{Filter, RequestHeader, Result}
+import sdil.config.AppConfig
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.Future
-import scala.language.implicitConversions
 
-package object controllers {
-  implicit def future[A](a: A): Future[A] = Future.successful(a)
+class VariationsFilter(errorHandler: FrontendErrorHandler)
+                      (implicit config: AppConfig, val mat: Materializer) extends Filter {
+  override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
+    if (rh.uri.contains("/variations") && !config.variationsEnabled) {
+      errorHandler.onClientError(rh, 404)
+    } else {
+      f(rh)
+    }
+  }
 }

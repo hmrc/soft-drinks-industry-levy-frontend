@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package sdil
+package sdil.models.variations
 
-import scala.concurrent.Future
-import scala.language.implicitConversions
+import play.api.libs.json.{Format, Json}
+import sdil.models.Address
+import sdil.models.retrieved.RetrievedSubscription
 
-package object controllers {
-  implicit def future[A](a: A): Future[A] = Future.successful(a)
+case class VariationData(original: RetrievedSubscription, updatedBusinessDetails: UpdatedBusinessDetails)
+
+object VariationData {
+  implicit val format: Format[VariationData] = Json.format[VariationData]
+
+  def apply(original: RetrievedSubscription): VariationData = VariationData(
+    original,
+    UpdatedBusinessDetails(original.orgName, Address.fromUkAddress(original.address))
+  )
 }

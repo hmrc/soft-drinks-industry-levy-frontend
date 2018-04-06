@@ -16,8 +16,8 @@
 
 package sdil.connectors
 
-import play.api.libs.json.JsValue
-import play.api.{Configuration, Environment}
+import play.api.libs.json.{JsValue, Json}
+import play.api.{Configuration, Environment, Logger}
 import sdil.models._
 import sdil.models.backend.Subscription
 import sdil.models.retrieved.RetrievedSubscription
@@ -53,5 +53,4 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
   def retrieveSubscription(sdilNumber: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
     http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/sdil/$sdilNumber")
   }
-
 }

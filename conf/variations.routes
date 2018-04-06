@@ -1,0 +1,5 @@
+GET         /start                   sdil.controllers.variation.VariationsController.start
+GET         /                        sdil.controllers.variation.VariationsController.show
+
+GET         /business-details        sdil.controllers.variation.BusinessDetailsController.show
+POST        /business-details        sdil.controllers.variation.BusinessDetailsController.submit

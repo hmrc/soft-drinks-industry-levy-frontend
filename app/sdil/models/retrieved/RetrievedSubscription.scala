@@ -27,17 +27,14 @@ object RetrievedActivity {
   implicit val format = Json.format[RetrievedActivity]
 }
 
-case class RetrievedSubscription(
-                                  utr: String,
-                                  orgName: String,
-                                  orgType: Option[String],
-                                  address: UkAddress,
-                                  activity: RetrievedActivity,
-                                  liabilityDate: LocalDate,
-                                  productionSites: List[Site],
-                                  warehouseSites: List[Site],
-                                  contact: Contact
-                                )
+case class RetrievedSubscription(utr: String,
+                                 orgName: String,
+                                 address: UkAddress,
+                                 activity: RetrievedActivity,
+                                 liabilityDate: LocalDate,
+                                 productionSites: List[Site],
+                                 warehouseSites: List[Site],
+                                 contact: Contact)
 
 object RetrievedSubscription {
   implicit val format = Json.format[RetrievedSubscription]

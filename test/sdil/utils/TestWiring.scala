@@ -27,8 +27,8 @@ import play.api.libs.concurrent.Execution.defaultContext
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
-import sdil.actions.{AuthorisedAction, FormAction}
-import sdil.config.FormDataCache
+import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
+import sdil.config.RegistrationFormDataCache
 import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
@@ -39,8 +39,8 @@ import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import scala.concurrent.{ExecutionContext, Future}
 
 trait TestWiring extends MockitoSugar {
-  val mockCache: FormDataCache = {
-    val m = mock[FormDataCache]
+  val mockCache: RegistrationFormDataCache = {
+    val m = mock[RegistrationFormDataCache]
     when(m.cache(anyString(), any())(any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
     when(m.get(anyString())(any())).thenReturn(Future.successful(None))
     when(m.clear(anyString())(any())).thenReturn(Future.successful(()))
@@ -94,4 +94,5 @@ trait TestWiring extends MockitoSugar {
 
   lazy val formAction: FormAction = wire[FormAction]
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
+  lazy val registeredAction: RegisteredAction = wire[RegisteredAction]
 }

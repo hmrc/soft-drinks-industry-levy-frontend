@@ -20,7 +20,7 @@ import play.api.data.Forms._
 import play.api.data.{Form, FormError, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.{FormAction, RegistrationFormRequest}
-import sdil.config.{AppConfig, FormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
 import sdil.models.DetailsCorrect.DifferentAddress
 import sdil.models._
@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.register.productionSite
 
-class ProductionSiteController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)
+class ProductionSiteController(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, formAction: FormAction)
                               (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 

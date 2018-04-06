@@ -56,4 +56,6 @@ class TestConfig extends AppConfig {
   override def whitelistEnabled: Boolean = _whitelist.nonEmpty
 
   override val signoutUrl: String = "http://localhost:9025/gg/sign-out"
+
+  override val variationsEnabled = true
 }
