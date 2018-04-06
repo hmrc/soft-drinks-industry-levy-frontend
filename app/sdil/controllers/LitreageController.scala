@@ -20,14 +20,14 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.FormAction
-import sdil.config.{AppConfig, FormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.litreagePage
 
 class LitreageController(val messagesApi: MessagesApi,
-                         cache: FormDataCache,
+                         cache: RegistrationFormDataCache,
                          formAction: FormAction)
                         (implicit config: AppConfig)
   extends FrontendController with I18nSupport {

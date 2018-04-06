@@ -24,7 +24,7 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Result
 import sdil.actions.{AuthorisedAction, AuthorisedRequest}
-import sdil.config.{AppConfig, FormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
 import sdil.models.{Address, Identification, RegistrationFormData}
@@ -34,7 +34,7 @@ import views.html.softdrinksindustrylevy.register
 import scala.concurrent.Future
 
 class IdentifyController(val messagesApi: MessagesApi,
-                         cache: FormDataCache,
+                         cache: RegistrationFormDataCache,
                          authorisedAction: AuthorisedAction,
                          softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {

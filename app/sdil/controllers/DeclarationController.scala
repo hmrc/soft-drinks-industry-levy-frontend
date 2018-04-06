@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
-import sdil.config.{AppConfig, FormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.backend.Subscription
 import sdil.models.{DeclarationPage, Journey, SubmissionData}
@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
 class DeclarationController(val messagesApi: MessagesApi,
-                            cache: FormDataCache,
+                            cache: RegistrationFormDataCache,
                             formAction: FormAction,
                             sdilConnector: SoftDrinksIndustryLevyConnector,
                             keystore: SessionCache)

@@ -24,7 +24,7 @@ import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
-import sdil.config.{AppConfig, FormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -32,7 +32,7 @@ import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class ContactDetailsController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)
+class ContactDetailsController(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, formAction: FormAction)
                               (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 

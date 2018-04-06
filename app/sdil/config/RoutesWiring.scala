@@ -35,7 +35,7 @@ trait RoutesWiring extends CommonWiring {
   val applicationLifecycle: DefaultApplicationLifecycle
   val httpClient: HttpClient
   val authConnector: AuthConnector
-  val cache: FormDataCache
+  val cache: RegistrationFormDataCache
   val sdilConnector: SoftDrinksIndustryLevyConnector
   val testConnector: TestConnector
   val gaConnector: GaConnector

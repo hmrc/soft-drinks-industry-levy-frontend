@@ -393,6 +393,7 @@ sdil.beta-registration-confirmed.p1=We’ll contact you if more spaces become av
 error.businessName.required=Enter a business name
 
 #Variations retrieved summary
+sdil.variation.heading=Your registration details
 sdil.variation.actor-status=Current status
 sdil.variation.voluntary-registration=
 sdil.variation.large-producer=Do you produce more than 1 million litres?

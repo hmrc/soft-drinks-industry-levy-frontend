@@ -22,17 +22,15 @@ import sdil.models.RegistrationFormData
 import uk.gov.hmrc.crypto.CompositeSymmetricCrypto
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.{CacheMap, ShortLivedCache, ShortLivedHttpCaching}
-import uk.gov.hmrc.play.bootstrap.config.AppName
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
 import scala.concurrent.Future
 
-class FormDataCache(val runModeConfiguration: Configuration,
-                    val shortLiveCache: ShortLivedHttpCaching,
-                    environment: Environment)
-                   (implicit val crypto: CompositeSymmetricCrypto)
+class RegistrationFormDataCache(val runModeConfiguration: Configuration,
+                                val shortLiveCache: ShortLivedHttpCaching,
+                                environment: Environment)
+                               (implicit val crypto: CompositeSymmetricCrypto)
   extends ShortLivedCache with ServicesConfig {
 
   override protected def mode: Mode = environment.mode
@@ -50,18 +48,4 @@ class FormDataCache(val runModeConfiguration: Configuration,
   def clear(internalId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
     remove(s"$internalId-sdil-registration") map { _ => () }
   }
-}
-
-class SDILShortLivedCaching(val http: HttpClient, val configuration: Configuration, environment: Environment)
-  extends ShortLivedHttpCaching with AppName with ServicesConfig {
-
-  override def defaultSource: String = appName
-
-  override def baseUri: String = baseUrl("cacheable.short-lived-cache")
-
-  override def domain: String = getConfString("cacheable.short-lived-cache.domain", throw new Exception("Missing config cacheable.short-lived-cache.domain"))
-
-  override protected def mode: Mode = environment.mode
-
-  override protected def runModeConfiguration: Configuration = configuration
 }

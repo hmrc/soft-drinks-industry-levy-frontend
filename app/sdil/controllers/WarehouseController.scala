@@ -23,7 +23,7 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Result
 import sdil.actions.{FormAction, RegistrationFormRequest}
-import sdil.config.{AppConfig, FormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.controllers.WarehouseController.selectSitesForm
 import sdil.forms.FormHelpers
 import sdil.models._
@@ -34,7 +34,7 @@ import views.html.softdrinksindustrylevy.register.secondaryWarehouse
 import scala.concurrent.Future
 
 class WarehouseController(val messagesApi: MessagesApi,
-                          cache: FormDataCache,
+                          cache: RegistrationFormDataCache,
                           formAction: FormAction)
                          (implicit config: AppConfig)
   extends FrontendController with I18nSupport {

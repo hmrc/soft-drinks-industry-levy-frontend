@@ -23,9 +23,8 @@
 @(retrievedSubscription: RetrievedSubscription, variationData: VariationData)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title")) {
-    <a class="link-back" href="@sdil.controllers.routes.ContactDetailsController.show()">@Messages("sdil.common.back")</a>
 
-    <h1 class="heading-large">@Messages("sdil.declaration.heading")</h1>
+    <h1 class="heading-large">@Messages("sdil.variation.heading")</h1>
 
     @declaration_table("declaration", "your-business") {
         @declaration_details_table_row("declaration", "utr", None, retrievedSubscription.utr, '_colspan -> "2")
@@ -46,6 +45,7 @@
             </td>
         </tr>
     }
+
     @declaration_table("variation", "actor-status") {
         @if(retrievedSubscription.activity.smallProducer || retrievedSubscription.activity.largeProducer) {
             @declaration_details_table_row("variation",
@@ -86,6 +86,7 @@
             }
         }
     }
+
     @if(retrievedSubscription.warehouseSites.nonEmpty) {
         @declaration_table("declaration", "warehouses") {
             @retrievedSubscription.warehouseSites.map { l =>
@@ -100,6 +101,7 @@
             }
         }
     }
+
     @declaration_table("declaration", "contact-details") {
         @declaration_details_table_row("declaration", "name",
             None, retrievedSubscription.contact.name.getOrElse(""))

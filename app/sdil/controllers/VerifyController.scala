@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import sdil.actions.FormAction
-import sdil.config.{AppConfig, FormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
 import sdil.models.{DetailsCorrect, Journey, VerifyPage}
@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 import views.html.softdrinksindustrylevy.{errors, register}
 
-class VerifyController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction,
+class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, formAction: FormAction,
                        sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 

@@ -21,7 +21,7 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
-import sdil.config.{AppConfig, FormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.{AnalyticsRequest, Event, GaConnector}
 import sdil.forms.FormHelpers
 import sdil.models.{Journey, OrganisationTypePage}
@@ -30,7 +30,7 @@ import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.Future
 
-class OrganisationTypeController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction,
+class OrganisationTypeController(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, formAction: FormAction,
                                  gaConnector: GaConnector)
                                 (implicit config: AppConfig)
   extends FrontendController with I18nSupport {

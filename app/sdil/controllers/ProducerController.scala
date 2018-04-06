@@ -20,13 +20,13 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
-import sdil.config.{AppConfig, FormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 
-class ProducerController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)(implicit config: AppConfig)
+class ProducerController(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import ProducerController._

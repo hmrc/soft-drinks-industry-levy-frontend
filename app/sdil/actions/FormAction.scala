@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc.{ActionBuilder, Request, Result, WrappedRequest}
-import sdil.config.{AppConfig, FormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.controllers.routes
 import sdil.models.RegistrationFormData
 import uk.gov.hmrc.auth.core.Enrolments
@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetai
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FormAction(val messagesApi: MessagesApi, cache: FormDataCache, authorisedAction: AuthorisedAction)
+class FormAction(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, authorisedAction: AuthorisedAction)
                 (implicit config: AppConfig)
   extends ActionBuilder[RegistrationFormRequest] with I18nSupport {
 

@@ -23,7 +23,7 @@ import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
-import sdil.config.{AppConfig, FormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.forms.FormHelpers
 import sdil.models.{Journey, StartDatePage}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -31,7 +31,7 @@ import views.html.softdrinksindustrylevy.register.start_date
 
 import scala.util.Try
 
-class StartDateController(val messagesApi: MessagesApi, cache: FormDataCache, formAction: FormAction)(implicit config: AppConfig)
+class StartDateController(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, formAction: FormAction)(implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   import StartDateController._
