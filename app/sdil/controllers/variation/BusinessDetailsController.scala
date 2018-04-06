@@ -20,46 +20,37 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import sdil.actions.RegisteredAction
+import sdil.actions.VariationAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
-import sdil.models.variations.{UpdatedBusinessDetails, VariationData}
+import sdil.models.variations.UpdatedBusinessDetails
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.softdrinksindustrylevy.variations.business_details
 
 import scala.concurrent.Future
 
 class BusinessDetailsController(val messagesApi: MessagesApi,
                                 sdilConnector: SoftDrinksIndustryLevyConnector,
-                                registeredAction: RegisteredAction,
                                 cache: SessionCache,
-                                errorHandler: FrontendErrorHandler)
+                                variationAction: VariationAction)
                                (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  def show: Action[AnyContent] = registeredAction.async { implicit request =>
-    cache.fetchAndGetEntry[VariationData]("variationData") map {
-      case Some(s) =>
-        Ok(business_details(BusinessDetailsForm().fill(s.updatedBusinessDetails)))
-      case None => NotFound(errorHandler.notFoundTemplate)
-    }
+  def show: Action[AnyContent] = variationAction { implicit request =>
+    Ok(business_details(BusinessDetailsForm().fill(request.data.updatedBusinessDetails)))
   }
 
-  def submit: Action[AnyContent] = Action.async { implicit request =>
+  def submit: Action[AnyContent] = variationAction.async { implicit request =>
     BusinessDetailsForm().bindFromRequest().fold(
       errors => Future.successful(BadRequest(business_details(errors))),
-      data =>
-        cache.fetchAndGetEntry[VariationData]("variationData") flatMap {
-          case Some(d) =>
-            val updated = d.copy(updatedBusinessDetails = data)
-            cache.cache("variationData", updated) map { _ =>
-              Redirect(routes.VariationsController.show())
-            }
-          case None => Future.successful(NotFound(errorHandler.notFoundTemplate))
+      data => {
+        val updated = request.data.copy(updatedBusinessDetails = data)
+        cache.cache("variationData", updated) map { _ =>
+          Redirect(routes.VariationsController.show())
         }
+      }
     )
   }
 }

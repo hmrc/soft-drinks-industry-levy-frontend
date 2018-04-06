@@ -21,7 +21,7 @@ import com.softwaremill.macwire.wire
 import controllers.Assets
 import play.api.inject.DefaultApplicationLifecycle
 import play.api.routing.Router
-import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
+import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction, VariationAction}
 import sdil.connectors.{ContactFrontendConnector, GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
 import sdil.controllers._
 import sdil.controllers.test.TestingController
@@ -45,6 +45,7 @@ trait RoutesWiring extends CommonWiring {
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
   lazy val formAction: FormAction = wire[FormAction]
   lazy val registeredAction: RegisteredAction = wire[RegisteredAction]
+  lazy val variationAction: VariationAction = wire[VariationAction]
   lazy val assets: Assets = wire[Assets]
   lazy val servicePageController: ServicePageController = wire[ServicePageController]
   lazy val completeController: CompleteController = wire[CompleteController]
