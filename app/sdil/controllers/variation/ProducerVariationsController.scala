@@ -41,12 +41,12 @@ class ProducerVariationsController(val messagesApi: MessagesApi,
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = variationAction { implicit request =>
-    Ok(produce_worldwide(ProducerController.form.fill(request.data.producer)))
+    Ok(produce_worldwide(ProducerController.form.fill(request.data.producer), backlink, submitAction))
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
     ProducerController.form.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(produce_worldwide(errors))),
+      errors => Future.successful(BadRequest(produce_worldwide(errors, backlink, submitAction))),
       data => {
         val updated = request.data.copy(producer = data)
         cache.cache("variationData", updated) map { _ =>
@@ -55,5 +55,8 @@ class ProducerVariationsController(val messagesApi: MessagesApi,
       }
     )
   }
+  lazy val backlink = routes.VariationsController.show()
+
+  lazy val submitAction = routes.ProducerVariationsController.submit()
 }
 

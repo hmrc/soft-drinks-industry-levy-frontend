@@ -47,24 +47,24 @@
     }
 
     @declaration_table("variation", "actor-status") {
-        @if(retrievedSubscription.activity.smallProducer || retrievedSubscription.activity.largeProducer) {
+        @if(variationData.producer.isProducer) {
             @declaration_details_table_row("variation",
                 "large-producer",
                 Some(sdil.controllers.variation.routes.ProducerVariationsController.show()),
-                Messages(s"sdil.declaration.${retrievedSubscription.activity.largeProducer}"),
-                '_colspan -> "2")
-            @declaration_details_table_row("variation",
-                "copacker",
-                None,
-                Messages(s"sdil.declaration.${retrievedSubscription.activity.contractPacker}"),
+                Messages(s"sdil.declaration.${variationData.producer.isLarge.getOrElse(false)}"),
                 '_colspan -> "2")
         } else {
             @declaration_details_table_row("variation",
                 "producer",
-                None,
+                Some(sdil.controllers.variation.routes.ProducerVariationsController.show()),
                 Messages(s"sdil.declaration.false"),
                 '_colspan -> "2")
         }
+        @declaration_details_table_row("variation",
+            "copacker",
+            None,
+            Messages(s"sdil.declaration.${retrievedSubscription.activity.contractPacker}"),
+            '_colspan -> "2")
         @declaration_details_table_row("variation",
             "importer",
             None,
