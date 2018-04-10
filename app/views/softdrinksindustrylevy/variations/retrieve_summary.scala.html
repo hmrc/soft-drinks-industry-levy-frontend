@@ -50,7 +50,7 @@
         @if(retrievedSubscription.activity.smallProducer || retrievedSubscription.activity.largeProducer) {
             @declaration_details_table_row("variation",
                 "large-producer",
-                None,
+                Some(sdil.controllers.variation.routes.ProducerVariationsController.show()),
                 Messages(s"sdil.declaration.${retrievedSubscription.activity.largeProducer}"),
                 '_colspan -> "2")
             @declaration_details_table_row("variation",

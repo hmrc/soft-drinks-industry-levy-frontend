@@ -50,6 +50,10 @@ class ProducerController(val messagesApi: MessagesApi, cache: RegistrationFormDa
     )
   }
 
+  lazy val backLink = routes.OrganisationTypeController.show()
+
+  lazy val submitAction = routes.ProducerController.submit()
+
   //clear unneeded data from session cache when the user's answers change
   private def updateData(formData: RegistrationFormData, producer: Producer) = producer match {
     case Producer(false, _) =>

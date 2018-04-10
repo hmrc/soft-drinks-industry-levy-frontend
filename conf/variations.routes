@@ -3,3 +3,6 @@ GET         /                        sdil.controllers.variation.VariationsContro
 
 GET         /business-details        sdil.controllers.variation.BusinessDetailsController.show
 POST        /business-details        sdil.controllers.variation.BusinessDetailsController.submit
+
+GET         /producer                sdil.controllers.variation.ProducerVariationsController.show
+POST        /producer                sdil.controllers.variation.ProducerVariationsController.submit
