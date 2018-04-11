@@ -18,7 +18,7 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 
-@(contactForm: Form[_], backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(contactForm: Form[_], backLink: Call, formTarget: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title"), form = Some(contactForm)) {
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
@@ -27,7 +27,7 @@
 
     <h1 class="heading-large">@Messages("sdil.contact-details.heading")</h1>
 
-    @form(sdil.controllers.routes.ContactDetailsController.submit()) {
+    @form(formTarget) {
 
         @inputText(
             contactForm("fullName"),

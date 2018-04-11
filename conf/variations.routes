@@ -3,3 +3,6 @@ GET         /                        sdil.controllers.variation.VariationsContro
 
 GET         /business-details        sdil.controllers.variation.BusinessDetailsController.show
 POST        /business-details        sdil.controllers.variation.BusinessDetailsController.submit
+
+GET         /contact-details         sdil.controllers.variation.ContactDetailsVariationController.show
+POST        /contact-details         sdil.controllers.variation.ContactDetailsVariationController.submit
