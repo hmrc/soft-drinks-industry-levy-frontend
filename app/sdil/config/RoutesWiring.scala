@@ -25,7 +25,7 @@ import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction, VariationAc
 import sdil.connectors.{ContactFrontendConnector, GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
 import sdil.controllers._
 import sdil.controllers.test.TestingController
-import sdil.controllers.variation.{BusinessDetailsController, ContactDetailsVariationController, VariationsController}
+import sdil.controllers.variation._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
