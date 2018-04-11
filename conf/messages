@@ -404,7 +404,8 @@ sdil.variation.importer=Do you import any liable drink from outside of the UK?
 sdil.variation.uses-copacker=Do you use a third party in the UK to package brands you own or have the rights to manufacture?
 sdil.variation.package-own=Do you operate any packaging sites in the UK which package liable drinks for brands\
    you own or have the rights to manufacture? 
-
+sdil.variation.package-own-vol=How many litres of liable drink will you package in the UK for the brands you own or \
+  have the rights to manufacture, in the next 12 months?
 #Update business details
 sdil.variation.tradingName=Trading name
 sdil.variation.address.heading=Business address

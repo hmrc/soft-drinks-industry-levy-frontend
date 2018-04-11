@@ -28,23 +28,29 @@ import views.html.softdrinksindustrylevy.register.radio_button
 
 import scala.concurrent.Future
 
-class PackageOwnController (val messagesApi: MessagesApi,
-                            cache: SessionCache,
-                            variationAction: VariationAction)
-                           (implicit config: AppConfig)
+class PackageOwnController(val messagesApi: MessagesApi,
+                           cache: SessionCache,
+                           variationAction: VariationAction)
+                          (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = variationAction { implicit request =>
-    Ok(radio_button(RadioFormController.form, "packageOwnUk", backLink, submitAction))
+    val filledForm = request.data.packageOwn.fold(RadioFormController.form)(RadioFormController.form.fill)
+
+    Ok(radio_button(filledForm, "packageOwnUk", backLink, submitAction))
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
     RadioFormController.form.bindFromRequest().fold(
       errors => Future.successful(BadRequest(radio_button(errors, "packageOwnUk", backLink, submitAction))),
-      data => {
-        val updated = request.data.copy(packageOwn = Some(data))
+      packageOwn => {
+        val updated = request.data.copy(packageOwn = Some(packageOwn))
         cache.cache("variationData", updated) map { _ =>
-          Redirect(routes.VariationsController.show())
+          if (packageOwn) {
+            Redirect(routes.PackageOwnVolController.show())
+          } else {
+            Redirect(routes.VariationsController.show())
+          }
         }
       }
     )

@@ -52,7 +52,7 @@
             Some(sdil.controllers.variation.routes.ProducerVariationsController.show()),
             Messages(s"sdil.declaration.${variationData.producer.isProducer}"),
             '_colspan -> "2")
-        
+
         @if(variationData.producer.isProducer) {
             @declaration_details_table_row("variation",
                 "large-producer",
@@ -74,60 +74,69 @@
                     Some(sdil.controllers.variation.routes.PackageOwnController.show()),
                     Messages(s"sdil.declaration.${packageOwn}"),
                     '_colspan -> "2")
-            }
-        }
-
-            @declaration_details_table_row("variation",
-                "copacker",
-                None,
-                Messages(s"sdil.declaration.${retrievedSubscription.activity.contractPacker}"),
-                '_colspan -> "2")
-            @declaration_details_table_row("variation",
-                "importer",
-                None,
-                Messages(s"sdil.declaration.${retrievedSubscription.activity.importer}"),
-                '_colspan -> "2")
-        }
-
-        @if(retrievedSubscription.productionSites.nonEmpty) {
-            @declaration_table("declaration", "production-sites") {
-                @retrievedSubscription.productionSites.map { l =>
-                    <tr>
-                        <td>
-                            @l.address.lines.map { a =>
-                                <div>@a</div>
-                            }
-                        <div>@l.address.postCode</div>
-                        </td>
-                    </tr>
+                @if(packageOwn) {
+                    @variationData.packageOwnVol.map { packageOwnVol =>
+                        @declaration_details_litres(
+                            "variation.package-own-vol",
+                            sdil.controllers.variation.routes.PackageOwnVolController.show(),
+                            packageOwnVol)
+                    }
                 }
+
             }
         }
 
-        @if(retrievedSubscription.warehouseSites.nonEmpty) {
-            @declaration_table("declaration", "warehouses") {
-                @retrievedSubscription.warehouseSites.map { l =>
-                    <tr>
-                        <td>
-                            @l.address.lines.map { a =>
-                                <div>@a</div>
-                            }
-                        <div>@l.address.postCode</div>
-                        </td>
-                    </tr>
-                }
-            }
-        }
+        @declaration_details_table_row("variation",
+            "copacker",
+            None,
+            Messages(s"sdil.declaration.${retrievedSubscription.activity.contractPacker}"),
+            '_colspan -> "2")
+        @declaration_details_table_row("variation",
+            "importer",
+            None,
+            Messages(s"sdil.declaration.${retrievedSubscription.activity.importer}"),
+            '_colspan -> "2")
+    }
 
-        @declaration_table("declaration", "contact-details") {
-            @declaration_details_table_row("declaration", "name",
-                None, retrievedSubscription.contact.name.getOrElse(""))
-            @declaration_details_table_row("declaration", "position",
-                None, retrievedSubscription.contact.positionInCompany.getOrElse(""))
-            @declaration_details_table_row("declaration", "phone-number",
-                None, retrievedSubscription.contact.phoneNumber)
-            @declaration_details_table_row("declaration", "email",
-                None, retrievedSubscription.contact.email)
+    @if(retrievedSubscription.productionSites.nonEmpty) {
+        @declaration_table("declaration", "production-sites") {
+            @retrievedSubscription.productionSites.map { l =>
+                <tr>
+                    <td>
+                        @l.address.lines.map { a =>
+                            <div>@a</div>
+                        }
+                    <div>@l.address.postCode</div>
+                    </td>
+                </tr>
+            }
         }
     }
+
+    @if(retrievedSubscription.warehouseSites.nonEmpty) {
+        @declaration_table("declaration", "warehouses") {
+            @retrievedSubscription.warehouseSites.map { l =>
+                <tr>
+                    <td>
+                        @l.address.lines.map { a =>
+                            <div>@a</div>
+                        }
+                    <div>@l.address.postCode</div>
+                    </td>
+                </tr>
+            }
+        }
+    }
+
+    @declaration_table("declaration", "contact-details") {
+        @declaration_details_table_row("declaration", "name",
+            None, retrievedSubscription.contact.name.getOrElse(""))
+        @declaration_details_table_row("declaration", "position",
+            None, retrievedSubscription.contact.positionInCompany.getOrElse(""))
+        @declaration_details_table_row("declaration", "phone-number",
+            None, retrievedSubscription.contact.phoneNumber)
+        @declaration_details_table_row("declaration", "email",
+            None, retrievedSubscription.contact.email)
+    }
+}
     

@@ -12,3 +12,6 @@ POST        /uses-copacker           sdil.controllers.variation.UsesCopackerCont
 
 GET         /package-own             sdil.controllers.variation.PackageOwnController.show
 POST        /package-own             sdil.controllers.variation.PackageOwnController.submit
+
+GET         /package-own-vol         sdil.controllers.variation.PackageOwnVolController.show
+POST        /package-own-vol         sdil.controllers.variation.PackageOwnVolController.submit

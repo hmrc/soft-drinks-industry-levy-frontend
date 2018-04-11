@@ -17,14 +17,16 @@
 package sdil.models.variations
 
 import play.api.libs.json.{Format, Json}
-import sdil.models.{Address, Producer}
+import sdil.models.{Address, Litreage, Producer}
 import sdil.models.retrieved.RetrievedSubscription
 
 case class VariationData(original: RetrievedSubscription,
                          updatedBusinessDetails: UpdatedBusinessDetails,
                          producer: Producer,
                          usesCopacker: Option[Boolean],
-                         packageOwn: Option[Boolean])
+                         packageOwn: Option[Boolean],
+                         packageOwnVol: Option[Litreage]
+                        )
 
 object VariationData {
   implicit val format: Format[VariationData] = Json.format[VariationData]
@@ -34,6 +36,7 @@ object VariationData {
     UpdatedBusinessDetails(original.orgName, Address.fromUkAddress(original.address)),
     Producer(original.activity.largeProducer || original.activity.smallProducer, Some(original.activity.largeProducer)),
     usesCopacker = None,
-    packageOwn = None
+    packageOwn = None,
+    packageOwnVol = None
   )
 }

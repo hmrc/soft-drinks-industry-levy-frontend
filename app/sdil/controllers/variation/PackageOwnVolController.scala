@@ -20,37 +20,37 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
-import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.controllers.RadioFormController
+import sdil.controllers.LitreageController
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.softdrinksindustrylevy.register.radio_button
+import views.html.softdrinksindustrylevy.register.litreagePage
 
 import scala.concurrent.Future
 
-class UsesCopackerController(val messagesApi: MessagesApi,
-                             cache: SessionCache,
-                             variationAction: VariationAction)
-                            (implicit config: AppConfig)
+class PackageOwnVolController(val messagesApi: MessagesApi,
+                              cache: SessionCache,
+                              variationAction: VariationAction)
+                             (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = variationAction { implicit request =>
-    val filledForm = request.data.usesCopacker.fold(RadioFormController.form)(RadioFormController.form.fill)
-    Ok(radio_button(filledForm, "copacked", backLink, submitAction))
+    val filledForm = request.data.packageOwnVol.fold(LitreageController.form)(LitreageController.form.fill)
+
+    Ok(litreagePage(filledForm, "packageOwnUk", backLink, Some(submitAction)))
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
-    RadioFormController.form.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(radio_button(errors, "copacked", backLink, submitAction))),
+    LitreageController.form.bindFromRequest().fold(
+      errors => Future.successful(BadRequest(litreagePage(errors, "packageOwnUk", backLink, Some(submitAction)))),
       data => {
-        val updated = request.data.copy(usesCopacker = Some(data))
+        val updated = request.data.copy(packageOwnVol = Some(data))
         cache.cache("variationData", updated) map { _ =>
-          Redirect(routes.PackageOwnController.show())
+          Redirect(routes.VariationsController.show())
         }
       }
     )
   }
 
-  lazy val backLink = routes.ProducerVariationsController.show()
-  lazy val submitAction = routes.UsesCopackerController.submit()
+  lazy val backLink = routes.PackageOwnController.show()
+  lazy val submitAction = routes.PackageOwnVolController.submit()
 }
