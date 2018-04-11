@@ -16,23 +16,23 @@
 
 package sdil.controllers.variation
 
-import com.softwaremill.macwire._
+import com.softwaremill.macwire.wire
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{eq => matching, _}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{any, eq => matching}
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.BeforeAndAfterAll
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.ControllerSpec
-import sdil.models.Address
-import sdil.models.variations.{UpdatedBusinessDetails, VariationData}
+import sdil.models.ContactDetails
+import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
-import scala.collection.JavaConverters._
 import scala.concurrent.Future
 
-class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAll {
+class ContactDetailsVariationControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
   override protected def beforeAll(): Unit = {
     val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
@@ -45,38 +45,25 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       .thenReturn(Future.successful(Some(VariationData(subscription))))
   }
 
-  "GET /variations/business-details" should {
-    "return 200 Ok and the business details page" in {
+  "GET /variations/contact-details" should {
+    "return 200 Ok and the contact details page" in {
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("h1").text mustBe "Business details"
+      html.select("h1").text mustBe Messages("sdil.contact-details.heading")
     }
 
-    "return a page containing a 'Trading Name' input" in {
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
+    "return a page with a link back to the variations page " in {
+      val response = testController.show(FakeRequest())
+      status(response) mustBe OK
 
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("input").asScala.map(_.attr("name")) must contain ("tradingName")
-    }
-
-    "return a page containing 'Business address' inputs" in {
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      val inputs = html.select("input").asScala.map(_.attr("name"))
-      inputs must contain ("businessAddress.line1")
-      inputs must contain ("businessAddress.line2")
-      inputs must contain ("businessAddress.line3")
-      inputs must contain ("businessAddress.line4")
-      inputs must contain ("businessAddress.postcode")
+      val html = Jsoup.parse(contentAsString(response))
+      html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
     }
   }
 
-  "POST /variations/business-details" should {
+  "POST /variations/contact-details" should {
     "return 400 Bad Request if the form data is invalid" in {
       val res = testController.submit()(FakeRequest().withFormUrlEncodedBody())
       status(res) mustBe BAD_REQUEST
@@ -84,12 +71,10 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
 
     "return 303 See Other and redirect to the summary page if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody(
-        "tradingName" -> "Forbidden Right Parenthesis & Sons",
-        "businessAddress.line1" -> "Rosm House",
-        "businessAddress.line2" -> "Des Street",
-        "businessAddress.line3" -> "Etmp Lane",
-        "businessAddress.line4" -> "",
-        "businessAddress.postcode" -> "AA11 1AA"
+        "fullName" -> "foo",
+        "position" -> "bar",
+        "phoneNumber" -> "12310123123",
+        "email" -> "foo@bar.com"
       )
 
       val res = testController.submit()(request)
@@ -105,12 +90,10 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
         .thenReturn(Future.successful(Some(data)))
 
       val request = FakeRequest().withFormUrlEncodedBody(
-        "tradingName" -> "Forbidden Right Parenthesis & Sons",
-        "businessAddress.line1" -> "Rosm House",
-        "businessAddress.line2" -> "Des Street",
-        "businessAddress.line3" -> "Etmp Lane",
-        "businessAddress.line4" -> "",
-        "businessAddress.postcode" -> "AA11 1AA"
+        "fullName" -> "foo",
+        "position" -> "bar",
+        "phoneNumber" -> "12310123123",
+        "email" -> "foo@bar.com"
       )
 
       val res = testController.submit()(request)
@@ -119,14 +102,13 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       verify(mockKeystore, times(1))
         .cache(
           matching("variationData"),
-          matching(data.copy(updatedBusinessDetails = UpdatedBusinessDetails(
-            "Forbidden Right Parenthesis & Sons",
-            Address("Rosm House", "Des Street", "Etmp Lane", "", "AA11 1AA")
-          )))
+          matching(data.copy(updatedContactDetails = ContactDetails(
+            "foo", "bar", "12310123123","foo@bar.com")
+          ))
         )(any(), any(), any())
     }
+
   }
 
-  lazy val testController: BusinessDetailsController = wire[BusinessDetailsController]
-
+  lazy val testController: ContactDetailsVariationController = wire[ContactDetailsVariationController]
 }
