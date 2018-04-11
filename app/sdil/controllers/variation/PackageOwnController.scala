@@ -20,43 +20,36 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
-import sdil.controllers.ProducerController
+import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.controllers.RadioFormController
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.softdrinksindustrylevy.register.produce_worldwide
+import views.html.softdrinksindustrylevy.register.radio_button
 
 import scala.concurrent.Future
 
-class ProducerVariationsController(val messagesApi: MessagesApi,
-                                   cache: SessionCache,
-                                   variationAction: VariationAction)
-                                  (implicit config: AppConfig)
+class PackageOwnController (val messagesApi: MessagesApi,
+                            cache: SessionCache,
+                            variationAction: VariationAction)
+                           (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = variationAction { implicit request =>
-    Ok(produce_worldwide(ProducerController.form.fill(request.data.producer), backLink, submitAction))
+    Ok(radio_button(RadioFormController.form, "packageOwnUk", backLink, submitAction))
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
-    ProducerController.form.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(produce_worldwide(errors, backLink, submitAction))),
+    RadioFormController.form.bindFromRequest().fold(
+      errors => Future.successful(BadRequest(radio_button(errors, "packageOwnUk", backLink, submitAction))),
       data => {
-        val updated = request.data.copy(producer = data)
+        val updated = request.data.copy(packageOwn = Some(data))
         cache.cache("variationData", updated) map { _ =>
-          if (data.isLarge.contains(false)) {
-            Redirect(routes.UsesCopackerController.show())
-          } else if (data.isProducer) {
-            Redirect(routes.PackageOwnController.show())
-          } else {
-            Redirect(routes.VariationsController.show())
-          }
+          Redirect(routes.VariationsController.show())
         }
       }
     )
   }
 
-  lazy val backLink = routes.VariationsController.show()
-
-  lazy val submitAction = routes.ProducerVariationsController.submit()
+  lazy val backLink = routes.UsesCopackerController.show()
+  lazy val submitAction = routes.PackageOwnController.submit()
 }
-

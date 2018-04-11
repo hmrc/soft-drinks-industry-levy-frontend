@@ -6,3 +6,9 @@ POST        /business-details        sdil.controllers.variation.BusinessDetailsC
 
 GET         /producer                sdil.controllers.variation.ProducerVariationsController.show
 POST        /producer                sdil.controllers.variation.ProducerVariationsController.submit
+
+GET         /uses-copacker           sdil.controllers.variation.UsesCopackerController.show
+POST        /uses-copacker           sdil.controllers.variation.UsesCopackerController.submit
+
+GET         /package-own             sdil.controllers.variation.PackageOwnController.show
+POST        /package-own             sdil.controllers.variation.PackageOwnController.submit
