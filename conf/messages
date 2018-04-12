@@ -409,3 +409,5 @@ sdil.variation.package-own-vol=How many litres of liable drink will you package 
 #Update business details
 sdil.variation.tradingName=Trading name
 sdil.variation.address.heading=Business address
+sdil.variation.copack-for-others-vol=How many litres do you contract pack for others?
+sdil.variation.imports-vol=How many litres do you import?

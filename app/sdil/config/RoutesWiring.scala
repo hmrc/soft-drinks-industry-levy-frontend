@@ -70,6 +70,10 @@ trait RoutesWiring extends CommonWiring {
   lazy val usesCopackerController: UsesCopackerController = wire[UsesCopackerController]
   lazy val packageOwnController: PackageOwnController = wire[PackageOwnController]
   lazy val packageOwnVolController: PackageOwnVolController = wire[PackageOwnVolController]
+  lazy val copackForOthersController: CopackForOthersController = wire[CopackForOthersController]
+  lazy val copackForOthersVolController: CopackForOthersVolController = wire[CopackForOthersVolController]
+  lazy val importsController: ImportsController = wire[ImportsController]
+  lazy val importsVolController: ImportsVolController = wire[ImportsVolController]
 
   private lazy val appRoutes: app.Routes = wire[app.Routes]
   private lazy val healthRoutes = new health.Routes()

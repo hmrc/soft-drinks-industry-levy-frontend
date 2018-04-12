@@ -25,7 +25,11 @@ case class VariationData(original: RetrievedSubscription,
                          producer: Producer,
                          usesCopacker: Option[Boolean],
                          packageOwn: Option[Boolean],
-                         packageOwnVol: Option[Litreage]
+                         packageOwnVol: Option[Litreage],
+                         copackForOthers: Boolean,
+                         copackForOthersVol: Option[Litreage],
+                         imports: Boolean,
+                         importsVol: Option[Litreage]
                         )
 
 object VariationData {
@@ -37,6 +41,10 @@ object VariationData {
     Producer(original.activity.largeProducer || original.activity.smallProducer, Some(original.activity.largeProducer)),
     usesCopacker = None,
     packageOwn = None,
-    packageOwnVol = None
+    packageOwnVol = None,
+    original.activity.contractPacker,
+    copackForOthersVol = None,
+    original.activity.importer,
+    importsVol = None
   )
 }
