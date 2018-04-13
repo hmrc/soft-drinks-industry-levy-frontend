@@ -87,18 +87,32 @@
         }
     }
 
-    @if(retrievedSubscription.warehouseSites.nonEmpty) {
+    @if(variationData.updatedWarehouseSites.nonEmpty) {
         @declaration_table("declaration", "warehouses") {
-            @retrievedSubscription.warehouseSites.map { l =>
+            @variationData.updatedWarehouseSites.map { address =>
                 <tr>
                     <td>
-                        @l.address.lines.map { a =>
+                        @address.nonEmptyLines.map { a =>
                             <div>@a</div>
                         }
-                    <div>@l.address.postCode</div>
+                    </td>
+                    <td class="change-answer">
+                        <a href="@sdil.controllers.variation.routes.WarehouseVariationController.show()">
+                        @Messages("sdil.declaration.change-link")
+                        </a>
                     </td>
                 </tr>
             }
+        }
+    } else {
+        @declaration_table("declaration", "warehouses") {
+            <tr>
+                <td class="change-answer">
+                    <a href="@sdil.controllers.variation.routes.WarehouseVariationController.show()">
+                    @Messages("sdil.variation.add-link")
+                    </a>
+                </td>
+            </tr>
         }
     }
 

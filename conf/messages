@@ -404,3 +404,6 @@ sdil.variation.importer=Do you import any liable drink from outside of the UK?
 #Update business details
 sdil.variation.tradingName=Trading name
 sdil.variation.address.heading=Business address
+
+#Update warehouse sites
+sdil.variation.add-link=Add new

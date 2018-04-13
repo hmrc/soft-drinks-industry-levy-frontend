@@ -17,12 +17,14 @@
 package sdil.models.variations
 
 import play.api.libs.json.{Format, Json}
+import sdil.models.backend.Site
 import sdil.models.{Address, ContactDetails}
 import sdil.models.retrieved.RetrievedSubscription
 
 case class VariationData(
                           original: RetrievedSubscription,
                           updatedBusinessDetails: UpdatedBusinessDetails,
+                          updatedWarehouseSites: Seq[Address], // TODO create variation Site model with trading name
                           updatedContactDetails: ContactDetails
                         )
 
@@ -32,6 +34,7 @@ object VariationData {
   def apply(original: RetrievedSubscription): VariationData = VariationData(
     original,
     UpdatedBusinessDetails(original.orgName, Address.fromUkAddress(original.address)),
+    original.warehouseSites.map{ x => Address.fromUkAddress(x.address)},
     ContactDetails(
       original.contact.name.getOrElse(""),
       original.contact.positionInCompany.getOrElse(""),
