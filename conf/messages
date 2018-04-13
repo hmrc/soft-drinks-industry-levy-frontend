@@ -395,7 +395,6 @@ error.businessName.required=Enter a business name
 #Variations retrieved summary
 sdil.variation.heading=Your registration details
 sdil.variation.actor-status=Current status
-sdil.variation.voluntary-registration=
 sdil.variation.large-producer=Do you produce more than 1 million litres?
 sdil.variation.copacker=Do you contract pack for others?
 sdil.variation.producer=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink \
