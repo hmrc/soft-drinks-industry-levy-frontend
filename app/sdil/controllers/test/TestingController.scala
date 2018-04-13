@@ -22,25 +22,13 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 class TestingController(testConnector: TestConnector) extends FrontendController {
 
-  def resetRegistrations: Action[AnyContent] = Action.async { implicit request =>
-    testConnector.resetRegistrations map {
-      x => Status(x.status)
+  def reset(url: String): Action[AnyContent] = Action.async { implicit request =>
+    testConnector.reset(url) map {
+      r => Status(r.status)
     }
   }
 
-  def resetReturns: Action[AnyContent] = Action.async { implicit request =>
-    testConnector.resetReturns map {
-      x => Status(x.status)
-    }
-  }
-
-  def resetDb: Action[AnyContent] = Action.async { implicit request =>
-    testConnector.resetDb map {
-      x => Status(x.status)(x.status.toString)
-    }
-  }
-
-  def getFile(envelopeId: String, fileId: String) = Action.async { implicit request =>
+  def getFile(envelopeId: String, fileId: String): Action[AnyContent] = Action.async { implicit request =>
     val contentType = fileId match {
       case "pdf" => "application/pdf"
       case "xml" => "application/xml"
