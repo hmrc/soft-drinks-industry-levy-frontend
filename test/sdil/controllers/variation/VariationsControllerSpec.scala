@@ -68,22 +68,5 @@ class VariationsControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       contentAsString(res) must include(messagesApi("sdil.variation.heading"))
     }
   }
-
   lazy val testController = wire[VariationsController]
-  lazy val subscription: RetrievedSubscription = RetrievedSubscription(
-    utr = "9876543210",
-    orgName = "Forbidden Left Parenthesis & Sons",
-    address = UkAddress(Seq("Rosm House", "Des Street", "Etmp Lane"), "SW1A 1AA"),
-    activity = RetrievedActivity(
-      smallProducer = true,
-      largeProducer = true,
-      contractPacker = false,
-      importer = false,
-      voluntaryRegistration = true
-    ),
-    liabilityDate = LocalDate.now,
-    productionSites = Nil,
-    warehouseSites = Nil,
-    contact = Contact(Some("body"), Some("thing"), "-7", "aa@bb.cc")
-  )
 }

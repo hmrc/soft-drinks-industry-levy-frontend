@@ -112,45 +112,56 @@
         }
     }
 
-        @if(retrievedSubscription.productionSites.nonEmpty) {
-            @declaration_table("declaration", "production-sites") {
-                @retrievedSubscription.productionSites.map { l =>
-                    <tr>
-                        <td>
-                            @l.address.lines.map { a =>
-                                <div>@a</div>
-                            }
-                        <div>@l.address.postCode</div>
-                        </td>
-                    </tr>
-                }
+    @if(retrievedSubscription.productionSites.nonEmpty) {
+        @declaration_table("declaration", "production-sites") {
+            @retrievedSubscription.productionSites.map { l =>
+                <tr>
+                    <td>
+                        @l.address.lines.map { a =>
+                            <div>@a</div>
+                        }
+                    <div>@l.address.postCode</div>
+                    </td>
+                </tr>
             }
-        }
-
-        @if(retrievedSubscription.warehouseSites.nonEmpty) {
-            @declaration_table("declaration", "warehouses") {
-                @retrievedSubscription.warehouseSites.map { l =>
-                    <tr>
-                        <td>
-                            @l.address.lines.map { a =>
-                                <div>@a</div>
-                            }
-                        <div>@l.address.postCode</div>
-                        </td>
-                    </tr>
-                }
-            }
-        }
-
-        @declaration_table("declaration", "contact-details") {
-            @declaration_details_table_row("declaration", "name",
-                None, retrievedSubscription.contact.name.getOrElse(""))
-            @declaration_details_table_row("declaration", "position",
-                None, retrievedSubscription.contact.positionInCompany.getOrElse(""))
-            @declaration_details_table_row("declaration", "phone-number",
-                None, retrievedSubscription.contact.phoneNumber)
-            @declaration_details_table_row("declaration", "email",
-                None, retrievedSubscription.contact.email)
         }
     }
-    
+
+    @if(retrievedSubscription.warehouseSites.nonEmpty) {
+        @declaration_table("declaration", "warehouses") {
+            @retrievedSubscription.warehouseSites.map { l =>
+                <tr>
+                    <td>
+                        @l.address.lines.map { a =>
+                            <div>@a</div>
+                        }
+                    <div>@l.address.postCode</div>
+                    </td>
+                </tr>
+            }
+        }
+    }
+
+    @declaration_table("declaration", "contact-details") {
+        @declaration_details_table_row(
+            "declaration",
+            "name",
+            Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
+            variationData.updatedContactDetails.fullName)
+        @declaration_details_table_row(
+            "declaration",
+            "position",
+            Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
+            variationData.updatedContactDetails.position)
+        @declaration_details_table_row(
+            "declaration",
+            "phone-number",
+            Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
+            variationData.updatedContactDetails.phoneNumber)
+        @declaration_details_table_row(
+            "declaration",
+            "email",
+            Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
+            variationData.updatedContactDetails.email)
+    }
+}

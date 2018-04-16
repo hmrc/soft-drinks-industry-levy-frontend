@@ -16,8 +16,6 @@
 
 package sdil.controllers.variation
 
-import java.time.LocalDate
-
 import com.softwaremill.macwire.wire
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matching}
@@ -26,8 +24,6 @@ import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import sdil.controllers.ControllerSpec
-import sdil.models.backend.{Contact, UkAddress}
-import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
@@ -111,22 +107,5 @@ class CopackForOthersControllerSpec extends ControllerSpec with BeforeAndAfterAl
   }
 
   lazy val testController = wire[CopackForOthersController]
-  lazy val subscription: RetrievedSubscription = RetrievedSubscription(
-    utr = "9876543210",
-    orgName = "Forbidden Left Parenthesis & Sons",
-    address = UkAddress(Seq("Rosm House", "Des Street", "Etmp Lane"), "SW1A 1AA"),
-    activity = RetrievedActivity(
-      smallProducer = true,
-      largeProducer = true,
-      contractPacker = false,
-      importer = false,
-      voluntaryRegistration = true
-    ),
-    liabilityDate = LocalDate.now,
-    productionSites = Nil,
-    warehouseSites = Nil,
-    contact = Contact(Some("body"), Some("thing"), "-7", "aa@bb.cc")
-  )
-
 }
 

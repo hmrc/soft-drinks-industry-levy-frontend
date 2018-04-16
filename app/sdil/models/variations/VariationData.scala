@@ -17,8 +17,8 @@
 package sdil.models.variations
 
 import play.api.libs.json.{Format, Json}
-import sdil.models.{Address, Litreage, Producer}
 import sdil.models.retrieved.RetrievedSubscription
+import sdil.models.{Address, ContactDetails, Litreage, Producer}
 
 case class VariationData(original: RetrievedSubscription,
                          updatedBusinessDetails: UpdatedBusinessDetails,
@@ -29,7 +29,8 @@ case class VariationData(original: RetrievedSubscription,
                          copackForOthers: Boolean,
                          copackForOthersVol: Option[Litreage],
                          imports: Boolean,
-                         importsVol: Option[Litreage]
+                         importsVol: Option[Litreage],
+                         updatedContactDetails: ContactDetails
                         )
 
 object VariationData {
@@ -45,6 +46,11 @@ object VariationData {
     original.activity.contractPacker,
     copackForOthersVol = None,
     original.activity.importer,
-    importsVol = None
+    importsVol = None,
+    ContactDetails(
+      original.contact.name.getOrElse(""),
+      original.contact.positionInCompany.getOrElse(""),
+      original.contact.phoneNumber,
+      original.contact.email)
   )
 }

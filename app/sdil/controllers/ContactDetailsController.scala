@@ -16,13 +16,11 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.forms.FormHelpers
@@ -38,18 +36,25 @@ class ContactDetailsController(val messagesApi: MessagesApi, cache: Registration
 
   import ContactDetailsController._
 
+  lazy val formTarget: Call = routes.ContactDetailsController.submit()
+
   def show: Action[AnyContent] = formAction.async { implicit request =>
     Journey.expectedPage(ContactDetailsPage) match {
-      case ContactDetailsPage =>
+      case ContactDetailsPage => {
         val filledForm = request.formData.contactDetails.fold(form)(form.fill)
-        Ok(register.contact_details(filledForm, Journey.previousPage(ContactDetailsPage).show))
+        val previousPage: Call = Journey.previousPage(ContactDetailsPage).show
+        Ok(register.contact_details(filledForm, previousPage, formTarget))
+      }
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def submit: Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(register.contact_details(formWithErrors, Journey.previousPage(ContactDetailsPage).show))),
+    formWithErrors => Future.successful(BadRequest(register.contact_details(
+        formWithErrors,
+        Journey.previousPage(ContactDetailsPage).show,
+        formTarget))),
       details => cache.cache(request.internalId, request.formData.copy(contactDetails = Some(details))) map { _ =>
         Redirect(routes.DeclarationController.submit())
       }

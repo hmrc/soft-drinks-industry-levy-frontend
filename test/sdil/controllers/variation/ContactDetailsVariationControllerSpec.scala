@@ -16,26 +16,23 @@
 
 package sdil.controllers.variation
 
-import java.time.LocalDate
-
 import com.softwaremill.macwire.wire
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.BeforeAndAfterAll
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, status, _}
-import sdil.controllers.{ControllerSpec, routes}
-import sdil.models.Address
-import sdil.models.backend.{Contact, UkAddress}
-import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.variations._
+import play.api.test.Helpers._
+import sdil.controllers.ControllerSpec
+import sdil.models.ContactDetails
+import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
 import scala.concurrent.Future
 
-class PacakgeOwnControllerSpec extends ControllerSpec with BeforeAndAfterAll {
+class ContactDetailsVariationControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
   override protected def beforeAll(): Unit = {
     val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
@@ -48,44 +45,42 @@ class PacakgeOwnControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       .thenReturn(Future.successful(Some(VariationData(subscription))))
   }
 
-  "GET /variations/package-own" should {
-    "return 200 and the package own page" in {
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      contentAsString(res) must include(messagesApi("sdil.packageOwnUk.heading"))
-    }
-    "return a page with a link back to the producer-variations" in {
+  "GET /variations/contact-details" should {
+    "return 200 Ok and the contact details page" in {
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.UsesCopackerController.show().url
+      html.select("h1").text mustBe Messages("sdil.contact-details.heading")
+    }
+
+    "return a page with a link back to the variations page " in {
+      val response = testController.show(FakeRequest())
+      status(response) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(response))
+      html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
     }
   }
 
-  "POST /variations/package-own" should {
+  "POST /variations/contact-details" should {
     "return 400 Bad Request if the form data is invalid" in {
       val res = testController.submit()(FakeRequest().withFormUrlEncodedBody())
       status(res) mustBe BAD_REQUEST
     }
 
-    "return 303 See Other and redirect to the package own vol page with valid form data" in {
-      val result = testController.submit()(FakeRequest().withFormUrlEncodedBody(
-        "yesOrNo" -> "true"
-      ))
+    "return 303 See Other and redirect to the summary page if the form data is valid" in {
+      val request = FakeRequest().withFormUrlEncodedBody(
+        "fullName" -> "foo",
+        "position" -> "bar",
+        "phoneNumber" -> "12310123123",
+        "email" -> "foo@bar.com"
+      )
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe routes.PackageOwnVolController.show().url
-    }
+      val res = testController.submit()(request)
+      status(res) mustBe SEE_OTHER
 
-    "return 303 See Other and redirect to the variations summary page with valid form data" in {
-      val result = testController.submit()(FakeRequest().withFormUrlEncodedBody(
-        "yesOrNo" -> "false"
-      ))
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe routes.VariationsController.show().url
+      redirectLocation(res).value mustBe routes.VariationsController.show().url
     }
 
     "update the cached form data when the form data is valid" in {
@@ -95,7 +90,10 @@ class PacakgeOwnControllerSpec extends ControllerSpec with BeforeAndAfterAll {
         .thenReturn(Future.successful(Some(data)))
 
       val request = FakeRequest().withFormUrlEncodedBody(
-        "yesOrNo" -> "true"
+        "fullName" -> "foo",
+        "position" -> "bar",
+        "phoneNumber" -> "12310123123",
+        "email" -> "foo@bar.com"
       )
 
       val res = testController.submit()(request)
@@ -104,11 +102,13 @@ class PacakgeOwnControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       verify(mockKeystore, times(1))
         .cache(
           matching("variationData"),
-          matching(data.copy(packageOwn = Option[Boolean](
-            true
-          )))
+          matching(data.copy(updatedContactDetails = ContactDetails(
+            "foo", "bar", "12310123123","foo@bar.com")
+          ))
         )(any(), any(), any())
     }
+
   }
-  lazy val testController = wire[PackageOwnController]
+
+  lazy val testController: ContactDetailsVariationController = wire[ContactDetailsVariationController]
 }

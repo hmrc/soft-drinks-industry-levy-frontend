@@ -16,9 +16,6 @@
 
 package sdil.controllers.variation
 
-import java.time.LocalDate
-
-import sdil.controllers.ControllerSpec
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
@@ -26,12 +23,11 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.controllers.ControllerSpec
 import sdil.models.Address
-import sdil.models.backend.{Contact, UkAddress}
-import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.variations.{UpdatedBusinessDetails, VariationData}
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.Future
@@ -138,21 +134,6 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
     }
   }
 
-  lazy val testController = wire[BusinessDetailsController]
-  lazy val subscription: RetrievedSubscription = RetrievedSubscription(
-    utr = "9876543210",
-    orgName = "Forbidden Left Parenthesis & Sons",
-    address = UkAddress(Seq("Rosm House", "Des Street", "Etmp Lane"), "SW1A 1AA"),
-    activity = RetrievedActivity(
-      smallProducer = true,
-      largeProducer = true,
-      contractPacker = false,
-      importer = false,
-      voluntaryRegistration = true
-    ),
-    liabilityDate = LocalDate.now,
-    productionSites = Nil,
-    warehouseSites = Nil,
-    contact = Contact(Some("body"), Some("thing"), "-7", "aa@bb.cc")
-  )
+  lazy val testController: BusinessDetailsController = wire[BusinessDetailsController]
+
 }

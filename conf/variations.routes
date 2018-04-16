@@ -27,3 +27,7 @@ POST        /imports                      sdil.controllers.variation.ImportsCont
 
 GET         /imports-vol                  sdil.controllers.variation.ImportsVolController.show
 POST        /imports-vol                  sdil.controllers.variation.ImportsVolController.submit
+
+GET         /contact-details         sdil.controllers.variation.ContactDetailsVariationController.show
+POST        /contact-details         sdil.controllers.variation.ContactDetailsVariationController.submit
+
