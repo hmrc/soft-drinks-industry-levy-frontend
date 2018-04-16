@@ -33,14 +33,14 @@ class ProducerController(val messagesApi: MessagesApi, cache: RegistrationFormDa
 
   def show(): Action[AnyContent] = formAction.async { implicit request =>
     Journey.expectedPage(ProducerPage) match {
-      case ProducerPage => Ok(register.produce_worldwide(request.formData.producer.fold(form)(form.fill)))
+      case ProducerPage => Ok(register.produce_worldwide(request.formData.producer.fold(form)(form.fill), backLink, submitAction))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
   def submit(): Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest.fold(
-      formWithErrors => BadRequest(register.produce_worldwide(formWithErrors)),
+      formWithErrors => BadRequest(register.produce_worldwide(formWithErrors, backLink, submitAction)),
       producer => {
         val updated = updateData(request.formData, producer)
         cache.cache(request.internalId, updated) map { _ =>
@@ -49,6 +49,10 @@ class ProducerController(val messagesApi: MessagesApi, cache: RegistrationFormDa
       }
     )
   }
+
+  lazy val backLink = routes.OrganisationTypeController.show()
+
+  lazy val submitAction = routes.ProducerController.submit()
 
   //clear unneeded data from session cache when the user's answers change
   private def updateData(formData: RegistrationFormData, producer: Producer) = producer match {

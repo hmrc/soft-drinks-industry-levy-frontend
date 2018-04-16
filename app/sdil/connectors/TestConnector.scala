@@ -35,16 +35,8 @@ class TestConnector(http: HttpClient,
 
   override protected def mode = environment.mode
 
-  def resetRegistrations(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    http.GET[HttpResponse](s"$testUrl/test-only/reset-registrations")
-  }
-
-  def resetReturns(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    http.GET[HttpResponse](s"$testUrl/test-only/reset-returns")
-  }
-
-  def resetDb(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    http.GET[HttpResponse](s"$testUrl/test-only/reset-pending")
+  def reset(url: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    http.GET[HttpResponse](s"$testUrl/test-only/$url")
   }
 
   def getFile(envelopeId: String, fileName: String)(implicit hc: HeaderCarrier): Future[ByteString] = {

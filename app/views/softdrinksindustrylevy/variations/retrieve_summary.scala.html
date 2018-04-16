@@ -47,29 +47,69 @@
     }
 
     @declaration_table("variation", "actor-status") {
-        @if(retrievedSubscription.activity.smallProducer || retrievedSubscription.activity.largeProducer) {
+        @declaration_details_table_row("variation",
+            "producer",
+            Some(sdil.controllers.variation.routes.ProducerVariationsController.show()),
+            Messages(s"sdil.declaration.${variationData.producer.isProducer}"),
+            '_colspan -> "2")
+
+        @if(variationData.producer.isProducer) {
             @declaration_details_table_row("variation",
                 "large-producer",
-                None,
-                Messages(s"sdil.declaration.${retrievedSubscription.activity.largeProducer}"),
+                Some(sdil.controllers.variation.routes.ProducerVariationsController.show()),
+                Messages(s"sdil.declaration.${variationData.producer.isLarge.getOrElse(false)}"),
                 '_colspan -> "2")
-            @declaration_details_table_row("variation",
-                "copacker",
-                None,
-                Messages(s"sdil.declaration.${retrievedSubscription.activity.contractPacker}"),
-                '_colspan -> "2")
-        } else {
-            @declaration_details_table_row("variation",
-                "producer",
-                None,
-                Messages(s"sdil.declaration.false"),
-                '_colspan -> "2")
+
+            @variationData.usesCopacker.map { usesCopacker =>
+                @declaration_details_table_row("variation",
+                    "uses-copacker",
+                    Some(sdil.controllers.variation.routes.UsesCopackerController.show()),
+                    Messages(s"sdil.declaration.${usesCopacker}"),
+                    '_colspan -> "2")
+            }
+
+            @variationData.packageOwn.map { packageOwn =>
+                @declaration_details_table_row("variation",
+                    "package-own",
+                    Some(sdil.controllers.variation.routes.PackageOwnController.show()),
+                    Messages(s"sdil.declaration.${packageOwn}"),
+                    '_colspan -> "2")
+                @if(packageOwn) {
+                    @variationData.packageOwnVol.map { packageOwnVol =>
+                        @declaration_details_litres(
+                            "variation.package-own-vol",
+                            sdil.controllers.variation.routes.PackageOwnVolController.show(),
+                            packageOwnVol)
+                    }
+                }
+            }
+        }
+        @declaration_details_table_row("variation",
+            "copacker",
+            Some(sdil.controllers.variation.routes.CopackForOthersController.show()),
+            Messages(s"sdil.declaration.${variationData.copackForOthers}"),
+            '_colspan -> "2")
+        @if(variationData.copackForOthers) {
+            @variationData.copackForOthersVol.map { copackForOthersVol =>
+                @declaration_details_litres(
+                    "variation.copack-for-others-vol",
+                    sdil.controllers.variation.routes.PackageOwnVolController.show(),
+                    copackForOthersVol)
+            }
         }
         @declaration_details_table_row("variation",
             "importer",
-            None,
+            Some(sdil.controllers.variation.routes.ImportsController.show()),
             Messages(s"sdil.declaration.${retrievedSubscription.activity.importer}"),
             '_colspan -> "2")
+        @if(variationData.imports) {
+            @variationData.importsVol.map { importsVol =>
+                @declaration_details_litres(
+                    "variation.imports-vol",
+                    sdil.controllers.variation.routes.ImportsVolController.show(),
+                    importsVol)
+            }
+        }
     }
 
     @if(variationData.updatedProductionSites.nonEmpty) {
@@ -152,6 +192,4 @@
             Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
             variationData.updatedContactDetails.email)
     }
-
 }
-    

@@ -16,6 +16,9 @@
 
 package sdil.controllers.variation
 
+import java.time.LocalDate
+
+import sdil.controllers.ControllerSpec
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
@@ -23,16 +26,17 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.controllers.ControllerSpec
-import sdil.models.Address
+import sdil.models.{Address, Producer}
+import sdil.models.backend.{Contact, UkAddress}
+import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.variations.{UpdatedBusinessDetails, VariationData}
-import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 
 import scala.collection.JavaConverters._
 import scala.concurrent.Future
 
-class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAll {
+class ProducerVariationsControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
   override protected def beforeAll(): Unit = {
     val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
@@ -45,12 +49,12 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       .thenReturn(Future.successful(Some(VariationData(subscription))))
   }
 
-  "GET /variations/business-details" should {
-    "return 200 Ok and the business details page" in {
+  "GET /variations/producer" should {
+    "return 200 Ok and the producer page" in {
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
-     contentAsString(res) must include(messagesApi("sdil.declaration.your-business"))
+      contentAsString(res) must include(messagesApi("sdil.producer.heading"))
     }
 
     "return a page with a link back to the variations summary page" in {
@@ -60,43 +64,44 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
     }
-
-    "return a page containing a 'Trading Name' input" in {
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("input").asScala.map(_.attr("name")) must contain ("tradingName")
-    }
-
-    "return a page containing 'Business address' inputs" in {
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      val inputs = html.select("input").asScala.map(_.attr("name"))
-      inputs must contain ("businessAddress.line1")
-      inputs must contain ("businessAddress.line2")
-      inputs must contain ("businessAddress.line3")
-      inputs must contain ("businessAddress.line4")
-      inputs must contain ("businessAddress.postcode")
-    }
   }
 
-  "POST /variations/business-details" should {
+  "POST /variations/producer" should {
     "return 400 Bad Request if the form data is invalid" in {
       val res = testController.submit()(FakeRequest().withFormUrlEncodedBody())
       status(res) mustBe BAD_REQUEST
     }
 
-    "return 303 See Other and redirect to the summary page if the form data is valid" in {
+    "return 303 See Other and redirect to the use copacker page if the " +
+      "form data is valid and they are not a large producer" in {
       val request = FakeRequest().withFormUrlEncodedBody(
-        "tradingName" -> "Forbidden Right Parenthesis & Sons",
-        "businessAddress.line1" -> "Rosm House",
-        "businessAddress.line2" -> "Des Street",
-        "businessAddress.line3" -> "Etmp Lane",
-        "businessAddress.line4" -> "",
-        "businessAddress.postcode" -> "AA11 1AA"
+        "isProducer" -> "true",
+        "isLarge" -> "false"
+      )
+
+      val res = testController.submit()(request)
+      status(res) mustBe SEE_OTHER
+
+      redirectLocation(res).value mustBe routes.UsesCopackerController.show().url
+    }
+
+    "return 303 See Other and redirect to the package own page if the " +
+      "form data is valid and they are a large producer" in {
+      val request = FakeRequest().withFormUrlEncodedBody(
+        "isProducer" -> "true",
+        "isLarge" -> "true"
+      )
+
+      val res = testController.submit()(request)
+      status(res) mustBe SEE_OTHER
+
+      redirectLocation(res).value mustBe routes.PackageOwnController.show().url
+    }
+
+    "return 303 See Other and redirect to the variations summary page if the " +
+      "form data is valid and they are a not producer" in {
+      val request = FakeRequest().withFormUrlEncodedBody(
+        "isProducer" -> "false"
       )
 
       val res = testController.submit()(request)
@@ -104,7 +109,6 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
 
       redirectLocation(res).value mustBe routes.VariationsController.show().url
     }
-
     "update the cached form data when the form data is valid" in {
       val data = VariationData(subscription.copy(utr = "9998887776"))
 
@@ -112,12 +116,8 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
         .thenReturn(Future.successful(Some(data)))
 
       val request = FakeRequest().withFormUrlEncodedBody(
-        "tradingName" -> "Forbidden Right Parenthesis & Sons",
-        "businessAddress.line1" -> "Rosm House",
-        "businessAddress.line2" -> "Des Street",
-        "businessAddress.line3" -> "Etmp Lane",
-        "businessAddress.line4" -> "",
-        "businessAddress.postcode" -> "AA11 1AA"
+        "isProducer" -> "true",
+        "isLarge" -> "false"
       )
 
       val res = testController.submit()(request)
@@ -126,14 +126,12 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       verify(mockKeystore, times(1))
         .cache(
           matching("variationData"),
-          matching(data.copy(updatedBusinessDetails = UpdatedBusinessDetails(
-            "Forbidden Right Parenthesis & Sons",
-            Address("Rosm House", "Des Street", "Etmp Lane", "", "AA11 1AA")
+          matching(data.copy(producer = Producer(
+            isProducer = true,
+            isLarge = Some(false)
           )))
         )(any(), any(), any())
     }
   }
-
-  lazy val testController: BusinessDetailsController = wire[BusinessDetailsController]
-
+  lazy val testController = wire[ProducerVariationsController]
 }
