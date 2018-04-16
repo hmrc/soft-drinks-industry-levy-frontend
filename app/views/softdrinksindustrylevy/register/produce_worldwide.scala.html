@@ -21,7 +21,7 @@
 
 
 
-@(producerForm: Form[_])(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(producerForm: Form[_], backLink: Call, submit: Call)(implicit messages: Messages, request: Request[_], config: AppConfig)
 
 @innerRadioButtons = {
     <h2 class="heading-medium">@Messages("sdil.producer.hidden-heading")</h2>
@@ -39,13 +39,13 @@
 
 @views.html.main_template(title = Messages("sdil.common.title"), form = Some(producerForm)) {
 
-    <a class="link-back" href="@sdil.controllers.routes.OrganisationTypeController.show()">@Messages("sdil.common.back")</a>
+    <a class="link-back" href="@backLink">@Messages("sdil.common.back")</a>
 
     @error_summary(producerForm)
 
     <h1 class="heading-large">@Messages("sdil.producer.heading")</h1>
 
-    @form(action = sdil.controllers.routes.ProducerController.submit()) {
+    @form(action = submit) {
         <div class="form-group">
         @inlineRadioButtonWithConditionalContent(
             producerForm("isProducer"),

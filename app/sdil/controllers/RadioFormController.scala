@@ -42,7 +42,8 @@ class RadioFormController(val messagesApi: MessagesApi,
     Journey.expectedPage(page) match {
       case `page` => Ok(register.radio_button(
         filledForm(page, request.formData),
-        pageName, Journey.previousPage(page).show
+        pageName, Journey.previousPage(page).show,
+        routes.RadioFormController.submit(pageName)
       ))
       case otherPage => Redirect(otherPage.show)
     }
@@ -52,7 +53,7 @@ class RadioFormController(val messagesApi: MessagesApi,
     val page = getPage(pageName)
 
     form.bindFromRequest().fold(
-      errors => BadRequest(register.radio_button(errors, pageName, Journey.previousPage(page).show)),
+      errors => BadRequest(register.radio_button(errors, pageName, Journey.previousPage(page).show, routes.RadioFormController.submit(pageName))),
       choice => {
         val updated = update(choice, request.formData, page)
 

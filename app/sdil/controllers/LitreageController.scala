@@ -19,6 +19,7 @@ package sdil.controllers
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.forms.FormHelpers
@@ -34,7 +35,7 @@ class LitreageController(val messagesApi: MessagesApi,
 
   import LitreageController._
 
-  def show(pageName: String) = formAction.async { implicit request =>
+  def show(pageName: String): Action[AnyContent] = formAction.async { implicit request =>
     val page = getPage(pageName)
 
     Journey.expectedPage(page) match {
@@ -43,7 +44,7 @@ class LitreageController(val messagesApi: MessagesApi,
     }
   }
 
-  def submit(pageName: String) = formAction.async { implicit request =>
+  def submit(pageName: String): Action[AnyContent] = formAction.async { implicit request =>
     val page = getPage(pageName)
 
     form.bindFromRequest().fold(

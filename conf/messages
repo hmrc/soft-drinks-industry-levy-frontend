@@ -394,12 +394,18 @@ error.businessName.required=Enter a business name
 #Variations retrieved summary
 sdil.variation.heading=Your registration details
 sdil.variation.actor-status=Current status
-sdil.variation.voluntary-registration=
 sdil.variation.large-producer=Do you produce more than 1 million litres?
 sdil.variation.copacker=Do you contract pack for others?
-sdil.variation.producer=Do you produce liable drinks for yourselves or others?
+sdil.variation.producer=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink \
+  for brands you own or have the rights to manufacture, worldwide?
 sdil.variation.importer=Do you import any liable drink from outside of the UK?
-
+sdil.variation.uses-copacker=Do you use a third party in the UK to package brands you own or have the rights to manufacture?
+sdil.variation.package-own=Do you operate any packaging sites in the UK which package liable drinks for brands\
+   you own or have the rights to manufacture? 
+sdil.variation.package-own-vol=How many litres of liable drink will you package in the UK for the brands you own or \
+  have the rights to manufacture, in the next 12 months?
 #Update business details
 sdil.variation.tradingName=Trading name
 sdil.variation.address.heading=Business address
+sdil.variation.copack-for-others-vol=How many litres do you contract pack for others?
+sdil.variation.imports-vol=How many litres do you import?
