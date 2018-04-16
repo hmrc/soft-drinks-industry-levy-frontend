@@ -105,7 +105,10 @@ class ProductionSiteVariationControllerSpec  extends ControllerSpec with BeforeA
     }
 
     "store the new address in keystore if another site has been added and the form data is valid" in {
-//      stubFormPage(productionSites = Some(Nil))
+      val data = VariationData(subscription.copy(productionSites = Nil))
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
 
       val request = FakeRequest().withFormUrlEncodedBody(
         "addAddress" -> "true",
@@ -121,7 +124,7 @@ class ProductionSiteVariationControllerSpec  extends ControllerSpec with BeforeA
 
       verify(mockKeystore, times(1)).cache(
         matching("variationData"),
-        matching(defaultFormData.copy(productionSites = Some(Seq(Address("line 2", "line 3", "", "", "AA12 2AA")))))
+        matching((VariationData(subscription)).copy(updatedProductionSites= Seq(Address("line 2", "line 3", "", "", "AA12 2AA"))))
       )(any(), any(), any())
     }
 
