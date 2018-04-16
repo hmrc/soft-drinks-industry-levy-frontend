@@ -16,15 +16,12 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Result
+import play.api.mvc.{Call, Result}
 import sdil.actions.{FormAction, RegistrationFormRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
-import sdil.controllers.WarehouseController.selectSitesForm
 import sdil.forms.FormHelpers
 import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -44,12 +41,12 @@ class WarehouseController(val messagesApi: MessagesApi,
   def show = formAction.async { implicit request =>
     Journey.expectedPage(WarehouseSitesPage) match {
       case WarehouseSitesPage =>
-        val fillInitialForm = request.formData.secondaryWarehouses match {
+        val fillInitialForm: Form[SecondaryWarehouses] = request.formData.secondaryWarehouses match {
           case Some(Nil) => initialForm.fill(SecondaryWarehouses(Nil, false, None))
           case Some(_) => selectSitesForm
           case None => initialForm
         }
-        Ok(secondaryWarehouse(fillInitialForm, secondaryWarehouses, Journey.previousPage(WarehouseSitesPage).show))
+        Ok(secondaryWarehouse(fillInitialForm, secondaryWarehouses, Journey.previousPage(WarehouseSitesPage).show, formTarget))
       case otherPage => Redirect(otherPage.show)
     }
   }
@@ -64,7 +61,11 @@ class WarehouseController(val messagesApi: MessagesApi,
 
   private def validateWith(form: Form[SecondaryWarehouses])(implicit request: RegistrationFormRequest[_]): Future[Result] = {
     form.bindFromRequest().fold(
-      errors => BadRequest(secondaryWarehouse(errors, secondaryWarehouses, Journey.previousPage(WarehouseSitesPage).show)),
+      errors => BadRequest(secondaryWarehouse(
+        errors,
+        secondaryWarehouses,
+        Journey.previousPage(WarehouseSitesPage).show,
+        formTarget)),
       {
         case SecondaryWarehouses(_, _, Some(addr)) =>
           val updatedSites = request.formData.secondaryWarehouses match {
@@ -86,6 +87,13 @@ class WarehouseController(val messagesApi: MessagesApi,
 
   private def secondaryWarehouses(implicit request: RegistrationFormRequest[_]): Seq[Address] = {
     request.formData.secondaryWarehouses.getOrElse(Nil)
+  }
+
+  private def formTarget(implicit request: RegistrationFormRequest[_]): Call = {
+    secondaryWarehouses match {
+      case Nil => routes.WarehouseController.addSingleSite()
+      case _ => routes.WarehouseController.addMultipleSites()
+    }
   }
 }
 

@@ -31,3 +31,9 @@ POST        /imports-vol                  sdil.controllers.variation.ImportsVolC
 GET         /contact-details         sdil.controllers.variation.ContactDetailsVariationController.show
 POST        /contact-details         sdil.controllers.variation.ContactDetailsVariationController.submit
 
+GET         /secondary-warehouses                     sdil.controllers.variation.WarehouseVariationController.show
+POST        /secondary-warehouses                     sdil.controllers.variation.WarehouseVariationController.addSingleSite
+POST        /secondary-warehouses/select-sites        sdil.controllers.variation.WarehouseVariationController.addMultipleSites
+
+GET         /production-sites                         sdil.controllers.variation.ProductionSiteVariationController.show
+POST        /production-sites                         sdil.controllers.variation.ProductionSiteVariationController.submit

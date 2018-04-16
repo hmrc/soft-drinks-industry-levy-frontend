@@ -30,6 +30,8 @@ case class VariationData(original: RetrievedSubscription,
                          copackForOthersVol: Option[Litreage],
                          imports: Boolean,
                          importsVol: Option[Litreage],
+                         updatedProductionSites: Seq[Address],
+                         updatedWarehouseSites: Seq[Address], // TODO create variation Site model with trading name
                          updatedContactDetails: ContactDetails
                         )
 
@@ -47,6 +49,8 @@ object VariationData {
     copackForOthersVol = None,
     original.activity.importer,
     importsVol = None,
+    original.productionSites.map{ x => Address.fromUkAddress(x.address)},
+    original.warehouseSites.map{ x => Address.fromUkAddress(x.address)},
     ContactDetails(
       original.contact.name.getOrElse(""),
       original.contact.positionInCompany.getOrElse(""),
