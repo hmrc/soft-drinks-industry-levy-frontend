@@ -39,10 +39,11 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: Registration
       case ProductionSitesPage => Ok(
         productionSite(
           form,
-          request.formData.rosmData.address,
+          Some(request.formData.rosmData.address),
           primaryPlaceOfBusiness,
           request.formData.productionSites.getOrElse(Nil),
-          Journey.previousPage(ProductionSitesPage).show
+          Journey.previousPage(ProductionSitesPage).show,
+          sdil.controllers.routes.ProductionSiteController.submit()
         )
       )
       case otherPage => Redirect(otherPage.show)
@@ -54,10 +55,11 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: Registration
       errors => BadRequest(
         productionSite(
           errors,
-          request.formData.rosmData.address,
+          Some(request.formData.rosmData.address),
           primaryPlaceOfBusiness,
           request.formData.productionSites.getOrElse(Nil),
-          Journey.previousPage(ProductionSitesPage).show
+          Journey.previousPage(ProductionSitesPage).show,
+          sdil.controllers.routes.ProductionSiteController.submit()
         )
       ),
       {
