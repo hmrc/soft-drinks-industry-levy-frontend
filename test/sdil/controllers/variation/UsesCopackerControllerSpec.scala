@@ -18,25 +18,23 @@ package sdil.controllers.variation
 
 import java.time.LocalDate
 
-import sdil.controllers.ControllerSpec
-import com.softwaremill.macwire._
+import com.softwaremill.macwire.wire
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{eq => matching, _}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{any, eq => matching}
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Address, Producer}
+import sdil.controllers.ControllerSpec
 import sdil.models.backend.{Contact, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.variations.{UpdatedBusinessDetails, VariationData}
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
+import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
-import scala.collection.JavaConverters._
 import scala.concurrent.Future
 
-class ProducerVariationsControllerSpec extends ControllerSpec with BeforeAndAfterAll {
+class UsesCopackerControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
   override protected def beforeAll(): Unit = {
     val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
@@ -49,20 +47,21 @@ class ProducerVariationsControllerSpec extends ControllerSpec with BeforeAndAfte
       .thenReturn(Future.successful(Some(VariationData(subscription))))
   }
 
-  "GET /variations/producer" should {
-    "return 200 Ok and the producer page" in {
+
+  "GET /variations/uses-copacker" should {
+    "return 200 Ok and the uses copacker page" in {
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
-      contentAsString(res) must include(messagesApi("sdil.producer.heading"))
+      contentAsString(res) must include(messagesApi("sdil.copacked.heading"))
     }
 
-    "return a page with a link back to the variations summary page" in {
+    "return a page with a link back to the producer-variations" in {
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
+      html.select("a.link-back").attr("href") mustBe routes.ProducerVariationsController.show().url
     }
   }
 
@@ -72,24 +71,9 @@ class ProducerVariationsControllerSpec extends ControllerSpec with BeforeAndAfte
       status(res) mustBe BAD_REQUEST
     }
 
-    "return 303 See Other and redirect to the use copacker page if the " +
-      "form data is valid and they are not a large producer" in {
+    "return 303 See Other and redirect to the package own page if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody(
-        "isProducer" -> "true",
-        "isLarge" -> "false"
-      )
-
-      val res = testController.submit()(request)
-      status(res) mustBe SEE_OTHER
-
-      redirectLocation(res).value mustBe routes.UsesCopackerController.show().url
-    }
-
-    "return 303 See Other and redirect to the package own page if the " +
-      "form data is valid and they are a large producer" in {
-      val request = FakeRequest().withFormUrlEncodedBody(
-        "isProducer" -> "true",
-        "isLarge" -> "true"
+        "yesOrNo" -> "true"
       )
 
       val res = testController.submit()(request)
@@ -98,17 +82,6 @@ class ProducerVariationsControllerSpec extends ControllerSpec with BeforeAndAfte
       redirectLocation(res).value mustBe routes.PackageOwnController.show().url
     }
 
-    "return 303 See Other and redirect to the variations summary page if the " +
-      "form data is valid and they are a not producer" in {
-      val request = FakeRequest().withFormUrlEncodedBody(
-        "isProducer" -> "false"
-      )
-
-      val res = testController.submit()(request)
-      status(res) mustBe SEE_OTHER
-
-      redirectLocation(res).value mustBe routes.VariationsController.show().url
-    }
     "update the cached form data when the form data is valid" in {
       val data = VariationData(subscription.copy(utr = "9998887776"))
 
@@ -116,8 +89,7 @@ class ProducerVariationsControllerSpec extends ControllerSpec with BeforeAndAfte
         .thenReturn(Future.successful(Some(data)))
 
       val request = FakeRequest().withFormUrlEncodedBody(
-        "isProducer" -> "true",
-        "isLarge" -> "false"
+        "yesOrNo" -> "false"
       )
 
       val res = testController.submit()(request)
@@ -126,15 +98,13 @@ class ProducerVariationsControllerSpec extends ControllerSpec with BeforeAndAfte
       verify(mockKeystore, times(1))
         .cache(
           matching("variationData"),
-          matching(data.copy(producer = Producer(
-            isProducer = true,
-            isLarge = Some(false)
-          )))
+          matching(data.copy(usesCopacker = Some(false)))
         )(any(), any(), any())
     }
   }
 
-  lazy val testController = wire[ProducerVariationsController]
+
+  lazy val testController = wire[UsesCopackerController]
   lazy val subscription: RetrievedSubscription = RetrievedSubscription(
     utr = "9876543210",
     orgName = "Forbidden Left Parenthesis & Sons",
@@ -151,4 +121,5 @@ class ProducerVariationsControllerSpec extends ControllerSpec with BeforeAndAfte
     warehouseSites = Nil,
     contact = Contact(Some("body"), Some("thing"), "-7", "aa@bb.cc")
   )
+
 }

@@ -57,6 +57,14 @@ class PackageOwnVolControllerSpec extends ControllerSpec with BeforeAndAfterAll 
       contentAsString(res) must include(messagesApi("sdil.packageOwnUk.heading"))
     }
 
+    "return a page with a link back to the package own page" in {
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.PackageOwnController.show().url
+    }
+
     "return a page containing a 'lowerRateLitres' input" in {
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK

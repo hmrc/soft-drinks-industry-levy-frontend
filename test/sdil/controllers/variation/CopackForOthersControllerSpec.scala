@@ -19,6 +19,7 @@ package sdil.controllers.variation
 import java.time.LocalDate
 
 import com.softwaremill.macwire.wire
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.BeforeAndAfterAll
@@ -52,6 +53,14 @@ class CopackForOthersControllerSpec extends ControllerSpec with BeforeAndAfterAl
       status(res) mustBe OK
 
       contentAsString(res) must include(messagesApi("sdil.packageCopack.heading"))
+    }
+
+    "return a page with a link back to the producer-variations" in {
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
     }
 
     "POST /variations/copack-for-others" should {

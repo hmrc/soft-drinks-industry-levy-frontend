@@ -54,8 +54,15 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
+     contentAsString(res) must include(messagesApi("sdil.declaration.your-business"))
+    }
+
+    "return a page with a link back to the variations summary page" in {
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
       val html = Jsoup.parse(contentAsString(res))
-      html.select("h1").text mustBe "Business details"
+      html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
     }
 
     "return a page containing a 'Trading Name' input" in {

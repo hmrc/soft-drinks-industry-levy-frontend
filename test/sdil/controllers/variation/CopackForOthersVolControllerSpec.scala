@@ -57,6 +57,14 @@ class CopackForOthersVolControllerSpec extends ControllerSpec with BeforeAndAfte
         contentAsString(res) must include(messagesApi("sdil.packageCopackVol.heading"))
       }
 
+      "return a page with a link back to the copack for others" in {
+        val res = testController.show()(FakeRequest())
+        status(res) mustBe OK
+
+        val html = Jsoup.parse(contentAsString(res))
+        html.select("a.link-back").attr("href") mustBe routes.CopackForOthersController.show().url
+      }
+
       "return a page containing a 'lowerRateLitres' input" in {
         val res = testController.show()(FakeRequest())
         status(res) mustBe OK
