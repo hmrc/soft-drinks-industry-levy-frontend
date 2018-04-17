@@ -16,6 +16,7 @@
 
 package sdil.controllers
 
+import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito._
 import play.api.i18n.Messages
@@ -25,7 +26,6 @@ import sdil.models.RegistrationFormData
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
-import com.softwaremill.macwire._
 
 import scala.concurrent.Future
 

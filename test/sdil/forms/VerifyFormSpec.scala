@@ -16,8 +16,8 @@
 
 package sdil.forms
 
-import sdil.models.{Address, DetailsCorrect}
 import sdil.controllers.VerifyController.form
+import sdil.models.{Address, DetailsCorrect}
 
 class VerifyFormSpec extends FormSpec {
 
