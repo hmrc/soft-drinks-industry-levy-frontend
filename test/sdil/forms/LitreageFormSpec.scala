@@ -16,8 +16,8 @@
 
 package sdil.forms
 
-import sdil.models.Litreage
 import sdil.controllers.LitreageController.form
+import sdil.models.Litreage
 
 class LitreageFormSpec extends FormSpec {
 

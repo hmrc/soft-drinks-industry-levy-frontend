@@ -16,9 +16,6 @@
 
 package sdil.controllers.variation
 
-import java.time.LocalDate
-
-import sdil.controllers.ControllerSpec
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
@@ -26,14 +23,12 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{Address, Producer}
-import sdil.models.backend.{Contact, UkAddress}
-import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.variations.{UpdatedBusinessDetails, VariationData}
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
+import sdil.controllers.ControllerSpec
+import sdil.models.Producer
+import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
-import scala.collection.JavaConverters._
 import scala.concurrent.Future
 
 class ProducerVariationsControllerSpec extends ControllerSpec with BeforeAndAfterAll {

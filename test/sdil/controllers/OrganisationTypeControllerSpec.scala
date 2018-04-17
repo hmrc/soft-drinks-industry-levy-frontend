@@ -16,19 +16,19 @@
 
 package sdil.controllers
 
+import com.softwaremill.macwire._
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers._
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
-import uk.gov.hmrc.auth.core.{Admin, Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.{Admin, Enrolment, EnrolmentIdentifier, Enrolments}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.Future
-import com.softwaremill.macwire._
 
 class OrganisationTypeControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
