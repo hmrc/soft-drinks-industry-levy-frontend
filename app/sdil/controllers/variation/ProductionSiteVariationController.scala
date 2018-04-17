@@ -44,7 +44,7 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
         None,
         None,
         request.data.updatedProductionSites,
-        previousPage,
+        request.data.previousPage,
         routes.ProductionSiteVariationController.submit()
       )
     )

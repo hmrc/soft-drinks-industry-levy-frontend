@@ -33,10 +33,12 @@ class PackageOwnVolController(val messagesApi: MessagesApi,
                              (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  def show: Action[AnyContent] = variationAction { implicit request =>
+  def show: Action[AnyContent] = variationAction.async { implicit request =>
     val filledForm = request.data.packageOwnVol.fold(LitreageController.form)(LitreageController.form.fill)
-
-    Ok(litreagePage(filledForm, "packageOwnUk", backLink, Some(submitAction)))
+    val updated = request.data.copy(previousPage = routes.PackageOwnVolController.show())
+    cache.cache("variationData", updated) map { _ =>
+      Ok(litreagePage(filledForm, "packageOwnUk", backLink, Some(submitAction)))
+    }
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
@@ -45,7 +47,7 @@ class PackageOwnVolController(val messagesApi: MessagesApi,
       data => {
         val updated = request.data.copy(packageOwnVol = Some(data))
         cache.cache("variationData", updated) map { _ =>
-          Redirect(routes.VariationsController.show())
+          Redirect(routes.ProductionSiteVariationController.show())
         }
       }
     )

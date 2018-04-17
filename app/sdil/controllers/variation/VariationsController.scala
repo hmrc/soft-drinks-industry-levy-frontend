@@ -17,7 +17,7 @@
 package sdil.controllers.variation
 
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -48,10 +48,13 @@ class VariationsController(val messagesApi: MessagesApi,
   }
 
   def show: Action[AnyContent] = registeredAction.async { implicit request =>
-    cache.fetchAndGetEntry[VariationData]("variationData") map {
+    cache.fetchAndGetEntry[VariationData]("variationData") flatMap  {
       case Some(s) =>
-        Ok(views.html.softdrinksindustrylevy.variations.retrieve_summary(s.original, s))
-      case None => NotFound(errorHandler.notFoundTemplate)
+        val updated = s.copy(previousPage = routes.VariationsController.show())
+        cache.cache("variationData", updated) map { _ =>
+          Ok(views.html.softdrinksindustrylevy.variations.retrieve_summary(s.original, s))
+        }
+      case None => Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 }

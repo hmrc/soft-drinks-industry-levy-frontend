@@ -16,7 +16,9 @@
 
 package sdil.models.variations
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json._
+import play.api.mvc.Call
+import sdil.controllers.variation.routes
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer}
 
@@ -32,10 +34,25 @@ case class VariationData(original: RetrievedSubscription,
                          importsVol: Option[Litreage],
                          updatedProductionSites: Seq[Address],
                          updatedWarehouseSites: Seq[Address], // TODO create variation Site model with trading name
-                         updatedContactDetails: ContactDetails
+                         updatedContactDetails: ContactDetails,
+                         previousPage: Call
                         )
 
 object VariationData {
+  implicit val callWrites: Writes[Call] = new Writes[Call] {
+    override def writes(o: Call): JsValue = {
+      Json.obj(
+        "method" -> o.method,
+        "url" -> o.url
+      )
+    }
+  }
+  implicit val callReads: Reads[Call] = new Reads[Call] {
+    override def reads(json: JsValue): JsResult[Call] = {
+      JsSuccess(Call((json \ "method").as[String], (json \ "url").as[String]))
+    }
+  }
+
   implicit val format: Format[VariationData] = Json.format[VariationData]
 
   def apply(original: RetrievedSubscription): VariationData = VariationData(
@@ -55,6 +72,7 @@ object VariationData {
       original.contact.name.getOrElse(""),
       original.contact.positionInCompany.getOrElse(""),
       original.contact.phoneNumber,
-      original.contact.email)
+      original.contact.email),
+    previousPage = routes.VariationsController.show
   )
 }

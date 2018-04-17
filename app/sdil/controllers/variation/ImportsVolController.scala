@@ -33,10 +33,12 @@ class ImportsVolController(val messagesApi: MessagesApi,
                           (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  def show: Action[AnyContent] = variationAction { implicit request =>
+  def show: Action[AnyContent] = variationAction.async { implicit request =>
     val filledForm = request.data.importsVol.fold(LitreageController.form)(LitreageController.form.fill)
-
-    Ok(litreagePage(filledForm, "importVolume", backLink, Some(submitAction)))
+    val updated = request.data.copy(previousPage = routes.ImportsVolController.show())
+    cache.cache("variationData", updated) map { _ =>
+      Ok(litreagePage(filledForm, "importVolume", backLink, Some(submitAction)))
+    }
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
@@ -45,7 +47,7 @@ class ImportsVolController(val messagesApi: MessagesApi,
       data => {
         val updated = request.data.copy(importsVol = Some(data))
         cache.cache("variationData", updated) map { _ =>
-          Redirect(routes.VariationsController.show())
+          Redirect(routes.WarehouseVariationController.show())
         }
       }
     )

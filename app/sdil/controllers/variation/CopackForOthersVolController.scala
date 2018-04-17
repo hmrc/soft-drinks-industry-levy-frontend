@@ -33,10 +33,12 @@ class CopackForOthersVolController(val messagesApi: MessagesApi,
                                   (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  def show: Action[AnyContent] = variationAction { implicit request =>
+  def show: Action[AnyContent] = variationAction.async { implicit request =>
     val filledForm = request.data.copackForOthersVol.fold(LitreageController.form)(LitreageController.form.fill)
-
-    Ok(litreagePage(filledForm, "packageCopackVol", backLink, Some(submitAction)))
+    val updated = request.data.copy(previousPage = routes.CopackForOthersVolController.show())
+    cache.cache("variationData", updated) map { _ =>
+      Ok(litreagePage(filledForm, "packageCopackVol", backLink, Some(submitAction)))
+    }
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
@@ -45,7 +47,7 @@ class CopackForOthersVolController(val messagesApi: MessagesApi,
       data => {
         val updated = request.data.copy(copackForOthersVol = Some(data))
         cache.cache("variationData", updated) map { _ =>
-          Redirect(routes.VariationsController.show())
+          Redirect(routes.ProductionSiteVariationController.show())
         }
       }
     )

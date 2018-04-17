@@ -93,14 +93,14 @@
             @variationData.copackForOthersVol.map { copackForOthersVol =>
                 @declaration_details_litres(
                     "variation.copack-for-others-vol",
-                    sdil.controllers.variation.routes.PackageOwnVolController.show(),
+                    sdil.controllers.variation.routes.CopackForOthersVolController.show(),
                     copackForOthersVol)
             }
         }
         @declaration_details_table_row("variation",
             "importer",
             Some(sdil.controllers.variation.routes.ImportsController.show()),
-            Messages(s"sdil.declaration.${retrievedSubscription.activity.importer}"),
+            Messages(s"sdil.declaration.${variationData.imports}"),
             '_colspan -> "2")
         @if(variationData.imports) {
             @variationData.importsVol.map { importsVol =>
@@ -112,84 +112,87 @@
         }
     }
 
-    @if(variationData.updatedProductionSites.nonEmpty) {
-        @declaration_table("declaration", "production-sites") {
-            @variationData.updatedProductionSites.map { address =>
+    @if(variationData.producer.isProducer || variationData.copackForOthers) {
+        @if(variationData.updatedProductionSites.nonEmpty) {
+            @declaration_table("declaration", "production-sites") {
+                @variationData.updatedProductionSites.map { address =>
+                    <tr>
+                        <td>
+                            @address.nonEmptyLines.map { a =>
+                                <div>@a</div>
+                            }
+                        </td>
+                        <td class="change-answer">
+                            <a href="@sdil.controllers.variation.routes.ProductionSiteVariationController.show()">
+                            @Messages("sdil.declaration.change-link")
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        } else {
+            @declaration_table("declaration", "production-sites") {
                 <tr>
-                    <td>
-                        @address.nonEmptyLines.map { a =>
-                            <div>@a</div>
-                        }
-                    </td>
                     <td class="change-answer">
                         <a href="@sdil.controllers.variation.routes.ProductionSiteVariationController.show()">
-                        @Messages("sdil.declaration.change-link")
+                        @Messages("sdil.variation.add-link")
                         </a>
                     </td>
                 </tr>
             }
         }
-    }else {
-        @declaration_table("declaration", "warehouses") {
-            <tr>
-                <td class="change-answer">
-                    <a href="@sdil.controllers.variation.routes.ProductionSiteVariationController.show()">
-                    @Messages("sdil.variation.add-link")
-                    </a>
-                </td>
-            </tr>
-        }
     }
-
-    @if(variationData.updatedWarehouseSites.nonEmpty) {
-        @declaration_table("declaration", "warehouses") {
-            @variationData.updatedWarehouseSites.map { address =>
+    @if(variationData.producer.isProducer || variationData.imports || variationData.copackForOthers) {
+        @if(variationData.updatedWarehouseSites.nonEmpty) {
+            @declaration_table("declaration", "warehouses") {
+                @variationData.updatedWarehouseSites.map { address =>
+                    <tr>
+                        <td>
+                            @address.nonEmptyLines.map { a =>
+                                <div>@a</div>
+                            }
+                        </td>
+                        <td class="change-answer">
+                            <a href="@sdil.controllers.variation.routes.WarehouseVariationController.show()">
+                            @Messages("sdil.declaration.change-link")
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        } else {
+            @declaration_table("declaration", "warehouses") {
                 <tr>
-                    <td>
-                        @address.nonEmptyLines.map { a =>
-                            <div>@a</div>
-                        }
-                    </td>
                     <td class="change-answer">
                         <a href="@sdil.controllers.variation.routes.WarehouseVariationController.show()">
-                        @Messages("sdil.declaration.change-link")
+                        @Messages("sdil.variation.add-link")
                         </a>
                     </td>
                 </tr>
             }
         }
-    } else {
-        @declaration_table("declaration", "warehouses") {
-            <tr>
-                <td class="change-answer">
-                    <a href="@sdil.controllers.variation.routes.WarehouseVariationController.show()">
-                    @Messages("sdil.variation.add-link")
-                    </a>
-                </td>
-            </tr>
-        }
-    }
 
-    @declaration_table("declaration", "contact-details") {
-        @declaration_details_table_row(
-            "declaration",
-            "name",
-            Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
-            variationData.updatedContactDetails.fullName)
-        @declaration_details_table_row(
-            "declaration",
-            "position",
-            Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
-            variationData.updatedContactDetails.position)
-        @declaration_details_table_row(
-            "declaration",
-            "phone-number",
-            Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
-            variationData.updatedContactDetails.phoneNumber)
-        @declaration_details_table_row(
-            "declaration",
-            "email",
-            Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
-            variationData.updatedContactDetails.email)
+        @declaration_table("declaration", "contact-details") {
+            @declaration_details_table_row(
+                "declaration",
+                "name",
+                Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
+                variationData.updatedContactDetails.fullName)
+            @declaration_details_table_row(
+                "declaration",
+                "position",
+                Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
+                variationData.updatedContactDetails.position)
+            @declaration_details_table_row(
+                "declaration",
+                "phone-number",
+                Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
+                variationData.updatedContactDetails.phoneNumber)
+            @declaration_details_table_row(
+                "declaration",
+                "email",
+                Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
+                variationData.updatedContactDetails.email)
+        }
     }
 }
