@@ -16,16 +16,13 @@
 
 package sdil.controllers.variation
 
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
 import sdil.controllers.RadioFormController
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.radio_button
-
-import scala.concurrent.Future
 
 class ImportsController(val messagesApi: MessagesApi,
                         val cache: SessionCache,

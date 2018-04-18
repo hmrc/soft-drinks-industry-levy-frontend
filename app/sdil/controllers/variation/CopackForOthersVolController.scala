@@ -28,23 +28,24 @@ import views.html.softdrinksindustrylevy.register.litreagePage
 import scala.concurrent.Future
 
 class CopackForOthersVolController(val messagesApi: MessagesApi,
-                                   cache: SessionCache,
+                                   val cache: SessionCache,
                                    variationAction: VariationAction)
                                   (implicit config: AppConfig)
-  extends FrontendController with I18nSupport {
+  extends Journey {
 
   def show: Action[AnyContent] = variationAction.async { implicit request =>
     val filledForm = request.data.copackForOthersVol.fold(LitreageController.form)(LitreageController.form.fill)
-    val pages = request.data.previousPages
-    val updated = request.data.copy(previousPages = pages :+ routes.CopackForOthersVolController.show())
-    cache.cache("variationData", updated) map { _ =>
-      Ok(litreagePage(filledForm, "packageCopackVol", backLink, Some(submitAction)))
+    backLink(routes.CopackForOthersVolController.show()) map { link =>
+      Ok(litreagePage(filledForm, "packageCopackVol", link, Some(submitAction)))
     }
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
     LitreageController.form.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(litreagePage(errors, "packageCopackVol", backLink, Some(submitAction)))),
+      errors =>
+        backLink(routes.CopackForOthersVolController.show()) map { link =>
+          BadRequest(litreagePage(errors, "packageCopackVol", link, Some(submitAction)))
+        },
       data => {
         val updated = request.data.copy(copackForOthersVol = Some(data))
         cache.cache("variationData", updated) map { _ =>
@@ -54,6 +55,5 @@ class CopackForOthersVolController(val messagesApi: MessagesApi,
     )
   }
 
-  lazy val backLink = routes.CopackForOthersController.show()
   lazy val submitAction = routes.CopackForOthersVolController.submit()
 }
