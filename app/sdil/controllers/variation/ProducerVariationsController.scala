@@ -16,30 +16,32 @@
 
 package sdil.controllers.variation
 
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
 import sdil.controllers.ProducerController
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.produce_worldwide
 
-import scala.concurrent.Future
-
 class ProducerVariationsController(val messagesApi: MessagesApi,
-                                   cache: SessionCache,
+                                   val cache: SessionCache,
                                    variationAction: VariationAction)
                                   (implicit config: AppConfig)
-  extends FrontendController with I18nSupport {
+  extends Journey {
 
-  def show: Action[AnyContent] = variationAction { implicit request =>
-    Ok(produce_worldwide(ProducerController.form.fill(request.data.producer), backLink, submitAction))
+  def show: Action[AnyContent] = variationAction.async { implicit request =>
+    backLink(routes.ProducerVariationsController.show()) map { link =>
+      Ok(produce_worldwide(ProducerController.form.fill(request.data.producer), link, submitAction))
+    }
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
     ProducerController.form.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(produce_worldwide(errors, backLink, submitAction))),
+      errors =>
+        backLink(routes.ProducerVariationsController.show()) map { link =>
+          BadRequest(produce_worldwide(errors, link, submitAction))
+        },
       data => {
         val updated = request.data.copy(producer = data)
         cache.cache("variationData", updated) map { _ =>
@@ -54,8 +56,6 @@ class ProducerVariationsController(val messagesApi: MessagesApi,
       }
     )
   }
-
-  lazy val backLink = routes.VariationsController.show()
 
   lazy val submitAction = routes.ProducerVariationsController.submit()
 }

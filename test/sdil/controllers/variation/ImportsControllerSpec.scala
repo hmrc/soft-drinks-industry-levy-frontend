@@ -55,13 +55,21 @@ class ImportsControllerSpec  extends ControllerSpec with BeforeAndAfterAll {
       contentAsString(res) must include(messagesApi("sdil.import.heading"))
     }
 
-    "return a page with a link back to the variations summary" in {
+    "return a page with a link back to the variations summary page" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
     }
+  }
 
     "POST /variations/imports" should {
       "return 400 Bad Request if the form data is invalid" in {
@@ -108,6 +116,6 @@ class ImportsControllerSpec  extends ControllerSpec with BeforeAndAfterAll {
           )(any(), any(), any())
       }
     }
-  }
+
   lazy val testController = wire[ImportsController]
 }

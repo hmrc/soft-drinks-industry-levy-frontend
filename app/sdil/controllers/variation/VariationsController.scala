@@ -17,7 +17,7 @@
 package sdil.controllers.variation
 
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -54,9 +54,6 @@ class VariationsController(val messagesApi: MessagesApi,
         cache.cache("variationData", updated) map { _ =>
           Ok(views.html.softdrinksindustrylevy.variations.retrieve_summary(s.original, s))
         }
-
-//        val t = Ok(views.html.softdrinksindustrylevy.variations.retrieve_summary(s.original, s))
-
       case None => Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }

@@ -58,6 +58,15 @@ class CopackForOthersVolControllerSpec extends ControllerSpec with BeforeAndAfte
       }
 
       "return a page with a link back to the copack for others" in {
+        val data = VariationData(subscription)
+          .copy(previousPages = Seq(
+            routes.VariationsController.show,
+            routes.CopackForOthersController.show)
+          )
+
+        when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+          .thenReturn(Future.successful(Some(data)))
+
         val res = testController.show()(FakeRequest())
         status(res) mustBe OK
 
@@ -80,7 +89,7 @@ class CopackForOthersVolControllerSpec extends ControllerSpec with BeforeAndAfte
         val html = Jsoup.parse(contentAsString(res))
         html.select("input").asScala.map(_.attr("name")) must contain("higherRateLitres")
       }
-
+    }
       "POST /variations/package-own-vol" should {
         "return 400 Bad Request if the form data is invalid" in {
           val res = testController.submit()(FakeRequest().withFormUrlEncodedBody())
@@ -93,7 +102,7 @@ class CopackForOthersVolControllerSpec extends ControllerSpec with BeforeAndAfte
           ))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.VariationsController.show().url
+          redirectLocation(result).value mustBe routes.ProductionSiteVariationController.show().url
         }
 
         "update the cached form data when the form data is valid" in {
@@ -118,6 +127,5 @@ class CopackForOthersVolControllerSpec extends ControllerSpec with BeforeAndAfte
             )(any(), any(), any())
         }
       }
-    }
     lazy val testController = wire[CopackForOthersVolController]
 }

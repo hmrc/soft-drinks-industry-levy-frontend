@@ -55,12 +55,40 @@ class PacakgeOwnControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
       contentAsString(res) must include(messagesApi("sdil.packageOwnUk.heading"))
     }
-    "return a page with a link back to the producer-variations" in {
+
+    "return a page with a link back to the uses copacker page" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show,
+          routes.ProducerVariationsController.show,
+          routes.UsesCopackerController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.UsesCopackerController.show().url
+    }
+
+    "return a page with a link back to the producer-variations page" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show,
+          routes.ProducerVariationsController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.ProducerVariationsController.show().url
     }
   }
 

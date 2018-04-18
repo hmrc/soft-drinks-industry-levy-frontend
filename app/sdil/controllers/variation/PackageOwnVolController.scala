@@ -16,35 +16,33 @@
 
 package sdil.controllers.variation
 
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
 import sdil.controllers.LitreageController
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.litreagePage
 
-import scala.concurrent.Future
-
 class PackageOwnVolController(val messagesApi: MessagesApi,
-                              cache: SessionCache,
+                              val cache: SessionCache,
                               variationAction: VariationAction)
                              (implicit config: AppConfig)
-  extends FrontendController with I18nSupport {
+  extends Journey {
 
   def show: Action[AnyContent] = variationAction.async { implicit request =>
     val filledForm = request.data.packageOwnVol.fold(LitreageController.form)(LitreageController.form.fill)
-    val pages = request.data.previousPages
-    val updated = request.data.copy(previousPages = pages :+ routes.PackageOwnVolController.show())
-    cache.cache("variationData", updated) map { _ =>
-      Ok(litreagePage(filledForm, "packageOwnUk", backLink, Some(submitAction)))
+    backLink(routes.PackageOwnVolController.show()) map { link =>
+      Ok(litreagePage(filledForm, "packageOwnVol", link, Some(submitAction)))
     }
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
     LitreageController.form.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(litreagePage(errors, "packageOwnUk", backLink, Some(submitAction)))),
+      errors =>
+        backLink(routes.PackageOwnVolController.show()) map { link =>
+          BadRequest(litreagePage(errors, "packageOwnVol", link, Some(submitAction)))
+        },
       data => {
         val updated = request.data.copy(packageOwnVol = Some(data))
         cache.cache("variationData", updated) map { _ =>
@@ -54,6 +52,5 @@ class PackageOwnVolController(val messagesApi: MessagesApi,
     )
   }
 
-  lazy val backLink = routes.PackageOwnController.show()
   lazy val submitAction = routes.PackageOwnVolController.submit()
 }
