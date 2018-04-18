@@ -35,7 +35,8 @@ class PackageOwnVolController(val messagesApi: MessagesApi,
 
   def show: Action[AnyContent] = variationAction.async { implicit request =>
     val filledForm = request.data.packageOwnVol.fold(LitreageController.form)(LitreageController.form.fill)
-    val updated = request.data.copy(previousPage = routes.PackageOwnVolController.show())
+    val pages = request.data.previousPages
+    val updated = request.data.copy(previousPages = pages :+ routes.PackageOwnVolController.show())
     cache.cache("variationData", updated) map { _ =>
       Ok(litreagePage(filledForm, "packageOwnUk", backLink, Some(submitAction)))
     }

@@ -35,7 +35,7 @@ case class VariationData(original: RetrievedSubscription,
                          updatedProductionSites: Seq[Address],
                          updatedWarehouseSites: Seq[Address], // TODO create variation Site model with trading name
                          updatedContactDetails: ContactDetails,
-                         previousPage: Call
+                         previousPages: Seq[Call]
                         )
 
 object VariationData {
@@ -73,6 +73,6 @@ object VariationData {
       original.contact.positionInCompany.getOrElse(""),
       original.contact.phoneNumber,
       original.contact.email),
-    previousPage = routes.VariationsController.show
+    previousPages = List(routes.VariationsController.show)
   )
 }

@@ -46,7 +46,7 @@ class WarehouseVariationController (val messagesApi: MessagesApi,
       secondaryWarehouse(
         fillInitialForm,
         warehouses,
-        request.data.previousPage,
+        request.data.previousPages.last,
         formTarget
       )
     )

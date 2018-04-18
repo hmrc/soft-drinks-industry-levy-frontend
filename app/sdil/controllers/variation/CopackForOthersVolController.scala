@@ -35,7 +35,8 @@ class CopackForOthersVolController(val messagesApi: MessagesApi,
 
   def show: Action[AnyContent] = variationAction.async { implicit request =>
     val filledForm = request.data.copackForOthersVol.fold(LitreageController.form)(LitreageController.form.fill)
-    val updated = request.data.copy(previousPage = routes.CopackForOthersVolController.show())
+    val pages = request.data.previousPages
+    val updated = request.data.copy(previousPages = pages :+ routes.CopackForOthersVolController.show())
     cache.cache("variationData", updated) map { _ =>
       Ok(litreagePage(filledForm, "packageCopackVol", backLink, Some(submitAction)))
     }
