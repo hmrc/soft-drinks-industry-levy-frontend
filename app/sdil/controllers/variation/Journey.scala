@@ -30,15 +30,16 @@ trait Journey extends FrontendController with I18nSupport {
   val messagesApi: MessagesApi
 
   def backLink(controllerPage: Call)(implicit request: VariationRequest[_]): Future[Call] = {
-    val pages = request.data.previousPages
-    val updated = request.data.copy(previousPages = pages :+ controllerPage)
-    cache.cache("variationData", updated) map { _ =>
-      if (request.data.previousPages.endsWith(Seq(controllerPage))) {
-        request.data.previousPages.dropRight(1)
-        request.data.previousPages.init.last
-      } else {
-        request.data.previousPages.last
-      }
+    request.data.previousPages match {
+      case pages if pages.contains(controllerPage) =>
+        Future(pages(pages.indexOf(controllerPage) -1))
+      case pages =>
+        cache.cache(
+          "variationData",
+          request.data.copy(previousPages = pages :+ controllerPage)
+        ) map { _ =>
+          pages.last
+        }
     }
   }
 }
