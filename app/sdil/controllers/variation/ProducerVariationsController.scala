@@ -16,32 +16,48 @@
 
 package sdil.controllers.variation
 
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
 import sdil.controllers.ProducerController
+import sdil.models.variations.VariationData
 import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.softdrinksindustrylevy.register.produce_worldwide
 
+import scala.concurrent.Future
+
 class ProducerVariationsController(val messagesApi: MessagesApi,
-                                   val cache: SessionCache,
+                                   cache: SessionCache,
+                                   errorHandler: FrontendErrorHandler,
                                    variationAction: VariationAction)
                                   (implicit config: AppConfig)
-  extends Journey {
+  extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = variationAction.async { implicit request =>
-    backLink(routes.ProducerVariationsController.show()) map { link =>
-      Ok(produce_worldwide(ProducerController.form.fill(request.data.producer), link, submitAction))
+
+    cache.fetchAndGetEntry[VariationData]("variationData") flatMap {
+      case Some(s) =>
+        val updated = s.copy(previousPages = List(
+          backlink,
+          submitAction)
+        )
+        cache.cache("variationData", updated) map { _ =>
+          Ok(views.html.softdrinksindustrylevy.register.produce_worldwide(
+            ProducerController.form.fill(s.producer),
+            backlink,
+            submitAction))
+        }
+      case None => Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
     ProducerController.form.bindFromRequest().fold(
       errors =>
-        backLink(routes.ProducerVariationsController.show()) map { link =>
-          BadRequest(produce_worldwide(errors, link, submitAction))
-        },
+          Future.successful(BadRequest(produce_worldwide(errors, backlink, submitAction))),
       data => {
         val updated = request.data.copy(producer = data)
         cache.cache("variationData", updated) map { _ =>
@@ -50,13 +66,14 @@ class ProducerVariationsController(val messagesApi: MessagesApi,
           } else if (data.isProducer) {
             Redirect(routes.PackageOwnController.show())
           } else {
-            Redirect(routes.VariationsController.show())
+            Redirect(backlink)
           }
         }
       }
     )
   }
 
+  lazy val backlink = routes.VariationsController.show()
   lazy val submitAction = routes.ProducerVariationsController.submit()
 }
 

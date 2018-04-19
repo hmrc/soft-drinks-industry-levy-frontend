@@ -31,7 +31,13 @@ class PackageOwnController(val messagesApi: MessagesApi,
   extends Journey {
 
   def show: Action[AnyContent] = variationAction.async { implicit request =>
-    val filledForm = request.data.packageOwn.fold(RadioFormController.form)(RadioFormController.form.fill)
+    val filledForm = RadioFormController.form.fill(
+      request.data match {
+        case d if !d.producer.isProducer && !d.copackForOthers => false
+        case d if d.updatedProductionSites.isEmpty => false
+        case _ => true
+      }
+    )
     backLink(routes.PackageOwnController.show()) map { link =>
       Ok(radio_button(filledForm, "packageOwnUk", link, submitAction))
     }

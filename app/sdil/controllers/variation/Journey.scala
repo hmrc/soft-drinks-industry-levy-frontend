@@ -31,7 +31,7 @@ trait Journey extends FrontendController with I18nSupport {
 
   def backLink(controllerPage: Call)(implicit request: VariationRequest[_]): Future[Call] = {
     request.data.previousPages match {
-      case pages if pages.contains(controllerPage) && controllerPage != routes.ProducerVariationsController.show =>
+      case pages if pages.contains(controllerPage) =>
         val updatedPages = pages.slice(0, pages.indexOf(controllerPage))
         cache.cache(
           "variationData",
