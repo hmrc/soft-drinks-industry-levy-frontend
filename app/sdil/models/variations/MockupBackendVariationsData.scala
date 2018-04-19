@@ -30,6 +30,7 @@ object VariationsRequest {
   implicit val writes: Writes[VariationsRequest] = Json.writes[VariationsRequest]
 }
 
+/** The payload that is sent to GForms */
 case class VariationsRequest(
                               tradingName: Option[String] = None,
                               businessContact: Option[VariationsContact] = None,
