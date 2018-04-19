@@ -16,8 +16,6 @@
 
 package sdil.controllers.variation
 
-import java.time.LocalDate
-
 import com.softwaremill.macwire.wire
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matching}
@@ -25,10 +23,7 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status, _}
-import sdil.controllers.{ControllerSpec, routes}
-import sdil.models.Address
-import sdil.models.backend.{Contact, UkAddress}
-import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
+import sdil.controllers.ControllerSpec
 import sdil.models.variations._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
