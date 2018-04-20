@@ -72,7 +72,7 @@ object SdilActivity {
 }
 
 case class SdilActivity(
-                         activity: Activity,
+                         activity: backendActivity,
                          produceLessThanOneMillionLitres: Option[Boolean] = None,
                          smallProducerExemption: Option[Boolean] = None, //If true then the user does not have to file returns
                          usesContractPacker: Option[Boolean] = None,
@@ -117,4 +117,10 @@ trait backendActivity {
   def isSmallProducer: Boolean = isProducer && !isLarge
 
   def taxEstimation: BigDecimal
+}
+
+case class RetrievedActivity(isProducer: Boolean, isLarge: Boolean, isContractPacker: Boolean, isImporter: Boolean)
+  extends backendActivity {
+  override def taxEstimation: BigDecimal = 0 // lost in translation - we should either hide or say something like unknown but it is
+  // not optional
 }
