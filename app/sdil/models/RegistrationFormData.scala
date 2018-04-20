@@ -38,19 +38,13 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 contactDetails: Option[ContactDetails] = None) {
 
   /**
-    * users cannot register if:
-    *  - they are a large producer globally, but have no activity in the UK
-    *  - they are a small producer globally, do not use a copacker, and do not copack or import in the UK
+    * users cannot register if they are a small producer globally, do not use a copacker, and do not copack or import in the UK
     */
   lazy val isNotAllowedToRegister: Boolean = {
-    (isLargeProducerWithNoUkProduction || isSmallProducerWithNoCopacker) && doesNotCopackOrImport
+    isSmallProducerWithNoCopacker && doesNotCopackOrImport
   }
 
   lazy val doesNotCopackOrImport: Boolean = packagesForOthers.contains(false) && isImporter.contains(false)
-
-  lazy val isLargeProducerWithNoUkProduction: Boolean = {
-    producer.flatMap(_.isLarge).contains(true) && isPackagingForSelf.forall(_ == false)
-  }
 
   lazy val isSmallProducerWithNoCopacker: Boolean = {
     producer.flatMap(_.isLarge).forall(_ == false) && usesCopacker.forall(_ == false)

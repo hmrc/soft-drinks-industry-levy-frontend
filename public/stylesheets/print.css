@@ -1,6 +1,10 @@
 /*hide unnecessary elements from print view*/
-.print-hidden, a, .button, .phase-banner, .header-wrapper {
+.print-hidden, .button, .phase-banner, .header-wrapper .print-link {
     display: none !important;
+}
+
+a:after {
+    content: "" !important;
 }
 
 .govuk-box-highlight {

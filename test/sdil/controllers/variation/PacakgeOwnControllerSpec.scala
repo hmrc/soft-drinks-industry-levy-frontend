@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, status, _}
+import play.api.test.Helpers._
 import sdil.controllers.ControllerSpec
 import sdil.models.variations._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
