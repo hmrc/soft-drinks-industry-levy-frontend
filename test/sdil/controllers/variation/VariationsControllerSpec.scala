@@ -23,6 +23,7 @@ import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status, _}
 import sdil.controllers.ControllerSpec
+import sdil.models.retrieved.RetrievedActivity
 import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
@@ -50,5 +51,59 @@ class VariationsControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       contentAsString(res) must include(messagesApi("sdil.variation.heading"))
     }
   }
+
+  "GET /variations with voluntary registration " should {
+    "return 200 Ok and show the current status and business details only" in {
+      val data = VariationData(
+        subscription.copy(
+          utr = "9998887776",
+          activity = RetrievedActivity(
+            smallProducer = true,
+            largeProducer = false,
+            contractPacker = false,
+            importer = false,
+            voluntaryRegistration = true
+          )
+        )
+      )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+      contentAsString(res) mustNot include(messagesApi("sdil.declaration.warehouses"))
+      contentAsString(res) mustNot include(messagesApi("sdil.declaration.production-sites"))
+      contentAsString(res) must include(messagesApi("sdil.declaration.contact-details"))
+    }
+  }
+
+  "GET /variations with no liability (e.g. dereg)" should {
+    "return 200 Ok and not show the packaging sites" in {
+      val data = VariationData(
+        subscription.copy(
+          utr = "9998887776",
+          activity = RetrievedActivity(
+            smallProducer = true,
+            largeProducer = false,
+            contractPacker = false,
+            importer = false,
+            voluntaryRegistration = false
+          )
+        )
+      )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+      contentAsString(res) mustNot include(messagesApi("sdil.declaration.warehouses"))
+      contentAsString(res) mustNot include(messagesApi("sdil.declaration.production-sites"))
+      contentAsString(res) mustNot include(messagesApi("sdil.declaration.contact-details"))
+    }
+  }
+
+
   lazy val testController = wire[VariationsController]
 }
