@@ -17,7 +17,6 @@
 package sdil.models.variations
 
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
 import play.api.mvc.Call
 import sdil.controllers.variation.routes
 import sdil.models.retrieved.RetrievedSubscription
@@ -37,7 +36,21 @@ case class VariationData(original: RetrievedSubscription,
                          updatedWarehouseSites: Seq[Address], // TODO create variation Site model with trading name
                          updatedContactDetails: ContactDetails,
                          previousPages: Seq[Call]
-                        )
+                        ) {
+
+  def isLiablePacker: Boolean = {
+    producer.isLarge.getOrElse(false) || copackForOthers
+  }
+
+  def isLiable: Boolean = {
+    producer.isLarge.getOrElse(false) || imports || copackForOthers
+  }
+
+  def isVoluntary: Boolean = {
+    usesCopacker.getOrElse(false) && !isLiable
+  }
+
+}
 
 object VariationData {
   implicit val callWrites: Format[Call] = new Format[Call] {
@@ -60,7 +73,7 @@ object VariationData {
     original,
     UpdatedBusinessDetails(original.orgName, Address.fromUkAddress(original.address)),
     Producer(original.activity.largeProducer || original.activity.smallProducer, Some(original.activity.largeProducer)),
-    usesCopacker = None,
+    usesCopacker = if(original.activity.voluntaryRegistration) Some(true) else None,
     packageOwn = None,
     packageOwnVol = None,
     original.activity.contractPacker,
