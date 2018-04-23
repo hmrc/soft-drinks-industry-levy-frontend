@@ -37,27 +37,22 @@ class ProducerVariationsController(val messagesApi: MessagesApi,
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = variationAction.async { implicit request =>
-
-    cache.fetchAndGetEntry[VariationData]("variationData") flatMap {
-      case Some(s) =>
-        val updated = s.copy(previousPages = List(
-          backlink,
-          submitAction)
-        )
-        cache.cache("variationData", updated) map { _ =>
-          Ok(views.html.softdrinksindustrylevy.register.produce_worldwide(
-            ProducerController.form.fill(s.producer),
-            backlink,
-            submitAction))
-        }
-      case None => Future.successful(NotFound(errorHandler.notFoundTemplate))
+    val updated = request.data.copy(previousPages = List(
+      backlink,
+      submitAction)
+    )
+    cache.cache("variationData", updated) map { _ =>
+      Ok(views.html.softdrinksindustrylevy.register.produce_worldwide(
+        ProducerController.form.fill(request.data.producer),
+        backlink,
+        submitAction))
     }
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
     ProducerController.form.bindFromRequest().fold(
       errors =>
-          Future.successful(BadRequest(produce_worldwide(errors, backlink, submitAction))),
+        Future.successful(BadRequest(produce_worldwide(errors, backlink, submitAction))),
       data => {
         val updated = request.data.copy(producer = data)
         cache.cache("variationData", updated) map { _ =>
