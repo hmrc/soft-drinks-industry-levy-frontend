@@ -53,13 +53,37 @@ class ImportsVolControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       contentAsString(res) must include(messagesApi("sdil.importVolume.heading"))
     }
 
+    "return a page with a link back to the variation summary" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(routes.VariationsController.show))
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
+    }
+
     "return a page with a link back to the imports" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show,
+          routes.ImportsController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.ImportsController.show().url
     }
+
 
     "return a page containing a 'lowerRateLitres' input" in {
       val res = testController.show()(FakeRequest())
@@ -76,45 +100,45 @@ class ImportsVolControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       val html = Jsoup.parse(contentAsString(res))
       html.select("input").asScala.map(_.attr("name")) must contain("higherRateLitres")
     }
+  }
+  "POST /variations/imports-own-vol" should {
+    "return 400 Bad Request if the form data is invalid" in {
+      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody())
+      status(res) mustBe BAD_REQUEST
+    }
 
-    "POST /variations/imports-own-vol" should {
-      "return 400 Bad Request if the form data is invalid" in {
-        val res = testController.submit()(FakeRequest().withFormUrlEncodedBody())
-        status(res) mustBe BAD_REQUEST
-      }
+    "return 303 See Other and redirect to the variations summary page with valid form data" in {
+      val result = testController.submit()(FakeRequest().withFormUrlEncodedBody(
+        "lowerRateLitres" -> "1", "higherRateLitres" -> "2"
+      ))
 
-      "return 303 See Other and redirect to the variations summary page with valid form data" in {
-        val result = testController.submit()(FakeRequest().withFormUrlEncodedBody(
-          "lowerRateLitres" -> "1", "higherRateLitres" -> "2"
-        ))
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe routes.WarehouseVariationController.show().url
+    }
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.VariationsController.show().url
-      }
+    "update the cached form data when the form data is valid" in {
+      val data = VariationData(subscription.copy(utr = "9998887776"))
 
-      "update the cached form data when the form data is valid" in {
-        val data = VariationData(subscription.copy(utr = "9998887776"))
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
 
-        when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
-          .thenReturn(Future.successful(Some(data)))
+      val request = FakeRequest().withFormUrlEncodedBody(
+        "lowerRateLitres" -> "1", "higherRateLitres" -> "2"
+      )
 
-        val request = FakeRequest().withFormUrlEncodedBody(
-          "lowerRateLitres" -> "1", "higherRateLitres" -> "2"
-        )
+      val res = testController.submit()(request)
+      status(res) mustBe SEE_OTHER
 
-        val res = testController.submit()(request)
-        status(res) mustBe SEE_OTHER
-
-        verify(mockKeystore, times(1))
-          .cache(
-            matching("variationData"),
-            matching(data.copy(importsVol = Option[Litreage](
-              Litreage(1, 2)
-            )))
-          )(any(), any(), any())
-      }
+      verify(mockKeystore, times(1))
+        .cache(
+          matching("variationData"),
+          matching(data.copy(importsVol = Option[Litreage](
+            Litreage(1, 2)
+          )))
+        )(any(), any(), any())
     }
   }
+
   lazy val testController = wire[ImportsVolController]
 }
 

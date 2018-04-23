@@ -46,7 +46,7 @@ class WarehouseVariationController (val messagesApi: MessagesApi,
       secondaryWarehouse(
         fillInitialForm,
         warehouses,
-        previousPage,
+        request.data.previousPages.last,
         formTarget
       )
     )
@@ -67,7 +67,7 @@ class WarehouseVariationController (val messagesApi: MessagesApi,
         secondaryWarehouse(
           errors,
           warehouses,
-          previousPage,
+          request.data.previousPages.last,
           formTarget
         )
       )),
@@ -84,7 +84,7 @@ class WarehouseVariationController (val messagesApi: MessagesApi,
           val updated = request.data.copy(updatedWarehouseSites = addresses.map(Address.fromString))
 
           cache.cache("variationData", updated) map { _ =>
-            Redirect(previousPage)
+            Redirect(routes.VariationsController.show())
           }
       }
     )

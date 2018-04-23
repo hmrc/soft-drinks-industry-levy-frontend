@@ -30,7 +30,7 @@ import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
 import scala.concurrent.Future
 
-class CopackForOthersControllerSpec extends ControllerSpec with BeforeAndAfterAll{
+class CopackForOthersControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
   override protected def beforeAll(): Unit = {
     val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
@@ -51,60 +51,67 @@ class CopackForOthersControllerSpec extends ControllerSpec with BeforeAndAfterAl
       contentAsString(res) must include(messagesApi("sdil.packageCopack.heading"))
     }
 
-    "return a page with a link back to the producer-variations" in {
+    "return a page with a link back to the variations summary page" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
     }
+  }
+  "POST /variations/copack-for-others" should {
+    "return 400 Bad Request if the form data is invalid" in {
+      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody())
+      status(res) mustBe BAD_REQUEST
+    }
 
-    "POST /variations/copack-for-others" should {
-      "return 400 Bad Request if the form data is invalid" in {
-        val res = testController.submit()(FakeRequest().withFormUrlEncodedBody())
-        status(res) mustBe BAD_REQUEST
-      }
+    "return 303 See Other and redirect to the package own vol page with valid form data" in {
+      val result = testController.submit()(FakeRequest().withFormUrlEncodedBody(
+        "yesOrNo" -> "true"
+      ))
 
-      "return 303 See Other and redirect to the package own vol page with valid form data" in {
-        val result = testController.submit()(FakeRequest().withFormUrlEncodedBody(
-          "yesOrNo" -> "true"
-        ))
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe routes.CopackForOthersVolController.show().url
+    }
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.CopackForOthersVolController.show().url
-      }
+    "return 303 See Other and redirect to the variations summary page with valid form data" in {
+      val result = testController.submit()(FakeRequest().withFormUrlEncodedBody(
+        "yesOrNo" -> "false"
+      ))
 
-      "return 303 See Other and redirect to the variations summary page with valid form data" in {
-        val result = testController.submit()(FakeRequest().withFormUrlEncodedBody(
-          "yesOrNo" -> "false"
-        ))
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe routes.VariationsController.show().url
+    }
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.VariationsController.show().url
-      }
+    "update the cached form data when the form data is valid" in {
+      val data = VariationData(subscription.copy(utr = "9998887776"))
 
-      "update the cached form data when the form data is valid" in {
-        val data = VariationData(subscription.copy(utr = "9998887776"))
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
 
-        when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
-          .thenReturn(Future.successful(Some(data)))
+      val request = FakeRequest().withFormUrlEncodedBody(
+        "yesOrNo" -> "true"
+      )
 
-        val request = FakeRequest().withFormUrlEncodedBody(
-          "yesOrNo" -> "true"
-        )
+      val res = testController.submit()(request)
+      status(res) mustBe SEE_OTHER
 
-        val res = testController.submit()(request)
-        status(res) mustBe SEE_OTHER
-
-        verify(mockKeystore, times(1))
-          .cache(
-            matching("variationData"),
-            matching(data.copy(copackForOthers = true
-            ))
-          )(any(), any(), any())
-      }
+      verify(mockKeystore, times(1))
+        .cache(
+          matching("variationData"),
+          matching(data.copy(copackForOthers = true
+          ))
+        )(any(), any(), any())
     }
   }
+
 
   lazy val testController = wire[CopackForOthersController]
 }

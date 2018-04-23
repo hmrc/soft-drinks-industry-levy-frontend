@@ -34,7 +34,7 @@ import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import scala.collection.JavaConverters._
 import scala.concurrent.Future
 
-class ProductionSiteVariationControllerSpec  extends ControllerSpec with BeforeAndAfterAll {
+class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
   "GET /production-sites" should {
     "return 200 Ok and the packaging-sites page" in {
@@ -45,6 +45,80 @@ class ProductionSiteVariationControllerSpec  extends ControllerSpec with BeforeA
       html.select("h1").text mustBe Messages("sdil.productionSite.heading")
       html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
     }
+
+    "return a page with a link back to the variations summary page" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
+    }
+
+    "return a page with a link back to the package own vol page if the user is a large producer" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show,
+          routes.ProducerVariationsController.show,
+          routes.PackageOwnController.show,
+          routes.PackageOwnVolController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.PackageOwnVolController.show().url
+    }
+
+    "return a page with a link back to the package own vol page if the user is a small producer" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show,
+          routes.ProducerVariationsController.show,
+          routes.UsesCopackerController.show,
+          routes.PackageOwnController.show,
+          routes.PackageOwnVolController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.PackageOwnVolController.show().url
+    }
+
+    "return a page with a link back to the copack for others vol page if the user copacks" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show,
+          routes.CopackForOthersController.show,
+          routes.CopackForOthersVolController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.CopackForOthersVolController.show().url
+    }
+
 
     "return a page including all production sites added so far" in {
       val sites = Seq(
@@ -57,7 +131,7 @@ class ProductionSiteVariationControllerSpec  extends ControllerSpec with BeforeA
         subscription.copy(productionSites = sites.map { x => Site.fromAddress(x) }.toList))
 
       when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
-      .thenReturn(Future.successful(Some(data)))
+        .thenReturn(Future.successful(Some(data)))
 
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
@@ -124,10 +198,9 @@ class ProductionSiteVariationControllerSpec  extends ControllerSpec with BeforeA
 
       verify(mockKeystore, times(1)).cache(
         matching("variationData"),
-        matching((VariationData(subscription)).copy(updatedProductionSites= Seq(Address("line 2", "line 3", "", "", "AA12 2AA"))))
+        matching((VariationData(subscription)).copy(updatedProductionSites = Seq(Address("line 2", "line 3", "", "", "AA12 2AA"))))
       )(any(), any(), any())
     }
-
   }
 
   lazy val testController: ProductionSiteVariationController = wire[ProductionSiteVariationController]

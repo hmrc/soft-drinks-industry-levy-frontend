@@ -48,10 +48,13 @@ class VariationsController(val messagesApi: MessagesApi,
   }
 
   def show: Action[AnyContent] = registeredAction.async { implicit request =>
-    cache.fetchAndGetEntry[VariationData]("variationData") map {
+    cache.fetchAndGetEntry[VariationData]("variationData") flatMap  {
       case Some(s) =>
-        Ok(views.html.softdrinksindustrylevy.variations.retrieve_summary(s.original, s))
-      case None => NotFound(errorHandler.notFoundTemplate)
+        val updated = s.copy(previousPages = List(routes.VariationsController.show()))
+        cache.cache("variationData", updated) map { _ =>
+          Ok(views.html.softdrinksindustrylevy.variations.retrieve_summary(s.original, s))
+        }
+      case None => Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 }

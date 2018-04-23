@@ -58,6 +58,39 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
       contentAsString(res) must include(Messages("sdil.warehouse.add.heading"))
     }
 
+    "return a page with a link back to the variations summary page" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
+    }
+
+    "return a page with a link back to the imports vol page if the user is a large producer" in {
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show,
+          routes.ImportsController.show,
+          routes.ImportsVolController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+
+      val html = Jsoup.parse(contentAsString(res))
+      html.select("a.link-back").attr("href") mustBe routes.ImportsVolController.show().url
+    }
   }
 
   "POST /secondary-warehouses" should {

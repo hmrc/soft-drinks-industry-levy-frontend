@@ -16,32 +16,33 @@
 
 package sdil.controllers.variation
 
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
-import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.RadioFormController
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.radio_button
 
-import scala.concurrent.Future
-
 class UsesCopackerController(val messagesApi: MessagesApi,
-                             cache: SessionCache,
+                             val cache: SessionCache,
                              variationAction: VariationAction)
                             (implicit config: AppConfig)
-  extends FrontendController with I18nSupport {
+  extends Journey {
 
-  def show: Action[AnyContent] = variationAction { implicit request =>
+  def show: Action[AnyContent] = variationAction.async { implicit request =>
     val filledForm = request.data.usesCopacker.fold(RadioFormController.form)(RadioFormController.form.fill)
-    Ok(radio_button(filledForm, "copacked", backLink, submitAction))
+    backLink(routes.UsesCopackerController.show()) map { link =>
+      Ok(radio_button(filledForm, "copacked", link, submitAction))
+    }
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
     RadioFormController.form.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(radio_button(errors, "copacked", backLink, submitAction))),
+      errors =>
+        backLink(routes.UsesCopackerController.show()) map { link =>
+          BadRequest(radio_button(errors, "copacked", link, submitAction))
+        },
       data => {
         val updated = request.data.copy(usesCopacker = Some(data))
         cache.cache("variationData", updated) map { _ =>
@@ -51,6 +52,5 @@ class UsesCopackerController(val messagesApi: MessagesApi,
     )
   }
 
-  lazy val backLink = routes.ProducerVariationsController.show()
   lazy val submitAction = routes.UsesCopackerController.submit()
 }
