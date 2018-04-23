@@ -112,7 +112,7 @@
         }
     }
 
-    @if(variationData.producer.isProducer || variationData.copackForOthers) {
+    @if(variationData.isLiablePacker) {
         @if(variationData.updatedProductionSites.nonEmpty) {
             @declaration_table("declaration", "production-sites") {
                 @variationData.updatedProductionSites.map { address =>
@@ -142,7 +142,8 @@
             }
         }
     }
-    @if(variationData.producer.isProducer || variationData.imports || variationData.copackForOthers) {
+
+    @if(variationData.isLiable) {
         @if(variationData.updatedWarehouseSites.nonEmpty) {
             @declaration_table("declaration", "warehouses") {
                 @variationData.updatedWarehouseSites.map { address =>
@@ -171,7 +172,9 @@
                 </tr>
             }
         }
+    }
 
+        @if(variationData.isLiable || variationData.isVoluntary) {
         @declaration_table("declaration", "contact-details") {
             @declaration_details_table_row(
                 "declaration",

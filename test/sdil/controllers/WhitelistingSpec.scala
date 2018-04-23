@@ -16,6 +16,7 @@
 
 package sdil.controllers
 
+import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
@@ -24,10 +25,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.{Address, OrganisationDetails, RegistrationFormData, RosmRegistration}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments, User}
 import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments, User}
 import uk.gov.hmrc.http.HttpResponse
-import com.softwaremill.macwire._
 
 import scala.concurrent.Future
 

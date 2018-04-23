@@ -34,7 +34,8 @@ object FrontendBuild extends Build {
           |sdil.controllers.RoutesPrefix;
           |testOnlyDoNotUseInAppConf.*;
           |sdil.controllers.test.*;
-          |sdil.connectors.TestConnector""".stripMargin,
+          |sdil.connectors.TestConnector;
+          |variations.Routes""".stripMargin,
       ScoverageKeys.coverageMinimum := 80,
       ScoverageKeys.coverageFailOnMinimum := false,
       ScoverageKeys.coverageHighlighting := true

@@ -50,7 +50,7 @@ class ProducerVariationsController(val messagesApi: MessagesApi,
           } else if (data.isProducer) {
             Redirect(routes.PackageOwnController.show())
           } else {
-            Redirect(routes.VariationsController.show())
+            Redirect(backlink)
           }
         }
       }

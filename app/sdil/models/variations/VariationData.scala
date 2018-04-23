@@ -36,21 +36,35 @@ case class VariationData(original: RetrievedSubscription,
                          updatedWarehouseSites: Seq[Address], // TODO create variation Site model with trading name
                          updatedContactDetails: ContactDetails,
                          previousPages: Seq[Call]
-                        )
+                        ) {
+
+  def isLiablePacker: Boolean = {
+    producer.isLarge.getOrElse(false) || copackForOthers
+  }
+
+  def isLiable: Boolean = {
+    producer.isLarge.getOrElse(false) || imports || copackForOthers
+  }
+
+  def isVoluntary: Boolean = {
+    usesCopacker.getOrElse(false) && !isLiable
+  }
+
+}
 
 object VariationData {
-  implicit val callWrites: Writes[Call] = new Writes[Call] {
+  implicit val callWrites: Format[Call] = new Format[Call] {
     override def writes(o: Call): JsValue = {
       Json.obj(
         "method" -> o.method,
         "url" -> o.url
       )
     }
-  }
-  implicit val callReads: Reads[Call] = new Reads[Call] {
-    override def reads(json: JsValue): JsResult[Call] = {
-      JsSuccess(Call((json \ "method").as[String], (json \ "url").as[String]))
-    }
+
+    override def reads(json: JsValue): JsResult[Call] = for {
+      method <- (json \ "method").validate[String]
+      url <- (json \ "url").validate[String]
+    } yield Call(method, url)
   }
 
   implicit val format: Format[VariationData] = Json.format[VariationData]
@@ -59,7 +73,7 @@ object VariationData {
     original,
     UpdatedBusinessDetails(original.orgName, Address.fromUkAddress(original.address)),
     Producer(original.activity.largeProducer || original.activity.smallProducer, Some(original.activity.largeProducer)),
-    usesCopacker = None,
+    usesCopacker = if(original.activity.voluntaryRegistration) Some(true) else None,
     packageOwn = None,
     packageOwnVol = None,
     original.activity.contractPacker,

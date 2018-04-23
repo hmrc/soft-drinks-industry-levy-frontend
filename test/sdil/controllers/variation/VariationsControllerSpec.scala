@@ -16,35 +16,18 @@
 
 package sdil.controllers.variation
 
-import java.time.LocalDate
-
-import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
+import com.softwaremill.macwire._
+import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, status}
+import play.api.test.Helpers.{contentAsString, status, _}
 import sdil.controllers.ControllerSpec
+import sdil.models.retrieved.RetrievedActivity
 import sdil.models.variations.VariationData
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
-import sdil.controllers.ControllerSpec
-import com.softwaremill.macwire._
-import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{eq => matching, _}
-import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterAll
-import play.api.i18n.Messages
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import sdil.models.Address
-import sdil.models.backend.{Contact, UkAddress}
-import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.variations.{UpdatedBusinessDetails, VariationData}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
-import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 
-import scala.collection.JavaConverters._
 import scala.concurrent.Future
 
 class VariationsControllerSpec extends ControllerSpec with BeforeAndAfterAll {
@@ -68,5 +51,59 @@ class VariationsControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       contentAsString(res) must include(messagesApi("sdil.variation.heading"))
     }
   }
+
+  "GET /variations with voluntary registration " should {
+    "return 200 Ok and show the current status and business details only" in {
+      val data = VariationData(
+        subscription.copy(
+          utr = "9998887776",
+          activity = RetrievedActivity(
+            smallProducer = true,
+            largeProducer = false,
+            contractPacker = false,
+            importer = false,
+            voluntaryRegistration = true
+          )
+        )
+      )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+      contentAsString(res) mustNot include(messagesApi("sdil.declaration.warehouses"))
+      contentAsString(res) mustNot include(messagesApi("sdil.declaration.production-sites"))
+      contentAsString(res) must include(messagesApi("sdil.declaration.contact-details"))
+    }
+  }
+
+  "GET /variations with no liability (e.g. dereg)" should {
+    "return 200 Ok and not show the packaging sites" in {
+      val data = VariationData(
+        subscription.copy(
+          utr = "9998887776",
+          activity = RetrievedActivity(
+            smallProducer = true,
+            largeProducer = false,
+            contractPacker = false,
+            importer = false,
+            voluntaryRegistration = false
+          )
+        )
+      )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe OK
+      contentAsString(res) mustNot include(messagesApi("sdil.declaration.warehouses"))
+      contentAsString(res) mustNot include(messagesApi("sdil.declaration.production-sites"))
+      contentAsString(res) mustNot include(messagesApi("sdil.declaration.contact-details"))
+    }
+  }
+
+
   lazy val testController = wire[VariationsController]
 }

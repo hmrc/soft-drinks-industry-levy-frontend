@@ -16,6 +16,7 @@
 
 package sdil.controllers
 
+import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -25,7 +26,6 @@ import play.api.test.Helpers._
 import sdil.models.Address
 import sdil.models.DetailsCorrect.DifferentAddress
 import uk.gov.hmrc.http.HttpResponse
-import com.softwaremill.macwire._
 
 class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 

@@ -18,17 +18,16 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.actions.RegisteredAction
 import sdil.models.backend.{Contact, Site, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
-import com.softwaremill.macwire._
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
 import scala.concurrent.Future
 

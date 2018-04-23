@@ -17,9 +17,9 @@
 package sdil.forms
 
 import play.api.data.Form
+import sdil.controllers.IdentifyController.form
 import sdil.models.Identification
 import uk.gov.hmrc.play.test.UnitSpec
-import sdil.controllers.IdentifyController.form
 
 class IdentifyFormSpec extends UnitSpec {
 
