@@ -19,6 +19,8 @@ package sdil.models.variations
 import java.time.LocalDate
 
 import cats.implicits._
+import sdil.models.Litreage
+import sdil.models.backend.{Activity, UkAddress}
 
 object Convert {
 
@@ -31,96 +33,70 @@ object Convert {
       if (first == other) None else Some(first)
   }
 
-  private def nonEmptyString(i: String) = i.some.filter(_.nonEmpty)
-
-  def apply(vd: VariationData, todaysDate: LocalDate = LocalDate.now()): VariationsRequest = {
+  def apply(vd: VariationData, todaysDate: LocalDate = LocalDate.now()): VariationsSubmission = {
     val orig = vd.original
 
     val newBusinessContact = {
       val address = vd.updatedBusinessDetails.address
+      val original = vd.original.address
+
       VariationsContact(
-        nonEmptyString(address.line1),
-        nonEmptyString(address.line2),
-        nonEmptyString(address.line3),
-        nonEmptyString(address.line4),
-        address.postcode.some,
-        nonEmptyString(vd.updatedContactDetails.phoneNumber),
-        nonEmptyString(vd.updatedContactDetails.email)
-      )
-    }
-    val oldBusinessContact = {
-      val lines = vd.original.address.lines.toVector
-      VariationsContact(
-        lines.headOption,
-        lines.get(1),
-        lines.get(2),
-        lines.get(3),
-        vd.original.address.postCode.some,
-        nonEmptyString(vd.original.contact.phoneNumber),
-        nonEmptyString(vd.original.contact.email)
+        if (address.nonEmptyLines != original.lines && address.postcode != original.postCode) {
+          Some(UkAddress(address.nonEmptyLines.toList, address.postcode))
+        } else {
+          None
+        },
+        vd.updatedContactDetails.phoneNumber ifDifferentTo orig.contact.phoneNumber,
+        vd.updatedContactDetails.email ifDifferentTo orig.contact.email
       )
     }
 
     val newPersonalDetails = {
       val contact = vd.updatedContactDetails
+      val original = orig.contact
+
       VariationsPersonalDetails(
-        nonEmptyString(contact.fullName),
-        nonEmptyString(contact.position),
-        nonEmptyString(contact.phoneNumber),
-        nonEmptyString(contact.email)
-      )
-    }
-    val oldPersonalDetails = {
-      val contact = vd.original.contact
-      VariationsPersonalDetails(
-        contact.name,
-        contact.positionInCompany,
-        nonEmptyString(contact.phoneNumber),
-        nonEmptyString(contact.email)
+        contact.fullName ifDifferentTo original.name.getOrElse(""),
+        contact.position ifDifferentTo original.positionInCompany.getOrElse(""),
+        contact.phoneNumber ifDifferentTo original.phoneNumber,
+        contact.email ifDifferentTo original.email
       )
     }
 
     val newSdilActivity = {
       SdilActivity(
-        backendActivity(???),
-        vd.producer.isLarge, /* opposite of large */
-        vd.producer.isLarge, /* opposite of large */
-        vd.usesCopacker,
-        voluntarilyRegistered = ???,
-        reasonForAmendment = ???,
-        estimatedTaxAmount = ???, /* calculation of all the litres in VariationData */
-        taxObligationStartDate = ??? /* not part of VariationData */
-      )
-    }
-    val oldSdilActivity = {
-      val retrievedActivity = vd.original.activity
-      SdilActivity(
-        backendActivity(???),
-        retrievedActivity.smallProducer.some,
-        retrievedActivity.smallProducer.some,
-        retrievedActivity.contractPacker.some,
-        retrievedActivity.voluntaryRegistration.some,
-        reasonForAmendment = None, /* you wouldn't be able to retrieve that surely? */
-        estimatedTaxAmount = None, /* we get no litres back from ETMP */
-        taxObligationStartDate = if (???) Some(todaysDate) else None /* do we get that back from ETMP? */
+        activity = Activity(
+          if (vd.packageOwn.contains(true) && vd.producer.isProducer) vd.packageOwnVol else None,
+          if (vd.imports) vd.importsVol else None,
+          if (vd.copackForOthers) vd.copackForOthersVol else None,
+          vd.usesCopacker.collect { case true => Litreage(1, 1) },
+          vd.producer.isLarge.contains(true) ifDifferentTo orig.activity.largeProducer
+        ),
+        reasonForAmendment = Some("reason"),
+        Some(todaysDate)
       )
     }
 
-    val newSites = {}
-    val amendSites = {}
+    val newSites = {
+
+    }
+
+    val amendSites = {
+
+    }
     val closeSites = {}
     val oldSites = {}
 
-    VariationsRequest(
+    VariationsSubmission(
       tradingName = vd.updatedBusinessDetails.tradingName ifDifferentTo orig.orgName,
-      businessContact = newBusinessContact ifDifferentTo oldBusinessContact,
-      correspondenceContact = newBusinessContact ifDifferentTo oldBusinessContact, // to confirm
-      primaryPersonContact = newPersonalDetails ifDifferentTo oldPersonalDetails,
-      sdilActivity = newSdilActivity ifDifferentTo oldSdilActivity,
-      deregistrationText = ???,
-      newSites = List[VariationsSite](???),
-      amendSites = List[VariationsSite](???),
-      closeSites = List[CloseSites](???)
+      businessContact = newBusinessContact,
+      correspondenceContact = newBusinessContact,
+      primaryPersonContact = newPersonalDetails,
+      sdilActivity = newSdilActivity,
+      deregistrationText = "I no longer want to be registered".some, // TODO: this properly
+      newSites = Nil,
+      amendSites = Nil,
+      closeSites = Nil
     )
   }
 }

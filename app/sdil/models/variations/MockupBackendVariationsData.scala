@@ -19,39 +19,28 @@ package sdil.models.variations
 import java.time.LocalDate
 
 import play.api.libs.json.{Json, Writes}
-import sdil.models.backend.Activity
+import sdil.models.backend.{Activity, UkAddress}
 
-class MockupBackendVariationsData {
-
-}
-
-
-object VariationsRequest {
-  implicit val writes: Writes[VariationsRequest] = Json.writes[VariationsRequest]
+object VariationsSubmission {
+  implicit val writes: Writes[VariationsSubmission] = Json.writes[VariationsSubmission]
 }
 
 /** The payload that is sent to GForms */
-case class VariationsRequest(
-                              tradingName: Option[String] = None,
-                              businessContact: Option[VariationsContact] = None,
-                              correspondenceContact: Option[VariationsContact] = None,
-                              primaryPersonContact: Option[VariationsPersonalDetails] = None,
-                              sdilActivity: Option[SdilActivity] = None,
-                              deregistrationText: Option[String] = None,
-                              newSites: List[VariationsSite] = Nil,
-                              amendSites: List[VariationsSite] = Nil,
-                              closeSites: List[CloseSites] = Nil
-                            )
+case class VariationsSubmission(tradingName: Option[String] = None,
+                                businessContact: VariationsContact,
+                                correspondenceContact: VariationsContact,
+                                primaryPersonContact: VariationsPersonalDetails,
+                                sdilActivity: SdilActivity,
+                                deregistrationText: Option[String] = None,
+                                newSites: List[VariationsSite] = Nil,
+                                amendSites: List[VariationsSite] = Nil,
+                                closeSites: List[CloseSites] = Nil)
 
 object VariationsContact {
   implicit val writes: Writes[VariationsContact] = Json.writes[VariationsContact]
 }
 
-case class VariationsContact(addressLine1: Option[String] = None,
-                             addressLine2: Option[String] = None,
-                             addressLine3: Option[String] = None,
-                             addressLine4: Option[String] = None,
-                             postCode: Option[String] = None,
+case class VariationsContact(address: Option[UkAddress] = None,
                              telephoneNumber: Option[String] = None,
                              emailAddress: Option[String] = None)
 
@@ -59,68 +48,33 @@ object VariationsPersonalDetails {
   implicit val writes: Writes[VariationsPersonalDetails] = Json.writes[VariationsPersonalDetails]
 }
 
-case class VariationsPersonalDetails(
-                                      name: Option[String] = None,
-                                      position: Option[String] = None,
-                                      telephoneNumber: Option[String] = None,
-                                      emailAddress: Option[String] = None
-                                    )
+case class VariationsPersonalDetails(name: Option[String] = None,
+                                     position: Option[String] = None,
+                                     telephoneNumber: Option[String] = None,
+                                     emailAddress: Option[String] = None)
 
 object SdilActivity {
 
   implicit val writes: Writes[SdilActivity] = Json.writes[SdilActivity]
 }
 
-case class SdilActivity(
-                         activity: backendActivity,
-                         produceLessThanOneMillionLitres: Option[Boolean] = None,
-                         smallProducerExemption: Option[Boolean] = None, //If true then the user does not have to file returns
-                         usesContractPacker: Option[Boolean] = None,
-                         voluntarilyRegistered: Option[Boolean] = None,
-                         reasonForAmendment: Option[String] = None,
-                         estimatedTaxAmount: Option[BigDecimal] = None,
-                         taxObligationStartDate: Option[LocalDate] = None
-                       )
+case class SdilActivity(activity: Activity,
+                        reasonForAmendment: Option[String] = None,
+                        taxObligationStartDate: Option[LocalDate] = None)
 
 object VariationsSite {
   implicit val writes: Writes[VariationsSite] = Json.writes[VariationsSite]
 }
 
-case class VariationsSite(
-                           tradingName: String,
-                           siteReference: String,
-                           variationsContact: VariationsContact,
-                           typeOfSite: String
-                         )
+case class VariationsSite(tradingName: String,
+                          siteReference: String,
+                          variationsContact: VariationsContact,
+                          typeOfSite: String)
 
 object CloseSites {
   implicit val writes: Writes[CloseSites] = Json.writes[CloseSites]
 }
 
-case class CloseSites(
-                       tradingName: String,
-                       siteReference: String,
-                       reasonOfClosure: String
-                     )
-
-trait backendActivity {
-  def isProducer: Boolean
-
-  def isLarge: Boolean
-
-  def isContractPacker: Boolean
-
-  def isImporter: Boolean
-
-  def isVoluntaryRegistration: Boolean = isProducer && !isLarge && !isImporter && !isContractPacker
-
-  def isSmallProducer: Boolean = isProducer && !isLarge
-
-  def taxEstimation: BigDecimal
-}
-
-case class RetrievedActivity(isProducer: Boolean, isLarge: Boolean, isContractPacker: Boolean, isImporter: Boolean)
-  extends backendActivity {
-  override def taxEstimation: BigDecimal = 0 // lost in translation - we should either hide or say something like unknown but it is
-  // not optional
-}
+case class CloseSites(tradingName: String,
+                      siteReference: String,
+                      reasonOfClosure: String)

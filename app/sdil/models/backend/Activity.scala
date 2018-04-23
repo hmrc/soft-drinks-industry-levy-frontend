@@ -23,7 +23,7 @@ case class Activity(ProducedOwnBrand: Option[Litreage],
                     Imported: Option[Litreage],
                     CopackerAll: Option[Litreage],
                     Copackee: Option[Litreage],
-                    isLarge: Boolean)
+                    isLarge: Option[Boolean])
 
 object Activity {
   private implicit val litreageFormat: Format[Litreage] = new Format[Litreage] {

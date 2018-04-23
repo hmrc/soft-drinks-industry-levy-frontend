@@ -57,6 +57,7 @@ class ProducerVariationsController(val messagesApi: MessagesApi,
     )
   }
 
+  lazy val backlink = routes.VariationsController.show()
   lazy val submitAction = routes.ProducerVariationsController.submit()
 }
 

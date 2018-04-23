@@ -53,7 +53,7 @@ object Subscription {
           formData.importVolume,
           formData.volumeForCustomerBrands,
           formData.usesCopacker.collect { case true => Litreage(1, 1) },
-          producer.isLarge.contains(true)
+          Some(producer.isLarge.contains(true))
         ),
         liabilityDate = startDate,
         productionSites = productionSites.map(Site.fromAddress),
