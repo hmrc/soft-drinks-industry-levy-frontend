@@ -40,5 +40,5 @@ class VariationsSummaryController(val messagesApi: MessagesApi,
 }
 
 object VariationsSummaryController {
-  val form: Form[Option[String]] = Form(Forms.single("variationReason" -> optional(text)))
+  val form: Form[String] = Form(Forms.single("variationReason" -> nonEmptyText))
 }

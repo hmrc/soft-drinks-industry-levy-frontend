@@ -72,17 +72,17 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "1112223334",
         "an organisation",
         "3",
-        UkAddress(Seq("1", "The Road"), "AA11 1AA"),
+        UkAddress(List("1", "The Road"), "AA11 1AA"),
         Activity(
           Some(Litreage(1, 2)),
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
           Some(Litreage(1, 1)),
-          isLarge = false
+          isLarge = Some(false)
         ),
         LocalDate.of(2018, 4, 6),
-        Seq(Site(UkAddress(Seq("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
-        Seq(Site(UkAddress(Seq("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
         Contact(
           Some("A person"),
           Some("A position"),
@@ -107,17 +107,17 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "1112223335",
         "an organisation",
         "3",
-        UkAddress(Seq("1", "The Road"), "AA11 1AA"),
+        UkAddress(List("1", "The Road"), "AA11 1AA"),
         Activity(
           Some(Litreage(1, 2)),
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
           Some(Litreage(1, 1)),
-          isLarge = false
+          isLarge = Some(false)
         ),
         LocalDate.of(2018, 4, 6),
-        Seq(Site(UkAddress(Seq("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
-        Seq(Site(UkAddress(Seq("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
         Contact(
           Some("A person"),
           Some("A position"),
@@ -148,17 +148,17 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         "2223334445",
         "an organisation",
         "3",
-        UkAddress(Seq("1", "The Road"), "AA11 1AA"),
+        UkAddress(List("1", "The Road"), "AA11 1AA"),
         Activity(
           Some(Litreage(1, 2)),
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
           Some(Litreage(1, 1)),
-          isLarge = false
+          isLarge = Some(false)
         ),
         LocalDate.now,
-        Seq(Site(UkAddress(Seq("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
-        Seq(Site(UkAddress(Seq("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
         Contact(
           Some("A person"),
           Some("A position"),

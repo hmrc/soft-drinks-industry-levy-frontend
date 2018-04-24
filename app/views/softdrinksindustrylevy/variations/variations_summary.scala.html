@@ -21,18 +21,65 @@
 @(f: Form[_], variationsSubmission: VariationsSubmission)(implicit request: VariationRequest[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.common.title")) {
-    @* voluntary → mandatory *@
-    @if(request.data.original.activity.voluntaryRegistration && request.data.isLiable) {
-        <p>@Messages("sdil.variations.voluntaryToMandatory")</p>
-    }
 
-    @* mandatory → voluntary *@
-    @if(!request.data.original.activity.voluntaryRegistration && request.data.isVoluntary) {
-        <p>@Messages("sdil.variations.mandatoryToVoluntary")</p>
+    <a class="link-back" href="@sdil.controllers.variation.routes.VariationsController.show()">@Messages("sdil.common.back")</a>
+
+    @request.data match {
+        case data if data.original.activity.voluntaryRegistration && data.isLiable => {
+            <p>@Messages("sdil.variations.voluntary-to-mandatory")</p>
+            @inputTextArea("why the hell would you do that?")
+        }
+        case data if !data.original.activity.voluntaryRegistration && data.isVoluntary => {
+            <p>@Messages("sdil.variations.mandatory-to-voluntary")</p>
+            @inputTextArea("why the hell would you do that?")
+        }
+        case _ if variationsSubmission.sdilActivity.activity.nonEmpty => {
+            <p>@Messages("you changed a thing")</p>
+            @inputTextArea("why the hell would you do that?")
+        }
+        case _ => {}
     }
 
     @*business details*@
     @if(variationsSubmission.tradingName.isDefined || variationsSubmission.businessContact.address.isDefined) {
-        <p>@Messages("sdil.variations.businessDeets")</p>
+        <p>@Messages("sdil.variations.business-details")</p>
     }
+    @*
+    new packaging sites
+    @if(variationsSubmission.newSites.nonEmpty) {
+    <p>@Messages("sdil.variations.production-sites.new")</p>
+    }
+
+    @*should we use amend sites?
+    @if(variationsSubmission.amendSites.nonEmpty) {
+    <p>@Messages("sdil.variations.production-sites.amend")</p>
+    }
+
+    @*close packaging sites
+    @if(variationsSubmission.closeSites.nonEmpty) {
+    <p>@Messages("sdil.variations.production-sites.close")</p>
+    }
+
+    @*change warehouse sites
+    @if(request.data.original.warehouseSites != request.data.updatedWarehouseSites) {
+    <p>@Messages("sdil.variations.warehouse-sites")</p>
+    }
+    *@
+
+    @*deregister*@
+    @if(!request.data.isLiable && !request.data.isVoluntary) {
+        <p>@Messages("sdil.variations.deregister")</p>
+        @inputTextArea("why the hell would you deregister?")
+    }
+    @*change contact details*@
+    @if(variationsSubmission.primaryPersonContact.nonEmpty) {
+        <p>@Messages("sdil.variations.contact-details.change")</p>
+    }
+}
+
+@inputTextArea(labelKey: String) = {
+    <div class="form-group">
+        <label class="form-label" for="textarea">@Messages(labelKey)</label>
+        <textarea class="form-control form-control-3-4" name="textarea" id="textarea" rows="5"></textarea>
+    </div>
 }

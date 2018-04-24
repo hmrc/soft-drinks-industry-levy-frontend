@@ -51,7 +51,9 @@ object VariationsPersonalDetails {
 case class VariationsPersonalDetails(name: Option[String] = None,
                                      position: Option[String] = None,
                                      telephoneNumber: Option[String] = None,
-                                     emailAddress: Option[String] = None)
+                                     emailAddress: Option[String] = None) {
+  def nonEmpty: Boolean = Seq(name, position, telephoneNumber, emailAddress).flatten.nonEmpty
+}
 
 object SdilActivity {
 

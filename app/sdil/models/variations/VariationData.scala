@@ -43,11 +43,11 @@ case class VariationData(original: RetrievedSubscription,
   }
 
   def isLiable: Boolean = {
-    producer.isLarge.getOrElse(false) || imports || copackForOthers
+    (producer.isProducer && producer.isLarge.getOrElse(false)) || imports || copackForOthers
   }
 
   def isVoluntary: Boolean = {
-    usesCopacker.getOrElse(false) && !isLiable
+    usesCopacker.getOrElse(false) && producer.isLarge.contains(false) && !isLiable
   }
 
 }

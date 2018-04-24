@@ -409,10 +409,12 @@ sdil.variation.tradingName=Trading name
 sdil.variation.address.heading=Business address
 sdil.variations.continue=Continue
 
-sdil.variations.mandatoryToVoluntary=Something about mandatory to voluntary
-sdil.variations.voluntaryToMandatory=Something not about mandatory to voluntary
-sdil.variations.businessDeets=Something about business details
-
+sdil.variations.mandatory-to-voluntary=Something about mandatory to voluntary
+sdil.variations.voluntary-to-mandatory=Something not about mandatory to voluntary
+sdil.variations.business-details=Something about business details
+sdil.variations.production-sites=Something about changing production sites
+sdil.variations.warehouse-sites=Something about changing warehouse sites
+sdil.variations.deregister=This guy needs to deregister
 #Update warehouse sites
 sdil.variation.add-link=Add new
 

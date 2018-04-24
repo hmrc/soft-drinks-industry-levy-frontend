@@ -23,7 +23,10 @@ case class Activity(ProducedOwnBrand: Option[Litreage],
                     Imported: Option[Litreage],
                     CopackerAll: Option[Litreage],
                     Copackee: Option[Litreage],
-                    isLarge: Option[Boolean])
+                    isLarge: Option[Boolean]) {
+
+  def nonEmpty: Boolean = Seq(ProducedOwnBrand, Imported, CopackerAll, Copackee, isLarge).flatten.nonEmpty
+}
 
 object Activity {
   private implicit val litreageFormat: Format[Litreage] = new Format[Litreage] {

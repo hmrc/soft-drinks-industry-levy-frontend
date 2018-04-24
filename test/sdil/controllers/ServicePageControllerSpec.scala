@@ -124,11 +124,11 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
   val validRetrievedSubscription = RetrievedSubscription(
     "111222333",
     "Cliff's Limonard",
-    UkAddress(Seq("1", "The Road"), "AA11 1AA"),
+    UkAddress(List("1", "The Road"), "AA11 1AA"),
     RetrievedActivity(false, false, true, false, false),
     LocalDate.of(2018, 4, 6),
-    List(Site(UkAddress(Seq("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
-    List(Site(UkAddress(Seq("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
+    List(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
+    List(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
     Contact(
       Some("A person"),
       Some("A position"),
