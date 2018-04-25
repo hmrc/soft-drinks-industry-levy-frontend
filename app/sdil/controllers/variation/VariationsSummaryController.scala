@@ -16,20 +16,20 @@
 
 package sdil.controllers.variation
 
-import play.api.data.{Form, Forms, Mapping}
 import play.api.data.Forms._
+import play.api.data.{Form, Forms}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
+import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.variations.Convert
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.variations.variations_summary
 
 class VariationsSummaryController(val messagesApi: MessagesApi,
-                                  val cache: SessionCache,
-                                  variationAction: VariationAction)
+                                  variationAction: VariationAction,
+                                  sdilConnector: SoftDrinksIndustryLevyConnector)
                                  (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
@@ -37,6 +37,31 @@ class VariationsSummaryController(val messagesApi: MessagesApi,
     Ok(variations_summary(VariationsSummaryController.form, Convert(request.data)))
   }
 
+  def submit: Action[AnyContent] = variationAction.async { implicit request =>
+    val variation = Convert(request.data)
+    val sdilNumber = request.wrapped.sdilEnrolment.value
+
+    if(!(request.data.isLiable || request.data.isVoluntary)) {
+      VariationsSummaryController.form.bindFromRequest().fold(
+        errors => BadRequest(variations_summary(errors, variation)),
+        deregReason => sdilConnector.submitVariation(
+          variation.copy(deregistrationText = Some(deregReason)),
+          sdilNumber
+        ) map { _ => Ok("yay you did it") }
+      )
+
+    } else if (variation.sdilActivity.nonEmpty) {
+      VariationsSummaryController.form.bindFromRequest().fold(
+        errors => BadRequest(variations_summary(errors, variation)),
+        amendReason => sdilConnector.submitVariation(
+          variation.copy(sdilActivity = variation.sdilActivity.map(_.copy(reasonForAmendment = Some(amendReason)))),
+          sdilNumber
+        ) map { _ => Ok("yay you did it 2") }
+      )
+    } else {
+      sdilConnector.submitVariation(variation, sdilNumber) map { _ => Ok("yay you did it 3") }
+    }
+  }
 }
 
 object VariationsSummaryController {

@@ -18,8 +18,9 @@ package sdil.models.variations
 
 import java.time.LocalDate
 
-import play.api.libs.json.{Json, Writes}
-import sdil.models.backend.{Activity, UkAddress}
+import play.api.libs.json._
+import sdil.models.Address
+import sdil.models.backend.Activity
 
 object VariationsSubmission {
   implicit val writes: Writes[VariationsSubmission] = Json.writes[VariationsSubmission]
@@ -27,22 +28,34 @@ object VariationsSubmission {
 
 /** The payload that is sent to GForms */
 case class VariationsSubmission(tradingName: Option[String] = None,
-                                businessContact: VariationsContact,
-                                correspondenceContact: VariationsContact,
-                                primaryPersonContact: VariationsPersonalDetails,
-                                sdilActivity: SdilActivity,
+                                businessContact: Option[VariationsContact],
+                                correspondenceContact: Option[VariationsContact],
+                                primaryPersonContact: Option[VariationsPersonalDetails],
+                                sdilActivity: Option[SdilActivity],
                                 deregistrationText: Option[String] = None,
                                 newSites: List[VariationsSite] = Nil,
                                 amendSites: List[VariationsSite] = Nil,
                                 closeSites: List[CloseSites] = Nil)
 
 object VariationsContact {
-  implicit val writes: Writes[VariationsContact] = Json.writes[VariationsContact]
+  implicit val writes: Writes[VariationsContact] = new Writes[VariationsContact] {
+    override def writes(o: VariationsContact): JsValue = Json.obj(
+      "addressLine1" -> o.address.map(_.line1),
+      "addressLine2" -> o.address.map(_.line2),
+      "addressLine3" -> o.address.map(_.line3),
+      "addressLine4" -> o.address.map(_.line4),
+      "postCode" -> o.address.map(_.postcode),
+      "telephoneNumber" -> o.telephoneNumber,
+      "emailAddress" -> o.emailAddress
+    )
+  }
 }
 
-case class VariationsContact(address: Option[UkAddress] = None,
+case class VariationsContact(address: Option[Address] = None,
                              telephoneNumber: Option[String] = None,
-                             emailAddress: Option[String] = None)
+                             emailAddress: Option[String] = None) {
+  def nonEmpty: Boolean = Seq(address, telephoneNumber, emailAddress).flatten.nonEmpty
+}
 
 object VariationsPersonalDetails {
   implicit val writes: Writes[VariationsPersonalDetails] = Json.writes[VariationsPersonalDetails]
@@ -60,9 +73,15 @@ object SdilActivity {
   implicit val writes: Writes[SdilActivity] = Json.writes[SdilActivity]
 }
 
-case class SdilActivity(activity: Activity,
-                        reasonForAmendment: Option[String] = None,
-                        taxObligationStartDate: Option[LocalDate] = None)
+case class SdilActivity(activity: Option[Activity],
+                        produceLessThanOneMillionLitres: Option[Boolean],
+                        smallProducerExemption: Option[Boolean], //If true then the user does not have to file returns
+                        usesContractPacker: Option[Boolean],
+                        voluntarilyRegistered: Option[Boolean],
+                        reasonForAmendment: Option[String],
+                        taxObligationStartDate: Option[LocalDate]) {
+  def nonEmpty: Boolean = Seq(activity, reasonForAmendment, taxObligationStartDate).flatten.nonEmpty
+}
 
 object VariationsSite {
   implicit val writes: Writes[VariationsSite] = Json.writes[VariationsSite]

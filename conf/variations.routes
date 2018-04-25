@@ -39,3 +39,4 @@ GET         /production-sites                         sdil.controllers.variation
 POST        /production-sites                         sdil.controllers.variation.ProductionSiteVariationController.submit
 
 GET         /variations-summary                       sdil.controllers.variation.VariationsSummaryController.show
+POST        /variations-summary                       sdil.controllers.variation.VariationsSummaryController.submit

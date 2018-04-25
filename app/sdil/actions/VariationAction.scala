@@ -49,4 +49,4 @@ class VariationAction(val messagesApi: MessagesApi,
   }
 }
 
-case class VariationRequest[T](request: Request[T], data: VariationData) extends WrappedRequest(request)
+case class VariationRequest[T](wrapped: RegisteredRequest[T], data: VariationData) extends WrappedRequest(wrapped)

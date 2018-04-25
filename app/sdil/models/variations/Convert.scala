@@ -33,6 +33,10 @@ object Convert {
       if (first == other) None else Some(first)
   }
 
+  implicit class PoorA[A <: {def nonEmpty: Boolean}](a: A) {
+    def ifNonEmpty: Option[A] = if (a.nonEmpty) Some(a) else None
+  }
+
   def apply(vd: VariationData, todaysDate: LocalDate = LocalDate.now()): VariationsSubmission = {
     val orig = vd.original
 
@@ -41,8 +45,8 @@ object Convert {
       val original = vd.original.address
 
       VariationsContact(
-        if (address.nonEmptyLines != original.lines && address.postcode != original.postCode) {
-          Some(UkAddress(address.nonEmptyLines.toList, address.postcode))
+        if (address.nonEmptyLines != original.lines || address.postcode != original.postCode) {
+          Some(address)
         } else {
           None
         },
@@ -64,36 +68,37 @@ object Convert {
     }
 
     val newSdilActivity = {
+      val activity = Activity(
+        if (vd.packageOwn.contains(true) && vd.producer.isProducer) vd.packageOwnVol else None,
+        if (vd.imports) vd.importsVol else None,
+        if (vd.copackForOthers) vd.copackForOthersVol else None,
+        vd.usesCopacker.collect { case true => Litreage(1, 1) },
+        vd.producer.isLarge.contains(true)
+      )
+
       SdilActivity(
-        activity = Activity(
-          if (vd.packageOwn.contains(true) && vd.producer.isProducer) vd.packageOwnVol else None,
-          if (vd.imports) vd.importsVol else None,
-          if (vd.copackForOthers) vd.copackForOthersVol else None,
-          vd.usesCopacker.collect { case true => Litreage(1, 1) },
-          vd.producer.isLarge.contains(true) ifDifferentTo orig.activity.largeProducer
-        ),
-        reasonForAmendment = Some("reason"),
-        Some(todaysDate)
+        activity = if (activity.nonEmpty || activity.isLarge != orig.activity.largeProducer) Some(activity) else None,
+        produceLessThanOneMillionLitres = !activity.isLarge ifDifferentTo !orig.activity.largeProducer,
+        smallProducerExemption = vd.isVoluntary ifDifferentTo orig.activity.voluntaryRegistration,
+        usesContractPacker = vd.isVoluntary ifDifferentTo orig.activity.voluntaryRegistration,
+        voluntarilyRegistered = vd.isVoluntary ifDifferentTo orig.activity.voluntaryRegistration,
+        reasonForAmendment = None,
+        taxObligationStartDate = if (orig.activity.voluntaryRegistration && vd.isLiable) Some(todaysDate) else None
       )
     }
 
-    val newSites = {
-
-    }
-
-    val amendSites = {
-
-    }
+    val newSites = {}
+    val amendSites = {}
     val closeSites = {}
     val oldSites = {}
 
     VariationsSubmission(
       tradingName = vd.updatedBusinessDetails.tradingName ifDifferentTo orig.orgName,
-      businessContact = newBusinessContact,
-      correspondenceContact = newBusinessContact,
-      primaryPersonContact = newPersonalDetails,
-      sdilActivity = newSdilActivity,
-      deregistrationText = "I no longer want to be registered".some, // TODO: this properly
+      businessContact = newBusinessContact.ifNonEmpty,
+      correspondenceContact = newBusinessContact.ifNonEmpty,
+      primaryPersonContact = newPersonalDetails.ifNonEmpty,
+      sdilActivity = newSdilActivity.ifNonEmpty,
+      deregistrationText = None,
       newSites = Nil,
       amendSites = Nil,
       closeSites = Nil
