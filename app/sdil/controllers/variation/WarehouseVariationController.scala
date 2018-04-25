@@ -74,7 +74,7 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
         )
       )),
       {
-        case Sites(_, _, Some(addr)) =>
+        case Sites(_, true, Some(addr)) =>
           val updatedSites = warehouses match {
             case addrs if addrs.nonEmpty =>
               addrs :+ Site(

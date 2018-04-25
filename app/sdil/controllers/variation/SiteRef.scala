@@ -27,7 +27,7 @@ trait SiteRef extends FormHelpers {
 
   def nextRef(sites: Seq[Site]): String = sites match {
     case sites if sites.nonEmpty =>
-      sites.last.ref.fold(1)(_.toInt).toString
+      sites.last.ref.fold(1)(_.toInt + 1).toString
     case _ => 1.toString
   }
 
