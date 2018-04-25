@@ -408,6 +408,7 @@ sdil.variation.package-own-vol=How many litres of liable drink will you package 
 sdil.variation.tradingName=Trading name
 sdil.variation.address.heading=Business address
 sdil.variations.continue=Continue
+sdil.variations.submit=Confirm and send
 
 sdil.variations.mandatory-to-voluntary=Something about mandatory to voluntary
 sdil.variations.voluntary-to-mandatory=Something not about mandatory to voluntary

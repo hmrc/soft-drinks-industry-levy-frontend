@@ -43,14 +43,11 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("h1").text mustBe Messages("sdil.productionSite.heading")
-      html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
     }
 
     "return a page with a link back to the variations summary page" in {
       val data = VariationData(subscription)
-        .copy(previousPages = Seq(
-          routes.VariationsController.show)
-        )
+        .copy(previousPages = Seq(routes.VariationsController.show()))
 
       when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(data)))

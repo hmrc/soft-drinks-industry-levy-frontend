@@ -46,7 +46,9 @@
         </tr>
     }
 
-    @declaration_table("variation", "actor-status") {
+
+    @* TODO actor status variation not enabled for initial release *@
+    @* @declaration_table("variation", "actor-status") {
         @declaration_details_table_row("variation",
             "producer",
             Some(sdil.controllers.variation.routes.ProducerVariationsController.show()),
@@ -110,9 +112,9 @@
                     importsVol)
             }
         }
-    }
+    } *@
 
-    @if(variationData.isLiablePacker) {
+    @* @if(variationData.isLiablePacker) { *@
         @if(variationData.updatedProductionSites.nonEmpty) {
             @declaration_table("declaration", "production-sites") {
                 @variationData.updatedProductionSites.map { address =>
@@ -130,20 +132,9 @@
                     </tr>
                 }
             }
-        } else {
-            @declaration_table("declaration", "production-sites") {
-                <tr>
-                    <td class="change-answer">
-                        <a href="@sdil.controllers.variation.routes.ProductionSiteVariationController.show()">
-                        @Messages("sdil.variation.add-link")
-                        </a>
-                    </td>
-                </tr>
-            }
         }
-    }
 
-    @if(variationData.isLiable) {
+    @if(!variationData.original.activity.voluntaryRegistration) {
         @if(variationData.updatedWarehouseSites.nonEmpty) {
             @declaration_table("declaration", "warehouses") {
                 @variationData.updatedWarehouseSites.map { address =>
@@ -174,7 +165,7 @@
         }
     }
 
-        @if(variationData.isLiable || variationData.isVoluntary) {
+    @* @if(variationData.isLiable || variationData.isVoluntary) { *@
         @declaration_table("declaration", "contact-details") {
             @declaration_details_table_row(
                 "declaration",
@@ -197,11 +188,8 @@
                 Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
                 variationData.updatedContactDetails.email)
         }
-    }
 
     <br/>
 
-    @form(sdil.controllers.variation.routes.VariationsSummaryController.show()) {
-        <p><input class="button" value="@Messages("sdil.variations.continue")" type="submit"></p>
-    }
+    <p><a class="button" href="@sdil.controllers.variation.routes.VariationsSummaryController.show()">@Messages("sdil.variations.continue")</a></p>
 }

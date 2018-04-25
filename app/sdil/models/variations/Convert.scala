@@ -45,7 +45,7 @@ object Convert {
       val original = vd.original.address
 
       VariationsContact(
-        if (address.nonEmptyLines != original.lines || address.postcode != original.postCode) {
+        if (address.nonEmptyLines.init != original.lines || address.postcode != original.postCode) {
           Some(address)
         } else {
           None
@@ -67,7 +67,7 @@ object Convert {
       )
     }
 
-    val newSdilActivity = {
+    lazy val newSdilActivity = {
       val activity = Activity(
         if (vd.packageOwn.contains(true) && vd.producer.isProducer) vd.packageOwnVol else None,
         if (vd.imports) vd.importsVol else None,
@@ -97,7 +97,7 @@ object Convert {
       businessContact = newBusinessContact.ifNonEmpty,
       correspondenceContact = newBusinessContact.ifNonEmpty,
       primaryPersonContact = newPersonalDetails.ifNonEmpty,
-      sdilActivity = newSdilActivity.ifNonEmpty,
+      sdilActivity = None, // TODO: not enabled for initial release
       deregistrationText = None,
       newSites = Nil,
       amendSites = Nil,
