@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package sdil.models.backend
+package sdil.controllers.variation.models
 
-import play.api.libs.json.{Format, Json}
 import sdil.models.Address
+import sdil.models.backend.Site
 
-case class Site(ref: Option[String],address: UkAddress)
-
-object Site {
-  implicit val format: Format[Site] = Json.format[Site]
-
-  def fromAddress(address: Address): Site = {
-    Site(None, UkAddress.fromAddress(address))
-  }
-}
+case class Sites(sites: Seq[Site],
+                 addAddress: Boolean,
+                 additionalSites: Option[Address])
