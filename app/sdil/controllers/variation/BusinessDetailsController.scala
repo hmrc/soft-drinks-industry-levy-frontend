@@ -56,5 +56,5 @@ class BusinessDetailsController(val messagesApi: MessagesApi,
 }
 
 object BusinessDetailsForm extends FormHelpers {
-  def apply(): Form[Address] = Form(Forms.single("something" -> addressMapping))
+  def apply(): Form[Address] = Form(Forms.single("businessAddress" -> addressMapping))
 }

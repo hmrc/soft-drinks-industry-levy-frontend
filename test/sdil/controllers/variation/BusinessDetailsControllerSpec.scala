@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.ControllerSpec
 import sdil.models.Address
-import sdil.models.variations.{UpdatedBusinessDetails, VariationData}
+import sdil.models.variations._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
@@ -91,7 +91,6 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
 
     "return 303 See Other and redirect to the summary page if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody(
-        "tradingName" -> "Forbidden Right Parenthesis & Sons",
         "businessAddress.line1" -> "Rosm House",
         "businessAddress.line2" -> "Des Street",
         "businessAddress.line3" -> "Etmp Lane",
@@ -112,7 +111,6 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
         .thenReturn(Future.successful(Some(data)))
 
       val request = FakeRequest().withFormUrlEncodedBody(
-        "tradingName" -> "Forbidden Right Parenthesis & Sons",
         "businessAddress.line1" -> "Rosm House",
         "businessAddress.line2" -> "Des Street",
         "businessAddress.line3" -> "Etmp Lane",
@@ -126,10 +124,9 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       verify(mockKeystore, times(1))
         .cache(
           matching("variationData"),
-          matching(data.copy(updatedBusinessAddress = UpdatedBusinessDetails(
-            "Forbidden Right Parenthesis & Sons",
+          matching(data.copy(updatedBusinessAddress =
             Address("Rosm House", "Des Street", "Etmp Lane", "", "AA11 1AA")
-          )))
+          ))
         )(any(), any(), any())
     }
   }
