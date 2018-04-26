@@ -35,7 +35,17 @@ case class VariationsSubmission(tradingName: Option[String] = None,
                                 deregistrationText: Option[String] = None,
                                 newSites: List[VariationsSite] = Nil,
                                 amendSites: List[VariationsSite] = Nil,
-                                closeSites: List[CloseSites] = Nil)
+                                closeSites: List[CloseSites] = Nil) {
+  def nonEmpty: Boolean = {
+    (Seq(
+      tradingName,
+      businessContact,
+      correspondenceContact,
+      primaryPersonContact,
+      sdilActivity
+    ).flatten ++ newSites ++ amendSites ++ closeSites).nonEmpty
+  }
+}
 
 object VariationsContact {
   implicit val writes: Writes[VariationsContact] = new Writes[VariationsContact] {

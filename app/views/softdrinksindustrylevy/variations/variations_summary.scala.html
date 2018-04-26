@@ -28,39 +28,38 @@
     <h1>@Messages("sdil.variations.summary.title")</h1>
     <p>@Messages("sdil.variations.summary.p1")</p>
 
-    @*business details*@
-    @if(variationsSubmission.tradingName.isDefined || variationsSubmission.businessContact.map(_.address).isDefined) {
-        <p>@Messages("sdil.variations.business-details")</p>
-    }
-    @*
-    new packaging sites
-    @if(variationsSubmission.newSites.nonEmpty) {
-    <p>@Messages("sdil.variations.production-sites.new")</p>
-    }
+    @if(variationsSubmission.nonEmpty) {
 
-    @*should we use amend sites?
-    @if(variationsSubmission.amendSites.nonEmpty) {
-    <p>@Messages("sdil.variations.production-sites.amend")</p>
-    }
+        @if(variationsSubmission.tradingName.isDefined || variationsSubmission.businessContact.map(_.address).isDefined) {
+            <p>@Messages("sdil.variations.business-details")</p>
+        }
+        @*
+        new packaging sites
+        @if(variationsSubmission.newSites.nonEmpty) {
+            <p>@Messages("sdil.variations.production-sites.new")</p>
+        }
 
-    @*close packaging sites
-    @if(variationsSubmission.closeSites.nonEmpty) {
-    <p>@Messages("sdil.variations.production-sites.close")</p>
-    }
+        @*should we use amend sites?
+        @if(variationsSubmission.amendSites.nonEmpty) {
+            <p>@Messages("sdil.variations.production-sites.amend")</p>
+        }
 
-    @*change warehouse sites
-    @if(request.data.original.warehouseSites != request.data.updatedWarehouseSites) {
-    <p>@Messages("sdil.variations.warehouse-sites")</p>
-    }
-    *@
+        @*close packaging sites
+        @if(variationsSubmission.closeSites.nonEmpty) {
+            <p>@Messages("sdil.variations.production-sites.close")</p>
+        }
 
-    @if(variationsSubmission.primaryPersonContact.nonEmpty) {
-        <p>@Messages("sdil.variations.contact-details.change")</p>
-    }
+        @*change warehouse sites
+        @if(request.data.original.warehouseSites != request.data.updatedWarehouseSites) {
+            <p>@Messages("sdil.variations.warehouse-sites")</p>
+        }
+        *@
+        @if(variationsSubmission.primaryPersonContact.nonEmpty) {
+            <p>@Messages("sdil.variations.contact-details.change")</p>
+        }
 
-    @form(sdil.controllers.variation.routes.VariationsSummaryController.submit()) {
-
-        @request.data match {
+        @form(sdil.controllers.variation.routes.VariationsSummaryController.submit()) {
+            @* @request.data match {
             case data if data.original.activity.voluntaryRegistration && data.isLiable => {
                 <p>@Messages("sdil.variations.voluntary-to-mandatory")</p>
                 @inputTextArea(f("variationReason"), "why the hell would you do that?")
@@ -78,10 +77,12 @@
                 @inputTextArea(f("variationReason"), "why the hell would you do that?")
             }
             case _ => {}
+            }
+            *@
+            <p><input class="button" value="@Messages("sdil.variations.submit")" type="submit"></p>
         }
-
-        <p><input class="button" value="@Messages("sdil.variations.continue")" type="submit"></p>
-
+    } else {
+        @Messages("sdil.variations.no-changes")
     }
 }
 
@@ -96,10 +97,10 @@
             }
         </label>
         <textarea class="form-control form-control-3-4 @if(field.hasErrors) {form-control-error}"
-            id="@field.name"
-            name="@field.name"
-            value="@field.value"
-            rows="5"></textarea>
+        id="@field.name"
+        name="@field.name"
+        value="@field.value"
+        rows="5"></textarea>
     </div>
 
 }

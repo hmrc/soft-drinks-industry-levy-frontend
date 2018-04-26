@@ -78,7 +78,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
           Some(Litreage(1, 1)),
-          isLarge = Some(false)
+          isLarge = false
         ),
         LocalDate.of(2018, 4, 6),
         Seq(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
@@ -113,7 +113,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
           Some(Litreage(1, 1)),
-          isLarge = Some(false)
+          isLarge = false
         ),
         LocalDate.of(2018, 4, 6),
         Seq(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
@@ -154,7 +154,7 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           Some(Litreage(9, 10)),
           Some(Litreage(3, 4)),
           Some(Litreage(1, 1)),
-          isLarge = Some(false)
+          isLarge = false
         ),
         LocalDate.now,
         Seq(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
