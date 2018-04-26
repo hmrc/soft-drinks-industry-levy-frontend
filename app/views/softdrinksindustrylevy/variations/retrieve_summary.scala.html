@@ -30,12 +30,12 @@
         @declaration_details_table_row("declaration", "utr", None, retrievedSubscription.utr, '_colspan -> "2")
 
         @declaration_details_table_row("declaration", "business-name", Some(sdil.controllers.variation.routes.BusinessDetailsController.show()),
-            variationData.updatedBusinessDetails.tradingName, '_colspan -> "2")
+            variationData.updatedBusinessAddress.tradingName, '_colspan -> "2")
 
         <tr>
             <td colspan = "2">@Messages("sdil.declaration.address")</td>
             <td>
-                @variationData.updatedBusinessDetails.address.nonEmptyLines.map { l =>
+                @variationData.updatedBusinessAddress.address.nonEmptyLines.map { l =>
                     <div>@l</div>
                 }
                 <div>@Messages("sdil.declaration.uk")</div>

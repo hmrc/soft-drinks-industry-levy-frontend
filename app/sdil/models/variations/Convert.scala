@@ -41,7 +41,7 @@ object Convert {
     val orig = vd.original
 
     val newBusinessContact = {
-      val address = vd.updatedBusinessDetails.address
+      val address = vd.updatedBusinessAddress
       val original = vd.original.address
 
       VariationsContact(
@@ -93,7 +93,6 @@ object Convert {
     val oldSites = {}
 
     VariationsSubmission(
-      tradingName = vd.updatedBusinessDetails.tradingName ifDifferentTo orig.orgName,
       businessContact = newBusinessContact.ifNonEmpty,
       correspondenceContact = newBusinessContact.ifNonEmpty,
       primaryPersonContact = newPersonalDetails.ifNonEmpty,

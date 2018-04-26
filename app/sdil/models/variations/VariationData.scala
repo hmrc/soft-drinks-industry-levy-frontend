@@ -24,7 +24,7 @@ import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer}
 
 case class VariationData(original: RetrievedSubscription,
-                         updatedBusinessDetails: UpdatedBusinessDetails,
+                         updatedBusinessAddress: Address,
                          producer: Producer,
                          usesCopacker: Option[Boolean],
                          packageOwn: Option[Boolean],
@@ -72,7 +72,7 @@ object VariationData {
 
   def apply(original: RetrievedSubscription): VariationData = VariationData(
     original,
-    UpdatedBusinessDetails(original.orgName, Address.fromUkAddress(original.address)),
+    Address.fromUkAddress(original.address),
     Producer(original.activity.largeProducer || original.activity.smallProducer, Some(original.activity.largeProducer)),
     usesCopacker = if(original.activity.voluntaryRegistration) Some(true) else None,
     packageOwn = None,

@@ -126,7 +126,7 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       verify(mockKeystore, times(1))
         .cache(
           matching("variationData"),
-          matching(data.copy(updatedBusinessDetails = UpdatedBusinessDetails(
+          matching(data.copy(updatedBusinessAddress = UpdatedBusinessDetails(
             "Forbidden Right Parenthesis & Sons",
             Address("Rosm House", "Des Street", "Etmp Lane", "", "AA11 1AA")
           )))
