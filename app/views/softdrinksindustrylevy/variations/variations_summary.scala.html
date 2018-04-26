@@ -33,27 +33,21 @@
         @if(variationsSubmission.tradingName.isDefined || variationsSubmission.businessContact.map(_.address).isDefined) {
             <p>@Messages("sdil.variations.business-details")</p>
         }
-        @*
-        new packaging sites
+
         @if(variationsSubmission.newSites.nonEmpty) {
-            <p>@Messages("sdil.variations.production-sites.new")</p>
+            <p>@Messages("sdil.variations.sites.new")</p>
         }
 
-        @*should we use amend sites?
+        @*
         @if(variationsSubmission.amendSites.nonEmpty) {
             <p>@Messages("sdil.variations.production-sites.amend")</p>
         }
-
-        @*close packaging sites
-        @if(variationsSubmission.closeSites.nonEmpty) {
-            <p>@Messages("sdil.variations.production-sites.close")</p>
-        }
-
-        @*change warehouse sites
-        @if(request.data.original.warehouseSites != request.data.updatedWarehouseSites) {
-            <p>@Messages("sdil.variations.warehouse-sites")</p>
-        }
         *@
+
+        @if(variationsSubmission.closeSites.nonEmpty) {
+            <p>@Messages("sdil.variations.sites.close")</p>
+        }
+
         @if(variationsSubmission.primaryPersonContact.nonEmpty) {
             <p>@Messages("sdil.variations.contact-details.change")</p>
         }

@@ -19,8 +19,8 @@ package sdil.models.variations
 import java.time.LocalDate
 
 import cats.implicits._
-import sdil.models.Litreage
-import sdil.models.backend.{Activity, UkAddress}
+import sdil.models.{Address, Litreage}
+import sdil.models.backend.{Activity, Site, UkAddress}
 
 object Convert {
 
@@ -87,10 +87,42 @@ object Convert {
       )
     }
 
-    val newSites = {}
-    val amendSites = {}
-    val closeSites = {}
-    val oldSites = {}
+    def variationsSites(productionSites: Seq[Site], warehouses: Seq[Site]): List[VariationsSite] = {
+      val contact = VariationsContact(
+        None,
+        Some(vd.updatedContactDetails.phoneNumber),
+        Some(vd.updatedContactDetails.email)
+      )
+
+      val ps = productionSites map { site =>
+        VariationsSite("", site.ref.getOrElse("1"), contact.copy(address = Some(Address.fromUkAddress(site.address))), "Production Site")
+      }
+
+      val w = warehouses map { warehouse =>
+        VariationsSite("", warehouse.ref.getOrElse("1"), contact.copy(address = Some(Address.fromUkAddress(warehouse.address))), "Warehouse")
+      }
+
+      (ps ++ w).toList
+    }
+
+    val newSites: List[VariationsSite] = {
+      val newProductionSites = vd.updatedProductionSites.diff(orig.productionSites)
+      val newWarehouses = vd.updatedWarehouseSites.diff(orig.warehouseSites)
+
+      variationsSites(newProductionSites, newWarehouses)
+    }
+
+    val closedSites: List[ClosedSite] = {
+      val closedProductionSites = orig.productionSites.diff(vd.updatedProductionSites) map { site =>
+        ClosedSite("", site.ref.getOrElse("1"), "This site is no longer open.")
+      }
+
+      val closedWarehouses = orig.warehouseSites.diff(vd.updatedWarehouseSites) map { warehouse =>
+        ClosedSite("", warehouse.ref.getOrElse("1"), "This site is no longer open.")
+      }
+
+      closedProductionSites ++ closedWarehouses
+    }
 
     VariationsSubmission(
       tradingName = vd.updatedBusinessDetails.tradingName ifDifferentTo orig.orgName,
@@ -99,9 +131,9 @@ object Convert {
       primaryPersonContact = newPersonalDetails.ifNonEmpty,
       sdilActivity = None, // TODO: not enabled for initial release
       deregistrationText = None,
-      newSites = Nil,
+      newSites = newSites,
       amendSites = Nil,
-      closeSites = Nil
+      closeSites = closedSites
     )
   }
 }
