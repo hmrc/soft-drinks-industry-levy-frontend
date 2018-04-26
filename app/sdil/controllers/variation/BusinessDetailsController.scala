@@ -16,15 +16,14 @@
 
 package sdil.controllers.variation
 
-import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.{Form, Forms}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
-import sdil.models.variations.UpdatedBusinessDetails
+import sdil.models.Address
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.variations.business_details
@@ -39,14 +38,14 @@ class BusinessDetailsController(val messagesApi: MessagesApi,
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = variationAction { implicit request =>
-    Ok(business_details(BusinessDetailsForm().fill(request.data.updatedBusinessDetails)))
+    Ok(business_details(BusinessDetailsForm().fill(request.data.updatedBusinessAddress)))
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
     BusinessDetailsForm().bindFromRequest().fold(
       errors => Future.successful(BadRequest(business_details(errors))),
       data => {
-        val updated = request.data.copy(updatedBusinessDetails = data)
+        val updated = request.data.copy(updatedBusinessAddress = data)
         cache.cache("variationData", updated) map { _ =>
           Redirect(routes.VariationsController.show())
         }
@@ -56,8 +55,5 @@ class BusinessDetailsController(val messagesApi: MessagesApi,
 }
 
 object BusinessDetailsForm extends FormHelpers {
-  def apply(): Form[UpdatedBusinessDetails] = Form(mapping(
-    "tradingName" -> nonEmptyText,
-    "businessAddress" -> addressMapping
-  )(UpdatedBusinessDetails.apply)(UpdatedBusinessDetails.unapply))
+  def apply(): Form[Address] = Form(Forms.single("businessAddress" -> addressMapping))
 }
