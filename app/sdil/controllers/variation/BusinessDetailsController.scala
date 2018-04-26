@@ -17,7 +17,6 @@
 package sdil.controllers.variation
 
 import play.api.data.{Form, Forms}
-import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.actions.VariationAction
