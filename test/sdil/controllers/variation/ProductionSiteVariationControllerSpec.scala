@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status, _}
 import sdil.controllers.ControllerSpec
 import sdil.models.Address
-import sdil.models.backend.Site
+import sdil.models.backend.{Site, UkAddress}
 import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
@@ -122,13 +122,12 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
 
     "return a page including all production sites added so far" in {
       val sites = Seq(
-        Address("3 The Place", "Another place", "", "", "AA11 1AA"),
-        Address("4 The Place", "Another place", "", "", "AA12 2AA"),
-        Address("5 The Place", "Another place", "", "", "AA13 3AA")
+        Site(Some("1"), UkAddress.fromAddress(Address("3 The Place", "Another place", "", "", "AA11 1AA"))),
+        Site(Some("2"), UkAddress.fromAddress(Address("4 The Place", "Another place", "", "", "AA12 2AA"))),
+        Site(Some("3"), UkAddress.fromAddress(Address("5 The Place", "Another place", "", "", "AA13 3AA")))
       )
 
-      val data = VariationData(
-        subscription.copy(productionSites = sites.map { x => Site.fromAddress(x) }.toList))
+      val data = VariationData(subscription.copy(productionSites = sites.toList))
 
       when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(data)))
@@ -140,7 +139,9 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
       val checkboxLabels = html.select(""".multiple-choice input[type="checkbox"]""")
         .asScala.filter(_.id.startsWith("additionalSites")).map(_.nextElementSibling().text)
 
-      checkboxLabels must contain theSameElementsAs sites.map(_.nonEmptyLines.mkString(", "))
+      checkboxLabels must contain theSameElementsAs sites.map { site =>
+        Address.fromUkAddress(site.address).nonEmptyLines.mkString(", ")
+      }
     }
   }
 
@@ -172,8 +173,11 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
       redirectLocation(res) mustBe Some(routes.ProductionSiteVariationController.show().url)
     }
 
-    "redirect to the warehouse page if another site has not been added and the form data is valid" in {
-      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody("bprAddress" -> "true"))
+    "redirect to the review page if another site has not been added and the form data is valid" in {
+      val res = testController.submit()(FakeRequest().withFormUrlEncodedBody(
+        "additionalSites[0]" ->
+          """{"ref":"1","address":{"lines":["The+house","The+Lane","nkcgswsydlwwribg","gkzuzayoxaipdtljetmaxxmlhyyqa"],"postCode":"CF66+0QL"}}"""
+      ))
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.VariationsController.show().url)
     }
@@ -198,7 +202,11 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
 
       verify(mockKeystore, times(1)).cache(
         matching("variationData"),
-        matching((VariationData(subscription)).copy(updatedProductionSites = Seq(Address("line 2", "line 3", "", "", "AA12 2AA"))))
+        matching((VariationData(subscription)).copy(updatedProductionSites =
+          Seq(
+            Site(Some("1"),UkAddress.fromAddress(Address("line 2", "line 3", "", "", "AA12 2AA")))
+          )
+        ))
       )(any(), any(), any())
     }
   }

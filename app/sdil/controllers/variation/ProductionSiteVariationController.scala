@@ -16,15 +16,19 @@
 
 package sdil.controllers.variation
 
+import play.api.data.Forms._
+import play.api.data.{Form, FormError, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
-import sdil.controllers.ProductionSiteController
-import sdil.models.Address
+import sdil.controllers.variation.models.Sites
+import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
+import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.softdrinksindustrylevy.register.productionSite
+import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
+import views.html.softdrinksindustrylevy.variations.productionSiteWithRef
 
 import scala.concurrent.Future
 
@@ -32,17 +36,14 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
                                          cache: SessionCache,
                                          variationAction: VariationAction)
                                         (implicit config: AppConfig)
-  extends FrontendController with I18nSupport {
+  extends FrontendController with I18nSupport with SiteRef {
 
-  import ProductionSiteController._
   lazy val previousPage: Call = routes.VariationsController.show()
 
   def show: Action[AnyContent] = variationAction { implicit request =>
     Ok(
-      productionSite(
-        form,
-        None,
-        None,
+      productionSiteWithRef(
+        ProductionSiteVariationController.form,
         request.data.updatedProductionSites,
         request.data.previousPages.last,
         routes.ProductionSiteVariationController.submit()
@@ -51,27 +52,26 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
-    form.bindFromRequest().fold(
+    ProductionSiteVariationController.form.bindFromRequest().fold(
       errors => Future(BadRequest(
-        productionSite(
+        productionSiteWithRef(
           errors,
-          None,
-          None,
           request.data.updatedProductionSites,
           request.data.previousPages.last,
           routes.ProductionSiteVariationController.submit()
         )
       )),
       {
-        case ProductionSites(_, _, _, true, Some(additionalAddress)) =>
-          val updated = request.data.updatedProductionSites :+ additionalAddress
-          cache.cache("variationData", request.data.copy(updatedProductionSites= updated)) map { _ =>
+        case Sites(_, true, Some(additionalAddress)) =>
+          val siteRef = nextRef(request.data.updatedProductionSites)
+          val site = Site(Some(siteRef), UkAddress.fromAddress(additionalAddress))
+          val updated = request.data.updatedProductionSites :+ site
+          cache.cache("variationData", request.data.copy(updatedProductionSites = updated)) map { _ =>
             Redirect(routes.ProductionSiteVariationController.show())
           }
 
-        case p =>
-          val addresses = p.additionalSites.map(Address.fromString)
-          val updated = request.data.copy(updatedProductionSites= addresses)
+        case Sites(sites, _, _) =>
+          val updated = request.data.copy(updatedProductionSites = sites)
           cache.cache("variationData", updated) map { _ =>
             Redirect(previousPage)
           }
@@ -81,3 +81,29 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
 
 }
 
+
+object ProductionSiteVariationController extends FormHelpers {
+
+  val form: Form[Sites] = Form(productionSitesMapping)
+
+  private lazy val productionSitesMapping: Mapping[Sites] = new MappingWithExtraConstraint[Sites] {
+    override val underlying: Mapping[Sites] = mapping(
+      "additionalSites" -> seq(siteJsonMapping),
+      "addAddress" -> boolean,
+      "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
+    )(Sites.apply)(Sites.unapply)
+
+    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites] = {
+      underlying.bind(data) match {
+        case Left(errs) => Left(errs)
+        case Right(sites) if noSitesSelected(sites) => Left(Seq(FormError("productionSites", "error.no-production-sites")))
+        case Right(sites) => Right(sites)
+      }
+    }
+  }
+
+  private lazy val noSitesSelected: Sites => Boolean = {
+    p => p.sites.isEmpty && p.additionalSites.isEmpty
+  }
+
+}
