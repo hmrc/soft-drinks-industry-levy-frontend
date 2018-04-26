@@ -144,6 +144,7 @@
                             @site.address.lines.map { a =>
                                 <div>@a</div>
                             }
+                            <div>@site.address.postCode</div>
                         </td>
                         <td class="change-answer">
                             <a href="@sdil.controllers.variation.routes.WarehouseVariationController.show()">

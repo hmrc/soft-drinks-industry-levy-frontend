@@ -25,10 +25,16 @@ import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
 trait SiteRef extends FormHelpers {
 
-  def nextRef(sites: Seq[Site]): String = sites match {
-    case sites if sites.nonEmpty =>
-      sites.last.ref.fold(1)(_.toInt + 1).toString
-    case _ => "1"
+  def nextRef(original: Seq[Site], updated: Seq[Site]): String = {
+    if (original.isEmpty && updated.isEmpty) {
+      "1"
+    } else {
+      (maxRef(original).max(maxRef(updated)) + 1).toString
+    }
+  }
+
+  private def maxRef(sites: Seq[Site]): Int = {
+    sites.map(_.ref.fold(0)(_.toInt)).max
   }
 
   val initialForm: Form[Sites] = Form(

@@ -78,7 +78,7 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
           val updatedSites = warehouses match {
             case addrs if addrs.nonEmpty =>
               addrs :+ Site(
-                Some(nextRef(addrs)),
+                Some(nextRef(request.data.original.warehouseSites, addrs)),
                 UkAddress.fromAddress(addr)
               )
             case addrs => Seq(Site(

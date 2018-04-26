@@ -35,7 +35,7 @@ case class VariationsSubmission(tradingName: Option[String] = None,
                                 deregistrationText: Option[String] = None,
                                 newSites: List[VariationsSite] = Nil,
                                 amendSites: List[VariationsSite] = Nil,
-                                closeSites: List[CloseSites] = Nil) {
+                                closeSites: List[ClosedSite] = Nil) {
   def nonEmpty: Boolean = {
     (Seq(
       tradingName,
@@ -102,10 +102,10 @@ case class VariationsSite(tradingName: String,
                           variationsContact: VariationsContact,
                           typeOfSite: String)
 
-object CloseSites {
-  implicit val writes: Writes[CloseSites] = Json.writes[CloseSites]
+object ClosedSite {
+  implicit val writes: Writes[ClosedSite] = Json.writes[ClosedSite]
 }
 
-case class CloseSites(tradingName: String,
+case class ClosedSite(tradingName: String,
                       siteReference: String,
                       reasonOfClosure: String)
