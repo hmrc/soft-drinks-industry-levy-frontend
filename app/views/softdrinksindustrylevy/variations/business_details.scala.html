@@ -26,7 +26,6 @@
     <h1 class="heading-large">@Messages("sdil.declaration.your-business")</h1>
 
     @form(sdil.controllers.variation.routes.BusinessDetailsController.submit()) {
-        @inputText(f("tradingName"), Messages("sdil.variation.tradingName"))
 
         @addressFields(f, "businessAddress", "sdil.variation.address", showHint = false)
 
