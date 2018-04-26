@@ -40,3 +40,5 @@ POST        /production-sites                         sdil.controllers.variation
 
 GET         /variations-summary                       sdil.controllers.variation.VariationsSummaryController.show
 POST        /variations-summary                       sdil.controllers.variation.VariationsSummaryController.submit
+
+GET         /confirmation                             sdil.controllers.variation.VariationsSummaryController.confirmation

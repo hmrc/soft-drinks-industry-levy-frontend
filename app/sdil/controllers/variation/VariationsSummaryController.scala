@@ -41,13 +41,15 @@ class VariationsSummaryController(val messagesApi: MessagesApi,
     val variation = Convert(request.data)
     val sdilNumber = request.wrapped.sdilEnrolment.value
 
-    if(!(request.data.isLiable || request.data.isVoluntary)) {
+    if (variation.isEmpty) {
+      Redirect(routes.VariationsSummaryController.confirmation())
+    } else if(!(request.data.isLiable || request.data.isVoluntary)) {
       VariationsSummaryController.form.bindFromRequest().fold(
         errors => BadRequest(variations_summary(errors, variation)),
         deregReason => sdilConnector.submitVariation(
           variation.copy(deregistrationText = Some(deregReason)),
           sdilNumber
-        ) map { _ => Ok("yay you did it") }
+        ) map { _ => Redirect(routes.VariationsSummaryController.confirmation()) }
       )
 
     } else if (variation.sdilActivity.nonEmpty) {
@@ -56,11 +58,15 @@ class VariationsSummaryController(val messagesApi: MessagesApi,
         amendReason => sdilConnector.submitVariation(
           variation.copy(sdilActivity = variation.sdilActivity.map(_.copy(reasonForAmendment = Some(amendReason)))),
           sdilNumber
-        ) map { _ => Ok("yay you did it 2") }
+        ) map { _ => Redirect(routes.VariationsSummaryController.confirmation()) }
       )
     } else {
-      sdilConnector.submitVariation(variation, sdilNumber) map { _ => Ok("yay you did it 3") }
+      sdilConnector.submitVariation(variation, sdilNumber) map { _ => Redirect(routes.VariationsSummaryController.confirmation()) }
     }
+  }
+
+  def confirmation: Action[AnyContent] = Action.async { implicit request =>
+    Ok(views.html.softdrinksindustrylevy.variations.confirmation())
   }
 }
 

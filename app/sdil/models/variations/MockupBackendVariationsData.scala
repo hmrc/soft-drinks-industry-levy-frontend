@@ -45,6 +45,8 @@ case class VariationsSubmission(tradingName: Option[String] = None,
       sdilActivity
     ).flatten ++ newSites ++ amendSites ++ closeSites).nonEmpty
   }
+
+  def isEmpty: Boolean = !nonEmpty
 }
 
 object VariationsContact {
