@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import sdil.config.AppConfig
+package sdil.controllers.variation.models
 
-@(summaryKey: String)(panelContent: Html)(implicit request: Request[_], messages: Messages, config: AppConfig)
+import sdil.models.Address
+import sdil.models.backend.Site
 
-<details class="padding-bottom-10">
-    <summary role="button">
-        <span class="summary" onclick="ga('send', 'event', 'helpLinks', 'help', '@Messages(summaryKey)')">@Messages(summaryKey)</span>
-    </summary>
-    <div class="panel-border-narrow panel" id="details-content-0">
-        @panelContent
-    </div>
-</details>
+case class Sites(sites: Seq[Site],
+                 addAddress: Boolean,
+                 additionalSites: Option[Address])

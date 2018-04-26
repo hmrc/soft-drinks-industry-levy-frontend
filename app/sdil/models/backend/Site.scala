@@ -19,12 +19,12 @@ package sdil.models.backend
 import play.api.libs.json.{Format, Json}
 import sdil.models.Address
 
-case class Site(address: UkAddress)
+case class Site(ref: Option[String],address: UkAddress)
 
 object Site {
   implicit val format: Format[Site] = Json.format[Site]
 
   def fromAddress(address: Address): Site = {
-    Site(UkAddress.fromAddress(address))
+    Site(None, UkAddress.fromAddress(address))
   }
 }

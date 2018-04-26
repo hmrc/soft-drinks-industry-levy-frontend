@@ -117,12 +117,13 @@
     @* @if(variationData.isLiablePacker) { *@
         @if(variationData.updatedProductionSites.nonEmpty) {
             @declaration_table("declaration", "production-sites") {
-                @variationData.updatedProductionSites.map { address =>
+                @variationData.updatedProductionSites.map { site =>
                     <tr>
                         <td>
-                            @address.nonEmptyLines.map { a =>
+                            @site.address.lines.map { a =>
                                 <div>@a</div>
                             }
+                            <div>@site.address.postCode</div>
                         </td>
                         <td class="change-answer">
                             <a href="@sdil.controllers.variation.routes.ProductionSiteVariationController.show()">
@@ -137,10 +138,10 @@
     @if(!variationData.original.activity.voluntaryRegistration) {
         @if(variationData.updatedWarehouseSites.nonEmpty) {
             @declaration_table("declaration", "warehouses") {
-                @variationData.updatedWarehouseSites.map { address =>
+                @variationData.updatedWarehouseSites.map { site =>
                     <tr>
                         <td>
-                            @address.nonEmptyLines.map { a =>
+                            @site.address.lines.map { a =>
                                 <div>@a</div>
                             }
                         </td>

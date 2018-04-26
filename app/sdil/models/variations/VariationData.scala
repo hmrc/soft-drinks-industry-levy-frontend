@@ -19,6 +19,7 @@ package sdil.models.variations
 import play.api.libs.json._
 import play.api.mvc.Call
 import sdil.controllers.variation.routes
+import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer}
 
@@ -32,8 +33,8 @@ case class VariationData(original: RetrievedSubscription,
                          copackForOthersVol: Option[Litreage],
                          imports: Boolean,
                          importsVol: Option[Litreage],
-                         updatedProductionSites: Seq[Address],
-                         updatedWarehouseSites: Seq[Address], // TODO create variation Site model with trading name
+                         updatedProductionSites: Seq[Site],
+                         updatedWarehouseSites: Seq[Site], // TODO create variation Site model with trading name
                          updatedContactDetails: ContactDetails,
                          previousPages: Seq[Call]
                         ) {
@@ -80,8 +81,8 @@ object VariationData {
     copackForOthersVol = None,
     original.activity.importer,
     importsVol = None,
-    original.productionSites.map{ x => Address.fromUkAddress(x.address)},
-    original.warehouseSites.map{ x => Address.fromUkAddress(x.address)},
+    original.productionSites,
+    original.warehouseSites,
     ContactDetails(
       original.contact.name.getOrElse(""),
       original.contact.positionInCompany.getOrElse(""),

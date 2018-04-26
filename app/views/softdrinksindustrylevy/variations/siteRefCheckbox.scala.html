@@ -15,14 +15,21 @@
  *@
 
 @import sdil.config.AppConfig
+@import play.api.libs.json.Json
+@import sdil.models.Address
 
-@(summaryKey: String)(panelContent: Html)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@import sdil.models.backend.Site
+@(name: String, site: Site, checked: Boolean = false)(implicit request: Request[_], messages: Messages, config:
+AppConfig)
 
-<details class="padding-bottom-10">
-    <summary role="button">
-        <span class="summary" onclick="ga('send', 'event', 'helpLinks', 'help', '@Messages(summaryKey)')">@Messages(summaryKey)</span>
-    </summary>
-    <div class="panel-border-narrow panel" id="details-content-0">
-        @panelContent
-    </div>
-</details>
+<div class="multiple-choice">
+    <input type="checkbox"
+    id="@name"
+    name="@name"
+    value="@Json.toJson(site)"
+        @if(checked) { checked="checked" }>
+    <label for="@name">
+        <div>@site.address.lines.head, @site.address.lines(1),</div>
+        <div>@site.address.lines.lift(2).map { l => @l, } @site.address.lines.lift(2).map { l => @l, }@site.address.postCode</div>
+    </label>
+</div>
