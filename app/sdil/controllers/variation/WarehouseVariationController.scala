@@ -82,7 +82,7 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
                 UkAddress.fromAddress(addr)
               )
             case addrs => Seq(Site(
-              Some(1.toString),
+              Some("1"),
               UkAddress.fromAddress(addr)
             ))
           }
