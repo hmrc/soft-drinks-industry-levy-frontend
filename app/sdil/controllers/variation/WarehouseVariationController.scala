@@ -78,12 +78,14 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
           val updatedSites = warehouses match {
             case addrs if addrs.nonEmpty =>
               addrs :+ Site(
+                UkAddress.fromAddress(addr),
                 Some(nextRef(request.data.original.warehouseSites, addrs)),
-                UkAddress.fromAddress(addr)
+                None
               )
             case addrs => Seq(Site(
-              Some("1"),
-              UkAddress.fromAddress(addr)
+              UkAddress.fromAddress(addr),
+              Some(nextRef(request.data.original.warehouseSites, addrs)),
+              None
             ))
           }
           cache.cache("variationData", request.data.copy(updatedWarehouseSites = updatedSites)) map { _ =>

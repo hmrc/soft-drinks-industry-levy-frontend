@@ -16,15 +16,17 @@
 
 package sdil.models.backend
 
+import java.time.LocalDate
+
 import play.api.libs.json.{Format, Json}
 import sdil.models.Address
 
-case class Site(ref: Option[String],address: UkAddress)
+case class Site(address: UkAddress, ref: Option[String], closureDate: Option[LocalDate])
 
 object Site {
   implicit val format: Format[Site] = Json.format[Site]
 
   def fromAddress(address: Address): Site = {
-    Site(None, UkAddress.fromAddress(address))
+    Site(UkAddress.fromAddress(address), None, None)
   }
 }

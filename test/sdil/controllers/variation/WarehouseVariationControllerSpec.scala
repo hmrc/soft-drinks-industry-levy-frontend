@@ -58,7 +58,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
     "return 200 Ok and the add secondary warehouse page if other secondary warehouses have been added" in {
       val data = VariationData(
         subscription.copy(
-          warehouseSites = List(Site(Some("1"), UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA"))))
+          warehouseSites = List(Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None))
         )
       )
 
@@ -155,8 +155,9 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
     "return 400 Bad Request if the user says they have a warehouse and does not fill in the address form" in {
 
       val data = VariationData(
-        subscription.copy(warehouseSites = List(Site(Some("1"), UkAddress.fromAddress(Address("1", "foo", "bar", "",
-          "AA11 1AA"))))))
+        subscription.copy(warehouseSites = List(
+          Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None)))
+      )
 
       when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(data)))
