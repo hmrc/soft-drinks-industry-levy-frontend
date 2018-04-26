@@ -18,7 +18,7 @@ package sdil.controllers.variation
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import sdil.actions.RegisteredAction
+import sdil.actions.{RegisteredAction, VariationAction}
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.variations.VariationData
@@ -31,6 +31,7 @@ import scala.concurrent.Future
 class VariationsController(val messagesApi: MessagesApi,
                            sdilConnector: SoftDrinksIndustryLevyConnector,
                            registeredAction: RegisteredAction,
+                           variationAction: VariationAction,
                            errorHandler: FrontendErrorHandler,
                            cache: SessionCache)
                           (implicit config: AppConfig)

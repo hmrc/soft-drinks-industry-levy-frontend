@@ -1,35 +1,35 @@
-GET         /start                        sdil.controllers.variation.VariationsController.start
-GET         /                             sdil.controllers.variation.VariationsController.show
+GET         /start                                    sdil.controllers.variation.VariationsController.start
+GET         /                                         sdil.controllers.variation.VariationsController.show
 
-GET         /business-details             sdil.controllers.variation.BusinessDetailsController.show
-POST        /business-details             sdil.controllers.variation.BusinessDetailsController.submit
+GET         /business-details                         sdil.controllers.variation.BusinessDetailsController.show
+POST        /business-details                         sdil.controllers.variation.BusinessDetailsController.submit
 
-GET         /producer                     sdil.controllers.variation.ProducerVariationsController.show
-POST        /producer                     sdil.controllers.variation.ProducerVariationsController.submit
+GET         /producer                                 sdil.controllers.variation.ProducerVariationsController.show
+POST        /producer                                 sdil.controllers.variation.ProducerVariationsController.submit
 
-GET         /uses-copacker                sdil.controllers.variation.UsesCopackerController.show
-POST        /uses-copacker                sdil.controllers.variation.UsesCopackerController.submit
+GET         /uses-copacker                            sdil.controllers.variation.UsesCopackerController.show
+POST        /uses-copacker                            sdil.controllers.variation.UsesCopackerController.submit
 
-GET         /package-own                  sdil.controllers.variation.PackageOwnController.show
-POST        /package-own                  sdil.controllers.variation.PackageOwnController.submit
+GET         /package-own                              sdil.controllers.variation.PackageOwnController.show
+POST        /package-own                              sdil.controllers.variation.PackageOwnController.submit
 
-GET         /package-own-vol              sdil.controllers.variation.PackageOwnVolController.show
-POST        /package-own-vol              sdil.controllers.variation.PackageOwnVolController.submit
+GET         /package-own-vol                          sdil.controllers.variation.PackageOwnVolController.show
+POST        /package-own-vol                          sdil.controllers.variation.PackageOwnVolController.submit
 
-GET         /copack-for-others            sdil.controllers.variation.CopackForOthersController.show
-POST        /copack-for-others            sdil.controllers.variation.CopackForOthersController.submit
+GET         /copack-for-others                        sdil.controllers.variation.CopackForOthersController.show
+POST        /copack-for-others                        sdil.controllers.variation.CopackForOthersController.submit
 
-GET         /copack-for-others-vol        sdil.controllers.variation.CopackForOthersVolController.show
-POST        /copack-for-others-vol        sdil.controllers.variation.CopackForOthersVolController.submit
+GET         /copack-for-others-vol                    sdil.controllers.variation.CopackForOthersVolController.show
+POST        /copack-for-others-vol                    sdil.controllers.variation.CopackForOthersVolController.submit
 
-GET         /imports                      sdil.controllers.variation.ImportsController.show
-POST        /imports                      sdil.controllers.variation.ImportsController.submit
+GET         /imports                                  sdil.controllers.variation.ImportsController.show
+POST        /imports                                  sdil.controllers.variation.ImportsController.submit
 
-GET         /imports-vol                  sdil.controllers.variation.ImportsVolController.show
-POST        /imports-vol                  sdil.controllers.variation.ImportsVolController.submit
+GET         /imports-vol                              sdil.controllers.variation.ImportsVolController.show
+POST        /imports-vol                              sdil.controllers.variation.ImportsVolController.submit
 
-GET         /contact-details         sdil.controllers.variation.ContactDetailsVariationController.show
-POST        /contact-details         sdil.controllers.variation.ContactDetailsVariationController.submit
+GET         /contact-details                          sdil.controllers.variation.ContactDetailsVariationController.show
+POST        /contact-details                          sdil.controllers.variation.ContactDetailsVariationController.submit
 
 GET         /secondary-warehouses                     sdil.controllers.variation.WarehouseVariationController.show
 POST        /secondary-warehouses                     sdil.controllers.variation.WarehouseVariationController.addSingleSite
@@ -37,3 +37,6 @@ POST        /secondary-warehouses/select-sites        sdil.controllers.variation
 
 GET         /production-sites                         sdil.controllers.variation.ProductionSiteVariationController.show
 POST        /production-sites                         sdil.controllers.variation.ProductionSiteVariationController.submit
+
+GET         /variations-summary                       sdil.controllers.variation.VariationsSummaryController.show
+POST        /variations-summary                       sdil.controllers.variation.VariationsSummaryController.submit

@@ -46,35 +46,7 @@ trait FormHelpers {
     "postcode" -> postcode
   )(Address.apply)(Address.unapply)
 
-  lazy val siteMapping: Mapping[Site] = mapping(
-    "ref" -> optionalSiteRef("ref"),
-    "ukAddress" -> ukAddressMapping
-  )(Site.apply)(Site.unapply)
-
   lazy val siteJsonMapping: Mapping[Site] = text.transform[Site](s => Json.parse(s).as[Site], s => Json.toJson(s).toString)
-
-  lazy val ukAddressMapping: Mapping[UkAddress] = mapping[UkAddress, String, String, String, String, String](
-    "line1" -> mandatoryAddressLine("line1"),
-    "line2" -> mandatoryAddressLine("line2"),
-    "line3" -> optionalAddressLine("line3"),
-    "line4" -> optionalAddressLine("line4"),
-    "postcode" -> postcode
-  )(makeUkAddress)(makeUkAddressFields)
-
-  def makeUkAddress(l1: String, l2: String, l3: String, l4: String, l5: String): UkAddress = {
-    val lines = Seq(l1,l2,l3,l4)
-    UkAddress(lines, l5)
-  }
-
-  def makeUkAddressFields(ukAddress: UkAddress): Option[(String, String, String, String, String)] = {
-    Some((
-      ukAddress.lines.head,
-      ukAddress.lines(1),
-      ukAddress.lines(2),
-      ukAddress.lines(3),
-      ukAddress.lines(4)
-    ))
-  }
 
   def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
     //have to use optional, or the framework returns `error.required` when no option is selected
@@ -92,15 +64,6 @@ trait FormHelpers {
   private def optionalAddressLineConstraint(key: String): Constraint[String] = Constraint {
     case a if !a.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") => Invalid(s"error.$key.invalid")
     case b if b.length > 35 => Invalid(s"error.$key.over")
-    case _ => Valid
-  }
-
-  private def optionalSiteRef(key: String): Mapping[Option[String]] = {
-    optional(text.transform[String](_.trim, s => s).verifying(optionalSiteRefConstraint(key)))
-  }
-
-  private def optionalSiteRefConstraint(key: String): Constraint[String] = Constraint {
-    case b if b.length > 40 => Invalid(s"error.$key.over")
     case _ => Valid
   }
 
