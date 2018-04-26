@@ -26,6 +26,10 @@
 
     <h1 class="heading-large">@Messages("sdil.variation.heading")</h1>
 
+    <div class="panel-border-narrow panel">
+        <p>@Messages("sdil.variation.pleaseActuallySubmitThis")</p>
+    </div>
+
     @declaration_table("declaration", "your-business") {
         @declaration_details_table_row("declaration", "utr", None, retrievedSubscription.utr, '_colspan -> "2")
 
@@ -116,7 +120,7 @@
 
     @* @if(variationData.isLiablePacker) { *@
         @if(variationData.updatedProductionSites.nonEmpty) {
-            @declaration_table("declaration", "production-sites") {
+            @declaration_table("declaration", "production-sites", Some(sdil.controllers.variation.routes.ProductionSiteVariationController.show())) {
                 @variationData.updatedProductionSites.map { site =>
                     <tr>
                         <td>
@@ -125,11 +129,7 @@
                             }
                             <div>@site.address.postCode</div>
                         </td>
-                        <td class="change-answer">
-                            <a href="@sdil.controllers.variation.routes.ProductionSiteVariationController.show()">
-                            @Messages("sdil.declaration.change-link")
-                            </a>
-                        </td>
+                        <td class="change-answer" colspan="2"></td>
                     </tr>
                 }
             }
@@ -137,7 +137,7 @@
 
     @if(!variationData.original.activity.voluntaryRegistration) {
         @if(variationData.updatedWarehouseSites.nonEmpty) {
-            @declaration_table("declaration", "warehouses") {
+            @declaration_table("declaration", "warehouses", Some(sdil.controllers.variation.routes.WarehouseVariationController.show())) {
                 @variationData.updatedWarehouseSites.map { site =>
                     <tr>
                         <td>
@@ -146,11 +146,7 @@
                             }
                             <div>@site.address.postCode</div>
                         </td>
-                        <td class="change-answer">
-                            <a href="@sdil.controllers.variation.routes.WarehouseVariationController.show()">
-                            @Messages("sdil.declaration.change-link")
-                            </a>
-                        </td>
+                        <td class="change-answer" colspan="2"></td>
                     </tr>
                 }
             }
@@ -193,5 +189,7 @@
 
     <br/>
 
-    <p><a class="button" href="@sdil.controllers.variation.routes.VariationsSummaryController.show()">@Messages("sdil.variations.continue")</a></p>
+    @form(sdil.controllers.variation.routes.VariationsSummaryController.submit()) {
+        <p><input class="button" value="@Messages("sdil.variations.submit")" type="submit"></p>
+    }
 }

@@ -392,7 +392,8 @@ sdil.beta-registration-confirmed.p1=We’ll contact you if more spaces become av
 error.businessName.required=Enter a business name
 
 #Variations retrieved summary
-sdil.variation.heading=Your registration details
+sdil.variation.heading=Change your registration details
+sdil.variation.pleaseActuallySubmitThis=Please actually submit this
 
 #Update business details
 sdil.variation.tradingName=Trading name
@@ -433,3 +434,9 @@ sdil.variation.add-link=Add new
 
 sdil.variation.copack-for-others-vol=How many litres do you contract pack for others?
 sdil.variation.imports-vol=How many litres do you import?
+
+#variation confirmation
+sdil.variation.complete.subheading=We’ve received your changes
+sdil.variation.what-happens.p1=Now you have to wait for some random case worker to see the PDF this just generated.
+sdil.variation.what-happens.p2=Hopefully they’ll manually type it all in correctly.
+sdil.link.back.home=Back to home
