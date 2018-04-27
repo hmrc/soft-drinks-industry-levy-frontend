@@ -37,6 +37,7 @@ POST        /secondary-warehouses/select-sites        sdil.controllers.variation
 
 GET         /production-sites                         sdil.controllers.variation.ProductionSiteVariationController.show
 POST        /production-sites                         sdil.controllers.variation.ProductionSiteVariationController.submit
+GET         /production-sites/confirm                 sdil.controllers.variation.ProductionSiteVariationController.confirm
 
 GET         /variations-summary                       sdil.controllers.variation.VariationsSummaryController.show
 POST        /variations-summary                       sdil.controllers.variation.VariationsSummaryController.submit

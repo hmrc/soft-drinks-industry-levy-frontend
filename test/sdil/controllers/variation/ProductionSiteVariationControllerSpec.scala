@@ -176,7 +176,7 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
           """{"ref":"1","address":{"lines":["The+house","The+Lane","nkcgswsydlwwribg","gkzuzayoxaipdtljetmaxxmlhyyqa"],"postCode":"CF66+0QL"}}"""
       ))
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.VariationsController.show().url)
+      redirectLocation(res) mustBe Some(routes.ProductionSiteVariationController.confirm().url)
     }
 
     "store the new address in keystore if another site has been added and the form data is valid" in {

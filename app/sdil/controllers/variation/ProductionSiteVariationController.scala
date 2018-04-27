@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.variations.productionSiteWithRef
+import views.html.softdrinksindustrylevy.variations.retrieve_summary_productionSites
 
 import scala.concurrent.Future
 
@@ -73,10 +74,14 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
         case Sites(sites, _, _) =>
           val updated = request.data.copy(updatedProductionSites = sites)
           cache.cache("variationData", updated) map { _ =>
-            Redirect(previousPage)
+            Redirect(routes.ProductionSiteVariationController.confirm())
           }
       }
     )
+  }
+
+  def confirm: Action[AnyContent] = variationAction { implicit request =>
+    Ok(retrieve_summary_productionSites(request.data))
   }
 
 }
