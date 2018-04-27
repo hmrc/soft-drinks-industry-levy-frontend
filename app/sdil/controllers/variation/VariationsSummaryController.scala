@@ -16,7 +16,7 @@
 
 package sdil.controllers.variation
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
 
 import play.api.data.Forms._
@@ -69,7 +69,7 @@ class VariationsSummaryController(val messagesApi: MessagesApi,
   }
 
   def confirmation: Action[AnyContent] = Action.async { implicit request =>
-    val ts = LocalDateTime.now()
+    val ts = LocalDateTime.now(ZoneId.of("Europe/London"))
 
     lazy val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
     lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("h:mm a")
