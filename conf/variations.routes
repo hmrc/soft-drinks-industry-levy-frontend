@@ -30,6 +30,7 @@ POST        /imports-vol                              sdil.controllers.variation
 
 GET         /contact-details                          sdil.controllers.variation.ContactDetailsVariationController.show
 POST        /contact-details                          sdil.controllers.variation.ContactDetailsVariationController.submit
+GET         /contact-details/confirm                  sdil.controllers.variation.ContactDetailsVariationController.confirm
 
 GET         /secondary-warehouses                     sdil.controllers.variation.WarehouseVariationController.show
 POST        /secondary-warehouses                     sdil.controllers.variation.WarehouseVariationController.addSingleSite
