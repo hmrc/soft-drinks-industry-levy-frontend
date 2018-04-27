@@ -26,7 +26,7 @@ import sdil.forms.FormHelpers
 import sdil.models.Address
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.softdrinksindustrylevy.variations.business_details
+import views.html.softdrinksindustrylevy.variations.{business_details, business_details_summary}
 
 import scala.concurrent.Future
 
@@ -47,10 +47,14 @@ class BusinessDetailsController(val messagesApi: MessagesApi,
       data => {
         val updated = request.data.copy(updatedBusinessAddress = data)
         cache.cache("variationData", updated) map { _ =>
-          Redirect(routes.VariationsController.show())
+          Redirect(routes.BusinessDetailsController.confirm())
         }
       }
     )
+  }
+
+  def confirm: Action[AnyContent] = variationAction { implicit request =>
+    Ok(business_details_summary(request.data))
   }
 }
 

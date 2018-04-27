@@ -392,7 +392,7 @@ sdil.beta-registration-confirmed.p1=We’ll contact you if more spaces become av
 error.businessName.required=Enter a business name
 
 #Variations retrieved summary
-sdil.variation.heading=Change your registration details
+sdil.variation.heading=Confirm your registration details
 sdil.variation.pleaseActuallySubmitThis=Please actually submit this
 
 #Update business details
