@@ -24,6 +24,13 @@
 @views.html.main_template(Messages("sdil.registered.title")) {
 
     <h1 class="heading-large">@Messages("sdil.variation.heading")</h1>
+    <div class="notice">
+        <i class="icon icon-important">
+        </i>
+        <strong class="bold-small">
+        @Messages("sdil.variation.submit.help")
+        </strong>
+    </div>
 
     @declaration_table("declaration", "your-business", None) {
         @declaration_details_table_row("declaration", "utr", None, variationData.original.utr, '_colspan -> "2")
