@@ -16,6 +16,9 @@
 
 package sdil.controllers.variation
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 import play.api.data.Forms._
 import play.api.data.{Form, Forms}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -66,7 +69,12 @@ class VariationsSummaryController(val messagesApi: MessagesApi,
   }
 
   def confirmation: Action[AnyContent] = Action.async { implicit request =>
-    Ok(views.html.softdrinksindustrylevy.variations.confirmation())
+    val ts = LocalDateTime.now()
+
+    lazy val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+    lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("h:mm a")
+
+    Ok(views.html.softdrinksindustrylevy.variations.confirmation(ts.format(dateFormatter), ts.format(timeFormatter)))
   }
 }
 
