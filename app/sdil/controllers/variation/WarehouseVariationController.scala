@@ -29,6 +29,8 @@ import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.variations.secondaryWarehouseWithRef
+import views.html.softdrinksindustrylevy.variations.retrieve_summary_secondaryWarehouse
+
 
 import scala.concurrent.Future
 
@@ -95,10 +97,14 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
           val updated = request.data.copy(updatedWarehouseSites = addresses)
 
           cache.cache("variationData", updated) map { _ =>
-            Redirect(routes.VariationsController.show())
+            Redirect(routes.WarehouseVariationController.confirm())
           }
       }
     )
+  }
+
+  def confirm: Action[AnyContent] = variationAction { implicit request =>
+    Ok(retrieve_summary_secondaryWarehouse(request.data))
   }
 
   private def warehouses(implicit request: VariationRequest[_]): Seq[Site] = {

@@ -93,7 +93,7 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       val res = testController.submit()(request)
       status(res) mustBe SEE_OTHER
 
-      redirectLocation(res).value mustBe routes.VariationsController.show().url
+      redirectLocation(res).value mustBe routes.BusinessDetailsController.confirm().url
     }
 
     "update the cached form data when the form data is valid" in {

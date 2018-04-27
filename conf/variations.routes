@@ -3,6 +3,7 @@ GET         /                                         sdil.controllers.variation
 
 GET         /business-details                         sdil.controllers.variation.BusinessDetailsController.show
 POST        /business-details                         sdil.controllers.variation.BusinessDetailsController.submit
+GET         /business-details/confirm                 sdil.controllers.variation.BusinessDetailsController.confirm
 
 GET         /producer                                 sdil.controllers.variation.ProducerVariationsController.show
 POST        /producer                                 sdil.controllers.variation.ProducerVariationsController.submit
@@ -30,13 +31,16 @@ POST        /imports-vol                              sdil.controllers.variation
 
 GET         /contact-details                          sdil.controllers.variation.ContactDetailsVariationController.show
 POST        /contact-details                          sdil.controllers.variation.ContactDetailsVariationController.submit
+GET         /contact-details/confirm                  sdil.controllers.variation.ContactDetailsVariationController.confirm
 
 GET         /secondary-warehouses                     sdil.controllers.variation.WarehouseVariationController.show
 POST        /secondary-warehouses                     sdil.controllers.variation.WarehouseVariationController.addSingleSite
 POST        /secondary-warehouses/select-sites        sdil.controllers.variation.WarehouseVariationController.addMultipleSites
+GET         /secondary-warehouses/confirm             sdil.controllers.variation.WarehouseVariationController.confirm
 
 GET         /production-sites                         sdil.controllers.variation.ProductionSiteVariationController.show
 POST        /production-sites                         sdil.controllers.variation.ProductionSiteVariationController.submit
+GET         /production-sites/confirm                 sdil.controllers.variation.ProductionSiteVariationController.confirm
 
 GET         /variations-summary                       sdil.controllers.variation.VariationsSummaryController.show
 POST        /variations-summary                       sdil.controllers.variation.VariationsSummaryController.submit

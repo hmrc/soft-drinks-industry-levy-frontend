@@ -403,6 +403,7 @@ error.businessName.required=Enter a business name
 sdil.variation.heading=Change your registration details
 sdil.variation.submit.help=Your changes will not be submitted until you have confirmed and sent them
 
+
 #Update business details
 sdil.variation.tradingName=Trading name
 sdil.variation.address.heading=Business address
