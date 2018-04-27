@@ -82,13 +82,13 @@
                     @declaration_details_table_row("service-page", "email", None, s"${subscription.contact.email}")
                 </tbody>
             </table>
+            @if(subscription.productionSites.nonEmpty || subscription.warehouseSites.nonEmpty) {
+                <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
+                <p>@Messages("sdil.service-page.registered-address.p1")</p>
 
-            <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
-            <p>@Messages("sdil.service-page.registered-address.p1")</p>
-
-            @service_sites(subscription.productionSites, "packaging")
-            @service_sites(subscription.warehouseSites, "warehouse")
-
+                @service_sites(subscription.productionSites, "packaging")
+                @service_sites(subscription.warehouseSites, "warehouse")
+            }
             @if(config.variationsEnabled) {
                 <div>
                     <h2>@Messages("sdil.service-page.variations.title")</h2>

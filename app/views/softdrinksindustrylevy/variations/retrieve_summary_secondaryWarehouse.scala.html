@@ -24,14 +24,6 @@
 
     <h1 class="heading-large">@Messages("sdil.variation.heading.confirm")</h1>
 
-    <div class="notice">
-        <i class="icon icon-important">
-        </i>
-        <strong class="bold-small">
-        @Messages("sdil.variation.submit.help")
-        </strong>
-    </div>
-
     @if(variationData.updatedWarehouseSites.nonEmpty) {
         @declaration_table("declaration", "warehouses", None) {
             @variationData.updatedWarehouseSites.map { site =>

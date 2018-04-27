@@ -19,7 +19,6 @@
 @()(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.registered.title")) {
-    <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show()">@Messages("sdil.link.back.home")</a>
 
     <div class="govuk-box-highlight">
         <h1 class="heading-xlarge">@Messages("sdil.variations.complete.title")</h1>
