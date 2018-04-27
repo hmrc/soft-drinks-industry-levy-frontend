@@ -61,14 +61,6 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
     }
 
-    "return a page containing a 'Trading Name' input" in {
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("input").asScala.map(_.attr("name")) must contain ("tradingName")
-    }
-
     "return a page containing 'Business address' inputs" in {
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
