@@ -404,6 +404,7 @@ error.businessName.required=Enter a business name
 
 #Variations retrieved summary
 sdil.variation.heading=Change your registration details
+sdil.variation.heading.confirm=Confirm your registration details
 sdil.variation.submit.help=Your changes will not be submitted until you have confirmed and sent them
 
 
