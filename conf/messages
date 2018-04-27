@@ -291,7 +291,7 @@ sdil.declaration.continue=Confirm and send
 sdil.complete.title=Application complete
 sdil.complete.subheading=We’ve received your application to register for the Soft Drinks Industry Levy
 sdil.complete.p1=Your application to register for the Soft Drinks Industry Levy was submitted on {0} at {1}.
-sdil.complete.what-happens.title=What happens next?
+sdil.complete.what-happens.title=What happens next
 sdil.complete.what-happens.p1=You don’t need to do anything else. We’ll send your reference number to {0} within 24 hours.
 sdil.complete.what-happens.p2=If you don’t get your reference number or you need to make a change to your registration, you need to call the Soft Drinks Industry Levy Helpline on 0300 200 3700.
 sdil.complete.what-happens.p3=Returns will be due for fixed quarters ending June, September, December and March.
@@ -401,7 +401,7 @@ error.businessName.required=Enter a business name
 
 #Variations retrieved summary
 sdil.variation.heading=Change your registration details
-sdil.variation.pleaseActuallySubmitThis=Please actually submit this
+sdil.variation.submit.help=Your changes will not be submitted until you have confirmed and sent them
 
 #Update business details
 sdil.variation.tradingName=Trading name
@@ -444,7 +444,7 @@ sdil.variation.copack-for-others-vol=How many litres do you contract pack for ot
 sdil.variation.imports-vol=How many litres do you import?
 
 #variation confirmation
-sdil.variation.complete.subheading=We’ve received your changes
-sdil.variation.what-happens.p1=Now you have to wait for some random case worker to see the PDF this just generated.
-sdil.variation.what-happens.p2=Hopefully they’ll manually type it all in correctly.
+sdil.variations.complete.title=Updates sent
+sdil.variation.complete.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
+sdil.variation.what-happens.p1=You don’t need to do anything else. We’ll update your details with the information you provided. We’ll send you a letter confirming that the changes have been made, which may take 15 working days.
 sdil.link.back.home=Back to home
