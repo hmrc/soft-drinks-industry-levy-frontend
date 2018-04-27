@@ -33,7 +33,7 @@ object Convert {
       if (first == other) None else Some(first)
   }
 
-  implicit class PoorA[A <: {def nonEmpty: Boolean}](a: A) {
+  implicit class PoorA[A <: {def nonEmpty : Boolean}](a: A) {
     def ifNonEmpty: Option[A] = if (a.nonEmpty) Some(a) else None
   }
 
@@ -106,19 +106,23 @@ object Convert {
     }
 
     val newSites: List[VariationsSite] = {
-      val newProductionSites = vd.updatedProductionSites.diff(orig.productionSites)
-      val newWarehouses = vd.updatedWarehouseSites.diff(orig.warehouseSites)
+      val newProductionSites = vd.updatedProductionSites.diff(orig.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))))
+      val newWarehouses = vd.updatedWarehouseSites.diff(orig.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))))
 
       variationsSites(newProductionSites, newWarehouses)
     }
 
     val closedSites: List[ClosedSite] = {
-      val closedProductionSites = orig.productionSites.diff(vd.updatedProductionSites) map { site =>
+      val closedProductionSites = orig.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))).diff(
+        vd.updatedProductionSites
+      ) map { site =>
         ClosedSite("", site.ref.getOrElse("1"), "This site is no longer open.")
       }
 
-      val closedWarehouses = orig.warehouseSites.diff(vd.updatedWarehouseSites) map { warehouse =>
-        ClosedSite("", warehouse.ref.getOrElse("1"), "This site is no longer open.")
+      val closedWarehouses = orig.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))).diff(
+        vd.updatedWarehouseSites
+      ) map {
+        warehouse => ClosedSite("", warehouse.ref.getOrElse("1"), "This site is no longer open.")
       }
 
       closedProductionSites ++ closedWarehouses

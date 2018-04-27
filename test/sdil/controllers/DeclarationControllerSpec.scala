@@ -81,8 +81,8 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           isLarge = false
         ),
         LocalDate.of(2018, 4, 6),
-        Seq(Site(None, UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
-        Seq(Site(None, UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"), None, None)),
+        Seq(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"), None, None)),
         Contact(
           Some("A person"),
           Some("A position"),
@@ -116,8 +116,8 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           isLarge = false
         ),
         LocalDate.of(2018, 4, 6),
-        Seq(Site(None, UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
-        Seq(Site(None, UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"), None, None)),
+        Seq(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"), None, None)),
         Contact(
           Some("A person"),
           Some("A position"),
@@ -157,8 +157,8 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
           isLarge = false
         ),
         LocalDate.now,
-        Seq(Site(None, UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
-        Seq(Site(None, UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
+        Seq(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"), None, None)),
+        Seq(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"), None, None)),
         Contact(
           Some("A person"),
           Some("A position"),

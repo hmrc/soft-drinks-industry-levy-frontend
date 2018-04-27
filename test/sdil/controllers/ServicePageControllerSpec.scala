@@ -127,8 +127,8 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     UkAddress(List("1", "The Road"), "AA11 1AA"),
     RetrievedActivity(false, false, true, false, false),
     LocalDate.of(2018, 4, 6),
-    List(Site(None, UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"))),
-    List(Site(None, UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"))),
+    List(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"), None, None)),
+    List(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"), None, None)),
     Contact(
       Some("A person"),
       Some("A position"),

@@ -16,11 +16,12 @@
 
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.models.backend.Site
+@import java.time.LocalDate
 
 @import sdil.config.AppConfig
 @(sites: List[Site], siteType: String)(implicit request: Request[_], messages: Messages,config: AppConfig)
 
-@if(sites.nonEmpty) {
+@if(openSites.nonEmpty) {
     @details(s"sdil.service-page.$siteType-address.subtitle") {
         <table>
             <thead>
@@ -39,7 +40,7 @@
             </thead>
 
             <tbody>
-            @sites.map { site =>
+            @openSites.map { site =>
                 <tr>
                     <td>@site.address.lines.head</td>
                     <td>@site.address.postCode</td>
@@ -48,4 +49,8 @@
             </tbody>
         </table>
     }
+}
+
+@openSites = @{
+    sites.filter(_.closureDate.forall(_.isAfter(LocalDate.now)))
 }

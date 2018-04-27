@@ -16,6 +16,8 @@
 
 package sdil.models.variations
 
+import java.time.LocalDate
+
 import play.api.libs.json._
 import play.api.mvc.Call
 import sdil.controllers.variation.routes
@@ -81,8 +83,8 @@ object VariationData {
     copackForOthersVol = None,
     original.activity.importer,
     importsVol = None,
-    original.productionSites,
-    original.warehouseSites,
+    original.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))),
+    original.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))),
     ContactDetails(
       original.contact.name.getOrElse(""),
       original.contact.positionInCompany.getOrElse(""),
