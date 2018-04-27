@@ -66,6 +66,11 @@ object FrontendBuild extends Build {
         "com.softwaremill.macwire" %% "proxy" % "2.3.0",
         "org.typelevel" %% "cats-core" % "1.0.1",
 
+        // scaffolding
+        "com.chuusai" %% "shapeless" % "2.3.3",
+        "com.github.mpilquist" %% "simulacrum" % "0.12.0",
+        "com.beachape" %% "enumeratum" % "1.5.13",
+
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % "test",
         "org.scalatest" %% "scalatest" % "3.0.1" % "test",
@@ -81,7 +86,10 @@ object FrontendBuild extends Build {
         Resolver.jcenterRepo
       )
     )
-    .settings(PlayKeys.playDefaultPort := 8700)
+    .settings(
+      PlayKeys.playDefaultPort := 8700,
+      addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+    )
     .settings(
       // concatenate js
       Concat.groups := Seq(

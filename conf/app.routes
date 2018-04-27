@@ -68,3 +68,9 @@ GET         /register-for-beta                                 sdil.controllers.
 POST        /register-for-beta                                 sdil.controllers.RegisterForBetaController.submit
 
 ->          /variations                                        variations.Routes
+
+GET         /returns                                           sdil.controllers.ReturnsController.index(id = "")
+GET         /returns/:id                                       sdil.controllers.ReturnsController.index(id: String)
+POST        /returns                                           sdil.controllers.ReturnsController.index(id = "")
+POST        /returns/:id                                       sdil.controllers.ReturnsController.index(id: String)
+
