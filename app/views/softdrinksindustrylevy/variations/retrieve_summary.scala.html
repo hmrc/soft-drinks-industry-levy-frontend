@@ -30,12 +30,11 @@
         <p>@Messages("sdil.variation.pleaseActuallySubmitThis")</p>
     </div>
 
-    @declaration_table("declaration", "your-business") {
+    @declaration_table("declaration", "your-business", Some(sdil.controllers.variation.routes.BusinessDetailsController.show())) {
         @declaration_details_table_row("declaration", "utr", None, retrievedSubscription.utr, '_colspan -> "2")
 
         @declaration_details_table_row("declaration", "business-name", None,
             retrievedSubscription.orgName, '_colspan -> "2")
-
         <tr>
             <td colspan = "2">@Messages("sdil.declaration.address")</td>
             <td>
@@ -44,96 +43,91 @@
                 }
                 <div>@Messages("sdil.declaration.uk")</div>
             </td>
-            <td class="change-answer">
-                <a href="@sdil.controllers.variation.routes.BusinessDetailsController.show()">@Messages("sdil.declaration.change-link")</a>
-            </td>
         </tr>
     }
-
-
     @* TODO actor status variation not enabled for initial release *@
     @* @declaration_table("variation", "actor-status") {
-        @declaration_details_table_row("variation",
-            "producer",
-            Some(sdil.controllers.variation.routes.ProducerVariationsController.show()),
-            Messages(s"sdil.declaration.${variationData.producer.isProducer}"),
-            '_colspan -> "2")
+    @declaration_details_table_row("variation",
+    "producer",
+    Some(sdil.controllers.variation.routes.ProducerVariationsController.show()),
+    Messages(s"sdil.declaration.${variationData.producer.isProducer}"),
+    '_colspan -> "2")
 
-        @if(variationData.producer.isProducer) {
-            @declaration_details_table_row("variation",
-                "large-producer",
-                Some(sdil.controllers.variation.routes.ProducerVariationsController.show()),
-                Messages(s"sdil.declaration.${variationData.producer.isLarge.getOrElse(false)}"),
-                '_colspan -> "2")
+    @if(variationData.producer.isProducer) {
+    @declaration_details_table_row("variation",
+    "large-producer",
+    Some(sdil.controllers.variation.routes.ProducerVariationsController.show()),
+    Messages(s"sdil.declaration.${variationData.producer.isLarge.getOrElse(false)}"),
+    '_colspan -> "2")
 
-            @variationData.usesCopacker.map { usesCopacker =>
-                @declaration_details_table_row("variation",
-                    "uses-copacker",
-                    Some(sdil.controllers.variation.routes.UsesCopackerController.show()),
-                    Messages(s"sdil.declaration.${usesCopacker}"),
-                    '_colspan -> "2")
-            }
+    @variationData.usesCopacker.map { usesCopacker =>
+    @declaration_details_table_row("variation",
+    "uses-copacker",
+    Some(sdil.controllers.variation.routes.UsesCopackerController.show()),
+    Messages(s"sdil.declaration.${usesCopacker}"),
+    '_colspan -> "2")
+    }
 
-            @variationData.packageOwn.map { packageOwn =>
-                @declaration_details_table_row("variation",
-                    "package-own",
-                    Some(sdil.controllers.variation.routes.PackageOwnController.show()),
-                    Messages(s"sdil.declaration.${packageOwn}"),
-                    '_colspan -> "2")
-                @if(packageOwn) {
-                    @variationData.packageOwnVol.map { packageOwnVol =>
-                        @declaration_details_litres(
-                            "variation.package-own-vol",
-                            sdil.controllers.variation.routes.PackageOwnVolController.show(),
-                            packageOwnVol)
-                    }
-                }
-            }
-        }
-        @declaration_details_table_row("variation",
-            "copacker",
-            Some(sdil.controllers.variation.routes.CopackForOthersController.show()),
-            Messages(s"sdil.declaration.${variationData.copackForOthers}"),
-            '_colspan -> "2")
-        @if(variationData.copackForOthers) {
-            @variationData.copackForOthersVol.map { copackForOthersVol =>
-                @declaration_details_litres(
-                    "variation.copack-for-others-vol",
-                    sdil.controllers.variation.routes.CopackForOthersVolController.show(),
-                    copackForOthersVol)
-            }
-        }
-        @declaration_details_table_row("variation",
-            "importer",
-            Some(sdil.controllers.variation.routes.ImportsController.show()),
-            Messages(s"sdil.declaration.${variationData.imports}"),
-            '_colspan -> "2")
-        @if(variationData.imports) {
-            @variationData.importsVol.map { importsVol =>
-                @declaration_details_litres(
-                    "variation.imports-vol",
-                    sdil.controllers.variation.routes.ImportsVolController.show(),
-                    importsVol)
-            }
-        }
+    @variationData.packageOwn.map { packageOwn =>
+    @declaration_details_table_row("variation",
+    "package-own",
+    Some(sdil.controllers.variation.routes.PackageOwnController.show()),
+    Messages(s"sdil.declaration.${packageOwn}"),
+    '_colspan -> "2")
+    @if(packageOwn) {
+    @variationData.packageOwnVol.map { packageOwnVol =>
+    @declaration_details_litres(
+    "variation.package-own-vol",
+    sdil.controllers.variation.routes.PackageOwnVolController.show(),
+    packageOwnVol)
+    }
+    }
+    }
+    }
+    @declaration_details_table_row("variation",
+    "copacker",
+    Some(sdil.controllers.variation.routes.CopackForOthersController.show()),
+    Messages(s"sdil.declaration.${variationData.copackForOthers}"),
+    '_colspan -> "2")
+    @if(variationData.copackForOthers) {
+    @variationData.copackForOthersVol.map { copackForOthersVol =>
+    @declaration_details_litres(
+    "variation.copack-for-others-vol",
+    sdil.controllers.variation.routes.CopackForOthersVolController.show(),
+    copackForOthersVol)
+    }
+    }
+    @declaration_details_table_row("variation",
+    "importer",
+    Some(sdil.controllers.variation.routes.ImportsController.show()),
+    Messages(s"sdil.declaration.${variationData.imports}"),
+    '_colspan -> "2")
+    @if(variationData.imports) {
+    @variationData.importsVol.map { importsVol =>
+    @declaration_details_litres(
+    "variation.imports-vol",
+    sdil.controllers.variation.routes.ImportsVolController.show(),
+    importsVol)
+    }
+    }
     } *@
 
     @* @if(variationData.isLiablePacker) { *@
-        @if(variationData.updatedProductionSites.nonEmpty) {
-            @declaration_table("declaration", "production-sites", Some(sdil.controllers.variation.routes.ProductionSiteVariationController.show())) {
-                @variationData.updatedProductionSites.map { site =>
-                    <tr>
-                        <td>
-                            @site.address.lines.map { a =>
-                                <div>@a</div>
-                            }
-                            <div>@site.address.postCode</div>
-                        </td>
-                        <td class="change-answer" colspan="2"></td>
-                    </tr>
-                }
+    @if(variationData.updatedProductionSites.nonEmpty) {
+        @declaration_table("declaration", "production-sites", Some(sdil.controllers.variation.routes.ProductionSiteVariationController.show())) {
+            @variationData.updatedProductionSites.map { site =>
+                <tr>
+                    <td>
+                        @site.address.lines.map { a =>
+                            <div>@a</div>
+                        }
+                    <div>@site.address.postCode</div>
+                    </td>
+                    <td class="change-answer" colspan="2"></td>
+                </tr>
             }
         }
+    }
 
     @if(!variationData.original.activity.voluntaryRegistration) {
         @if(variationData.updatedWarehouseSites.nonEmpty) {
@@ -144,7 +138,7 @@
                             @site.address.lines.map { a =>
                                 <div>@a</div>
                             }
-                            <div>@site.address.postCode</div>
+                        <div>@site.address.postCode</div>
                         </td>
                         <td class="change-answer" colspan="2"></td>
                     </tr>
@@ -162,30 +156,33 @@
             }
         }
     }
-
     @* @if(variationData.isLiable || variationData.isVoluntary) { *@
-        @declaration_table("declaration", "contact-details") {
-            @declaration_details_table_row(
-                "declaration",
-                "name",
-                Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
-                variationData.updatedContactDetails.fullName)
-            @declaration_details_table_row(
-                "declaration",
-                "position",
-                Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
-                variationData.updatedContactDetails.position)
-            @declaration_details_table_row(
-                "declaration",
-                "phone-number",
-                Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
-                variationData.updatedContactDetails.phoneNumber)
-            @declaration_details_table_row(
-                "declaration",
-                "email",
-                Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show()),
-                variationData.updatedContactDetails.email)
-        }
+    @declaration_table("declaration", "contact-details", Some(sdil.controllers.variation.routes.ContactDetailsVariationController.show())) {
+        @declaration_details_table_row(
+            "declaration",
+            "name",
+            None,
+            variationData.updatedContactDetails.fullName,
+            '_colspan -> "2")
+        @declaration_details_table_row(
+            "declaration",
+            "position",
+            None,
+            variationData.updatedContactDetails.position,
+            '_colspan -> "2")
+        @declaration_details_table_row(
+            "declaration",
+            "phone-number",
+            None,
+            variationData.updatedContactDetails.phoneNumber,
+            '_colspan -> "2")
+        @declaration_details_table_row(
+            "declaration",
+            "email",
+            None,
+            variationData.updatedContactDetails.email,
+            '_colspan -> "2")
+    }
 
     <br/>
 
