@@ -330,7 +330,9 @@ sdil.service-page.variations.li.3=change your business activity, including becom
 sdil.service-page.variations.li.4=need to deregister from the Soft Drinks Industry Levy
 sdil.service-page.variations.li.5=need to make an adjustment of £10,000 or more to a previous return
 sdil.service-page.variations.change=Tell HMRC about a change
-sdil.service-page.variations.p2=Changes can take up to 15 working days to process. 
+sdil.service-page.variations.p2=To change your business activity or deregister from the Soft Drinks Industry Levy, call 0300 200 3700.
+sdil.service-page.variations.p3=You can tell HMRC about changes to warehouses, packaging sites and contact details online.
+sdil.service-page.variations.p4=Changes can take up to 15 working days to process.
 
 #Already registered
 sdil.already-enrolled.heading=You’re already registered
