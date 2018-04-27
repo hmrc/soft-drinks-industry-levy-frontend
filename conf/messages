@@ -16,6 +16,7 @@ sdil.common.return-to-sign-in=Return to Government Gateway sign in
 sdil.registered.title=Soft Drinks Industry Levy
 sdil.hint.optional=Optional
 sdil.common.error=Error
+sdil.common.cancel=Cancel
 
 #Address lines
 sdil.address.line1=Address line 1
