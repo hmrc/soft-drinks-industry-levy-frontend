@@ -26,8 +26,12 @@
 
     <h1 class="heading-large">@Messages("sdil.variation.heading")</h1>
 
-    <div class="panel-border-narrow panel">
-        <p>@Messages("sdil.variation.pleaseActuallySubmitThis")</p>
+    <div class="notice">
+        <i class="icon icon-important">
+        </i>
+        <strong class="bold-small">
+        @Messages("sdil.variation.submit.help")
+        </strong>
     </div>
 
     @if(variationData.updatedProductionSites.nonEmpty) {
