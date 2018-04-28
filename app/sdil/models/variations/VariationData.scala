@@ -50,6 +50,22 @@ case class VariationData(original: RetrievedSubscription,
     usesCopacker.getOrElse(false) && !isLiable
   }
 
+  /** Material changes are updates to sites, reporting liability or
+    * contact details.  
+    * 
+    * A material change must by law be reported as a variation
+    * whereas a non-material change cannot be submitted as a variation. 
+    */
+  def isMaterialChange: Boolean = {
+    val orig = VariationData(original)
+
+    List(
+      updatedContactDetails != orig.updatedContactDetails,
+      isLiable != orig.isLiable,
+      updatedWarehouseSites.nonEmpty,
+      updatedProductionSites.nonEmpty
+    ).foldLeft(false)(_ || _)
+  }
 }
 
 object VariationData {

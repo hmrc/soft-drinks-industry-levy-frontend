@@ -31,7 +31,7 @@ object HtmlShow {
 
   import ops._
 
-  protected def instance[A](f: A => Html) = new HtmlShow[A] {
+  def instance[A](f: A => Html) = new HtmlShow[A] {
     def showHtml(in: A): Html = f(in)
   }
 

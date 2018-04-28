@@ -78,13 +78,6 @@ package object webmonad {
       (none[String], path, db - key, ().asRight[Result]).pure[Future]
     }
 
-  sealed trait Control
-
-  //case class Delete(index: Int) extends Control
-  case object Add extends Control
-
-  case object Done extends Control
-
   def many[A](
     id: String, min: Int = 0, max: Int = 1000
   )(
@@ -100,7 +93,7 @@ package object webmonad {
     val updateProgram: WebMonad[List[A]] = for {
       addItem <- innerPage
       _ <- update[List[A]](dataKey) { x => {
-        addItem :: x.getOrElse(List.empty[A])
+        x.getOrElse(List.empty[A]) :+ addItem
       }.some
       }
       _ <- clear(innerId)
@@ -123,6 +116,11 @@ package object webmonad {
 }
 
 package webmonad {
+
+  sealed trait Control
+  //case class Delete(index: Int) extends Control
+  case object Add extends Control
+  case object Done extends Control
 
 
   trait WebMonadController extends Controller with i18n.I18nSupport {
