@@ -78,14 +78,11 @@ package object webmonad {
       (none[String], path, db - key, ().asRight[Result]).pure[Future]
     }
 
-  def many[A](
-    id: String, min: Int = 0, max: Int = 1000
-  )(
-    listingPage: (String, Int, Int, List[A]) => WebMonad[Control]
-  )(
-    wm: String => WebMonad[A]
-  )(implicit format: Format[A], executionContext: ExecutionContext): WebMonad[List[A]] = {
-
+  def many[A](id: String, min: Int = 0, max: Int = 1000, default: List[A] = List.empty[A])
+    (listingPage: (String, Int, Int, List[A]) => WebMonad[Control])
+    (wm: String => WebMonad[A])
+    (implicit format: Format[A], executionContext: ExecutionContext): WebMonad[List[A]] =
+  {
     val innerId = s"${id}_add"
     val innerPage: WebMonad[A] = wm(innerId)
 
@@ -93,26 +90,25 @@ package object webmonad {
     val updateProgram: WebMonad[List[A]] = for {
       addItem <- innerPage
       _ <- update[List[A]](dataKey) { x => {
-        x.getOrElse(List.empty[A]) :+ addItem
-      }.some
-      }
+        x.getOrElse(default) :+ addItem
+      }.some }
+
       _ <- clear(innerId)
       i <- many(id, min, max)(listingPage)(wm)
-    } yield {
-      i
-    }
+    } yield i
 
     for {
-      items <- read[List[A]](dataKey).map{_.getOrElse(List.empty[A])}
+      items <- read[List[A]](dataKey).map{_.getOrElse(default)}
       res <- listingPage(id,min,max,items).flatMap {
-      case Add => updateProgram
-      case Done => read[List[A]](dataKey).map {
-        _.getOrElse(List.empty[A])
-      }: WebMonad[List[A]]
-    }
+        case Add => updateProgram
+        case Done => read[List[A]](dataKey).map {
+          _.getOrElse(List.empty[A])
+        }: WebMonad[List[A]]
+      }
     } yield (res)
 
   }
+
 }
 
 package webmonad {
@@ -177,10 +173,14 @@ package webmonad {
         }
     }
 
-    def formPage[A, B: Writeable](id: String)(mapping: Mapping[A])(
-      render: (String, Form[A], Request[AnyContent]) => B
+    def formPage[A, B: Writeable](id: String)(
+      mapping: Mapping[A], default: Option[A] = None
+    )(
+      render: (List[String], Form[A], Request[AnyContent]) => B
     )(implicit f: Format[A]): WebMonad[A] = {
       val form = Form(single(id -> mapping))
+      val formWithDefault =
+        default.map{form.fill}.getOrElse(form)
 
       EitherT[WebInner, Result, A] {
         RWST { case ((targetId, r), (path, st)) =>
@@ -199,7 +199,7 @@ println(request.body)
                 (
                   id.pure[List],
                   (path, st),
-                  Ok(render(id, form, implicitly)).asLeft[A]
+                  Ok(render(path, formWithDefault, implicitly)).asLeft[A]
                 )
               // something in database, step in URI, user revisting old page, render filled in form
               case ("get", Some(json), `id`) =>
@@ -207,7 +207,7 @@ println(request.body)
                 (
                   id.pure[List],
                   (path, st),
-                  Ok(render(id, form.fill(json.as[A]), implicitly)).asLeft[A]
+                  Ok(render(path, form.fill(json.as[A]), implicitly)).asLeft[A]
                 )
               // something in database, not step in URI, pass through
               case ("get", Some(json), _) =>
@@ -223,7 +223,7 @@ println(request.body)
                   (
                     id.pure[List],
                     (path, st),
-                    BadRequest(render(id, formWithErrors, implicitly)).asLeft[A]
+                    BadRequest(render(path, formWithErrors, implicitly)).asLeft[A]
                   )
                 },
                 formData => {
@@ -263,6 +263,27 @@ println(request.body)
         }
       }
     }
+
+    implicit class RichWebMonadBoolean(wmb: WebMonad[Boolean]) {
+      def andIfTrue[A](next: WebMonad[A]): WebMonad[Option[A]] = for {
+        opt <- wmb
+        ret <- if (opt) next map {_.some} else none[A].pure[WebMonad]
+      } yield ret
+    }
+
+    implicit class RichWebMonad[A](wm: WebMonad[A]) {
+      def when(b: => Boolean): WebMonad[Option[A]] =
+        if(b) wm.map{_.some} else none[A].pure[WebMonad]
+
+      def when(wmb: WebMonad[Boolean]): WebMonad[Option[A]] = for {
+        opt <- wmb
+        ret <- if (opt) wm map {_.some} else none[A].pure[WebMonad]
+      } yield ret
+    }
+
+    def when[A](b: => Boolean)(wm: WebMonad[A]): WebMonad[Option[A]] =
+      if(b) wm.map{_.some} else none[A].pure[WebMonad]
+
   }
 
   /*

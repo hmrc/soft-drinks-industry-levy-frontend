@@ -17,31 +17,39 @@
 package sdil.controllers
 
 import cats.implicits._
+import java.time.LocalDate
 import ltbs.play.scaffold._
 import play.api.i18n.MessagesApi
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.mvc._
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.models.backend.{ Contact, Site, UkAddress }
+import sdil.models.retrieved.{ RetrievedActivity, RetrievedSubscription }
 import uk.gov.hmrc.http.cache.client.SessionCache
 import webmonad._
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.collection.mutable.{Map => MMap}
 import play.api.data.Forms._
 import views.html.gdspages
 import enumeratum._
 import sdil.models._
-import sdil.models.variations.VariationData
+import sdil.models.variations._
 
-class ReturnsController(val messagesApi: MessagesApi,
-                        sdilConnector: SoftDrinksIndustryLevyConnector,
-                        keystore: SessionCache)
-                       (implicit val config: AppConfig, val ec: ExecutionContext)
-    extends SdilWMController {
+class ReturnsController(
+  val messagesApi: MessagesApi,
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  keystore: SessionCache,
+  http: HttpClient
+)(implicit
+  val config: AppConfig,
+  val ec: ExecutionContext
+) extends SdilWMController {
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
@@ -55,32 +63,58 @@ class ReturnsController(val messagesApi: MessagesApi,
     throw new NotImplementedError()
   }
 
-  implicit class RichWebMonadBoolean(wmb: WebMonad[Boolean]) {
-    def andIfTrue[A](next: WebMonad[A]): WebMonad[Option[A]] = for {
-      opt <- wmb
-      ret <- if (opt) next map {_.some} else none[A].pure[WebMonad]
-    } yield ret
-  }
+  implicit val siteHtml: HtmlShow[Address] =
+    HtmlShow.instance { address =>
+      val lines = address.nonEmptyLines.mkString("<br />")
+      Html(s"<div>$lines</div><hr />")
+    }
 
-  def when[A](b: => Boolean)(wm: WebMonad[A]): WebMonad[Option[A]] =
-    if(b) wm.map{_.some} else none[A].pure[WebMonad]
+  protected def askContactDetails(
+    id: String, default: Option[ContactDetails]
+  ): WebMonad[ContactDetails] = for {
+    //TODO: Replace with a single page
+    name     <- askString(s"${id}_name", default.map{_.fullName})
+    position <- askString(s"${id}_position", default.map{_.position})
+    phone    <- askString(s"${id}_phone", default.map{_.phoneNumber})
+    email    <- askString(s"${id}_email", default.map{_.email})
+  } yield ContactDetails(name, position, phone, email)
 
-  implicit val siteHtml: HtmlShow[Address] = HtmlShow.instance { address =>
-    val lines = address.nonEmptyLines.mkString("<br />")
-    Html(s"<div>$lines</div>")
-  }
+  protected def askUpdatedBusinessDetails(
+    id: String, default: Option[UpdatedBusinessDetails] = None
+  ): WebMonad[UpdatedBusinessDetails] = for {
+    //TODO: Replace with a single page
+    orgName <- askString(s"${id}_orgName", default.map { _.tradingName })
+    address <- askAddress(s"${id}_address", default.map { _.address })
+  } yield UpdatedBusinessDetails(orgName, address)
 
-  private val activityUpdate: WebMonad[VariationData] = for {
-    packSites    <- manyT("packSites", askAddress(_))
-    packLarge    <- askBool("package") andIfTrue askBool("packLarge")
-    packQty      <- when (packLarge == Some(true)) (askLitreage("packQty"))
-    useCopacker  <- askBool("useCopacker")
-    operateSites <- askBool("operateSites")
-    imports      <- askBool("importer") andIfTrue askLitreage("importQty")
-    copacks      <- askBool("copacker") andIfTrue askLitreage("copackQty")
-  } yield VariationData(
-    original               = ???,
-    updatedBusinessDetails = ???,
+  // Nasty hack to prevent me from having to either create
+  // good function signatures or put '.some' after all the
+  // defaults
+  private implicit def toSome[A](in: A): Option[A] = in.some
+
+  //
+
+  private def activityUpdate(
+    data: VariationData
+  ): WebMonad[VariationData] = for {
+    packLarge       <- askBool("packLarge", data.producer.isLarge) when
+                         askBool("package", data.producer.isProducer)
+    packQty         <- askLitreage("packQty") when (packLarge == Some(true))
+    packSites       <- if (packLarge == Some(true))
+                         manyT("packSites", askAddress(_), default = data.updatedProductionSites.toList)
+                           else
+                         List.empty[Address].pure[WebMonad]
+    useCopacker     <- askBool("useCopacker", data.usesCopacker)
+    imports         <- askLitreage("importQty") when
+                         askBool("importer", data.imports)
+    copacks         <- askLitreage("copackQty") when
+                         askBool("copacker", data.copackForOthers)
+    contact         <- askContactDetails("contact", data.updatedContactDetails)
+    businessDetails <- askUpdatedBusinessDetails("updatedBusinessDetails",
+                         data.updatedBusinessDetails)
+    warehouses      <- manyT("warehouses", askAddress(_), default = data.updatedWarehouseSites.toList)
+  } yield data.copy (
+    updatedBusinessDetails = businessDetails,
     producer               = Producer(packLarge.isDefined, packLarge),
     usesCopacker           = useCopacker.some,
     packageOwn             = packLarge.isDefined.some,
@@ -89,9 +123,9 @@ class ReturnsController(val messagesApi: MessagesApi,
     copackForOthersVol     = copacks.map{case (a,b) => Litreage(a,b)},
     imports                = imports.isDefined,
     importsVol             = imports.map{case (a,b) => Litreage(a,b)},
-    updatedProductionSites = ???,
-    updatedWarehouseSites  = ???,
-    updatedContactDetails  = ???,
+    updatedProductionSites = packSites,
+    updatedWarehouseSites  = warehouses,
+    updatedContactDetails  = contact,
     previousPages          = Nil
   )
 
@@ -99,26 +133,44 @@ class ReturnsController(val messagesApi: MessagesApi,
     throw new NotImplementedError()
   }
 
+  // Retrieve from ETMP
+  private def retrieveSubscription: WebMonad[RetrievedSubscription] =
+    RetrievedSubscription(
+      utr = "UTR12345",
+      orgName = "Drastox Armnaments",
+      address = UkAddress(List("12 The Street", "Blahville"),"AK47 9PG"),
+      activity = RetrievedActivity(true, false, true, true, false),
+      liabilityDate = LocalDate.now,
+      productionSites = List(
+        Site(UkAddress(List("12 The Street", "Blahville"),"AK47 9PG"))),
+      warehouseSites = List.empty[Site],
+      contact = Contact(
+        "Joe McBlokey".some,
+        "Warlord".some,
+        "01234 567890",
+        "joe@drastox.git.uk")
+    ).pure[WebMonad]
+
   private val getVariation: WebMonad[VariationData] = for {
+    base <- retrieveSubscription.map{VariationData.apply}
     changeType <- askEnum("changeType", ChangeType)
     variation <- changeType match {
       case ChangeType.Sites => contactUpdate
-      case ChangeType.Activity => activityUpdate
+      case ChangeType.Activity => activityUpdate(base)
       case ChangeType.Deregister => deregisterUpdate
     }
-  } yield {
-    variation
-  }
+  } yield variation
 
-  def errorPage(id: String): WebMonad[Result] = ??? 
+  def errorPage(id: String): WebMonad[Result] = ???
 
   private val program: WebMonad[Result] = for {
     variation <- getVariation
-    _ <- when (variation.isMaterialChange) (errorPage("noVariationNeeded"))
+    _ <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
   } yield {
     Ok(s"$variation")
   }
 
-  def index(id: String): Action[AnyContent] = run(program)(id)(dataGet,dataPut)
+  def index(id: String): Action[AnyContent] =
+    run(program)(id)(dataGet,dataPut)
 
 }

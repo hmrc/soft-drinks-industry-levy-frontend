@@ -19,6 +19,7 @@ package sdil.controllers
 import enumeratum._
 import ltbs.play.scaffold.HtmlShow
 import ltbs.play.scaffold.webmonad._
+import play.api.data.Mapping
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.collection.mutable.{Map => MMap}
@@ -49,29 +50,63 @@ trait SdilWMController extends WebMonadController with JunkPersistence {
 
   implicit def config: AppConfig
 
-  protected def askEnum[E <: EnumEntry](id: String, e: Enum[E]): WebMonad[E] = {
+  protected def askEnum[E <: EnumEntry](
+    id: String,
+    e: Enum[E],
+    default: Option[E] = None
+  ): WebMonad[E] = {
     val possValues: List[String] = e.values.toList.map{_.toString}
-    formPage(id)(nonEmptyText.verifying(possValues.contains(_))) { (a, b, r) =>
+    formPage(id)(
+      nonEmptyText.verifying(possValues.contains(_)),
+      default.map{_.toString}
+    ) { (a, b, r) =>
       implicit val request: Request[AnyContent] = r
       gdspages.radiolist(id, b, possValues)
     }.imap(e.withName)(_.toString)
   }
 
-  protected def askBool(id: String): WebMonad[Boolean] =
-    formPage(id)(boolean) { (a, b, r) =>
-    implicit val request: Request[AnyContent] = r
-    gdspages.boolean(id, b)
+  protected def askBool(
+    id: String,
+    default: Option[Boolean] = None
+  ): WebMonad[Boolean] = {
+    val mapping: Mapping[Boolean] = optional(boolean)
+      .verifying(_.isDefined)
+      .transform(_.getOrElse(false),{x: Boolean => x.some})
+
+    formPage(id)(mapping, default) { (a, b, r) =>
+      implicit val request: Request[AnyContent] = r
+      gdspages.boolean(id, b)
+    }
   }
 
-  protected def askEnumSet[E <: EnumEntry](id: String, e: Enum[E]): WebMonad[Set[E]] = {
+  protected def askString(
+    id: String,
+    default: Option[String] = None
+  ): WebMonad[String] =
+    formPage(id)(nonEmptyText, default) { (a, b, r) =>
+    implicit val request: Request[AnyContent] = r
+    gdspages.string(id, b)
+  }
+
+  protected def askEnumSet[E <: EnumEntry](
+    id: String,
+    e: Enum[E],
+    default: Option[Set[E]] = None
+  ): WebMonad[Set[E]] = {
     val possValues: Set[String] = e.values.toList.map{_.toString}.toSet
-    formPage(id)(list(nonEmptyText).verifying(_.toSet subsetOf possValues)) { (a, b, r) =>
+    formPage(id)(
+      list(nonEmptyText).verifying(_.toSet subsetOf possValues),
+      default.map{_.map{_.toString}.toList}
+    ) { (a, b, r) =>
       implicit val request: Request[AnyContent] = r
       gdspages.checkboxes(id, b, possValues.toList)
     }.imap(_.map{e.withName}.toSet)(_.map(_.toString).toList)
   }
 
-  protected def askAddress(id: String): WebMonad[Address] = {
+  protected def askAddress(
+    id: String,
+    default: Option[Address] = None
+  ): WebMonad[Address] = {
     val siteMapping: play.api.data.Mapping[Address] = mapping(
       "line1" -> nonEmptyText,
       "line2" -> text,
@@ -80,7 +115,7 @@ trait SdilWMController extends WebMonadController with JunkPersistence {
       "postcode" -> nonEmptyText
     )(Address.apply)(Address.unapply)
 
-    formPage(id)(siteMapping) { (a, b, r) =>
+    formPage(id)(siteMapping, default) { (a, b, r) =>
       implicit val request: Request[AnyContent] = r
       gdspages.site(id, b)
     }
@@ -91,13 +126,25 @@ trait SdilWMController extends WebMonadController with JunkPersistence {
     (JsPath \ "higher").format[Long]
   )((a: Long, b: Long) => (a,b), unlift({x: (Long,Long) => Tuple2.unapply(x)}))
 
-  protected def askLitreage(id: String): WebMonad[(Long,Long)] =
-    formPage(id)(tuple("lower" -> longNumber, "higher" -> longNumber)){ (a,b,r) =>
+  protected def askLitreage(
+    id: String,
+    default: Option[(Long,Long)] = None
+  ): WebMonad[(Long,Long)] =
+    formPage(id)(
+      tuple("lower" -> longNumber, "higher" -> longNumber),
+      default
+    ){ (a,b,r) =>
       implicit val request: Request[AnyContent] = r
       gdspages.literage(id, b)
     }
 
-  protected def manyT[A](id: String, wm: String => WebMonad[A], min: Int = 0, max: Int = 100)(implicit hs: HtmlShow[A], format: Format[A]): WebMonad[List[A]] = {
+  protected def manyT[A](
+    id: String,
+    wm: String => WebMonad[A],
+    min: Int = 0,
+    max: Int = 100,
+    default: List[A] = List.empty[A]
+  )(implicit hs: HtmlShow[A], format: Format[A]): WebMonad[List[A]] = {
     
     val possValues: List[String] = List("Add","Done")
     def outf(x: String): Control = x match {
@@ -106,7 +153,7 @@ trait SdilWMController extends WebMonadController with JunkPersistence {
     }
     def inf(x: Control): String = x.toString
 
-    many[A](id,min,max){ case (iid, min, max, items) =>
+    many[A](id, min, max, default){ case (iid, min, max, items) =>
 
       formPage(id)(nonEmptyText) { (a, b, r) =>
         implicit val request: Request[AnyContent] = r
@@ -114,6 +161,5 @@ trait SdilWMController extends WebMonadController with JunkPersistence {
       }.imap(outf)(inf)
     }(wm)
   }
-
 
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-    @import helper._
+@import helper._
 @import play.api.Configuration
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.softdrinksindustrylevy.helpers._
@@ -31,8 +31,8 @@
         @helper.form(action = play.api.mvc.Call("post", key)) {
             @CSRF.formField
             @helper.inputText(form(key))
-            <button class="button" type="submit" id="continue-button">
-            @Messages("continue")
+        <button class="button" type="submit" id="continue-button">
+	  @Messages("sdil.common.save-continue")
             </button>
         }
 
