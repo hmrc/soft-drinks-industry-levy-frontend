@@ -20,20 +20,23 @@
 @import sdil.config.AppConfig
 @import views.html.helper.options
 @import ltbs.play.scaffold.webmonad._
+@import views.html.gdspages.helpers._
 
-@(key: String, form: Form[String], items: List[Html])(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[String], items: List[Html], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
 @views.html.main_template(Messages("sdil.common.title"), form = Some(form)) {
+
+    @backlink(breadcrumbs)
 
     @error_summary(form)
 
-    <article class="content__body">
         <h1 class="heading-large">@Messages(s"heading.$key")</h1>
         @helper.form(action = play.api.mvc.Call("post", key)) {
             @CSRF.formField
 
             <ul>
-            @for(item <- items) {
-                <li>@item</li>
+            @for((item, id) <- items.zipWithIndex) {
+			       @item
+			       <button name="@key" value="Delete.@id">Delete</button><hr />
             }
             </ul>
 
@@ -42,7 +45,5 @@
   <button name="@key"  value="Add" formmethod="post">Add</button>
   <button name="@key" value="Done">Done</button>
     }
-
-  </article>
 
 }

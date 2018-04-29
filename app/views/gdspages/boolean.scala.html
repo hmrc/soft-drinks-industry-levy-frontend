@@ -19,15 +19,15 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 @import views.html.helper.options
+@import views.html.gdspages.helpers._
 
-
-@(key: String, form: Form[Boolean])(implicit messages: Messages, request: Request[_], appConfig: AppConfig)
+@(key: String, form: Form[Boolean], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], appConfig: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title"), form = Some(form)) {
 
-    @error_summary(form)
+    @backlink(breadcrumbs)
 
-    <article class="content__body">
+    @error_summary(form)
         <h1 class="heading-large">@Messages(s"heading.$key")</h1>
         @helper.form(action = play.api.mvc.Call("post", key)) {
             @CSRF.formField
@@ -49,7 +49,5 @@
         </div>
 
     }
-
-  </article>
 
 }

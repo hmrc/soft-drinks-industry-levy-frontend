@@ -26,13 +26,15 @@ import play.api.mvc._
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
-import sdil.config.AppConfig
+import sdil.actions.RegisteredAction
+import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.backend.{ Contact, Site, UkAddress }
 import sdil.models.retrieved.{ RetrievedActivity, RetrievedSubscription }
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import webmonad._
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.collection.mutable.{Map => MMap}
 import play.api.data.Forms._
@@ -44,12 +46,12 @@ import sdil.models.variations._
 class ReturnsController(
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
-  keystore: SessionCache,
-  http: HttpClient
+  registeredAction: RegisteredAction,
+  keystore: SessionCache
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController {
+) extends SdilWMController with FrontendController {
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
@@ -66,7 +68,7 @@ class ReturnsController(
   implicit val siteHtml: HtmlShow[Address] =
     HtmlShow.instance { address =>
       val lines = address.nonEmptyLines.mkString("<br />")
-      Html(s"<div>$lines</div><hr />")
+      Html(s"<div>$lines</div>")
     }
 
   protected def askContactDetails(
@@ -97,13 +99,14 @@ class ReturnsController(
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = for {
+    packSites       <- manyT("packSites", askAddress(_), default = data.updatedProductionSites.toList)
     packLarge       <- askBool("packLarge", data.producer.isLarge) when
                          askBool("package", data.producer.isProducer)
     packQty         <- askLitreage("packQty") when (packLarge == Some(true))
-    packSites       <- if (packLarge == Some(true))
-                         manyT("packSites", askAddress(_), default = data.updatedProductionSites.toList)
-                           else
-                         List.empty[Address].pure[WebMonad]
+    // packSites       <- if (packLarge == Some(true))
+    //                      manyT("packSites", askAddress(_), default = data.updatedProductionSites.toList)
+    //                        else
+    //                      List.empty[Address].pure[WebMonad]
     useCopacker     <- askBool("useCopacker", data.usesCopacker)
     imports         <- askLitreage("importQty") when
                          askBool("importer", data.imports)
@@ -136,41 +139,47 @@ class ReturnsController(
   // Retrieve from ETMP
   private def retrieveSubscription: WebMonad[RetrievedSubscription] =
     RetrievedSubscription(
-      utr = "UTR12345",
-      orgName = "Drastox Armnaments",
-      address = UkAddress(List("12 The Street", "Blahville"),"AK47 9PG"),
-      activity = RetrievedActivity(true, false, true, true, false),
-      liabilityDate = LocalDate.now,
+      utr             = "UTR12345",
+      orgName         = "eCola Group",
+      address         = UkAddress(List("12 The Street", "Blahville"),"AK47 9PG"),
+      activity        = RetrievedActivity(true, false, true, true, false),
+      liabilityDate   = LocalDate.now,
       productionSites = List(
         Site(UkAddress(List("12 The Street", "Blahville"),"AK47 9PG"))),
-      warehouseSites = List.empty[Site],
-      contact = Contact(
+      warehouseSites  = List.empty[Site],
+      contact         = Contact(
         "Joe McBlokey".some,
-        "Warlord".some,
+        "Carbonated Drinks Evangelist".some,
         "01234 567890",
-        "joe@drastox.git.uk")
+        "joe@ecola.co.uk")
     ).pure[WebMonad]
 
-  private val getVariation: WebMonad[VariationData] = for {
-    base <- retrieveSubscription.map{VariationData.apply}
+  private def getVariation(implicit hc: HeaderCarrier): WebMonad[VariationData] = for {
+    //    baseP      <- httpGet[RetrievedSubscription]("subscription", s"$sdilUrl/subscription/sdil/1234")
+    base       <- cachedFutureOpt("subscription"){ sdilConnector.retrieveSubscription("XKSDIL000000000")}.
+                     map{x => VariationData.apply(x.get)}
+
+    //base       <- retrieveSubscription.map{VariationData.apply}
     changeType <- askEnum("changeType", ChangeType)
-    variation <- changeType match {
-      case ChangeType.Sites => contactUpdate
-      case ChangeType.Activity => activityUpdate(base)
+    variation  <- changeType match {
+      case ChangeType.Sites      => contactUpdate
+      case ChangeType.Activity   => activityUpdate(base)
       case ChangeType.Deregister => deregisterUpdate
     }
   } yield variation
 
-  def errorPage(id: String): WebMonad[Result] = ???
+  def errorPage(id: String): WebMonad[Result] = Ok(s"Error $id")
 
-  private val program: WebMonad[Result] = for {
+
+  private def program(implicit hc: HeaderCarrier): WebMonad[Result] = for {
     variation <- getVariation
     _ <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
   } yield {
     Ok(s"$variation")
   }
 
-  def index(id: String): Action[AnyContent] =
-    run(program)(id)(dataGet,dataPut)
+  def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    runInner(request)(program)(id)(dataGet,dataPut)
+  }
 
 }

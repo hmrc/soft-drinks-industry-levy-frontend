@@ -14,22 +14,8 @@
  * limitations under the License.
  *@
 
-@import play.api.Configuration
+@(breadcrumbs: List[String])(implicit messages: Messages)
 
-@(key: String, form: Form[Int], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_])
-
-@main(s"heading.$key") {
-
-  <article class="content__body">
-        <h1 class="heading-large">@Messages(s"heading.$key")</h1>
-
-    @helper.form(action = play.api.mvc.Call("post", request.uri)) {
-        @helper.inputText(form(key))
-        <button class="button" type="submit" id="continue-button">
-	  @Messages("continue")
-	</button>
-    }
-
-  </article>
-
+@for(prev <- breadcrumbs.headOption) {
+  <a class="link-back" href="./@prev">@Messages("sdil.common.back")</a>
 }

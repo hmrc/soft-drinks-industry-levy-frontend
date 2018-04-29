@@ -23,14 +23,15 @@ import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 import play.api.http.Writeable
 import play.api.libs.json._
-import play.api.mvc.{Result, Request, AnyContent, Controller, Action}
+import play.api.mvc.{ Action, AnyContent, Controller, Request, Result }
 import scala.concurrent.{Future, ExecutionContext}
 
 import scala.language.implicitConversions
 
 package object webmonad {
 
-  // add in State to avoid having to repetitively read/write to the DB
+  // State is read once, threaded through the webmonads and the final state is
+  // written back at the end of execution
   type DbState = Map[String, JsValue]
 
   // write out Pages (path state)
@@ -46,6 +47,11 @@ package object webmonad {
       RWST { case ((pathA, r), (pathB, st)) =>
         f(pathA, r, pathB, st).map { case (a, b, c, d) => (a.toList, (b, c), d) }
       }
+    }
+
+  def back(implicit ec: ExecutionContext): WebMonad[Unit] = 
+    webMonad { (a, b, path, db) =>
+      (path.headOption, path.tail, db, ().asRight).pure[Future]
     }
 
   def read[A](key: String)(implicit reads: Reads[A], ec: ExecutionContext): WebMonad[Option[A]] =
@@ -78,36 +84,46 @@ package object webmonad {
       (none[String], path, db - key, ().asRight[Result]).pure[Future]
     }
 
-  def many[A](id: String, min: Int = 0, max: Int = 1000, default: List[A] = List.empty[A])
-    (listingPage: (String, Int, Int, List[A]) => WebMonad[Control])
-    (wm: String => WebMonad[A])
-    (implicit format: Format[A], executionContext: ExecutionContext): WebMonad[List[A]] =
-  {
-    val innerId = s"${id}_add"
-    val innerPage: WebMonad[A] = wm(innerId)
+  def cachedFuture[A]
+    (cacheId: String)
+    (f: => Future[A])
+    (implicit format: Format[A], ec: ExecutionContext): WebMonad[A] =
+    webMonad { (id, request, path, db) =>
+      val cached = for {
+        record <- db.get(cacheId)
+      } yield
+          (none[String], path, db, record.as[A].asRight[Result])
+            .pure[Future]
 
-    val dataKey = s"${id}_data"
-    val updateProgram: WebMonad[List[A]] = for {
-      addItem <- innerPage
-      _ <- update[List[A]](dataKey) { x => {
-        x.getOrElse(default) :+ addItem
-      }.some }
-
-      _ <- clear(innerId)
-      i <- many(id, min, max)(listingPage)(wm)
-    } yield i
-
-    for {
-      items <- read[List[A]](dataKey).map{_.getOrElse(default)}
-      res <- listingPage(id,min,max,items).flatMap {
-        case Add => updateProgram
-        case Done => read[List[A]](dataKey).map {
-          _.getOrElse(List.empty[A])
-        }: WebMonad[List[A]]
+      cached.getOrElse {
+        f.map { result =>
+          val newDb = db + (cacheId -> Json.toJson(result))
+          (none[String], path, newDb, result.asRight[Result])
+        }
       }
-    } yield (res)
+    }  
 
-  }
+  def cachedFutureOpt[A]
+    (cacheId: String)
+    (f: => Future[Option[A]])
+    (implicit format: Format[A], ec: ExecutionContext): WebMonad[Option[A]] =
+    webMonad { (id, request, path, db) =>
+      val cached = for {
+        record <- db.get(cacheId)
+      } yield
+          (none[String], path, db, record.as[A].some.asRight[Result])
+            .pure[Future]
+
+      cached.getOrElse {
+        f.map { result =>
+          val newDb = result.map { r => 
+            db + (cacheId -> Json.toJson(r))
+          } getOrElse db
+          (none[String], path, newDb, result.asRight[Result])
+        }
+      }
+    }  
+
 
 }
 
@@ -117,7 +133,9 @@ package webmonad {
   //case class Delete(index: Int) extends Control
   case object Add extends Control
   case object Done extends Control
-
+  case class Delete(i: Int) extends Control {
+    override def toString = s"Delete.$i"
+  }
 
   trait WebMonadController extends Controller with i18n.I18nSupport {
 
@@ -135,11 +153,57 @@ package webmonad {
         }
       }
 
-    def run(program: WebMonad[Result])(id: String)(
+    def redirect(target: String): WebMonad[Unit] = webMonad {
+      (id, request, path, db) =>
+      (none[String], path, db, Redirect(s"./$target").asLeft[Unit]).pure[Future]
+    }
+
+    def many[A](id: String, min: Int = 0, max: Int = 1000, default: List[A] = List.empty[A])
+      (listingPage: (String, Int, Int, List[A]) => WebMonad[Control])
+      (wm: String => WebMonad[A])
+      (implicit format: Format[A]): WebMonad[List[A]] =
+    {
+      val innerId = s"${id}_add"
+      val innerPage: WebMonad[A] = wm(innerId)
+
+      val dataKey = s"${id}_data"
+      val updateProgram: WebMonad[List[A]] = for {
+        addItem <- innerPage
+        _ <- update[List[A]](dataKey) { x => {
+          x.getOrElse(default) :+ addItem
+        }.some }
+
+        _ <- clear(innerId)
+        i <- many(id, min, max)(listingPage)(wm)
+      } yield i
+
+      def deleteProgram(index: Int): WebMonad[List[A]] = for {
+        _ <- update[List[A]](dataKey) { x => {
+          val all = x.getOrElse(default)
+          all.take(index) ++ all.drop(index + 1)
+        }.some }
+        _ <- redirect(id) 
+      } yield {
+        throw new IllegalStateException("Redirect failing for deletion!")
+      }
+
+      for {
+        items <- read[List[A]](dataKey).map{_.getOrElse(default)}
+        res <- listingPage(id,min,max,items).flatMap {
+          case Add => updateProgram
+          case Done => read[List[A]](dataKey).map {
+            _.getOrElse(List.empty[A])
+          }: WebMonad[List[A]]
+          case Delete(index) => deleteProgram(index)
+        }
+      } yield (res)
+
+    }
+
+    def runInner(request: Request[AnyContent])(program: WebMonad[Result])(id: String)(
       load: String => Future[Map[String, JsValue]],
       save: (String, Map[String, JsValue]) => Future[Unit]
-    ) = Action.async {
-      request =>
+    ): Future[Result] = {
         request.session.get("uuid").fold {
           Redirect(".").withSession {
             request.session + ("uuid" -> java.util.UUID.randomUUID.toString)
@@ -171,6 +235,13 @@ package webmonad {
               }
           }
         }
+    }
+
+    def run(program: WebMonad[Result])(id: String)(
+      load: String => Future[Map[String, JsValue]],
+      save: (String, Map[String, JsValue]) => Future[Unit]
+    ) = Action.async {
+      request => runInner(request)(program)(id)(load, save)
     }
 
     def formPage[A, B: Writeable](id: String)(

@@ -14,19 +14,21 @@
  * limitations under the License.
  *@
 
-    @import helper._
+@import helper._
 @import play.api.Configuration
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
+@import views.html.gdspages.helpers._
+@import sdil.models.Address
 
-    @import sdil.models.Address
-    @(key: String, form: Form[Address])(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[Address], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title"), form = Some(form)) {
-    @error_summary(form)
 
-    <article class="content__body">
+    @backlink(breadcrumbs)
+
+    @error_summary(form)
         <h1 class="heading-large">@Messages(s"heading.$key")</h1>
 
         @helper.form(action = play.api.mvc.Call("post", key)) {
@@ -40,8 +42,5 @@
             @Messages("continue")
             </button>
         }
-
-    </article>
-
 
 }

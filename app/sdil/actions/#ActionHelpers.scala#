@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import play.api.Configuration
+package sdil.actions
 
-@(key: String, form: Form[Int], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_])
+import uk.gov.hmrc.auth.core.{EnrolmentIdentifier, Enrolments}
 
-@main(s"heading.$key") {
-
-  <article class="content__body">
-        <h1 class="heading-large">@Messages(s"heading.$key")</h1>
-
-    @helper.form(action = play.api.mvc.Call("post", request.uri)) {
-        @helper.inputText(form(key))
-        <button class="button" type="submit" id="continue-button">
-	  @Messages("continue")
-	</button>
+trait ActionHelpers {
+  protected def getSdilEnrolment(enrolments: Enrolments): Option[EnrolmentIdentifier] = {
+    for {
+      enrolment <- enrolments.getEnrolment("HMRC-OBTDS-ORG")
+      sdil <- enrolment.getIdentifier("EtmpRegistrationNumber")
+      if sdil.value.slice(2, 4) == "SD"
+    } yield {
+      sdil
     }
+  }
 
-  </article>
-
+  protected def getUtr(enrolments: Enrolments): Option[String] = {
+    enrolments.getEnrolment("IR-CT").orElse(enrolments.getEnrolment("IR-SA")).flatMap(_.getIdentifier("UTR").map(_.value))
+  }
 }
