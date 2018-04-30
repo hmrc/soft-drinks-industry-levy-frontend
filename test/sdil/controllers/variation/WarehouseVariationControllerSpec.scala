@@ -27,6 +27,7 @@ import play.api.test.Helpers._
 import sdil.controllers.ControllerSpec
 import sdil.models.Address
 import sdil.models.backend.{Site, UkAddress}
+import sdil.models.retrieved.RetrievedActivity
 import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
@@ -103,6 +104,27 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.ImportsVolController.show().url
     }
+
+    "redirect to the variations page if the user is voluntary" in {
+      val data = VariationData(
+        subscription.copy(
+          activity = RetrievedActivity(
+            smallProducer = true,
+            largeProducer = false,
+            contractPacker = false,
+            importer = false,
+            voluntaryRegistration = true)
+        )
+      )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      redirectLocation(res).value mustBe routes.VariationsController.show().url
+    }
   }
 
   "POST /secondary-warehouses" should {
@@ -148,7 +170,6 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.WarehouseVariationController.show().url
     }
-
   }
 
   "POST /secondary-warehouses/select-sites" should {
