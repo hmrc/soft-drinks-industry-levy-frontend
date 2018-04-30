@@ -18,9 +18,9 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 
-@(contactForm: Form[_], backLink: Call, formTarget: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(contactForm: Form[_], backLink: Call, formTarget: Call, variations: Boolean = false)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@views.html.main_template(Messages("sdil.common.title"), form = Some(contactForm)) {
+@views.html.main_template(if(variations) Messages("sdil.variations.title") else Messages("sdil.common.title"), form = Some(contactForm)) {
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
     @error_summary(contactForm)
