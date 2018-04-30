@@ -30,14 +30,17 @@
     <h1 class="heading-large">@Messages(s"sdil.$pageName.heading")</h1>
 
     @form(submit) {
-        <div class = "form-group">
-            <fieldset class = "form-field-group">
+        <div class="form-group">
+            <fieldset class="form-field-group">
             @inputRadioGroup(
                 radioForm("yesOrNo"),
                 options("true" -> Messages("sdil.common.yes"), "false" -> Messages("sdil.common.no")),
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
-                '_groupClass -> "form-field-group inline")
+                '_groupClass -> "form-field-group inline",
+                '_legend -> Messages(s"sdil.$pageName.heading"),
+                '_legendClass -> "visuallyhidden"
+            )
             </fieldset>
 
             @if(pageName == "packageCopackSmall") {
