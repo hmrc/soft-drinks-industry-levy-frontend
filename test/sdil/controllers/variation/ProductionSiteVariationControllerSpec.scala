@@ -27,6 +27,7 @@ import play.api.test.Helpers.{contentAsString, status, _}
 import sdil.controllers.ControllerSpec
 import sdil.models.Address
 import sdil.models.backend.{Site, UkAddress}
+import sdil.models.retrieved.RetrievedActivity
 import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
@@ -139,6 +140,27 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
       checkboxLabels must contain theSameElementsAs sites.map { site =>
         Address.fromUkAddress(site.address).nonEmptyLines.mkString(", ")
       }
+    }
+
+    "redirect to the variations page if the user is voluntary" in {
+      val data = VariationData(
+        subscription.copy(
+          activity = RetrievedActivity(
+            smallProducer = true,
+            largeProducer = false,
+            contractPacker = false,
+            importer = false,
+            voluntaryRegistration = true)
+        )
+      )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      redirectLocation(res).value mustBe routes.VariationsController.show().url
     }
   }
 

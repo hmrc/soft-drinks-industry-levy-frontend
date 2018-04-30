@@ -40,16 +40,21 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
                                   (implicit config: AppConfig)
   extends FrontendController with I18nSupport with SiteRef {
 
-  lazy val previousPage: Call = routes.VariationsController.show()
-
   def show: Action[AnyContent] = variationAction { implicit request =>
-    val fillInitialForm: Form[Sites] = warehouses match {
-      case Nil => ProductionSiteVariationController.form.fill(Sites(Nil, false, None))
-      case _ => ProductionSiteVariationController.form
+    (request.data.isVoluntary, warehouses) match {
+      case (true, _) =>
+        Redirect(routes.VariationsController.show())
+      case (_, Nil) =>
+        formPage(ProductionSiteVariationController.form.fill(Sites(Nil, false, None)))
+      case _ =>
+        formPage(ProductionSiteVariationController.form)
     }
+  }
+
+  private def formPage(form: Form[Sites])(implicit request: VariationRequest[AnyContent]): Result = {
     Ok(
       secondaryWarehouseWithRef(
-        fillInitialForm,
+        form,
         warehouses,
         request.data.previousPages.last,
         formTarget

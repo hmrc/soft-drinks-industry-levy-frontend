@@ -39,17 +39,19 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
                                         (implicit config: AppConfig)
   extends FrontendController with I18nSupport with SiteRef {
 
-  lazy val previousPage: Call = routes.VariationsController.show()
-
   def show: Action[AnyContent] = variationAction { implicit request =>
-    Ok(
-      productionSiteWithRef(
-        ProductionSiteVariationController.form,
-        request.data.updatedProductionSites,
-        request.data.previousPages.last,
-        routes.ProductionSiteVariationController.submit()
+    if (request.data.isVoluntary) {
+      Redirect(routes.VariationsController.show())
+    } else {
+      Ok(
+        productionSiteWithRef(
+          ProductionSiteVariationController.form,
+          request.data.updatedProductionSites,
+          request.data.previousPages.last,
+          routes.ProductionSiteVariationController.submit()
+        )
       )
-    )
+    }
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
