@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-    @import helper._
+@import helper.{inputText => _,_}
 @import play.api.Configuration
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.softdrinksindustrylevy.helpers._
@@ -34,10 +34,27 @@
 
         @helper.form(action = play.api.mvc.Call("post", key)) {
             @CSRF.formField
-            @helper.inputText(form(s"$key.lower"))
-            @helper.inputText(form(s"$key.higher"))
+
+            <div class="form-group form-litres">
+                @inputText(
+                    form(s"$key.lower"),
+                    Messages("sdil.litreage.lowRate"),
+                    '_inputType -> "text",
+                    '_inputClass -> "input--no-spinner volume"
+                )
+            </div>
+
+            <div class="form-group form-litres">
+                @inputText(
+                    form(s"$key.higher"),
+                    Messages("sdil.litreage.highRate"),
+                    '_inputType -> "text",
+                    '_inputClass -> "input--no-spinner volume"
+                )
+            </div>
+
             <button class="button" type="submit" id="continue-button">
-            @Messages("continue")
+                @Messages("sdil.common.save-continue")
             </button>
         }
 

@@ -14,19 +14,19 @@
  * limitations under the License.
  *@
 
-@import helper.{inputText => _,_}
+@import helper.{inputText => _, _}
 @import play.api.Configuration
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 @import views.html.gdspages.helpers._
+@import sdil.models._
 
-@(key: String, form: Form[String], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[ContactDetails], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title"), form = Some(form)) {
 
     @backlink(breadcrumbs)
-
 
     @error_summary(form)
 
@@ -36,15 +36,29 @@
         @CSRF.formField
 
         @inputText(
-            form(key),
-            Messages(s"$key.fieldlabel"),
-            '_maxLength -> "100"
+            form(s"$key.fullName"),
+            Messages("sdil.contact-details.full-name"),
+            '_maxLength -> "40"
+        )
+
+        @inputText(
+            form(s"$key.position"),
+            Messages("sdil.contact-details.position"),
+            '_maxLength -> "155"
+        )
+        @inputText(
+            form(s"$key.phoneNumber"),
+            Messages("sdil.contact-details.phone-number"),
+            '_maxLength -> "24"
+        )
+        @inputText(
+            form(s"$key.email"),
+            Messages("sdil.contact-details.email"),
+            '_maxLength -> "132"
         )
 
         <button class="button" type="submit" id="continue-button">
-	  @Messages("sdil.common.save-continue")
-            </button>
-        }
-
-
+          @Messages("continue")
+        </button>
+    }
 }

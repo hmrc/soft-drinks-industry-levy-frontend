@@ -413,3 +413,62 @@ sdil.variation.add-link=Add new
 
 sdil.variation.copack-for-others-vol=How many litres do you contract pack for others?
 sdil.variation.imports-vol=How many litres do you import?
+
+# Uniform variation process
+heading.changeType=Which change do you need to make?
+changeType.option.sites=Update contact, packaging site or warehouse details
+changeType.option.activity=Change our business activity, including becoming a small producer
+changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
+heading.package=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide?
+option.package.false=No
+option.package.true=Yes
+heading.packLarge=How many litres of liable drink did you, or third parties acting on your behalf package worldwide in the last 12 months?
+option.packLarge.false=Less than 1 million litres
+option.packLarge.true=1 million litres or more
+
+heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have the rights to manufacture?
+option.packOpt.false=No
+option.packOpt.true=Yes
+
+heading.packQty=In the next 12 months, how many litres of liable drink do you expect to package for brands you own or have the rights to manufacture at UK packaging sites you operate?
+packQty.lower=Litres in the low band
+packQty.higher=Litres in the high band
+
+heading.copacker=Do you operate any packaging sites in the UK to package liable drinks for any customers as a third party?
+option.copacker.false=No
+option.copacker.true=Yes
+
+heading.copackQty=How many litres of liable drink will you package on behalf of your customers in the next 12 months?
+
+heading.importer=Do you bring liable drinks into the UK from anywhere outside of the UK?
+option.importer.false=No
+option.importer.true=Yes
+
+heading.importQty=In the next 12 months, how many litres of liable drink do you expect to bring into the UK?
+importQty.lower=Litres in the low band
+importQty.higher=Litres in the high band
+
+heading.useCopacker=Do you use a copacker?
+
+heading.packSites=Tell us about the packaging sites your business operates in the UK to package liable drinks
+heading.warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+
+heading.contact=Who is your contact for the Soft Drinks Industry Levy?
+contact.fullName=Full Name
+contact.position=Job title
+contact.phoneNumber=Telephone Number
+contact.email=Email
+
+heading.updatedBusinessDetails_orgName=Organisation Name
+updatedBusinessDetails_orgName.fieldlabel=Organisation Name
+option.useCopacker.false=No
+option.useCopacker.true=Yes
+
+heading.updatedBusinessDetails_address=What address should we send correspondence to?
+
+heading.packSites_add=Where is the new packing site located?
+
+variationDone.title=Updates Sent
+variationDone.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
+variationDone.what-happens-next=You don’t need to do anything else. We’ll update your details with the information \
+  you provided. We’ll send you a letter confirming that the changes have been made, which may take 15 working days.  

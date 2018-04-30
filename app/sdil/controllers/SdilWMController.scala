@@ -24,6 +24,7 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
+import scala.util.Try
 import play.api.data.Forms._
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import sdil.config.AppConfig
@@ -109,6 +110,15 @@ trait SdilWMController extends WebMonadController
     }.imap(_.map{e.withName}.toSet)(_.map(_.toString).toList)
   }
 
+  protected def journeyEnd(id: String): WebMonad[Result] =
+    webMonad{ (rid, request, path, db) =>
+      implicit val r = request
+
+      Future.successful {
+        (id.some, path, db, Ok(gdspages.journeyEnd(id, path)).asRight[Result])
+      }
+    }
+
   protected def askAddress(
     id: String,
     default: Option[Address] = None
@@ -135,14 +145,25 @@ trait SdilWMController extends WebMonadController
   protected def askLitreage(
     id: String,
     default: Option[(Long,Long)] = None
-  ): WebMonad[(Long,Long)] =
+  ): WebMonad[(Long,Long)] = {
+
+    val litreage: Mapping[Long] = nonEmptyText
+      .transform[String](_.replaceAll(",", ""), _.toString)
+      .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
+      .transform[BigDecimal](BigDecimal.apply, _.toString)
+      .verifying("error.litreage.numeric", _.isWhole)
+      .verifying("error.litreage.max", _ <= 9999999999999L)
+      .verifying("error.litreage.min", _ >= 0)
+      .transform[Long](_.toLong, BigDecimal.apply)
+
     formPage(id)(
-      tuple("lower" -> longNumber, "higher" -> longNumber),
+      tuple("lower" -> litreage, "higher" -> litreage),
       default
     ){ (path,b,r) =>
       implicit val request: Request[AnyContent] = r
       gdspages.literage(id, b, path)
     }
+  }
 
   protected def manyT[A](
     id: String,

@@ -49,9 +49,9 @@ package object webmonad {
       }
     }
 
-  def back(implicit ec: ExecutionContext): WebMonad[Unit] = 
-    webMonad { (a, b, path, db) =>
-      (path.headOption, path.tail, db, ().asRight).pure[Future]
+  def getRequest(implicit ec: ExecutionContext): WebMonad[Request[AnyContent]] =
+    webMonad { (a, request, path, db) =>
+      (none[String], path, db, request.asRight).pure[Future]
     }
 
   def read[A](key: String)(implicit reads: Reads[A], ec: ExecutionContext): WebMonad[Option[A]] =
@@ -340,6 +340,11 @@ println(request.body)
         opt <- wmb
         ret <- if (opt) next map {_.some} else none[A].pure[WebMonad]
       } yield ret
+    }
+
+    implicit class RichWebMonoid[A](wm: WebMonad[A])(implicit monoid: Monoid[A]) {
+      def emptyUnless(b: => Boolean): WebMonad[A] =
+        if(b) wm else monoid.empty.pure[WebMonad]
     }
 
     implicit class RichWebMonad[A](wm: WebMonad[A]) {

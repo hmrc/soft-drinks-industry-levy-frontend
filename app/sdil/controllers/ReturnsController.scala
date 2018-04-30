@@ -73,13 +73,21 @@ class ReturnsController(
 
   protected def askContactDetails(
     id: String, default: Option[ContactDetails]
-  ): WebMonad[ContactDetails] = for {
-    //TODO: Replace with a single page
-    name     <- askString(s"${id}_name", default.map{_.fullName})
-    position <- askString(s"${id}_position", default.map{_.position})
-    phone    <- askString(s"${id}_phone", default.map{_.phoneNumber})
-    email    <- askString(s"${id}_email", default.map{_.email})
-  } yield ContactDetails(name, position, phone, email)
+  ): WebMonad[ContactDetails] = {
+    val contactMapping = mapping(
+      "fullName" -> nonEmptyText,
+      "position" -> nonEmptyText,
+      "phoneNumber" -> nonEmptyText,
+      "email" -> nonEmptyText
+    )(ContactDetails.apply)(ContactDetails.unapply)
+
+
+    formPage(id)(contactMapping, default) { (path, b, r) =>
+      implicit val request: Request[AnyContent] = r
+      gdspages.contactdetails(id, b, path)
+    }
+
+  }
 
   protected def askUpdatedBusinessDetails(
     id: String, default: Option[UpdatedBusinessDetails] = None
@@ -99,23 +107,16 @@ class ReturnsController(
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = for {
-    packSites       <- manyT("packSites", askAddress(_), default = data.updatedProductionSites.toList)
-    packLarge       <- askBool("packLarge", data.producer.isLarge) when
-                         askBool("package", data.producer.isProducer)
-    packQty         <- askLitreage("packQty") when (packLarge == Some(true))
-    // packSites       <- if (packLarge == Some(true))
-    //                      manyT("packSites", askAddress(_), default = data.updatedProductionSites.toList)
-    //                        else
-    //                      List.empty[Address].pure[WebMonad]
+    packLarge       <- askBool("packLarge", data.producer.isLarge) when askBool("package", data.producer.isProducer)
+    packQty         <- askLitreage("packQty") when askBool("packOpt", data.updatedProductionSites.nonEmpty)
     useCopacker     <- askBool("useCopacker", data.usesCopacker)
-    imports         <- askLitreage("importQty") when
-                         askBool("importer", data.imports)
-    copacks         <- askLitreage("copackQty") when
-                         askBool("copacker", data.copackForOthers)
-    contact         <- askContactDetails("contact", data.updatedContactDetails)
-    businessDetails <- askUpdatedBusinessDetails("updatedBusinessDetails",
-                         data.updatedBusinessDetails)
+    copacks         <- askLitreage("copackQty") when askBool("copacker", data.copackForOthers)
+    imports         <- askLitreage("importQty") when askBool("importer", data.imports)
+    packSites       <- manyT("packSites", askAddress(_), default = data.updatedProductionSites.toList)
     warehouses      <- manyT("warehouses", askAddress(_), default = data.updatedWarehouseSites.toList)
+    businessDetails <- askUpdatedBusinessDetails("updatedBusinessDetails", data.updatedBusinessDetails)
+    contact         <- askContactDetails("contact", data.updatedContactDetails)
+
   } yield data.copy (
     updatedBusinessDetails = businessDetails,
     producer               = Producer(packLarge.isDefined, packLarge),
@@ -136,50 +137,35 @@ class ReturnsController(
     throw new NotImplementedError()
   }
 
-  // Retrieve from ETMP
-  private def retrieveSubscription: WebMonad[RetrievedSubscription] =
-    RetrievedSubscription(
-      utr             = "UTR12345",
-      orgName         = "eCola Group",
-      address         = UkAddress(List("12 The Street", "Blahville"),"AK47 9PG"),
-      activity        = RetrievedActivity(true, false, true, true, false),
-      liabilityDate   = LocalDate.now,
-      productionSites = List(
-        Site(UkAddress(List("12 The Street", "Blahville"),"AK47 9PG"))),
-      warehouseSites  = List.empty[Site],
-      contact         = Contact(
-        "Joe McBlokey".some,
-        "Carbonated Drinks Evangelist".some,
-        "01234 567890",
-        "joe@ecola.co.uk")
-    ).pure[WebMonad]
-
-  private def getVariation(implicit hc: HeaderCarrier): WebMonad[VariationData] = for {
-    //    baseP      <- httpGet[RetrievedSubscription]("subscription", s"$sdilUrl/subscription/sdil/1234")
-    base       <- cachedFutureOpt("subscription"){ sdilConnector.retrieveSubscription("XKSDIL000000000")}.
-                     map{x => VariationData.apply(x.get)}
-
-    //base       <- retrieveSubscription.map{VariationData.apply}
-    changeType <- askEnum("changeType", ChangeType)
-    variation  <- changeType match {
-      case ChangeType.Sites      => contactUpdate
-      case ChangeType.Activity   => activityUpdate(base)
-      case ChangeType.Deregister => deregisterUpdate
-    }
-  } yield variation
+  private def getVariation(subscription: RetrievedSubscription): WebMonad[VariationData] = {
+    val base = VariationData(subscription)
+    for {
+      changeType <- askEnum("changeType", ChangeType)
+      variation  <- changeType match {
+        case ChangeType.Sites      => contactUpdate
+        case ChangeType.Activity   => activityUpdate(base)
+        case ChangeType.Deregister => deregisterUpdate
+      }
+    } yield variation
+  }
 
   def errorPage(id: String): WebMonad[Result] = Ok(s"Error $id")
 
 
-  private def program(implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    variation <- getVariation
+  private def program(subscription: RetrievedSubscription): WebMonad[Result] = for {
+    variation <- getVariation(subscription)
     _ <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
+    exit <- journeyEnd("variationDone")
   } yield {
-    Ok(s"$variation")
+    exit
   }
 
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    runInner(request)(program)(id)(dataGet,dataPut)
+
+    sdilConnector.retrieveSubscription(request.sdilEnrolment.value) flatMap {
+      case Some(s) => runInner(request)(program(s))(id)(dataGet,dataPut)
+      case None => NotFound("").pure[Future]
+    }
   }
 
 }

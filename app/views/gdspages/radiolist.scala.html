@@ -33,7 +33,7 @@
         <div class = "form-group">
             @inputRadioGroup(
                 form(key),
-                options(possibleValues),
+                possibleValues.map{v => (v, Messages(key + ".option." + v.toLowerCase))},
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
                 '_groupClass -> "form-field-group"
