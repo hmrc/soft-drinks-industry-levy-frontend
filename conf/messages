@@ -201,7 +201,7 @@ sdil.small-prod-confirm.body=If this is not accurate, you need to <a href="{0}" 
 sdil.small-prod-confirm.continue=Accept and continue
 
 #Start date
-sdil.start-date.heading=What date did you become liable for the Soft Drinks Industry Levy?
+sdil.start-date.heading=What date did you become liable to register for the Soft Drinks Industry Levy?
 sdil.start-date.example=For example, 6 4 2018
 sdil.start-date.day=Day
 sdil.start-date.month=Month
