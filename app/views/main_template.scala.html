@@ -37,12 +37,13 @@
 
 
 @govuk_wrapper(appConfig = config,
-               title = if(form.exists(_.hasErrors)) { s"${Messages("sdil.common.error")}: $title" } else { title },
+               title = title,
                mainClass = mainClass,
                bodyClasses = bodyClasses,
                sidebar = sidebar,
                contentHeader = contentHeader,
                mainContent = if(noArticle) mainContent else layouts.article(mainContent),
                serviceInfoContent = serviceInfoContent,
-               scriptElem = scriptElem
+               scriptElem = scriptElem,
+               form = form
 )
