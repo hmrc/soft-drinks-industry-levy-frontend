@@ -33,9 +33,7 @@
     <h2 class="heading-medium">@Messages("sdil.complete.what-happens.title")</h2>
     <p>@Messages("sdil.variation.what-happens.p1")</p>
     <p>
-     @Messages("sdil.variation.anotherChange")
-        <a href="@sdil.controllers.variation.routes.VariationsController.start">
-            @Messages("sdil.variation.anotherChangeLink")
-        </a>.
+        <a href="@sdil.controllers.variation.routes.VariationsController.start()" class="button--secondary">
+        @Messages("sdil.service-page.variations.submit.change")</a>
     </p>
 }
