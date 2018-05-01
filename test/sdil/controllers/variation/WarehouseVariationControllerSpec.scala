@@ -160,6 +160,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
 
       val res = testController.addSingleSite()(FakeRequest().withFormUrlEncodedBody(
         "addAddress" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 3",
         "additionalAddress.line2" -> "line 4",
         "additionalAddress.line3" -> "line 5",
@@ -192,6 +193,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
     "redirect to the add secondary warehouse page if a warehouse has been added" in {
       val request = FakeRequest().withFormUrlEncodedBody(
         "addAddress" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 1",
         "additionalAddress.line2" -> "line 2",
         "additionalAddress.line3" -> "line 3",

@@ -180,6 +180,7 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
     "redirect to the production sites page if another site has been added and the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody(
         "addAddress" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 1",
         "additionalAddress.line2" -> "line 2",
         "additionalAddress.line3" -> "",
@@ -209,6 +210,7 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
 
       val request = FakeRequest().withFormUrlEncodedBody(
         "addAddress" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 2",
         "additionalAddress.line2" -> "line 3",
         "additionalAddress.line3" -> "",
@@ -223,7 +225,7 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
         matching("variationData"),
         matching(VariationData(subscription).copy(updatedProductionSites =
           Seq(
-            Site(UkAddress.fromAddress(Address("line 2", "line 3", "", "", "AA12 2AA")), Some("1"), None, None)
+            Site(UkAddress.fromAddress(Address("line 2", "line 3", "", "", "AA12 2AA")), Some("1"), Some("name trade"), None)
           )
         ))
       )(any(), any(), any())
