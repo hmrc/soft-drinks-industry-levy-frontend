@@ -18,11 +18,13 @@
 
 @(summaryKey: String)(panelContent: Html)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-<details class="padding-bottom-10">
-    <summary role="button">
-        <span class="summary" onclick="ga('send', 'event', 'helpLinks', 'help', '@Messages(summaryKey)')">@Messages(summaryKey)</span>
+<details role="group" class="padding-bottom-10">
+    <summary>
+        <span class="summary" onclick="ga('send', 'event', 'helpLinks', 'help', '@Messages(summaryKey)')">
+        @Messages(summaryKey)
+        </span>
     </summary>
-    <div class="panel-border-narrow panel" id="details-content-0">
-        @panelContent
+    <div class="panel panel-border-narrow" id="details-content-0">
+    @panelContent
     </div>
 </details>
