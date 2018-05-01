@@ -66,6 +66,15 @@ trait FormHelpers {
     case b if b.length > 35 => Invalid(s"error.$key.over")
     case _ => Valid
   }
+  lazy val tradingNameMapping: Mapping[String] = {
+    text.transform[String](_.trim, s => s).verifying(optionalTradingNameConstraint)
+  }
+
+  private def optionalTradingNameConstraint: Constraint[String] = Constraint {
+    case b if b.length > 160 => Invalid(s"error.tradingName.over")
+    case a if !a.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid(s"error.tradingName.invalid")
+    case _ => Valid
+  }
 
   def required(key: String): Constraint[String] = Constraint {
     case "" => Invalid(s"error.$key.required")

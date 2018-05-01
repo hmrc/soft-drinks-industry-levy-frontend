@@ -65,15 +65,15 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
         )
       )),
       {
-        case Sites(_, true, Some(additionalAddress)) =>
+        case Sites(_, true, Some(tradingName), Some(additionalAddress)) =>
           val siteRef = nextRef(request.data.original.productionSites, request.data.updatedProductionSites)
-          val site = Site(UkAddress.fromAddress(additionalAddress), Some(siteRef), None)
+          val site = Site(UkAddress.fromAddress(additionalAddress), Some(siteRef), Some(tradingName), None)
           val updated = request.data.updatedProductionSites :+ site
           cache.cache("variationData", request.data.copy(updatedProductionSites = updated)) map { _ =>
             Redirect(routes.ProductionSiteVariationController.show())
           }
 
-        case Sites(sites, _, _) =>
+        case Sites(sites, _, _, _) =>
           val updated = request.data.copy(updatedProductionSites = sites)
           cache.cache("variationData", updated) map { _ =>
             Redirect(routes.ProductionSiteVariationController.confirm())
@@ -97,6 +97,7 @@ object ProductionSiteVariationController extends FormHelpers {
     override val underlying: Mapping[Sites] = mapping(
       "additionalSites" -> seq(siteJsonMapping),
       "addAddress" -> boolean,
+      "tradingName" -> optional(tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(Sites.apply)(Sites.unapply)
 

@@ -39,7 +39,7 @@
                     "true" -> ((Messages("sdil.common.yes"), Some("hiddenTarget"))),
                     "false" -> ((Messages("sdil.common.no"), None))
                 ),
-                Some(addressFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add", warehouses.isEmpty)),
+                Some(siteFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add", warehouses.isEmpty)),
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
                 '_groupClass -> "form-field-group inline",
@@ -57,7 +57,7 @@
                     }
 
                     @expandableCheckbox(warehouseForm, "addAddress", "label.warehouse-sites.add") {
-                        @addressFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add")
+                        @siteFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add")
 
                         <br/>
                         @* note that nested forms are not allowed in HTML, so both buttons must use the same action *@

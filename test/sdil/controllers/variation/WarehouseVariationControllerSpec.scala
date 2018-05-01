@@ -59,7 +59,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
     "return 200 Ok and the add secondary warehouse page if other secondary warehouses have been added" in {
       val data = VariationData(
         subscription.copy(
-          warehouseSites = List(Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None))
+          warehouseSites = List(Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None, None))
         )
       )
 
@@ -160,6 +160,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
 
       val res = testController.addSingleSite()(FakeRequest().withFormUrlEncodedBody(
         "addAddress" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 3",
         "additionalAddress.line2" -> "line 4",
         "additionalAddress.line3" -> "line 5",
@@ -177,7 +178,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
 
       val data = VariationData(
         subscription.copy(warehouseSites = List(
-          Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None)))
+          Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None, None)))
       )
 
       when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
@@ -192,6 +193,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
     "redirect to the add secondary warehouse page if a warehouse has been added" in {
       val request = FakeRequest().withFormUrlEncodedBody(
         "addAddress" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 1",
         "additionalAddress.line2" -> "line 2",
         "additionalAddress.line3" -> "line 3",

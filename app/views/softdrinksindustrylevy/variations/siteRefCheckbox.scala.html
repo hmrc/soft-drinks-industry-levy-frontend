@@ -29,6 +29,7 @@ AppConfig)
     value="@Json.toJson(site)"
         @if(checked) { checked="checked" }>
     <label for="@name">
+        <div>@site.tradingName.fold("")(_+",")</div>
         <div>@site.address.lines.head, @site.address.lines(1),</div>
         <div>@site.address.lines.lift(2).map { l => @l, } @site.address.lines.lift(3).map { l => @l, }@site.address.postCode</div>
     </label>

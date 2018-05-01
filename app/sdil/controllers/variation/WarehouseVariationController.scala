@@ -16,7 +16,7 @@
 
 package sdil.controllers.variation
 
-import play.api.data.Forms.{boolean, mapping, seq}
+import play.api.data.Forms._
 import play.api.data.{Form, FormError, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, Result}
@@ -27,10 +27,8 @@ import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
 import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
-import views.html.softdrinksindustrylevy.variations.secondaryWarehouseWithRef
-import views.html.softdrinksindustrylevy.variations.retrieve_summary_secondaryWarehouse
-
+import uk.gov.voa.play.form.ConditionalMappings._
+import views.html.softdrinksindustrylevy.variations.{retrieve_summary_secondaryWarehouse, secondaryWarehouseWithRef}
 
 import scala.concurrent.Future
 
@@ -45,9 +43,9 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
       case (true, _) =>
         Redirect(routes.VariationsController.show())
       case (_, Nil) =>
-        formPage(ProductionSiteVariationController.form.fill(Sites(Nil, false, None)))
+        formPage(WarehouseVariationController.form.fill(Sites(Nil, false, None, None)))
       case _ =>
-        formPage(ProductionSiteVariationController.form)
+        formPage(WarehouseVariationController.form)
     }
   }
 
@@ -81,24 +79,26 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
         )
       )),
       {
-        case Sites(_, true, Some(addr)) =>
+        case Sites(_, true, Some(tradingName), Some(addr)) =>
           val updatedSites = warehouses match {
             case addrs if addrs.nonEmpty =>
               addrs :+ Site(
                 UkAddress.fromAddress(addr),
                 Some(nextRef(request.data.original.warehouseSites, addrs)),
+                Some(tradingName),
                 None
               )
             case addrs => Seq(Site(
               UkAddress.fromAddress(addr),
               Some(nextRef(request.data.original.warehouseSites, addrs)),
+              Some(tradingName),
               None
             ))
           }
           cache.cache("variationData", request.data.copy(updatedWarehouseSites = updatedSites)) map { _ =>
             Redirect(routes.WarehouseVariationController.show())
           }
-        case Sites(addresses, _, _) =>
+        case Sites(addresses, _, _, _) =>
           val updated = request.data.copy(updatedWarehouseSites = addresses)
 
           cache.cache("variationData", updated) map { _ =>
@@ -132,6 +132,7 @@ object WarehouseVariationController extends FormHelpers {
     override val underlying: Mapping[Sites] = mapping(
       "additionalSites" -> seq(siteJsonMapping),
       "addAddress" -> boolean,
+      "tradingName" -> optional(tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(Sites.apply)(Sites.unapply)
 
