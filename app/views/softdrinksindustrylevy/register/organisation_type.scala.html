@@ -30,13 +30,15 @@
     <h1 class="heading-large">@Messages("sdil.organisation-type.heading")</h1>
 
     @form(sdil.controllers.routes.OrganisationTypeController.submit()) {
-        <div class = "form-group">
+        <div class="form-group">
             @inputRadioGroup(
                 orgTypeForm("orgType"),
                 options(orgTypes:_*),
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
-                '_groupClass -> "form-field-group"
+                '_groupClass -> "form-field-group",
+                '_legend -> Messages("sdil.organisation-type.heading"),
+                '_legendClass -> "visuallyhidden"
             )
 
             <button class="button" type="submit" id="continue-button">
