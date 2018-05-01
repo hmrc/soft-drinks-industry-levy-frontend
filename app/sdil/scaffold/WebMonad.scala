@@ -17,6 +17,7 @@
 package ltbs.play.scaffold
 
 import cats.data.{EitherT, RWST}
+import cats.Monoid
 import cats.implicits._
 import play.api._
 import play.api.data.Forms._

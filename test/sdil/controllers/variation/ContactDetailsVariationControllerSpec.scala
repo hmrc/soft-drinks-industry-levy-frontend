@@ -80,7 +80,7 @@ class ContactDetailsVariationControllerSpec extends ControllerSpec with BeforeAn
       val res = testController.submit()(request)
       status(res) mustBe SEE_OTHER
 
-      redirectLocation(res).value mustBe routes.VariationsController.show().url
+      redirectLocation(res).value mustBe routes.ContactDetailsVariationController.confirm().url
     }
 
     "update the cached form data when the form data is valid" in {

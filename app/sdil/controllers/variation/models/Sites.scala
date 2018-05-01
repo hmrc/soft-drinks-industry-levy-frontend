@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package sdil.models.variations
+package sdil.controllers.variation.models
 
-import play.api.libs.json.{Format, Json}
 import sdil.models.Address
+import sdil.models.backend.Site
 
-case class UpdatedBusinessDetails(tradingName: String, address: Address)
-
-object UpdatedBusinessDetails {
-  implicit val format: Format[UpdatedBusinessDetails] = Json.format[UpdatedBusinessDetails]
-}
+case class Sites(sites: Seq[Site],
+                 addAddress: Boolean,
+                 additionalSites: Option[Address])

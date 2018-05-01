@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package sdil.models.backend
+package sdil.controllers
 
-import java.time.LocalDate
+import scala.concurrent.Future
+import scala.language.implicitConversions
 
-import play.api.libs.json.{Format, Json}
-import sdil.models.Address
-
-case class Site(address: UkAddress, ref: Option[String], closureDate: Option[LocalDate])
-
-object Site {
-  implicit val format: Format[Site] = Json.format[Site]
-
-  def fromAddress(address: Address): Site = {
-    Site(UkAddress.fromAddress(address), None, None)
-  }
+package object variation {
+  implicit def toFuture[A](a: A): Future[A] = Future.successful(a)
 }

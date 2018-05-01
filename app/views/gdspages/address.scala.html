@@ -20,9 +20,9 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 @import views.html.gdspages.helpers._
-@import sdil.models.backend.Site
+@import sdil.models.Address
 
-@(key: String, form: Form[Site], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[Address], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
 
 @views.html.main_template(Messages("sdil.common.title"), form = Some(form)) {
 
@@ -35,37 +35,35 @@
         @CSRF.formField
 
         @inputText(
-            form(s"$key.address.line1"),
+            form(s"$key.line1"),
             Messages("sdil.address.line1"),
             '_divClass -> "form-group-compound",
             '_maxLength -> "35"
         )
         @inputText(
-            form(s"$key.address.line2"),
+            form(s"$key.line2"),
             Messages("sdil.address.line2"),
             '_divClass -> "form-group-compound",
             '_maxLength -> "35"
         )
         @inputText(
-            form(s"$key.address.line3"),
+            form(s"$key.line3"),
             Messages("sdil.address.line3"),
             '_divClass -> "form-group-compound",
             '_maxLength -> "35"
         )
         @inputText(
-            form(s"$key.address.line4"),
+            form(s"$key.line4"),
             Messages("sdil.address.line4"),
             '_divClass -> "form-group-compound",
             '_maxLength -> "35"
         )
         @inputText(
-            form(s"$key.address.postcode"),
+            form(s"$key.postcode"),
             Messages("sdil.address.postcode"),
             '_divClass -> "form-group-compound",
             '_maxLength -> "35"
         )
-
-
             <button class="button" type="submit" id="continue-button">
             @Messages("continue")
             </button>

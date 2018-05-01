@@ -24,6 +24,7 @@ import sdil.controllers.ContactDetailsController
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
+import views.html.softdrinksindustrylevy.variations
 
 import scala.concurrent.Future
 
@@ -52,9 +53,13 @@ class ContactDetailsVariationController(val messagesApi: MessagesApi,
         formWithErrors,
         previousPage, formTarget))),
       details => cache.cache("variationData", request.data.copy(updatedContactDetails = details)) map { _ =>
-        Redirect(routes.VariationsController.show())
+        Redirect(routes.ContactDetailsVariationController.confirm())
       }
     )
+  }
+
+  def confirm: Action[AnyContent] = variationAction { implicit request =>
+    Ok(variations.retrieve_summary_contact_details(request.data))
   }
 }
 

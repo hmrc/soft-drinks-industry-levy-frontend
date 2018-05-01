@@ -26,7 +26,7 @@ package object variation {
   lazy val subscription: RetrievedSubscription = RetrievedSubscription(
     utr = "9876543210",
     orgName = "Forbidden Left Parenthesis & Sons",
-    address = UkAddress(Seq("Rosm House", "Des Street", "Etmp Lane"), "SW1A 1AA"),
+    address = UkAddress(List("Rosm House", "Des Street", "Etmp Lane"), "SW1A 1AA"),
     activity = RetrievedActivity(
       smallProducer = true,
       largeProducer = true,

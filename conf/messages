@@ -16,6 +16,7 @@ sdil.common.return-to-sign-in=Return to Government Gateway sign in
 sdil.registered.title=Soft Drinks Industry Levy
 sdil.hint.optional=Optional
 sdil.common.error=Error
+sdil.common.cancel=Cancel
 
 #Address lines
 sdil.address.line1=Address line 1
@@ -291,25 +292,25 @@ sdil.declaration.continue=Confirm and send
 sdil.complete.title=Application complete
 sdil.complete.subheading=We’ve received your application to register for the Soft Drinks Industry Levy
 sdil.complete.p1=Your application to register for the Soft Drinks Industry Levy was submitted on {0} at {1}.
-sdil.complete.what-happens.title=What happens next?
+sdil.complete.what-happens.title=What happens next
 sdil.complete.what-happens.p1=You don’t need to do anything else. We’ll send your reference number to {0} within 24 hours.
 sdil.complete.what-happens.p2=If you don’t get your reference number or you need to make a change to your registration, you need to call the Soft Drinks Industry Levy Helpline on 0300 200 3700.
 sdil.complete.what-happens.p3=Returns will be due for fixed quarters ending June, September, December and March.
 
 #Service page
 sdil.service-page.title=Soft Drinks Industry Levy details
-sdil.service-page.p1=Your Soft Drinks Industry Levy reference is: 
+sdil.service-page.p1=Your Soft Drinks Industry Levy reference is:
 sdil.service-page.p2.voluntary-only= You’re registered as a small producer only, which means you don’t have to file returns. You need\
  to give your reference number to your third party packagers so they can claim an exemption for the liable drinks\
  they package for you. You need to contact us if your situation changes.
 sdil.service-page.business-details.title=Registered business details
-sdil.service-page.contact-details.title=Contact details 
+sdil.service-page.contact-details.title=Contact details
 sdil.service-page.name=Name
 sdil.service-page.job-title=Job Title
 sdil.service-page.telephone=Telephone
 sdil.service-page.email=Email
 sdil.service-page.registered-address.title=Registered address
-sdil.service-page.registered-address.p1=You need to keep these up to date. To add or remove an address, you need to contact us.
+sdil.service-page.registered-address.p1=You need to keep these up to date.
 sdil.service-page.packaging-address.subtitle=Your registered packaging sites
 sdil.service-page.warehouse-address.subtitle=Your registered warehouses
 sdil.service-page.address-line-1=Address line 1
@@ -320,9 +321,19 @@ sdil.service-page.support.p2=Telephone: 0300 200 3700
 sdil.service-page.support.title2=More options
 sdil.service-page.support.link1=https://www.gov.uk/guidance/soft-drinks-industry-levy
 sdil.service-page.support.p3=Soft Drinks Industry Levy guidance
-sdil.service-page.support.link2=https://www.gov.uk/government/consultations/draft-legislation-soft-drinks-industry-levy
-sdil.service-page.support.p4=Draft legislation: Soft Drinks Industry Levy
-
+sdil.service-page.support.link2=https://www.legislation.gov.uk/uksi/2018/41/made
+sdil.service-page.support.p4=Soft Drinks Industry Levy legislation
+sdil.service-page.variations.title=Change registered details
+sdil.service-page.variations.p1=You must tell HMRC when you:
+sdil.service-page.variations.li.1=start or stop using a warehouse or packaging site
+sdil.service-page.variations.li.2=change your contact details
+sdil.service-page.variations.li.3=change your business activity, including becoming a small producer
+sdil.service-page.variations.li.4=need to deregister from the Soft Drinks Industry Levy
+sdil.service-page.variations.li.5=need to make an adjustment of £10,000 or more to a previous return
+sdil.service-page.variations.change=Tell HMRC about a change
+sdil.service-page.variations.p2=To change your business activity or deregister from the Soft Drinks Industry Levy, call 0300 200 3700.
+sdil.service-page.variations.p3=You can tell HMRC about changes to warehouses, packaging sites and contact details online.
+sdil.service-page.variations.p4=Changes can take up to 15 working days to process.
 
 #Already registered
 sdil.already-enrolled.heading=You’re already registered
@@ -392,22 +403,45 @@ sdil.beta-registration-confirmed.p1=We’ll contact you if more spaces become av
 error.businessName.required=Enter a business name
 
 #Variations retrieved summary
-sdil.variation.heading=Your registration details
+sdil.variation.heading=Change your registration details
+sdil.variation.heading.confirm=Confirm your registration details
+sdil.variation.submit.help=Your changes will not be submitted until you have confirmed and sent them
+
+
+#Update business details
+sdil.variation.tradingName=Trading name
+sdil.variation.address.heading=Business address
+sdil.variations.continue=Continue
+
+#update actor status
 sdil.variation.actor-status=Current status
 sdil.variation.large-producer=Did you produce more than 1 million litres?
 sdil.variation.copacker=Do you contract pack for others?
 sdil.variation.producer=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink \
-  for brands you own or have the rights to manufacture, worldwide?
+for brands you own or have the rights to manufacture, worldwide?
+
 sdil.variation.importer=Do you import any liable drink from outside of the UK?
 sdil.variation.uses-copacker=Do you use a third party in the UK to package brands you own or have the rights to manufacture?
 sdil.variation.package-own=Do you operate any packaging sites in the UK which package liable drinks for brands\
-   you own or have the rights to manufacture? 
+you own or have the rights to manufacture? 
 sdil.variation.package-own-vol=How many litres of liable drink will you package in the UK for the brands you own or \
-  have the rights to manufacture, in the next 12 months?
+have the rights to manufacture, in the next 12 months?
 #Update business details
 sdil.variation.tradingName=Trading name
 sdil.variation.address.heading=Business address
+sdil.variations.continue=Continue
+sdil.variations.submit=Confirm and send
 
+#variations summary page
+sdil.variations.summary.title=Check your variations
+sdil.variations.summary.p1=Below is a list of the variations you want to make to your registration.
+sdil.variations.mandatory-to-voluntary=Something about mandatory to voluntary
+sdil.variations.voluntary-to-mandatory=Something not about mandatory to voluntary
+sdil.variations.business-details=You have changed your business details
+sdil.variations.production-sites=You have changed your production sites
+sdil.variations.warehouse-sites=You have changed your warehouse sites
+sdil.variations.contact-details.change=You have changed your contact details
+sdil.variations.deregister=Your company needs to deregister
 #Update warehouse sites
 sdil.variation.add-link=Add new
 
@@ -472,3 +506,14 @@ variationDone.title=Updates Sent
 variationDone.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
 variationDone.what-happens-next=You don’t need to do anything else. We’ll update your details with the information \
   you provided. We’ll send you a letter confirming that the changes have been made, which may take 15 working days.  
+
+
+#variation confirmation
+sdil.variations.complete.title=Updates sent
+sdil.variation.complete.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
+sdil.variation.what-happens.p1=You don’t need to do anything else. We’ll update your details with the information you provided. We’ll send you a letter confirming that the changes have been made, which may take 15 working days.
+sdil.link.back.home=Back to home
+sdil.variation.complete.p1=Your updates for the Soft Drinks Industry Levy were submitted on {0} at {1}.
+sdil.variation.anotherChange=If you need to make another change,
+sdil.variation.anotherChangeLink=go back and start again
+

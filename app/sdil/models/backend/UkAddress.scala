@@ -16,18 +16,47 @@
 
 package sdil.models.backend
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, JsResult, JsValue, Json}
 import sdil.models.Address
 
-case class UkAddress(lines: Seq[String], postCode: String)
+trait RetrievedAddress {
+  def lines: List[String]
+  def country: String
+}
+
+object RetrievedAddress {
+  implicit val format: Format[RetrievedAddress] = new Format[RetrievedAddress] {
+    override def writes(o: RetrievedAddress): JsValue = o match {
+      case uk: UkAddress => Json.toJson(uk)
+      case foreign: ForeignAddress => Json.toJson(foreign)
+    }
+
+    override def reads(json: JsValue): JsResult[RetrievedAddress] = {
+      (json \ "country").asOpt[String].map(_.toLowerCase) match {
+        case Some("uk") | None => json.validate[UkAddress]
+        case _ => json.validate[ForeignAddress]
+      }
+    }
+  }
+}
+
+case class UkAddress(lines: List[String], postCode: String) extends RetrievedAddress {
+  val country = "GB"
+}
 
 object UkAddress {
-  implicit val format: Format[UkAddress] = Json.format[UkAddress]
+  implicit val ukAddressFormat: Format[UkAddress] = Json.format[UkAddress]
 
   def fromAddress(address: Address): UkAddress = {
     UkAddress(
-      Seq(address.line1, address.line2, address.line3, address.line4).filter(_.nonEmpty),
+      List(address.line1, address.line2, address.line3, address.line4).filter(_.nonEmpty),
       address.postcode
     )
   }
+}
+
+case class ForeignAddress(lines: List[String], country: String) extends RetrievedAddress
+
+object ForeignAddress {
+  implicit val foreignAddressFormat: Format[ForeignAddress] = Json.format[ForeignAddress]
 }

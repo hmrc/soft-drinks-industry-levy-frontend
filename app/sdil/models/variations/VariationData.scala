@@ -16,14 +16,17 @@
 
 package sdil.models.variations
 
+import java.time.LocalDate
+
 import play.api.libs.json._
 import play.api.mvc.Call
 import sdil.controllers.variation.routes
+import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer}
 
 case class VariationData(original: RetrievedSubscription,
-                         updatedBusinessDetails: UpdatedBusinessDetails,
+                         updatedBusinessAddress: Address,
                          producer: Producer,
                          usesCopacker: Option[Boolean],
                          packageOwn: Option[Boolean],
@@ -32,8 +35,8 @@ case class VariationData(original: RetrievedSubscription,
                          copackForOthersVol: Option[Litreage],
                          imports: Boolean,
                          importsVol: Option[Litreage],
-                         updatedProductionSites: Seq[Address],
-                         updatedWarehouseSites: Seq[Address], // TODO create variation Site model with trading name
+                         updatedProductionSites: Seq[Site],
+                         updatedWarehouseSites: Seq[Site], // TODO create variation Site model with trading name
                          updatedContactDetails: ContactDetails,
                          previousPages: Seq[Call]
                         ) {
@@ -43,11 +46,11 @@ case class VariationData(original: RetrievedSubscription,
   }
 
   def isLiable: Boolean = {
-    producer.isLarge.getOrElse(false) || imports || copackForOthers
+    (producer.isProducer && producer.isLarge.getOrElse(false)) || imports || copackForOthers
   }
 
   def isVoluntary: Boolean = {
-    usesCopacker.getOrElse(false) && !isLiable
+    usesCopacker.getOrElse(false) && producer.isLarge.contains(false) && !isLiable
   }
 
   /** Material changes are updates to sites, reporting liability or
@@ -87,7 +90,7 @@ object VariationData {
 
   def apply(original: RetrievedSubscription): VariationData = VariationData(
     original,
-    UpdatedBusinessDetails(original.orgName, Address.fromUkAddress(original.address)),
+    Address.fromUkAddress(original.address),
     Producer(original.activity.largeProducer || original.activity.smallProducer, Some(original.activity.largeProducer)),
     usesCopacker = if(original.activity.voluntaryRegistration) Some(true) else None,
     packageOwn = None,
@@ -96,8 +99,8 @@ object VariationData {
     copackForOthersVol = None,
     original.activity.importer,
     importsVol = None,
-    original.productionSites.map{ x => Address.fromUkAddress(x.address)},
-    original.warehouseSites.map{ x => Address.fromUkAddress(x.address)},
+    original.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))),
+    original.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))),
     ContactDetails(
       original.contact.name.getOrElse(""),
       original.contact.positionInCompany.getOrElse(""),

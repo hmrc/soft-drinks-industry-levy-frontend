@@ -29,12 +29,14 @@ import play.api.data.Forms._
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import sdil.config.AppConfig
 import sdil.models._
+import sdil.models.backend._
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpReads }
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
 import cats.implicits._
 import HtmlShow.ops._
+import java.time.LocalDate
 
 trait JunkPersistence {
 
@@ -119,23 +121,43 @@ trait SdilWMController extends WebMonadController
       }
     }
 
-  protected def askAddress(
+  protected def askSite(
     id: String,
-    default: Option[Address] = None
-  ): WebMonad[Address] = {
-    val siteMapping: play.api.data.Mapping[Address] = mapping(
-      "line1" -> nonEmptyText,
-      "line2" -> text,
-      "line3" -> text,
-      "line4" -> text,
-      "postcode" -> nonEmptyText
-    )(Address.apply)(Address.unapply)
+    default: Option[Site] = None
+  ): WebMonad[Site] = {
+
+    val siteMapping = mapping(
+      "address" -> ukAddressMapping
+    ){a => Site.apply(a,none[String],none[LocalDate])}(Site.unapply(_).map{
+      case (address,refOpt,_) => address
+                                                     })
 
     formPage(id)(siteMapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
       gdspages.site(id, b, path)
     }
   }
+
+  private val addressMapping: play.api.data.Mapping[Address] = mapping(
+    "line1" -> nonEmptyText,
+    "line2" -> text,
+    "line3" -> text,
+    "line4" -> text,
+    "postcode" -> nonEmptyText
+  )(Address.apply)(Address.unapply)
+
+  private val ukAddressMapping: Mapping[UkAddress] =
+    addressMapping.transform(UkAddress.fromAddress, Address.fromUkAddress)
+
+  protected def askAddress(
+    id: String,
+    default: Option[Address] = None
+  ): WebMonad[Address] = 
+    formPage(id)(addressMapping, default) { (path, b, r) =>
+      implicit val request: Request[AnyContent] = r
+      gdspages.address(id, b, path)
+    }
+  
 
   implicit val longTupleFormatter: Format[(Long, Long)] = (
     (JsPath \ "lower").format[Long] and

@@ -23,7 +23,7 @@ import play.api.inject.DefaultApplicationLifecycle
 import play.api.routing.Router
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction, VariationAction}
 import sdil.connectors.{ContactFrontendConnector, GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
-import sdil.controllers._
+import sdil.controllers.{VariationsController => UniformVariationsController, _}
 import sdil.controllers.test.TestingController
 import sdil.controllers.variation._
 import uk.gov.hmrc.auth.core.AuthConnector
@@ -77,7 +77,9 @@ trait RoutesWiring extends CommonWiring {
   lazy val contactDetailsVariationController: ContactDetailsVariationController = wire[ContactDetailsVariationController]
   lazy val warehouseVariationController: WarehouseVariationController = wire[WarehouseVariationController]
   lazy val productionSiteVariationController: ProductionSiteVariationController = wire[ProductionSiteVariationController]
+  lazy val variationsSummaryController: VariationsSummaryController = wire[VariationsSummaryController]
 
+  lazy val uniformVariationsController: UniformVariationsController = wire[UniformVariationsController]
   lazy val returnsController: ReturnsController = wire[ReturnsController]
 
   private lazy val appRoutes: app.Routes = wire[app.Routes]

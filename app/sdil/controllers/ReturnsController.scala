@@ -41,9 +41,8 @@ import play.api.data.Forms._
 import views.html.gdspages
 import enumeratum._
 import sdil.models._
-import sdil.models.variations._
 
-class ReturnsController(
+class ReturnsController (
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
@@ -53,17 +52,6 @@ class ReturnsController(
   val ec: ExecutionContext
 ) extends SdilWMController with FrontendController {
 
-  sealed trait ChangeType extends EnumEntry
-  object ChangeType extends Enum[ChangeType] {
-    val values = findValues
-    case object Sites extends ChangeType
-    case object Activity extends ChangeType
-    case object Deregister extends ChangeType
-  }
-
-  private lazy val contactUpdate: WebMonad[VariationData] = {
-    throw new NotImplementedError()
-  }
 
   implicit val siteHtml: HtmlShow[Address] =
     HtmlShow.instance { address =>
@@ -89,79 +77,19 @@ class ReturnsController(
 
   }
 
-  protected def askUpdatedBusinessDetails(
-    id: String, default: Option[UpdatedBusinessDetails] = None
-  ): WebMonad[UpdatedBusinessDetails] = for {
-    //TODO: Replace with a single page
-    orgName <- askString(s"${id}_orgName", default.map { _.tradingName })
-    address <- askAddress(s"${id}_address", default.map { _.address })
-  } yield UpdatedBusinessDetails(orgName, address)
-
   // Nasty hack to prevent me from having to either create
   // good function signatures or put '.some' after all the
   // defaults
   private implicit def toSome[A](in: A): Option[A] = in.some
 
-  //
-
-  private def activityUpdate(
-    data: VariationData
-  ): WebMonad[VariationData] = for {
-    packLarge       <- askBool("packLarge", data.producer.isLarge) when askBool("package", data.producer.isProducer)
-    packQty         <- askLitreage("packQty") when askBool("packOpt", data.updatedProductionSites.nonEmpty)
-    useCopacker     <- askBool("useCopacker", data.usesCopacker)
-    copacks         <- askLitreage("copackQty") when askBool("copacker", data.copackForOthers)
-    imports         <- askLitreage("importQty") when askBool("importer", data.imports)
-    packSites       <- manyT("packSites", askAddress(_), default = data.updatedProductionSites.toList)
-    warehouses      <- manyT("warehouses", askAddress(_), default = data.updatedWarehouseSites.toList)
-    businessDetails <- askUpdatedBusinessDetails("updatedBusinessDetails", data.updatedBusinessDetails)
-    contact         <- askContactDetails("contact", data.updatedContactDetails)
-
-  } yield data.copy (
-    updatedBusinessDetails = businessDetails,
-    producer               = Producer(packLarge.isDefined, packLarge),
-    usesCopacker           = useCopacker.some,
-    packageOwn             = packLarge.isDefined.some,
-    packageOwnVol          = packQty.map{case (a,b) => Litreage(a,b)},
-    copackForOthers        = copacks.isDefined,
-    copackForOthersVol     = copacks.map{case (a,b) => Litreage(a,b)},
-    imports                = imports.isDefined,
-    importsVol             = imports.map{case (a,b) => Litreage(a,b)},
-    updatedProductionSites = packSites,
-    updatedWarehouseSites  = warehouses,
-    updatedContactDetails  = contact,
-    previousPages          = Nil
-  )
-
-  private lazy val deregisterUpdate: WebMonad[VariationData] = {
-    throw new NotImplementedError()
-  }
-
-  private def getVariation(subscription: RetrievedSubscription): WebMonad[VariationData] = {
-    val base = VariationData(subscription)
-    for {
-      changeType <- askEnum("changeType", ChangeType)
-      variation  <- changeType match {
-        case ChangeType.Sites      => contactUpdate
-        case ChangeType.Activity   => activityUpdate(base)
-        case ChangeType.Deregister => deregisterUpdate
-      }
-    } yield variation
-  }
-
-  def errorPage(id: String): WebMonad[Result] = Ok(s"Error $id")
-
-
   private def program(subscription: RetrievedSubscription): WebMonad[Result] = for {
-    variation <- getVariation(subscription)
-    _ <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
-    exit <- journeyEnd("variationDone")
+    produced <- askLitreage("returnsProduced")
+    exit <- journeyEnd("returnsDone")
   } yield {
     exit
   }
 
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-
     sdilConnector.retrieveSubscription(request.sdilEnrolment.value) flatMap {
       case Some(s) => runInner(request)(program(s))(id)(dataGet,dataPut)
       case None => NotFound("").pure[Future]

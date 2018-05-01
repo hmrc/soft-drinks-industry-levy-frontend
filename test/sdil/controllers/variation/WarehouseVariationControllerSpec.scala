@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.ControllerSpec
 import sdil.models.Address
-import sdil.models.backend.Site
+import sdil.models.backend.{Site, UkAddress}
 import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
@@ -37,6 +37,15 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
 
   "GET /secondary-warehouses" should {
     "return 200 Ok and the secondary warehouse page if no secondary warehouses have been added" in {
+
+      val data = VariationData(subscription)
+        .copy(previousPages = Seq(
+          routes.VariationsController.show)
+        )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
@@ -48,7 +57,10 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
 
     "return 200 Ok and the add secondary warehouse page if other secondary warehouses have been added" in {
       val data = VariationData(
-        subscription.copy(warehouseSites = List(Site.fromAddress(Address("1", "", "", "", "AA11 1AA")))))
+        subscription.copy(
+          warehouseSites = List(Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None))
+        )
+      )
 
       when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
       .thenReturn(Future.successful(Some(data)))
@@ -125,7 +137,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
         .thenReturn(Future.successful(Some(data)))
 
       val res = testController.addSingleSite()(FakeRequest().withFormUrlEncodedBody(
-        "addWarehouse" -> "true",
+        "addAddress" -> "true",
         "additionalAddress.line1" -> "line 3",
         "additionalAddress.line2" -> "line 4",
         "additionalAddress.line3" -> "line 5",
@@ -143,20 +155,22 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
     "return 400 Bad Request if the user says they have a warehouse and does not fill in the address form" in {
 
       val data = VariationData(
-        subscription.copy(warehouseSites = List(Site.fromAddress(Address("1", "", "", "", "AA11 1AA")))))
+        subscription.copy(warehouseSites = List(
+          Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None)))
+      )
 
       when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
         .thenReturn(Future.successful(Some(data)))
 
 
-      val res = testController.addMultipleSites()(FakeRequest().withFormUrlEncodedBody("addWarehouse" -> "true"))
+      val res = testController.addMultipleSites()(FakeRequest().withFormUrlEncodedBody("addAddress" -> "true"))
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include(Messages("sdil.warehouse.add.heading"))
     }
 
     "redirect to the add secondary warehouse page if a warehouse has been added" in {
       val request = FakeRequest().withFormUrlEncodedBody(
-        "addWarehouse" -> "true",
+        "addAddress" -> "true",
         "additionalAddress.line1" -> "line 1",
         "additionalAddress.line2" -> "line 2",
         "additionalAddress.line3" -> "line 3",

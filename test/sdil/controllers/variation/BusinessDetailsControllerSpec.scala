@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.ControllerSpec
 import sdil.models.Address
-import sdil.models.variations.{UpdatedBusinessDetails, VariationData}
+import sdil.models.variations._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
@@ -61,14 +61,6 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       html.select("a.link-back").attr("href") mustBe routes.VariationsController.show().url
     }
 
-    "return a page containing a 'Trading Name' input" in {
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("input").asScala.map(_.attr("name")) must contain ("tradingName")
-    }
-
     "return a page containing 'Business address' inputs" in {
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
@@ -91,7 +83,6 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
 
     "return 303 See Other and redirect to the summary page if the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody(
-        "tradingName" -> "Forbidden Right Parenthesis & Sons",
         "businessAddress.line1" -> "Rosm House",
         "businessAddress.line2" -> "Des Street",
         "businessAddress.line3" -> "Etmp Lane",
@@ -102,7 +93,7 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       val res = testController.submit()(request)
       status(res) mustBe SEE_OTHER
 
-      redirectLocation(res).value mustBe routes.VariationsController.show().url
+      redirectLocation(res).value mustBe routes.BusinessDetailsController.confirm().url
     }
 
     "update the cached form data when the form data is valid" in {
@@ -112,7 +103,6 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
         .thenReturn(Future.successful(Some(data)))
 
       val request = FakeRequest().withFormUrlEncodedBody(
-        "tradingName" -> "Forbidden Right Parenthesis & Sons",
         "businessAddress.line1" -> "Rosm House",
         "businessAddress.line2" -> "Des Street",
         "businessAddress.line3" -> "Etmp Lane",
@@ -126,10 +116,9 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       verify(mockKeystore, times(1))
         .cache(
           matching("variationData"),
-          matching(data.copy(updatedBusinessDetails = UpdatedBusinessDetails(
-            "Forbidden Right Parenthesis & Sons",
+          matching(data.copy(updatedBusinessAddress =
             Address("Rosm House", "Des Street", "Etmp Lane", "", "AA11 1AA")
-          )))
+          ))
         )(any(), any(), any())
     }
   }

@@ -74,3 +74,8 @@ GET         /returns/:id                                       sdil.controllers.
 POST        /returns                                           sdil.controllers.ReturnsController.index(id = "")
 POST        /returns/:id                                       sdil.controllers.ReturnsController.index(id: String)
 
+GET         /ufvariations                                        sdil.controllers.VariationsController.index(id = "")
+GET         /ufvariations/:id                                    sdil.controllers.VariationsController.index(id: String)
+POST        /ufvariations                                        sdil.controllers.VariationsController.index(id = "")
+POST        /ufvariations/:id                                    sdil.controllers.VariationsController.index(id: String)
+

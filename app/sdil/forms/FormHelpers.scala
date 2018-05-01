@@ -19,7 +19,9 @@ package sdil.forms
 import play.api.data.Forms._
 import play.api.data.Mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.libs.json.Json
 import sdil.models.Address
+import sdil.models.backend.{Site, UkAddress}
 
 import scala.util.Try
 
@@ -43,6 +45,8 @@ trait FormHelpers {
     "line4" -> optionalAddressLine("line4"),
     "postcode" -> postcode
   )(Address.apply)(Address.unapply)
+
+  lazy val siteJsonMapping: Mapping[Site] = text.transform[Site](s => Json.parse(s).as[Site], s => Json.toJson(s).toString)
 
   def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
     //have to use optional, or the framework returns `error.required` when no option is selected

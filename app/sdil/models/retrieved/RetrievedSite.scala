@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package sdil.models.backend
-
-import java.time.LocalDate
+package sdil.models.retrieved
 
 import play.api.libs.json.{Format, Json}
-import sdil.models.Address
+import sdil.models.backend.RetrievedAddress
 
-case class Site(address: UkAddress, ref: Option[String], closureDate: Option[LocalDate])
+case class RetrievedSite(address: RetrievedAddress, ref: Option[String])
 
-object Site {
-  implicit val format: Format[Site] = Json.format[Site]
-
-  def fromAddress(address: Address): Site = {
-    Site(UkAddress.fromAddress(address), None, None)
-  }
+object RetrievedSite {
+  implicit val format: Format[RetrievedSite] = Json.format[RetrievedSite]
 }
