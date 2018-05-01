@@ -36,6 +36,8 @@
 
                 <fieldset class="form-group form-date @if(startDateForm.hasErrors) {form-field--error}" id="start-date-fieldset">
 
+                    <legend class="visuallyhidden">@Messages("sdil.start-date.heading")</legend>
+
                     @startDateForm.errors.map { error => <span class="error-notification">@Messages(error.message, error.args: _*)</span> }
 
                     <label for="startDate.day" class="form-group form-group-day">
