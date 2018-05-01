@@ -95,11 +95,20 @@ object Convert {
       )
 
       val ps = productionSites map { site =>
-        VariationsSite("", site.ref.getOrElse("1"), contact.copy(address = Some(Address.fromUkAddress(site.address))), "Production Site")
+        VariationsSite(
+          site.tradingName.getOrElse(""),
+          site.ref.getOrElse("1"),
+          contact.copy(address = Some(Address.fromUkAddress(site.address))),
+          "Production Site")
       }
 
       val w = warehouses map { warehouse =>
-        VariationsSite("", warehouse.ref.getOrElse("1"), contact.copy(address = Some(Address.fromUkAddress(warehouse.address))), "Warehouse")
+        VariationsSite(
+          warehouse.tradingName.getOrElse(""),
+          warehouse.ref.getOrElse("1"),
+          contact.copy(address = Some(Address.fromUkAddress(warehouse.address))),
+          "Warehouse"
+        )
       }
 
       (ps ++ w).toList

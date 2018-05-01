@@ -130,7 +130,11 @@
             @declaration_table("declaration", "warehouses", Some(sdil.controllers.variation.routes.WarehouseVariationController.show())) {
                 @variationData.updatedWarehouseSites.map { site =>
                     <tr>
+
                         <td>
+                            @site.tradingName.map { t =>
+                                <div>@t</div>
+                            }
                             @site.address.lines.map { a =>
                                 <div>@a</div>
                             }

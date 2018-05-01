@@ -120,9 +120,9 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
 
     "return a page including all production sites added so far" in {
       val sites = Seq(
-        Site(UkAddress.fromAddress(Address("3 The Place", "Another place", "", "", "AA11 1AA")), Some("1"), None),
-        Site(UkAddress.fromAddress(Address("4 The Place", "Another place", "", "", "AA12 2AA")), Some("2"), None),
-        Site(UkAddress.fromAddress(Address("5 The Place", "Another place", "", "", "AA13 3AA")), Some("3"), None)
+        Site(UkAddress.fromAddress(Address("3 The Place", "Another place", "", "", "AA11 1AA")), Some("1"), None, None),
+        Site(UkAddress.fromAddress(Address("4 The Place", "Another place", "", "", "AA12 2AA")), Some("2"), None, None),
+        Site(UkAddress.fromAddress(Address("5 The Place", "Another place", "", "", "AA13 3AA")), Some("3"), None, None)
       )
 
       val data = VariationData(subscription.copy(productionSites = sites.toList))
@@ -223,7 +223,7 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
         matching("variationData"),
         matching(VariationData(subscription).copy(updatedProductionSites =
           Seq(
-            Site(UkAddress.fromAddress(Address("line 2", "line 3", "", "", "AA12 2AA")), Some("1"), None)
+            Site(UkAddress.fromAddress(Address("line 2", "line 3", "", "", "AA12 2AA")), Some("1"), None, None)
           )
         ))
       )(any(), any(), any())
