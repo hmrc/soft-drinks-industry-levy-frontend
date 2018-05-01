@@ -61,10 +61,6 @@ class VariationsController(
     case object Deregister extends ChangeType
   }
 
-  private lazy val contactUpdate: WebMonad[VariationData] = {
-    throw new NotImplementedError()
-  }
-
   implicit val addressHtml: HtmlShow[Address] =
     HtmlShow.instance { address =>
       val lines = address.nonEmptyLines.mkString("<br />")
@@ -84,7 +80,6 @@ class VariationsController(
       "phoneNumber" -> nonEmptyText,
       "email" -> nonEmptyText
     )(ContactDetails.apply)(ContactDetails.unapply)
-
 
     formPage(id)(contactMapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
@@ -107,6 +102,21 @@ class VariationsController(
   private implicit def toSome[A](in: A): Option[A] = in.some
 
   //
+
+
+  private def contactUpdate(
+    data: VariationData
+  ): WebMonad[VariationData] = for {
+    contact         <- askContactDetails("contact", data.updatedContactDetails)
+    warehouses      <- manyT("warehouses", askSite(_), default = data.updatedWarehouseSites.toList)
+    packSites       <- manyT("packSites", askSite(_), default = data.updatedProductionSites.toList)
+    businessAddress <- askAddress("businessAddress", default = data.updatedBusinessAddress)
+  } yield data.copy (
+    updatedBusinessAddress = businessAddress,
+    updatedProductionSites = packSites,
+    updatedWarehouseSites  = warehouses,
+    updatedContactDetails  = contact
+  )
 
   private def activityUpdate(
     data: VariationData
@@ -132,7 +142,7 @@ class VariationsController(
     importsVol             = imports.map{case (a,b) => Litreage(a,b)},
     updatedProductionSites = packSites,
     updatedWarehouseSites  = warehouses,
-    previousPages          = Nil
+    updatedContactDetails  = contact
   )
 
   private lazy val deregisterUpdate: WebMonad[VariationData] = {
@@ -144,7 +154,7 @@ class VariationsController(
     for {
       changeType <- askEnum("changeType", ChangeType)
       variation  <- changeType match {
-        case ChangeType.Sites      => contactUpdate
+        case ChangeType.Sites      => contactUpdate(base)
         case ChangeType.Activity   => activityUpdate(base)
         case ChangeType.Deregister => deregisterUpdate
       }
