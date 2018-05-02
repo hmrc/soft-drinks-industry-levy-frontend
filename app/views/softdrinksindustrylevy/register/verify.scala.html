@@ -21,57 +21,61 @@
 
 @(verifyForm: Form[_], utr: String, organisation: String, address: Address, alreadyRegistered: Boolean = false)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-    @main_template(title = Messages("sdil.common.title"), form = Some(verifyForm)) {
+@verifyTitle = @{
+    if(!alreadyRegistered) {
+        Messages("sdil.verify.heading")
+    } else {
+        Messages("sdil.already.received.for.utr.title")
+    }
+}
 
-        <a class="link-back" href="@sdil.controllers.routes.IdentifyController.show()">@Messages("sdil.common.back")</a>
+@main_template(title = verifyTitle, form = Some(verifyForm)) {
 
-        @error_summary(verifyForm)
+    <a class="link-back" href="@sdil.controllers.routes.IdentifyController.show()">@Messages("sdil.common.back")</a>
 
-        <h1 class="heading-large">
-            @if(!alreadyRegistered) {
-                @Messages("sdil.verify.heading")
-            } else {
-                @Messages("sdil.already.received.for.utr.title")
-            }
-        </h1>
+    @error_summary(verifyForm)
+
+    <h1 class="heading-large">
+    @verifyTitle
+    </h1>
 
     @businessDetails(utr, organisation, address)
 
-        @if(!alreadyRegistered) {
-            @form(sdil.controllers.routes.VerifyController.submit()) {
-                @radioButtonWithConditionalContent(
-                    field = verifyForm("detailsCorrect"),
-                    radioOptions = Seq(
-                        ("yes",
-                                (Messages("sdil.verify.detailsCorrect.yes"),
-                                        None)
-                        ),
-                        ("differentAddress",
-                                (Messages("sdil.verify.detailsCorrect.differentAddress"),
-                                        Some(
-                                            addressFields(
-                                                verifyForm,
-                                                "alternativeAddress",
-                                                "sdil.verify.address",
-                                                showHint = false)
-                                        )
-                                )
-                        ),
-                        ("no",
-                                (Messages("sdil.verify.detailsCorrect.no"),
-                                        None))
+    @if(!alreadyRegistered) {
+        @form(sdil.controllers.routes.VerifyController.submit()) {
+            @radioButtonWithConditionalContent(
+                field = verifyForm("detailsCorrect"),
+                radioOptions = Seq(
+                    ("yes",
+                            (Messages("sdil.verify.detailsCorrect.yes"),
+                                    None)
                     ),
-                    '_labelClass -> "block-label",
-                    '_labelAfter -> true,
-                    '_groupClass -> "form-field-group",
-                    '_dataTargetTrue -> "something",
-                    '_legend -> Messages("sdil.verify.heading"),
-                    '_legendClass -> "visuallyhidden"
-                )
+                    ("differentAddress",
+                            (Messages("sdil.verify.detailsCorrect.differentAddress"),
+                                    Some(
+                                        addressFields(
+                                            verifyForm,
+                                            "alternativeAddress",
+                                            "sdil.verify.address",
+                                            showHint = false)
+                                    )
+                            )
+                    ),
+                    ("no",
+                            (Messages("sdil.verify.detailsCorrect.no"),
+                                    None))
+                ),
+                '_labelClass -> "block-label",
+                '_labelAfter -> true,
+                '_groupClass -> "form-field-group",
+                '_dataTargetTrue -> "something",
+                '_legend -> Messages("sdil.verify.heading"),
+                '_legendClass -> "visuallyhidden"
+            )
 
-                <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
-            }
-        } else {
-            @Html(Messages("sdil.already.received.for.utr.info", sdil.controllers.routes.IdentifyController.show()))
+            <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
         }
+    } else {
+        @Html(Messages("sdil.already.received.for.utr.info", sdil.controllers.routes.IdentifyController.show()))
     }
+}
