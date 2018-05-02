@@ -24,7 +24,7 @@
 @(warehouseForm: Form[_], warehouses: Seq[Site], backLink: Call, formTarget: Call)(implicit request: Request[_],
         messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.common.title"), form = Some(warehouseForm)) {
+@main_template(heading, form = Some(warehouseForm)) {
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
     @error_summary(warehouseForm)
@@ -39,11 +39,13 @@
                     "true" -> ((Messages("sdil.common.yes"), Some("hiddenTarget"))),
                     "false" -> ((Messages("sdil.common.no"), None))
                 ),
-                Some(addressFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add", warehouses.isEmpty)),
+                Some(siteFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add", warehouses.isEmpty)),
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
                 '_groupClass -> "form-field-group inline",
-                '_dataTargetTrue -> "warehouse"
+                '_dataTargetTrue -> "warehouse",
+                '_legend -> Messages(heading),
+                '_legendClass -> "visuallyhidden"
             )
         } else {
             <fieldset>
@@ -55,7 +57,7 @@
                     }
 
                     @expandableCheckbox(warehouseForm, "addAddress", "label.warehouse-sites.add") {
-                        @addressFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add")
+                        @siteFields(warehouseForm, "additionalAddress", "sdil.warehouse-site.add")
 
                         <br/>
                         @* note that nested forms are not allowed in HTML, so both buttons must use the same action *@

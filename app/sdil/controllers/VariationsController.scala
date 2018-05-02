@@ -145,7 +145,10 @@ class VariationsController(
     updatedContactDetails  = contact
   )
 
-  private lazy val deregisterUpdate: WebMonad[VariationData] = {
+  private lazy val deregisterUpdate: WebMonad[VariationData] = for {
+    deregDate <- askDate("deregDate", none, constraints = List(("nofuture",x => x < LocalDate.now)))
+    reason    <- askBigText("deregister.reason")
+  } yield {
     throw new NotImplementedError()
   }
 

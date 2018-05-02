@@ -27,7 +27,7 @@
         formAction: Call
 )(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.common.title"), form = Some(siteForm)) {
+@main_template(Messages("sdil.productionSite.heading"), form = Some(siteForm)) {
 
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
@@ -38,6 +38,8 @@
     @form(formAction) {
 
         <fieldset>
+
+            <legend class="visuallyhidden">@Messages("sdil.productionSite.heading")</legend>
 
             <div id="productionSites" class="form-group @if(siteForm.hasErrors){form-group-error}">
                 @siteForm.errors.map { err => <span class="error-message">@Messages(err.message)</span> }

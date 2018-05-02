@@ -17,7 +17,7 @@
 package sdil.controllers.variation
 
 import play.api.data.Form
-import play.api.data.Forms.{ignored, mapping}
+import play.api.data.Forms._
 import sdil.controllers.variation.models.Sites
 import sdil.forms.FormHelpers
 import sdil.models.backend.Site
@@ -40,6 +40,7 @@ trait SiteRef extends FormHelpers {
     mapping(
       "additionalSites" -> ignored(Seq.empty[Site]),
       "addAddress" -> mandatoryBoolean,
+      "tradingName" -> optional(tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(Sites.apply)(Sites.unapply)
   )

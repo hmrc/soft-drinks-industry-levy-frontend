@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-package sdil.controllers.variation.models
+package ltbs
 
-import sdil.models.Address
-import sdil.models.backend.Site
+import _root_.play.api.i18n._
 
-case class Sites(sites: Seq[Site],
-                 addAddress: Boolean,
-                 tradingName: Option[String],
-                 additionalSites: Option[Address])
+package object play {
+
+  implicit class RichMessages(m: Messages) {
+    def first(
+      key: String,
+      sndKey: String,
+      fallbackKeys: String*
+    )(args: Any*)(implicit lang: Lang): String = {
+      val definedKey = (key :: sndKey :: fallbackKeys.toList)
+        .find(m.isDefinedAt)
+        .getOrElse(key)
+
+      m(definedKey, args :_*)
+    }
+  }
+}

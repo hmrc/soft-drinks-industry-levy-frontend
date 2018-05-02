@@ -27,6 +27,7 @@ import play.api.test.Helpers._
 import sdil.controllers.ControllerSpec
 import sdil.models.Address
 import sdil.models.backend.{Site, UkAddress}
+import sdil.models.retrieved.RetrievedActivity
 import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
@@ -58,7 +59,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
     "return 200 Ok and the add secondary warehouse page if other secondary warehouses have been added" in {
       val data = VariationData(
         subscription.copy(
-          warehouseSites = List(Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None))
+          warehouseSites = List(Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None, None))
         )
       )
 
@@ -103,6 +104,27 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.ImportsVolController.show().url
     }
+
+    "redirect to the variations page if the user is voluntary" in {
+      val data = VariationData(
+        subscription.copy(
+          activity = RetrievedActivity(
+            smallProducer = true,
+            largeProducer = false,
+            contractPacker = false,
+            importer = false,
+            voluntaryRegistration = true)
+        )
+      )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      redirectLocation(res).value mustBe routes.VariationsController.show().url
+    }
   }
 
   "POST /secondary-warehouses" should {
@@ -138,6 +160,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
 
       val res = testController.addSingleSite()(FakeRequest().withFormUrlEncodedBody(
         "addAddress" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 3",
         "additionalAddress.line2" -> "line 4",
         "additionalAddress.line3" -> "line 5",
@@ -148,7 +171,6 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.WarehouseVariationController.show().url
     }
-
   }
 
   "POST /secondary-warehouses/select-sites" should {
@@ -156,7 +178,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
 
       val data = VariationData(
         subscription.copy(warehouseSites = List(
-          Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None)))
+          Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None, None)))
       )
 
       when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
@@ -171,6 +193,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
     "redirect to the add secondary warehouse page if a warehouse has been added" in {
       val request = FakeRequest().withFormUrlEncodedBody(
         "addAddress" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 1",
         "additionalAddress.line2" -> "line 2",
         "additionalAddress.line3" -> "line 3",

@@ -19,36 +19,35 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 @import views.html.helper.options
+@import ltbs.play.scaffold.webmonad._
 @import views.html.gdspages.helpers._
-@import ltbs.play._
 
-@(key: String, form: Form[Boolean], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], appConfig: AppConfig)
-
+@(key: String, form: Form[Unit], breadcrumbs: List[String], headings: List[Html], rows: List[List[Html]])(implicit messages: Messages, request: Request[_], config: AppConfig)
 @views.html.main_template(Messages("sdil.common.title"), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
-    @error_summary(form)
         <h1 class="heading-large">@Messages(s"heading.$key")</h1>
         @helper.form(action = play.api.mvc.Call("post", key)) {
             @CSRF.formField
-        <div class = "form-group">
-            @inputRadioGroup(
-                form(key),
-                options(
-        "true" -> messages.first(s"option.$key.true","sdil.common.yes")(),
-        "false" -> messages.first(s"option.$key.false", "sdil.common.no")()
-    ),
-                '_labelClass -> "block-label",
-                '_labelAfter -> true,
-                '_groupClass -> "inline"
-            )
 
-            <button class="button" type="submit" id="continue-button">
-            @Messages("sdil.common.save-continue")
-            </button>
-        </div>
 
+            <table>
+                <tr>
+                    @for(heading <- headings) {
+                        <th>@heading</th>
+                    }
+                </tr>
+                @for(row <- rows) {
+                    <tr>
+                        @for(cell <- row) {
+                            <td>@cell</td>
+                                }
+                    </tr>
+                }
+            </table>
+
+  <button name="@key"  value="Next" formmethod="post">Next</button>
     }
 
 }

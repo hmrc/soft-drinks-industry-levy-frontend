@@ -17,7 +17,7 @@
 package ltbs.play.scaffold
 
 import cats.data.{EitherT, RWST}
-import cats.Monoid
+import cats.{Monoid, Order}
 import cats.implicits._
 import play.api._
 import play.api.data.Forms._
@@ -26,10 +26,15 @@ import play.api.http.Writeable
 import play.api.libs.json._
 import play.api.mvc.{ Action, AnyContent, Controller, Request, Result }
 import scala.concurrent.{Future, ExecutionContext}
+import java.time.LocalDate
 
 import scala.language.implicitConversions
 
 package object webmonad {
+
+  implicit val orderedLD: Order[LocalDate] = new Order[LocalDate] {
+    def compare(a: LocalDate, b: LocalDate): Int = a compareTo b
+  }
 
   // State is read once, threaded through the webmonads and the final state is
   // written back at the end of execution

@@ -26,7 +26,7 @@
         formAction: Call
 )(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.common.title"), form = Some(siteForm)) {
+@main_template(Messages("sdil.productionSite.heading"), form = Some(siteForm)) {
 
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
@@ -47,7 +47,7 @@
                 }
 
                 @expandableCheckbox(siteForm, "addAddress", "label.production-sites.add") {
-                    @addressFields(siteForm, "additionalAddress", "sdil.production-site.add")
+                    @siteFields(siteForm, "additionalAddress", "sdil.production-site.add")
 
                     <br/>
                     @* note that nested forms are not allowed in HTML, so both buttons must use the same action *@

@@ -14,12 +14,3 @@
  * limitations under the License.
  */
 
-package sdil.controllers.variation.models
-
-import sdil.models.Address
-import sdil.models.backend.Site
-
-case class Sites(sites: Seq[Site],
-                 addAddress: Boolean,
-                 tradingName: Option[String],
-                 additionalSites: Option[Address])

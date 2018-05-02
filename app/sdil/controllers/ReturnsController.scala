@@ -64,8 +64,6 @@ class ReturnsController (
     default: Option[SmallProducer] = None
   ): WebMonad[SmallProducer] = {
 
-
-
     val litreage: Mapping[Long] = nonEmptyText
       .transform[String](_.replaceAll(",", ""), _.toString)
       .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
@@ -77,7 +75,7 @@ class ReturnsController (
 
     formPage(id)(
       mapping(
-        "sdilRef" -> nonEmptyText,
+        "sdilRef" -> nonEmptyText.verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$")),
         "lower" -> litreage,
         "higher" -> litreage){
         (ref,l,h) => SmallProducer(ref, (l,h))
@@ -91,19 +89,53 @@ class ReturnsController (
     }
   }
 
-  /** 
-    *
-    */
   def askLitreageOpt(key: String): WebMonad[(Long, Long)] =
     askLitreage(key + "Qty") emptyUnless askBool(key + "YesNo")
 
+  def checkYourAnswers(key: String)(sdilReturn: SdilReturn): WebMonad[Unit] = {
+
+    //TODO: The rates should be read in from somewhere not just dumped in
+    // a function
+    def taxRow(in: (Long, Long), rate: Int = 1): (Long, Long, BigDecimal, BigDecimal) = {
+      val tax = in.combineN(rate)
+      (in._1, in._2, BigDecimal("0.18") * tax._1, BigDecimal("0.24") * tax._2)
+    }
+
+    implicit def stringToHtml(i: String): Html = Html(i)
+
+    val data = List(
+      "packageSmall" -> taxRow(sdilReturn.packageSmall.map{_.litreage}.combineAll, 0),
+      "packageLarge" -> taxRow(sdilReturn.packageLarge),
+      "importSmall"  -> taxRow(sdilReturn.importSmall),
+      "importLarge"  -> taxRow(sdilReturn.importLarge),
+      "export"       -> taxRow(sdilReturn.export, -1),
+      "wastage"      -> taxRow(sdilReturn.wastage, -1)
+    )
+
+    val totals = ("total" -> data.map{_._2}.combineAll)
+
+    tellTable(
+      key,
+      headings = List("", "litres.lower", "litres.higher", "tax.lower", "tax.higher", "subtotal"),
+      rows = {data :+ totals}.map{ case (key, (lower, higher, taxLow, taxHigh)) =>
+        List(key, f"$lower%,d", f"$higher%,d", f"£$taxLow%,.2f", f"£$taxHigh%,.2f", f"£${taxLow+taxHigh}%,.2f")
+          .map(stringToHtml)
+      }
+    )
+  }
+
+  private val askReturn: WebMonad[SdilReturn] = (
+    manyT("packageSmall", askSmallProducer(_), min = 1) emptyUnless askBool("packageSmallYN"),
+    askLitreageOpt("packageLarge"),
+    askLitreageOpt("importSmall"),
+    askLitreageOpt("importLarge"),
+    askLitreageOpt("export"),
+    askLitreageOpt("wastage")
+  ).mapN(SdilReturn.apply)
+
   private val program: WebMonad[Result] = for {
-    packageSmall <- manyT("packageSmallEntries", askSmallProducer(_)) emptyUnless askBool("packageSmallYN")
-    packageLarge <- askLitreageOpt("packageLarge")
-    importSmall  <- askLitreageOpt("importSmall")
-    importLarge  <- askLitreageOpt("importLarge")
-    export       <- askLitreageOpt("export")
-    wastage      <- askLitreageOpt("wastage")
+    sdilReturn   <- askReturn
+    _            <- checkYourAnswers("check")(sdilReturn)
     exit         <- journeyEnd("returnsDone")
   } yield {
     exit

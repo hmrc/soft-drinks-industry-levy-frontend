@@ -14,6 +14,7 @@ sdil.common.print=Print
 sdil.common.sign-out=Sign out
 sdil.common.return-to-sign-in=Return to Government Gateway sign in
 sdil.registered.title=Soft Drinks Industry Levy
+sdil.variations.title=Change your Soft Drinks Industry Levy details
 sdil.hint.optional=Optional
 sdil.common.error=Error
 sdil.common.cancel=Cancel
@@ -201,7 +202,7 @@ sdil.small-prod-confirm.body=If this is not accurate, you need to <a href="{0}" 
 sdil.small-prod-confirm.continue=Accept and continue
 
 #Start date
-sdil.start-date.heading=What date did you become liable for the Soft Drinks Industry Levy?
+sdil.start-date.heading=What date did you become liable to register for the Soft Drinks Industry Levy?
 sdil.start-date.example=For example, 6 4 2018
 sdil.start-date.day=Day
 sdil.start-date.month=Month
@@ -444,6 +445,7 @@ sdil.variations.contact-details.change=You have changed your contact details
 sdil.variations.deregister=Your company needs to deregister
 #Update warehouse sites
 sdil.variation.add-link=Add new
+sdil.tradingName=Trading name (optional)
 
 sdil.variation.copack-for-others-vol=How many litres do you contract pack for others?
 sdil.variation.imports-vol=How many litres do you import?
@@ -514,6 +516,8 @@ sdil.variation.complete.subheading=We’ve received the updates to your Soft Dri
 sdil.variation.what-happens.p1=You don’t need to do anything else. We’ll update your details with the information you provided. We’ll send you a letter confirming that the changes have been made, which may take 15 working days.
 sdil.link.back.home=Back to home
 sdil.variation.complete.p1=Your updates for the Soft Drinks Industry Levy were submitted on {0} at {1}.
+
 sdil.variation.anotherChange=If you need to make another change,
 sdil.variation.anotherChangeLink=go back and start again
+sdil.service-page.variations.submit.change=Make another change
 

@@ -27,6 +27,7 @@ import play.api.test.Helpers.{contentAsString, status, _}
 import sdil.controllers.ControllerSpec
 import sdil.models.Address
 import sdil.models.backend.{Site, UkAddress}
+import sdil.models.retrieved.RetrievedActivity
 import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
@@ -119,9 +120,9 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
 
     "return a page including all production sites added so far" in {
       val sites = Seq(
-        Site(UkAddress.fromAddress(Address("3 The Place", "Another place", "", "", "AA11 1AA")), Some("1"), None),
-        Site(UkAddress.fromAddress(Address("4 The Place", "Another place", "", "", "AA12 2AA")), Some("2"), None),
-        Site(UkAddress.fromAddress(Address("5 The Place", "Another place", "", "", "AA13 3AA")), Some("3"), None)
+        Site(UkAddress.fromAddress(Address("3 The Place", "Another place", "", "", "AA11 1AA")), Some("1"), None, None),
+        Site(UkAddress.fromAddress(Address("4 The Place", "Another place", "", "", "AA12 2AA")), Some("2"), None, None),
+        Site(UkAddress.fromAddress(Address("5 The Place", "Another place", "", "", "AA13 3AA")), Some("3"), None, None)
       )
 
       val data = VariationData(subscription.copy(productionSites = sites.toList))
@@ -139,6 +140,27 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
       checkboxLabels must contain theSameElementsAs sites.map { site =>
         Address.fromUkAddress(site.address).nonEmptyLines.mkString(", ")
       }
+    }
+
+    "redirect to the variations page if the user is voluntary" in {
+      val data = VariationData(
+        subscription.copy(
+          activity = RetrievedActivity(
+            smallProducer = true,
+            largeProducer = false,
+            contractPacker = false,
+            importer = false,
+            voluntaryRegistration = true)
+        )
+      )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val res = testController.show()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      redirectLocation(res).value mustBe routes.VariationsController.show().url
     }
   }
 
@@ -158,6 +180,7 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
     "redirect to the production sites page if another site has been added and the form data is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody(
         "addAddress" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 1",
         "additionalAddress.line2" -> "line 2",
         "additionalAddress.line3" -> "",
@@ -187,6 +210,7 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
 
       val request = FakeRequest().withFormUrlEncodedBody(
         "addAddress" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 2",
         "additionalAddress.line2" -> "line 3",
         "additionalAddress.line3" -> "",
@@ -201,7 +225,7 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
         matching("variationData"),
         matching(VariationData(subscription).copy(updatedProductionSites =
           Seq(
-            Site(UkAddress.fromAddress(Address("line 2", "line 3", "", "", "AA12 2AA")), Some("1"), None)
+            Site(UkAddress.fromAddress(Address("line 2", "line 3", "", "", "AA12 2AA")), Some("1"), Some("name trade"), None)
           )
         ))
       )(any(), any(), any())

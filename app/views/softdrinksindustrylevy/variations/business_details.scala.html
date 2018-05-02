@@ -20,8 +20,10 @@
 
 @(f: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@views.html.main_template(Messages("sdil.registered.title")) {
+@views.html.main_template(Messages("sdil.declaration.your-business"), form = Some(f)) {
     <a class="link-back" href="@sdil.controllers.variation.routes.VariationsController.show()">@Messages("sdil.common.back")</a>
+
+    @error_summary(f)
 
     <h1 class="heading-large">@Messages("sdil.declaration.your-business")</h1>
 

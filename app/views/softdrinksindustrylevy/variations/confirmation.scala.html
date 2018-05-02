@@ -18,7 +18,7 @@
 
 @(submissionDate: String, submissionTime: String)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.registered.title")) {
+@main_template(Messages("sdil.variations.complete.title")) {
 
     <div class="govuk-box-highlight">
         <h1 class="heading-xlarge">@Messages("sdil.variations.complete.title")</h1>
@@ -33,9 +33,7 @@
     <h2 class="heading-medium">@Messages("sdil.complete.what-happens.title")</h2>
     <p>@Messages("sdil.variation.what-happens.p1")</p>
     <p>
-     @Messages("sdil.variation.anotherChange")
-        <a href="@sdil.controllers.variation.routes.VariationsController.start">
-            @Messages("sdil.variation.anotherChangeLink")
-        </a>.
+        <a href="@sdil.controllers.variation.routes.VariationsController.start()" class="button--secondary">
+        @Messages("sdil.service-page.variations.submit.change")</a>
     </p>
 }

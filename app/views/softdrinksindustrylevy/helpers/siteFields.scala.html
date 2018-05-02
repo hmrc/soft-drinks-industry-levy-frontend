@@ -1,0 +1,73 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@(form: Form[_], fieldName: String, labelPrefix: String, showHint: Boolean = true)(implicit request: Request[_], messages: Messages)
+
+<div id="@fieldName-fields">
+    <h2 class="heading-small">@Messages(s"$labelPrefix.heading")</h2>
+
+    @if(showHint) {
+        <span class="form-hint">@Messages(s"$labelPrefix.hint")</span>
+    }
+
+    <fieldset>
+
+        <legend class="visuallyhidden">@Messages(s"$labelPrefix.legend")</legend>
+
+        @inputText(
+            form(s"tradingName"),
+            Messages("sdil.tradingName"),
+            '_divClass -> "form-group-compound",
+            '_maxLength -> "160"
+        )
+
+        @inputText(
+            form(s"$fieldName.line1"),
+            Messages("sdil.address.line1"),
+            '_divClass -> "form-group-compound",
+            '_maxLength -> "35"
+        )
+
+        @inputText(
+            form(s"$fieldName.line2"),
+            Messages("sdil.address.line2"),
+            '_divClass -> "form-group-compound",
+            '_maxLength -> "35"
+        )
+
+        @inputText(
+            form(s"$fieldName.line3"),
+            Messages("sdil.address.line3"),
+            '_divClass -> "form-group-compound",
+            '_maxLength -> "35"
+        )
+
+        @inputText(
+            form(s"$fieldName.line4"),
+            Messages("sdil.address.line4"),
+            '_divClass -> "form-group-compound",
+            '_maxLength -> "35"
+        )
+
+        @inputText(
+            form(s"$fieldName.postcode"),
+            Messages("sdil.address.postcode"),
+            '_divClass -> "form-group-compound",
+            '_inputClass -> "form-control-1-4 input--cleared caps"
+        )
+
+    </fieldset>
+</div>
