@@ -57,7 +57,7 @@ object Subscription {
         ),
         liabilityDate = startDate,
         productionSites = productionSites.map(Site.fromAddress),
-        warehouseSites = secondaryWarehouses.map(Site.fromAddress),
+        warehouseSites = secondaryWarehouses,
         contact = Contact(
           name = Some(contactDetails.fullName),
           positionInCompany = Some(contactDetails.position),

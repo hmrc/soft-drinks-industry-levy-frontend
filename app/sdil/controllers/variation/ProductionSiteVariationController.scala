@@ -22,8 +22,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
-import sdil.controllers.variation.models.Sites
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
+import sdil.models.Sites
 import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController

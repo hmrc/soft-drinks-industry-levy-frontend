@@ -66,6 +66,7 @@ trait FormHelpers {
     case b if b.length > 35 => Invalid(s"error.$key.over")
     case _ => Valid
   }
+
   lazy val tradingNameMapping: Mapping[String] = {
     text.transform[String](_.trim, s => s).verifying(optionalTradingNameConstraint)
   }

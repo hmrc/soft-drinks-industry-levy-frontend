@@ -18,8 +18,8 @@ package sdil.controllers.variation
 
 import play.api.data.Form
 import play.api.data.Forms._
-import sdil.controllers.variation.models.Sites
 import sdil.forms.FormHelpers
+import sdil.models.Sites
 import sdil.models.backend.Site
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
