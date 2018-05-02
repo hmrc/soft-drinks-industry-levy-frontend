@@ -211,15 +211,6 @@ class StartDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
   lazy val tomorrow = LocalDate.now plusDays 1
   lazy val yesterday: LocalDate = LocalDate.now minusDays 1
 
-  override protected def beforeEach(): Unit = {
-    testConfig.setTaxStartDate(yesterday)
-    stubFilledInForm
-  }
-
-  override protected def afterEach(): Unit = {
-    testConfig.resetTaxStartDate()
-  }
-
   private lazy val validStartDateForm = Seq(
     "startDate.day" -> LocalDate.now.getDayOfMonth.toString,
     "startDate.month" -> LocalDate.now.getMonthValue.toString,

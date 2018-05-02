@@ -130,7 +130,7 @@
         }
     }
 
-    @if((LocalDate.now isAfter config.taxStartDate) && !formData.isVoluntary) {
+    @if(!formData.isVoluntary) {
         @declaration_table("declaration", "liable-date") {
             @formData.startDate.map { date =>
                 @declaration_details_table_row("declaration", "date",
