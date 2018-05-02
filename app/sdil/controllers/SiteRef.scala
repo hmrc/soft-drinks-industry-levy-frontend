@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package sdil.controllers.variation
+package sdil.controllers
 
 import play.api.data.Form
 import play.api.data.Forms._

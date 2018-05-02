@@ -16,26 +16,26 @@
 
 package sdil.forms
 
-import sdil.controllers.WarehouseController.{SecondaryWarehouses, selectSitesForm}
-import sdil.models.Address
+import sdil.models.{Address, Sites}
+import sdil.controllers.WarehouseController.form
 
 class WarehouseFormSpec extends FormSpec {
 
   "The warehouse form" should {
     "bind to SecondaryWarehouses if there are no additional warehouses" in {
-      val f = selectSitesForm.bind(Map(addWarehouse -> "false"))
+      val f = form.bind(Map(addWarehouse -> "false"))
 
-      f.value mustBe Some(SecondaryWarehouses(Nil, false, None))
+      f.value mustBe Some(Sites(Nil, false, None, None))
     }
 
     "validate the address if there is a warehouse" in {
-      mustValidateAddress(selectSitesForm, "additionalAddress", secondaryWarehouseData)
+      mustValidateAddress(form, "additionalAddress", secondaryWarehouseData)
     }
 
     "bind to SecondaryWarehouses if there is a warehouse and an address is provided" in {
-      val f = selectSitesForm.bind(secondaryWarehouseData)
+      val f = form.bind(secondaryWarehouseData)
 
-      f.value mustBe Some(SecondaryWarehouses(Nil, true, Some(Address("line 1", "line 2", "", "", "AA11 1AA"))))
+      f.value mustBe Some(Sites(Nil, true, Some("name trade"), Some(Address("line 1", "line 2", "", "", "AA11 1AA"))))
     }
   }
 

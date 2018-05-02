@@ -22,6 +22,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, Result}
 import sdil.actions.{VariationAction, VariationRequest}
 import sdil.config.AppConfig
+import sdil.controllers.SiteRef
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
 import sdil.models.Sites
 import sdil.models.backend.{Site, UkAddress}

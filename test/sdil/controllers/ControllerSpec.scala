@@ -21,6 +21,7 @@ import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import sdil.models._
+import sdil.models.backend.{Site, UkAddress}
 import sdil.utils.FakeApplicationSpec
 
 import scala.concurrent.Future
@@ -49,7 +50,7 @@ trait ControllerSpec extends FakeApplicationSpec {
                    importVolume: Option[Litreage] = defaultFormData.importVolume,
                    startDate: Option[LocalDate] = defaultFormData.startDate,
                    productionSites: Option[Seq[Address]] = defaultFormData.productionSites,
-                   secondaryWarehouses: Option[Seq[Address]] = defaultFormData.secondaryWarehouses,
+                   secondaryWarehouses: Option[Seq[Site]] = defaultFormData.secondaryWarehouses,
                    contactDetails: Option[ContactDetails] = defaultFormData.contactDetails) = {
 
     stubCacheEntry(Some(RegistrationFormData(
@@ -107,7 +108,12 @@ trait ControllerSpec extends FakeApplicationSpec {
       )),
       startDate = Some(LocalDate.of(2018, 4, 6)),
       productionSites = Some(Seq(Address("1 Production Site St", "Production Site Town", "", "", "AA11 1AA"))),
-      secondaryWarehouses = Some(Seq(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA"))),
+      secondaryWarehouses = Some(Seq(
+        Site(
+          UkAddress.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA")),
+          None,
+          None,
+          None))),
       contactDetails = Some(ContactDetails(
         fullName = "A person",
         position = "A position",

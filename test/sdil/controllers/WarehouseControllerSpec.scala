@@ -26,6 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.models.backend.{Site, UkAddress}
 import sdil.models.{Address, Producer}
 
 class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
@@ -40,7 +41,13 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "return 200 Ok and the add secondary warehouse page if other secondary warehouses have been added" in {
-      stubFormPage(secondaryWarehouses = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
+      stubFormPage(secondaryWarehouses = Some(Seq(
+        Site(
+          UkAddress.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA")),
+          None,
+          None,
+          None)
+      )))
 
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
@@ -118,7 +125,8 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       stubFormPage(secondaryWarehouses = None)
 
       val res = testController.addSingleSite()(FakeRequest().withFormUrlEncodedBody(
-        "addWarehouse" -> "true",
+        "addAddress" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 3",
         "additionalAddress.line2" -> "line 4",
         "additionalAddress.line3" -> "line 5",
@@ -133,7 +141,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "redirect to the contact details page if the user has no warehouses" in {
       stubFormPage(secondaryWarehouses = None)
 
-      val res = testController.addSingleSite()(FakeRequest().withFormUrlEncodedBody("addWarehouse" -> "false"))
+      val res = testController.addSingleSite()(FakeRequest().withFormUrlEncodedBody("addAddress" -> "false"))
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.ContactDetailsController.show().url
@@ -142,9 +150,15 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "POST /secondary-warehouses/select-sites" should {
     "return 400 Bad Request if the user says they have a warehouse and does not fill in the address form" in {
-      stubFormPage(secondaryWarehouses = Some(Seq(Address("1", "", "", "", "AA11 1AA"))))
+      stubFormPage(secondaryWarehouses = Some(Seq(
+        Site(
+          UkAddress.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA")),
+          None,
+          None,
+          None)
+      )))
 
-      val res = testController.addMultipleSites()(FakeRequest().withFormUrlEncodedBody("addWarehouse" -> "true"))
+      val res = testController.addMultipleSites()(FakeRequest().withFormUrlEncodedBody("addAddress" -> "true"))
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include(Messages("sdil.warehouse.add.heading"))
     }
@@ -152,6 +166,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     "redirect to the add secondary warehouse page if a warehouse has been added" in {
       val request = FakeRequest().withFormUrlEncodedBody(
         "addWarehouse" -> "true",
+        "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 1",
         "additionalAddress.line2" -> "line 2",
         "additionalAddress.line3" -> "line 3",
@@ -165,7 +180,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "redirect to the contact details page if a warehouse is not added" in {
-      val res = testController.addMultipleSites()(FakeRequest().withFormUrlEncodedBody("hasWarehouse" -> "false"))
+      val res = testController.addMultipleSites()(FakeRequest().withFormUrlEncodedBody("addAddress" -> "false"))
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.ContactDetailsController.show().url)
     }
@@ -188,8 +203,13 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       verify(mockCache, times(1))
         .cache(
           matching("internal id"),
-          matching(defaultFormData.copy(secondaryWarehouses = Some(Seq(Address("line 2", "line 3", "line 4", "line 5", "AA11 1AA")))))
-        )(any())
+          matching(defaultFormData.copy(secondaryWarehouses = Some(Seq(
+            Site(
+              UkAddress.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA")),
+              None,
+              None,
+              None)
+          )))))(any())
     }
   }
 

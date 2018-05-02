@@ -140,7 +140,7 @@
         }
     }
 
-    @if(formData.secondaryWarehouses.exists(_.nonEmpty) || formData.productionSites.exists(_.nonEmpty)) {
+  @if(formData.secondaryWarehouses.exists(_.nonEmpty) || formData.productionSites.exists(_.nonEmpty)) {
         @declaration_table("declaration", "registered-sites") {
             @if(formData.productionSites.exists(_.nonEmpty)) {
                 @formData.productionSites.map { sites =>
