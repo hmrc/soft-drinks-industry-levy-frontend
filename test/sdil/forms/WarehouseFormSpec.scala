@@ -40,7 +40,8 @@ class WarehouseFormSpec extends FormSpec {
   }
 
   lazy val secondaryWarehouseData = Map(
-    addWarehouse -> "true",
+    "addAddress" -> "true",
+    "tradingName" -> "name trade",
     line1 -> "line 1",
     line2 -> "line 2",
     "additionalAddress.line3" -> "",

@@ -165,7 +165,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "redirect to the add secondary warehouse page if a warehouse has been added" in {
       val request = FakeRequest().withFormUrlEncodedBody(
-        "addWarehouse" -> "true",
+        "addAddress" -> "true",
         "tradingName" -> "name trade",
         "additionalAddress.line1" -> "line 1",
         "additionalAddress.line2" -> "line 2",
@@ -189,11 +189,12 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       stubFormPage(secondaryWarehouses = Some(Nil))
 
       val request = FakeRequest().withFormUrlEncodedBody(
-        "addWarehouse" -> "true",
-        "additionalAddress.line1" -> "line 2",
-        "additionalAddress.line2" -> "line 3",
-        "additionalAddress.line3" -> "line 4",
-        "additionalAddress.line4" -> "line 5",
+        "addAddress" -> "true",
+        "tradingName" -> "name trade",
+        "additionalAddress.line1" -> "1 Warehouse Site St",
+        "additionalAddress.line2" -> "Warehouse Site Town",
+        "additionalAddress.line3" -> "",
+        "additionalAddress.line4" -> "",
         "additionalAddress.postcode" -> "AA11 1AA"
       )
 
@@ -207,7 +208,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
             Site(
               UkAddress.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA")),
               None,
-              None,
+              Some("name trade"),
               None)
           )))))(any())
     }
