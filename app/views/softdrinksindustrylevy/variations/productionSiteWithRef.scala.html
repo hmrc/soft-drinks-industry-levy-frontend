@@ -26,7 +26,7 @@
         formAction: Call
 )(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.variations.title"), form = Some(siteForm)) {
+@main_template(Messages("sdil.productionSite.heading"), form = Some(siteForm)) {
 
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 

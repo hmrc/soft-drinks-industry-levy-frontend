@@ -21,7 +21,7 @@
 
 @(orgTypeForm: Form[_], hasCTEnrolment: Boolean)(implicit messages: Messages, request: Request[_], configuration: AppConfig)
 
-@views.html.main_template(title = Messages("sdil.common.title"), form = Some(orgTypeForm)) {
+@views.html.main_template(title = Messages("sdil.organisation-type.heading"), form = Some(orgTypeForm)) {
 
     <a class="link-back" href="@sdil.controllers.routes.VerifyController.show()">@Messages("sdil.common.back")</a>
 

@@ -18,7 +18,7 @@
 
 @(backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.common.title")) {
+@main_template(Messages("sdil.registration-not-required.heading")) {
     <a class="link-back" href=@backLink>@Messages("sdil.common.back")</a>
     <h1 class="heading-large">@Messages("sdil.registration-not-required.heading")</h1>
 

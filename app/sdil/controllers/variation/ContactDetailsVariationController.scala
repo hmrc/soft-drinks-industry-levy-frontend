@@ -42,8 +42,7 @@ class ContactDetailsVariationController(val messagesApi: MessagesApi,
       register.contact_details(
         ContactDetailsController.form.fill(request.data.updatedContactDetails),
         previousPage,
-        formTarget,
-        variations = true
+        formTarget
       )
     )
   }
