@@ -346,6 +346,11 @@ println(request.body)
     implicit class RichWebMonoid[A](wm: WebMonad[A])(implicit monoid: Monoid[A]) {
       def emptyUnless(b: => Boolean): WebMonad[A] =
         if(b) wm else monoid.empty.pure[WebMonad]
+
+      def emptyUnless(wmb: WebMonad[Boolean]): WebMonad[A] = for {
+        opt <- wmb
+        ret <- if (opt) wm else monoid.empty.pure[WebMonad]
+      } yield ret
     }
 
     implicit class RichWebMonad[A](wm: WebMonad[A]) {

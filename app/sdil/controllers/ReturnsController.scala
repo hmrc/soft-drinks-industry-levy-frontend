@@ -24,8 +24,7 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.mvc._
 import play.twirl.api.Html
-
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -35,12 +34,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import webmonad._
-
 import scala.collection.mutable.{Map => MMap}
 import play.api.data.Forms._
 import views.html.gdspages
 import enumeratum._
 import sdil.models._
+import play.api.data.Mapping
+import scala.util.Try
 
 class ReturnsController (
   val messagesApi: MessagesApi,
@@ -52,48 +52,64 @@ class ReturnsController (
   val ec: ExecutionContext
 ) extends SdilWMController with FrontendController {
 
+  implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
 
-  implicit val siteHtml: HtmlShow[Address] =
-    HtmlShow.instance { address =>
-      val lines = address.nonEmptyLines.mkString("<br />")
-      Html(s"<div>$lines</div>")
+  implicit val smallProducerHtml: HtmlShow[SmallProducer] =
+    HtmlShow.instance { producer =>
+      Html(s"${producer.sdilRef} ${producer.litreage}")
     }
 
-  protected def askContactDetails(
-    id: String, default: Option[ContactDetails]
-  ): WebMonad[ContactDetails] = {
-    val contactMapping = mapping(
-      "fullName" -> nonEmptyText,
-      "position" -> nonEmptyText,
-      "phoneNumber" -> nonEmptyText,
-      "email" -> nonEmptyText
-    )(ContactDetails.apply)(ContactDetails.unapply)
+  protected def askSmallProducer(
+    id: String,
+    default: Option[SmallProducer] = None
+  ): WebMonad[SmallProducer] = {
 
 
-    formPage(id)(contactMapping, default) { (path, b, r) =>
+
+    val litreage: Mapping[Long] = nonEmptyText
+      .transform[String](_.replaceAll(",", ""), _.toString)
+      .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
+      .transform[BigDecimal](BigDecimal.apply, _.toString)
+      .verifying("error.litreage.numeric", _.isWhole)
+      .verifying("error.litreage.max", _ <= 9999999999999L)
+      .verifying("error.litreage.min", _ >= 0)
+      .transform[Long](_.toLong, BigDecimal.apply)
+
+    formPage(id)(
+      mapping(
+        "sdilRef" -> nonEmptyText,
+        "lower" -> litreage,
+        "higher" -> litreage){
+        (ref,l,h) => SmallProducer(ref, (l,h))
+      }{
+        case SmallProducer(ref, (l,h)) => (ref,l,h).some
+      },
+      default
+    ){ (path,b,r) =>
       implicit val request: Request[AnyContent] = r
-      gdspages.contactdetails(id, b, path)
+      gdspages.smallProducer(id, b, path)
     }
-
   }
 
-  // Nasty hack to prevent me from having to either create
-  // good function signatures or put '.some' after all the
-  // defaults
-  private implicit def toSome[A](in: A): Option[A] = in.some
+  /** 
+    *
+    */
+  def askLitreageOpt(key: String): WebMonad[(Long, Long)] =
+    askLitreage(key + "Qty") emptyUnless askBool(key + "YesNo")
 
-  private def program(subscription: RetrievedSubscription): WebMonad[Result] = for {
-    produced <- askLitreage("returnsProduced")
-    exit <- journeyEnd("returnsDone")
+  private val program: WebMonad[Result] = for {
+    packageSmall <- manyT("packageSmallEntries", askSmallProducer(_)) emptyUnless askBool("packageSmallYN")
+    packageLarge <- askLitreageOpt("packageLarge")
+    importSmall  <- askLitreageOpt("importSmall")
+    importLarge  <- askLitreageOpt("importLarge")
+    export       <- askLitreageOpt("export")
+    wastage      <- askLitreageOpt("wastage")
+    exit         <- journeyEnd("returnsDone")
   } yield {
     exit
   }
 
-  def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    sdilConnector.retrieveSubscription(request.sdilEnrolment.value) flatMap {
-      case Some(s) => runInner(request)(program(s))(id)(dataGet,dataPut)
-      case None => NotFound("").pure[Future]
-    }
+  def index(id: String): Action[AnyContent] = Action.async { implicit request =>
+    runInner(request)(program)(id)(dataGet,dataPut)
   }
-
 }
