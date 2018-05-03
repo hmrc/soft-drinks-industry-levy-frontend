@@ -65,9 +65,9 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
         )
       )),
       {
-        case Sites(_, true, Some(tradingName), Some(additionalAddress)) =>
+        case Sites(_, true, tradingName, Some(additionalAddress)) =>
           val siteRef = nextRef(request.data.original.productionSites, request.data.updatedProductionSites)
-          val site = Site(UkAddress.fromAddress(additionalAddress), Some(siteRef), Some(tradingName), None)
+          val site = Site(UkAddress.fromAddress(additionalAddress), Some(siteRef), tradingName, None)
           val updated = request.data.updatedProductionSites :+ site
           cache.cache("variationData", request.data.copy(updatedProductionSites = updated)) map { _ =>
             Redirect(routes.ProductionSiteVariationController.show())
