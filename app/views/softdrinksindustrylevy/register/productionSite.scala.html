@@ -18,11 +18,14 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 @import sdil.config.AppConfig
+@import views.html.softdrinksindustrylevy.variations.siteRefCheckbox // TODO move this out of variations
 
+
+@import sdil.models.backend.Site
 @(siteForm: Form[_],
         bprAddress: Option[Address],
         primaryPlaceOfBusiness: Option[Address],
-        otherSites: Seq[Address],
+        otherSites: Seq[Site],
         backLink: Call,
         formAction: Call
 )(implicit request: Request[_], messages: Messages, config: AppConfig)
@@ -55,7 +58,7 @@
 
                 @*avoid duplicating bpr address/ppob address*@
                 @otherSites.filterNot(a => bprAddress.contains(a) || primaryPlaceOfBusiness.contains(a)).zipWithIndex.map { case (site, idx) =>
-                    @addressCheckbox(s"additionalSites[$idx]", site, otherSites.contains(site))
+                    @siteRefCheckbox(s"additionalSites[$idx]", site, otherSites.contains(site))
                 }
 
                 @expandableCheckbox(siteForm, "addAddress", "label.production-sites.add") {

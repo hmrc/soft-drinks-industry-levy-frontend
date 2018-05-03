@@ -34,7 +34,7 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 isImporter: Option[Boolean] = None,
                                 importVolume: Option[Litreage] = None,
                                 startDate: Option[LocalDate] = None,
-                                productionSites: Option[Seq[Address]] = None,
+                                productionSites: Option[Seq[Site]] = None,
                                 secondaryWarehouses: Option[Seq[Site]] = None,
                                 contactDetails: Option[ContactDetails] = None) {
 
