@@ -49,7 +49,7 @@ trait ControllerSpec extends FakeApplicationSpec {
                    imports: Option[Boolean] = defaultFormData.isImporter,
                    importVolume: Option[Litreage] = defaultFormData.importVolume,
                    startDate: Option[LocalDate] = defaultFormData.startDate,
-                   productionSites: Option[Seq[Address]] = defaultFormData.productionSites,
+                   productionSites: Option[Seq[Site]] = defaultFormData.productionSites,
                    secondaryWarehouses: Option[Seq[Site]] = defaultFormData.secondaryWarehouses,
                    contactDetails: Option[ContactDetails] = defaultFormData.contactDetails) = {
 
@@ -107,13 +107,12 @@ trait ControllerSpec extends FakeApplicationSpec {
         atHighRate = 10
       )),
       startDate = Some(LocalDate.of(2018, 4, 6)),
-      productionSites = Some(Seq(Address("1 Production Site St", "Production Site Town", "", "", "AA11 1AA"))),
+      productionSites = Some(Seq(
+        Site.fromAddress(Address("1 Production Site St", "Production Site Town", "", "", "AA11 1AA"))
+         )),
       secondaryWarehouses = Some(Seq(
-        Site(
-          UkAddress.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA")),
-          None,
-          None,
-          None))),
+        Site.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA"))
+      )),
       contactDetails = Some(ContactDetails(
         fullName = "A person",
         position = "A position",

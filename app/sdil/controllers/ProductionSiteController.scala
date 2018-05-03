@@ -54,12 +54,7 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: Registration
 
 
   private def makeSite(s: String): Site = {
-    Site(
-      UkAddress.fromAddress(Address.fromString(s)),
-      None,
-      None,
-      None
-    )
+    Site.fromAddress(Address.fromString(s))
   }
 
   def submit: Action[AnyContent] = formAction.async { implicit request =>
@@ -75,9 +70,9 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: Registration
         )
       ),
       {
-        case ProductionSites(bprAddress, ppobAddress, _, true, tradingName, Some(additionalAddress)) =>
+        case ProductionSites(bprAddress, ppobAddress, sites, true, tradingName, Some(additionalAddress)) =>
           val site = Site(UkAddress.fromAddress(additionalAddress), None, tradingName, None)
-          val updated = Seq(bprAddress, ppobAddress).flatten.map(makeSite) :+ site
+          val updated = Seq(bprAddress, ppobAddress).flatten.map(makeSite).union(sites) :+ site
 
           cache.cache(request.internalId, request.formData.copy(productionSites = Some(updated))) map { _ =>
             Redirect(routes.ProductionSiteController.show())

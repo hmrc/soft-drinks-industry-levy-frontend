@@ -57,7 +57,8 @@
                 }
 
                 @*avoid duplicating bpr address/ppob address*@
-                @otherSites.filterNot(a => bprAddress.contains(a) || primaryPlaceOfBusiness.contains(a)).zipWithIndex.map { case (site, idx) =>
+                @otherSites.filterNot(a => bprAddress.contains(Address.fromUkAddress(a.address)) ||
+                        primaryPlaceOfBusiness.contains(Address.fromUkAddress(a.address))).zipWithIndex.map { case (site, idx) =>
                     @siteRefCheckbox(s"additionalSites[$idx]", site, otherSites.contains(site))
                 }
 

@@ -27,7 +27,8 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.DetailsCorrect.DifferentAddress
-import sdil.models.{Address, Litreage, OrganisationDetails, RosmRegistration}
+import sdil.models.backend.{Site, UkAddress}
+import sdil.models._
 
 import scala.collection.JavaConverters._
 
@@ -72,9 +73,9 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
     "return a page including all production sites added so far" in {
       val sites = Seq(
-        Address("3 The Place", "Another place", "", "", "AA11 1AA"),
-        Address("4 The Place", "Another place", "", "", "AA12 2AA"),
-        Address("5 The Place", "Another place", "", "", "AA13 3AA")
+        Site.fromAddress(Address("3 The Place", "Another place", "", "", "AA11 1AA")),
+        Site.fromAddress(Address("4 The Place", "Another place", "", "", "AA11 1AA")),
+        Site.fromAddress(Address("5 The Place", "Another place", "", "", "AA11 1AA"))
       )
 
       stubFormPage(productionSites = Some(sites))
@@ -86,7 +87,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       val checkboxLabels = html.select(""".multiple-choice input[type="checkbox"]""")
         .asScala.filter(_.id.startsWith("additionalSites")).map(_.nextElementSibling().text)
 
-      checkboxLabels must contain theSameElementsAs sites.map(_.nonEmptyLines.mkString(", "))
+      checkboxLabels must contain theSameElementsAs sites.map(x => Address.fromUkAddress(x.address).nonEmptyLines.mkString(", "))
     }
 
     "return a page with a link back to the start date page if the date is after the sugar tax start date" in {
@@ -194,7 +195,9 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
       verify(mockCache, times(1)).cache(
         matching("internal id"),
-        matching(defaultFormData.copy(productionSites = Some(Seq(Address("line 2", "line 3", "", "", "AA12 2AA")))))
+        matching(defaultFormData.copy(productionSites = Some(Seq(
+          Site.fromAddress(Address("line 2", "line 3", "", "", "AA12 2AA"))
+        ))))
       )(any())
     }
 
@@ -212,15 +215,15 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
         rosmData = rosmRegistration,
         verify = Some(DifferentAddress(ppobAddress)),
         productionSites = Some(Seq(
-          Address("1", "2", "3", "4", "AA11 1AA"),
-          Address("2", "3", "4", "5", "AA12 2AA")
+          Site.fromAddress(Address("1", "2", "3", "4", "AA11 1AA")),
+          Site.fromAddress(Address("2", "3", "4", "5", "AA12 2AA"))
         ))
       )
 
       val request = FakeRequest().withFormUrlEncodedBody(
         "bprAddress" -> bprAddress.nonEmptyLines.mkString(","),
         "ppobAddress" -> ppobAddress.nonEmptyLines.mkString(","),
-        "additionalSites[1]" -> "2,3,4,5,AA12 2AA"
+        "additionalSites[1]" -> """{"address":{"lines":["2","3","4","5"],"postCode":"AA12 2AA"}}"""
       )
 
       val res = testController.submit()(request)
@@ -231,7 +234,9 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
         matching(defaultFormData.copy(
           rosmData = rosmRegistration,
           verify = Some(DifferentAddress(ppobAddress)),
-          productionSites = Some(Seq(bprAddress, ppobAddress, Address("2", "3", "4", "5", "AA12 2AA"))))
+          productionSites = Some(
+            Seq(bprAddress, ppobAddress, Address("2", "3", "4", "5", "AA12 2AA")).map(Site.fromAddress)
+          ))
         )
       )(any())
     }
