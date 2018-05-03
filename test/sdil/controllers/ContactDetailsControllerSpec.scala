@@ -16,8 +16,6 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
@@ -29,7 +27,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
   "Contact details controller" should {
     "return Status: OK for displaying contact details page" in {
-      val result = testController.show.apply(FakeRequest())
+      val result = testController.show(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.contact-details.heading"))
@@ -42,7 +40,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
         "phoneNumber" -> "+4411111111111",
         "email" -> "a@a.com"
       )
-      val result = testController.submit.apply(request)
+      val result = testController.submit(request)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.DeclarationController.show().url
@@ -55,7 +53,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
         "phoneNumber" -> "+4411111111111",
         "email" -> "a@a.com"
       )
-      val result = testController.submit.apply(request)
+      val result = testController.submit(request)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include(messagesApi("error.full-name.invalid"))
@@ -94,26 +92,6 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
       html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("import").url
     }
 
-    "return page with back link to the import page when they are voluntary, it is before the tax start date, " +
-      "and they do not import" in {
-
-      testConfig.setTaxStartDate(LocalDate.now plusYears 2)
-
-      stubFormPage(
-        packageOwnVol = Some(Litreage(1, 2)),
-        packagesForOthers = Some(false),
-        volumeForCustomerBrands = None,
-        usesCopacker = Some(true),
-        imports = Some(false),
-        importVolume = None
-      )
-      val response = testController.show(FakeRequest())
-      status(response) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(response))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("import").url
-    }
-
     "return page with back link to the warehouse page when they are mandatory and it is after the tax start date" in {
 
       stubFormPage(
@@ -132,17 +110,7 @@ class ContactDetailsControllerSpec extends ControllerSpec with BeforeAndAfterEac
     }
   }
 
-  lazy val yesterday: LocalDate = LocalDate.now minusDays 1
-
-  override protected def beforeEach(): Unit = {
-    testConfig.setTaxStartDate(yesterday)
-    stubFilledInForm
-  }
-
-  override protected def afterEach(): Unit = {
-    testConfig.resetTaxStartDate()
-  }
-
   lazy val testController: ContactDetailsController = wire[ContactDetailsController]
+  override protected def beforeEach(): Unit = stubFilledInForm
 
 }

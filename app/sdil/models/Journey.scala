@@ -41,7 +41,7 @@ object Journey {
 
   private val reversed: List[Page] = pages.reverse
 
-  def expectedPage(page: Page)(implicit request: RegistrationFormRequest[_], config: AppConfig): Page = {
+  def expectedPage(page: Page)(implicit request: RegistrationFormRequest[_]): Page = {
     implicit val formData: RegistrationFormData = request.formData
 
     if (page.isVisible) {
@@ -51,7 +51,7 @@ object Journey {
     }
   }
 
-  def previousPage(page: Page)(implicit request: RegistrationFormRequest[_], config: AppConfig): Page = {
+  def previousPage(page: Page)(implicit request: RegistrationFormRequest[_]): Page = {
     implicit val formData: RegistrationFormData = request.formData
 
     if (page == IdentifyPage) {
