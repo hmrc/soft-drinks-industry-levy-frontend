@@ -70,6 +70,7 @@ object FrontendBuild extends Build {
         "com.chuusai" %% "shapeless" % "2.3.3",
         "com.github.mpilquist" %% "simulacrum" % "0.12.0",
         "com.beachape" %% "enumeratum" % "1.5.13",
+        "org.scala-lang.modules" %% "scala-pickling" % "0.10.1",
 
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % "test",

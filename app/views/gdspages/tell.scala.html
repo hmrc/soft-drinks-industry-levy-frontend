@@ -14,24 +14,27 @@
  * limitations under the License.
  *@
 
+@import helper.{inputRadioGroup => _, _}
 @import play.api.Configuration
+@import views.html.softdrinksindustrylevy.helpers._
+@import sdil.config.AppConfig
+@import views.html.helper.options
+@import ltbs.play.scaffold.webmonad._
+@import ltbs.play._
+@import views.html.gdspages.helpers._
 
-@(key: String, msg: String)(implicit messages: Messages, request: Request[_])
+@(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig)
+@views.html.main_template(Messages("sdil.common.title"), form = Some(form)) {
+  @backlink(breadcrumbs)
 
-@main(s"heading.$key") {
-
-<article class="content__body">
-        <h1 class="heading-large">@Messages(s"heading.$key")</h1>
-
-	<div>
-	@{msg}
-	</div>
-	
-	
-        <a class="button" type="submit" id="continue-button" href=".">
-		  @Messages("continue")
-		</a>
-
-    </article>
-
+  <h1 class="heading-large">
+        @messages.first(s"heading.$key", "sdil.declaration.heading")()
+  </h1>
+  @helper.form(action = play.api.mvc.Call("post", key)) {
+    @CSRF.formField
+    @tell
+    <button name="@key"  value="Next" formmethod="post">
+        @messages.first(s"$key.continue", "sdil.declaration.continue")()
+    </button>
+  }
 }

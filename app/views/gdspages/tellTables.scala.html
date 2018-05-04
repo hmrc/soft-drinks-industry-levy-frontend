@@ -20,38 +20,35 @@
 @import sdil.config.AppConfig
 @import views.html.helper.options
 @import ltbs.play.scaffold.webmonad._
-@import ltbs.play._
 @import views.html.gdspages.helpers._
+@import ltbs.play._
 
-@(key: String, form: Form[String], items: List[Html], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[Unit], breadcrumbs: List[String], tables: List[(String,Table[Html,Html])])(implicit messages: Messages, request: Request[_], config: AppConfig)
 @views.html.main_template(Messages("sdil.common.title"), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
-    @error_summary(form)
-
     <h1 class="heading-large">@Messages(s"heading.$key")</h1>
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
-        <div class="form-group">
-        <table>
-            @for((item, id) <- items.zipWithIndex) {
+
+        @for((title, table) <- tables) {
+            <h2>@title</h2>
                 <tr>
-                    <td>
-                        @item
-                    </td>
-                    <td>
-			                  <button name="@key" value="Delete.@id">@messages.first(s"$key.delete", "delete")()</button>
-                    </td>
+                   @for(heading <- table.header) {
+                       <th>@heading</th>
+                   }
                 </tr>
+                @for(row <- table.body){
+                    <tr>
+                        @for(cell <- row){
+                            <td>@cell</td>
+                        }
+                    </tr>
                 }
-                <tr>
-			              <td><button name="@key" value="Add">@messages.first(s"$key.add", "add")()</button></td>
-                    <td />
-                </tr>
-        </table>
-        </div>
-      <button name="@key" value="Done">Done</button>
+        }
+
+        <button name="@key"  value="Next" formmethod="post">Next</button>
     }
 
 }

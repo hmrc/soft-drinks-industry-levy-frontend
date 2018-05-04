@@ -17,6 +17,7 @@
 package sdil.controllers
 
 import enumeratum._
+import ltbs.play._
 import ltbs.play.scaffold.HtmlShow
 import ltbs.play.scaffold.webmonad._
 import play.api.data._
@@ -108,6 +109,47 @@ trait SdilWMController extends WebMonadController
       implicit val request: Request[AnyContent] = r
 
       gdspages.tellTable(id, form, path, headings, rows)
+    }
+  }
+
+  protected def tell[A](
+    id: String,
+    a: A
+  )(implicit show: HtmlShow[A]): WebMonad[Unit] = {
+
+    // Because I decided earlier on to make everything based off of JSON
+    // I have to write silly things like this. TODO
+    implicit val formatUnit: Format[Unit] = new Format[Unit] {
+      def writes(u: Unit) = JsNull
+      def reads(v: JsValue) = JsSuccess(())
+    }
+
+    val unitMapping: Mapping[Unit] = text.transform(_ => (), _ => "")
+
+    formPage(id)(unitMapping, none[Unit]){  (path, form, r) =>
+      implicit val request: Request[AnyContent] = r
+
+      gdspages.tell(id, form, path, a.showHtml)
+    }    
+  }
+
+  protected def tellTables(
+    id: String,
+    tables: List[(String,Table[Html,Html])]
+  ): WebMonad[Unit] = {
+
+    // Because I decided earlier on to make everything based off of JSON
+    // I have to write silly things like this. TODO
+    implicit val formatUnit: Format[Unit] = new Format[Unit] {
+      def writes(u: Unit) = JsNull
+      def reads(v: JsValue) = JsSuccess(())
+    }
+
+    val unitMapping: Mapping[Unit] = text.transform(_ => (), _ => "")
+    formPage(id)(unitMapping, none[Unit]){  (path, form, r) =>
+      implicit val request: Request[AnyContent] = r
+
+      gdspages.tellTables(id, form, path, tables)
     }
   }
 

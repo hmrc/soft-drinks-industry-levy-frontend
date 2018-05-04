@@ -32,22 +32,22 @@
         <h1 class="heading-large">@Messages(s"heading.$key")</h1>
         @helper.form(action = play.api.mvc.Call("post", key)) {
             @CSRF.formField
-        <div class = "form-group">
-            @inputRadioGroup(
-                form(key),
-                options(
-        "true" -> messages.first(s"option.$key.true","sdil.common.yes")(),
-        "false" -> messages.first(s"option.$key.false", "sdil.common.no")()
-    ),
-                '_labelClass -> "block-label",
-                '_labelAfter -> true,
-                '_groupClass -> "inline"
-            )
-
+            <div class = "form-group">
+                @inputRadioGroup(
+                    form(key),
+                    options(
+                        "true" -> messages.first(s"option.$key.true","sdil.common.yes")(),
+                        "false" -> messages.first(s"option.$key.false", "sdil.common.no")()
+                    ),
+                    '_labelClass -> "block-label",
+                    '_labelAfter -> true,
+                    '_groupClass -> "inline"
+                )
+            </div>
             <button class="button" type="submit" id="continue-button">
             @Messages("sdil.common.save-continue")
             </button>
-        </div>
+
 
     }
 

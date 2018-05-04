@@ -18,6 +18,7 @@ package sdil.controllers
 
 import cats.implicits._
 import java.time.LocalDate
+import ltbs.play._
 import ltbs.play.scaffold._
 import play.api.i18n.MessagesApi
 import play.api.libs.json._
@@ -88,21 +89,7 @@ class VariationsController(
 
   }
 
-  // protected def askUpdatedBusinessDetails(
-  //   id: String, default: Option[UpdatedBusinessDetails] = None
-  // ): WebMonad[UpdatedBusinessDetails] = for {
-  //   //TODO: Replace with a single page
-  //   orgName <- askString(s"${id}_orgName", default.map { _.tradingName })
-  //   address <- askAddress(s"${id}_address", default.map { _.address })
-  // } yield UpdatedBusinessDetails(orgName, address)
-
-  // Nasty hack to prevent me from having to either create
-  // good function signatures or put '.some' after all the
-  // defaults
   private implicit def toSome[A](in: A): Option[A] = in.some
-
-  //
-
 
   private def contactUpdate(
     data: VariationData
@@ -124,8 +111,8 @@ class VariationsController(
     packLarge       <- askBool("packLarge", data.producer.isLarge) when askBool("package", data.producer.isProducer)
     packQty         <- askLitreage("packQty") when askBool("packOpt", data.updatedProductionSites.nonEmpty)
     useCopacker     <- askBool("useCopacker", data.usesCopacker)
-    copacks         <- askLitreage("copackQty") when askBool("copacker", data.copackForOthers)
     imports         <- askLitreage("importQty") when askBool("importer", data.imports)
+    copacks         <- askLitreage("copackQty") when askBool("copacker", data.copackForOthers)
     packSites       <- manyT("packSites", askSite(_), default = data.updatedProductionSites.toList)
     warehouses      <- manyT("warehouses", askSite(_), default = data.updatedWarehouseSites.toList)
     businessAddress <- askAddress("businessAddress", default = data.updatedBusinessAddress)
@@ -145,42 +132,56 @@ class VariationsController(
     updatedContactDetails  = contact
   )
 
-  private lazy val deregisterUpdate: WebMonad[VariationData] = for {
-    deregDate <- askDate("deregDate", none, constraints = List(("nofuture",x => x < LocalDate.now)))
-    reason    <- askBigText("deregister.reason")
-  } yield {
-    throw new NotImplementedError()
-  }
+  private def deregisterUpdate(
+    data: VariationData
+  ): WebMonad[VariationData] = for {
+    reason    <- askBigText("reason")
+    deregDate <- askDate("deregDate", none, constraints = List(
+                           ("error.deregDate.nopast",  x => x > LocalDate.now),
+                           ("error.deregDate.nofuture",x => x < LocalDate.now.plusDays(15))))
 
-  private def getVariation(subscription: RetrievedSubscription): WebMonad[VariationData] = {
-    val base = VariationData(subscription)
-    for {
-      changeType <- askEnum("changeType", ChangeType)
-      variation  <- changeType match {
-        case ChangeType.Sites      => contactUpdate(base)
-        case ChangeType.Activity   => activityUpdate(base)
-        case ChangeType.Deregister => deregisterUpdate
-      }
-    } yield variation
-  }
+  } yield data.copy(
+    reason = reason.some,
+    deregDate = deregDate.some
+  )
 
   def errorPage(id: String): WebMonad[Result] = Ok(s"Error $id")
 
+  implicit val variationDataShow: HtmlShow[VariationData] = new HtmlShow[VariationData] {
+    def showHtml(v: VariationData): Html = views.html.gdspages.variationDataCYA(v)
+  }
 
   private def program(subscription: RetrievedSubscription): WebMonad[Result] = for {
-    variation <- getVariation(subscription)
-    _ <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
-    exit <- journeyEnd("variationDone")
+    changeType <- askEnum("changeType", ChangeType)
+    base = VariationData(subscription)
+    variation  <- changeType match {
+      case ChangeType.Sites      => contactUpdate(base)
+      case ChangeType.Activity   => activityUpdate(base)
+      case ChangeType.Deregister => deregisterUpdate(base)
+    }
+    _          <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
+    _          <- tell("checkyouranswers", variation)
+    exit       <- journeyEnd("variationDone")
   } yield {
     exit
   }
 
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-
     sdilConnector.retrieveSubscription(request.sdilEnrolment.value) flatMap {
       case Some(s) => runInner(request)(program(s))(id)(dataGet,dataPut)
       case None => NotFound("").pure[Future]
     }
   }
 
+  def index2(id: String): Action[AnyContent] = Action.async { implicit request =>
+
+    def testProgram: WebMonad[Result] = for {
+      packSites <- manyT("packSites", askSite(_))
+      exit      <- journeyEnd("variationDone")
+    } yield {
+      exit
+    }
+
+    runInner(request)(testProgram)(id)(dataGet,dataPut)
+  }
 }
