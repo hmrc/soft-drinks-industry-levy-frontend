@@ -19,17 +19,17 @@ package sdil.controllers.variation
 import play.api.data.Forms._
 import play.api.data.{Form, FormError, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
-import sdil.controllers.variation.models.Sites
+import sdil.controllers.SiteRef
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
+import sdil.models.Sites
 import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
-import views.html.softdrinksindustrylevy.variations.productionSiteWithRef
-import views.html.softdrinksindustrylevy.variations.retrieve_summary_productionSites
+import views.html.softdrinksindustrylevy.variations.{productionSiteWithRef, retrieve_summary_productionSites}
 
 import scala.concurrent.Future
 

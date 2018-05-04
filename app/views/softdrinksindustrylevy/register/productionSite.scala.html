@@ -19,10 +19,11 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import sdil.config.AppConfig
 
+@import sdil.models.backend.Site
 @(siteForm: Form[_],
         bprAddress: Option[Address],
         primaryPlaceOfBusiness: Option[Address],
-        otherSites: Seq[Address],
+        otherSites: Seq[Site],
         backLink: Call,
         formAction: Call
 )(implicit request: Request[_], messages: Messages, config: AppConfig)
@@ -46,20 +47,21 @@
                 <span class="form-hint">@Messages("sdil.production-sites.select-applicable")</span>
 
                 @bprAddress.map { bprAddress =>
-                    @addressCheckbox("bprAddress", bprAddress, otherSites.contains(bprAddress))
+                    @addressCheckbox("bprAddress", bprAddress, otherSites.map(x => Address.fromUkAddress(x.address)).contains(bprAddress))
                 }
 
                 @primaryPlaceOfBusiness.map { ppob =>
-                    @addressCheckbox("ppobAddress", ppob, otherSites.contains(ppob))
+                    @addressCheckbox("ppobAddress", ppob, otherSites.map(x => Address.fromUkAddress(x.address)).contains(ppob))
                 }
 
                 @*avoid duplicating bpr address/ppob address*@
-                @otherSites.filterNot(a => bprAddress.contains(a) || primaryPlaceOfBusiness.contains(a)).zipWithIndex.map { case (site, idx) =>
-                    @addressCheckbox(s"additionalSites[$idx]", site, otherSites.contains(site))
+                @otherSites.filterNot(a => bprAddress.contains(Address.fromUkAddress(a.address)) ||
+                        primaryPlaceOfBusiness.contains(Address.fromUkAddress(a.address))).zipWithIndex.map { case (site, idx) =>
+                    @siteRefCheckbox(s"additionalSites[$idx]", site, otherSites.contains(site))
                 }
 
                 @expandableCheckbox(siteForm, "addAddress", "label.production-sites.add") {
-                    @addressFields(siteForm, "additionalAddress", "sdil.production-site.add")
+                    @siteFields(siteForm, "additionalAddress", "sdil.production-site.add")
 
                     <br/>
                     @* note that nested forms are not allowed in HTML, so both buttons must use the same action *@

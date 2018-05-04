@@ -36,7 +36,7 @@ case class VariationData(original: RetrievedSubscription,
                          imports: Boolean,
                          importsVol: Option[Litreage],
                          updatedProductionSites: Seq[Site],
-                         updatedWarehouseSites: Seq[Site], // TODO create variation Site model with trading name
+                         updatedWarehouseSites: Seq[Site],
                          updatedContactDetails: ContactDetails,
                          previousPages: Seq[Call]
                         ) {
