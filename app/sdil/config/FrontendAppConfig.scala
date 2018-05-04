@@ -18,6 +18,7 @@ package sdil.config
 
 import java.time.LocalDate
 
+import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
 
@@ -27,26 +28,23 @@ trait AppConfig {
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
   val betaFeedbackUrlAuth: String
-  def taxStartDate: LocalDate
   val ggLoginUrl: String
   val signoutUrl: String
   val sdilHomePage: String
   val appName: String
-  def isWhitelisted(utr: String): Boolean
-  def whitelistEnabled: Boolean
   def variationsEnabled: Boolean
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, environment: Environment) extends AppConfig with ServicesConfig {
-  override protected def mode = environment.mode
+  override protected def mode: Mode = environment.mode
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
   private lazy val contactHost = runModeConfiguration.getString(s"contact-frontend.host").getOrElse("")
   private lazy val contactFormServiceIdentifier = runModeConfiguration.getString("appName").get
 
-  override lazy val analyticsToken = loadConfig(s"google-analytics.token")
-  override lazy val analyticsHost = loadConfig(s"google-analytics.host")
+  override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
+  override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   override lazy val betaFeedbackUrlAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
@@ -60,13 +58,6 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   lazy val feedbackSurveyUrl: String = loadConfig("microservice.services.feedback-survey.url")
   lazy val signoutUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath?continue=$feedbackSurveyUrl?origin=SDIL"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
-  lazy val taxStartDate: LocalDate = LocalDate.parse(loadConfig("tax-start-date"))
-
-  override def isWhitelisted(utr: String): Boolean = whitelistedUtrs.isEmpty || whitelistedUtrs.contains(utr)
-
-  // disable whitelist filter on 6th April
-  override val whitelistEnabled: Boolean = getBoolean("whitelist.enabled") && taxStartDate.isAfter(LocalDate.now)
-  private lazy val whitelistedUtrs: Seq[String] = runModeConfiguration.getStringSeq("whitelist.utrs").getOrElse(Nil)
 
   override val variationsEnabled: Boolean = getBoolean("variations.enabled")
 }

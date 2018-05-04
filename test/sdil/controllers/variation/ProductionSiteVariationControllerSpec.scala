@@ -202,6 +202,35 @@ class ProductionSiteVariationControllerSpec extends ControllerSpec with BeforeAn
       redirectLocation(res) mustBe Some(routes.ProductionSiteVariationController.confirm().url)
     }
 
+    "store the new address in keystore if another site has been added without a trading name" in {
+      val data = VariationData(subscription.copy(productionSites = Nil))
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+      val request = FakeRequest().withFormUrlEncodedBody(
+        "addAddress" -> "true",
+        "tradingName" -> "",
+        "additionalAddress.line1" -> "line 3",
+        "additionalAddress.line2" -> "line 4",
+        "additionalAddress.line3" -> "",
+        "additionalAddress.line4" -> "",
+        "additionalAddress.postcode" -> "AA13 3AA"
+      )
+
+      val res = testController.submit()(request)
+      status(res) mustBe SEE_OTHER
+
+      verify(mockKeystore, times(1)).cache(
+        matching("variationData"),
+        matching(VariationData(subscription).copy(updatedProductionSites =
+          Seq(
+            Site(UkAddress.fromAddress(Address("line 3", "line 4", "", "", "AA13 3AA")), Some("1"), None, None)
+          )
+        ))
+      )(any(), any(), any())
+    }
+
     "store the new address in keystore if another site has been added and the form data is valid" in {
       val data = VariationData(subscription.copy(productionSites = Nil))
 

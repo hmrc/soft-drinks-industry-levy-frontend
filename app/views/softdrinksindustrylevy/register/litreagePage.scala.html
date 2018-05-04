@@ -21,7 +21,7 @@
 
 @(litreageForm: Form[_], pageName: String, backLink: Call, nextLink: Option[Call] = None)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.common.title"), form = Some(litreageForm)) {
+@main_template(Messages(s"sdil.$pageName.heading"), form = Some(litreageForm)) {
 
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 

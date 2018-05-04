@@ -16,9 +16,6 @@
 
 package sdil.actions
 
-import cats.data.OptionT
-import cats.implicits._
-import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc.{ActionBuilder, Request, Result, WrappedRequest}
@@ -30,7 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class FormAction(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, authorisedAction: AuthorisedAction)
                 (implicit config: AppConfig)
@@ -42,31 +39,13 @@ class FormAction(val messagesApi: MessagesApi, cache: RegistrationFormDataCache,
     authorisedAction.invokeBlock[A](request, { implicit req =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-      val maybeData = cache.get(req.internalId)
-      val maybeUtr = OptionT.fromOption[Future](req.utr).orElse(OptionT(maybeData).map(_.utr))
-
-      notWhitelisted(maybeUtr) getOrElseF {
-        maybeData flatMap {
-          case Some(data) => block(RegistrationFormRequest(request, data, req.internalId, req.enrolments))
-          case None => Future.successful(Redirect(routes.IdentifyController.show()))
-        }
+      cache.get(req.internalId) flatMap {
+        case Some(data) => block(RegistrationFormRequest(request, data, req.internalId, req.enrolments))
+        case None => Future.successful(Redirect(routes.IdentifyController.show()))
       }
     })
   }
 
-  private def notWhitelisted(maybeUtr: OptionT[Future, String])
-                            (implicit request: Request[_], ec: ExecutionContext): OptionT[Future, Result] = {
-    maybeUtr transform {
-      case Some(utr) if config.whitelistEnabled && config.isWhitelisted(utr) => None
-      case Some(utr) if config.whitelistEnabled && !config.isWhitelisted(utr) =>
-        Logger.warn("Login attempt blocked due to non-whitelisted UTR")
-        Some(Forbidden(views.html.softdrinksindustrylevy.errors.not_whitelisted()))
-      case _ if !config.whitelistEnabled => None
-      case _ if config.whitelistEnabled =>
-        Logger.warn("Login attempt blocked due to missing UTR enrolment")
-        Some(Forbidden(views.html.softdrinksindustrylevy.errors.not_whitelisted()))
-    }
-  }
 }
 
 case class RegistrationFormRequest[T](request: Request[T],

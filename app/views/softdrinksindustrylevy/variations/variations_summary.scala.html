@@ -21,7 +21,7 @@
 
 @(f: Form[_], variationsSubmission: VariationsSubmission)(implicit request: VariationRequest[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.variations.title")) {
+@main_template(Messages("sdil.variations.summary.title")) {
 
     <a class="link-back" href="@sdil.controllers.variation.routes.VariationsController.show()">@Messages("sdil.common.back")</a>
 

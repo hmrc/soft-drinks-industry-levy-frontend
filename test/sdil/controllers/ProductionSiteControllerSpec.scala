@@ -91,56 +91,11 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
     }
 
     "return a page with a link back to the start date page if the date is after the sugar tax start date" in {
-      testConfig.setTaxStartDate(yesterday)
-
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.StartDateController.show().url
-
-      testConfig.resetTaxStartDate()
-    }
-
-    "return a page with a link back to the import volume page if the date is before the sugar tax start date " +
-      "and the user is importing liable drinks" in {
-      testConfig.setTaxStartDate(tomorrow)
-      stubFormPage(
-        packageOwnVol = Some(Litreage(10000000L, 10000000L)),
-        imports = Some(true),
-        importVolume = Some(Litreage(5, 5)))
-
-
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
-    }
-
-    "return a page with a link back to the import page if the date is before the sugar tax start date " +
-      "and the user is not importing liable drinks" in {
-      testConfig.setTaxStartDate(tomorrow)
-      stubFormPage(packageOwnVol = Some(Litreage(10000000L, 10000000L)),
-        imports = Some(false))
-
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("import").url
-    }
-
-    "return a page with a link back to the import volume page if the date is before the tax start date, " +
-      "and the user is importing liable drinks" in {
-
-      testConfig.setTaxStartDate(tomorrow)
-
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
     }
   }
 
@@ -243,17 +198,4 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
   }
 
   lazy val testController = wire[ProductionSiteController]
-
-  lazy val tomorrow = LocalDate.now plusDays 1
-  lazy val yesterday: LocalDate = LocalDate.now minusDays 1
-
-
-  override protected def beforeEach(): Unit = {
-    testConfig.setTaxStartDate(yesterday)
-    stubFilledInForm
-  }
-
-  override protected def afterEach(): Unit = {
-    testConfig.resetTaxStartDate()
-  }
 }

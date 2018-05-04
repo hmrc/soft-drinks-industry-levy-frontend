@@ -24,7 +24,7 @@
 @import sdil.models.Producer
 @(formData: RegistrationFormData)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@views.html.main_template(Messages("sdil.common.title")) {
+@views.html.main_template(Messages("sdil.declaration.heading")) {
     <a class="link-back" href="@sdil.controllers.routes.ContactDetailsController.show()">@Messages("sdil.common.back")</a>
 
     <h1 class="heading-large">@Messages("sdil.declaration.heading")</h1>
@@ -130,7 +130,7 @@
         }
     }
 
-    @if((LocalDate.now isAfter config.taxStartDate) && !formData.isVoluntary) {
+    @if(!formData.isVoluntary) {
         @declaration_table("declaration", "liable-date") {
             @formData.startDate.map { date =>
                 @declaration_details_table_row("declaration", "date",

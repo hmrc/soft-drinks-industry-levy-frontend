@@ -24,7 +24,7 @@
 @(warehouseForm: Form[_], warehouses: Seq[Site], backLink: Call, formTarget: Call)(implicit request: Request[_],
         messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.common.title"), form = Some(warehouseForm)) {
+@main_template(heading, form = Some(warehouseForm)) {
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
     @error_summary(warehouseForm)

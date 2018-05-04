@@ -20,7 +20,7 @@
 
 @(startDateForm: Form[_], backLink: Call)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@views.html.main_template(Messages("sdil.common.title"), form = Some(startDateForm)) {
+@views.html.main_template(Messages("sdil.start-date.heading"), form = Some(startDateForm)) {
 
     <a class="link-back" href="@backLink.url">@Messages("sdil.common.back")</a>
 
