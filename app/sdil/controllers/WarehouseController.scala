@@ -110,21 +110,11 @@ class WarehouseController(val messagesApi: MessagesApi,
 
 object WarehouseController extends FormHelpers {
 
-  val form: Form[Sites] = Form(warehouseSitesMapping)
+  val form: Form[Sites] = Form(mapping(
+    "additionalSites" -> seq(siteJsonMapping),
+    "addAddress" -> boolean,
+    "tradingName" -> optional(tradingNameMapping),
+    "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
+  )(Sites.apply)(Sites.unapply))
 
-  private lazy val warehouseSitesMapping: Mapping[Sites] = new MappingWithExtraConstraint[Sites] {
-    override val underlying: Mapping[Sites] = mapping(
-      "additionalSites" -> seq(siteJsonMapping),
-      "addAddress" -> boolean,
-      "tradingName" -> optional(tradingNameMapping),
-      "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
-    )(Sites.apply)(Sites.unapply)
-
-    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites] = {
-      underlying.bind(data) match {
-        case Left(errs) => Left(errs)
-        case Right(sites) => Right(sites)
-      }
-    }
-  }
 }
