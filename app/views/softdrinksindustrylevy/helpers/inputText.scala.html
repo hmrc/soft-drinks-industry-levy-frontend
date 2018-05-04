@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(field: Field, label: String, args: (Symbol, String)*)(implicit request: Request[_], messages: Messages)
+@(field: Field, label: String, args: (Symbol, String)*)(implicit messages: Messages)
 
 <div class="form-group form-@field.name @if(field.hasErrors) {form-group-error} @args.toMap.get('_divClass)">
 

@@ -112,6 +112,45 @@ trait SdilWMController extends WebMonadController
     }
   }
 
+  trait FormHtml[A] {
+    def asHtmlForm(key: String, form: Form[A])(implicit request: Request[AnyContent]): Html
+  }
+
+  def formFromView[A](view: (String, Form[A]) => Request[AnyContent] => Html): FormHtml[A] =
+    new FormHtml[A] {
+      def asHtmlForm(key: String, form: Form[A])(implicit request: Request[AnyContent]): Html = {
+        view(key, form)(implicitly)
+      }
+    }
+
+//  val booleanForm2 = formFromView[Boolean]{gdspages.fragments.boolean(_, _)(_)}
+
+  implicit val booleanForm = new FormHtml[Boolean] {
+    def asHtmlForm(key: String, form: Form[Boolean])(implicit request: Request[AnyContent]): Html = {
+      gdspages.fragments.boolean(key, form)
+    }
+  }
+
+  implicit val stringForm = new FormHtml[String] {
+    def asHtmlForm(key: String, form: Form[String])(implicit request: Request[AnyContent]): Html = {
+      gdspages.fragments.string(key, form)
+    }
+  }
+
+  implicit class RichMapping[T](mapping: Mapping[T]) {
+    def ask(key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
+      formPage(key)(mapping, default) { (path, form, r) =>
+        implicit val request: Request[AnyContent] = r
+        gdspages.ask(key, form, htmlForm.asHtmlForm(key, form), path)
+      }
+
+    def ask(key: String)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
+      ask(key, None)
+
+    def ask(key: String, default: T)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
+      ask(key, default.some)
+  }
+
   protected def tell[A](
     id: String,
     a: A
@@ -130,7 +169,7 @@ trait SdilWMController extends WebMonadController
       implicit val request: Request[AnyContent] = r
 
       gdspages.tell(id, form, path, a.showHtml)
-    }    
+    }
   }
 
   protected def tellTables(
