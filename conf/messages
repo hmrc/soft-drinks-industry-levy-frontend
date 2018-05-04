@@ -405,7 +405,7 @@ error.businessName.required=Enter a business name
 
 #Variations retrieved summary
 sdil.variation.heading=Change your registration details
-sdil.variation.heading.confirm=Confirm your registration details
+sdil.variation.heading.confirm=Check your answers
 sdil.variation.submit.help=Your changes will not be submitted until you have confirmed and sent them
 
 
@@ -446,6 +446,7 @@ sdil.variations.deregister=Your company needs to deregister
 #Update warehouse sites
 sdil.variation.add-link=Add new
 sdil.tradingName=Trading name (optional)
+sdil.variations.change-address=Change your contact address for the Soft Drinks Industry Levy
 
 sdil.variation.copack-for-others-vol=How many litres do you contract pack for others?
 sdil.variation.imports-vol=How many litres do you import?
