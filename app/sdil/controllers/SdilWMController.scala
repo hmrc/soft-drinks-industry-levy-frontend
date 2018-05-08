@@ -16,34 +16,32 @@
 
 package sdil.controllers
 
+import java.time.LocalDate
+
+import cats.implicits._
 import enumeratum._
 import ltbs.play._
 import ltbs.play.scaffold.HtmlShow
+import ltbs.play.scaffold.HtmlShow.ops._
 import ltbs.play.scaffold.webmonad._
+import play.api.data.Forms._
 import play.api.data._
 import play.api.data.validation._
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import play.api.mvc.{AnyContent, Request, Result}
 import play.twirl.api.Html
+import sdil.config.AppConfig
+import sdil.forms.FormHelpers
+import sdil.models._
+import sdil.models.backend._
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.gdspages
 
 import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
 import scala.util.Try
-import play.api.data.Forms._
-import play.api.mvc.{Action, AnyContent, Request, Result}
-import sdil.config.AppConfig
-import sdil.models._
-import sdil.models.backend._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
-import uk.gov.hmrc.play.HeaderCarrierConverter
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.gdspages
-import cats.implicits._
-import HtmlShow.ops._
-import java.time.LocalDate
-
-import sdil.controllers.variation.WarehouseVariationController.tradingNameMapping
-import sdil.forms.FormHelpers
 
 trait Persistence {
   def dataGet(session: String): Future[Map[String, JsValue]]
