@@ -147,6 +147,13 @@ package webmonad {
 
     implicit def ec: ExecutionContext
 
+    def execute[A](f: => Future[A]): WebMonad[A] =
+      webMonad{ (id, request, path, db) =>
+        f.map{ e =>
+          (none[String], path, db, e.asRight[Result])
+        }
+      }
+
     implicit def resultToWebMonad(result: Result): WebMonad[Result] =
 
       EitherT[WebInner, Result, Result] {

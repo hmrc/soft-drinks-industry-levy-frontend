@@ -125,7 +125,7 @@ class ReturnsController (
   }
 
   private val askReturn: WebMonad[SdilReturn] = (
-    manyT("packageSmall", askSmallProducer(_), min = 1) emptyUnless askBool("packageSmallYN"),
+    manyT("packageSmall", askSmallProducer(_), min = 1) emptyUnless boolean.ask("packageSmallYN"),
     askLitreageOpt("packageLarge"),
     askLitreageOpt("importSmall"),
     askLitreageOpt("importLarge"),
@@ -142,6 +142,7 @@ class ReturnsController (
   }
 
   def index(id: String): Action[AnyContent] = Action.async { implicit request =>
-    runInner(request)(program)(id)(dataGet,dataPut)
+    val persistence = SessionCachePersistence("returns", keystore)
+    runInner(request)(program)(id)(persistence.dataGet,persistence.dataPut)
   }
 }

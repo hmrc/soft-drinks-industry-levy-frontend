@@ -45,22 +45,44 @@ import java.time.LocalDate
 import sdil.controllers.variation.WarehouseVariationController.tradingNameMapping
 import sdil.forms.FormHelpers
 
-trait JunkPersistence {
+trait Persistence {
+  def dataGet(session: String): Future[Map[String, JsValue]]
+  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit
+}
+
+trait JunkPersistence extends Persistence {
 
   implicit def ec: ExecutionContext
 
   // crappy persistence, but good for development
   private val data = MMap.empty[String,Map[String,JsValue]]
 
-  protected def dataGet(session: String): Future[Map[String, JsValue]] =
+  def dataGet(session: String): Future[Map[String, JsValue]] =
     data.getOrElse(session, Map.empty[String,JsValue]).pure[Future]
 
-  protected def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
+  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
     data(session) = dataIn
 }
 
+case class SessionCachePersistence(
+  journeyName: String,
+  keystore: uk.gov.hmrc.http.cache.client.SessionCache
+)(implicit
+    ec: ExecutionContext,
+  hc: HeaderCarrier
+) extends Persistence {
+  def dataGet(session: String): Future[Map[String, JsValue]] =
+    keystore.fetchAndGetEntry[Map[String, JsValue]](journeyName).map{
+      _.getOrElse(Map.empty)
+    }
+
+  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
+    keystore.cache(journeyName, dataIn)
+
+}
+
+
 trait SdilWMController extends WebMonadController
-    with JunkPersistence
     with FrontendController
     with FormHelpers
 {
