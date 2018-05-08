@@ -25,6 +25,7 @@ import play.api.data.validation._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.twirl.api.Html
+
 import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
 import scala.util.Try
@@ -33,13 +34,15 @@ import play.api.mvc.{Action, AnyContent, Request, Result}
 import sdil.config.AppConfig
 import sdil.models._
 import sdil.models.backend._
-import uk.gov.hmrc.http.{ HeaderCarrier, HttpReads }
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
 import cats.implicits._
 import HtmlShow.ops._
 import java.time.LocalDate
+
+import sdil.forms.FormHelpers
 
 trait JunkPersistence {
 
@@ -58,6 +61,7 @@ trait JunkPersistence {
 trait SdilWMController extends WebMonadController
     with JunkPersistence
     with FrontendController
+    with FormHelpers
 {
 
   implicit def config: AppConfig
@@ -280,14 +284,6 @@ trait SdilWMController extends WebMonadController
       gdspages.site(id, b, path)
     }
   }
-
-  private val addressMapping: play.api.data.Mapping[Address] = mapping(
-    "line1" -> nonEmptyText,
-    "line2" -> text,
-    "line3" -> text,
-    "line4" -> text,
-    "postcode" -> nonEmptyText
-  )(Address.apply)(Address.unapply)
 
   private val ukAddressMapping: Mapping[UkAddress] =
     addressMapping.transform(UkAddress.fromAddress, Address.fromUkAddress)
