@@ -105,14 +105,15 @@ class VariationsController(
     updatedContactDetails  = contact
   )
 
+
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = for {
     packLarge       <- askBool("packLarge", data.producer.isLarge) when askBool("package", data.producer.isProducer)
     packQty         <- askLitreage("packQty") when askBool("packOpt", data.updatedProductionSites.nonEmpty)
     useCopacker     <- askBool("useCopacker", data.usesCopacker)
-    imports         <- askLitreage("importQty") when askBool("importer", data.imports)
     copacks         <- askLitreage("copackQty") when askBool("copacker", data.copackForOthers)
+    imports         <- askLitreage("importQty") when askBool("importer", data.imports)
     packSites       <- manyT("packSites", askSite(_), default = data.updatedProductionSites.toList)
     warehouses      <- manyT("warehouses", askSite(_), default = data.updatedWarehouseSites.toList)
     businessAddress <- askAddress("businessAddress", default = data.updatedBusinessAddress)
@@ -151,7 +152,7 @@ class VariationsController(
     def showHtml(v: VariationData): Html = views.html.gdspages.variationDataCYA(v)
   }
 
-  private def program(subscription: RetrievedSubscription): WebMonad[Result] = for {
+  private def program(subscription: RetrievedSubscription, sdilRef: String)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
     changeType <- askEnum("changeType", ChangeType)
     base = VariationData(subscription)
     variation  <- changeType match {
@@ -161,19 +162,27 @@ class VariationsController(
     }
     _          <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
     _          <- tell("checkyouranswers", variation)
+    _          <- execute{sdilConnector.submitVariation(Convert(variation), sdilRef)}
     exit       <- journeyEnd("variationDone")
   } yield {
     exit
   }
 
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    sdilConnector.retrieveSubscription(request.sdilEnrolment.value) flatMap {
-      case Some(s) => runInner(request)(program(s))(id)(dataGet,dataPut)
+
+    val persistence = SessionCachePersistence("variation", keystore)
+    val sdilRef = request.sdilEnrolment.value
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(s) => runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
       case None => NotFound("").pure[Future]
     }
+
+
   }
 
   def index2(id: String): Action[AnyContent] = Action.async { implicit request =>
+
+    val persistence = SessionCachePersistence("test", keystore)
 
     def testProgram: WebMonad[Result] = for {
       packSites <- manyT("packSites", askSite(_))
@@ -182,6 +191,7 @@ class VariationsController(
       exit
     }
 
-    runInner(request)(testProgram)(id)(dataGet,dataPut)
+    runInner(request)(testProgram)(id)(persistence.dataGet,persistence.dataPut)
   }
+
 }
