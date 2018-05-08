@@ -35,6 +35,12 @@
         @CSRF.formField
 
         @inputText(
+            form(s"$key.tradingName"),
+            Messages("sdil.tradingName"),
+            '_divClass -> "form-group-compound",
+            '_maxLength -> "160"
+        )
+        @inputText(
             form(s"$key.address.line1"),
             Messages("sdil.address.line1"),
             '_divClass -> "form-group-compound",

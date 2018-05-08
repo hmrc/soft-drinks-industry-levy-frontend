@@ -42,6 +42,7 @@ import cats.implicits._
 import HtmlShow.ops._
 import java.time.LocalDate
 
+import sdil.controllers.variation.WarehouseVariationController.tradingNameMapping
 import sdil.forms.FormHelpers
 
 trait JunkPersistence {
@@ -274,9 +275,10 @@ trait SdilWMController extends WebMonadController
   ): WebMonad[Site] = {
 
     val siteMapping = mapping(
-      "address" -> ukAddressMapping
-    ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{
-      case (address, refOpt, _, _) => address })
+      "address" -> ukAddressMapping,
+      "tradingName" -> optional(tradingNameMapping)
+    ){(a, b) => Site.apply(a, none, b, none)}(Site.unapply(_).map{
+      case (address, _, tradingName, _) => (address, tradingName) })
     .verifying(constraintMap(constraints) :_*)
 
     formPage(id)(siteMapping, default) { (path, b, r) =>
