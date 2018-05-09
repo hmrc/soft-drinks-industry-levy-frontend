@@ -35,11 +35,22 @@
             <div class = "form-group">
               @htmlForm
             </div>
+
+            @if(messages.isDefinedAt(s"$key.help")) {
+
+                @details(s"$key.help.header") {
+                    <p>
+                        <span>@Messages(s"$key.help")</span>
+                    </p>
+                }
+           }
+
+
             <button class="button" type="submit" id="continue-button">
-            @Messages("sdil.common.save-continue")
+                @Messages("sdil.common.save-continue")
             </button>
 
 
-    }
+       }
 
 }

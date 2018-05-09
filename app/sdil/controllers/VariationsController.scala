@@ -138,8 +138,8 @@ class VariationsController(
   ): WebMonad[VariationData] = for {
     reason    <- askBigText("reason")
     deregDate <- askDate("deregDate", none, constraints = List(
-                           ("error.deregDate.nopast",  x => x > LocalDate.now),
-                           ("error.deregDate.nofuture",x => x < LocalDate.now.plusDays(15))))
+                           ("error.deregDate.nopast",  _ >= LocalDate.now),
+                           ("error.deregDate.nofuture",_ <  LocalDate.now.plusDays(15))))
 
   } yield data.copy(
     reason = reason.some,

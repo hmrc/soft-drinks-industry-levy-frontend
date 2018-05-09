@@ -109,7 +109,8 @@ trait SdilWMController extends WebMonadController
 
     formPage(id)(mapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      gdspages.boolean(id, b, path)
+      val formHtml = gdspages.fragments.boolean(id, b)
+      gdspages.ask(id, b, formHtml, path)
     }
   }
 
@@ -319,9 +320,10 @@ trait SdilWMController extends WebMonadController
     default: Option[Address] = None,
     constraints: List[(String, Address => Boolean)] = Nil
   ): WebMonad[Address] = 
-    formPage(id)(addressMapping.verifying(constraintMap(constraints):_*), default) { (path, b, r) =>
+    formPage(id)(addressMapping.verifying(constraintMap(constraints):_*), default) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
-      gdspages.address(id, b, path)
+      val formHtml = gdspages.fragments.address(id, form)
+      gdspages.ask(id, form, formHtml, path)
     }
 
   implicit val longTupleFormatter: Format[(Long, Long)] = (

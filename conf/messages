@@ -452,6 +452,11 @@ sdil.tradingName=Trading name (optional)
 sdil.variation.copack-for-others-vol=How many litres do you contract pack for others?
 sdil.variation.imports-vol=How many litres do you import?
 
+# Uniform common messages
+delete=Delete
+add=Add
+edit=Edit
+
 # Uniform variation process
 heading.changeType=Which change do you need to make?
 changeType.option.sites=Update contact, packaging site or warehouse details
@@ -459,6 +464,12 @@ changeType.option.activity=Change our business activity, including becoming a sm
 changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
 heading.package=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide?
 heading.packLarge=How many litres of liable drink did you, or third parties acting on your behalf package worldwide in the last 12 months?
+package.help.header=What does ''package'' mean?
+package.help=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
+heading.warehouses_add=[Tell us about the warehouse you are adding]
+heading.warehouses_add=[Tell us about the warehouse you are adding]
+heading.packSites_add=[Tell us about the packing site you are adding]
+
 option.packLarge.false=Less than 1 million litres
 option.packLarge.true=1 million litres or more
 

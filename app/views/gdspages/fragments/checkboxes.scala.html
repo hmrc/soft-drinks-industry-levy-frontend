@@ -14,17 +14,13 @@
  * limitations under the License.
  *@
 
+@import helper.{inputRadioGroup => _, _}
+@import play.api.Configuration
+@import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
+@import views.html.helper.options
+@import views.html.gdspages.helpers._
 
-@(summaryKey: String)(panelContent: Html)(implicit messages: Messages)
+@(key: String, form: Form[List[String]], possibleValues: List[String])(implicit messages: Messages)
 
-<details class="padding-bottom-10">
-    <summary>
-        <span class="summary" onclick="ga('send', 'event', 'helpLinks', 'help', '@Messages(summaryKey)')">
-        @Messages(summaryKey)
-        </span>
-    </summary>
-    <div class="panel panel-border-narrow" id="details-content-0">
-    @panelContent
-    </div>
-</details>
+@inputCheckboxGroup(form(key), possibleValues.map{x => (x,x)})
