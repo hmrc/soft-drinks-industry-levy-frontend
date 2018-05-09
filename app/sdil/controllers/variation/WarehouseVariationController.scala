@@ -127,30 +127,11 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
 
 object WarehouseVariationController extends FormHelpers {
 
-  val form: Form[Sites] = Form(warehouseSitesMapping)
-
-  private lazy val warehouseSitesMapping: Mapping[Sites] = new MappingWithExtraConstraint[Sites] {
-    override val underlying: Mapping[Sites] = mapping(
-      "additionalSites" -> seq(siteJsonMapping),
-      "addAddress" -> boolean,
-      "tradingName" -> tradingNameMapping,
-      "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
-    )(sitesApply)(sitesUnapply)
-
-    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites] = {
-      underlying.bind(data) match {
-        case Left(errs) => Left(errs)
-        case Right(sites) => Right(sites)
-      }
-    }
-
-    def sitesApply(a: Seq[Site], b: Boolean, c: String, d: Option[Address]): Sites = {
-      Sites.apply(a,b,Some(c),d)
-    }
-
-    def sitesUnapply(s: Sites) = {
-      Option(s.sites, s.addAddress, s.tradingName.getOrElse(""), s.additionalSites)
-    }
-  }
+  val form: Form[Sites] = Form(mapping(
+    "additionalSites" -> seq(siteJsonMapping),
+    "addAddress" -> boolean,
+    "tradingName" -> mandatoryIfTrue("addAddress", tradingNameMapping),
+    "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
+  )(Sites.apply)(Sites.unapply))
 
 }
