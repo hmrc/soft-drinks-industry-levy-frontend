@@ -40,7 +40,7 @@ trait SiteRef extends FormHelpers {
     mapping(
       "additionalSites" -> ignored(Seq.empty[Site]),
       "addAddress" -> mandatoryBoolean,
-      "tradingName" -> optional(tradingNameMapping),
+      "tradingName" -> mandatoryIfTrue("addAddress", tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(Sites.apply)(Sites.unapply)
   )
