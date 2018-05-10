@@ -113,7 +113,7 @@ object WarehouseController extends FormHelpers {
   val form: Form[Sites] = Form(mapping(
     "additionalSites" -> seq(siteJsonMapping),
     "addAddress" -> boolean,
-    "tradingName" -> optional(tradingNameMapping),
+    "tradingName" -> mandatoryIfTrue("addAddress", tradingNameMapping),
     "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
   )(Sites.apply)(Sites.unapply))
 

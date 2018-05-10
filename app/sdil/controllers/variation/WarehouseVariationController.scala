@@ -24,7 +24,7 @@ import sdil.actions.{VariationAction, VariationRequest}
 import sdil.config.AppConfig
 import sdil.controllers.SiteRef
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
-import sdil.models.Sites
+import sdil.models.{Address, Sites}
 import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -127,22 +127,11 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
 
 object WarehouseVariationController extends FormHelpers {
 
-  val form: Form[Sites] = Form(warehouseSitesMapping)
-
-  private lazy val warehouseSitesMapping: Mapping[Sites] = new MappingWithExtraConstraint[Sites] {
-    override val underlying: Mapping[Sites] = mapping(
-      "additionalSites" -> seq(siteJsonMapping),
-      "addAddress" -> boolean,
-      "tradingName" -> optional(tradingNameMapping),
-      "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
-    )(Sites.apply)(Sites.unapply)
-
-    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites] = {
-      underlying.bind(data) match {
-        case Left(errs) => Left(errs)
-        case Right(sites) => Right(sites)
-      }
-    }
-  }
+  val form: Form[Sites] = Form(mapping(
+    "additionalSites" -> seq(siteJsonMapping),
+    "addAddress" -> boolean,
+    "tradingName" -> mandatoryIfTrue("addAddress", tradingNameMapping),
+    "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
+  )(Sites.apply)(Sites.unapply))
 
 }
