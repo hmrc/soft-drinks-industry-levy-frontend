@@ -20,12 +20,14 @@ import uk.gov.hmrc.auth.core.{EnrolmentIdentifier, Enrolments}
 
 trait ActionHelpers {
   protected def getSdilEnrolment(enrolments: Enrolments): Option[EnrolmentIdentifier] = {
-    for {
-      enrolment <- enrolments.getEnrolment("HMRC-OBTDS-ORG")
+    val sdil = for {
+      enrolment <- enrolments.enrolments if enrolment.key.equalsIgnoreCase("HMRC-OBTDS-ORG")
       sdil <- enrolment.getIdentifier("EtmpRegistrationNumber") if sdil.value.slice(2, 4) == "SD"
     } yield {
       sdil
     }
+
+    sdil.headOption
   }
 
   protected def getUtr(enrolments: Enrolments): Option[String] = {
