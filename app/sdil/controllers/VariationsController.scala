@@ -69,7 +69,8 @@ class VariationsController(
     }
 
   implicit val siteHtml: HtmlShow[Site] = HtmlShow.instance { site =>
-    HtmlShow[Address].showHtml(Address.fromUkAddress(site.address))
+    Html(site.tradingName.fold("")(x => s"<div>$x</div>") +
+      HtmlShow[Address].showHtml(Address.fromUkAddress(site.address)))
   }
 
   protected def askContactDetails(

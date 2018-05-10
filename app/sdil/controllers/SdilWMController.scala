@@ -16,30 +16,32 @@
 
 package sdil.controllers
 
+import java.time.LocalDate
+
+import cats.implicits._
 import enumeratum._
 import ltbs.play._
 import ltbs.play.scaffold.HtmlShow
+import ltbs.play.scaffold.HtmlShow.ops._
 import ltbs.play.scaffold.webmonad._
+import play.api.data.Forms._
 import play.api.data._
 import play.api.data.validation._
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import play.api.mvc.{AnyContent, Request, Result}
 import play.twirl.api.Html
+import sdil.config.AppConfig
+import sdil.forms.FormHelpers
+import sdil.models._
+import sdil.models.backend._
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.gdspages
+
 import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
 import scala.util.Try
-import play.api.data.Forms._
-import play.api.mvc.{Action, AnyContent, Request, Result}
-import sdil.config.AppConfig
-import sdil.models._
-import sdil.models.backend._
-import uk.gov.hmrc.http.{ HeaderCarrier, HttpReads }
-import uk.gov.hmrc.play.HeaderCarrierConverter
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.gdspages
-import cats.implicits._
-import HtmlShow.ops._
-import java.time.LocalDate
 
 trait Persistence {
   def dataGet(session: String): Future[Map[String, JsValue]]
@@ -80,6 +82,7 @@ case class SessionCachePersistence(
 
 trait SdilWMController extends WebMonadController
     with FrontendController
+    with FormHelpers
 {
 
   implicit def config: AppConfig
@@ -293,9 +296,10 @@ trait SdilWMController extends WebMonadController
   ): WebMonad[Site] = {
 
     val siteMapping = mapping(
-      "address" -> ukAddressMapping
-    ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{
-      case (address, refOpt, _, _) => address })
+      "address" -> ukAddressMapping,
+      "tradingName" -> optional(tradingNameMapping)
+    ){(a, b) => Site.apply(a, none, b, none)}(Site.unapply(_).map{
+      case (address, _, tradingName, _) => (address, tradingName) })
     .verifying(constraintMap(constraints) :_*)
 
     formPage(id)(siteMapping, default) { (path, b, r) =>
@@ -303,14 +307,6 @@ trait SdilWMController extends WebMonadController
       gdspages.site(id, b, path)
     }
   }
-
-  private val addressMapping: play.api.data.Mapping[Address] = mapping(
-    "line1" -> nonEmptyText,
-    "line2" -> text,
-    "line3" -> text,
-    "line4" -> text,
-    "postcode" -> nonEmptyText
-  )(Address.apply)(Address.unapply)
 
   private val ukAddressMapping: Mapping[UkAddress] =
     addressMapping.transform(UkAddress.fromAddress, Address.fromUkAddress)
