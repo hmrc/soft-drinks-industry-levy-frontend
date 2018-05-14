@@ -96,6 +96,7 @@ object FrontendBuild extends Build {
       Concat.groups := Seq(
         "javascripts/sdil-frontend-app.js" -> group(Seq(
           "javascripts/application.js",
+          "javascripts/show-hide-content.js",
           "javascripts/details.polyfill.js"
         ))
       ),

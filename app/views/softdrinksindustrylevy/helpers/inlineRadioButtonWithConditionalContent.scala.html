@@ -36,7 +36,7 @@
     @radioOptions.map { case (value, (label, targ)) =>
 
     @defining(s"${elements.field.name}-${value.toLowerCase.replace(" ","_").replace(".","_")}")  { inputId =>
-        <div class="multiple-choice" @if(targ.nonEmpty) { showhide-target="@target"}>
+        <div class="multiple-choice" @if(targ.nonEmpty) { data-target="@target"}>
 
         <input
         type="radio"
