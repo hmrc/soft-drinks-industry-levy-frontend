@@ -17,31 +17,46 @@
 package sdil.forms
 
 import sdil.models.{Address, Sites}
-import sdil.controllers.WarehouseController.form
 
 class WarehouseFormSpec extends FormSpec {
 
   "The warehouse form" should {
     "bind to SecondaryWarehouses if there are no additional warehouses" in {
-      val f = form.bind(Map(addWarehouse -> "false"))
+      val f = WarehouseForm().bind(Map(addAddress -> "false"))
 
       f.value mustBe Some(Sites(Nil, false, None, None))
     }
 
     "validate the address if there is a warehouse" in {
-      mustValidateAddress(form, "additionalAddress", secondaryWarehouseData)
+      mustValidateAddress(WarehouseForm(), "additionalAddress", secondaryWarehouseData)
+    }
+
+    "require a trading name if a warehouse is added" in {
+      val f = WarehouseForm().bind(secondaryWarehouseData.updated(tradingName, ""))
+
+      mustContainError(f, tradingName, "error.tradingName.required")
+    }
+
+    "require the trading name to be less than 160 characters" in {
+      mustHaveMaxLength(tradingName, 160)(WarehouseForm(), secondaryWarehouseData, "error.tradingName.length")
+    }
+
+    "not allow the trading name to contain special characters" in {
+      val f = WarehouseForm().bind(secondaryWarehouseData.updated(tradingName, "ħełłø"))
+
+      mustContainError(f, tradingName, "error.tradingName.invalid")
     }
 
     "bind to SecondaryWarehouses if there is a warehouse and an address is provided" in {
-      val f = form.bind(secondaryWarehouseData)
+      val f = WarehouseForm().bind(secondaryWarehouseData)
 
       f.value mustBe Some(Sites(Nil, true, Some("name trade"), Some(Address("line 1", "line 2", "", "", "AA11 1AA"))))
     }
   }
 
   lazy val secondaryWarehouseData = Map(
-    "addAddress" -> "true",
-    "tradingName" -> "name trade",
+    addAddress -> "true",
+    tradingName -> "name trade",
     line1 -> "line 1",
     line2 -> "line 2",
     "additionalAddress.line3" -> "",
@@ -49,7 +64,8 @@ class WarehouseFormSpec extends FormSpec {
     postcode -> "AA11 1AA"
   )
 
-  lazy val addWarehouse = "addWarehouse"
+  lazy val addAddress = "addAddress"
+  lazy val tradingName = "tradingName"
   lazy val line1 = "additionalAddress.line1"
   lazy val line2 = "additionalAddress.line2"
   lazy val postcode = "additionalAddress.postcode"
