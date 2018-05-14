@@ -17,30 +17,27 @@
 package sdil.controllers
 
 import cats.implicits._
-import java.time.LocalDate
 import ltbs.play.scaffold._
+import play.api.data.Forms._
+import play.api.data.Mapping
 import play.api.i18n.MessagesApi
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
 import scala.concurrent.{ ExecutionContext, Future }
+import scala.util.Try
 import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.models._
 import sdil.models.backend.{ Contact, Site, UkAddress }
 import sdil.models.retrieved.{ RetrievedActivity, RetrievedSubscription }
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import webmonad._
-import scala.collection.mutable.{Map => MMap}
-import play.api.data.Forms._
 import views.html.gdspages
-import enumeratum._
-import sdil.models._
-import play.api.data.Mapping
-import scala.util.Try
+import webmonad._
 
 class ReturnsController (
   val messagesApi: MessagesApi,
@@ -50,7 +47,7 @@ class ReturnsController (
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController {
+) extends SdilWMController with FrontendController with GdsComponents with SdilComponents {
 
   implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
 
@@ -59,38 +56,16 @@ class ReturnsController (
       Html(s"${producer.sdilRef} ${producer.litreage}")
     }
 
-  protected def askSmallProducer(
-    id: String,
-    default: Option[SmallProducer] = None
-  ): WebMonad[SmallProducer] = {
-
-    val litreage: Mapping[Long] = nonEmptyText
-      .transform[String](_.replaceAll(",", ""), _.toString)
-      .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
-      .transform[BigDecimal](BigDecimal.apply, _.toString)
-      .verifying("error.litreage.numeric", _.isWhole)
-      .verifying("error.litreage.max", _ <= 9999999999999L)
-      .verifying("error.litreage.min", _ >= 0)
-      .transform[Long](_.toLong, BigDecimal.apply)
-
-    formPage(id)(
-      mapping(
-        "sdilRef" -> nonEmptyText.verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$")),
-        "lower" -> litreage,
-        "higher" -> litreage){
-        (ref,l,h) => SmallProducer(ref, (l,h))
-      }{
-        case SmallProducer(ref, (l,h)) => (ref,l,h).some
-      },
-      default
-    ){ (path,b,r) =>
-      implicit val request: Request[AnyContent] = r
-      gdspages.smallProducer(id, b, path)
-    }
+  implicit val smallProducer: Mapping[SmallProducer] = mapping(
+    "sdilRef" -> nonEmptyText
+      .verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$")),
+    "lower"   -> litreage,
+    "higher"  -> litreage
+  ){
+    (ref,l,h) => SmallProducer(ref, (l,h))
+  }{
+    case SmallProducer(ref, (l,h)) => (ref,l,h).some
   }
-
-  def askLitreageOpt(key: String): WebMonad[(Long, Long)] =
-    askLitreage(key + "Qty") emptyUnless askBool(key + "YesNo")
 
   def checkYourAnswers(key: String)(sdilReturn: SdilReturn): WebMonad[Unit] = {
 
@@ -117,15 +92,25 @@ class ReturnsController (
     tellTable(
       key,
       headings = List("", "litres.lower", "litres.higher", "tax.lower", "tax.higher", "subtotal"),
-      rows = {data :+ totals}.map{ case (key, (lower, higher, taxLow, taxHigh)) =>
-        List(key, f"$lower%,d", f"$higher%,d", f"£$taxLow%,.2f", f"£$taxHigh%,.2f", f"£${taxLow+taxHigh}%,.2f")
-          .map(stringToHtml)
+      rows = {data :+ totals}.map{
+        case (key, (lower, higher, taxLow, taxHigh)) =>
+        List(
+          key,
+          f"$lower%,d",
+          f"$higher%,d",
+          f"£$taxLow%,.2f",
+          f"£$taxHigh%,.2f",
+          f"£${taxLow+taxHigh}%,.2f"
+        ).map(stringToHtml)
       }
     )
   }
 
+  def askLitreageOpt(key: String): WebMonad[(Long, Long)] =
+    ask(litreagePair.nonEmpty, key + "Qty") emptyUnless ask(bool, key + "YesNo")
+
   private val askReturn: WebMonad[SdilReturn] = (
-    manyT("packageSmall", askSmallProducer(_), min = 1) emptyUnless boolean.ask("packageSmallYN"),
+    manyT("packageSmall", ask(smallProducer,_), min = 1) emptyUnless ask(bool, "packageSmallYN"),
     askLitreageOpt("packageLarge"),
     askLitreageOpt("importSmall"),
     askLitreageOpt("importLarge"),

@@ -17,32 +17,29 @@
 package sdil.controllers
 
 import cats.implicits._
+import enumeratum._
 import java.time.LocalDate
 import ltbs.play._
 import ltbs.play.scaffold._
+import play.api.data.Forms._
 import play.api.i18n.MessagesApi
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
-
 import scala.concurrent.{ExecutionContext, Future}
 import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.models._
 import sdil.models.backend.{ Contact, Site, UkAddress }
 import sdil.models.retrieved.{ RetrievedActivity, RetrievedSubscription }
+import sdil.models.variations._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import webmonad._
-
-import scala.collection.mutable.{Map => MMap}
-import play.api.data.Forms._
 import views.html.gdspages
-import enumeratum._
-import sdil.models._
-import sdil.models.variations._
+import webmonad._
 
 class VariationsController(
   val messagesApi: MessagesApi,
@@ -52,7 +49,7 @@ class VariationsController(
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController {
+) extends SdilWMController with FrontendController with GdsComponents with SdilComponents {
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
@@ -62,42 +59,13 @@ class VariationsController(
     case object Deregister extends ChangeType
   }
 
-  implicit val addressHtml: HtmlShow[Address] =
-    HtmlShow.instance { address =>
-      val lines = address.nonEmptyLines.mkString("<br />")
-      Html(s"<div>$lines</div>")
-    }
-
-  implicit val siteHtml: HtmlShow[Site] = HtmlShow.instance { site =>
-    HtmlShow[Address].showHtml(Address.fromUkAddress(site.address))
-  }
-
-  protected def askContactDetails(
-    id: String, default: Option[ContactDetails]
-  ): WebMonad[ContactDetails] = {
-    val contactMapping = mapping(
-      "fullName" -> nonEmptyText,
-      "position" -> nonEmptyText,
-      "phoneNumber" -> nonEmptyText,
-      "email" -> nonEmptyText
-    )(ContactDetails.apply)(ContactDetails.unapply)
-
-    formPage(id)(contactMapping, default) { (path, b, r) =>
-      implicit val request: Request[AnyContent] = r
-      gdspages.contactdetails(id, b, path)
-    }
-
-  }
-
-  private implicit def toSome[A](in: A): Option[A] = in.some
-
   private def contactUpdate(
     data: VariationData
   ): WebMonad[VariationData] = for {
-    contact         <- askContactDetails("contact", data.updatedContactDetails)
+    contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
     warehouses      <- manyT("warehouses", askSite(_), default = data.updatedWarehouseSites.toList)
     packSites       <- manyT("packSites", askSite(_), default = data.updatedProductionSites.toList)
-    businessAddress <- askAddress("businessAddress", default = data.updatedBusinessAddress)
+    businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
   } yield data.copy (
     updatedBusinessAddress = businessAddress,
     updatedProductionSites = packSites,
@@ -105,19 +73,30 @@ class VariationsController(
     updatedContactDetails  = contact
   )
 
+  implicit def optFormatter[A](implicit innerFormatter: Format[A]): Format[Option[A]] =
+    new Format[Option[A]] {
+      def reads(json: JsValue): JsResult[Option[A]] = json match {
+        case JsNull => JsSuccess(none[A])
+        case a      => innerFormatter.reads(a).map{_.some}
+      }
+      def writes(o: Option[A]): JsValue =
+        o.map{innerFormatter.writes}.getOrElse(JsNull)
+      
+    }
 
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = for {
-    packLarge       <- askBool("packLarge", data.producer.isLarge) when askBool("package", data.producer.isProducer)
-    packQty         <- askLitreage("packQty") when askBool("packOpt", data.updatedProductionSites.nonEmpty)
-    useCopacker     <- askBool("useCopacker", data.usesCopacker)
-    copacks         <- askLitreage("copackQty") when askBool("copacker", data.copackForOthers)
-    imports         <- askLitreage("importQty") when askBool("importer", data.imports)
-    packSites       <- manyT("packSites", askSite(_), default = data.updatedProductionSites.toList)
-    warehouses      <- manyT("warehouses", askSite(_), default = data.updatedWarehouseSites.toList)
-    businessAddress <- askAddress("businessAddress", default = data.updatedBusinessAddress)
-    contact         <- askContactDetails("contact", data.updatedContactDetails)
+    //packLarge       <- ask(bool, "packLarge", data.producer.isLarge) when ask(bool, "package", data.producer.isProducer)
+    packLarge       <- ask[Option[Boolean]](innerOpt(bool), "packLarge")
+    packQty         <- ask(litreagePair.nonEmpty, "packQty") when ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
+    useCopacker     <- ask(bool,"useCopacker", data.usesCopacker)
+    copacks         <- ask(litreagePair.nonEmpty, "copackQty") when ask(bool, "copacker", data.copackForOthers)
+    imports         <- ask(litreagePair.nonEmpty, "importQty") when ask(bool, "importer", data.imports)
+    packSites       <- manyT("packSites", ask(siteMapping,_), default = data.updatedProductionSites.toList)
+    warehouses      <- manyT("warehouses", ask(siteMapping,_), default = data.updatedWarehouseSites.toList)
+    businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
+    contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
   } yield data.copy (
     updatedBusinessAddress = businessAddress,
     producer               = Producer(packLarge.isDefined, packLarge),
@@ -168,16 +147,26 @@ class VariationsController(
     exit
   }
 
-  def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+  def index(id: String): Action[AnyContent] = development(id)
+
+  def real(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
 
     val persistence = SessionCachePersistence("variation", keystore)
     val sdilRef = request.sdilEnrolment.value
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
-      case Some(s) => runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
+      case Some(s) =>
+        runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
       case None => NotFound("").pure[Future]
     }
+  }
 
+  val junkPersistence = new JunkPersistence
 
+  def development(id: String): Action[AnyContent] = Action.async { implicit request =>
+    val sdilRef = "XKSDIL000000000"
+    val s = RetrievedSubscription("0100000000","Adam's Dyes (Also Soft Drinks)",UkAddress(List("86 Amory's Holt Way", "Ipswich"),"IP12 5ZT"),RetrievedActivity(false,true,true,true,false),LocalDate.now,List(Site(UkAddress(List("40 Sudbury Mews", "Torquay"),"TQ53 6GW"),Some("92"),None,None), Site(UkAddress(List("11B Welling Close", "North London"),"N93 9II"),Some("95"),None,None)),List(Site(UkAddress(List("33 Acre Grove", "Falkirk"),"FK38 8TP"),Some("61"),None,None)),Contact(Some("Avery Roche"),Some("Enterprise Infrastructure Engineer"),"01024 670607","Charlotte.Connolly@gmail.co.uk"))
+
+    runInner(request)(program(s, sdilRef))(id)(junkPersistence.dataGet,junkPersistence.dataPut)
   }
 
   def index2(id: String): Action[AnyContent] = Action.async { implicit request =>

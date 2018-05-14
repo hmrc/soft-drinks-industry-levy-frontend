@@ -16,39 +16,41 @@
 
 package sdil.controllers
 
-import enumeratum._
-import ltbs.play._
-import ltbs.play.scaffold.HtmlShow
-import ltbs.play.scaffold.webmonad._
-import play.api.data._
-import play.api.data.validation._
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import play.twirl.api.Html
+import java.time.LocalDate
+
 import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
 import scala.util.Try
+
+import cats.{Eq, Semigroup, Monoid}
+import cats.implicits._
+import enumeratum._
+import ltbs.play._
+import ltbs.play.scaffold._
+import ltbs.play.scaffold.HtmlShow.ops._
+import ltbs.play.scaffold.webmonad._
+import play.api.data._
 import play.api.data.Forms._
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.data.validation._
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import play.api.mvc.{AnyContent, Request, Result}
+import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.models._
 import sdil.models.backend._
-import uk.gov.hmrc.http.{ HeaderCarrier, HttpReads }
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
-import cats.implicits._
-import HtmlShow.ops._
-import java.time.LocalDate
+import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
+
 
 trait Persistence {
   def dataGet(session: String): Future[Map[String, JsValue]]
   def dataPut(session: String, dataIn: Map[String, JsValue]): Unit
 }
 
-trait JunkPersistence extends Persistence {
-
-  implicit def ec: ExecutionContext
+class JunkPersistence(implicit val ec: ExecutionContext) extends Persistence {
 
   // crappy persistence, but good for development
   private val data = MMap.empty[String,Map[String,JsValue]]
@@ -79,7 +81,7 @@ case class SessionCachePersistence(
 
 
 trait SdilWMController extends WebMonadController
-    with FrontendController
+    with FrontendController with GdsComponents
 {
 
   implicit def config: AppConfig
@@ -99,15 +101,28 @@ trait SdilWMController extends WebMonadController
     }.imap(e.withName)(_.toString)
   }
 
+  val litreage: Mapping[Long] = nonEmptyText
+    .transform[String](_.replaceAll(",", ""), _.toString)
+    .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
+    .transform[BigDecimal](BigDecimal.apply, _.toString)
+    .verifying("error.litreage.numeric", _.isWhole)
+    .verifying("error.litreage.max", _ <= 9999999999999L)
+    .verifying("error.litreage.min", _ >= 0)
+    .transform[Long](_.toLong, BigDecimal.apply)
+
+  val litreagePair: Mapping[(Long,Long)] =
+    tuple("lower" -> litreage, "higher" -> litreage)
+
+  implicit class RichMapping[A](mapping: Mapping[A]) {
+    def nonEmpty(implicit m: Monoid[A], eq: Eq[A]): Mapping[A] =
+      mapping.verifying("error.empty", {!_.isEmpty})
+  }
+
   protected def askBool(
     id: String,
     default: Option[Boolean] = None
   ): WebMonad[Boolean] = {
-    val mapping: Mapping[Boolean] = optional(boolean)
-      .verifying("error.required", _.isDefined)
-      .transform(_.getOrElse(false),{x: Boolean => x.some})
-
-    formPage(id)(mapping, default) { (path, b, r) =>
+    formPage(id)(bool, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
       val formHtml = gdspages.fragments.boolean(id, b)
       gdspages.ask(id, b, formHtml, path)
@@ -135,44 +150,19 @@ trait SdilWMController extends WebMonadController
     }
   }
 
-  trait FormHtml[A] {
-    def asHtmlForm(key: String, form: Form[A])(implicit request: Request[AnyContent]): Html
-  }
-
-  def formFromView[A](view: (String, Form[A]) => Request[AnyContent] => Html): FormHtml[A] =
-    new FormHtml[A] {
-      def asHtmlForm(key: String, form: Form[A])(implicit request: Request[AnyContent]): Html = {
-        view(key, form)(implicitly)
-      }
-    }
-
 //  val booleanForm2 = formFromView[Boolean]{gdspages.fragments.boolean(_, _)(_)}
 
-  implicit val booleanForm = new FormHtml[Boolean] {
-    def asHtmlForm(key: String, form: Form[Boolean])(implicit request: Request[AnyContent]): Html = {
-      gdspages.fragments.boolean(key, form)
+  def ask[T](mapping: Mapping[T], key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
+    formPage(key)(mapping, default) { (path, form, r) =>
+      implicit val request: Request[AnyContent] = r
+      gdspages.ask(key, form, htmlForm.asHtmlForm(key, form), path)
     }
-  }
 
-  implicit val stringForm = new FormHtml[String] {
-    def asHtmlForm(key: String, form: Form[String])(implicit request: Request[AnyContent]): Html = {
-      gdspages.fragments.string(key, form)
-    }
-  }
+  def ask[T](mapping: Mapping[T], key: String)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
+    ask(mapping, key, None)
 
-  implicit class RichMapping[T](mapping: Mapping[T]) {
-    def ask(key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
-      formPage(key)(mapping, default) { (path, form, r) =>
-        implicit val request: Request[AnyContent] = r
-        gdspages.ask(key, form, htmlForm.asHtmlForm(key, form), path)
-      }
-
-    def ask(key: String)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
-      ask(key, None)
-
-    def ask(key: String, default: T)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
-      ask(key, default.some)
-  }
+  def ask[T](mapping: Mapping[T], key: String, default: T)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
+    ask(mapping, key, default.some)
 
   protected def tell[A](
     id: String,
@@ -235,6 +225,13 @@ trait SdilWMController extends WebMonadController
       gdspages.bigtext(id, b, path)
     }
 
+  protected def innerOpt[A](inner: Mapping[A]): Mapping[Option[A]] = 
+      mapping(
+        "inner" -> mandatoryIfTrue("outer", inner),
+        "outer" -> bool
+      ){(_,_) match { case (a, b) => a.filter(_ => b) }
+      }( a => (a, a.isDefined).some )
+
   protected def askDate(
     id: String,
     default: Option[LocalDate] = None,
@@ -286,25 +283,23 @@ trait SdilWMController extends WebMonadController
       }
     }
 
+  lazy val siteMapping: Mapping[Site] = mapping(
+    "address" -> ukAddressMapping
+  ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{ case (address, refOpt, _, _) => address } )
+
   protected def askSite(
     id: String,
     default: Option[Site] = None,
     constraints: List[(String, Site => Boolean)] = Nil
   ): WebMonad[Site] = {
 
-    val siteMapping = mapping(
-      "address" -> ukAddressMapping
-    ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{
-      case (address, refOpt, _, _) => address })
-    .verifying(constraintMap(constraints) :_*)
-
-    formPage(id)(siteMapping, default) { (path, b, r) =>
+    formPage(id)(siteMapping.verifying(constraintMap(constraints) :_*), default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
       gdspages.site(id, b, path)
     }
   }
 
-  private val addressMapping: play.api.data.Mapping[Address] = mapping(
+  protected val addressMapping: play.api.data.Mapping[Address] = mapping(
     "line1" -> nonEmptyText,
     "line2" -> text,
     "line3" -> text,
@@ -314,6 +309,13 @@ trait SdilWMController extends WebMonadController
 
   private val ukAddressMapping: Mapping[UkAddress] =
     addressMapping.transform(UkAddress.fromAddress, Address.fromUkAddress)
+
+  val contactDetailsMapping: Mapping[ContactDetails] = mapping(
+    "fullName" -> nonEmptyText,
+    "position" -> nonEmptyText,
+    "phoneNumber" -> nonEmptyText,
+    "email" -> nonEmptyText
+  )(ContactDetails.apply)(ContactDetails.unapply)
 
   protected def askAddress(
     id: String,
@@ -337,15 +339,6 @@ trait SdilWMController extends WebMonadController
     allowZero: Boolean = false,
     constraints: List[(String, ((Long,Long)) => Boolean)] = Nil
   ): WebMonad[(Long,Long)] = {
-
-    val litreage: Mapping[Long] = nonEmptyText
-      .transform[String](_.replaceAll(",", ""), _.toString)
-      .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
-      .transform[BigDecimal](BigDecimal.apply, _.toString)
-      .verifying("error.litreage.numeric", _.isWhole)
-      .verifying("error.litreage.max", _ <= 9999999999999L)
-      .verifying("error.litreage.min", _ >= 0)
-      .transform[Long](_.toLong, BigDecimal.apply)
 
     val constraintsP:List[Constraint[(Long,Long)]] = constraintMap(
       constraints ++ List(("error.litreage.zero", {a: (Long,Long) => !a.isEmpty || allowZero}))
@@ -375,7 +368,10 @@ trait SdilWMController extends WebMonadController
     }
     def inf(x: Control): String = x.toString
 
-    many[A](id, min, max, default){ case (iid, minA, maxA, items) =>
+    def confirmation(q: A): WebMonad[Boolean] =
+      tell(s"${id}_deleteConfirmation", q).map{_ => true}
+
+    many[A](id, min, max, default, confirmation){ case (iid, minA, maxA, items) =>
 
       val mapping = nonEmptyText
         .verifying("error.items.toFew", a => a != "Done" || items.size >= min)

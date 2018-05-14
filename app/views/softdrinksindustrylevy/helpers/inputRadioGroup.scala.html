@@ -37,11 +37,11 @@
     @elements.errors.map{error => <span class="error-message">@Messages(error)</span>}
 
     @radioOptions.map { case (value, label) =>
-        @defining(s"${elements.field.name}-${value.toLowerCase.replace(" ","_")}")  { inputId =>
+        @defining(s"${elements.field.name}-${value.toLowerCase.replace(" ","_").replace(".","_")}")  { inputId =>
             <div class="multiple-choice">
                 <input
                 type="radio"
-                id="@inputId"
+                id="@{inputId.replace(".","_")}"
                 name="@elements.field.name"
                 value="@value"
                     @elements.args.get('_inputClass).map{inputClass => class="@inputClass"}

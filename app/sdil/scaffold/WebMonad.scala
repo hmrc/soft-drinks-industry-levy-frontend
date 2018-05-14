@@ -16,19 +16,27 @@
 
 package ltbs.play.scaffold
 
-import cats.data.{EitherT, RWST}
-import cats.{Monoid, Order}
-import cats.implicits._
-import play.api._
-import play.api.data.Forms._
-import play.api.data.{Form, Mapping}
-import play.api.http.Writeable
-import play.api.libs.json._
-import play.api.mvc.{ Action, AnyContent, Controller, Request, Result }
-import scala.concurrent.{Future, ExecutionContext}
 import java.time.LocalDate
 
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
+
+import cats.{Monoid, Order}
+import cats.data.{EitherT, RWST}
+import cats.implicits._
+import play.api._
+import play.api.data.{Form, Mapping}
+import play.api.data.Forms._
+import play.api.http.Writeable
+import play.api.i18n.Messages
+import play.api.libs.json._
+import play.api.mvc.{Action, AnyContent, Controller, Request, Result}
+import play.twirl.api.Html
+
+
+trait FormHtml[A] {
+  def asHtmlForm(key: String, form: Form[A])(implicit messages: Messages): Html
+}
 
 package object webmonad {
 
@@ -171,8 +179,13 @@ package webmonad {
       (none[String], path, db, Redirect(s"./$target").asLeft[Unit]).pure[Future]
     }
 
-    def many[A](id: String, min: Int = 0, max: Int = 1000, default: List[A] = List.empty[A])
-      (listingPage: (String, Int, Int, List[A]) => WebMonad[Control])
+    def many[A](
+      id: String,
+      min: Int = 0,
+      max: Int = 1000,
+      default: List[A] = List.empty[A],
+      deleteConfirmation: A => WebMonad[Boolean] = {_: A => true.pure[WebMonad]}
+    )(listingPage: (String, Int, Int, List[A]) => WebMonad[Control])
       (wm: String => WebMonad[A])
       (implicit format: Format[A]): WebMonad[List[A]] =
     {
@@ -191,10 +204,11 @@ package webmonad {
       } yield i
 
       def deleteProgram(index: Int): WebMonad[List[A]] = for {
+        allItems <- read[List[A]](dataKey).map{_.getOrElse(default)}
         _ <- update[List[A]](dataKey) { x => {
-          val all = x.getOrElse(default)
-          all.take(index) ++ all.drop(index + 1)
-        }.some }
+               val all = x.getOrElse(default)
+               all.take(index) ++ all.drop(index + 1)
+             }.some } when deleteConfirmation(allItems(index))
         _ <- redirect(id) 
       } yield {
         throw new IllegalStateException("Redirect failing for deletion!")
