@@ -16,17 +16,15 @@
 
 package sdil.controllers
 
-import play.api.data.Forms._
-import play.api.data.{Form, FormError, Mapping}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, Result}
 import sdil.actions.{FormAction, RegistrationFormRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
-import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
+import sdil.forms.WarehouseForm
 import sdil.models._
 import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.register.secondaryWarehouse
 
 import scala.concurrent.Future
@@ -37,15 +35,13 @@ class WarehouseController(val messagesApi: MessagesApi,
                          (implicit config: AppConfig)
   extends FrontendController with I18nSupport with SiteRef {
 
-  import WarehouseController._
-
   def show: Action[AnyContent] = formAction.async { implicit request =>
     Journey.expectedPage(WarehouseSitesPage) match {
       case WarehouseSitesPage =>
         val fillInitialForm: Form[Sites] = request.formData.secondaryWarehouses match {
-          case Some(Nil) => initialForm.fill(Sites(Nil, addAddress = false, None, None))
-          case Some(_) => form
-          case None => initialForm
+          case Some(Nil) => WarehouseForm.initial().fill(Sites(Nil, addAddress = false, None, None))
+          case Some(_) => WarehouseForm()
+          case None => WarehouseForm.initial()
         }
         Ok(secondaryWarehouse(fillInitialForm, secondaryWarehouses, Journey.previousPage(WarehouseSitesPage).show, formTarget))
       case otherPage => Redirect(otherPage.show)
@@ -53,11 +49,11 @@ class WarehouseController(val messagesApi: MessagesApi,
   }
 
   val addSingleSite: Action[AnyContent] = formAction.async { implicit request =>
-    validateWith(initialForm)
+    validateWith(WarehouseForm.initial())
   }
 
   val addMultipleSites: Action[AnyContent] = formAction.async { implicit request =>
-    validateWith(form)
+    validateWith(WarehouseForm())
   }
 
   private def validateWith(form: Form[Sites])(implicit request: RegistrationFormRequest[_]): Future[Result] = {
@@ -106,15 +102,4 @@ class WarehouseController(val messagesApi: MessagesApi,
       case _ => routes.WarehouseController.addMultipleSites()
     }
   }
-}
-
-object WarehouseController extends FormHelpers {
-
-  val form: Form[Sites] = Form(mapping(
-    "additionalSites" -> seq(siteJsonMapping),
-    "addAddress" -> boolean,
-    "tradingName" -> mandatoryIfTrue("addAddress", tradingNameMapping),
-    "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
-  )(Sites.apply)(Sites.unapply))
-
 }

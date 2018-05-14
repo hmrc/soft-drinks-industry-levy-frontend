@@ -16,19 +16,17 @@
 
 package sdil.controllers.variation
 
-import play.api.data.Forms._
-import play.api.data.{Form, FormError, Mapping}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, Result}
 import sdil.actions.{VariationAction, VariationRequest}
 import sdil.config.AppConfig
 import sdil.controllers.SiteRef
-import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
-import sdil.models.{Address, Sites}
+import sdil.forms.WarehouseForm
+import sdil.models.Sites
 import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.voa.play.form.ConditionalMappings._
 import views.html.softdrinksindustrylevy.variations.{retrieve_summary_secondaryWarehouse, secondaryWarehouseWithRef}
 
 import scala.concurrent.Future
@@ -44,9 +42,9 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
       case (true, _) =>
         Redirect(routes.VariationsController.show())
       case (_, Nil) =>
-        formPage(WarehouseVariationController.form.fill(Sites(Nil, false, None, None)))
+        formPage(WarehouseForm().fill(Sites(Nil, false, None, None)))
       case _ =>
-        formPage(WarehouseVariationController.form)
+        formPage(WarehouseForm())
     }
   }
 
@@ -62,11 +60,11 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
   }
 
   def addSingleSite: Action[AnyContent] = variationAction.async { implicit request =>
-    validateWith(initialForm)
+    validateWith(WarehouseForm.initial())
   }
 
   def addMultipleSites: Action[AnyContent] = variationAction.async { implicit request =>
-    validateWith(WarehouseVariationController.form)
+    validateWith(WarehouseForm())
   }
 
   private def validateWith(form: Form[Sites])(implicit request: VariationRequest[_]): Future[Result] = {
@@ -123,15 +121,4 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
       case _ => routes.WarehouseVariationController.addMultipleSites()
     }
   }
-}
-
-object WarehouseVariationController extends FormHelpers {
-
-  val form: Form[Sites] = Form(mapping(
-    "additionalSites" -> seq(siteJsonMapping),
-    "addAddress" -> boolean,
-    "tradingName" -> mandatoryIfTrue("addAddress", tradingNameMapping),
-    "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
-  )(Sites.apply)(Sites.unapply))
-
 }
