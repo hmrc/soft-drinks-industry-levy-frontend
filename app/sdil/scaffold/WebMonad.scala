@@ -21,7 +21,7 @@ import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 
-import cats.{Monoid, Order}
+import cats.{Semigroup, Monoid, Order}
 import cats.data.{EitherT, RWST}
 import cats.implicits._
 import play.api._
@@ -39,6 +39,12 @@ trait FormHtml[A] {
 }
 
 package object webmonad {
+
+  implicit val htmlSemigroup: Monoid[Html] = new Monoid[Html] {
+    def combine(x: Html, y: Html): Html = Html(x.toString ++ y.toString)
+    def empty: Html = Html("")
+  }
+
 
   implicit val orderedLD: Order[LocalDate] = new Order[LocalDate] {
     def compare(a: LocalDate, b: LocalDate): Int = a compareTo b

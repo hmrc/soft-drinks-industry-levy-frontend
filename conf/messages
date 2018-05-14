@@ -529,3 +529,19 @@ deregister.reason.label=Reason for deregistering
 heading.deregDate=What date do you need to deregister from?
 error.deregDate.nopast=[Cannot be in the past]
 error.deregDate.nofuture=[Cannot be more than 14 days in the future]
+
+variations.cya.packLarge=Amount of own brand liable drink produced in the past 12 months
+variations.cya.packLarge.large=1 million litres or more
+variations.cya.packLarge.small=[Less than 1 million litres]
+variations.cya.packLarge.none=[None]
+
+variations.cya.packOpt=Do you package at your own site?
+variations.cya.packQty=Annual litres for your own brands
+variations.cya.copackQty=Annual litres for your customers
+variations.cya.importer=Do you bring liable drinks into the UK?
+variations.cya.importQty=Annual litres brought into the UK
+
+variations.cya.activity=Changes to business activity
+variations.cya.packsites=Packaging sites
+variations.cya.warehouses=[Warehouse sites]
+

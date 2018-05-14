@@ -40,6 +40,7 @@ import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
 import webmonad._
+import HtmlShow.ops._
 
 class VariationsController(
   val messagesApi: MessagesApi,
@@ -86,31 +87,108 @@ class VariationsController(
 
   private def activityUpdate(
     data: VariationData
-  ): WebMonad[VariationData] = for {
-    //packLarge       <- ask(bool, "packLarge", data.producer.isLarge) when ask(bool, "package", data.producer.isProducer)
-    packLarge       <- ask[Option[Boolean]](innerOpt(bool), "packLarge")
-    packQty         <- ask(litreagePair.nonEmpty, "packQty") when ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
-    useCopacker     <- ask(bool,"useCopacker", data.usesCopacker)
-    copacks         <- ask(litreagePair.nonEmpty, "copackQty") when ask(bool, "copacker", data.copackForOthers)
-    imports         <- ask(litreagePair.nonEmpty, "importQty") when ask(bool, "importer", data.imports)
-    packSites       <- manyT("packSites", ask(siteMapping,_), default = data.updatedProductionSites.toList)
-    warehouses      <- manyT("warehouses", ask(siteMapping,_), default = data.updatedWarehouseSites.toList)
-    businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
-    contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
-  } yield data.copy (
-    updatedBusinessAddress = businessAddress,
-    producer               = Producer(packLarge.isDefined, packLarge),
-    usesCopacker           = useCopacker.some,
-    packageOwn             = packLarge.isDefined.some,
-    packageOwnVol          = packQty.map{case (a,b) => Litreage(a,b)},
-    copackForOthers        = copacks.isDefined,
-    copackForOthersVol     = copacks.map{case (a,b) => Litreage(a,b)},
-    imports                = imports.isDefined,
-    importsVol             = imports.map{case (a,b) => Litreage(a,b)},
-    updatedProductionSites = packSites,
-    updatedWarehouseSites  = warehouses,
-    updatedContactDetails  = contact
-  )
+  ): WebMonad[VariationData] = {
+
+    import play.api.i18n.Messages
+
+    implicit val showLitreage: HtmlShow[Litreage] = new HtmlShow[Litreage]{
+      def showHtml(l: Litreage): Html = l match {
+        case Litreage(lower, higher) => Html(
+          Messages("sdil.declaration.low-band") + f": $lower%,f" +
+            "<br>" +
+            Messages("sdil.declaration.high-band") + f": $higher%,f"
+        )
+      }
+    }
+
+      implicit val siteListToHtml: HtmlShow[List[Site]] = new HtmlShow[List[Site]] {
+        def showHtml(sx: List[Site]): Html =
+          Html("<dl class=\"govuk-check-your-answers cya-questions-short\">") |+|
+            sx.map{site =>
+              Html(
+                s"""|
+                   |     <dt class="cya-question">
+                   |       &nbsp;
+                   |     </dt>
+                   |     <dd class="cya-answer">
+                   |       <details role="group">
+                   |         <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">${site.address.lines.head}</span></summary>
+                   |         <div class="panel" id="details-content-0" aria-hidden="true">${site.address.lines.tail.mkString("<br />")}<br />${site.address.postCode}
+                   |         </div>
+                   |       </details>
+                   |     </dd>
+                   |     <dd class="cya-change">
+                   |       <a href="#">
+                   |         Change<span class="visually-hidden"> address</span>
+                   |       </a>
+                   |     </dd>""".stripMargin)
+            }.combineAll |+| Html("</dl>")
+      }
+
+    implicit val variationDataShow: HtmlShow[VariationData] = new HtmlShow[VariationData] {
+
+      implicit def boolToHtml(bool: Boolean): Html =
+        Html {bool match {
+                case true => Messages("sdil.common.yes")
+                case false => Messages("sdil.common.no")
+              }}
+
+      def showHtml(v: VariationData): Html = {
+        val pre="variations.cya."
+
+        val table: List[(String, Option[Html])] = List(
+          "packLarge" ->
+            Html(v.producer.isLarge match {
+                   case Some(true) =>  Messages(s"${pre}packLarge.large")
+                   case Some(false) => Messages(s"${pre}packLarge.small")
+                   case None => Messages(s"${pre}packLarge.none")
+                 }).some,
+          "packOpt" -> boolToHtml{v.packageOwn.getOrElse(false)}.some,
+          "packQty" -> v.packageOwnVol.map{_.showHtml},
+          "copackQty" -> v.copackForOthersVol.map{_.showHtml},
+          "importer" -> boolToHtml(v.imports).some,
+          "importQty" -> v.importsVol.map{_.showHtml}
+        )
+        Html("""<h2 class="heading-medium">""" ++ Messages(s"${pre}activity") ++ "</h2>") |+|
+        views.html.gdspages.fragments.checkyouranswers(
+          table.collect{ case (f,Some(html)) => (s"$pre$f", html, s"./$f".some) }
+        ) |+|
+          Html("""<h2 class="heading-medium">""" ++ Messages(s"${pre}packsites") ++ "</h2>") |+|
+          v.updatedProductionSites.toList.showHtml |+|
+          Html("""<h2 class="heading-medium">""" ++ Messages(s"${pre}warehouses") ++ "</h2>") |+|
+          v.updatedWarehouseSites.toList.showHtml
+
+      }
+    }
+
+    for {
+      //packLarge       <- ask(bool, "packLarge", data.producer.isLarge) when ask(bool, "package", data.producer.isProducer)
+      packLarge       <- ask[Option[Boolean]](innerOpt(bool), "packLarge")
+      packQty         <- ask(litreagePair.nonEmpty, "packQty") when ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
+      useCopacker     <- ask(bool,"useCopacker", data.usesCopacker)
+      copacks         <- ask(litreagePair.nonEmpty, "copackQty") when ask(bool, "copacker", data.copackForOthers)
+      imports         <- ask(litreagePair.nonEmpty, "importQty") when ask(bool, "importer", data.imports)
+      packSites       <- manyT("packSites", ask(siteMapping,_), default = data.updatedProductionSites.toList)
+      warehouses      <- manyT("warehouses", ask(siteMapping,_), default = data.updatedWarehouseSites.toList)
+      businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
+      contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
+      variation = data.copy (
+        updatedBusinessAddress = businessAddress,
+        producer               = Producer(packLarge.isDefined, packLarge),
+        usesCopacker           = useCopacker.some,
+        packageOwn             = packLarge.isDefined.some,
+        packageOwnVol          = packQty.map{case (a,b) => Litreage(a,b)},
+        copackForOthers        = copacks.isDefined,
+        copackForOthersVol     = copacks.map{case (a,b) => Litreage(a,b)},
+        imports                = imports.isDefined,
+        importsVol             = imports.map{case (a,b) => Litreage(a,b)},
+        updatedProductionSites = packSites,
+        updatedWarehouseSites  = warehouses,
+        updatedContactDetails  = contact
+      )
+      _               <- tell("checkyouranswers", variation)
+    } yield (variation)
+  }
 
   private def deregisterUpdate(
     data: VariationData
@@ -127,10 +205,6 @@ class VariationsController(
 
   def errorPage(id: String): WebMonad[Result] = Ok(s"Error $id")
 
-  implicit val variationDataShow: HtmlShow[VariationData] = new HtmlShow[VariationData] {
-    def showHtml(v: VariationData): Html = views.html.gdspages.variationDataCYA(v)
-  }
-
   private def program(subscription: RetrievedSubscription, sdilRef: String)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
     changeType <- askEnum("changeType", ChangeType)
     base = VariationData(subscription)
@@ -140,7 +214,6 @@ class VariationsController(
       case ChangeType.Deregister => deregisterUpdate(base)
     }
     _          <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
-    _          <- tell("checkyouranswers", variation)
     _          <- execute{sdilConnector.submitVariation(Convert(variation), sdilRef)}
     exit       <- journeyEnd("variationDone")
   } yield {
