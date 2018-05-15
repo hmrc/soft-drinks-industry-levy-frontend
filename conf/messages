@@ -453,7 +453,7 @@ sdil.variation.copack-for-others-vol=How many litres do you contract pack for ot
 sdil.variation.imports-vol=How many litres do you import?
 
 # Uniform common messages
-delete=Delete
+delete=Remove
 add=Add
 edit=Edit
 
@@ -553,3 +553,6 @@ variations.cya.activity=Changes to business activity
 variations.cya.packsites=Packaging sites
 variations.cya.warehouses=[Warehouse sites]
 
+heading.reason=Why are you deregistering from the Soft Drinks Industry Levy?
+reason.label=Reason for deregistering
+reason.hint=Enter a maximum of 255 characters

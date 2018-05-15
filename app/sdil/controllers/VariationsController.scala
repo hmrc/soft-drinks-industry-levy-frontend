@@ -37,16 +37,19 @@ import sdil.models.retrieved.{ RetrievedActivity, RetrievedSubscription }
 import sdil.models.variations._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
 import webmonad._
 import HtmlShow.ops._
 
+
 class VariationsController(
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
-  keystore: SessionCache
+  keystore: SessionCache,
+  regdata: RegistrationFormDataCache // Bloody DI
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
@@ -68,7 +71,6 @@ class VariationsController(
     case object ContactAddress extends ContactChangeType
   }
 
-
   private def contactUpdate(
     data: VariationData
   ): WebMonad[VariationData] = {
@@ -76,17 +78,17 @@ class VariationsController(
     for {
       change          <- askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
 
-      contact         <- if (change.contains(ContactPerson)) {
-        ask(contactDetailsMapping, "contact", data.updatedContactDetails)
-      } else data.updatedContactDetails.pure[WebMonad]
+      packSites       <- if (change.contains(Sites)) {
+        manyT("packSites", askSite(_), default = data.updatedProductionSites.toList)
+      } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
         manyT("warehouses", askSite(_), default = data.updatedWarehouseSites.toList)
       } else data.updatedWarehouseSites.pure[WebMonad]
 
-      packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", askSite(_), default = data.updatedProductionSites.toList)
-      } else data.updatedProductionSites.pure[WebMonad]
+      contact         <- if (change.contains(ContactPerson)) {
+        ask(contactDetailsMapping, "contact", data.updatedContactDetails)
+      } else data.updatedContactDetails.pure[WebMonad]
 
       businessAddress <- if (change.contains(ContactAddress)) {
         ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
@@ -255,11 +257,12 @@ class VariationsController(
     exit
   }
 
-  def index(id: String): Action[AnyContent] = development(id)
+  def index(id: String): Action[AnyContent] = real(id)
 
   def real(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    val persistence = SessionCachePersistence("variation", keystore)
     val sdilRef = request.sdilEnrolment.value
+    val persistence = SaveForLaterPersistence("variations", sdilRef, regdata.shortLiveCache)
+    //val persistence = SessionCachePersistence("variation", keystore)
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
         runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
