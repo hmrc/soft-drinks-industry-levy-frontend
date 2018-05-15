@@ -42,8 +42,6 @@ import sdil.models.backend._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
-import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
-
 
 trait Persistence {
   def dataGet(session: String): Future[Map[String, JsValue]]
@@ -99,6 +97,25 @@ trait SdilWMController extends WebMonadController
       implicit val request: Request[AnyContent] = r
       gdspages.radiolist(id, b, possValues, path)
     }.imap(e.withName)(_.toString)
+  }
+
+
+  protected def askEnumSet[E <: EnumEntry](
+    id: String,
+    e: Enum[E],
+    minSize: Int = 0,
+    default: Option[Set[E]] = None
+  ): WebMonad[Set[E]] = {
+    val possValues: Set[String] = e.values.toList.map{_.toString}.toSet
+    formPage(id)(
+      list(nonEmptyText)
+        .verifying(_.toSet subsetOf possValues)
+        .verifying("error.radio-form.choose-one-option", _.size >= minSize),
+      default.map{_.map{_.toString}.toList}
+    ) { (path, b, r) =>
+      implicit val request: Request[AnyContent] = r
+      gdspages.checkboxes(id, b, possValues.toList, path)
+    }.imap(_.map{e.withName}.toSet)(_.map(_.toString).toList)
   }
 
   val litreage: Mapping[Long] = nonEmptyText
@@ -225,13 +242,6 @@ trait SdilWMController extends WebMonadController
       gdspages.bigtext(id, b, path)
     }
 
-  protected def innerOpt[A](inner: Mapping[A]): Mapping[Option[A]] = 
-      mapping(
-        "inner" -> mandatoryIfTrue("outer", inner),
-        "outer" -> bool
-      ){(_,_) match { case (a, b) => a.filter(_ => b) }
-      }( a => (a, a.isDefined).some )
-
   protected def askDate(
     id: String,
     default: Option[LocalDate] = None,
@@ -257,21 +267,6 @@ trait SdilWMController extends WebMonadController
       implicit val request: Request[AnyContent] = r
       gdspages.date(id, b, path)
     }
-  }
-
-  protected def askEnumSet[E <: EnumEntry](
-    id: String,
-    e: Enum[E],
-    default: Option[Set[E]] = None
-  ): WebMonad[Set[E]] = {
-    val possValues: Set[String] = e.values.toList.map{_.toString}.toSet
-    formPage(id)(
-      list(nonEmptyText).verifying(_.toSet subsetOf possValues),
-      default.map{_.map{_.toString}.toList}
-    ) { (path, b, r) =>
-      implicit val request: Request[AnyContent] = r
-      gdspages.checkboxes(id, b, possValues.toList, path)
-    }.imap(_.map{e.withName}.toSet)(_.map(_.toString).toList)
   }
 
   protected def journeyEnd(id: String): WebMonad[Result] =

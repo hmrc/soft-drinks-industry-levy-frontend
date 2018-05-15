@@ -290,11 +290,11 @@ package webmonad {
         RWST { case ((targetId, r), (path, st)) =>
 
           implicit val request: Request[AnyContent] = r
-println(request.body)
+
           val post = request.method.toLowerCase == "post"
           val method = request.method.toLowerCase
           val data = st.get(id)
-          println(s"$method $id $targetId");
+          println(s"\n\n$method $id $targetId>> $data");
           {
             (method, data, targetId) match {
               // nothing in database, step in URI, render empty form

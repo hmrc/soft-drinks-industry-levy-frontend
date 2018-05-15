@@ -462,19 +462,27 @@ heading.changeType=Which change do you need to make?
 changeType.option.sites=Update contact, packaging site or warehouse details
 changeType.option.activity=Change our business activity, including becoming a small producer
 changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
-heading.package=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide?
-heading.packLarge=How many litres of liable drink did you, or third parties acting on your behalf package worldwide in the last 12 months?
-package.help.header=What does ''package'' mean?
-package.help=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
+
+heading.contactChangeType=What do you need to change?
+contactChangeType.option.sites=Add or remove packaging sites or warehouse addresses
+contactChangeType.option.contactperson=Update our contact person
+contactChangeType.option.contactaddress=Change our contact address for the Soft Drinks Industry Levy
+
+
+heading.packLarge=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide? 
+packLarge.help.header=What does ''package'' mean?
+packLarge.help=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
+
+
 heading.warehouses_add=[Tell us about the warehouse you are adding]
 heading.warehouses_deleteConfirmation=[Are you sure you want to delete this warehouse?]
 warehouses_deleteConfirmation.continue=[Delete Warehouse]
 heading.packSites_add=[Tell us about the packing site you are adding]
 heading.packSites_deleteConfirmation=[Are you sure you want to delete this packaging site?]
 packSites_deleteConfirmation.continue=[Delete Packing Site]
-
-option.packLarge.false=Less than 1 million litres
-option.packLarge.true=1 million litres or more
+packLarge.inner-heading=How many litres worldwide?
+option.packLarge.inner.false=Less than 1 million litres
+option.packLarge.inner.true=1 million litres or more
 
 heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have the rights to manufacture?
 
@@ -492,7 +500,7 @@ heading.importQty=In the next 12 months, how many litres of liable drink do you 
 importQty.lower=Litres in the low band
 importQty.higher=Litres in the high band
 
-heading.useCopacker=[Do you use a copacker?]
+heading.useCopacker=Do you use any third parties in the UK to package liable drinks on your behalf?
 
 heading.packSites=Tell us about the packaging sites your business operates in the UK to package liable drinks
 heading.warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
@@ -537,6 +545,7 @@ variations.cya.packLarge.none=[None]
 
 variations.cya.packOpt=Do you package at your own site?
 variations.cya.packQty=Annual litres for your own brands
+variations.cya.useCopacker=Do you use third party packagers? 
 variations.cya.copackQty=Annual litres for your customers
 variations.cya.importer=Do you bring liable drinks into the UK?
 variations.cya.importQty=Annual litres brought into the UK

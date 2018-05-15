@@ -28,17 +28,17 @@
 
     @error_summary(form)
 
-        <h1 class="heading-large">@Messages(s"heading.$key")</h1>
-        @helper.form(action = play.api.mvc.Call("post", key)) {
-            @CSRF.formField
-            @*
-        <div class = "form-group">
+    <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+    @helper.form(action = play.api.mvc.Call("post", key)) {
+        @CSRF.formField
+        @*
+           <div class = "form-group">
            @for(item <- possibleValues) {
-               @defining(form(key).value.contains(item)) {ticked =>
-               <input type="checkbox" id="@item" name="@key" value="@item" @if(ticked){ checked="checked" }>
-               <label @if(!ticked){ selected="" }>@Messages(s"$key.$item")</label>
-        }}*@
-            @inputCheckboxGroup(form(key), possibleValues.map{x => (x,x)})
+           @defining(form(key).value.contains(item)) {ticked =>
+           <input type="checkbox" id="@item" name="@key" value="@item" @if(ticked){ checked="checked" }>
+           <label @if(!ticked){ selected="" }>@Messages(s"$key.$item")</label>
+           }}*@
+        @inputCheckboxGroup(form(key), possibleValues.map{v => (v, Messages(key + ".option." + v.toLowerCase))})
 
             <button class="button" type="submit" id="continue-button">
             @Messages("sdil.common.save-continue")

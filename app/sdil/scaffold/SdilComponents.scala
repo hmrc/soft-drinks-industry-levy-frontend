@@ -62,9 +62,12 @@ trait SdilComponents {
     }
   }
 
-  def optFormHtml[A](inner: FormHtml[A]): FormHtml[Option[A]] = {
-    ???
-  }
+  // implicit def optFormHtml[A](implicit inner: FormHtml[A]): FormHtml[Option[A]] = {
+  //   def asHtmlForm(key: String, form: Form[Option[A]])(implicit messages: Messages): Html = {
+  //     val innerHtml = inner.asHtmlForm(s"${key}.inner", form(s"${key}.inner"))
+  //     gdspages.fragments.innerOpt(key, form, innerHtml)
+  //   }
+  // }
 
   implicit val addressHtml: HtmlShow[Address] =
     HtmlShow.instance { address =>

@@ -20,7 +20,20 @@
 @import sdil.config.AppConfig
 @import views.html.helper.options
 @import views.html.gdspages.helpers._
+@import ltbs.play._
 
-@(key: String, form: Form[List[String]], possibleValues: List[String])(implicit messages: Messages)
+@(key: String, form: Form[Option[_]], inner: Html)(implicit messages: Messages)
 
-@inputCheckboxGroup(form(key), possibleValues.map{v => (v, Messages(key + ".option." + v.toLowerCase))})
+@inlineRadioButtonWithConditionalContent(
+    form(s"${key}.outer"),
+    Seq(
+        "true" -> (messages.first(s"option.$key.true","sdil.common.yes")(), Some("hiddenTarget")),
+        "false" -> (messages.first(s"option.$key.false", "sdil.common.no")(), None)
+    ),
+    Some(inner),
+    '_labelClass -> "block-label",
+    '_labelAfter -> true,
+    '_groupClass -> "form-field-group inline",
+    '_dataTargetTrue -> s"anything",
+    '_legendClass -> "visuallyhidden"
+)

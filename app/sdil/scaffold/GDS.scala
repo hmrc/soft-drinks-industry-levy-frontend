@@ -26,12 +26,20 @@ import play.api.mvc.{ AnyContent, Request }
 import play.twirl.api.Html
 import views.html.gdspages
 import ltbs.play.scaffold.webmonad._
+import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
 trait GdsComponents {
 
   val bool: Mapping[Boolean] = optional(boolean)
     .verifying("error.required", _.isDefined)
     .transform(_.getOrElse(false),{x: Boolean => x.some})
+
+  def innerOpt[A](key: String, innerMap: Mapping[A]): Mapping[Option[A]] =
+    mapping(
+      "outer" -> bool,
+      "inner" -> mandatoryIfTrue(s"${key}.outer", innerMap)
+    ){(_,_) match { case (outer, inner) => inner }
+    }( a => (a.isDefined, a).some )
 
   implicit class RichEnum[A <: EnumEntry](e: Enum[A]) {
     lazy val possValues: Set[String] = e.values.map{_.toString}.toSet

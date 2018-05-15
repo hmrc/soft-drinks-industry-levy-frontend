@@ -60,19 +60,45 @@ class VariationsController(
     case object Deregister extends ChangeType
   }
 
+  sealed trait ContactChangeType extends EnumEntry
+  object ContactChangeType extends Enum[ContactChangeType] {
+    val values = findValues
+    case object Sites extends ContactChangeType
+    case object ContactPerson extends ContactChangeType
+    case object ContactAddress extends ContactChangeType
+  }
+
+
   private def contactUpdate(
     data: VariationData
-  ): WebMonad[VariationData] = for {
-    contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
-    warehouses      <- manyT("warehouses", askSite(_), default = data.updatedWarehouseSites.toList)
-    packSites       <- manyT("packSites", askSite(_), default = data.updatedProductionSites.toList)
-    businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
-  } yield data.copy (
-    updatedBusinessAddress = businessAddress,
-    updatedProductionSites = packSites,
-    updatedWarehouseSites  = warehouses,
-    updatedContactDetails  = contact
-  )
+  ): WebMonad[VariationData] = {
+    import ContactChangeType._
+    for {
+      change          <- askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
+
+      contact         <- if (change.contains(ContactPerson)) {
+        ask(contactDetailsMapping, "contact", data.updatedContactDetails)
+      } else data.updatedContactDetails.pure[WebMonad]
+
+      warehouses      <- if (change.contains(Sites)) {
+        manyT("warehouses", askSite(_), default = data.updatedWarehouseSites.toList)
+      } else data.updatedWarehouseSites.pure[WebMonad]
+
+      packSites       <- if (change.contains(Sites)) {
+        manyT("packSites", askSite(_), default = data.updatedProductionSites.toList)
+      } else data.updatedProductionSites.pure[WebMonad]
+
+      businessAddress <- if (change.contains(ContactAddress)) {
+        ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
+      } else data.updatedBusinessAddress.pure[WebMonad]
+
+    } yield data.copy (
+      updatedBusinessAddress = businessAddress,
+      updatedProductionSites = packSites,
+      updatedWarehouseSites  = warehouses,
+      updatedContactDetails  = contact
+    )
+  }
 
   implicit def optFormatter[A](implicit innerFormatter: Format[A]): Format[Option[A]] =
     new Format[Option[A]] {
@@ -82,7 +108,6 @@ class VariationsController(
       }
       def writes(o: Option[A]): JsValue =
         o.map{innerFormatter.writes}.getOrElse(JsNull)
-      
     }
 
   private def activityUpdate(
@@ -94,9 +119,9 @@ class VariationsController(
     implicit val showLitreage: HtmlShow[Litreage] = new HtmlShow[Litreage]{
       def showHtml(l: Litreage): Html = l match {
         case Litreage(lower, higher) => Html(
-          Messages("sdil.declaration.low-band") + f": $lower%,f" +
+          Messages("sdil.declaration.low-band") + f": $lower%,.0f" +
             "<br>" +
-            Messages("sdil.declaration.high-band") + f": $higher%,f"
+            Messages("sdil.declaration.high-band") + f": $higher%,.0f"
         )
       }
     }
@@ -129,7 +154,7 @@ class VariationsController(
 
       implicit def boolToHtml(bool: Boolean): Html =
         Html {bool match {
-                case true => Messages("sdil.common.yes")
+                case true  => Messages("sdil.common.yes")
                 case false => Messages("sdil.common.no")
               }}
 
@@ -137,35 +162,43 @@ class VariationsController(
         val pre="variations.cya."
 
         val table: List[(String, Option[Html])] = List(
-          "packLarge" ->
+          "packLarge"   ->
             Html(v.producer.isLarge match {
-                   case Some(true) =>  Messages(s"${pre}packLarge.large")
+                   case Some(true)  => Messages(s"${pre}packLarge.large")
                    case Some(false) => Messages(s"${pre}packLarge.small")
-                   case None => Messages(s"${pre}packLarge.none")
+                   case None        => Messages(s"${pre}packLarge.none")
                  }).some,
-          "packOpt" -> boolToHtml{v.packageOwn.getOrElse(false)}.some,
-          "packQty" -> v.packageOwnVol.map{_.showHtml},
-          "copackQty" -> v.copackForOthersVol.map{_.showHtml},
-          "importer" -> boolToHtml(v.imports).some,
-          "importQty" -> v.importsVol.map{_.showHtml}
+          "useCopacker" -> v.usesCopacker.map{boolToHtml},
+          "packOpt"     -> boolToHtml{v.packageOwn.getOrElse(false)}.some,
+          "packQty"     -> v.packageOwnVol.map{_.showHtml},
+          "copackQty"   -> v.copackForOthersVol.map{_.showHtml},
+          "importer"    -> boolToHtml(v.imports).some,
+          "importQty"   -> v.importsVol.map{_.showHtml}
         )
-        Html("""<h2 class="heading-medium">""" ++ Messages(s"${pre}activity") ++ "</h2>") |+|
-        views.html.gdspages.fragments.checkyouranswers(
-          table.collect{ case (f,Some(html)) => (s"$pre$f", html, s"./$f".some) }
-        ) |+|
-          Html("""<h2 class="heading-medium">""" ++ Messages(s"${pre}packsites") ++ "</h2>") |+|
-          v.updatedProductionSites.toList.showHtml |+|
-          Html("""<h2 class="heading-medium">""" ++ Messages(s"${pre}warehouses") ++ "</h2>") |+|
-          v.updatedWarehouseSites.toList.showHtml
 
+        val activityChanges = views.html.gdspages.fragments.checkyouranswers(
+          table.collect{ case (f,Some(html)) => (s"$pre$f", html, s"./$f".some) }
+        )
+
+        def siteListing(title: String, sites: List[Site]): Html = sites match {
+          case Nil => Html("")
+          case _   =>
+            Html("""<h2 class="heading-medium">""" ++ Messages(title) ++ "</h2>") |+|
+                   sites.showHtml
+        }
+
+        Html("""<h2 class="heading-medium">""" ++ Messages(s"${pre}activity") ++ "</h2>") |+|
+          activityChanges |+|
+          siteListing(s"${pre}packsites", v.updatedProductionSites.toList) |+|
+          siteListing(s"${pre}warehouses", v.updatedWarehouseSites.toList) |+|
+          Html("<br />")
       }
     }
 
     for {
-      //packLarge       <- ask(bool, "packLarge", data.producer.isLarge) when ask(bool, "package", data.producer.isProducer)
-      packLarge       <- ask[Option[Boolean]](innerOpt(bool), "packLarge")
+      packLarge       <- ask(innerOpt("packLarge", bool), "packLarge")
+      useCopacker     <- ask(bool,"useCopacker", data.usesCopacker) when (packLarge == Some(false))
       packQty         <- ask(litreagePair.nonEmpty, "packQty") when ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
-      useCopacker     <- ask(bool,"useCopacker", data.usesCopacker)
       copacks         <- ask(litreagePair.nonEmpty, "copackQty") when ask(bool, "copacker", data.copackForOthers)
       imports         <- ask(litreagePair.nonEmpty, "importQty") when ask(bool, "importer", data.imports)
       packSites       <- manyT("packSites", ask(siteMapping,_), default = data.updatedProductionSites.toList)
@@ -175,7 +208,7 @@ class VariationsController(
       variation = data.copy (
         updatedBusinessAddress = businessAddress,
         producer               = Producer(packLarge.isDefined, packLarge),
-        usesCopacker           = useCopacker.some,
+        usesCopacker           = useCopacker.some.flatten,
         packageOwn             = packLarge.isDefined.some,
         packageOwnVol          = packQty.map{case (a,b) => Litreage(a,b)},
         copackForOthers        = copacks.isDefined,
@@ -197,7 +230,6 @@ class VariationsController(
     deregDate <- askDate("deregDate", none, constraints = List(
                            ("error.deregDate.nopast",  _ >= LocalDate.now),
                            ("error.deregDate.nofuture",_ <  LocalDate.now.plusDays(15))))
-
   } yield data.copy(
     reason = reason.some,
     deregDate = deregDate.some
@@ -205,7 +237,10 @@ class VariationsController(
 
   def errorPage(id: String): WebMonad[Result] = Ok(s"Error $id")
 
-  private def program(subscription: RetrievedSubscription, sdilRef: String)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
+  private def program(
+    subscription: RetrievedSubscription,
+    sdilRef: String
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = for {
     changeType <- askEnum("changeType", ChangeType)
     base = VariationData(subscription)
     variation  <- changeType match {
@@ -213,9 +248,9 @@ class VariationsController(
       case ChangeType.Activity   => activityUpdate(base)
       case ChangeType.Deregister => deregisterUpdate(base)
     }
-    _          <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
-    _          <- execute{sdilConnector.submitVariation(Convert(variation), sdilRef)}
-    exit       <- journeyEnd("variationDone")
+    _    <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
+    _    <- execute{sdilConnector.submitVariation(Convert(variation), sdilRef)}
+    exit <- journeyEnd("variationDone")
   } yield {
     exit
   }
@@ -223,7 +258,6 @@ class VariationsController(
   def index(id: String): Action[AnyContent] = development(id)
 
   def real(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-
     val persistence = SessionCachePersistence("variation", keystore)
     val sdilRef = request.sdilEnrolment.value
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
