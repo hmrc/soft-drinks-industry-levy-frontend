@@ -47,10 +47,32 @@ class WarehouseFormSpec extends FormSpec {
       mustContainError(f, tradingName, "error.tradingName.invalid")
     }
 
+    "not require a new warehouse if warehouses have already been added" in {
+      val f = WarehouseForm().bind(Map.empty[String, String])
+
+      f.value mustBe Some(Sites(Nil, false, None, None))
+    }
+
     "bind to SecondaryWarehouses if there is a warehouse and an address is provided" in {
       val f = WarehouseForm().bind(secondaryWarehouseData)
 
       f.value mustBe Some(Sites(Nil, true, Some("name trade"), Some(Address("line 1", "line 2", "", "", "AA11 1AA"))))
+    }
+  }
+
+  "The initial warehouse form" should {
+    "require addAddress" in {
+      val f = WarehouseForm.initial().bind(Map.empty[String, String])
+
+      mustContainError(f, addAddress, "error.radio-form.choose-option")
+    }
+
+    "require a trading name if an address is added" in {
+      mustRequire(tradingName)(WarehouseForm.initial(), secondaryWarehouseData, "error.tradingName.required")
+    }
+
+    "validate the address if an address is added" in {
+      mustValidateAddress(WarehouseForm.initial(), "additionalAddress", secondaryWarehouseData)
     }
   }
 
