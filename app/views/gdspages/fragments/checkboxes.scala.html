@@ -21,6 +21,18 @@
 @import views.html.helper.options
 @import views.html.gdspages.helpers._
 
-@(key: String, form: Form[List[String]], possibleValues: List[String])(implicit messages: Messages)
+@(key: String, formIn: Form[List[String]], possibleValues: List[String])(implicit messages: Messages)
 
-@inputCheckboxGroup(form(key), possibleValues.map{v => (v, Messages(key + ".option." + v.toLowerCase))})
+@for(option <- possibleValues) {
+    <div class="multiple-choice">
+        <input id="@{key}_@{option}"
+               name="@{key}[]"
+               value="@option"
+               type="checkbox"
+               @formIn.value.getOrElse(Nil).filter( _ == option ).map{_ => checked="checked"} />
+
+        <label for="@{key}_@{option}">
+            @Messages(s"$key.option.$option")
+        </label>
+    </div>
+}

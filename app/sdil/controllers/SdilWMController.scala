@@ -112,9 +112,10 @@ trait SdilWMController extends WebMonadController
         .verifying(_.toSet subsetOf possValues)
         .verifying("error.radio-form.choose-one-option", _.size >= minSize),
       default.map{_.map{_.toString}.toList}
-    ) { (path, b, r) =>
+    ) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
-      gdspages.checkboxes(id, b, possValues.toList, path)
+      val innerHtml = gdspages.fragments.checkboxes(id, form, possValues.toList)
+      gdspages.ask(id, form, innerHtml, path)
     }.imap(_.map{e.withName}.toSet)(_.map(_.toString).toList)
   }
 

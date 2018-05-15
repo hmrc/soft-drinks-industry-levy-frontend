@@ -464,15 +464,14 @@ changeType.option.activity=Change our business activity, including becoming a sm
 changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
 
 heading.contactChangeType=What do you need to change?
-contactChangeType.option.sites=Add or remove packaging sites or warehouse addresses
-contactChangeType.option.contactperson=Update our contact person
-contactChangeType.option.contactaddress=Change our contact address for the Soft Drinks Industry Levy
+contactChangeType.hint=Select all that apply
+contactChangeType.option.Sites=Add or remove packaging sites or warehouse addresses
+contactChangeType.option.ContactPerson=Update our contact person
+contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
 
-
-heading.packLarge=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide? 
+heading.packLarge=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide?
 packLarge.help.header=What does ''package'' mean?
 packLarge.help=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
-
 
 heading.warehouses_add=[Tell us about the warehouse you are adding]
 heading.warehouses_deleteConfirmation=[Are you sure you want to delete this warehouse?]
