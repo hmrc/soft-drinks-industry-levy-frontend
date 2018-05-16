@@ -553,6 +553,10 @@ variations.cya.activity=Changes to business activity
 variations.cya.packsites=Packaging sites
 variations.cya.warehouses=[Warehouse sites]
 
+variations.cya.dereg=Deregistration
+variations.cya.reason=Reason
+variations.cya.deregDate=Date
+
 heading.reason=Why are you deregistering from the Soft Drinks Industry Levy?
 reason.label=Reason for deregistering
 reason.hint=Enter a maximum of 255 characters

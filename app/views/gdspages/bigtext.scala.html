@@ -29,7 +29,7 @@
 
     @error_summary(form)
 
-    <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+   <h1 class="heading-large">@Messages(s"heading.$key")</h1>
 
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
@@ -46,8 +46,7 @@
             <textarea class="form-control form-control-3-4 @if(form.hasErrors) {form-control-error}"
                       id="@key"
                       name="@key"
-                      value="@key"
-                      rows="5"></textarea>
+                      rows="5">@{form(key).value.getOrElse("")}</textarea>
         </div>
         <button class="button" type="submit" id="continue-button">
 	  @Messages("sdil.common.save-continue")

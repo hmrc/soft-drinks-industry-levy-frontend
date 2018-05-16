@@ -76,4 +76,12 @@ trait GdsComponents {
     }
   }
 
+  implicit val htmlShowHtml = new HtmlShow[Html] {
+    def showHtml(in: Html): Html = in
+  }
+
+  implicit val dateShow = new HtmlShow[LocalDate] {
+    def showHtml(in: LocalDate): Html = Html(in.toString) // ISO YYYY-MM-DD
+  }
+
 }
