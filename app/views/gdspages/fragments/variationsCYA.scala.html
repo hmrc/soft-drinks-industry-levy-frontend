@@ -62,7 +62,7 @@
 }
 
 @if(path.contains("warehouses") && v.updatedWarehouseSites.nonEmpty) {
-<table class="check-your-answers">
+  <table class="check-your-answers">
     <caption class="heading-medium">Warehouses</caption>
 
     <thead>
@@ -85,71 +85,68 @@
     <tbody>
       @for(site <- v.updatedWarehouseSites) {
         <tr>
-        <td>
+          <td>
             <details role="group">
-                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@site.address.lines.head</span></summary>
-                    @for(line <- site.address.lines.tail) {
-                    <div aria-hidden="true">@line</div>
-                        }
-                        <div class="postal-code">@site.address.postCode</div>
-                            </details>
-                            </td>
-                            <td>@site.address.postCode</td>
-                                <td class="change-answer">
-                                    <a href="packSites">
-                                        Change <span class="visuallyhidden">packaging sites</span>
-                                    </a>
-                                </td>
+              <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@site.address.lines.head</span></summary>
+              @for(line <- site.address.lines.tail) {
+                <div aria-hidden="true">@line</div>
+              }
+              <div class="postal-code">@site.address.postCode</div>
+            </details>
+          </td>
+          <td>@site.address.postCode</td>
+          <td class="change-answer">
+            <a href="packSites">
+              Change <span class="visuallyhidden">packaging sites</span>
+            </a>
+          </td>
         </tr>
         }
     </tbody>
-</table>
+  </table>
 }
 
-
-<h2 class="heading-medium">
+@if(path.contains("contact")) {
+  <h2 class="heading-medium">
     Contact person
-</h2>
+  </h2>
 
-<dl class="govuk-check-your-answers cya-questions-short">
-
+  <dl class="govuk-check-your-answers cya-questions-short">
     <div>
         <dt class="cya-question">
             Full name
         </dt>
         <dd class="cya-answer">
-            
+            @v.updatedContactDetails.fullName
         </dd>
         <dd class="cya-change">
-            <a href="#">
+            <a href="contact">
                 Change<span class="visually-hidden"> full name</span>
             </a>
         </dd>
     </div>
-
     <div>
         <dt class="cya-question">
             Job title
         </dt>
         <dd class="cya-answer">
-            
+            @v.updatedContactDetails.position
         </dd>
         <dd class="cya-change">
-            <a href="#">
+            <a href="contact">
                 Change<span class="visually-hidden"> job title</span>
             </a>
         </dd>
     </div>
-
     <div>
         <dt class="cya-question">
             Telephone number
         </dt>
         <dd class="cya-answer">
-            
+            @v.updatedContactDetails.phoneNumber
         </dd>
         <dd class="cya-change">
-            <a href="#">
+            <a href="contact">
                 Change<span class="visually-hidden"> telephone number</span>
             </a>
         </dd>
@@ -160,19 +157,19 @@
             Email
         </dt>
         <dd class="cya-answer">
-            
+            @v.updatedContactDetails.email
         </dd>
         <dd class="cya-change">
-            <a href="#">
+            <a href="contact">
                 Change<span class="visually-hidden"> email</span>
             </a>
         </dd>
     </div>
 
-</dl>
+  </dl>
+}
 
-
-
+@if(path.contains("businessAddress")) {
 <h2 class="heading-medium">
     Contact address
 </h2>
@@ -184,17 +181,52 @@
             Address
         </dt>
         <dd class="cya-answer">
-            10 Kings Road<br /> 
-            Ipswich<br />
-            
-            Suffolk<br />
-            ABC 123
+            @v.updatedBusinessAddress.nonEmptyLines.head
+            @for(line <- v.updatedBusinessAddress.nonEmptyLines.tail) {
+                <br />
+                @line
+            }
         </dd>
         <dd class="cya-change">
-            <a href="#">
+            <a href="businessAddress">
                 Change<span class="visually-hidden"> home address</span>
             </a>
         </dd>
     </div>
 
 </dl>
+}
+
+@if(path.contains("reason")) {
+    <dl class="govuk-check-your-answers cya-questions-short">
+
+        <div>
+            <dt class="cya-question">
+                Reason
+            </dt>
+            <dd class="cya-answer">
+                <p>aoeuaeou</p>
+            </dd>
+            <dd class="cya-change">
+                <a href="reason">
+                    Change<span class="visually-hidden"> deregistration reason</span>
+                </a>
+            </dd>
+        </div>
+
+        <div>
+            <dt class="cya-question">
+                Date
+            </dt>
+            <dd class="cya-answer">
+                <p>1/1/2018</p>
+            </dd>
+            <dd class="cya-change">
+                <a href="#">
+                    Change<span class="visually-hidden"> deregistration date</span>
+                </a>
+            </dd>
+        </div>
+
+    </dl>
+}
