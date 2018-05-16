@@ -19,7 +19,8 @@ package sdil.models.retrieved
 import java.time.LocalDate
 
 import play.api.libs.json.Json
-import sdil.models.backend.{Contact, Site, UkAddress}
+import sdil.models.backend._
+import sdil.controllers._
 
 case class RetrievedActivity(smallProducer: Boolean, largeProducer: Boolean, contractPacker: Boolean, importer: Boolean, voluntaryRegistration: Boolean)
 
@@ -32,8 +33,8 @@ case class RetrievedSubscription(utr: String,
                                  address: UkAddress,
                                  activity: RetrievedActivity,
                                  liabilityDate: LocalDate,
-                                 productionSites: List[Site],
-                                 warehouseSites: List[Site],
+                                 productionSites: List[PackagingSite],
+                                 warehouseSites: List[WarehouseSite],
                                  contact: Contact)
 
 object RetrievedSubscription {

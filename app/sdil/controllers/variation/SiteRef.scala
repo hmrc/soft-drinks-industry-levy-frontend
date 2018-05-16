@@ -36,13 +36,4 @@ trait SiteRef extends FormHelpers {
     sites.map(_.ref.fold(0)(_.toInt)).max
   }
 
-  val initialForm: Form[Sites] = Form(
-    mapping(
-      "additionalSites" -> ignored(Seq.empty[Site]),
-      "addAddress" -> mandatoryBoolean,
-      "tradingName" -> optional(tradingNameMapping),
-      "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
-    )(Sites.apply)(Sites.unapply)
-  )
-
 }

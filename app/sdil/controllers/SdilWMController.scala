@@ -279,21 +279,27 @@ trait SdilWMController extends WebMonadController
       }
     }
 
-  lazy val siteMapping: Mapping[Site] = mapping(
+  lazy val warehouseSiteMapping: Mapping[WarehouseSite] = mapping(
     "address" -> ukAddressMapping
-  ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{ case (address, refOpt, _, _) => address } )
+  ){a => WarehouseSite.apply(a, none, none, none)}(WarehouseSite.unapply(_).map{ case (address, refOpt, _, _) => address } )
 
-  protected def askSite(
-    id: String,
-    default: Option[Site] = None,
-    constraints: List[(String, Site => Boolean)] = Nil
-  ): WebMonad[Site] = {
+  lazy val packagingSiteMapping: Mapping[PackagingSite] = mapping(
+    "address" -> ukAddressMapping
+  ){a => PackagingSite.apply(a, none, none, none)}(PackagingSite.unapply(_).map{ case (address, refOpt, _, _) =>
+    address } )
 
-    formPage(id)(siteMapping.verifying(constraintMap(constraints) :_*), default) { (path, b, r) =>
-      implicit val request: Request[AnyContent] = r
-      gdspages.site(id, b, path)
-    }
-  }
+
+  //  protected def askSite(
+//    id: String,
+//    default: Option[Site] = None,
+//    constraints: List[(String, Site => Boolean)] = Nil
+//  ): WebMonad[Site] = {
+//
+//    formPage(id)(siteMapping.verifying(constraintMap(constraints) :_*), default) { (path, b, r) =>
+//      implicit val request: Request[AnyContent] = r
+//      gdspages.site(id, b, path)
+//    }
+//  }
 
   protected val addressMapping: play.api.data.Mapping[Address] = mapping(
     "line1" -> nonEmptyText,

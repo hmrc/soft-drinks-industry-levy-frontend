@@ -21,7 +21,8 @@ import java.time.LocalDate
 import play.api.libs.json._
 import play.api.mvc.Call
 import sdil.controllers.variation.routes
-import sdil.models.backend.Site
+import sdil.models.backend.{PackagingSite, Site, WarehouseSite}
+import sdil.controllers._
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer}
 
@@ -36,8 +37,9 @@ case class VariationData(original: RetrievedSubscription,
                          copackForOthersVol: Option[Litreage],
                          imports: Boolean,
                          importsVol: Option[Litreage],
-                         updatedProductionSites: Seq[Site],
-                         updatedWarehouseSites: Seq[Site], // TODO create variation Site model with trading name
+                         updatedProductionSites: Seq[PackagingSite],
+                         updatedWarehouseSites: Seq[WarehouseSite],
+                         // name
                          updatedContactDetails: ContactDetails,
                          previousPages: Seq[Call],
                          reason: Option[String] = None,
