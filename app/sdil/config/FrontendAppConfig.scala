@@ -16,8 +16,6 @@
 
 package sdil.config
 
-import java.time.LocalDate
-
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig

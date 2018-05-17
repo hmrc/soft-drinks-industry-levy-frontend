@@ -16,8 +16,6 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matching}
@@ -27,8 +25,8 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.DetailsCorrect.DifferentAddress
-import sdil.models.backend.{PackagingSite, Site, UkAddress}
 import sdil.models._
+import sdil.models.backend.PackagingSite
 
 import scala.collection.JavaConverters._
 

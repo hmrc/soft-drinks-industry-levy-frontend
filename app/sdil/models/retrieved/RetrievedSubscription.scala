@@ -20,7 +20,6 @@ import java.time.LocalDate
 
 import play.api.libs.json.Json
 import sdil.models.backend._
-import sdil.controllers._
 
 case class RetrievedActivity(smallProducer: Boolean, largeProducer: Boolean, contractPacker: Boolean, importer: Boolean, voluntaryRegistration: Boolean)
 

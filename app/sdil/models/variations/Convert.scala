@@ -18,9 +18,8 @@ package sdil.models.variations
 
 import java.time.LocalDate
 
-import cats.implicits._
+import sdil.models.backend.{Activity, Site}
 import sdil.models.{Address, Litreage}
-import sdil.models.backend.{Activity, Site, UkAddress}
 
 object Convert {
 

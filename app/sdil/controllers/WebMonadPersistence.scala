@@ -16,12 +16,13 @@
 
 package sdil.controllers
 
-import scala.concurrent._
-import play.api.libs.json._
-import scala.collection.mutable.{Map => MMap}
 import cats.implicits._
+import play.api.libs.json._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
+
+import scala.collection.mutable.{Map => MMap}
+import scala.concurrent._
 
 /** WebMonads read in all their data at the start of the interaction with the
   * user and write it all out again at the end.

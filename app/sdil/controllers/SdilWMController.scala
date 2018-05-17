@@ -18,30 +18,29 @@ package sdil.controllers
 
 import java.time.LocalDate
 
-import scala.collection.mutable.{Map => MMap}
-import scala.concurrent._
-import scala.util.Try
-import cats.{Eq, Monoid, Semigroup}
 import cats.implicits._
+import cats.{Eq, Monoid}
 import enumeratum._
 import ltbs.play._
-import ltbs.play.scaffold._
 import ltbs.play.scaffold.HtmlShow.ops._
+import ltbs.play.scaffold._
 import ltbs.play.scaffold.webmonad._
-import play.api.data._
 import play.api.data.Forms._
+import play.api.data._
 import play.api.data.validation._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
 import play.twirl.api.Html
 import sdil.config.AppConfig
-import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend._
-
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
+
+import scala.collection.mutable.{Map => MMap}
+import scala.concurrent._
+import scala.util.Try
 
 trait SdilWMController extends WebMonadController
     with FrontendController with GdsComponents

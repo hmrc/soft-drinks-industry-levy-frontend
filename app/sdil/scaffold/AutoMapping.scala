@@ -17,7 +17,6 @@
 package ltbs.play.scaffold
 
 import shapeless._
-import shapeless.labelled._
 
 trait AutoMapping[a] {
 

@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.ControllerSpec
 import sdil.models.Address
-import sdil.models.backend.{Site, UkAddress, WarehouseSite}
+import sdil.models.backend.{UkAddress, WarehouseSite}
 import sdil.models.retrieved.RetrievedActivity
 import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments

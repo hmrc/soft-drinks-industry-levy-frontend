@@ -16,8 +16,8 @@
 
 package sdil.config
 
-import play.api.{Configuration, Environment}
 import play.api.Mode.Mode
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.config.AppName
 import uk.gov.hmrc.play.bootstrap.http.HttpClient

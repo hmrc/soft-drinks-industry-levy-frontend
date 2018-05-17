@@ -21,8 +21,7 @@ import java.time.LocalDate
 import play.api.libs.json._
 import play.api.mvc.Call
 import sdil.controllers.variation.routes
-import sdil.models.backend.{PackagingSite, Site, WarehouseSite}
-import sdil.controllers._
+import sdil.models.backend.{PackagingSite, WarehouseSite}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer}
 

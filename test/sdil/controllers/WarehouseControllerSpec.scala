@@ -16,8 +16,6 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{eq => matching, _}
@@ -26,7 +24,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.backend.{Site, UkAddress, WarehouseSite}
+import sdil.models.backend.{UkAddress, WarehouseSite}
 import sdil.models.{Address, Producer}
 
 class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {

@@ -23,10 +23,9 @@ import play.api.inject.DefaultApplicationLifecycle
 import play.api.routing.Router
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction, VariationAction}
 import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
-import sdil.controllers.{VariationsController => UniformVariationsController, _}
-import sdil.controllers._
 import sdil.controllers.test.TestingController
 import sdil.controllers.variation._
+import sdil.controllers.{VariationsController => UniformVariationsController, _}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}

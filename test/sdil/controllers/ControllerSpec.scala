@@ -21,7 +21,7 @@ import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import sdil.models._
-import sdil.models.backend.{PackagingSite, Site, UkAddress, WarehouseSite}
+import sdil.models.backend.{PackagingSite, WarehouseSite}
 import sdil.utils.FakeApplicationSpec
 
 import scala.concurrent.Future

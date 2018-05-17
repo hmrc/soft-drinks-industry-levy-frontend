@@ -21,7 +21,7 @@ import play.api.data.Mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.libs.json.Json
 import sdil.models.Address
-import sdil.models.backend.{PackagingSite, Site, UkAddress, WarehouseSite}
+import sdil.models.backend.{PackagingSite, WarehouseSite}
 
 import scala.util.Try
 

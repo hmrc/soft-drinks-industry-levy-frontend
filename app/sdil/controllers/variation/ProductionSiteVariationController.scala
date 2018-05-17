@@ -24,8 +24,8 @@ import sdil.actions.VariationAction
 import sdil.config.AppConfig
 import sdil.controllers.SiteRef
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
-import sdil.models.backend.{PackagingSite, Site, UkAddress}
 import sdil.models.Sites
+import sdil.models.backend.{PackagingSite, UkAddress}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue

@@ -16,20 +16,16 @@
 
 package sdil.controllers
 
-import cats.implicits._
-import enumeratum._
 import java.time.LocalDate
 
-import ltbs.play._
+import cats.implicits._
+import enumeratum._
 import ltbs.play.scaffold._
-import play.api.data.Forms._
+import ltbs.play.scaffold.webmonad._
 import play.api.i18n._
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
-
-import scala.concurrent.{ExecutionContext, Future}
 import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -39,12 +35,10 @@ import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.variations._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
-import webmonad._
-import HtmlShow.ops._
-import sdil.forms.FormHelpers
+
+import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait ChangeType extends EnumEntry
 object ChangeType extends Enum[ChangeType] {

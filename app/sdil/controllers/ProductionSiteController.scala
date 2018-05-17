@@ -25,7 +25,7 @@ import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
 import sdil.models.DetailsCorrect.DifferentAddress
 import sdil.models._
-import sdil.models.backend.{PackagingSite, Site, UkAddress}
+import sdil.models.backend.{PackagingSite, UkAddress}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.register.productionSite
