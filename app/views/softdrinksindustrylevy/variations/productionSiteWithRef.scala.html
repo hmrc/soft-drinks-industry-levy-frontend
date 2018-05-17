@@ -16,7 +16,6 @@
 
 @import views.html.softdrinksindustrylevy.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
-@import views.html.softdrinksindustrylevy.variations.siteRefCheckbox
 @import sdil.config.AppConfig
 
 @import sdil.models.backend.Site
@@ -43,11 +42,11 @@
                 <span class="form-hint">@Messages("sdil.production-sites.select-applicable")</span>
 
                 @otherSites.zipWithIndex.map { case (site, idx) =>
-                    @siteRefCheckbox(s"additionalSites[$idx]", site, otherSites.contains(site))
+                    @siteRefCheckbox(s"additionalSites[$idx]", site, otherSites.contains(site), showTradingName = false)
                 }
 
                 @expandableCheckbox(siteForm, "addAddress", "label.production-sites.add") {
-                    @siteFields(siteForm, "additionalAddress", "sdil.production-site.add")
+                    @siteFields(siteForm, "additionalAddress", "sdil.production-site.add", showTradingName = false)
 
                     <br/>
                     @* note that nested forms are not allowed in HTML, so both buttons must use the same action *@

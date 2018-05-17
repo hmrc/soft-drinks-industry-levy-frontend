@@ -50,7 +50,7 @@ class BusinessDetailsControllerSpec extends ControllerSpec with BeforeAndAfterAl
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
-     contentAsString(res) must include(messagesApi("sdil.declaration.your-business"))
+     contentAsString(res) must include(messagesApi("sdil.variations.change-address"))
     }
 
     "return a page with a link back to the variations summary page" in {

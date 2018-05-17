@@ -17,15 +17,14 @@
 package sdil.controllers
 
 import play.api.data.Form
-import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Call, Result}
+import play.api.mvc.{Action, AnyContent, Call, Result}
 import sdil.actions.{FormAction, RegistrationFormRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
-import sdil.forms.FormHelpers
+import sdil.forms.WarehouseForm
 import sdil.models._
+import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.register.secondaryWarehouse
 
 import scala.concurrent.Future
@@ -34,32 +33,30 @@ class WarehouseController(val messagesApi: MessagesApi,
                           cache: RegistrationFormDataCache,
                           formAction: FormAction)
                          (implicit config: AppConfig)
-  extends FrontendController with I18nSupport {
+  extends FrontendController with I18nSupport with SiteRef {
 
-  import WarehouseController._
-
-  def show = formAction.async { implicit request =>
+  def show: Action[AnyContent] = formAction.async { implicit request =>
     Journey.expectedPage(WarehouseSitesPage) match {
       case WarehouseSitesPage =>
-        val fillInitialForm: Form[SecondaryWarehouses] = request.formData.secondaryWarehouses match {
-          case Some(Nil) => initialForm.fill(SecondaryWarehouses(Nil, false, None))
-          case Some(_) => selectSitesForm
-          case None => initialForm
+        val fillInitialForm: Form[Sites] = request.formData.secondaryWarehouses match {
+          case Some(Nil) => WarehouseForm.initial().fill(Sites(Nil, addAddress = false, None, None))
+          case Some(_) => WarehouseForm()
+          case None => WarehouseForm.initial()
         }
         Ok(secondaryWarehouse(fillInitialForm, secondaryWarehouses, Journey.previousPage(WarehouseSitesPage).show, formTarget))
       case otherPage => Redirect(otherPage.show)
     }
   }
 
-  def addSingleSite = formAction.async { implicit request =>
-    validateWith(initialForm)
+  val addSingleSite: Action[AnyContent] = formAction.async { implicit request =>
+    validateWith(WarehouseForm.initial())
   }
 
-  def addMultipleSites = formAction.async { implicit request =>
-    validateWith(selectSitesForm)
+  val addMultipleSites: Action[AnyContent] = formAction.async { implicit request =>
+    validateWith(WarehouseForm())
   }
 
-  private def validateWith(form: Form[SecondaryWarehouses])(implicit request: RegistrationFormRequest[_]): Future[Result] = {
+  private def validateWith(form: Form[Sites])(implicit request: RegistrationFormRequest[_]): Future[Result] = {
     form.bindFromRequest().fold(
       errors => BadRequest(secondaryWarehouse(
         errors,
@@ -67,17 +64,27 @@ class WarehouseController(val messagesApi: MessagesApi,
         Journey.previousPage(WarehouseSitesPage).show,
         formTarget)),
       {
-        case SecondaryWarehouses(_, _, Some(addr)) =>
+        case Sites(_, _, tradingName, Some(addr)) =>
           val updatedSites = request.formData.secondaryWarehouses match {
-            case Some(addrs) => Some(addrs :+ addr)
-            case _ => Some(Seq(addr))
+            case Some(addrs) if addrs.nonEmpty =>
+              addrs :+ Site(
+                UkAddress.fromAddress(addr),
+                None,
+                tradingName,
+                None
+              )
+            case _ => Seq(Site(
+              UkAddress.fromAddress(addr),
+              None,
+              tradingName,
+              None
+            ))
           }
-          cache.cache(request.internalId, request.formData.copy(secondaryWarehouses = updatedSites)) map { _ =>
+          cache.cache(request.internalId, request.formData.copy(secondaryWarehouses = Some(updatedSites))) map { _ =>
             Redirect(routes.WarehouseController.show())
           }
-        case SecondaryWarehouses(addresses, _, _) =>
-          val updated = request.formData.copy(secondaryWarehouses = Some(addresses.map(Address.fromString)))
-
+        case Sites(addresses, _, _, _) =>
+          val updated = request.formData.copy(secondaryWarehouses = Some(addresses))
           cache.cache(request.internalId, updated) map { _ =>
             Redirect(Journey.nextPage(WarehouseSitesPage, updated).show)
           }
@@ -85,7 +92,7 @@ class WarehouseController(val messagesApi: MessagesApi,
     )
   }
 
-  private def secondaryWarehouses(implicit request: RegistrationFormRequest[_]): Seq[Address] = {
+  private def secondaryWarehouses(implicit request: RegistrationFormRequest[_]): Seq[Site] = {
     request.formData.secondaryWarehouses.getOrElse(Nil)
   }
 
@@ -95,28 +102,4 @@ class WarehouseController(val messagesApi: MessagesApi,
       case _ => routes.WarehouseController.addMultipleSites()
     }
   }
-}
-
-object WarehouseController extends FormHelpers {
-
-  /* when the user first lands on the page and sees the radio button (and must choose an option) */
-  val initialForm: Form[SecondaryWarehouses] = Form(
-    mapping(
-      "warehouseSites" -> ignored(Seq.empty[String]),
-      "addWarehouse" -> mandatoryBoolean,
-      "additionalAddress" -> mandatoryIfTrue("addWarehouse", addressMapping)
-    )(SecondaryWarehouses.apply)(SecondaryWarehouses.unapply)
-  )
-
-  /* after the user has selected at least one warehouse site, and doesn't have to select any of them */
-  val selectSitesForm: Form[SecondaryWarehouses] = Form(
-    mapping(
-      "warehouseSites" -> seq(text),
-      "addWarehouse" -> boolean,
-      "additionalAddress" -> mandatoryIfTrue("addWarehouse", addressMapping)
-    )(SecondaryWarehouses.apply)(SecondaryWarehouses.unapply)
-  )
-
-  case class SecondaryWarehouses(addresses: Seq[String], addWarehouse: Boolean, additionalAddress: Option[Address])
-
 }

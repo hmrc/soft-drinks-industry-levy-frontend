@@ -23,7 +23,7 @@ import sdil.config.AppConfig
 import sdil.controllers.routes
 
 sealed trait Page {
-  def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean
+  def isVisible(implicit formData: RegistrationFormData): Boolean
 
   def isComplete(implicit formData: RegistrationFormData): Boolean
 
@@ -33,7 +33,7 @@ sealed trait Page {
 }
 
 case object IdentifyPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = true
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = true
 
   override def isComplete(implicit formData: RegistrationFormData): Boolean = true
 
@@ -41,7 +41,7 @@ case object IdentifyPage extends Page {
 }
 
 case object VerifyPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = true
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = true
 
   override def isComplete(implicit formData: RegistrationFormData): Boolean = formData.verify.isDefined
 
@@ -49,7 +49,7 @@ case object VerifyPage extends Page {
 }
 
 case object OrganisationTypePage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = true
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = true
 
   override def isComplete(implicit formData: RegistrationFormData): Boolean = formData.organisationType.isDefined
 
@@ -57,7 +57,7 @@ case object OrganisationTypePage extends Page {
 }
 
 case object ProducerPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = true
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = true
 
   override def isComplete(implicit formData: RegistrationFormData): Boolean = formData.producer.isDefined
 
@@ -65,7 +65,7 @@ case object ProducerPage extends Page {
 }
 
 case object CopackedPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = {
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = {
     formData.producer.flatMap(_.isLarge).contains(false)
   }
 
@@ -75,7 +75,7 @@ case object CopackedPage extends Page {
 }
 
 case object PackageOwnUkPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = {
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = {
     formData.producer.exists(_.isProducer)
   }
 
@@ -85,7 +85,7 @@ case object PackageOwnUkPage extends Page {
 }
 
 case object PackageOwnVolPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = {
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = {
     formData.isPackagingForSelf.contains(true)
   }
 
@@ -95,7 +95,7 @@ case object PackageOwnVolPage extends Page {
 }
 
 case object PackageCopackPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = true
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = true
 
   override def isComplete(implicit formData: RegistrationFormData): Boolean = formData.packagesForOthers.isDefined
 
@@ -103,7 +103,7 @@ case object PackageCopackPage extends Page {
 }
 
 case object PackageCopackVolPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = {
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = {
     formData.packagesForOthers.contains(true)
   }
 
@@ -113,7 +113,7 @@ case object PackageCopackVolPage extends Page {
 }
 
 case object ImportPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = true
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = true
 
   override def isComplete(implicit formData: RegistrationFormData): Boolean = formData.isImporter.isDefined
 
@@ -121,7 +121,7 @@ case object ImportPage extends Page {
 }
 
 case object ImportVolumePage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = {
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = {
     formData.isImporter.contains(true)
   }
 
@@ -131,7 +131,7 @@ case object ImportVolumePage extends Page {
 }
 
 case object DoNotRegisterPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = formData.isNotAllowedToRegister
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = formData.isNotAllowedToRegister
 
   override def isComplete(implicit formData: RegistrationFormData): Boolean = false
 
@@ -139,8 +139,8 @@ case object DoNotRegisterPage extends Page {
 }
 
 case object StartDatePage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = {
-    (LocalDate.now isAfter config.taxStartDate) && !formData.isVoluntary
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = {
+    !formData.isVoluntary
   }
 
   override def isComplete(implicit formData: RegistrationFormData): Boolean = formData.startDate.isDefined
@@ -149,7 +149,7 @@ case object StartDatePage extends Page {
 }
 
 case object ProductionSitesPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = {
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = {
     formData.hasPackagingSites
   }
 
@@ -159,7 +159,7 @@ case object ProductionSitesPage extends Page {
 }
 
 case object WarehouseSitesPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = !formData.isVoluntary
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = !formData.isVoluntary
 
   override def isComplete(implicit formData: RegistrationFormData): Boolean = formData.secondaryWarehouses.isDefined
 
@@ -167,7 +167,7 @@ case object WarehouseSitesPage extends Page {
 }
 
 case object ContactDetailsPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = true
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = true
 
   override def isComplete(implicit formData: RegistrationFormData): Boolean = formData.contactDetails.isDefined
 
@@ -175,7 +175,7 @@ case object ContactDetailsPage extends Page {
 }
 
 case object DeclarationPage extends Page {
-  override def isVisible(implicit formData: RegistrationFormData, config: AppConfig): Boolean = true
+  override def isVisible(implicit formData: RegistrationFormData): Boolean = true
 
   override def isComplete(implicit formData: RegistrationFormData): Boolean = true
 
