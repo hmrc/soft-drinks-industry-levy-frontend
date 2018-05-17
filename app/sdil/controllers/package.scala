@@ -27,8 +27,8 @@ package object controllers {
   implicit def future[A](a: A): Future[A] = Future.successful(a)
   implicit val siteWrites: Writes[Site] = new Writes[Site] {
     override def writes(site: Site) = site match {
-      case packaging: PackagingSite => Json.toJson(packaging)
-      case warehouse: WarehouseSite => Json.toJson(warehouse)
+      case packaging: PackagingSite => Json.toJson(packaging)(Json.format[PackagingSite])
+      case warehouse: WarehouseSite => Json.toJson(warehouse)(Json.format[WarehouseSite])
     }
   }
   implicit val retrievedSubscriptionFormat: Format[RetrievedSubscription] = Json.format[RetrievedSubscription]
