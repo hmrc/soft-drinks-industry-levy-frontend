@@ -19,11 +19,13 @@ package sdil.controllers
 import play.api.data.Forms._
 import play.api.data.{Form, FormError, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import sdil.actions.{FormAction, RegistrationFormRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
 import sdil.models.DetailsCorrect.DifferentAddress
 import sdil.models._
+import sdil.models.backend.{PackagingSite, Site, UkAddress}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.register.productionSite
@@ -50,7 +52,12 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: Registration
     }
   }
 
-  def submit = formAction.async { implicit request =>
+
+  private def makeSite(s: String): PackagingSite = {
+    PackagingSite.fromAddress(Address.fromString(s))
+  }
+
+  def submit: Action[AnyContent] = formAction.async { implicit request =>
     form.bindFromRequest().fold(
       errors => BadRequest(
         productionSite(
@@ -63,17 +70,16 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: Registration
         )
       ),
       {
-        case ProductionSites(bprAddress, ppobAddress, _, true, Some(additionalAddress)) =>
-          val updated = Seq(bprAddress, ppobAddress).flatten.map(Address.fromString) ++
-            request.formData.productionSites.getOrElse(Nil) :+
-            additionalAddress
+        case ProductionSites(bprAddress, ppobAddress, sites, true, Some(additionalAddress)) =>
+          val site = PackagingSite(UkAddress.fromAddress(additionalAddress), None, None, None)
+          val updated = Seq(bprAddress, ppobAddress).flatten.map(makeSite).union(sites) :+ site
 
           cache.cache(request.internalId, request.formData.copy(productionSites = Some(updated))) map { _ =>
             Redirect(routes.ProductionSiteController.show())
           }
 
         case p =>
-          val addresses = (Seq(p.bprAddress, p.ppobAddress).flatten ++ p.additionalSites).map(Address.fromString)
+          val addresses = Seq(p.bprAddress, p.ppobAddress).flatten.map(makeSite) ++ p.additionalSites
           val updated = request.formData.copy(productionSites = Some(addresses))
 
           cache.cache(request.internalId, updated) map { _ =>
@@ -99,7 +105,7 @@ object ProductionSiteController extends FormHelpers {
     override val underlying: Mapping[ProductionSites] = mapping(
       "bprAddress" -> optional(text),
       "ppobAddress" -> optional(text),
-      "additionalSites" -> seq(text),
+      "additionalSites" -> seq(packagingSiteJsonMapping),
       "addAddress" -> boolean,
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(ProductionSites.apply)(ProductionSites.unapply)
@@ -119,7 +125,7 @@ object ProductionSiteController extends FormHelpers {
 
   case class ProductionSites(bprAddress: Option[String],
                              ppobAddress: Option[String],
-                             additionalSites: Seq[String],
+                             additionalSites: Seq[PackagingSite],
                              addAddress: Boolean,
                              additionalAddress: Option[Address])
 }

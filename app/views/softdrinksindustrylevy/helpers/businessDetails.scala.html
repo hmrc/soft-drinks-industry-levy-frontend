@@ -23,15 +23,15 @@
     <caption class="heading-small visuallyhidden">@Messages("sdil.verify.table.caption")</caption>
     <tbody>
         <tr>
-            <td scope="row">@Messages("sdil.verify.utr")</td>
+            <th scope="row">@Messages("sdil.verify.utr")</th>
             <td class="table-row-answer">@utr</td>
         </tr>
         <tr>
-            <td scope="row">@Messages("sdil.verify.organisation")</td>
+            <th scope="row">@Messages("sdil.verify.organisation")</th>
             <td class="table-row-answer">@organisation</td>
         </tr>
         <tr>
-            <td scope="row">@Messages("sdil.verify.address")</td>
+            <th scope="row">@Messages("sdil.verify.address")</th>
             <td class="table-row-answer">
                 @address.line1,<br/>
                 @if(address.line2.nonEmpty) { @address.line2,<br/> }

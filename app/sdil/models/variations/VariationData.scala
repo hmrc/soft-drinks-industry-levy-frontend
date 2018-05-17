@@ -39,7 +39,6 @@ case class VariationData(original: RetrievedSubscription,
                          importsVol: Option[Litreage],
                          updatedProductionSites: Seq[PackagingSite],
                          updatedWarehouseSites: Seq[WarehouseSite],
-                         // name
                          updatedContactDetails: ContactDetails,
                          previousPages: Seq[Call],
                          reason: Option[String] = None,

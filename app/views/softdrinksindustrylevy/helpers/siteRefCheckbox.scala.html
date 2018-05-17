@@ -19,7 +19,7 @@
 @import sdil.models.backend.Site
 @import sdil.controllers.siteWrites
 
-@(name: String, site: Site, checked: Boolean = false)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(name: String, site: Site, checked: Boolean = false, showTradingName: Boolean = true)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 <div class="multiple-choice">
     <input type="checkbox"
@@ -28,7 +28,11 @@
     value="@Json.toJson(site)"
         @if(checked) { checked="checked" }>
     <label for="@name">
-        <div>@site.tradingName.fold("")(_+",")</div>
+        @if(showTradingName) {
+            @site.tradingName.map { tradingName =>
+              <div>@tradingName</div>
+            }
+        }
         <div>@site.address.lines.head, @site.address.lines(1),</div>
         <div>@site.address.lines.lift(2).map { l => @l, } @site.address.lines.lift(3).map { l => @l, }@site.address.postCode</div>
     </label>

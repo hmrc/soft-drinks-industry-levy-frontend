@@ -18,7 +18,7 @@ package sdil.config
 
 import com.softwaremill.macwire.wire
 import play.api.libs.ws.WSClient
-import sdil.connectors.{ContactFrontendConnector, GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
+import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
@@ -34,5 +34,4 @@ trait ConnectorWiring extends CommonWiring {
   lazy val sdilConnector: SoftDrinksIndustryLevyConnector = wire[SoftDrinksIndustryLevyConnector]
   lazy val testConnector: TestConnector = wire[TestConnector]
   lazy val gaConnector: GaConnector = wire[GaConnector]
-  lazy val contactFrontendConnector: ContactFrontendConnector = wire[ContactFrontendConnector]
 }

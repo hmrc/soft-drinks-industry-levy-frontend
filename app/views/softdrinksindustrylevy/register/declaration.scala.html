@@ -130,7 +130,7 @@
         }
     }
 
-    @if((LocalDate.now isAfter config.taxStartDate) && !formData.isVoluntary) {
+    @if(!formData.isVoluntary) {
         @declaration_table("declaration", "liable-date") {
             @formData.startDate.map { date =>
                 @declaration_details_table_row("declaration", "date",
@@ -140,7 +140,7 @@
         }
     }
 
-    @if(formData.secondaryWarehouses.exists(_.nonEmpty) || formData.productionSites.exists(_.nonEmpty)) {
+  @if(formData.secondaryWarehouses.exists(_.nonEmpty) || formData.productionSites.exists(_.nonEmpty)) {
         @declaration_table("declaration", "registered-sites") {
             @if(formData.productionSites.exists(_.nonEmpty)) {
                 @formData.productionSites.map { sites =>

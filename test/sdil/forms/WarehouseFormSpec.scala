@@ -16,31 +16,69 @@
 
 package sdil.forms
 
-import sdil.controllers.WarehouseController.{SecondaryWarehouses, selectSitesForm}
-import sdil.models.Address
+import sdil.models.{Address, Sites}
 
 class WarehouseFormSpec extends FormSpec {
 
   "The warehouse form" should {
     "bind to SecondaryWarehouses if there are no additional warehouses" in {
-      val f = selectSitesForm.bind(Map(addWarehouse -> "false"))
+      val f = WarehouseForm().bind(Map(addAddress -> "false"))
 
-      f.value mustBe Some(SecondaryWarehouses(Nil, false, None))
+      f.value mustBe Some(Sites(Nil, false, None, None))
     }
 
     "validate the address if there is a warehouse" in {
-      mustValidateAddress(selectSitesForm, "additionalAddress", secondaryWarehouseData)
+      mustValidateAddress(WarehouseForm(), "additionalAddress", secondaryWarehouseData)
+    }
+
+    "require a trading name if a warehouse is added" in {
+      val f = WarehouseForm().bind(secondaryWarehouseData.updated(tradingName, ""))
+
+      mustContainError(f, tradingName, "error.tradingName.required")
+    }
+
+    "require the trading name to be less than 160 characters" in {
+      mustHaveMaxLength(tradingName, 160)(WarehouseForm(), secondaryWarehouseData, "error.tradingName.length")
+    }
+
+    "not allow the trading name to contain special characters" in {
+      val f = WarehouseForm().bind(secondaryWarehouseData.updated(tradingName, "ħełłø"))
+
+      mustContainError(f, tradingName, "error.tradingName.invalid")
+    }
+
+    "not require a new warehouse if warehouses have already been added" in {
+      val f = WarehouseForm().bind(Map.empty[String, String])
+
+      f.value mustBe Some(Sites(Nil, false, None, None))
     }
 
     "bind to SecondaryWarehouses if there is a warehouse and an address is provided" in {
-      val f = selectSitesForm.bind(secondaryWarehouseData)
+      val f = WarehouseForm().bind(secondaryWarehouseData)
 
-      f.value mustBe Some(SecondaryWarehouses(Nil, true, Some(Address("line 1", "line 2", "", "", "AA11 1AA"))))
+      f.value mustBe Some(Sites(Nil, true, Some("name trade"), Some(Address("line 1", "line 2", "", "", "AA11 1AA"))))
+    }
+  }
+
+  "The initial warehouse form" should {
+    "require addAddress" in {
+      val f = WarehouseForm.initial().bind(Map.empty[String, String])
+
+      mustContainError(f, addAddress, "error.radio-form.choose-option")
+    }
+
+    "require a trading name if an address is added" in {
+      mustRequire(tradingName)(WarehouseForm.initial(), secondaryWarehouseData, "error.tradingName.required")
+    }
+
+    "validate the address if an address is added" in {
+      mustValidateAddress(WarehouseForm.initial(), "additionalAddress", secondaryWarehouseData)
     }
   }
 
   lazy val secondaryWarehouseData = Map(
-    addWarehouse -> "true",
+    addAddress -> "true",
+    tradingName -> "name trade",
     line1 -> "line 1",
     line2 -> "line 2",
     "additionalAddress.line3" -> "",
@@ -48,7 +86,8 @@ class WarehouseFormSpec extends FormSpec {
     postcode -> "AA11 1AA"
   )
 
-  lazy val addWarehouse = "addWarehouse"
+  lazy val addAddress = "addAddress"
+  lazy val tradingName = "tradingName"
   lazy val line1 = "additionalAddress.line1"
   lazy val line2 = "additionalAddress.line2"
   lazy val postcode = "additionalAddress.postcode"

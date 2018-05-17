@@ -57,9 +57,15 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
     }
 
     "return 200 Ok and the add secondary warehouse page if other secondary warehouses have been added" in {
+      val tradingName = "Juicy juices"
       val data = VariationData(
         subscription.copy(
-          warehouseSites = List(WarehouseSite(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None, None))
+          warehouseSites = List(WarehouseSite(UkAddress.fromAddress(
+            Address("1", "foo", "bar", "", "AA11 1AA")),
+            Some("1"),
+            Some(tradingName),
+            None
+          ))
         )
       )
 
@@ -68,6 +74,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
 
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
+      contentAsString(res) must include(tradingName)
       contentAsString(res) must include(Messages("sdil.warehouse.add.heading"))
     }
 
@@ -204,6 +211,33 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
       val res = testController.addMultipleSites()(request)
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.WarehouseVariationController.show().url)
+    }
+
+    "return redirct to confirmation page if the user has added a warehouse without optional fields but don't need to " +
+      "add more " in {
+
+      val data = VariationData(
+        subscription.copy(warehouseSites = List(
+          WarehouseSite(
+            UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")),
+            None,
+            None,
+            None
+          )))
+      )
+
+      when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
+        .thenReturn(Future.successful(Some(data)))
+
+
+      val res = testController.addMultipleSites()(FakeRequest()
+        .withFormUrlEncodedBody(
+          "addAddress" -> "false",
+          "additionalSites[0]" ->	"""{"address":{"lines":["foo","bar"],"postCode":"AA11+1AA"}}"""
+        )
+      )
+      status(res) mustBe SEE_OTHER
+      redirectLocation(res) mustBe Some(routes.WarehouseVariationController.confirm().url)
     }
 
   }

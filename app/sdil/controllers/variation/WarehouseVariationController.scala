@@ -22,15 +22,18 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, Result}
 import sdil.actions.{VariationAction, VariationRequest}
 import sdil.config.AppConfig
-import sdil.controllers.variation.models.Sites
+import sdil.controllers.SiteRef
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
-import sdil.models.backend.{Site, UkAddress, WarehouseSite}
+import sdil.models.Sites
+import sdil.models.backend.{UkAddress, WarehouseSite}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings._
 import views.html.softdrinksindustrylevy.variations.{retrieve_summary_secondaryWarehouse, secondaryWarehouseWithRef}
 
 import scala.concurrent.Future
+
+
 
 class WarehouseVariationController(val messagesApi: MessagesApi,
                                    cache: SessionCache,
@@ -79,19 +82,19 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
         )
       )),
       {
-        case Sites(_, true, Some(tradingName), Some(addr)) =>
+        case Sites(_, true, tradingName, Some(addr)) =>
           val updatedSites = warehouses match {
             case addrs if addrs.nonEmpty =>
               addrs :+ WarehouseSite(
                 UkAddress.fromAddress(addr),
                 Some(nextRef(request.data.original.warehouseSites, addrs)),
-                Some(tradingName),
+                tradingName,
                 None
               )
             case addrs => Seq(WarehouseSite(
               UkAddress.fromAddress(addr),
               Some(nextRef(request.data.original.warehouseSites, addrs)),
-              Some(tradingName),
+              tradingName,
               None
             ))
           }

@@ -18,9 +18,7 @@ package sdil.forms
 
 import java.time.LocalDate
 
-import sdil.config.AppConfig
 import sdil.controllers.StartDateController.form
-import sdil.utils.TestConfig
 
 class StartDateFormSpec extends FormSpec {
 
@@ -88,11 +86,4 @@ class StartDateFormSpec extends FormSpec {
     keys.month -> LocalDate.now.getMonthValue.toString,
     keys.year -> LocalDate.now.getYear.toString
   )
-
-  lazy implicit val config: AppConfig = {
-    val c = new TestConfig
-    c.setTaxStartDate(LocalDate.of(2017, 1, 1))
-    c
-  }
-
 }

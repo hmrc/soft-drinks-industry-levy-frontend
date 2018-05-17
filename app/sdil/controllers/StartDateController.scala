@@ -60,11 +60,11 @@ class StartDateController(val messagesApi: MessagesApi, cache: RegistrationFormD
 
 object StartDateController extends FormHelpers {
 
-  def form(implicit appConfig: AppConfig): Form[LocalDate] = Form(
+  val form: Form[LocalDate] = Form(
     single(
       "startDate" -> startDate
         .verifying("error.start-date.in-future", !_.isAfter(LocalDate.now))
-        .verifying("error.start-date.before-tax-start", !_.isBefore(appConfig.taxStartDate))
+        .verifying("error.start-date.before-tax-start", !_.isBefore(LocalDate.of(2018, 4, 6)))
     )
   )
 

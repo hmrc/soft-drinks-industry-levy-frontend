@@ -56,8 +56,8 @@ object Subscription {
           producer.isLarge.contains(true)
         ),
         liabilityDate = startDate,
-        productionSites = productionSites.map(PackagingSite.fromAddress),
-        warehouseSites = secondaryWarehouses.map(WarehouseSite.fromAddress),
+        productionSites = productionSites,
+        warehouseSites = secondaryWarehouses,
         contact = Contact(
           name = Some(contactDetails.fullName),
           positionInCompany = Some(contactDetails.position),

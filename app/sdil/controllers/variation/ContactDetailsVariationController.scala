@@ -23,8 +23,7 @@ import sdil.config.AppConfig
 import sdil.controllers.ContactDetailsController
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.softdrinksindustrylevy.register
-import views.html.softdrinksindustrylevy.variations
+import views.html.softdrinksindustrylevy.{register, variations}
 
 import scala.concurrent.Future
 

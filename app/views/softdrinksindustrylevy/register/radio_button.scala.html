@@ -42,17 +42,15 @@
                 '_legendClass -> "visuallyhidden"
             )
             </fieldset>
-
-            @if(pageName == "packageCopackSmall") {
-                @details("sdil.packageCopackSmall.whatis.header") {
-                    <p id="details-content-1">@Html(Messages("sdil.packageCopackSmall.whatis.body.p1"))</p>
-                    <p id="details-content-2">@Html(Messages("sdil.packageCopackSmall.whatis.body.p2"))</p>
-                }
-            }
-
-            <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
-
         </div>
+
+        @if(pageName == "packageOwnUk") {
+            @details("sdil.producer.details.title") {
+                <p>@Messages("sdil.producer.details.p1")</p>
+            }
+        }
+
+        <button class="button" type="submit" id="continue-button">@Messages("sdil.common.save-continue")</button>
 
     }
 

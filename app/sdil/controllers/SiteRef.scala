@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import sdil.config.AppConfig
+package sdil.controllers
 
-@()(implicit request: Request[_], messages: Messages, config: AppConfig)
+import sdil.forms.FormHelpers
+import sdil.models.backend.Site
 
-@main_template(Messages("sdil.common.title")) {
-    <h1>@Messages("sdil.not-whitelisted.title")</h1>
-    <p>@Messages("sdil.not-whitelisted.p1")</p>
-    <p>@Messages("sdil.not-whitelisted.p2")</p>
+trait SiteRef extends FormHelpers {
+
+  def nextRef(original: Seq[Site], updated: Seq[Site]): String = (original, updated) match {
+    case (Nil, Nil) => "1"
+    case (o, Nil) => (maxRef(o) + 1).toString
+    case (Nil, u) => (maxRef(u) + 1).toString
+    case (o, u) => (maxRef(o).max(maxRef(u)) + 1).toString
+  }
+
+  private def maxRef(sites: Seq[Site]): Int = {
+    sites.map(_.ref.fold(0)(_.toInt)).max
+  }
 }
