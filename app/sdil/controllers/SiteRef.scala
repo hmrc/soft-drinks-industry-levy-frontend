@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package sdil.controllers.variation
+package sdil.controllers
 
-import play.api.data.Form
-import play.api.data.Forms._
-import sdil.controllers.variation.models.Sites
 import sdil.forms.FormHelpers
 import sdil.models.backend.Site
-import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
 trait SiteRef extends FormHelpers {
 
@@ -35,14 +31,4 @@ trait SiteRef extends FormHelpers {
   private def maxRef(sites: Seq[Site]): Int = {
     sites.map(_.ref.fold(0)(_.toInt)).max
   }
-
-  val initialForm: Form[Sites] = Form(
-    mapping(
-      "additionalSites" -> ignored(Seq.empty[Site]),
-      "addAddress" -> mandatoryBoolean,
-      "tradingName" -> optional(tradingNameMapping),
-      "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
-    )(Sites.apply)(Sites.unapply)
-  )
-
 }

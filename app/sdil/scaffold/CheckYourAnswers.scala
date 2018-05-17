@@ -16,8 +16,6 @@
 
 package ltbs.play.scaffold
 
-import play.twirl.api.Html
-
 object CheckYourAnswers {
   
 }

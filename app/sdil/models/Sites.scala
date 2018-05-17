@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import sdil.config.AppConfig
+package sdil.models
 
-@()(implicit request: Request[_], messages: Messages, config: AppConfig)
+import sdil.models.backend.Site
 
-@main_template(Messages("sdil.common.title")) {
-    <h1>@Messages("sdil.not-whitelisted.title")</h1>
-    <p>@Messages("sdil.not-whitelisted.p1")</p>
-    <p>@Messages("sdil.not-whitelisted.p2")</p>
-}
+case class Sites[A <:Site](sites: Seq[A],
+                 addAddress: Boolean,
+                 tradingName: Option[String],
+                 additionalSites: Option[Address])

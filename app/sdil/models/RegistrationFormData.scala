@@ -19,6 +19,7 @@ package sdil.models
 import java.time.LocalDate
 
 import play.api.libs.json._
+import sdil.models.backend.{PackagingSite, WarehouseSite}
 
 case class RegistrationFormData(rosmData: RosmRegistration,
                                 utr: String,
@@ -33,8 +34,8 @@ case class RegistrationFormData(rosmData: RosmRegistration,
                                 isImporter: Option[Boolean] = None,
                                 importVolume: Option[Litreage] = None,
                                 startDate: Option[LocalDate] = None,
-                                productionSites: Option[Seq[Address]] = None,
-                                secondaryWarehouses: Option[Seq[Address]] = None,
+                                productionSites: Option[Seq[PackagingSite]] = None,
+                                secondaryWarehouses: Option[Seq[WarehouseSite]] = None,
                                 contactDetails: Option[ContactDetails] = None) {
 
   /**

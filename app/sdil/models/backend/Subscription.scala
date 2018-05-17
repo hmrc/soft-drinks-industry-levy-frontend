@@ -27,8 +27,8 @@ case class Subscription(utr: String,
                         address: UkAddress,
                         activity: Activity,
                         liabilityDate: LocalDate,
-                        productionSites: Seq[Site],
-                        warehouseSites: Seq[Site],
+                        productionSites: Seq[PackagingSite],
+                        warehouseSites: Seq[WarehouseSite],
                         contact: Contact)
 
 object Subscription {
@@ -56,8 +56,8 @@ object Subscription {
           producer.isLarge.contains(true)
         ),
         liabilityDate = startDate,
-        productionSites = productionSites.map(Site.fromAddress),
-        warehouseSites = secondaryWarehouses.map(Site.fromAddress),
+        productionSites = productionSites,
+        warehouseSites = secondaryWarehouses,
         contact = Contact(
           name = Some(contactDetails.fullName),
           positionInCompany = Some(contactDetails.position),

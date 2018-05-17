@@ -16,8 +16,6 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
@@ -84,14 +82,10 @@ class RadioFormControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "redirect to the start date page if the user does not import liable drinks and is non-voluntary" in {
-      testConfig.setTaxStartDate(LocalDate.now.minusDays(1))
-
       val res = importSubmit(FakeRequest().withFormUrlEncodedBody("yesOrNo" -> "false"))
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.StartDateController.show().url
-
-      testConfig.resetTaxStartDate()
     }
 
     "redirect to the contact details page if the user does not import liable drinks, and is voluntary" in {

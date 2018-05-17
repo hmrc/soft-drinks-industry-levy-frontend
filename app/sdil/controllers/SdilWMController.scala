@@ -18,19 +18,15 @@ package sdil.controllers
 
 import java.time.LocalDate
 
-import scala.collection.mutable.{Map => MMap}
-import scala.concurrent._
-import scala.util.Try
-
-import cats.{Eq, Semigroup, Monoid}
 import cats.implicits._
+import cats.{Eq, Monoid}
 import enumeratum._
 import ltbs.play._
-import ltbs.play.scaffold._
 import ltbs.play.scaffold.HtmlShow.ops._
+import ltbs.play.scaffold._
 import ltbs.play.scaffold.webmonad._
-import play.api.data._
 import play.api.data.Forms._
+import play.api.data._
 import play.api.data.validation._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -39,9 +35,12 @@ import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.models._
 import sdil.models.backend._
-
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
+
+import scala.collection.mutable.{Map => MMap}
+import scala.concurrent._
+import scala.util.Try
 
 trait SdilWMController extends WebMonadController
     with FrontendController with GdsComponents
@@ -244,21 +243,28 @@ trait SdilWMController extends WebMonadController
       }
     }
 
-  lazy val siteMapping: Mapping[Site] = mapping(
-    "address" -> ukAddressMapping
-  ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{ case (address, refOpt, _, _) => address } )
 
-  protected def askSite(
-    id: String,
-    default: Option[Site] = None,
-    constraints: List[(String, Site => Boolean)] = Nil
-  ): WebMonad[Site] = {
-
-    formPage(id)(siteMapping.verifying(constraintMap(constraints) :_*), default) { (path, b, r) =>
-      implicit val request: Request[AnyContent] = r
-      gdspages.site(id, b, path)
-    }
+  // TODO these were lifted from FormHelpers which has differing implementations of other mappings - resolve
+  lazy val tradingNameMapping: Mapping[String] = {
+    text.transform[String](_.trim, s => s).verifying(optionalTradingNameConstraint)
   }
+
+  private def optionalTradingNameConstraint: Constraint[String] = Constraint {
+    case b if b.length > 160 => Invalid(s"error.tradingName.over")
+    case a if !a.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid(s"error.tradingName.invalid")
+    case _ => Valid
+  }
+
+
+  lazy val warehouseSiteMapping: Mapping[WarehouseSite] = mapping(
+    "address" -> ukAddressMapping,
+    "tradingName" -> optional(tradingNameMapping)
+  ){(a,b) => WarehouseSite.apply(a, none, b, none)}(WarehouseSite.unapply(_).map{ case (address, refOpt, tradingName, _) => (address, tradingName) } )
+
+  lazy val packagingSiteMapping: Mapping[PackagingSite] = mapping(
+    "address" -> ukAddressMapping
+  ){a => PackagingSite.apply(a, none, none, none)}(PackagingSite.unapply(_).map{ case (address, refOpt, _, _) =>
+    address } )
 
   protected val addressMapping: play.api.data.Mapping[Address] = mapping(
     "line1" -> nonEmptyText,

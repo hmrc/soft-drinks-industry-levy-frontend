@@ -18,20 +18,20 @@ package ltbs.play.scaffold
 
 import java.time.LocalDate
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.language.implicitConversions
-
-import cats.{Semigroup, Monoid, Order}
 import cats.data.{EitherT, RWST}
 import cats.implicits._
+import cats.{Monoid, Order}
 import play.api._
-import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
+import play.api.data.{Form, Mapping}
 import play.api.http.Writeable
 import play.api.i18n.Messages
 import play.api.libs.json._
-import play.api.mvc.{Action, AnyContent, Controller, Request, Result}
+import play.api.mvc._
 import play.twirl.api.Html
+
+import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
 
 trait FormHtml[A] {

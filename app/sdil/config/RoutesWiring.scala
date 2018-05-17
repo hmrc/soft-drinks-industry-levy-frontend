@@ -22,10 +22,10 @@ import controllers.Assets
 import play.api.inject.DefaultApplicationLifecycle
 import play.api.routing.Router
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction, VariationAction}
-import sdil.connectors.{ContactFrontendConnector, GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
-import sdil.controllers.{VariationsController => UniformVariationsController, _}
+import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
 import sdil.controllers.test.TestingController
 import sdil.controllers.variation._
+import sdil.controllers.{VariationsController => UniformVariationsController, _}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
@@ -39,7 +39,6 @@ trait RoutesWiring extends CommonWiring {
   val sdilConnector: SoftDrinksIndustryLevyConnector
   val testConnector: TestConnector
   val gaConnector: GaConnector
-  val contactFrontendConnector: ContactFrontendConnector
   val keystore: SessionCache
 
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
@@ -62,9 +61,8 @@ trait RoutesWiring extends CommonWiring {
   lazy val radioFormController: RadioFormController = wire[RadioFormController]
   lazy val signoutController: AuthenticationController = wire[AuthenticationController]
   lazy val testController: TestingController = wire[TestingController]
-  lazy val registerForBetaController: RegisterForBetaController = wire[RegisterForBetaController]
   lazy val producerController: ProducerController = wire[ProducerController]
-  lazy val variationsController: VariationsController = wire[VariationsController]
+  lazy val variationsController: variation.VariationsController = wire[variation.VariationsController]
   lazy val businessDetailsController: BusinessDetailsController = wire[BusinessDetailsController]
   lazy val producerVariationsController: ProducerVariationsController = wire[ProducerVariationsController]
   lazy val usesCopackerController: UsesCopackerController = wire[UsesCopackerController]

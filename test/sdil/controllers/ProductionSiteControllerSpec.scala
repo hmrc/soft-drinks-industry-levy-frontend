@@ -16,8 +16,6 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matching}
@@ -27,7 +25,8 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.DetailsCorrect.DifferentAddress
-import sdil.models.{Address, Litreage, OrganisationDetails, RosmRegistration}
+import sdil.models._
+import sdil.models.backend.PackagingSite
 
 import scala.collection.JavaConverters._
 
@@ -72,9 +71,9 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
     "return a page including all production sites added so far" in {
       val sites = Seq(
-        Address("3 The Place", "Another place", "", "", "AA11 1AA"),
-        Address("4 The Place", "Another place", "", "", "AA12 2AA"),
-        Address("5 The Place", "Another place", "", "", "AA13 3AA")
+        PackagingSite.fromAddress(Address("3 The Place", "Another place", "", "", "AA11 1AA")),
+        PackagingSite.fromAddress(Address("4 The Place", "Another place", "", "", "AA11 1AA")),
+        PackagingSite.fromAddress(Address("5 The Place", "Another place", "", "", "AA11 1AA"))
       )
 
       stubFormPage(productionSites = Some(sites))
@@ -86,60 +85,15 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       val checkboxLabels = html.select(""".multiple-choice input[type="checkbox"]""")
         .asScala.filter(_.id.startsWith("additionalSites")).map(_.nextElementSibling().text)
 
-      checkboxLabels must contain theSameElementsAs sites.map(_.nonEmptyLines.mkString(", "))
+      checkboxLabels must contain theSameElementsAs sites.map(x => Address.fromUkAddress(x.address).nonEmptyLines.mkString(", "))
     }
 
     "return a page with a link back to the start date page if the date is after the sugar tax start date" in {
-      testConfig.setTaxStartDate(yesterday)
-
       val res = testController.show()(FakeRequest())
       status(res) mustBe OK
 
       val html = Jsoup.parse(contentAsString(res))
       html.select("a.link-back").attr("href") mustBe routes.StartDateController.show().url
-
-      testConfig.resetTaxStartDate()
-    }
-
-    "return a page with a link back to the import volume page if the date is before the sugar tax start date " +
-      "and the user is importing liable drinks" in {
-      testConfig.setTaxStartDate(tomorrow)
-      stubFormPage(
-        packageOwnVol = Some(Litreage(10000000L, 10000000L)),
-        imports = Some(true),
-        importVolume = Some(Litreage(5, 5)))
-
-
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
-    }
-
-    "return a page with a link back to the import page if the date is before the sugar tax start date " +
-      "and the user is not importing liable drinks" in {
-      testConfig.setTaxStartDate(tomorrow)
-      stubFormPage(packageOwnVol = Some(Litreage(10000000L, 10000000L)),
-        imports = Some(false))
-
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.RadioFormController.show("import").url
-    }
-
-    "return a page with a link back to the import volume page if the date is before the tax start date, " +
-      "and the user is importing liable drinks" in {
-
-      testConfig.setTaxStartDate(tomorrow)
-
-      val res = testController.show()(FakeRequest())
-      status(res) mustBe OK
-
-      val html = Jsoup.parse(contentAsString(res))
-      html.select("a.link-back").attr("href") mustBe routes.LitreageController.show("importVolume").url
     }
   }
 
@@ -194,7 +148,9 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
       verify(mockCache, times(1)).cache(
         matching("internal id"),
-        matching(defaultFormData.copy(productionSites = Some(Seq(Address("line 2", "line 3", "", "", "AA12 2AA")))))
+        matching(defaultFormData.copy(productionSites = Some(Seq(
+          PackagingSite.fromAddress(Address("line 2", "line 3", "", "", "AA12 2AA"))
+        ))))
       )(any())
     }
 
@@ -212,15 +168,15 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
         rosmData = rosmRegistration,
         verify = Some(DifferentAddress(ppobAddress)),
         productionSites = Some(Seq(
-          Address("1", "2", "3", "4", "AA11 1AA"),
-          Address("2", "3", "4", "5", "AA12 2AA")
+          PackagingSite.fromAddress(Address("1", "2", "3", "4", "AA11 1AA")),
+          PackagingSite.fromAddress(Address("2", "3", "4", "5", "AA12 2AA"))
         ))
       )
 
       val request = FakeRequest().withFormUrlEncodedBody(
         "bprAddress" -> bprAddress.nonEmptyLines.mkString(","),
         "ppobAddress" -> ppobAddress.nonEmptyLines.mkString(","),
-        "additionalSites[1]" -> "2,3,4,5,AA12 2AA"
+        "additionalSites[1]" -> """{"address":{"lines":["2","3","4","5"],"postCode":"AA12 2AA"}}"""
       )
 
       val res = testController.submit()(request)
@@ -231,24 +187,13 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
         matching(defaultFormData.copy(
           rosmData = rosmRegistration,
           verify = Some(DifferentAddress(ppobAddress)),
-          productionSites = Some(Seq(bprAddress, ppobAddress, Address("2", "3", "4", "5", "AA12 2AA"))))
+          productionSites = Some(
+            Seq(bprAddress, ppobAddress, Address("2", "3", "4", "5", "AA12 2AA")).map(PackagingSite.fromAddress)
+          ))
         )
       )(any())
     }
   }
 
   lazy val testController = wire[ProductionSiteController]
-
-  lazy val tomorrow = LocalDate.now plusDays 1
-  lazy val yesterday: LocalDate = LocalDate.now minusDays 1
-
-
-  override protected def beforeEach(): Unit = {
-    testConfig.setTaxStartDate(yesterday)
-    stubFilledInForm
-  }
-
-  override protected def afterEach(): Unit = {
-    testConfig.resetTaxStartDate()
-  }
 }

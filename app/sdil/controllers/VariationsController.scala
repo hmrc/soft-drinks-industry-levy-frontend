@@ -16,32 +16,29 @@
 
 package sdil.controllers
 
+import java.time.LocalDate
+
 import cats.implicits._
 import enumeratum._
-import java.time.LocalDate
-import ltbs.play._
 import ltbs.play.scaffold._
-import play.api.data.Forms._
+import ltbs.play.scaffold.webmonad._
 import play.api.i18n._
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
-import scala.concurrent.{ExecutionContext, Future}
 import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend.{ Contact, Site, UkAddress }
-import sdil.models.retrieved.{ RetrievedActivity, RetrievedSubscription }
+import sdil.models.backend._
+import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.variations._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
-import webmonad._
-import HtmlShow.ops._
+
+import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait ChangeType extends EnumEntry
 object ChangeType extends Enum[ChangeType] {
@@ -78,11 +75,11 @@ class VariationsController(
       change          <- askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", askSite(_), default = data.updatedProductionSites.toList)
+        manyT("packSites", ask(packagingSiteMapping,_), default = data.updatedProductionSites.toList)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
-        manyT("warehouses", askSite(_), default = data.updatedWarehouseSites.toList)
+        manyT("warehouses", ask(warehouseSiteMapping,_), default = data.updatedWarehouseSites.toList)
       } else data.updatedWarehouseSites.pure[WebMonad]
 
       contact         <- if (change.contains(ContactPerson)) {
@@ -130,8 +127,8 @@ class VariationsController(
       packQty         <- ask(litreagePair.nonEmpty, "packQty") when ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
       copacks         <- ask(litreagePair.nonEmpty, "copackQty") when ask(bool, "copacker", data.copackForOthers)
       imports         <- ask(litreagePair.nonEmpty, "importQty") when ask(bool, "importer", data.imports)
-      packSites       <- manyT("packSites", ask(siteMapping,_), default = data.updatedProductionSites.toList)
-      warehouses      <- manyT("warehouses", ask(siteMapping,_), default = data.updatedWarehouseSites.toList)
+      packSites       <- manyT("packSites", ask(packagingSiteMapping,_), default = data.updatedProductionSites.toList)
+      warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_), default = data.updatedWarehouseSites.toList)
       businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
       contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
     } yield data.copy (
@@ -201,7 +198,25 @@ class VariationsController(
 
   def development(id: String): Action[AnyContent] = Action.async { implicit request =>
     val sdilRef = "XKSDIL000000000"
-    val s = RetrievedSubscription("0100000000","eCola Group",UkAddress(List("86 Amory's Holt Way", "Ipswich"),"IP12 5ZT"),RetrievedActivity(false,true,true,true,false),LocalDate.now,List(Site(UkAddress(List("40 Sudbury Mews", "Torquay"),"TQ53 6GW"),Some("92"),None,None), Site(UkAddress(List("11B Welling Close", "North London"),"N93 9II"),Some("95"),None,None)),List(Site(UkAddress(List("33 Acre Grove", "Falkirk"),"FK38 8TP"),Some("61"),None,None)),Contact(Some("Avery Roche"),Some("Enterprise Infrastructure Engineer"),"01024 670607","Charlotte.Connolly@gmail.co.uk"))
+    val s = RetrievedSubscription(
+      "0100000000",
+      "Adam's Dyes (Also Soft Drinks)",
+      UkAddress(List("86 Amory's Holt Way", "Ipswich"),"IP12 5ZT"),
+      RetrievedActivity(false,true,true,true,false),
+      LocalDate.now,
+      List(
+        PackagingSite(UkAddress(List("40 Sudbury Mews", "Torquay"),"TQ53 6GW"),Some("92"),None,None),
+        PackagingSite(UkAddress(List("11B Welling Close", "North London"),"N93 9II"),Some("95"),None,None)
+      ),
+      List(
+        WarehouseSite(UkAddress(List("33 Acre Grove", "Falkirk"),"FK38 8TP"),Some("61"),Some("Illogistics"),None)
+      ),
+      Contact(
+        Some("Avery Roche"),
+        Some("Enterprise Infrastructure Engineer"),
+        "01024 670607","Charlotte.Connolly@gmail.co.uk"
+      )
+    )
 
     runInner(request)(program(s, sdilRef))(id)(junkPersistence.dataGet,junkPersistence.dataPut)
   }
@@ -211,7 +226,7 @@ class VariationsController(
     val persistence = SessionCachePersistence("test", keystore)
 
     def testProgram: WebMonad[Result] = for {
-      packSites <- manyT("packSites", askSite(_))
+      packSites <- manyT("packSites", ask(packagingSiteMapping,_))
       exit      <- journeyEnd("variationDone")
     } yield {
       exit

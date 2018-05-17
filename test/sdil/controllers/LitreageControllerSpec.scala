@@ -16,8 +16,6 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matching}
@@ -152,15 +150,11 @@ class LitreageControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "redirect to the start date page if the user is not voluntary, and the form data is valid" in {
-      testConfig.setTaxStartDate(LocalDate.now.minusDays(1))
-
       val request = FakeRequest().withFormUrlEncodedBody("lowerRateLitres" -> "7", "higherRateLitres" -> "6")
       val res = testController.submit("importVolume")(request)
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res) mustBe Some(routes.StartDateController.show().url)
-
-      testConfig.resetTaxStartDate()
     }
 
     "store the form data in keystore if it is valid" in {

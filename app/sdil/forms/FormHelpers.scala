@@ -21,7 +21,7 @@ import play.api.data.Mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.libs.json.Json
 import sdil.models.Address
-import sdil.models.backend.{Site, UkAddress}
+import sdil.models.backend.{PackagingSite, WarehouseSite}
 
 import scala.util.Try
 
@@ -46,7 +46,11 @@ trait FormHelpers {
     "postcode" -> postcode
   )(Address.apply)(Address.unapply)
 
-  lazy val siteJsonMapping: Mapping[Site] = text.transform[Site](s => Json.parse(s).as[Site], s => Json.toJson(s).toString)
+//  lazy val siteJsonMapping: Mapping[Site] = text.transform[Site](s => Json.parse(s).as[Site], s => Json.toJson(s).toString)
+  lazy val packagingSiteJsonMapping: Mapping[PackagingSite] =
+    text.transform[PackagingSite](s => Json.parse(s).as[PackagingSite], s => Json.toJson(s).toString)
+  lazy val warehouseSiteJsonMapping: Mapping[WarehouseSite] =
+    text.transform[WarehouseSite](s => Json.parse(s).as[WarehouseSite], s => Json.toJson(s).toString)
 
   def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
     //have to use optional, or the framework returns `error.required` when no option is selected
@@ -66,13 +70,15 @@ trait FormHelpers {
     case b if b.length > 35 => Invalid(s"error.$key.over")
     case _ => Valid
   }
+
   lazy val tradingNameMapping: Mapping[String] = {
     text.transform[String](_.trim, s => s).verifying(optionalTradingNameConstraint)
   }
 
   private def optionalTradingNameConstraint: Constraint[String] = Constraint {
-    case b if b.length > 160 => Invalid(s"error.tradingName.over")
-    case a if !a.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid(s"error.tradingName.invalid")
+    case "" => Invalid("error.tradingName.required")
+    case s if s.length > 160 => Invalid("error.tradingName.length")
+    case s if !s.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid("error.tradingName.invalid")
     case _ => Valid
   }
 

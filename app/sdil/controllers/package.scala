@@ -16,9 +16,20 @@
 
 package sdil
 
+import play.api.libs.json._
+import sdil.models.backend.{PackagingSite, Site, WarehouseSite}
+import sdil.models.retrieved.RetrievedSubscription
+
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
 package object controllers {
   implicit def future[A](a: A): Future[A] = Future.successful(a)
+  implicit val siteWrites: Writes[Site] = new Writes[Site] {
+    override def writes(site: Site) = site match {
+      case packaging: PackagingSite => Json.toJson(packaging)(Json.format[PackagingSite])
+      case warehouse: WarehouseSite => Json.toJson(warehouse)(Json.format[WarehouseSite])
+    }
+  }
+  implicit val retrievedSubscriptionFormat: Format[RetrievedSubscription] = Json.format[RetrievedSubscription]
 }

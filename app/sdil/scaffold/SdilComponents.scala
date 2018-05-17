@@ -18,10 +18,9 @@ package ltbs.play.scaffold
 
 import play.api.data._
 import play.api.i18n.Messages
-import play.api.mvc.{ AnyContent, Request }
 import play.twirl.api.Html
 import sdil.models._
-import sdil.models.backend.Site
+import sdil.models.backend.{PackagingSite, Site, WarehouseSite}
 import views.html.gdspages
 
 trait SdilComponents {
@@ -48,6 +47,22 @@ trait SdilComponents {
     def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html = {
       gdspages.fragments.site(key, form)
     }
+  }
+
+  implicit val packagingSiteForm = new FormHtml[PackagingSite] {
+    def asHtmlForm(key: String, form: Form[PackagingSite])(implicit messages: Messages): Html = {
+      gdspages.fragments.packagingSite(key, form)
+    }
+  }
+
+  implicit val warehouseSiteForm = new FormHtml[WarehouseSite] {
+    def asHtmlForm(key: String, form: Form[WarehouseSite])(implicit messages: Messages): Html = {
+      gdspages.fragments.warehouseSite(key, form)
+    }
+  }
+
+  implicit def htmlShow[A <: Site] = new HtmlShow[A] {
+    override def showHtml(in: A) = Html(in.getLines.mkString("<br />"))
   }
 
   implicit val contactDetailsForm = new FormHtml[ContactDetails] {
