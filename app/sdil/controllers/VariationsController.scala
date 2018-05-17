@@ -23,7 +23,7 @@ import java.time.LocalDate
 import ltbs.play._
 import ltbs.play.scaffold._
 import play.api.data.Forms._
-import play.api.i18n.MessagesApi
+import play.api.i18n._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc._
@@ -39,38 +39,39 @@ import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.variations._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
 import webmonad._
 import HtmlShow.ops._
 import sdil.forms.FormHelpers
 
+sealed trait ChangeType extends EnumEntry
+object ChangeType extends Enum[ChangeType] {
+  val values = findValues
+  case object Sites extends ChangeType
+  case object Activity extends ChangeType
+  case object Deregister extends ChangeType
+}
+
+sealed trait ContactChangeType extends EnumEntry
+object ContactChangeType extends Enum[ContactChangeType] {
+  val values = findValues
+  case object Sites extends ContactChangeType
+  case object ContactPerson extends ContactChangeType
+  case object ContactAddress extends ContactChangeType
+}
+
 class VariationsController(
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
-  keystore: SessionCache
+  keystore: SessionCache,
+  regdata: RegistrationFormDataCache // Bloody DI
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
 ) extends SdilWMController with FrontendController with GdsComponents with SdilComponents {
-
-  sealed trait ChangeType extends EnumEntry
-  object ChangeType extends Enum[ChangeType] {
-    val values = findValues
-    case object Sites extends ChangeType
-    case object Activity extends ChangeType
-    case object Deregister extends ChangeType
-  }
-
-  sealed trait ContactChangeType extends EnumEntry
-  object ContactChangeType extends Enum[ContactChangeType] {
-    val values = findValues
-    case object Sites extends ContactChangeType
-    case object ContactPerson extends ContactChangeType
-    case object ContactAddress extends ContactChangeType
-  }
-
 
   private def contactUpdate(
     data: VariationData
@@ -79,17 +80,17 @@ class VariationsController(
     for {
       change          <- askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
 
-      contact         <- if (change.contains(ContactPerson)) {
-        ask(contactDetailsMapping, "contact", data.updatedContactDetails)
-      } else data.updatedContactDetails.pure[WebMonad]
+      packSites       <- if (change.contains(Sites)) {
+        manyT("packSites", ask(packagingSiteMapping,_), default = data.updatedProductionSites.toList)
+      } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
         manyT("warehouses", ask(warehouseSiteMapping,_), default = data.updatedWarehouseSites.toList)
       } else data.updatedWarehouseSites.pure[WebMonad]
 
-      packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", ask(packagingSiteMapping,_), default = data.updatedProductionSites.toList)
-      } else data.updatedProductionSites.pure[WebMonad]
+      contact         <- if (change.contains(ContactPerson)) {
+        ask(contactDetailsMapping, "contact", data.updatedContactDetails)
+      } else data.updatedContactDetails.pure[WebMonad]
 
       businessAddress <- if (change.contains(ContactAddress)) {
         ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
@@ -113,91 +114,19 @@ class VariationsController(
         o.map{innerFormatter.writes}.getOrElse(JsNull)
     }
 
+  implicit val showLitreage: HtmlShow[Litreage] = new HtmlShow[Litreage]{
+    def showHtml(l: Litreage): Html = l match {
+      case Litreage(lower, higher) => Html(
+        Messages("sdil.declaration.low-band") + f": $lower%,.0f" +
+          "<br>" +
+          Messages("sdil.declaration.high-band") + f": $higher%,.0f"
+      )
+    }
+  }
+
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = {
-
-    import play.api.i18n.Messages
-
-    implicit val showLitreage: HtmlShow[Litreage] = new HtmlShow[Litreage]{
-      def showHtml(l: Litreage): Html = l match {
-        case Litreage(lower, higher) => Html(
-          Messages("sdil.declaration.low-band") + f": $lower%,.0f" +
-            "<br>" +
-            Messages("sdil.declaration.high-band") + f": $higher%,.0f"
-        )
-      }
-    }
-
-      implicit val siteListToHtml: HtmlShow[List[Site]] = new HtmlShow[List[Site]] {
-        def showHtml(sx: List[Site]): Html =
-          Html("<dl class=\"govuk-check-your-answers cya-questions-short\">") |+|
-            sx.map{site =>
-              Html(
-                s"""|
-                   |     <dt class="cya-question">
-                   |       &nbsp;
-                   |     </dt>
-                   |     <dd class="cya-answer">
-                   |       <details role="group">
-                   |         <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">${site.address.lines.head}</span></summary>
-                   |         <div class="panel" id="details-content-0" aria-hidden="true">${site.address.lines.tail.mkString("<br />")}<br />${site.address.postCode}
-                   |         </div>
-                   |       </details>
-                   |     </dd>
-                   |     <dd class="cya-change">
-                   |       <a href="#">
-                   |         Change<span class="visually-hidden"> address</span>
-                   |       </a>
-                   |     </dd>""".stripMargin)
-            }.combineAll |+| Html("</dl>")
-      }
-
-    implicit val variationDataShow: HtmlShow[VariationData] = new HtmlShow[VariationData] {
-
-      implicit def boolToHtml(bool: Boolean): Html =
-        Html {bool match {
-                case true  => Messages("sdil.common.yes")
-                case false => Messages("sdil.common.no")
-              }}
-
-      def showHtml(v: VariationData): Html = {
-        val pre="variations.cya."
-
-        val table: List[(String, Option[Html])] = List(
-          "packLarge"   ->
-            Html(v.producer.isLarge match {
-                   case Some(true)  => Messages(s"${pre}packLarge.large")
-                   case Some(false) => Messages(s"${pre}packLarge.small")
-                   case None        => Messages(s"${pre}packLarge.none")
-                 }).some,
-          "useCopacker" -> v.usesCopacker.map{boolToHtml},
-          "packOpt"     -> boolToHtml{v.packageOwn.getOrElse(false)}.some,
-          "packQty"     -> v.packageOwnVol.map{_.showHtml},
-          "copackQty"   -> v.copackForOthersVol.map{_.showHtml},
-          "importer"    -> boolToHtml(v.imports).some,
-          "importQty"   -> v.importsVol.map{_.showHtml}
-        )
-
-        val activityChanges = views.html.gdspages.fragments.checkyouranswers(
-          table.collect{ case (f,Some(html)) => (s"$pre$f", html, s"./$f".some) }
-        )
-
-        def siteListing(title: String, sites: List[Site]): Html = sites match {
-          case Nil => Html("")
-          case _   =>
-            Html("""<h2 class="heading-medium">""" ++ Messages(title) ++ "</h2>") |+|
-                   sites.showHtml
-        }
-
-        Html("""<h2 class="heading-medium">""" ++ Messages(s"${pre}activity") ++ "</h2>") |+|
-          activityChanges |+|
-          siteListing(s"${pre}packsites", v.updatedProductionSites.toList) |+|
-          siteListing(s"${pre}warehouses", v.updatedWarehouseSites.toList) |+|
-          Html("<br />")
-      }
-    }
-
     for {
       packLarge       <- ask(innerOpt("packLarge", bool), "packLarge")
       useCopacker     <- ask(bool,"useCopacker", data.usesCopacker) when (packLarge == Some(false))
@@ -208,22 +137,20 @@ class VariationsController(
       warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_), default = data.updatedWarehouseSites.toList)
       businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
       contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
-      variation = data.copy (
-        updatedBusinessAddress = businessAddress,
-        producer               = Producer(packLarge.isDefined, packLarge),
-        usesCopacker           = useCopacker.some.flatten,
-        packageOwn             = packLarge.isDefined.some,
-        packageOwnVol          = packQty.map{case (a,b) => Litreage(a,b)},
-        copackForOthers        = copacks.isDefined,
-        copackForOthersVol     = copacks.map{case (a,b) => Litreage(a,b)},
-        imports                = imports.isDefined,
-        importsVol             = imports.map{case (a,b) => Litreage(a,b)},
-        updatedProductionSites = packSites,
-        updatedWarehouseSites  = warehouses,
-        updatedContactDetails  = contact
-      )
-      _               <- tell("checkyouranswers", variation)
-    } yield (variation)
+    } yield data.copy (
+      updatedBusinessAddress = businessAddress,
+      producer               = Producer(packLarge.isDefined, packLarge),
+      usesCopacker           = useCopacker.some.flatten,
+      packageOwn             = packLarge.isDefined.some,
+      packageOwnVol          = packQty.map{case (a,b) => Litreage(a,b)},
+      copackForOthers        = copacks.isDefined,
+      copackForOthersVol     = copacks.map{case (a,b) => Litreage(a,b)},
+      imports                = imports.isDefined,
+      importsVol             = imports.map{case (a,b) => Litreage(a,b)},
+      updatedProductionSites = packSites,
+      updatedWarehouseSites  = warehouses,
+      updatedContactDetails  = contact
+    )
   }
 
   private def deregisterUpdate(
@@ -252,17 +179,20 @@ class VariationsController(
       case ChangeType.Deregister => deregisterUpdate(base)
     }
     _    <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
-    _    <- execute{sdilConnector.submitVariation(Convert(variation), sdilRef)}
+    path <- getPath
+    _    <- tell("checkyouranswers", gdspages.fragments.variationsCYA(variation, path))
+//    _    <- execute{sdilConnector.submitVariation(Convert(variation), sdilRef)}
     exit <- journeyEnd("variationDone")
   } yield {
     exit
   }
 
-  def index(id: String): Action[AnyContent] = development(id)
+  def index(id: String): Action[AnyContent] = real(id)
 
   def real(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    val persistence = SessionCachePersistence("variation", keystore)
     val sdilRef = request.sdilEnrolment.value
+    val persistence = SaveForLaterPersistence("variations", sdilRef, regdata.shortLiveCache)
+    //val persistence = SessionCachePersistence("variation", keystore)
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
         runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)

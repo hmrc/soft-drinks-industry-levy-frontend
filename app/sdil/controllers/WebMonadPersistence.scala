@@ -19,6 +19,9 @@ package sdil.controllers
 import scala.concurrent._
 import play.api.libs.json._
 import scala.collection.mutable.{Map => MMap}
+import cats.implicits._
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 
 /** WebMonads read in all their data at the start of the interaction with the
   * user and write it all out again at the end.
@@ -29,24 +32,58 @@ import scala.collection.mutable.{Map => MMap}
   * The store should be tolerant of failure - the structure of objects is likely
   * to change during development and it's usually fine to just ask the user again.
   */
-trait WebMonadPersistence {
-  def get: Future[Map[String, JsValue]]
-  def update(data: Map[String, JsValue]): Future[Unit]
-  def clear: Future[Unit] = update(Map.empty)
+trait Persistence {
+  def dataGet(session: String): Future[Map[String, JsValue]]
+  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit
 }
 
 /** A non-presistent persistence engine - fast to develop in (store gets purged on
   * recompile), but guaranteed to bring shame and ruin should you actually dare
   * to use this in production. Basically a thin wrapper around a mutable map.
   */
-class AJunkPersistence extends WebMonadPersistence {
-  private var data: Map[String,JsValue] = Map.empty[String,JsValue]
+class JunkPersistence(implicit val ec: ExecutionContext) extends Persistence {
 
-  def get: Future[Map[String, JsValue]] =
-    Future.successful(data)
+  private val data = MMap.empty[String,Map[String,JsValue]]
 
-  def update(dataIn: Map[String, JsValue]): Future[Unit] =
-    Future.successful(data = dataIn)
+  def dataGet(session: String): Future[Map[String, JsValue]] =
+    data.getOrElse(session, Map.empty[String,JsValue]).pure[Future]
+
+  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
+    data(session) = dataIn
+}
+
+case class SessionCachePersistence(
+  journeyName: String,
+  keystore: uk.gov.hmrc.http.cache.client.SessionCache
+)(implicit
+    ec: ExecutionContext,
+  hc: HeaderCarrier
+) extends Persistence {
+  def dataGet(session: String): Future[Map[String, JsValue]] =
+    keystore.fetchAndGetEntry[Map[String, JsValue]](journeyName).map{
+      _.getOrElse(Map.empty)
+    }
+
+  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
+    keystore.cache(journeyName, dataIn)
 
 }
 
+case class SaveForLaterPersistence(
+  journeyName: String,
+  userId: String,
+  shortLiveCache: ShortLivedHttpCaching
+)(implicit
+    ec: ExecutionContext,
+  hc: HeaderCarrier
+) extends Persistence {
+  def dataGet(session: String): Future[Map[String, JsValue]] = {
+    shortLiveCache.fetchAndGetEntry[Map[String, JsValue]](userId, journeyName).map{
+      _.getOrElse(Map.empty)
+    }
+  }
+
+  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
+    shortLiveCache.cache(userId, journeyName, dataIn)
+
+}

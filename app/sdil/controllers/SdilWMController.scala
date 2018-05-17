@@ -39,44 +39,9 @@ import sdil.config.AppConfig
 import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend._
-import uk.gov.hmrc.http.HeaderCarrier
+
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.gdspages
-
-trait Persistence {
-  def dataGet(session: String): Future[Map[String, JsValue]]
-  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit
-}
-
-class JunkPersistence(implicit val ec: ExecutionContext) extends Persistence {
-
-  // crappy persistence, but good for development
-  private val data = MMap.empty[String,Map[String,JsValue]]
-
-  def dataGet(session: String): Future[Map[String, JsValue]] =
-    data.getOrElse(session, Map.empty[String,JsValue]).pure[Future]
-
-  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
-    data(session) = dataIn
-}
-
-case class SessionCachePersistence(
-  journeyName: String,
-  keystore: uk.gov.hmrc.http.cache.client.SessionCache
-)(implicit
-    ec: ExecutionContext,
-  hc: HeaderCarrier
-) extends Persistence {
-  def dataGet(session: String): Future[Map[String, JsValue]] =
-    keystore.fetchAndGetEntry[Map[String, JsValue]](journeyName).map{
-      _.getOrElse(Map.empty)
-    }
-
-  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
-    keystore.cache(journeyName, dataIn)
-
-}
-
 
 trait SdilWMController extends WebMonadController
     with FrontendController with GdsComponents

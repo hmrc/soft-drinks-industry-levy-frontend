@@ -74,6 +74,11 @@ package object webmonad {
       (none[String], path, db, request.asRight).pure[Future]
     }
 
+  def getPath(implicit ec: ExecutionContext): WebMonad[List[String]] =
+    webMonad{ (a, request, path, db) =>
+      (none[String], path, db, path.asRight).pure[Future]
+    }
+
   def read[A](key: String)(implicit reads: Reads[A], ec: ExecutionContext): WebMonad[Option[A]] =
     webMonad { (_, _, path, db) =>
       (none[String], path, db, db.get(key).map {
