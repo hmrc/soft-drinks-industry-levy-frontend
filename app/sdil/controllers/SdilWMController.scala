@@ -21,8 +21,7 @@ import java.time.LocalDate
 import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
 import scala.util.Try
-
-import cats.{Eq, Semigroup, Monoid}
+import cats.{Eq, Monoid, Semigroup}
 import cats.implicits._
 import enumeratum._
 import ltbs.play._
@@ -37,6 +36,7 @@ import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
 import play.twirl.api.Html
 import sdil.config.AppConfig
+import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -279,27 +279,28 @@ trait SdilWMController extends WebMonadController
       }
     }
 
+
+  // TODO these were lifted from FormHelpers which has differing implementations of other mappings - resolve
+  lazy val tradingNameMapping: Mapping[String] = {
+    text.transform[String](_.trim, s => s).verifying(optionalTradingNameConstraint)
+  }
+
+  private def optionalTradingNameConstraint: Constraint[String] = Constraint {
+    case b if b.length > 160 => Invalid(s"error.tradingName.over")
+    case a if !a.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid(s"error.tradingName.invalid")
+    case _ => Valid
+  }
+
+
   lazy val warehouseSiteMapping: Mapping[WarehouseSite] = mapping(
-    "address" -> ukAddressMapping
-  ){a => WarehouseSite.apply(a, none, none, none)}(WarehouseSite.unapply(_).map{ case (address, refOpt, _, _) => address } )
+    "address" -> ukAddressMapping,
+    "tradingName" -> optional(tradingNameMapping)
+  ){(a,b) => WarehouseSite.apply(a, none, b, none)}(WarehouseSite.unapply(_).map{ case (address, refOpt, tradingName, _) => (address, tradingName) } )
 
   lazy val packagingSiteMapping: Mapping[PackagingSite] = mapping(
     "address" -> ukAddressMapping
   ){a => PackagingSite.apply(a, none, none, none)}(PackagingSite.unapply(_).map{ case (address, refOpt, _, _) =>
     address } )
-
-
-  //  protected def askSite(
-//    id: String,
-//    default: Option[Site] = None,
-//    constraints: List[(String, Site => Boolean)] = Nil
-//  ): WebMonad[Site] = {
-//
-//    formPage(id)(siteMapping.verifying(constraintMap(constraints) :_*), default) { (path, b, r) =>
-//      implicit val request: Request[AnyContent] = r
-//      gdspages.site(id, b, path)
-//    }
-//  }
 
   protected val addressMapping: play.api.data.Mapping[Address] = mapping(
     "line1" -> nonEmptyText,

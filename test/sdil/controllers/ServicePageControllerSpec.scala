@@ -24,7 +24,7 @@ import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.backend.{Contact, Site, UkAddress}
+import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
@@ -127,8 +127,8 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     UkAddress(List("1", "The Road"), "AA11 1AA"),
     RetrievedActivity(false, false, true, false, false),
     LocalDate.of(2018, 4, 6),
-    List(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"), None, None, None)),
-    List(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"), None, None, None)),
+    List(PackagingSite(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"), None, None, None)),
+    List(WarehouseSite(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"), None, None, None)),
     Contact(
       Some("A person"),
       Some("A position"),

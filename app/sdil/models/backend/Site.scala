@@ -27,7 +27,7 @@ trait Site {
   def tradingName: Option[String]
   def closureDate: Option[LocalDate]
   def getLines: List[String] = {
-    tradingName.fold(address.lines) { x => address.lines :+ x}
+    tradingName.fold(address.lines) { x => (x :: address.lines) :+ address.postCode}
   }
 }
 
