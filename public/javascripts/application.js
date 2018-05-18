@@ -30,6 +30,8 @@ $(document).ready(function () {
         $(errorSummary).focus();
     }
 
+
+    $.timeoutDialog = timeoutDialog;
 });
 
 window.onload = function () {

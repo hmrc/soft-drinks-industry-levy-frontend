@@ -19,7 +19,7 @@ package sdil.controllers
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.config.AppConfig
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendController, UnauthorisedAction}
 
 class AuthenticationController(val messagesApi: MessagesApi)
                               (implicit config: AppConfig)
@@ -31,5 +31,9 @@ class AuthenticationController(val messagesApi: MessagesApi)
 
   def signOut: Action[AnyContent] = Action { implicit request =>
     Redirect(config.signoutUrl).withNewSession
+  }
+
+  def keepAlive = UnauthorisedAction { implicit request =>
+    Ok("OK")
   }
 }
