@@ -41,7 +41,7 @@ import sdil.models._
 import sdil.models.backend._
 
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.gdspages
+import views.html.uniform
 
 trait SdilWMController extends WebMonadController
     with FrontendController with GdsComponents
@@ -60,7 +60,7 @@ trait SdilWMController extends WebMonadController
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      gdspages.radiolist(id, b, possValues, path)
+      uniform.radiolist(id, b, possValues, path)
     }.imap(e.withName)(_.toString)
   }
 
@@ -79,8 +79,8 @@ trait SdilWMController extends WebMonadController
       default.map{_.map{_.toString}.toList}
     ) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
-      val innerHtml = gdspages.fragments.checkboxes(id, form, possValues.toList)
-      gdspages.ask(id, form, innerHtml, path)
+      val innerHtml = uniform.fragments.checkboxes(id, form, possValues.toList)
+      uniform.ask(id, form, innerHtml, path)
     }.imap(_.map{e.withName}.toSet)(_.map(_.toString).toList)
   }
 
@@ -101,17 +101,6 @@ trait SdilWMController extends WebMonadController
       mapping.verifying("error.empty", {!_.isEmpty})
   }
 
-  protected def askBool(
-    id: String,
-    default: Option[Boolean] = None
-  ): WebMonad[Boolean] = {
-    formPage(id)(bool, default) { (path, b, r) =>
-      implicit val request: Request[AnyContent] = r
-      val formHtml = gdspages.fragments.boolean(id, b)
-      gdspages.ask(id, b, formHtml, path)
-    }
-  }
-
   protected def tellTable(
     id: String,
     headings: List[Html],
@@ -129,16 +118,16 @@ trait SdilWMController extends WebMonadController
     formPage(id)(unitMapping, none[Unit]){  (path, form, r) =>
       implicit val request: Request[AnyContent] = r
 
-      gdspages.tellTable(id, form, path, headings, rows)
+      uniform.tellTable(id, form, path, headings, rows)
     }
   }
 
-//  val booleanForm2 = formFromView[Boolean]{gdspages.fragments.boolean(_, _)(_)}
+//  val booleanForm2 = formFromView[Boolean]{uniform.fragments.boolean(_, _)(_)}
 
   def ask[T](mapping: Mapping[T], key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
     formPage(key)(mapping, default) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
-      gdspages.ask(key, form, htmlForm.asHtmlForm(key, form), path)
+      uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path)
     }
 
   def ask[T](mapping: Mapping[T], key: String)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
@@ -164,38 +153,8 @@ trait SdilWMController extends WebMonadController
     formPage(id)(unitMapping, none[Unit]){  (path, form, r) =>
       implicit val request: Request[AnyContent] = r
 
-      gdspages.tell(id, form, path, a.showHtml)
+      uniform.tell(id, form, path, a.showHtml)
     }
-  }
-
-  protected def tellTables(
-    id: String,
-    tables: List[(String,Table[Html,Html])]
-  ): WebMonad[Unit] = {
-
-    // Because I decided earlier on to make everything based off of JSON
-    // I have to write silly things like this. TODO
-    implicit val formatUnit: Format[Unit] = new Format[Unit] {
-      def writes(u: Unit) = JsNull
-      def reads(v: JsValue) = JsSuccess(())
-    }
-
-    val unitMapping: Mapping[Unit] = text.transform(_ => (), _ => "")
-    formPage(id)(unitMapping, none[Unit]){  (path, form, r) =>
-      implicit val request: Request[AnyContent] = r
-
-      gdspages.tellTables(id, form, path, tables)
-    }
-  }
-
-  protected def askString(
-    id: String,
-    default: Option[String] = None,
-    constraints: List[(String, String => Boolean)] = Nil
-  ): WebMonad[String] =
-    formPage(id)(nonEmptyText.verifying(constraintMap(constraints) :_*), default) { (path, b, r) =>
-    implicit val request: Request[AnyContent] = r
-    gdspages.string(id, b, path)
   }
 
   protected def askBigText(
@@ -205,8 +164,21 @@ trait SdilWMController extends WebMonadController
   ): WebMonad[String] =
     formPage(id)(nonEmptyText.verifying(constraintMap(constraints) :_*), default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      gdspages.bigtext(id, b, path)
+      uniform.bigtext(id, b, path)
     }
+
+  val dateMapping: Mapping[LocalDate] = tuple(
+    "day" -> number(1,31),
+    "month" -> number(1,12),
+    "year" -> number
+  ).verifying(
+    "error.date.invalid", _ match {
+      case (d, m, y) => Try(LocalDate.of(y, m, d)).isSuccess
+    })
+    .transform(
+      {case (d, m, y) => LocalDate.of(y, m, d)},
+      d => (d.getDayOfMonth, d.getMonthValue, d.getYear)
+    )
 
   protected def askDate(
     id: String,
@@ -214,24 +186,11 @@ trait SdilWMController extends WebMonadController
     constraints: List[(String, LocalDate => Boolean)] = Nil
   ): WebMonad[LocalDate] = {
 
-    val dateMapping: Mapping[LocalDate] = tuple(
-      "day" -> number(1,31),
-      "month" -> number(1,12),
-      "year" -> number
-    ).verifying(
-      "error.date.invalid", _ match {
-        case (d, m, y) => Try(LocalDate.of(y, m, d)).isSuccess
-      })
-      .transform(
-        {case (d, m, y) => LocalDate.of(y, m, d)},
-        d => (d.getDayOfMonth, d.getMonthValue, d.getYear)
-      )
-
     val constraintsP = constraintMap(constraints)
 
     formPage(id)(dateMapping.verifying(constraintsP :_*), default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      gdspages.date(id, b, path)
+      uniform.date(id, b, path)
     }
   }
 
@@ -240,7 +199,7 @@ trait SdilWMController extends WebMonadController
       implicit val r = request
 
       Future.successful {
-        (id.some, path, db, Ok(gdspages.journeyEnd(id, path)).asRight[Result])
+        (id.some, path, db, Ok(uniform.journeyEnd(id, path)).asRight[Result])
       }
     }
 
@@ -248,17 +207,6 @@ trait SdilWMController extends WebMonadController
     "address" -> ukAddressMapping
   ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{ case (address, refOpt, _, _) => address } )
 
-  protected def askSite(
-    id: String,
-    default: Option[Site] = None,
-    constraints: List[(String, Site => Boolean)] = Nil
-  ): WebMonad[Site] = {
-
-    formPage(id)(siteMapping.verifying(constraintMap(constraints) :_*), default) { (path, b, r) =>
-      implicit val request: Request[AnyContent] = r
-      gdspages.site(id, b, path)
-    }
-  }
 
   protected val addressMapping: play.api.data.Mapping[Address] = mapping(
     "line1" -> nonEmptyText,
@@ -278,42 +226,10 @@ trait SdilWMController extends WebMonadController
     "email" -> nonEmptyText
   )(ContactDetails.apply)(ContactDetails.unapply)
 
-  protected def askAddress(
-    id: String,
-    default: Option[Address] = None,
-    constraints: List[(String, Address => Boolean)] = Nil
-  ): WebMonad[Address] = 
-    formPage(id)(addressMapping.verifying(constraintMap(constraints):_*), default) { (path, form, r) =>
-      implicit val request: Request[AnyContent] = r
-      val formHtml = gdspages.fragments.address(id, form)
-      gdspages.ask(id, form, formHtml, path)
-    }
-
   implicit val longTupleFormatter: Format[(Long, Long)] = (
     (JsPath \ "lower").format[Long] and
     (JsPath \ "higher").format[Long]
   )((a: Long, b: Long) => (a,b), unlift({x: (Long,Long) => Tuple2.unapply(x)}))
-
-  protected def askLitreage(
-    id: String,
-    default: Option[(Long,Long)] = None,
-    allowZero: Boolean = false,
-    constraints: List[(String, ((Long,Long)) => Boolean)] = Nil
-  ): WebMonad[(Long,Long)] = {
-
-    val constraintsP:List[Constraint[(Long,Long)]] = constraintMap(
-      constraints ++ List(("error.litreage.zero", {a: (Long,Long) => !a.isEmpty || allowZero}))
-    )
-
-    formPage(id)(
-      tuple("lower" -> litreage, "higher" -> litreage)
-        .verifying(constraintsP:_*),
-      default
-    ){ (path,b,r) =>
-      implicit val request: Request[AnyContent] = r
-      gdspages.literage(id, b, path)
-    }
-  }
 
   protected def manyT[A](
     id: String,
@@ -340,7 +256,7 @@ trait SdilWMController extends WebMonadController
 
       formPage(id)(mapping) { (path, b, r) =>
         implicit val request: Request[AnyContent] = r
-        gdspages.many(id, b, items.map{_.showHtml}, path)
+        uniform.many(id, b, items.map{_.showHtml}, path)
       }.imap(outf)(inf)
     }(wm)
   }

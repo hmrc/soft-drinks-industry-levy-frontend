@@ -18,26 +18,22 @@ package sdil.controllers
 
 import cats.implicits._
 import ltbs.play.scaffold._
+import ltbs.play.scaffold.webmonad._
 import play.api.data.Forms._
 import play.api.data.Mapping
 import play.api.i18n.MessagesApi
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.Try
 import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend.{ Contact, Site, UkAddress }
-import sdil.models.retrieved.{ RetrievedActivity, RetrievedSubscription }
-import uk.gov.hmrc.http.HeaderCarrier
+import sdil.uniform.SessionCachePersistence
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.gdspages
-import webmonad._
+
+import scala.concurrent.ExecutionContext
 
 class ReturnsController (
   val messagesApi: MessagesApi,
