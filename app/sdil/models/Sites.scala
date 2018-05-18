@@ -18,7 +18,7 @@ package sdil.models
 
 import sdil.models.backend.Site
 
-case class Sites(sites: Seq[Site],
+case class Sites[A <:Site](sites: Seq[A],
                  addAddress: Boolean,
                  tradingName: Option[String],
                  additionalSites: Option[Address])

@@ -9,9 +9,9 @@ $(document).ready(function () {
 
     // Where .multiple-choice uses the data-target attribute
     // to toggle hidden content
-    var showHideContent = new GOVUK.ShowHideContent();
+    var showHideContentFoo = new GOVUK.ShowHideContentFoo();
 
-    showHideContent.init();
+    showHideContentFoo.init();
 
     $('input.volume').keyup(function(event) {
 

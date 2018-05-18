@@ -19,21 +19,21 @@ package sdil.forms
 import play.api.data.Form
 import play.api.data.Forms.{boolean, ignored, mapping, seq}
 import sdil.models.Sites
-import sdil.models.backend.Site
-import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
+import sdil.models.backend.WarehouseSite
+import uk.gov.voa.play.form.ConditionalMappings._
 
 object WarehouseForm extends FormHelpers {
 
-  def apply(): Form[Sites] = Form(mapping(
-    "additionalSites" -> seq(siteJsonMapping),
+  def apply(): Form[Sites[WarehouseSite]] = Form(mapping(
+    "additionalSites" -> seq(warehouseSiteJsonMapping),
     "addAddress" -> boolean,
     "tradingName" -> mandatoryIfTrue("addAddress", tradingNameMapping),
     "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
   )(Sites.apply)(Sites.unapply))
 
-  def initial(): Form[Sites] = Form(
+  def initial(): Form[Sites[WarehouseSite]] = Form(
     mapping(
-      "additionalSites" -> ignored(Seq.empty[Site]),
+      "additionalSites" -> ignored(Seq.empty[WarehouseSite]),
       "addAddress" -> mandatoryBoolean,
       "tradingName" -> mandatoryIfTrue("addAddress", tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)

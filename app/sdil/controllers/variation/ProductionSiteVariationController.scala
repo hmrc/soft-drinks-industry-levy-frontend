@@ -25,7 +25,7 @@ import sdil.config.AppConfig
 import sdil.controllers.SiteRef
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
 import sdil.models.Sites
-import sdil.models.backend.{Site, UkAddress}
+import sdil.models.backend.{PackagingSite, UkAddress}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
@@ -67,13 +67,13 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
       {
         case Sites(_, true, tradingName, Some(additionalAddress)) =>
           val siteRef = nextRef(request.data.original.productionSites, request.data.updatedProductionSites)
-          val site = Site(UkAddress.fromAddress(additionalAddress), Some(siteRef), tradingName, None)
+          val site = PackagingSite(UkAddress.fromAddress(additionalAddress), Some(siteRef), tradingName, None)
           val updated = request.data.updatedProductionSites :+ site
           cache.cache("variationData", request.data.copy(updatedProductionSites = updated)) map { _ =>
             Redirect(routes.ProductionSiteVariationController.show())
           }
 
-        case Sites(sites, _, _, _) =>
+        case Sites(sites:List[PackagingSite], _, _, _) =>
           val updated = request.data.copy(updatedProductionSites = sites)
           cache.cache("variationData", updated) map { _ =>
             Redirect(routes.ProductionSiteVariationController.confirm())
@@ -91,17 +91,17 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
 
 object ProductionSiteVariationController extends FormHelpers {
 
-  val form: Form[Sites] = Form(productionSitesMapping)
+  val form: Form[Sites[PackagingSite]] = Form(productionSitesMapping)
 
-  private lazy val productionSitesMapping: Mapping[Sites] = new MappingWithExtraConstraint[Sites] {
-    override val underlying: Mapping[Sites] = mapping(
-      "additionalSites" -> seq(siteJsonMapping),
+  private lazy val productionSitesMapping: Mapping[Sites[PackagingSite]] = new MappingWithExtraConstraint[Sites[PackagingSite]] {
+    override val underlying: Mapping[Sites[PackagingSite]] = mapping(
+      "additionalSites" -> seq(packagingSiteJsonMapping),
       "addAddress" -> boolean,
       "tradingName" -> optional(tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(Sites.apply)(Sites.unapply)
 
-    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites] = {
+    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites[PackagingSite]] = {
       underlying.bind(data) match {
         case Left(errs) => Left(errs)
         case Right(sites) if noSitesSelected(sites) => Left(Seq(FormError("productionSites", "error.no-production-sites")))
@@ -110,7 +110,7 @@ object ProductionSiteVariationController extends FormHelpers {
     }
   }
 
-  private lazy val noSitesSelected: Sites => Boolean = {
+  private lazy val noSitesSelected: Sites[PackagingSite] => Boolean = {
     p => p.sites.isEmpty && p.additionalSites.isEmpty
   }
 

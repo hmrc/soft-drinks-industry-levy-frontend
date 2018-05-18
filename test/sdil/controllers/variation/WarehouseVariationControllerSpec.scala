@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.controllers.ControllerSpec
 import sdil.models.Address
-import sdil.models.backend.{Site, UkAddress}
+import sdil.models.backend.{UkAddress, WarehouseSite}
 import sdil.models.retrieved.RetrievedActivity
 import sdil.models.variations.VariationData
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
@@ -60,7 +60,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
       val tradingName = "Juicy juices"
       val data = VariationData(
         subscription.copy(
-          warehouseSites = List(Site(UkAddress.fromAddress(
+          warehouseSites = List(WarehouseSite(UkAddress.fromAddress(
             Address("1", "foo", "bar", "", "AA11 1AA")),
             Some("1"),
             Some(tradingName),
@@ -185,7 +185,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
 
       val data = VariationData(
         subscription.copy(warehouseSites = List(
-          Site(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None, None)))
+          WarehouseSite(UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")), Some("1"), None, None)))
       )
 
       when(mockKeystore.fetchAndGetEntry[VariationData](matching("variationData"))(any(), any(), any()))
@@ -218,7 +218,7 @@ class WarehouseVariationControllerSpec extends ControllerSpec with BeforeAndAfte
 
       val data = VariationData(
         subscription.copy(warehouseSites = List(
-          Site(
+          WarehouseSite(
             UkAddress.fromAddress(Address("1", "foo", "bar", "", "AA11 1AA")),
             None,
             None,
