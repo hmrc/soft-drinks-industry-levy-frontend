@@ -197,15 +197,16 @@
 </dl>
 }
 
-@if(path.contains("reason")) {
+@if(path.contains("deregDate") || path.contains("reason")) {
     <dl class="govuk-check-your-answers cya-questions-short">
 
+        @v.reason.map{ reason =>
         <div>
             <dt class="cya-question">
                 Reason
             </dt>
             <dd class="cya-answer">
-                <p>aoeuaeou</p>
+                <p>@reason</p>
             </dd>
             <dd class="cya-change">
                 <a href="reason">
@@ -213,20 +214,22 @@
                 </a>
             </dd>
         </div>
+        }
 
+        @v.deregDate.map{ date =>
         <div>
             <dt class="cya-question">
                 Date
             </dt>
             <dd class="cya-answer">
-                <p>1/1/2018</p>
+                <p>@date</p>
             </dd>
             <dd class="cya-change">
-                <a href="#">
+                <a href="deregDate">
                     Change<span class="visually-hidden"> deregistration date</span>
                 </a>
             </dd>
         </div>
-
+        }
     </dl>
 }

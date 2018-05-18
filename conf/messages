@@ -564,3 +564,16 @@ variations.cya.deregDate=Date
 heading.reason=Why are you deregistering from the Soft Drinks Industry Levy?
 reason.label=Reason for deregistering
 reason.hint=Enter a maximum of 255 characters
+
+heading.suggestDereg=You need to deregister
+suggestDereg.body=Based on your answers, you’re a small producer who doesn’t use a third party to package liable drinks. This means you can deregister from the Soft Drinks Industry Levy.
+suggestDereg.continue=Deregister
+
+doubt1=If you don’t think this is right you need to
+doubt2=go back and change your answers
+
+heading.removePackSites=[Remove your packing sites?]
+removePackSites.body=[Based on your answers, you’re no longer packing any soft drinks and therefore will not be operating any packing sites. In continuing all packing sites will be removed.]
+removePackSites.continue=[Remove all packing sites]
+
+heading.businessAddress=Change your contact address for the Soft Drinks Industry Levy

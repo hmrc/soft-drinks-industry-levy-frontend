@@ -19,6 +19,7 @@ package sdil.controllers
 import java.time.LocalDate
 
 import cats.implicits._
+import cats.Monoid
 import enumeratum._
 import ltbs.play.scaffold._
 import ltbs.play.scaffold.webmonad._
@@ -121,30 +122,48 @@ class VariationsController(
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = {
+
+    // workaround for intermediate data structures
+    def longTupToLitreage(in: (Long,Long)): Option[Litreage] =
+      if (in.isEmpty) None else Litreage(in._1, in._2).some
+
+    def askPackSites(existingSites: List[PackagingSite], packs: Boolean): WebMonad[List[PackagingSite]] =
+      (existingSites, packs) match {
+        case (_, true)    => manyT("packSites", ask(packagingSiteMapping,_), default = existingSites)
+        case (Nil, false) => List.empty[PackagingSite].pure[WebMonad]
+        case (_, false)   => tell("removePackSites", gdspages.confirmOrGoBackTo("removePackSites", "packOpt")) >>
+            List.empty[PackagingSite].pure[WebMonad]
+      }
+
+
     for {
       packLarge       <- ask(innerOpt("packLarge", bool), "packLarge")
       useCopacker     <- ask(bool,"useCopacker", data.usesCopacker) when (packLarge == Some(false))
-      packQty         <- ask(litreagePair.nonEmpty, "packQty") when ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
-      copacks         <- ask(litreagePair.nonEmpty, "copackQty") when ask(bool, "copacker", data.copackForOthers)
-      imports         <- ask(litreagePair.nonEmpty, "importQty") when ask(bool, "importer", data.imports)
-      packSites       <- manyT("packSites", ask(packagingSiteMapping,_), default = data.updatedProductionSites.toList)
-      warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_), default = data.updatedWarehouseSites.toList)
-      businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
-      contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
-    } yield data.copy (
-      updatedBusinessAddress = businessAddress,
-      producer               = Producer(packLarge.isDefined, packLarge),
-      usesCopacker           = useCopacker.some.flatten,
-      packageOwn             = packLarge.isDefined.some,
-      packageOwnVol          = packQty.map{case (a,b) => Litreage(a,b)},
-      copackForOthers        = copacks.isDefined,
-      copackForOthersVol     = copacks.map{case (a,b) => Litreage(a,b)},
-      imports                = imports.isDefined,
-      importsVol             = imports.map{case (a,b) => Litreage(a,b)},
-      updatedProductionSites = packSites,
-      updatedWarehouseSites  = warehouses,
-      updatedContactDetails  = contact
-    )
+      packQty         <- ask(litreagePair.nonEmpty, "packQty") emptyUnless ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
+      copacks         <- ask(litreagePair.nonEmpty, "copackQty") emptyUnless ask(bool, "copacker", data.copackForOthers)
+      imports         <- ask(litreagePair.nonEmpty, "importQty") emptyUnless ask(bool, "importer", data.imports)
+      variation       <- if ((packQty, copacks, imports).isEmpty && packLarge == None)
+                           tell("suggestDereg", gdspages.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
+                         else for {
+                           packSites       <- askPackSites(data.updatedProductionSites.toList, !(packQty, copacks).isEmpty)
+                           warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_), default = data.updatedWarehouseSites.toList)
+                           businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
+                           contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
+                         } yield data.copy (
+                           updatedBusinessAddress = businessAddress,
+                           producer               = Producer(packLarge.isDefined, packLarge),
+                           usesCopacker           = useCopacker.some.flatten,
+                           packageOwn             = packLarge.isDefined.some,
+                           packageOwnVol          = longTupToLitreage(packQty),
+                           copackForOthers        = !copacks.isEmpty,
+                           copackForOthersVol     = longTupToLitreage(copacks),
+                           imports                = !imports.isEmpty,
+                           importsVol             = longTupToLitreage(imports),
+                           updatedProductionSites = packSites,
+                           updatedWarehouseSites  = warehouses,
+                           updatedContactDetails  = contact
+                         )
+    } yield variation
   }
 
   private def deregisterUpdate(
@@ -177,6 +196,7 @@ class VariationsController(
     _    <- tell("checkyouranswers", gdspages.fragments.variationsCYA(variation, path))
 //    _    <- execute{sdilConnector.submitVariation(Convert(variation), sdilRef)}
     exit <- journeyEnd("variationDone")
+    _    <- clear
   } yield {
     exit
   }
