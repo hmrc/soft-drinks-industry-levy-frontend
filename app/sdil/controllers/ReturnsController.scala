@@ -32,6 +32,7 @@ import sdil.models._
 import sdil.uniform.SessionCachePersistence
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.uniform
 
 import scala.concurrent.ExecutionContext
 
@@ -61,6 +62,27 @@ class ReturnsController (
     (ref,l,h) => SmallProducer(ref, (l,h))
   }{
     case SmallProducer(ref, (l,h)) => (ref,l,h).some
+  }
+
+  protected def tellTable(
+                           id: String,
+                           headings: List[Html],
+                           rows: List[List[Html]]
+                         ): WebMonad[Unit] = {
+
+    // Because I decided earlier on to make everything based off of JSON
+    // I have to write silly things like this. TODO
+    implicit val formatUnit: Format[Unit] = new Format[Unit] {
+      def writes(u: Unit) = JsNull
+      def reads(v: JsValue) = JsSuccess(())
+    }
+
+    val unitMapping: Mapping[Unit] = text.transform(_ => (), _ => "")
+    formPage(id)(unitMapping, none[Unit]){  (path, form, r) =>
+      implicit val request: Request[AnyContent] = r
+
+      uniform.tellTable(id, form, path, headings, rows)
+    }
   }
 
   def checkYourAnswers(key: String)(sdilReturn: SdilReturn): WebMonad[Unit] = {

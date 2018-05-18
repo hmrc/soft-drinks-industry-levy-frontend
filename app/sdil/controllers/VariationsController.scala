@@ -25,7 +25,6 @@ import ltbs.play.scaffold.webmonad._
 import play.api.i18n._
 import play.api.libs.json._
 import play.api.mvc._
-import play.twirl.api.Html
 import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector

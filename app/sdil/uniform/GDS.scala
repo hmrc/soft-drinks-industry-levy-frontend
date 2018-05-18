@@ -16,17 +16,16 @@
 
 package ltbs.play.scaffold
 
-import enumeratum._
 import java.time.LocalDate
+
 import cats.implicits._
-import play.api.data._
+import enumeratum._
 import play.api.data.Forms._
+import play.api.data._
 import play.api.i18n.Messages
-import play.api.mvc.{ AnyContent, Request }
 import play.twirl.api.Html
-import views.html.uniform
-import ltbs.play.scaffold.webmonad._
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
+import views.html.uniform
 
 trait GdsComponents {
 

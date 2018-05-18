@@ -18,7 +18,6 @@ package ltbs.play.scaffold
 
 import play.api.data._
 import play.api.i18n.Messages
-import play.api.mvc.{ AnyContent, Request }
 import play.twirl.api.Html
 import sdil.models._
 import sdil.models.backend.Site

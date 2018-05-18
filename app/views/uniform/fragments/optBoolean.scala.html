@@ -43,8 +43,8 @@
 @inlineRadioButtonWithConditionalContent(
     form(s"${key}.outer"),
     Seq(
-        "true" -> (messages.first(s"option.$key.true","sdil.common.yes")(), Some("hiddenTarget")),
-        "false" -> (messages.first(s"option.$key.false", "sdil.common.no")(), None)
+        "true" -> ((messages.first(s"option.$key.true","sdil.common.yes")(), Some("hiddenTarget"))),
+        "false" -> ((messages.first(s"option.$key.false", "sdil.common.no")(), None))
     ),
     Some(innerRadioButtons),
     '_labelClass -> "block-label",

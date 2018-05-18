@@ -18,30 +18,26 @@ package sdil.controllers
 
 import java.time.LocalDate
 
-import scala.collection.mutable.{Map => MMap}
-import scala.concurrent._
-import scala.util.Try
-
-import cats.{Eq, Semigroup, Monoid}
 import cats.implicits._
+import cats.{Eq, Monoid}
 import enumeratum._
-import ltbs.play._
-import ltbs.play.scaffold._
 import ltbs.play.scaffold.HtmlShow.ops._
+import ltbs.play.scaffold._
 import ltbs.play.scaffold.webmonad._
-import play.api.data._
 import play.api.data.Forms._
+import play.api.data._
 import play.api.data.validation._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
-import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.models._
 import sdil.models.backend._
-
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
+
+import scala.concurrent._
+import scala.util.Try
 
 trait SdilWMController extends WebMonadController
     with FrontendController with GdsComponents
@@ -101,29 +97,6 @@ trait SdilWMController extends WebMonadController
       mapping.verifying("error.empty", {!_.isEmpty})
   }
 
-  protected def tellTable(
-    id: String,
-    headings: List[Html],
-    rows: List[List[Html]]
-  ): WebMonad[Unit] = {
-
-    // Because I decided earlier on to make everything based off of JSON
-    // I have to write silly things like this. TODO
-    implicit val formatUnit: Format[Unit] = new Format[Unit] {
-      def writes(u: Unit) = JsNull
-      def reads(v: JsValue) = JsSuccess(())
-    }
-
-    val unitMapping: Mapping[Unit] = text.transform(_ => (), _ => "")
-    formPage(id)(unitMapping, none[Unit]){  (path, form, r) =>
-      implicit val request: Request[AnyContent] = r
-
-      uniform.tellTable(id, form, path, headings, rows)
-    }
-  }
-
-//  val booleanForm2 = formFromView[Boolean]{uniform.fragments.boolean(_, _)(_)}
-
   def ask[T](mapping: Mapping[T], key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
     formPage(key)(mapping, default) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
@@ -180,19 +153,6 @@ trait SdilWMController extends WebMonadController
       d => (d.getDayOfMonth, d.getMonthValue, d.getYear)
     )
 
-  protected def askDate(
-    id: String,
-    default: Option[LocalDate] = None,
-    constraints: List[(String, LocalDate => Boolean)] = Nil
-  ): WebMonad[LocalDate] = {
-
-    val constraintsP = constraintMap(constraints)
-
-    formPage(id)(dateMapping.verifying(constraintsP :_*), default) { (path, b, r) =>
-      implicit val request: Request[AnyContent] = r
-      uniform.date(id, b, path)
-    }
-  }
 
   protected def journeyEnd(id: String): WebMonad[Result] =
     webMonad{ (rid, request, path, db) =>
