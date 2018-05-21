@@ -19,7 +19,7 @@
 @(questionKey: String, changeRoute: Call, rowData: Litreage)(implicit messages: Messages, request: Request[_])
 
 <tr>
-    <td rowspan="2">@Messages(s"sdil.$questionKey")</td>
+    <td rowspan="2">@Messages(s"sdil.declaration.$questionKey")</td>
     <td>@Messages("sdil.declaration.low-band")</td>
     <td>@formatLitres(rowData.atLowRate)</td>
     <td class="change-answer">
