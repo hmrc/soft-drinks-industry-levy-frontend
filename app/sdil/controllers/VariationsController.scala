@@ -19,43 +19,28 @@ package sdil.controllers
 import java.time.LocalDate
 
 import cats.implicits._
-import cats.Monoid
 import enumeratum._
 import ltbs.play.scaffold._
 import ltbs.play.scaffold.webmonad._
 import play.api.i18n._
 import play.api.libs.json._
 import play.api.mvc._
-import play.twirl.api.Html
 import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend._
+import sdil.models.backend.{Contact, Site, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.variations._
+import sdil.uniform.{JunkPersistence, SaveForLaterPersistence, SessionCachePersistence}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.gdspages
+import views.html.uniform
 
 import scala.concurrent.{ExecutionContext, Future}
 
-sealed trait ChangeType extends EnumEntry
-object ChangeType extends Enum[ChangeType] {
-  val values = findValues
-  case object Sites extends ChangeType
-  case object Activity extends ChangeType
-  case object Deregister extends ChangeType
-}
 
-sealed trait ContactChangeType extends EnumEntry
-object ContactChangeType extends Enum[ContactChangeType] {
-  val values = findValues
-  case object Sites extends ContactChangeType
-  case object ContactPerson extends ContactChangeType
-  case object ContactAddress extends ContactChangeType
-}
 
 class VariationsController(
   val messagesApi: MessagesApi,
@@ -68,9 +53,26 @@ class VariationsController(
   val ec: ExecutionContext
 ) extends SdilWMController with FrontendController with GdsComponents with SdilComponents {
 
+  sealed trait ChangeType extends EnumEntry
+  object ChangeType extends Enum[ChangeType] {
+    val values = findValues
+    case object Sites extends ChangeType
+    case object Activity extends ChangeType
+    case object Deregister extends ChangeType
+  }
+
   private def contactUpdate(
     data: VariationData
   ): WebMonad[VariationData] = {
+
+    sealed trait ContactChangeType extends EnumEntry
+    object ContactChangeType extends Enum[ContactChangeType] {
+      val values = findValues
+      case object Sites extends ContactChangeType
+      case object ContactPerson extends ContactChangeType
+      case object ContactAddress extends ContactChangeType
+    }
+
     import ContactChangeType._
     for {
       change          <- askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
@@ -109,16 +111,6 @@ class VariationsController(
         o.map{innerFormatter.writes}.getOrElse(JsNull)
     }
 
-  implicit val showLitreage: HtmlShow[Litreage] = new HtmlShow[Litreage]{
-    def showHtml(l: Litreage): Html = l match {
-      case Litreage(lower, higher) => Html(
-        Messages("sdil.declaration.low-band") + f": $lower%,.0f" +
-          "<br>" +
-          Messages("sdil.declaration.high-band") + f": $higher%,.0f"
-      )
-    }
-  }
-
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = {
@@ -131,19 +123,18 @@ class VariationsController(
       (existingSites, packs) match {
         case (_, true)    => manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = existingSites)
         case (Nil, false) => List.empty[Site].pure[WebMonad]
-        case (_, false)   => tell("removePackSites", gdspages.confirmOrGoBackTo("removePackSites", "packOpt")) >>
+        case (_, false)   => tell("removePackSites", uniform.confirmOrGoBackTo("removePackSites", "packOpt")) >>
             List.empty[Site].pure[WebMonad]
       }
 
-
     for {
       packLarge       <- ask(innerOpt("packLarge", bool), "packLarge")
-      useCopacker     <- ask(bool,"useCopacker", data.usesCopacker) when (packLarge == Some(false))
+      useCopacker     <- ask(bool,"useCopacker", data.usesCopacker) when packLarge.contains(false)
       packQty         <- ask(litreagePair.nonEmpty, "packQty") emptyUnless ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
       copacks         <- ask(litreagePair.nonEmpty, "copackQty") emptyUnless ask(bool, "copacker", data.copackForOthers)
       imports         <- ask(litreagePair.nonEmpty, "importQty") emptyUnless ask(bool, "importer", data.imports)
-      variation       <- if ((packQty, copacks, imports).isEmpty && packLarge == None)
-                           tell("suggestDereg", gdspages.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
+      variation       <- if ((packQty, copacks, imports).isEmpty && packLarge.isEmpty)
+                           tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
                          else for {
                            packSites       <- askPackSites(data.updatedProductionSites.toList, !(packQty, copacks).isEmpty)
                            warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList)
@@ -170,9 +161,10 @@ class VariationsController(
     data: VariationData
   ): WebMonad[VariationData] = for {
     reason    <- askBigText("reason")
-    deregDate <- askDate("deregDate", none, constraints = List(
-                           ("error.deregDate.nopast",  _ >= LocalDate.now),
-                           ("error.deregDate.nofuture",_ <  LocalDate.now.plusDays(15))))
+    deregDate <- ask(dateMapping
+      .verifying("error.deregDate.nopast",  _ >= LocalDate.now)
+      .verifying("error.deregDate.nofuture",_ <  LocalDate.now.plusDays(15))
+      , "deregDate")
   } yield data.copy(
     reason = reason.some,
     deregDate = deregDate.some
@@ -193,7 +185,7 @@ class VariationsController(
     }
     _    <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
     path <- getPath
-    _    <- tell("checkyouranswers", gdspages.fragments.variationsCYA(variation, path))
+    _    <- tell("checkyouranswers", uniform.fragments.variationsCYA(variation, path))
 //    _    <- execute{sdilConnector.submitVariation(Convert(variation), sdilRef)}
     exit <- journeyEnd("variationDone")
     _    <- clear
