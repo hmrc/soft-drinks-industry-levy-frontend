@@ -1,9 +1,9 @@
 $.timeoutDialog({
-    timeout: 1000,
-    countdown: 990,
-    keep_alive_url: '/keep-alive',
+    timeout: 15,
+    countdown: 10,
+    keep_alive_url: window.location.href,
     restart_on_yes: true,
-    logout_url: '/soft-drinks-industry-levy/sign-out',
-    keep_alive_button_text: 'Get another 15 minutes',
+    logout_url: '/soft-drinks-industry-levy/time-out',
+    keep_alive_button_text: 'Stay signed in',
     sign_out_button_text: 'Sign out'
 });

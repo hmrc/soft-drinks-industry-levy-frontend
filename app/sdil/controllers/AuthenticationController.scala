@@ -20,6 +20,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.controller.{FrontendController, UnauthorisedAction}
+//import views.html.time_out
 
 class AuthenticationController(val messagesApi: MessagesApi)
                               (implicit config: AppConfig)
@@ -33,7 +34,13 @@ class AuthenticationController(val messagesApi: MessagesApi)
     Redirect(config.signoutUrl).withNewSession
   }
 
-  def keepAlive = UnauthorisedAction { implicit request =>
-    Ok("OK")
+  def timeIn(referrer: String) = Action { implicit request =>
+    Redirect(config.ggLoginUrl, Map("continue" -> Seq(referrer), "origin" -> Seq(config.appName)))
   }
+
+
+  def timeOut: Action[AnyContent] = Action { implicit request =>
+    Ok(views.html.time_out()).withNewSession
+  }
+
 }

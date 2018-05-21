@@ -12,6 +12,7 @@ sdil.common.yes=Yes
 sdil.common.no=No
 sdil.common.print=Print
 sdil.common.sign-out=Sign out
+sdil.common.sign-in=Sign in
 sdil.common.return-to-sign-in=Return to Government Gateway sign in
 sdil.registered.title=Soft Drinks Industry Levy
 sdil.variations.title=Change your Soft Drinks Industry Levy details
@@ -461,3 +462,7 @@ sdil.variation.what-happens.p1=You don’t need to do anything else. We’ll upd
 sdil.link.back.home=Back to home
 sdil.variation.complete.p1=Your updates for the Soft Drinks Industry Levy were submitted on {0} at {1}.
 sdil.service-page.variations.submit.change=Make another change
+
+#time out
+sdil.time-out.title=For your security, we signed you out
+sdil.time-out.p1=We have saved your answers
