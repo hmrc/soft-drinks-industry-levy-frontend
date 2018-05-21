@@ -1,6 +1,6 @@
 $.timeoutDialog({
-    timeout: 15,
-    countdown: 10,
+    timeout: 900,
+    countdown: 120,
     keep_alive_url: window.location.href,
     restart_on_yes: true,
     logout_url: '/soft-drinks-industry-levy/time-out',
