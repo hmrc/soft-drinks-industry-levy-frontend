@@ -76,11 +76,11 @@ class VariationsController(
       change          <- askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", ask(packagingSiteMapping,_), default = data.updatedProductionSites.toList)
+        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data.updatedProductionSites.toList)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
-        manyT("warehouses", ask(warehouseSiteMapping,_), default = data.updatedWarehouseSites.toList)
+        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList)
       } else data.updatedWarehouseSites.pure[WebMonad]
 
       contact         <- if (change.contains(ContactPerson)) {
@@ -127,12 +127,12 @@ class VariationsController(
     def longTupToLitreage(in: (Long,Long)): Option[Litreage] =
       if (in.isEmpty) None else Litreage(in._1, in._2).some
 
-    def askPackSites(existingSites: List[PackagingSite], packs: Boolean): WebMonad[List[PackagingSite]] =
+    def askPackSites(existingSites: List[Site], packs: Boolean): WebMonad[List[Site]] =
       (existingSites, packs) match {
-        case (_, true)    => manyT("packSites", ask(packagingSiteMapping,_), default = existingSites)
-        case (Nil, false) => List.empty[PackagingSite].pure[WebMonad]
+        case (_, true)    => manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = existingSites)
+        case (Nil, false) => List.empty[Site].pure[WebMonad]
         case (_, false)   => tell("removePackSites", gdspages.confirmOrGoBackTo("removePackSites", "packOpt")) >>
-            List.empty[PackagingSite].pure[WebMonad]
+            List.empty[Site].pure[WebMonad]
       }
 
 
@@ -146,7 +146,7 @@ class VariationsController(
                            tell("suggestDereg", gdspages.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
                          else for {
                            packSites       <- askPackSites(data.updatedProductionSites.toList, !(packQty, copacks).isEmpty)
-                           warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_), default = data.updatedWarehouseSites.toList)
+                           warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList)
                            businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
                            contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
                          } yield data.copy (
@@ -225,11 +225,11 @@ class VariationsController(
       RetrievedActivity(false,true,true,true,false),
       LocalDate.now,
       List(
-        PackagingSite(UkAddress(List("40 Sudbury Mews", "Torquay"),"TQ53 6GW"),Some("92"),None,None),
-        PackagingSite(UkAddress(List("11B Welling Close", "North London"),"N93 9II"),Some("95"),None,None)
+        Site(UkAddress(List("40 Sudbury Mews", "Torquay"),"TQ53 6GW"),Some("92"),None,None),
+        Site(UkAddress(List("11B Welling Close", "North London"),"N93 9II"),Some("95"),None,None)
       ),
       List(
-        WarehouseSite(UkAddress(List("33 Acre Grove", "Falkirk"),"FK38 8TP"),Some("61"),Some("Illogistics"),None)
+        Site(UkAddress(List("33 Acre Grove", "Falkirk"),"FK38 8TP"),Some("61"),Some("Illogistics"),None)
       ),
       Contact(
         Some("Avery Roche"),

@@ -20,7 +20,7 @@ import play.api.data._
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import sdil.models._
-import sdil.models.backend.{PackagingSite, Site, WarehouseSite}
+import sdil.models.backend.Site
 import views.html.gdspages
 
 trait SdilComponents {
@@ -49,20 +49,20 @@ trait SdilComponents {
     }
   }
 
-  implicit val packagingSiteForm = new FormHtml[PackagingSite] {
-    def asHtmlForm(key: String, form: Form[PackagingSite])(implicit messages: Messages): Html = {
+  val packagingSiteForm = new FormHtml[Site] {
+    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html = {
       gdspages.fragments.packagingSite(key, form)
     }
   }
 
-  implicit val warehouseSiteForm = new FormHtml[WarehouseSite] {
-    def asHtmlForm(key: String, form: Form[WarehouseSite])(implicit messages: Messages): Html = {
+  val warehouseSiteForm = new FormHtml[Site] {
+    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html = {
       gdspages.fragments.warehouseSite(key, form)
     }
   }
 
-  implicit def htmlShow[A <: Site] = new HtmlShow[A] {
-    override def showHtml(in: A) = Html(in.getLines.mkString("<br />"))
+  implicit def htmlShow: HtmlShow[Site] = new HtmlShow[Site] {
+    override def showHtml(in: Site): Html = Html(  in.getLines.mkString("<br />"))
   }
 
   implicit val contactDetailsForm = new FormHtml[ContactDetails] {
@@ -89,9 +89,5 @@ trait SdilComponents {
       val lines = address.nonEmptyLines.mkString("<br />")
       Html(s"<div>$lines</div>")
     }
-
-  implicit val siteHtml: HtmlShow[Site] = HtmlShow.instance { site =>
-    HtmlShow[Address].showHtml(Address.fromUkAddress(site.address))
-  }
 
 }

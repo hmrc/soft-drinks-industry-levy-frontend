@@ -27,8 +27,8 @@ case class Subscription(utr: String,
                         address: UkAddress,
                         activity: Activity,
                         liabilityDate: LocalDate,
-                        productionSites: Seq[PackagingSite],
-                        warehouseSites: Seq[WarehouseSite],
+                        productionSites: Seq[Site],
+                        warehouseSites: Seq[Site],
                         contact: Contact)
 
 object Subscription {

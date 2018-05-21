@@ -25,7 +25,7 @@ import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
 import sdil.models.DetailsCorrect.DifferentAddress
 import sdil.models._
-import sdil.models.backend.{PackagingSite, UkAddress}
+import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.register.productionSite
@@ -53,8 +53,8 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: Registration
   }
 
 
-  private def makeSite(s: String): PackagingSite = {
-    PackagingSite.fromAddress(Address.fromString(s))
+  private def makeSite(s: String): Site = {
+    Site.fromAddress(Address.fromString(s))
   }
 
   def submit: Action[AnyContent] = formAction.async { implicit request =>
@@ -71,7 +71,7 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: Registration
       ),
       {
         case ProductionSites(bprAddress, ppobAddress, sites, true, Some(additionalAddress)) =>
-          val site = PackagingSite(UkAddress.fromAddress(additionalAddress), None, None, None)
+          val site = Site(UkAddress.fromAddress(additionalAddress), None, None, None)
           val updated = Seq(bprAddress, ppobAddress).flatten.map(makeSite).union(sites) :+ site
 
           cache.cache(request.internalId, request.formData.copy(productionSites = Some(updated))) map { _ =>
@@ -105,7 +105,7 @@ object ProductionSiteController extends FormHelpers {
     override val underlying: Mapping[ProductionSites] = mapping(
       "bprAddress" -> optional(text),
       "ppobAddress" -> optional(text),
-      "additionalSites" -> seq(packagingSiteJsonMapping),
+      "additionalSites" -> seq(siteJsonMapping),
       "addAddress" -> boolean,
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(ProductionSites.apply)(ProductionSites.unapply)
@@ -125,7 +125,7 @@ object ProductionSiteController extends FormHelpers {
 
   case class ProductionSites(bprAddress: Option[String],
                              ppobAddress: Option[String],
-                             additionalSites: Seq[PackagingSite],
+                             additionalSites: Seq[Site],
                              addAddress: Boolean,
                              additionalAddress: Option[Address])
 }

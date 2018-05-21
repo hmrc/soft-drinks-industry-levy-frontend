@@ -25,7 +25,7 @@ import sdil.config.AppConfig
 import sdil.controllers.SiteRef
 import sdil.forms.{FormHelpers, MappingWithExtraConstraint}
 import sdil.models.Sites
-import sdil.models.backend.{UkAddress, WarehouseSite}
+import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings._
@@ -46,13 +46,13 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
       case (true, _) =>
         Redirect(routes.VariationsController.show())
       case (_, Nil) =>
-        formPage(WarehouseVariationController.form.fill(Sites[WarehouseSite](Nil, false, None, None)))
+        formPage(WarehouseVariationController.form.fill(Sites[Site](Nil, false, None, None)))
       case _ =>
         formPage(WarehouseVariationController.form)
     }
   }
 
-  private def formPage(form: Form[Sites[WarehouseSite]])(implicit request: VariationRequest[AnyContent]): Result = {
+  private def formPage(form: Form[Sites[Site]])(implicit request: VariationRequest[AnyContent]): Result = {
     Ok(
       secondaryWarehouseWithRef(
         form,
@@ -71,7 +71,7 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
     validateWith(WarehouseVariationController.form)
   }
 
-  private def validateWith(form: Form[Sites[WarehouseSite]])(implicit request: VariationRequest[_]): Future[Result] = {
+  private def validateWith(form: Form[Sites[Site]])(implicit request: VariationRequest[_]): Future[Result] = {
     form.bindFromRequest().fold(
       errors => Future(BadRequest(
         secondaryWarehouseWithRef(
@@ -85,13 +85,13 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
         case Sites(_, true, tradingName, Some(addr)) =>
           val updatedSites = warehouses match {
             case addrs if addrs.nonEmpty =>
-              addrs :+ WarehouseSite(
+              addrs :+ Site(
                 UkAddress.fromAddress(addr),
                 Some(nextRef(request.data.original.warehouseSites, addrs)),
                 tradingName,
                 None
               )
-            case addrs => Seq(WarehouseSite(
+            case addrs => Seq(Site(
               UkAddress.fromAddress(addr),
               Some(nextRef(request.data.original.warehouseSites, addrs)),
               tradingName,
@@ -101,7 +101,7 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
           cache.cache("variationData", request.data.copy(updatedWarehouseSites = updatedSites)) map { _ =>
             Redirect(routes.WarehouseVariationController.show())
           }
-        case Sites(addresses:List[WarehouseSite], _, _, _) =>
+        case Sites(addresses:List[Site], _, _, _) =>
           val updated = request.data.copy(updatedWarehouseSites = addresses)
 
           cache.cache("variationData", updated) map { _ =>
@@ -115,7 +115,7 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
     Ok(retrieve_summary_secondaryWarehouse(request.data))
   }
 
-  private def warehouses(implicit request: VariationRequest[_]): Seq[WarehouseSite] = {
+  private def warehouses(implicit request: VariationRequest[_]): Seq[Site] = {
     request.data.updatedWarehouseSites
   }
 
@@ -129,26 +129,26 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
 
 object WarehouseVariationController extends FormHelpers {
 
-  val form: Form[Sites[WarehouseSite]] = Form(warehouseSitesMapping)
+  val form: Form[Sites[Site]] = Form(warehouseSitesMapping)
 
-  val initialForm: Form[Sites[WarehouseSite]] = Form(
+  val initialForm: Form[Sites[Site]] = Form(
     mapping(
-      "additionalSites" -> ignored(Seq.empty[WarehouseSite]),
+      "additionalSites" -> ignored(Seq.empty[Site]),
       "addAddress" -> mandatoryBoolean,
       "tradingName" -> optional(tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(Sites.apply)(Sites.unapply)
   )
 
-  private lazy val warehouseSitesMapping: Mapping[Sites[WarehouseSite]] = new MappingWithExtraConstraint[Sites[WarehouseSite]] {
-    override val underlying: Mapping[Sites[WarehouseSite]] = mapping(
-      "additionalSites" -> seq(warehouseSiteJsonMapping),
+  private lazy val warehouseSitesMapping: Mapping[Sites[Site]] = new MappingWithExtraConstraint[Sites[Site]] {
+    override val underlying: Mapping[Sites[Site]] = mapping(
+      "additionalSites" -> seq(siteJsonMapping),
       "addAddress" -> boolean,
       "tradingName" -> optional(tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(Sites.apply)(Sites.unapply)
 
-    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites[WarehouseSite]] = {
+    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites[Site]] = {
       underlying.bind(data) match {
         case Left(errs) => Left(errs)
         case Right(sites) => Right(sites)

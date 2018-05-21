@@ -24,7 +24,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.backend.{UkAddress, WarehouseSite}
+import sdil.models.backend.{UkAddress, Site}
 import sdil.models.{Address, Producer}
 
 class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
@@ -40,7 +40,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "return 200 Ok and the add secondary warehouse page if other secondary warehouses have been added" in {
       stubFormPage(secondaryWarehouses = Some(Seq(
-        WarehouseSite(
+        Site(
           UkAddress.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA")),
           None,
           None,
@@ -122,7 +122,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
   "POST /secondary-warehouses/select-sites" should {
     "return 400 Bad Request if the user says they have a warehouse and does not fill in the address form" in {
       stubFormPage(secondaryWarehouses = Some(Seq(
-        WarehouseSite(
+        Site(
           UkAddress.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA")),
           None,
           None,
@@ -176,7 +176,7 @@ class WarehouseControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         .cache(
           matching("internal id"),
           matching(defaultFormData.copy(secondaryWarehouses = Some(Seq(
-            WarehouseSite(
+            Site(
               UkAddress.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA")),
               None,
               Some("name trade"),

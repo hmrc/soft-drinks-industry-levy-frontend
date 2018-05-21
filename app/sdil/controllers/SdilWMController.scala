@@ -256,14 +256,14 @@ trait SdilWMController extends WebMonadController
   }
 
 
-  lazy val warehouseSiteMapping: Mapping[WarehouseSite] = mapping(
+  lazy val warehouseSiteMapping: Mapping[Site] = mapping(
     "address" -> ukAddressMapping,
     "tradingName" -> optional(tradingNameMapping)
-  ){(a,b) => WarehouseSite.apply(a, none, b, none)}(WarehouseSite.unapply(_).map{ case (address, refOpt, tradingName, _) => (address, tradingName) } )
+  ){(a,b) => Site.apply(a, none, b, none)}(Site.unapply(_).map{ case (address, refOpt, tradingName, _) => (address, tradingName) } )
 
-  lazy val packagingSiteMapping: Mapping[PackagingSite] = mapping(
+  lazy val packagingSiteMapping: Mapping[Site] = mapping(
     "address" -> ukAddressMapping
-  ){a => PackagingSite.apply(a, none, none, none)}(PackagingSite.unapply(_).map{ case (address, refOpt, _, _) =>
+  ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{ case (address, refOpt, _, _) =>
     address } )
 
   protected val addressMapping: play.api.data.Mapping[Address] = mapping(

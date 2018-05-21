@@ -21,44 +21,22 @@ import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
 import sdil.models.Address
 
-trait Site {
-  def address: UkAddress
-  def ref: Option[String]
-  def tradingName: Option[String]
-  def closureDate: Option[LocalDate]
+
+case class Site(
+                          address: UkAddress,
+                          ref: Option[String],
+                          tradingName: Option[String],
+                          closureDate: Option[LocalDate]
+                        ) {
   def getLines: List[String] = {
     tradingName.fold(address.lines) { x => (x :: address.lines) :+ address.postCode}
   }
 }
 
-trait FromAddress {
-  def fromAddress(address: Address): Site
-}
+object Site {
+  implicit val format: Format[Site] = Json.format[Site]
 
-case class PackagingSite(
-                        address: UkAddress,
-                        ref: Option[String],
-                        tradingName: Option[String],
-                        closureDate: Option[LocalDate]
-                        ) extends Site
-
-case object PackagingSite extends FromAddress {
-  implicit val format: Format[PackagingSite] = Json.format[PackagingSite]
-  override def fromAddress(address: Address): PackagingSite = {
-    PackagingSite(UkAddress.fromAddress(address), None, None, None)
-  }
-}
-
-case class WarehouseSite(
-                        address: UkAddress,
-                        ref: Option[String],
-                        tradingName: Option[String],
-                        closureDate: Option[LocalDate]
-                        ) extends Site
-
-case object WarehouseSite extends FromAddress {
-  implicit val format: Format[WarehouseSite] = Json.format[WarehouseSite]
-  override def fromAddress(address: Address): WarehouseSite = {
-    WarehouseSite(UkAddress.fromAddress(address), None, None, None)
+  def fromAddress(address: Address): Site = {
+    Site(UkAddress.fromAddress(address), None, None, None)
   }
 }

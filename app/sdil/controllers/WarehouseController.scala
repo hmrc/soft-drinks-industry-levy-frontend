@@ -23,7 +23,7 @@ import sdil.actions.{FormAction, RegistrationFormRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.forms.WarehouseForm
 import sdil.models._
-import sdil.models.backend.{Site, UkAddress, WarehouseSite}
+import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register.secondaryWarehouse
 
@@ -38,7 +38,7 @@ class WarehouseController(val messagesApi: MessagesApi,
   def show: Action[AnyContent] = formAction.async { implicit request =>
     Journey.expectedPage(WarehouseSitesPage) match {
       case WarehouseSitesPage =>
-        val fillInitialForm: Form[Sites[WarehouseSite]] = request.formData.secondaryWarehouses match {
+        val fillInitialForm: Form[Sites[Site]] = request.formData.secondaryWarehouses match {
           case Some(Nil) => WarehouseForm.initial().fill(Sites(Nil, addAddress = false, None, None))
           case Some(_) => WarehouseForm()
           case None => WarehouseForm.initial()
@@ -56,7 +56,7 @@ class WarehouseController(val messagesApi: MessagesApi,
     validateWith(WarehouseForm())
   }
 
-  private def validateWith(form: Form[Sites[WarehouseSite]])(implicit request: RegistrationFormRequest[_]): Future[Result] = {
+  private def validateWith(form: Form[Sites[Site]])(implicit request: RegistrationFormRequest[_]): Future[Result] = {
     form.bindFromRequest().fold(
       errors => BadRequest(secondaryWarehouse(
         errors,
@@ -67,13 +67,13 @@ class WarehouseController(val messagesApi: MessagesApi,
         case Sites(_, _, tradingName, Some(addr)) =>
           val updatedSites = request.formData.secondaryWarehouses match {
             case Some(addrs) if addrs.nonEmpty =>
-              addrs :+ WarehouseSite(
+              addrs :+ Site(
                 UkAddress.fromAddress(addr),
                 None,
                 tradingName,
                 None
               )
-            case _ => Seq(WarehouseSite(
+            case _ => Seq(Site(
               UkAddress.fromAddress(addr),
               None,
               tradingName,

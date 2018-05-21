@@ -32,8 +32,8 @@ case class RetrievedSubscription(utr: String,
                                  address: UkAddress,
                                  activity: RetrievedActivity,
                                  liabilityDate: LocalDate,
-                                 productionSites: List[PackagingSite],
-                                 warehouseSites: List[WarehouseSite],
+                                 productionSites: List[Site],
+                                 warehouseSites: List[Site],
                                  contact: Contact)
 
 object RetrievedSubscription {

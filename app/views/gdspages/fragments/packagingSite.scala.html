@@ -20,9 +20,9 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 @import views.html.gdspages.helpers._
-@import sdil.models.backend.PackagingSite
+@import sdil.models.backend.Site
 
-@(key: String, form: Form[PackagingSite])(implicit messages: Messages)
+@(key: String, form: Form[Site])(implicit messages: Messages)
 @inputText(
     form(s"$key.address.line1"),
     Messages("sdil.address.line1"),

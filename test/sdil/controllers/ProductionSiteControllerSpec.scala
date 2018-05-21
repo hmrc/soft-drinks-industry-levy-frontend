@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.DetailsCorrect.DifferentAddress
 import sdil.models._
-import sdil.models.backend.PackagingSite
+import sdil.models.backend.Site
 
 import scala.collection.JavaConverters._
 
@@ -71,9 +71,9 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
 
     "return a page including all production sites added so far" in {
       val sites = Seq(
-        PackagingSite.fromAddress(Address("3 The Place", "Another place", "", "", "AA11 1AA")),
-        PackagingSite.fromAddress(Address("4 The Place", "Another place", "", "", "AA11 1AA")),
-        PackagingSite.fromAddress(Address("5 The Place", "Another place", "", "", "AA11 1AA"))
+        Site.fromAddress(Address("3 The Place", "Another place", "", "", "AA11 1AA")),
+        Site.fromAddress(Address("4 The Place", "Another place", "", "", "AA11 1AA")),
+        Site.fromAddress(Address("5 The Place", "Another place", "", "", "AA11 1AA"))
       )
 
       stubFormPage(productionSites = Some(sites))
@@ -149,7 +149,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
       verify(mockCache, times(1)).cache(
         matching("internal id"),
         matching(defaultFormData.copy(productionSites = Some(Seq(
-          PackagingSite.fromAddress(Address("line 2", "line 3", "", "", "AA12 2AA"))
+          Site.fromAddress(Address("line 2", "line 3", "", "", "AA12 2AA"))
         ))))
       )(any())
     }
@@ -168,8 +168,8 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
         rosmData = rosmRegistration,
         verify = Some(DifferentAddress(ppobAddress)),
         productionSites = Some(Seq(
-          PackagingSite.fromAddress(Address("1", "2", "3", "4", "AA11 1AA")),
-          PackagingSite.fromAddress(Address("2", "3", "4", "5", "AA12 2AA"))
+          Site.fromAddress(Address("1", "2", "3", "4", "AA11 1AA")),
+          Site.fromAddress(Address("2", "3", "4", "5", "AA12 2AA"))
         ))
       )
 
@@ -188,7 +188,7 @@ class ProductionSiteControllerSpec extends ControllerSpec with BeforeAndAfterEac
           rosmData = rosmRegistration,
           verify = Some(DifferentAddress(ppobAddress)),
           productionSites = Some(
-            Seq(bprAddress, ppobAddress, Address("2", "3", "4", "5", "AA12 2AA")).map(PackagingSite.fromAddress)
+            Seq(bprAddress, ppobAddress, Address("2", "3", "4", "5", "AA12 2AA")).map(Site.fromAddress)
           ))
         )
       )(any())
