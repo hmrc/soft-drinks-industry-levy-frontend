@@ -20,7 +20,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import sdil.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.controller.{FrontendController, UnauthorisedAction}
-//import views.html.time_out
 
 class AuthenticationController(val messagesApi: MessagesApi)
                               (implicit config: AppConfig)
