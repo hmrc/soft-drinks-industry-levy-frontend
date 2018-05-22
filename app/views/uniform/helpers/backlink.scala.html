@@ -16,6 +16,8 @@
 
 @(breadcrumbs: List[String])(implicit messages: Messages)
 
-@for(prev <- breadcrumbs.headOption) {
-  <a class="link-back" href="./@prev">@Messages("sdil.common.back")</a>
+@breadcrumbs.headOption.fold {
+  <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
+} { x =>
+  <a class="link-back" href="./@x">@Messages("sdil.common.back")</a>
 }

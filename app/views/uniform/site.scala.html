@@ -24,7 +24,7 @@
 
 @(key: String, form: Form[Site], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
 
-@views.html.main_template(Messages("sdil.common.title"), form = Some(form)) {
+@views.html.main_template(Messages("sdil.variations.title"), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
