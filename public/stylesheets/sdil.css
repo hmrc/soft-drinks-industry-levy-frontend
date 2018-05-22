@@ -110,9 +110,17 @@ html .font-xsmall {
   cursor: pointer;
   -webkit-box-shadow: none;
   outline: 0;
-  position: static;
+  position: relative;
 }
 
 .link-button:hover {
     color: #4c2c92;
+}
+
+.cya-change {
+    font-weight: bold;
+}
+
+button[name="checkyouranswers"] {
+    margin-top: 30px;
 }
