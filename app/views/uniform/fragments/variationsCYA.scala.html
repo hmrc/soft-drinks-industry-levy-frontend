@@ -16,6 +16,10 @@
 
 @(v: sdil.models.variations.VariationData, path: List[String])(implicit m: Messages)
 
+@formatLitres(value: BigDecimal) = @{
+    java.text.NumberFormat.getNumberInstance.format(value)
+}
+
 @if(path.contains("packSites") && v.updatedProductionSites.nonEmpty) {
 <table class="check-your-answers">
     <caption class="heading-medium">@Messages("variations.cya.packsites")</caption>
@@ -105,6 +109,171 @@
     </tbody>
   </table>
 }
+
+@if(path.contains("packLarge")) {
+    <h2 class="heading-medium">
+        @Messages("variations.cya.activity-change")
+    </h2>
+
+    <dl class="govuk-check-your-answers cya-questions-short">
+
+        <div>
+            <dt class="cya-question">
+            @Messages("variations.cya.activity-change.producer")
+            </dt>
+            <dd class="cya-answer">
+                @Messages(s"variations.cya.${v.producer.isProducer}")
+                @if(v.producer.isProducer) {
+                    @v.producer.isLarge.map {
+                        case true => {
+                            : @Messages("sdil.declaration.largeProducer")
+                        }
+                        case _ => {
+                            : @Messages("sdil.declaration.smallProducer")
+                        }
+                    }
+                }
+            </dd>
+            <dd class="cya-change">
+                <a href="packLarge">
+                @Html(Messages("variations.cya.activity-change.package-own.change"))
+                </a>
+            </dd>
+        </div>
+        @if(v.producer.isProducer) {
+
+            <div>
+                <dt class="cya-question">
+                    @Messages("variations.cya.activity-change.package-own")
+                </dt>
+                <dd class="cya-answer">
+                    @v.packageOwn.map { x =>
+                        @Messages(s"variations.cya.$x")
+                    }
+                </dd>
+                <dd class="cya-change">
+                    <a href="packOpt">
+                    @Html(Messages("variations.cya.activity-change.package-own.change"))
+                    </a>
+                </dd>
+            </div>
+        }
+
+        @if(v.packageOwn.getOrElse(false)) {
+            <div>
+                <dt class="cya-question">
+                    @Messages("variations.cya.activity-change.litres-own")
+                </dt>
+                <dd class="cya-answer">
+                    @v.packageOwnVol.map { x =>
+                        @Messages("variations.cya.activity-change.low-band")
+                        @formatLitres(x.atLowRate) <br/>
+                        @Messages("variations.cya.activity-change.high-band")
+                        @formatLitres(x.atHighRate)
+                    }
+                </dd>
+                <dd class="cya-change">
+                    <a href="packQty">
+                        @Html(Messages("variations.cya.activity-change.litres-own.change"))
+                    </a>
+                </dd>
+            </div>
+        }
+
+        @if(v.producer.isProducer) {
+
+            <div>
+                <dt class="cya-question">
+                @Messages("variations.cya.activity-change.use-copacker")
+                </dt>
+                <dd class="cya-answer">
+                @v.usesCopacker.map { x =>
+                    @Messages(s"variations.cya.$x")
+                }
+                </dd>
+                <dd class="cya-change">
+                    <a href="useCopacker">
+                    @Html(Messages("variations.cya.activity-change.use-copacker.change"))
+                    </a>
+                </dd>
+            </div>
+        }
+
+
+        <div>
+            <dt class="cya-question">
+                @Messages("variations.cya.activity-change.package-others")
+            </dt>
+            <dd class="cya-answer">
+                @Messages(s"variations.cya.${v.copackForOthers}")
+            </dd>
+            <dd class="cya-change">
+                <a href="copacker">
+                    @Html(Messages("variations.cya.activity-change.package-others.change"))
+                </a>
+            </dd>
+        </div>
+
+        @if(v.copackForOthers) {
+            <div>
+                <dt class="cya-question">
+                @Messages("variations.cya.activity-change.litres-others")
+                </dt>
+                <dd class="cya-answer">
+                @v.importsVol.map { x =>
+                    @Messages("variations.cya.activity-change.low-band")
+                    @formatLitres(x.atLowRate) <br/>
+                    @Messages("variations.cya.activity-change.high-band")
+                    @formatLitres(x.atHighRate)
+                }
+                </dd>
+                <dd class="cya-change">
+                    <a href="copackQty">
+                    @Html(Messages("variations.cya.activity-change.litres-others.change"))
+                    </a>
+                </dd>
+            </div>
+
+        }
+
+        <div>
+            <dt class="cya-question">
+            @Messages("variations.cya.activity-change.import")
+            </dt>
+            <dd class="cya-answer">
+            @Messages(s"variations.cya.${v.imports}")
+            </dd>
+            <dd class="cya-change">
+                <a href="importer">
+                @Html(Messages("variations.cya.activity-change.import.change"))
+                </a>
+            </dd>
+        </div>
+
+        @if(v.imports) {
+            <div>
+                <dt class="cya-question">
+                @Messages("variations.cya.activity-change.litres-import")
+                </dt>
+                <dd class="cya-answer">
+                @v.importsVol.map { x =>
+                    @Messages("variations.cya.activity-change.low-band")
+                    @formatLitres(x.atLowRate) <br/>
+                    @Messages("variations.cya.activity-change.high-band")
+                    @formatLitres(x.atHighRate)
+                }
+                </dd>
+                <dd class="cya-change">
+                    <a href="importQty">
+                    @Html(Messages("variations.cya.activity-change.litres-import.change"))
+                    </a>
+                </dd>
+            </div>
+        }
+    </dl>
+
+}
+
 
 @if(path.contains("contact")) {
   <h2 class="heading-medium">

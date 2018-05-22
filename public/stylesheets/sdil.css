@@ -110,7 +110,7 @@ html .font-xsmall {
   cursor: pointer;
   -webkit-box-shadow: none;
   outline: 0;
-  position: static;
+  position: relative;
 }
 
 .link-button:hover {

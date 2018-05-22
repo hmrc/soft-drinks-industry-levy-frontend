@@ -578,6 +578,32 @@ variations.cya.deregistration.change.reason=Change<span class="visually-hidden">
 variations.cya.deregistration.date=Date
 variations.cya.deregistration.change.date=Change<span class="visually-hidden"> deregistration date</span>
 
+variations.cya.activity-change=Changes to business activity 
+variations.cya.activity-change.producer=Own brand packaged in past 12 months?
+variations.cya.activity-change.use-copacker=Use third party packagers?
+variations.cya.activity-change.use-copacker.change=Change<span class="visually-hidden"> use third party \
+  packagers</span> 
+variations.cya.activity-change.package-own=Package your own brand at your own sites?
+variations.cya.activity-change.package-own.change=Change<span class="visually-hidden"> do you package at your own site</span>
+variations.cya.activity-change.litres-own=Litres in next 12 months
+variations.cya.activity-change.litres-own.change=Change<span class="visually-hidden"> litres in next 12 months</span>
+variations.cya.activity-change.package-others=Package for customers at your own sites?
+variations.cya.activity-change.litres-others=Litres in next 12 months
+variations.cya.activity-change.litres-others.change=Change<span class="visually-hidden"> litres in next 12 months</span>
+
+variations.cya.activity-change.package-others.change=Change<span class="visually-hidden"> do you package for \
+  customers</span>
+variations.cya.activity-change.import=Do you bring liable drinks into the UK?
+variations.cya.activity-change.import.change=Change<span class="visually-hidden"> do you bring liable drinks into the\
+   UK?</span> 
+variations.cya.activity-change.litres-import=Litres in next 12 months
+variations.cya.activity-change.litres-import.change=Change<span class="visually-hidden"> litres in next 12 months</span>
+
+variations.cya.activity-change.low-band=Low band:
+variations.cya.activity-change.high-band=High band:
+variations.cya.true=Yes
+variations.cya.false=No
+
 variations.cya.dereg=Deregistration
 variations.cya.reason=Reason
 variations.cya.deregDate=Date
