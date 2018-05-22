@@ -127,12 +127,14 @@ class VariationsController(
             List.empty[Site].pure[WebMonad]
       }
 
+    val litres = litreagePair.nonEmpty("error.litreage.zero")
+
     for {
       packLarge       <- ask(innerOpt("packLarge", bool), "packLarge")
       useCopacker     <- ask(bool,"useCopacker", data.usesCopacker) when packLarge.contains(false)
-      packQty         <- ask(litreagePair.nonEmpty, "packQty") emptyUnless ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
-      copacks         <- ask(litreagePair.nonEmpty, "copackQty") emptyUnless ask(bool, "copacker", data.copackForOthers)
-      imports         <- ask(litreagePair.nonEmpty, "importQty") emptyUnless ask(bool, "importer", data.imports)
+      packQty         <- ask(litres, "packQty") emptyUnless ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
+      copacks         <- ask(litres, "copackQty") emptyUnless ask(bool, "copacker", data.copackForOthers)
+      imports         <- ask(litres, "importQty") emptyUnless ask(bool, "importer", data.imports)
       variation       <- if ((packQty, copacks, imports).isEmpty && packLarge.isEmpty)
                            tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
                          else for {
