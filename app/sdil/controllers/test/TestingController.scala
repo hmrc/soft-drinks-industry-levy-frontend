@@ -45,4 +45,11 @@ class TestingController(testConnector: TestConnector) extends FrontendController
     }
   }
 
+  def getVariationHtml(sdilRef: String): Action[AnyContent] = Action.async { implicit request =>
+    testConnector.getVariationHtml(sdilRef) map {
+      case Some(html) => Ok(html)
+      case None => NotFound
+    }
+  }
+
 }

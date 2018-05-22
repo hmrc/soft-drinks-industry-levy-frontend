@@ -19,6 +19,7 @@ package sdil.connectors
 import akka.util.ByteString
 import play.api.libs.ws.WSClient
 import play.api.{Configuration, Environment}
+import play.twirl.api.Html
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -41,6 +42,13 @@ class TestConnector(http: HttpClient,
 
   def getFile(envelopeId: String, fileName: String)(implicit hc: HeaderCarrier): Future[ByteString] = {
     ws.url(s"$testUrl/test-only/get-file/$envelopeId/$fileName").get().map(_.bodyAsBytes)
+  }
+
+  def getVariationHtml(sdilRef: String)(implicit hc: HeaderCarrier): Future[Option[Html]] = {
+    http.GET[HttpResponse](s"$testUrl/test-only/get-last-variation/$sdilRef") map {
+      case res if res.status == 200 => Some(Html(res.body))
+      case _ => None
+    }
   }
 
 }
