@@ -84,7 +84,8 @@ trait SdilWMController extends WebMonadController
     }.imap(_.map{e.withName}.toSet)(_.map(_.toString).toList)
   }
 
-  val litreage: Mapping[Long] = nonEmptyText
+  val litreage: Mapping[Long] = text
+    .verifying("error.litreage.required", _.nonEmpty)
     .transform[String](_.replaceAll(",", ""), _.toString)
     .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
     .transform[BigDecimal](BigDecimal.apply, _.toString)
@@ -97,8 +98,10 @@ trait SdilWMController extends WebMonadController
     tuple("lower" -> litreage, "higher" -> litreage)
 
   implicit class RichMapping[A](mapping: Mapping[A]) {
-    def nonEmpty(implicit m: Monoid[A], eq: Eq[A]): Mapping[A] =
-      mapping.verifying("error.empty", {!_.isEmpty})
+    def nonEmpty(errorMsg: String)(implicit m: Monoid[A], eq: Eq[A]): Mapping[A] =
+      mapping.verifying(errorMsg, {!_.isEmpty})
+
+    def nonEmpty(implicit m: Monoid[A], eq: Eq[A]): Mapping[A] = nonEmpty("error.empty")
   }
 
   def ask[T](mapping: Mapping[T], key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
