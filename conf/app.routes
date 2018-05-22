@@ -64,8 +64,6 @@ GET         /register/complete                                 sdil.controllers.
 GET         /sign-in                                           sdil.controllers.AuthenticationController.signIn()
 GET         /sign-out                                          sdil.controllers.AuthenticationController.signOut()
 
-->          /variations                                        variations.Routes
-
 GET         /returns                                           sdil.controllers.ReturnsController.index(id = "")
 GET         /returns/:id                                       sdil.controllers.ReturnsController.index(id: String)
 POST        /returns                                           sdil.controllers.ReturnsController.index(id = "")
@@ -75,3 +73,5 @@ GET         /ufvariations                                        sdil.controller
 GET         /ufvariations/:id                                    sdil.controllers.VariationsController.index(id: String)
 POST        /ufvariations                                        sdil.controllers.VariationsController.index(id = "")
 POST        /ufvariations/:id                                    sdil.controllers.VariationsController.index(id: String)
+
+->          /variations                                        variations.Routes

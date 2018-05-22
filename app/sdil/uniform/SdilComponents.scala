@@ -49,6 +49,22 @@ trait SdilComponents {
     }
   }
 
+  val packagingSiteForm = new FormHtml[Site] {
+    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html = {
+      uniform.fragments.packagingSite(key, form)
+    }
+  }
+
+  val warehouseSiteForm = new FormHtml[Site] {
+    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html = {
+      uniform.fragments.warehouseSite(key, form)
+    }
+  }
+
+  implicit def htmlShow: HtmlShow[Site] = new HtmlShow[Site] {
+    override def showHtml(in: Site): Html = Html(  in.getLines.mkString("<br />"))
+  }
+
   implicit val contactDetailsForm = new FormHtml[ContactDetails] {
     def asHtmlForm(key: String, form: Form[ContactDetails])(implicit messages: Messages): Html = {
       uniform.fragments.contactdetails(key, form)
@@ -73,10 +89,6 @@ trait SdilComponents {
       val lines = address.nonEmptyLines.mkString("<br />")
       Html(s"<div>$lines</div>")
     }
-
-  implicit val siteHtml: HtmlShow[Site] = HtmlShow.instance { site =>
-    HtmlShow[Address].showHtml(Address.fromUkAddress(site.address))
-  }
 
   implicit def showLitreage(implicit messages: Messages): HtmlShow[Litreage] = new HtmlShow[Litreage]{
     def showHtml(l: Litreage): Html = l match {

@@ -24,7 +24,7 @@ import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.backend.{Contact, Site, UkAddress}
+import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}

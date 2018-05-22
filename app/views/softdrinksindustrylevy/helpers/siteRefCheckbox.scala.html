@@ -16,9 +16,8 @@
 
 @import sdil.config.AppConfig
 @import play.api.libs.json.Json
-@import sdil.models.Address
-
 @import sdil.models.backend.Site
+
 @(name: String, site: Site, checked: Boolean = false, showTradingName: Boolean = true)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 <div class="multiple-choice">

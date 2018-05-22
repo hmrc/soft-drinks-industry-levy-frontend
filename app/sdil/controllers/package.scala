@@ -16,9 +16,13 @@
 
 package sdil
 
+import play.api.libs.json._
+import sdil.models.retrieved.RetrievedSubscription
+
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
 package object controllers {
   implicit def future[A](a: A): Future[A] = Future.successful(a)
+  implicit val retrievedSubscriptionFormat: Format[RetrievedSubscription] = Json.format[RetrievedSubscription]
 }

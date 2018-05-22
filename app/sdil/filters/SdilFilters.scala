@@ -23,8 +23,8 @@ import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.CookieCryptoFilter
 import uk.gov.hmrc.play.bootstrap.filters.frontend.deviceid.DeviceIdFilter
-import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, FrontendFilters, LoggingFilter}
 import uk.gov.hmrc.play.bootstrap.filters.frontend.{FrontendAuditFilter, HeadersFilter, SessionTimeoutFilter}
+import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, FrontendFilters, LoggingFilter}
 
 class SdilFilters(configuration: Configuration,
                   loggingFilter: LoggingFilter,

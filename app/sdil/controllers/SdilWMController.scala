@@ -39,6 +39,10 @@ import views.html.uniform
 import scala.concurrent._
 import scala.util.Try
 
+import scala.collection.mutable.{Map => MMap}
+import scala.concurrent._
+import scala.util.Try
+
 trait SdilWMController extends WebMonadController
     with FrontendController with GdsComponents
 {
@@ -163,10 +167,27 @@ trait SdilWMController extends WebMonadController
       }
     }
 
-  lazy val siteMapping: Mapping[Site] = mapping(
-    "address" -> ukAddressMapping
-  ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{ case (address, refOpt, _, _) => address } )
 
+  // TODO these were lifted from FormHelpers which has differing implementations of other mappings - resolve
+  lazy val tradingNameMapping: Mapping[String] = {
+    text.transform[String](_.trim, s => s).verifying(optionalTradingNameConstraint)
+  }
+
+  private def optionalTradingNameConstraint: Constraint[String] = Constraint {
+    case b if b.length > 160 => Invalid(s"error.tradingName.over")
+    case a if !a.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid(s"error.tradingName.invalid")
+    case _ => Valid
+  }
+
+  lazy val warehouseSiteMapping: Mapping[Site] = mapping(
+    "address" -> ukAddressMapping,
+    "tradingName" -> optional(tradingNameMapping)
+  ){(a,b) => Site.apply(a, none, b, none)}(Site.unapply(_).map{ case (address, refOpt, tradingName, _) => (address, tradingName) } )
+
+  lazy val packagingSiteMapping: Mapping[Site] = mapping(
+    "address" -> ukAddressMapping
+  ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{ case (address, refOpt, _, _) =>
+    address } )
 
   protected val addressMapping: play.api.data.Mapping[Address] = mapping(
     "line1" -> nonEmptyText,

@@ -17,13 +17,13 @@
 package sdil.actions
 
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results._
 import play.api.mvc.{ActionBuilder, Request, Result, WrappedRequest}
 import sdil.config.AppConfig
 import sdil.models.variations.VariationData
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import play.api.mvc.Results._
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}

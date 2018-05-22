@@ -17,9 +17,9 @@
 package ltbs.play.scaffold
 
 import play.twirl.api.Html
-import simulacrum._
 import shapeless._
 import shapeless.labelled._
+import simulacrum._
 
 import scala.language.implicitConversions
 
