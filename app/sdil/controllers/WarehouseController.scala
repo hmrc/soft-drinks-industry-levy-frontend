@@ -38,7 +38,7 @@ class WarehouseController(val messagesApi: MessagesApi,
   def show: Action[AnyContent] = formAction.async { implicit request =>
     Journey.expectedPage(WarehouseSitesPage) match {
       case WarehouseSitesPage =>
-        val fillInitialForm: Form[Sites[Site]] = request.formData.secondaryWarehouses match {
+        val fillInitialForm: Form[Sites] = request.formData.secondaryWarehouses match {
           case Some(Nil) => WarehouseForm.initial().fill(Sites(Nil, addAddress = false, None, None))
           case Some(_) => WarehouseForm()
           case None => WarehouseForm.initial()
@@ -56,7 +56,7 @@ class WarehouseController(val messagesApi: MessagesApi,
     validateWith(WarehouseForm())
   }
 
-  private def validateWith(form: Form[Sites[Site]])(implicit request: RegistrationFormRequest[_]): Future[Result] = {
+  private def validateWith(form: Form[Sites])(implicit request: RegistrationFormRequest[_]): Future[Result] = {
     form.bindFromRequest().fold(
       errors => BadRequest(secondaryWarehouse(
         errors,

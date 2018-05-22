@@ -46,13 +46,13 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
       case (true, _) =>
         Redirect(routes.VariationsController.show())
       case (_, Nil) =>
-        formPage(WarehouseVariationController.form.fill(Sites[Site](Nil, false, None, None)))
+        formPage(WarehouseVariationController.form.fill(Sites(Nil, false, None, None)))
       case _ =>
         formPage(WarehouseVariationController.form)
     }
   }
 
-  private def formPage(form: Form[Sites[Site]])(implicit request: VariationRequest[AnyContent]): Result = {
+  private def formPage(form: Form[Sites])(implicit request: VariationRequest[AnyContent]): Result = {
     Ok(
       secondaryWarehouseWithRef(
         form,
@@ -71,7 +71,7 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
     validateWith(WarehouseVariationController.form)
   }
 
-  private def validateWith(form: Form[Sites[Site]])(implicit request: VariationRequest[_]): Future[Result] = {
+  private def validateWith(form: Form[Sites])(implicit request: VariationRequest[_]): Future[Result] = {
     form.bindFromRequest().fold(
       errors => Future(BadRequest(
         secondaryWarehouseWithRef(
@@ -129,9 +129,9 @@ class WarehouseVariationController(val messagesApi: MessagesApi,
 
 object WarehouseVariationController extends FormHelpers {
 
-  val form: Form[Sites[Site]] = Form(warehouseSitesMapping)
+  val form: Form[Sites] = Form(warehouseSitesMapping)
 
-  val initialForm: Form[Sites[Site]] = Form(
+  val initialForm: Form[Sites] = Form(
     mapping(
       "additionalSites" -> ignored(Seq.empty[Site]),
       "addAddress" -> mandatoryBoolean,
@@ -140,15 +140,15 @@ object WarehouseVariationController extends FormHelpers {
     )(Sites.apply)(Sites.unapply)
   )
 
-  private lazy val warehouseSitesMapping: Mapping[Sites[Site]] = new MappingWithExtraConstraint[Sites[Site]] {
-    override val underlying: Mapping[Sites[Site]] = mapping(
+  private lazy val warehouseSitesMapping: Mapping[Sites] = new MappingWithExtraConstraint[Sites] {
+    override val underlying: Mapping[Sites] = mapping(
       "additionalSites" -> seq(siteJsonMapping),
       "addAddress" -> boolean,
       "tradingName" -> optional(tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(Sites.apply)(Sites.unapply)
 
-    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites[Site]] = {
+    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites] = {
       underlying.bind(data) match {
         case Left(errs) => Left(errs)
         case Right(sites) => Right(sites)

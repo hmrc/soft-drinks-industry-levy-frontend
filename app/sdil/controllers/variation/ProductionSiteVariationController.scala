@@ -91,17 +91,17 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
 
 object ProductionSiteVariationController extends FormHelpers {
 
-  val form: Form[Sites[Site]] = Form(productionSitesMapping)
+  val form: Form[Sites] = Form(productionSitesMapping)
 
-  private lazy val productionSitesMapping: Mapping[Sites[Site]] = new MappingWithExtraConstraint[Sites[Site]] {
-    override val underlying: Mapping[Sites[Site]] = mapping(
+  private lazy val productionSitesMapping: Mapping[Sites] = new MappingWithExtraConstraint[Sites] {
+    override val underlying: Mapping[Sites] = mapping(
       "additionalSites" -> seq(siteJsonMapping),
       "addAddress" -> boolean,
       "tradingName" -> optional(tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(Sites.apply)(Sites.unapply)
 
-    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites[Site]] = {
+    override def bind(data: Map[String, String]): Either[Seq[FormError], Sites] = {
       underlying.bind(data) match {
         case Left(errs) => Left(errs)
         case Right(sites) if noSitesSelected(sites) => Left(Seq(FormError("productionSites", "error.no-production-sites")))
@@ -110,7 +110,7 @@ object ProductionSiteVariationController extends FormHelpers {
     }
   }
 
-  private lazy val noSitesSelected: Sites[Site] => Boolean = {
+  private lazy val noSitesSelected: Sites => Boolean = {
     p => p.sites.isEmpty && p.additionalSites.isEmpty
   }
 

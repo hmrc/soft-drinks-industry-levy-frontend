@@ -24,14 +24,14 @@ import uk.gov.voa.play.form.ConditionalMappings._
 
 object WarehouseForm extends FormHelpers {
 
-  def apply(): Form[Sites[Site]] = Form(mapping(
+  def apply(): Form[Sites] = Form(mapping(
     "additionalSites" -> seq(siteJsonMapping),
     "addAddress" -> boolean,
     "tradingName" -> mandatoryIfTrue("addAddress", tradingNameMapping),
     "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
   )(Sites.apply)(Sites.unapply))
 
-  def initial(): Form[Sites[Site]] = Form(
+  def initial(): Form[Sites] = Form(
     mapping(
       "additionalSites" -> ignored(Seq.empty[Site]),
       "addAddress" -> mandatoryBoolean,
