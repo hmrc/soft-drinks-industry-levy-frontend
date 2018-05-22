@@ -162,7 +162,7 @@ class VariationsController(
   private def deregisterUpdate(
     data: VariationData
   ): WebMonad[VariationData] = for {
-    reason    <- askBigText("reason")
+    reason    <- askBigText("reason", constraints = List(("error.deregReason.tooLong", _.length <= 255)))
     deregDate <- ask(dateMapping
       .verifying("error.deregDate.nopast",  _ >= LocalDate.now)
       .verifying("error.deregDate.nofuture",_ <  LocalDate.now.plusDays(15))
