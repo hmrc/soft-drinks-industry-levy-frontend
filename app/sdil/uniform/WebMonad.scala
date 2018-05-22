@@ -226,7 +226,7 @@ package webmonad {
                val all = x.getOrElse(default)
                all.take(index) ++ all.drop(index + 1)
              }.some } when deleteConfirmation(allItems(index))
-        _ <- redirect(id) 
+        _ <- redirect(id)
       } yield {
         throw new IllegalStateException("Redirect failing for deletion!")
       }
@@ -236,7 +236,7 @@ package webmonad {
         res <- listingPage(id,min,max,items).flatMap {
           case Add => updateProgram
           case Done => read[List[A]](dataKey).map {
-            _.getOrElse(List.empty[A])
+            _.getOrElse(default)
           }: WebMonad[List[A]]
           case Delete(index) => deleteProgram(index)
         }

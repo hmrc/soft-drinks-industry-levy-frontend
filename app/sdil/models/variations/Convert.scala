@@ -67,6 +67,12 @@ object Convert {
       )
     }
 
+    lazy val sdilActivity: Option[SdilActivity] =
+      if (vd.packageOwnVol.isDefined || vd.copackForOthersVol.isDefined || vd.importsVol.isDefined)
+        Some(newSdilActivity)
+      else
+        None
+
     lazy val newSdilActivity = {
       val activity = Activity(
         if (vd.packageOwn.contains(true) && vd.producer.isProducer) vd.packageOwnVol else None,
@@ -122,11 +128,13 @@ object Convert {
     }
 
     val closedSites: List[ClosedSite] = {
-      val closedProductionSites = orig.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))).diff(
-        vd.updatedProductionSites
-      ) map { site =>
-        ClosedSite("", site.ref.getOrElse("1"), "This site is no longer open.")
-      }
+
+      val closedProductionSites = orig.productionSites
+        .filter(_.closureDate.forall(_.isAfter(LocalDate.now)))
+        .diff(vd.updatedProductionSites)
+        .map { site =>
+          ClosedSite("", site.ref.getOrElse("1"), "This site is no longer open.")
+        }
 
       val closedWarehouses = orig.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))).diff(
         vd.updatedWarehouseSites
@@ -141,8 +149,9 @@ object Convert {
       businessContact = newBusinessContact.ifNonEmpty,
       correspondenceContact = newBusinessContact.ifNonEmpty,
       primaryPersonContact = newPersonalDetails.ifNonEmpty,
-      sdilActivity = None, // TODO: not enabled for initial release
-      deregistrationText = None,
+      sdilActivity = sdilActivity,
+      deregistrationText = vd.reason,
+      deregistrationDate = vd.deregDate,
       newSites = newSites,
       amendSites = Nil,
       closeSites = closedSites
