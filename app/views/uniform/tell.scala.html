@@ -30,11 +30,13 @@
   <h1 class="heading-large">
         @messages.first(s"heading.$key", "sdil.declaration.heading")()
   </h1>
-  @helper.form(action = play.api.mvc.Call("post", key)) {
-    @CSRF.formField
-    @tell
-    <button name="@key"  value="Next" formmethod="post">
-        @messages.first(s"$key.continue", "sdil.declaration.continue")()
-    </button>
-  }
+    @helper.form(action = play.api.mvc.Call("post", key)) {
+        <div class="form-group">
+        @CSRF.formField
+        @tell
+        </div>
+        <button name="@key"  value="Next" formmethod="post">
+            @messages.first(s"$key.continue", "sdil.declaration.continue")()
+        </button>
+    }
 }
