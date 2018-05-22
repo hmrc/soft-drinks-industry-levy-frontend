@@ -70,8 +70,8 @@ class ProductionSiteController(val messagesApi: MessagesApi, cache: Registration
         )
       ),
       {
-        case ProductionSites(bprAddress, ppobAddress, sites, true, tradingName, Some(additionalAddress)) =>
-          val site = Site(UkAddress.fromAddress(additionalAddress), None, tradingName, None)
+        case ProductionSites(bprAddress, ppobAddress, sites, true, Some(additionalAddress)) =>
+          val site = Site(UkAddress.fromAddress(additionalAddress), None, None, None)
           val updated = Seq(bprAddress, ppobAddress).flatten.map(makeSite).union(sites) :+ site
 
           cache.cache(request.internalId, request.formData.copy(productionSites = Some(updated))) map { _ =>
@@ -107,7 +107,6 @@ object ProductionSiteController extends FormHelpers {
       "ppobAddress" -> optional(text),
       "additionalSites" -> seq(siteJsonMapping),
       "addAddress" -> boolean,
-      "tradingName" -> optional(tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(ProductionSites.apply)(ProductionSites.unapply)
 
@@ -128,6 +127,5 @@ object ProductionSiteController extends FormHelpers {
                              ppobAddress: Option[String],
                              additionalSites: Seq[Site],
                              addAddress: Boolean,
-                             tradingName: Option[String],
                              additionalAddress: Option[Address])
 }

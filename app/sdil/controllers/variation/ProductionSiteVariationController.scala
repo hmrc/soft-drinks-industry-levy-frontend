@@ -73,7 +73,7 @@ class ProductionSiteVariationController (val messagesApi: MessagesApi,
             Redirect(routes.ProductionSiteVariationController.show())
           }
 
-        case Sites(sites, _, _, _) =>
+        case Sites(sites:List[Site], _, _, _) =>
           val updated = request.data.copy(updatedProductionSites = sites)
           cache.cache("variationData", updated) map { _ =>
             Redirect(routes.ProductionSiteVariationController.confirm())

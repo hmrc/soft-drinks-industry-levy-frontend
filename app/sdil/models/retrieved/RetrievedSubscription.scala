@@ -19,7 +19,7 @@ package sdil.models.retrieved
 import java.time.LocalDate
 
 import play.api.libs.json.Json
-import sdil.models.backend.{Contact, Site, UkAddress}
+import sdil.models.backend._
 
 case class RetrievedActivity(smallProducer: Boolean, largeProducer: Boolean, contractPacker: Boolean, importer: Boolean, voluntaryRegistration: Boolean)
 

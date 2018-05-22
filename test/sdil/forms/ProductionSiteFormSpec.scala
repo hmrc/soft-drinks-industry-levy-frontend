@@ -44,13 +44,13 @@ class ProductionSiteFormSpec extends FormSpec {
     "bind to ProductionSites if there is not another site" in {
       val f = form.bind(productionSitesData - addSite - line1 - "additionalSite.line2" - "additionalSite.line3" - "additionalSite.line4" - postcode)
 
-      f.value mustBe Some(ProductionSites(Some("1,1,AA11 1AA"), Some("2,2,AA22 2AA"), Nil, false, None, None))
+      f.value mustBe Some(ProductionSites(Some("1,1,AA11 1AA"), Some("2,2,AA22 2AA"), Nil, false, None))
     }
 
     "bind to ProductionSites if there is another site and an address is provided" in {
       val f = form.bind(productionSitesData)
 
-      f.value mustBe Some(ProductionSites(Some("1,1,AA11 1AA"), Some("2,2,AA22 2AA"), Nil, true, None, Some(Address("line 1", "line 2", "line 3", "line 4", "AA11 1AA"))))
+      f.value mustBe Some(ProductionSites(Some("1,1,AA11 1AA"), Some("2,2,AA22 2AA"), Nil, true, Some(Address("line 1", "line 2", "line 3", "line 4", "AA11 1AA"))))
     }
   }
 

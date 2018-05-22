@@ -78,11 +78,11 @@ class VariationsController(
       change          <- askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", ask(siteMapping, _), default = data.updatedProductionSites.toList)
+        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data.updatedProductionSites.toList)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
-        manyT("warehouses", ask(siteMapping, _), default = data.updatedWarehouseSites.toList)
+        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList)
       } else data.updatedWarehouseSites.pure[WebMonad]
 
       contact         <- if (change.contains(ContactPerson)) {
@@ -121,7 +121,7 @@ class VariationsController(
 
     def askPackSites(existingSites: List[Site], packs: Boolean): WebMonad[List[Site]] =
       (existingSites, packs) match {
-        case (_, true)    => manyT("packSites", ask(siteMapping,_), default = existingSites)
+        case (_, true)    => manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = existingSites)
         case (Nil, false) => List.empty[Site].pure[WebMonad]
         case (_, false)   => tell("removePackSites", uniform.confirmOrGoBackTo("removePackSites", "packOpt")) >>
             List.empty[Site].pure[WebMonad]
@@ -137,7 +137,7 @@ class VariationsController(
                            tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
                          else for {
                            packSites       <- askPackSites(data.updatedProductionSites.toList, !(packQty, copacks).isEmpty)
-                           warehouses      <- manyT("warehouses", ask(siteMapping,_), default = data.updatedWarehouseSites.toList)
+                           warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList)
                            businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
                            contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
                          } yield data.copy (
@@ -210,7 +210,25 @@ class VariationsController(
 
   def development(id: String): Action[AnyContent] = Action.async { implicit request =>
     val sdilRef = "XKSDIL000000000"
-    val s = RetrievedSubscription("0100000000","eCola Group",UkAddress(List("86 Amory's Holt Way", "Ipswich"),"IP12 5ZT"),RetrievedActivity(false,true,true,true,false),LocalDate.now,List(Site(UkAddress(List("40 Sudbury Mews", "Torquay"),"TQ53 6GW"),Some("92"),None,None), Site(UkAddress(List("11B Welling Close", "North London"),"N93 9II"),Some("95"),None,None)),List(Site(UkAddress(List("33 Acre Grove", "Falkirk"),"FK38 8TP"),Some("61"),None,None)),Contact(Some("Avery Roche"),Some("Enterprise Infrastructure Engineer"),"01024 670607","Charlotte.Connolly@gmail.co.uk"))
+    val s = RetrievedSubscription(
+      "0100000000",
+      "Adam's Dyes (Also Soft Drinks)",
+      UkAddress(List("86 Amory's Holt Way", "Ipswich"),"IP12 5ZT"),
+      RetrievedActivity(false,true,true,true,false),
+      LocalDate.now,
+      List(
+        Site(UkAddress(List("40 Sudbury Mews", "Torquay"),"TQ53 6GW"),Some("92"),None,None),
+        Site(UkAddress(List("11B Welling Close", "North London"),"N93 9II"),Some("95"),None,None)
+      ),
+      List(
+        Site(UkAddress(List("33 Acre Grove", "Falkirk"),"FK38 8TP"),Some("61"),Some("Illogistics"),None)
+      ),
+      Contact(
+        Some("Avery Roche"),
+        Some("Enterprise Infrastructure Engineer"),
+        "01024 670607","Charlotte.Connolly@gmail.co.uk"
+      )
+    )
 
     runInner(request)(program(s, sdilRef))(id)(junkPersistence.dataGet,junkPersistence.dataPut)
   }
@@ -220,7 +238,7 @@ class VariationsController(
     val persistence = SessionCachePersistence("test", keystore)
 
     def testProgram: WebMonad[Result] = for {
-      packSites <- manyT("packSites", ask(siteMapping, _))
+      packSites <- manyT("packSites", ask(packagingSiteMapping,_))
       exit      <- journeyEnd("variationDone")
     } yield {
       exit

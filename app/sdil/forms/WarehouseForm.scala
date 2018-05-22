@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.{boolean, ignored, mapping, seq}
 import sdil.models.Sites
 import sdil.models.backend.Site
-import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
+import uk.gov.voa.play.form.ConditionalMappings._
 
 object WarehouseForm extends FormHelpers {
 
