@@ -18,18 +18,18 @@
 
 @if(path.contains("packSites") && v.updatedProductionSites.nonEmpty) {
 <table class="check-your-answers">
-    <caption class="heading-medium">Packaging sites</caption>
+    <caption class="heading-medium">@Messages("variations.cya.packsites")</caption>
 
     <thead>
         <tr>
             <th>
                 <h2 class="heading-small">
-                    Packaging site address
+                    @Messages("variations.cya.packsites.address")
                 </h2>
             </th>
             <th>
                 <h2 class="heading-small">
-                    Postcode
+                    @Messages("variations.cya.postcode")
                 </h2>
             </th>
             <th>
@@ -52,7 +52,7 @@
             <td>@site.address.postCode</td>
             <td class="change-answer">
                 <a href="packSites">
-                    Change <span class="visuallyhidden">packaging sites</span>
+                    @Html(Messages("variations.cya.packsites.change"))
                 </a>
             </td>
         </tr>
@@ -69,12 +69,12 @@
         <tr>
             <th>
                 <h2 class="heading-small">
-                    Warehouse address
+                    @Messages("variations.cya.warehouses")
                 </h2>
             </th>
             <th>
                 <h2 class="heading-small">
-                    Postcode
+                    @Messages("variations.cya.postcode")
                 </h2>
             </th>
             <th>
@@ -97,7 +97,7 @@
           <td>@site.address.postCode</td>
           <td class="change-answer">
             <a href="warehouses">
-              Change <span class="visuallyhidden">warehouses</span>
+              @Html(Messages("variations.cya.warehouses.change"))
             </a>
           </td>
         </tr>
@@ -108,60 +108,60 @@
 
 @if(path.contains("contact")) {
   <h2 class="heading-medium">
-    Contact person
+      @Messages("variations.cya.contact")
   </h2>
 
   <dl class="govuk-check-your-answers cya-questions-short">
     <div>
         <dt class="cya-question">
-            Full name
+            @Messages("variations.cya.contact.fullName")
         </dt>
         <dd class="cya-answer">
             @v.updatedContactDetails.fullName
         </dd>
         <dd class="cya-change">
             <a href="contact">
-                Change<span class="visually-hidden"> full name</span>
+                @Html(Messages("variations.cya.contact.change.fullName"))
             </a>
         </dd>
     </div>
     <div>
         <dt class="cya-question">
-            Job title
+            @Messages("variations.cya.contact.jobTitle")
         </dt>
         <dd class="cya-answer">
             @v.updatedContactDetails.position
         </dd>
         <dd class="cya-change">
             <a href="contact">
-                Change<span class="visually-hidden"> job title</span>
+                @Html(Messages("variations.cya.contact.change.jobTitle"))
             </a>
         </dd>
     </div>
     <div>
         <dt class="cya-question">
-            Telephone number
+            @Messages("variations.cya.contact.telephone")
         </dt>
         <dd class="cya-answer">
             @v.updatedContactDetails.phoneNumber
         </dd>
         <dd class="cya-change">
             <a href="contact">
-                Change<span class="visually-hidden"> telephone number</span>
+                @Html(Messages("variations.cya.contact.change.telephone"))
             </a>
         </dd>
     </div>
 
     <div>
         <dt class="cya-question">
-            Email
+            @Messages("variations.cya.contact.email")
         </dt>
         <dd class="cya-answer">
             @v.updatedContactDetails.email
         </dd>
         <dd class="cya-change">
             <a href="contact">
-                Change<span class="visually-hidden"> email</span>
+                @Html(Messages("variations.cya.contact.change.email"))
             </a>
         </dd>
     </div>
@@ -171,14 +171,14 @@
 
 @if(path.contains("businessAddress")) {
 <h2 class="heading-medium">
-    Contact address
+    @Messages("variations.cya.contact.address")
 </h2>
 
 <dl class="govuk-check-your-answers cya-questions-short">
 
     <div>
         <dt class="cya-question">
-            Address
+            @Messages("variations.cya.contact.address.sub")
         </dt>
         <dd class="cya-answer">
             @v.updatedBusinessAddress.nonEmptyLines.head
@@ -189,7 +189,7 @@
         </dd>
         <dd class="cya-change">
             <a href="businessAddress">
-                Change<span class="visually-hidden"> home address</span>
+                @Html(Messages("variations.cya.contact.change.address"))
             </a>
         </dd>
     </div>
@@ -198,19 +198,24 @@
 }
 
 @if(path.contains("deregDate") || path.contains("reason")) {
+
+    <h2 class="heading-medium">
+        @Messages("variations.cya.deregistration")
+    </h2>
+
     <dl class="govuk-check-your-answers cya-questions-short">
 
         @v.reason.map{ reason =>
         <div>
             <dt class="cya-question">
-                Reason
+                @Messages("variations.cya.deregistration.reason")
             </dt>
             <dd class="cya-answer">
                 <p>@reason</p>
             </dd>
             <dd class="cya-change">
                 <a href="reason">
-                    Change<span class="visually-hidden"> deregistration reason</span>
+                    @Html(Messages("variations.cya.deregistration.change.reason"))
                 </a>
             </dd>
         </div>
@@ -219,14 +224,14 @@
         @v.deregDate.map{ date =>
         <div>
             <dt class="cya-question">
-                Date
+                @Messages("variations.cya.deregistration.date")
             </dt>
             <dd class="cya-answer">
                 <p>@date</p>
             </dd>
             <dd class="cya-change">
                 <a href="deregDate">
-                    Change<span class="visually-hidden"> deregistration date</span>
+                    @Html(Messages("variations.cya.deregistration.change.date"))
                 </a>
             </dd>
         </div>

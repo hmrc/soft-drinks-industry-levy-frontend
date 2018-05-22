@@ -555,7 +555,28 @@ variations.cya.importQty=Annual litres brought into the UK
 
 variations.cya.activity=Changes to business activity
 variations.cya.packsites=Packaging sites
-variations.cya.warehouses=[Warehouse sites]
+variations.cya.packsites.address=Packaging site address
+variations.cya.packsites.change=Change <span class="visuallyhidden">packaging sites</span>
+variations.cya.warehouses.change=Change <span class="visuallyhidden">warehouses</span>
+variations.cya.postcode=Postcode
+variations.cya.warehouses=Warehouse addresses
+variations.cya.contact=Contact person
+variations.cya.contact.fullName=Full name
+variations.cya.contact.change.fullName=Change<span class="visually-hidden"> full name</span>
+variations.cya.contact.jobTitle=Job title
+variations.cya.contact.change.jobTitle=Change<span class="visually-hidden"> job title</span>
+variations.cya.contact.telephone=Telephone number
+variations.cya.contact.change.telephone=Change<span class="visually-hidden"> telephone number</span>
+variations.cya.contact.email=Email
+variations.cya.contact.change.email=Change<span class="visually-hidden"> email</span>
+variations.cya.contact.address=Contact address
+variations.cya.contact.address.sub=Address
+variations.cya.contact.change.address=Change<span class="visually-hidden"> home address</span>
+variations.cya.deregistration=Deregistration
+variations.cya.deregistration.reason=Reason
+variations.cya.deregistration.change.reason=Change<span class="visually-hidden"> deregistration reason</span>
+variations.cya.deregistration.date=Date
+variations.cya.deregistration.change.date=Change<span class="visually-hidden"> deregistration date</span>
 
 variations.cya.dereg=Deregistration
 variations.cya.reason=Reason
