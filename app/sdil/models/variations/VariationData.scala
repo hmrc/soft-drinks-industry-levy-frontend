@@ -25,6 +25,7 @@ import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer}
 
+
 case class VariationData(original: RetrievedSubscription,
                          updatedBusinessAddress: Address,
                          producer: Producer,
@@ -38,7 +39,9 @@ case class VariationData(original: RetrievedSubscription,
                          updatedProductionSites: Seq[Site],
                          updatedWarehouseSites: Seq[Site],
                          updatedContactDetails: ContactDetails,
-                         previousPages: Seq[Call]
+                         previousPages: Seq[Call],
+                         reason: Option[String] = None,
+                         deregDate: Option[LocalDate] = None
                         ) {
 
   def isLiablePacker: Boolean = {
@@ -53,6 +56,23 @@ case class VariationData(original: RetrievedSubscription,
     usesCopacker.getOrElse(false) && producer.isLarge.contains(false) && !isLiable
   }
 
+  /** Material changes are updates to sites, reporting liability or
+    * contact details.
+    *
+    * A material change must by law be reported as a variation
+    * whereas a non-material change cannot be submitted as a variation.
+    */
+  def isMaterialChange: Boolean = {
+    val orig = VariationData(original)
+
+    List(
+      updatedContactDetails != orig.updatedContactDetails,
+      isLiable != orig.isLiable,
+      updatedWarehouseSites.nonEmpty,
+      updatedProductionSites.nonEmpty,
+      deregDate.isDefined
+    ).foldLeft(false)(_ || _)
+  }
 }
 
 object VariationData {

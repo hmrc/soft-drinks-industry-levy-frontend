@@ -41,14 +41,14 @@
             <div class="multiple-choice">
                 <input
                 type="radio"
-                id="@inputId"
+                id="@{inputId}"
                 name="@elements.field.name"
                 value="@value"
                     @elements.args.get('_inputClass).map{inputClass => class="@inputClass"}
                     @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
                     @field.value.filter( _ == value).map{_ => checked="checked"}/>
 
-                <label for="@inputId"
+            <label for="@{inputId}"
                     @elements.args.get('_labelClass).map{labelClass => class="@labelClass@field.value.filter( _ == value).map{_ => selected}"}>
                     @if(!labelAfter) {
                         @if(elements.args.get('_stackedLabel)) {

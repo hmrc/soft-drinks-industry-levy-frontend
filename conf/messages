@@ -19,6 +19,8 @@ sdil.hint.optional=Optional
 sdil.common.error=Error
 sdil.common.cancel=Cancel
 
+error.sdilref.invalid=Invalid SDIL Number
+
 #Address lines
 sdil.address.line1=Address line 1
 sdil.address.line2=Address line 2
@@ -454,10 +456,179 @@ sdil.variations.change-address=Change your contact address for the Soft Drinks I
 sdil.variation.copack-for-others-vol=How many litres do you contract pack for others?
 sdil.variation.imports-vol=How many litres do you import?
 
+# Uniform common messages
+delete=Remove
+add=Add
+edit=Edit
+
+# Uniform variation process
+heading.changeType=Which change do you need to make?
+changeType.option.sites=Update contact, packaging site or warehouse details
+changeType.option.activity=Change our business activity, including becoming a small producer
+changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
+
+heading.contactChangeType=What do you need to change?
+contactChangeType.hint=Select all that apply
+contactChangeType.option.Sites=Add or remove packaging sites or warehouse addresses
+contactChangeType.option.ContactPerson=Update our contact person
+contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
+
+heading.packLarge=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide?
+packLarge.help.header=What does ''package'' mean?
+packLarge.help=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
+
+heading.warehouses_add=Enter your new warehouse details
+heading.warehouses_deleteConfirmation=Are you sure you want to remove this warehouse?
+warehouses_deleteConfirmation.continue=Save and continue
+heading.packSites_add=Enter your new packaging site details
+heading.packSites_deleteConfirmation=Are you sure you want to remove this packaging site?
+packSites_deleteConfirmation.continue=Save and continue
+packLarge.inner-heading=How many litres worldwide?
+option.packLarge.inner.false=Less than 1 million litres
+option.packLarge.inner.true=1 million litres or more
+
+heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have the rights to manufacture?
+
+heading.packQty=In the next 12 months, how many litres of liable drink do you expect to package for brands you own or have the rights to manufacture at UK packaging sites you operate?
+packQty.lower=Litres in the low band
+packQty.higher=Litres in the high band
+
+heading.copacker=Do you operate any packaging sites in the UK to package liable drinks for any customers as a third party?
+
+heading.copackQty=How many litres of liable drink will you package on behalf of your customers in the next 12 months?
+
+heading.importer=Do you bring liable drinks into the UK from anywhere outside of the UK?
+
+heading.importQty=In the next 12 months, how many litres of liable drink do you expect to bring into the UK?
+importQty.lower=Litres in the low band
+importQty.higher=Litres in the high band
+
+heading.useCopacker=Do you use any third parties in the UK to package liable drinks on your behalf?
+
+heading.packSites=Tell us about the packaging sites your business operates in the UK to package liable drinks
+heading.warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+
+heading.contact=Who is your contact for the Soft Drinks Industry Levy?
+contact.fullName=Full Name
+contact.position=Job title
+contact.phoneNumber=Telephone Number
+contact.email=Email
+
+heading.updatedBusinessDetails_orgName=Organisation Name
+updatedBusinessDetails_orgName.fieldlabel=Organisation Name
+
+heading.updatedBusinessDetails_address=What address should we send correspondence to?
+
+variationDone.title=Updates Sent
+variationDone.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
+variationDone.what-happens-next=You don’t need to do anything else. We’ll update your details with the information \
+  you provided. We’ll send you a letter confirming that the changes have been made, which may take 15 working days.  
+
+
 #variation confirmation
 sdil.variations.complete.title=Updates sent
 sdil.variation.complete.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
 sdil.variation.what-happens.p1=You don’t need to do anything else. We’ll update your details with the information you provided. We’ll send you a letter confirming that the changes have been made, which may take 15 working days.
 sdil.link.back.home=Back to home
 sdil.variation.complete.p1=Your updates for the Soft Drinks Industry Levy were submitted on {0} at {1}.
+sdil.variation.anotherChange=If you need to make another change,
+sdil.variation.anotherChangeLink=go back and start again
 sdil.service-page.variations.submit.change=Make another change
+
+heading.deregister.reason=Why are you deregistering from the Soft Drinks Industry Levy? 
+deregister.reason.label=Reason for deregistering
+heading.deregDate=What date do you need to deregister from?
+error.deregDate.nopast=Deregistration date can not be in the past
+error.deregDate.nofuture=Deregistration date can not be more than 14 days in the future
+
+variations.cya.packLarge=Amount of own brand liable drink produced in the past 12 months
+variations.cya.packLarge.large=1 million litres or more
+variations.cya.packLarge.small=[Less than 1 million litres]
+variations.cya.packLarge.none=[None]
+
+variations.cya.packOpt=Do you package at your own site?
+variations.cya.packQty=Annual litres for your own brands
+variations.cya.useCopacker=Do you use third party packagers? 
+variations.cya.copackQty=Annual litres for your customers
+variations.cya.importer=Do you bring liable drinks into the UK?
+variations.cya.importQty=Annual litres brought into the UK
+
+variations.cya.activity=Changes to business activity
+variations.cya.packsites.add=Packaging sites you’re adding
+variations.cya.packsites.remove=Packaging sites you’re removing
+variations.cya.warehouses.add=Warehouses you’re adding
+variations.cya.warehouses.remove=Warehouses you’re removing
+variations.cya.packsites.address=Packaging site address
+variations.cya.packsites.change=Change <span class="visuallyhidden">packaging sites</span>
+variations.cya.warehouses.change=Change <span class="visuallyhidden">warehouses</span>
+variations.cya.postcode=Postcode
+variations.cya.warehouses=Warehouse addresses
+variations.cya.contact=Contact person
+variations.cya.contact.fullName=Full name
+variations.cya.contact.change.fullName=Change<span class="visually-hidden"> full name</span>
+variations.cya.contact.jobTitle=Job title
+variations.cya.contact.change.jobTitle=Change<span class="visually-hidden"> job title</span>
+variations.cya.contact.telephone=Telephone number
+variations.cya.contact.change.telephone=Change<span class="visually-hidden"> telephone number</span>
+variations.cya.contact.email=Email
+variations.cya.contact.change.email=Change<span class="visually-hidden"> email</span>
+variations.cya.contact.address=Contact address
+variations.cya.contact.address.sub=Address
+variations.cya.contact.change.address=Change<span class="visually-hidden"> home address</span>
+variations.cya.deregistration=Deregistration
+variations.cya.deregistration.reason=Reason
+variations.cya.deregistration.change.reason=Change<span class="visually-hidden"> deregistration reason</span>
+variations.cya.deregistration.date=Date
+variations.cya.deregistration.change.date=Change<span class="visually-hidden"> deregistration date</span>
+
+error.deregReason.tooLong=Deregistration reason must be 255 characters or less
+day=Day
+month=Month
+year=Year
+
+variations.cya.activity-change=Changes to business activity 
+variations.cya.activity-change.producer=Own brand packaged in past 12 months?
+variations.cya.activity-change.use-copacker=Use third party packagers?
+variations.cya.activity-change.use-copacker.change=Change<span class="visually-hidden"> use third party \
+  packagers</span> 
+variations.cya.activity-change.package-own=Package your own brand at your own sites?
+variations.cya.activity-change.package-own.change=Change<span class="visually-hidden"> do you package at your own site</span>
+variations.cya.activity-change.litres-own=Litres in next 12 months
+variations.cya.activity-change.litres-own.change=Change<span class="visually-hidden"> litres in next 12 months</span>
+variations.cya.activity-change.package-others=Package for customers at your own sites?
+variations.cya.activity-change.litres-others=Litres in next 12 months
+variations.cya.activity-change.litres-others.change=Change<span class="visually-hidden"> litres in next 12 months</span>
+
+variations.cya.activity-change.package-others.change=Change<span class="visually-hidden"> do you package for \
+  customers</span>
+variations.cya.activity-change.import=Do you bring liable drinks into the UK?
+variations.cya.activity-change.import.change=Change<span class="visually-hidden"> do you bring liable drinks into the\
+   UK?</span> 
+variations.cya.activity-change.litres-import=Litres in next 12 months
+variations.cya.activity-change.litres-import.change=Change<span class="visually-hidden"> litres in next 12 months</span>
+
+variations.cya.activity-change.low-band=Low band:
+variations.cya.activity-change.high-band=High band:
+variations.cya.true=Yes
+variations.cya.false=No
+
+variations.cya.dereg=Deregistration
+variations.cya.reason=Reason
+variations.cya.deregDate=Date
+
+heading.reason=Why are you deregistering from the Soft Drinks Industry Levy?
+reason.label=Reason for deregistering
+reason.hint=Enter a maximum of 255 characters
+
+heading.suggestDereg=You need to deregister
+suggestDereg.body=Based on your answers, you’re a small producer who doesn’t use a third party to package liable drinks. This means you can deregister from the Soft Drinks Industry Levy.
+suggestDereg.continue=Deregister
+
+doubt1=If you don’t think this is right you need to
+doubt2=go back and change your answers
+
+heading.removePackSites=[Remove your packing sites?]
+removePackSites.body=[Based on your answers, you’re no longer packing any soft drinks and therefore will not be operating any packing sites. In continuing all packing sites will be removed.]
+removePackSites.continue=[Remove all packing sites]
+
+heading.businessAddress=Change your contact address for the Soft Drinks Industry Levy

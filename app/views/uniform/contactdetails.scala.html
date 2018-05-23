@@ -1,0 +1,64 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helper.{inputText => _, _}
+@import play.api.Configuration
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.softdrinksindustrylevy.helpers._
+@import sdil.config.AppConfig
+@import views.html.uniform.helpers._
+@import sdil.models._
+
+@(key: String, form: Form[ContactDetails], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
+
+@views.html.main_template(Messages("sdil.variations.title"), form = Some(form)) {
+
+    @backlink(breadcrumbs)
+
+    @error_summary(form)
+
+    <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+
+    @helper.form(action = play.api.mvc.Call("post", key)) {
+        @CSRF.formField
+
+        @inputText(
+            form(s"$key.fullName"),
+            Messages("sdil.contact-details.full-name"),
+            '_maxLength -> "40"
+        )
+
+        @inputText(
+            form(s"$key.position"),
+            Messages("sdil.contact-details.position"),
+            '_maxLength -> "155"
+        )
+        @inputText(
+            form(s"$key.phoneNumber"),
+            Messages("sdil.contact-details.phone-number"),
+            '_maxLength -> "24"
+        )
+        @inputText(
+            form(s"$key.email"),
+            Messages("sdil.contact-details.email"),
+            '_maxLength -> "132"
+        )
+
+        <button class="button" type="submit" id="continue-button">
+          @Messages("continue")
+        </button>
+    }
+}

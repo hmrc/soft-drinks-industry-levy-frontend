@@ -21,11 +21,19 @@ import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
 import sdil.models.Address
 
+
 case class Site(
-                 address: UkAddress,
-                 ref: Option[String],
-                 tradingName: Option[String],
-                 closureDate: Option[LocalDate])
+                          address: UkAddress,
+                          ref: Option[String],
+                          tradingName: Option[String],
+                          closureDate: Option[LocalDate]
+                        ) {
+  def getLines: List[String] = {
+    tradingName.fold(address.lines :+ address.postCode) {
+      x => (x :: address.lines) :+ address.postCode
+    }
+  }
+}
 
 object Site {
   implicit val format: Format[Site] = Json.format[Site]
