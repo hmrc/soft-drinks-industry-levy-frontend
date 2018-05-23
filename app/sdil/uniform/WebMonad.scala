@@ -161,7 +161,6 @@ package object webmonad {
 package webmonad {
 
   sealed trait Control
-  //case class Delete(index: Int) extends Control
   case object Add extends Control
   case object Done extends Control
   case class Delete(i: Int) extends Control {
@@ -268,7 +267,6 @@ package webmonad {
               .run((id, request), (List.empty[String], data))
               .flatMap { case (_, (path, state), a) => {
                 if (state != initialData) {
-                  println(s"Saving $sessionUUID to $state")
                   save(sessionUUID, state)
                 }
                 else
@@ -304,13 +302,11 @@ package webmonad {
 
           val post = request.method.toLowerCase == "post"
           val method = request.method.toLowerCase
-          val data = st.get(id)
-          println(s"\n\n$method $id $targetId>> $data");
+          val data = st.get(id);
           {
             (method, data, targetId) match {
               // nothing in database, step in URI, render empty form
               case ("get", None, `id`) =>
-                println("nothing in database, step in URI, render empty form")
                 (
                   id.pure[List],
                   (path, st),
@@ -318,7 +314,6 @@ package webmonad {
                 )
               // something in database, step in URI, user revisting old page, render filled in form
               case ("get", Some(json), `id`) =>
-                println("something in database, step in URI, user revisting old page, render filled in form")
                 (
                   id.pure[List],
                   (path, st),
@@ -326,7 +321,6 @@ package webmonad {
                 )
               // something in database, not step in URI, pass through
               case ("get", Some(json), _) =>
-                println("something in database, not step in URI, pass through")
                 (
                   id.pure[List],
                   (id :: path, st),
@@ -334,7 +328,6 @@ package webmonad {
                 )
               case ("post", _, `id`) => form.bindFromRequest.fold(
                 formWithErrors => {
-                  println("Error in form, bouncing back")
                   (
                     id.pure[List],
                     (path, st),
@@ -342,7 +335,6 @@ package webmonad {
                   )
                 },
                 formData => {
-                  println(s"Storing $formData")
                   (
                     id.pure[List],
                     (id :: path, st + (id -> Json.toJson(formData))),
@@ -352,7 +344,6 @@ package webmonad {
               )
               // something in database, previous page submitted
               case ("post", Some(json), _) if path.contains(targetId) =>
-                println("something in database, previous page submitted")
                 (
                   id.pure[List],
                   (id :: path, st),
@@ -360,14 +351,12 @@ package webmonad {
                 )
               // something in database, posting, not step in URI nor previous page -> pass through
               case ("post", Some(json), _) =>
-                println("something in database, posting, not step in URI nor previous page -> pass through")
                 (
                   id.pure[List],
                   (id :: path, st),
                   json.as[A].asRight[Result]
                 )
               case ("post", _, _) | ("get", _, _) =>
-                println(s"Bad path $targetId, redirecting to $id")
                 (
                   id.pure[List],
                   (path, st),
@@ -410,51 +399,4 @@ package webmonad {
       if(b) wm.map{_.some} else none[A].pure[WebMonad]
 
   }
-
-  /*
-      def many[A, B: Writeable](id: String, min: Int = 0, max: Int = 1000)(singular: String => WebMonad[A])(implicit f: Format[A]): WebMonad[List[A]] = {
-
-        sealed trait Control
-        case class Delete(index: Int) extends Control
-        case object Add extends Control
-        case object Done extends Control
-
-        def listingPage: WebMonad[Control] = ???
-        val innerId = s"${id}_add"
-        def innerPage: WebMonad[A] = singular(innerId)
-
-        EitherT[WebInner, Result, A] {
-          RWST { case ((targetId, r), (path,st)) =>
-
-            implicit val request: Request[AnyContent] = r
-
-            val post = request.method.toLowerCase == "post"
-            val method = request.method.toLowerCase
-            val data = st.get(id)
-            println(s"$method $id $targetId");
-            {
-              (method, data, targetId) match {
-                case ("get", None, `id`) =>
-                case ("get", Some(json), `id`) =>
-                case ("get", Some(json), _) =>
-                case ("post", _, `id`) =>
-                case ("post", Some(json), _) if path.contains(targetId) =>
-                case ("post", Some(json), _) =>
-                case ("post", _, _) | ("get", _, _) =>
-                  println(s"Bad path $targetId, redirecting to $id")
-                  (
-                    id.pure[List],
-                    (path, st),
-                    Redirect(s"./$id"
-                  ).asLeft[A]
-              }
-            }.pure[Future]
-          }
-        }
-      }
-
-
-    }
-  */
-
 }
