@@ -245,41 +245,6 @@ trait SdilWMController extends WebMonadController
     }(wm)
   }
 
-  // private def httpGetBase[A](cacheId: Option[String], uri: String)
-  //   (implicit reads: HttpReads[A], formats: Format[A]): WebMonad[A] =
-  //   webMonad{ (id, request, path, db) =>
-  //     implicit val hc: HeaderCarrier =
-  //       HeaderCarrierConverter.fromHeadersAndSession(
-  //         request.headers,
-  //         Some(request.session)
-  //       )
-
-  //     val cached = for {
-  //       cid <- cacheId
-  //       record <- db.get(cid)
-  //     } yield (none[String], path, db, record.as[A].asRight[Result])
-
-  //     cached.map{_.pure[Future]}.getOrElse {
-  //       val record = httpClient.GET[A](uri)
-        
-  //       record.map{r =>
-  //         val newDb = cacheId.map {
-  //           cid => db + (cid -> Json.toJson(r))
-  //         } getOrElse db
-  //         (none[String], path, newDb, r.asRight[Result])
-  //       }
-  //     }
-      
-  //   }
-
-  // def httpGet[A](cacheId: String, uri: String)
-  //   (implicit reads: HttpReads[A], formats: Format[A]): WebMonad[A] =
-  //   httpGetBase(cacheId.some, uri)
-  // def httpGetNoCache[A](uri: String)
-  //   (implicit reads: HttpReads[A], formats: Format[A]): WebMonad[A] =
-  //   httpGetBase(none[String], uri)
-
-
   // TODO: Prevent this ugliness by making the mapping the centre of the
   // webmonad form construction
   private def constraintMap[T](

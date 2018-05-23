@@ -40,8 +40,6 @@ import views.html.uniform
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
-
 class VariationsController(
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
@@ -159,8 +157,7 @@ class VariationsController(
     reason    <- askBigText("reason", constraints = List(("error.deregReason.tooLong", _.length <= 255)))
     deregDate <- ask(dateMapping
       .verifying("error.deregDate.nopast",  _ >= LocalDate.now)
-      .verifying("error.deregDate.nofuture",_ <  LocalDate.now.plusDays(15))
-      , "deregDate")
+      .verifying("error.deregDate.nofuture",_ <  LocalDate.now.plusDays(15)), "deregDate")
   } yield data.copy(
     reason = reason.some,
     deregDate = deregDate.some
@@ -189,58 +186,14 @@ class VariationsController(
     exit
   }
 
-  def index(id: String): Action[AnyContent] = real(id)
-
-  def real(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+  def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     val persistence = SaveForLaterPersistence("variations", sdilRef, regdata.shortLiveCache)
-    //val persistence = SessionCachePersistence("variation", keystore)
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
         runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
       case None => NotFound("").pure[Future]
     }
-  }
-
-  val junkPersistence = new JunkPersistence
-
-  def development(id: String): Action[AnyContent] = Action.async { implicit request =>
-    val sdilRef = "XKSDIL000000000"
-    val s = RetrievedSubscription(
-      "0100000000",
-      "Adam's Dyes (Also Soft Drinks)",
-      UkAddress(List("86 Amory's Holt Way", "Ipswich"),"IP12 5ZT"),
-      RetrievedActivity(false,true,true,true,false),
-      LocalDate.now,
-      List(
-        Site(UkAddress(List("40 Sudbury Mews", "Torquay"),"TQ53 6GW"),Some("92"),None,None),
-        Site(UkAddress(List("11B Welling Close", "North London"),"N93 9II"),Some("95"),None,None)
-      ),
-      List(
-        Site(UkAddress(List("33 Acre Grove", "Falkirk"),"FK38 8TP"),Some("61"),Some("Illogistics"),None)
-      ),
-      Contact(
-        Some("Avery Roche"),
-        Some("Enterprise Infrastructure Engineer"),
-        "01024 670607","Charlotte.Connolly@gmail.co.uk"
-      )
-    )
-
-    runInner(request)(program(s, sdilRef))(id)(junkPersistence.dataGet,junkPersistence.dataPut)
-  }
-
-  def index2(id: String): Action[AnyContent] = Action.async { implicit request =>
-
-    val persistence = SessionCachePersistence("test", keystore)
-
-    def testProgram: WebMonad[Result] = for {
-      packSites <- manyT("packSites", ask(packagingSiteMapping,_))
-      exit      <- journeyEnd("variationDone")
-    } yield {
-      exit
-    }
-
-    runInner(request)(testProgram)(id)(persistence.dataGet,persistence.dataPut)
   }
 
 }
