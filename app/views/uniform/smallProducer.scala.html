@@ -14,36 +14,56 @@
  * limitations under the License.
  *@
 
-@import helper.{inputRadioGroup => _, _}
+@import helper.{inputText => _,_}
 @import play.api.Configuration
+@import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
-@import views.html.helper.options
 @import views.html.uniform.helpers._
+@import sdil.models.SmallProducer
 
-@(key: String, form: Form[String], possibleValues: List[String], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[SmallProducer], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
+
 @views.html.main_template(Messages("sdil.variations.title"), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
     @error_summary(form)
+
         <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+
         @helper.form(action = play.api.mvc.Call("post", key)) {
             @CSRF.formField
-        <div class = "form-group">
-            @inputRadioGroup(
-                form(key),
-                possibleValues.map{v => (v, Messages(key + ".option." + v.toLowerCase))},
-                '_labelClass -> "block-label",
-                '_labelAfter -> true,
-                '_groupClass -> "form-field-group"
-            )
+
+            <div class="form-group form-litres">
+
+                @inputText(
+                    form(s"$key.sdilRef"),
+                    Messages("sdil.sdilRef"),
+                    '_inputType -> "text",
+                    '_inputClass -> "input--no-spinner"
+                )
+
+                @inputText(
+                    form(s"$key.lower"),
+                    Messages("sdil.litreage.lowRate"),
+                    '_inputType -> "text",
+                    '_inputClass -> "input--no-spinner volume"
+                )
+
+                @inputText(
+                    form(s"$key.higher"),
+                    Messages("sdil.litreage.highRate"),
+                    '_inputType -> "text",
+                    '_inputClass -> "input--no-spinner volume"
+                )
+            </div>
 
             <button class="button" type="submit" id="continue-button">
-            @Messages("sdil.common.save-continue")
+                @Messages("sdil.common.save-continue")
             </button>
-        </div>
+        }
 
-    }
+
 
 }

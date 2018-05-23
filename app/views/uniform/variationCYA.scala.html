@@ -20,40 +20,37 @@
 @import sdil.config.AppConfig
 @import views.html.helper.options
 @import ltbs.play.scaffold.webmonad._
-@import ltbs.play._
 @import views.html.uniform.helpers._
+@import ltbs.play._
+@import sdil.models.variations._
 
-@(key: String, form: Form[String], items: List[Html], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[Unit], breadcrumbs: List[String], variationData: VariationData)(implicit messages: Messages, request: Request[_], config: AppConfig)
 @views.html.main_template(Messages("sdil.variations.title"), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
-    @error_summary(form)
-
     <h1 class="heading-large">@Messages(s"heading.$key")</h1>
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
-        <div class="form-group">
-        <table>
-            @for((item, id) <- items.zipWithIndex) {
-                <tr>
-                    <td>
-                        @item
-                    </td>
-                    <td>
-			                  <button name="@key" value="Delete.@id" class="link-button">@messages.first(s"$key.delete", "delete")()</button>
-                    </td>
-                </tr>
-                }
-                <tr>
-			              <td><button name="@key" value="Add" class="link-button">@messages.first(s"$key.add", "add")()</button></td>
-                    <td />
-                </tr>
-        </table>
-        </div>
-        <button name="@key" value="Done">
-            @Messages("sdil.common.save-continue")
-        </button>
+
+        <h2 class="heading-medium">Changes to business activity</h2>
+        <dl class="govuk-check-your-answers cya-questions-short">
+            <div>
+                <dt class="cya-question">Business name</dt><dd class="cya-answer">ABC Drinks LTD</dd><dd class="cya-change"></dd>
+            </div>
+
+            <div>
+                <dt class="cya-question">Business address</dt><dd class="cya-answer">
+                    10 Kings Road<br>
+                    Ipswich<br>
+                    Suffolk<br>
+                    ABC 123
+                </dd>
+                <dd class="cya-change"></dd>
+            </div>
+        </dl>
+
+        <button name="@key"  value="@key" formmethod="post">@Messages("sdil.declaration.continue")</button>
     }
 
 }

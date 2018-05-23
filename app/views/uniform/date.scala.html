@@ -20,8 +20,9 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 @import views.html.uniform.helpers._
+@import java.time.LocalDate
 
-@(key: String, form: Form[String], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[LocalDate], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
 
 @views.html.main_template(Messages("sdil.variations.title"), form = Some(form)) {
 
@@ -29,29 +30,38 @@
 
     @error_summary(form)
 
-   <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+    <h1 class="heading-large">@Messages(s"heading.$key")</h1>
 
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
 
         <div class="form-group @if(form.hasErrors) {form-group-error}">
-            <label for="@key">
-                <span class="form-label">@Messages(s"${key}.label")</span>
-                @form.errors.map { error =>
-                    <span class="error-message" role="tooltip" data-journey="search-page:error:@key">
-                    @Messages(error.message, error.args: _*)
-                    </span>
-                }
-            </label>
-            <textarea class="form-control form-control-3-4 @if(form.hasErrors) {form-control-error}"
-                      id="@key"
-                      name="@key"
-                      rows="5">@{form(key).value.getOrElse("")}</textarea>
+            <fieldset>
+                <legend>
+                    <span class="form-hint">For example, 31 3 1980</span>
+                </legend>
+                <div class="form-date">
+
+                    @for(field <- List("day", "month", "year")) {
+                      <div class="form-group form-group-@{field}">
+                        <label class="form-label" for="@{key}.@{field}">@Messages(field)</label>
+                        <input class="form-control @if(form(s"$key.$field").hasErrors) {form-control-error}"
+                               id="@{key}.@{field}"
+                               name="@{key}.@{field}"
+                               value="@{form(s"$key.$field").value}"
+                               type="number"
+                               pattern="[0-9]*">
+                      </div>
+                    }
+
+                </div>
+            </fieldset>
         </div>
+
         <button class="button" type="submit" id="continue-button">
-	  @Messages("sdil.common.save-continue")
-            </button>
-        }
+       	  @Messages("sdil.common.save-continue")
+        </button>
+   }
 
 
 }

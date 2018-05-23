@@ -578,6 +578,11 @@ variations.cya.deregistration.change.reason=Change<span class="visually-hidden">
 variations.cya.deregistration.date=Date
 variations.cya.deregistration.change.date=Change<span class="visually-hidden"> deregistration date</span>
 
+error.deregReason.tooLong=Deregistration reason must be 255 characters or less
+day=Day
+month=Month
+year=Year
+
 variations.cya.activity-change=Changes to business activity 
 variations.cya.activity-change.producer=Own brand packaged in past 12 months?
 variations.cya.activity-change.use-copacker=Use third party packagers?
