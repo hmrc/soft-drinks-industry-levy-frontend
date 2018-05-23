@@ -27,7 +27,7 @@ import sdil.controllers.test.TestingController
 import sdil.controllers.variation._
 import sdil.controllers.{VariationsController => UniformVariationsController, _}
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
 
 trait RoutesWiring extends CommonWiring {
@@ -36,6 +36,7 @@ trait RoutesWiring extends CommonWiring {
   val httpClient: HttpClient
   val authConnector: AuthConnector
   val cache: RegistrationFormDataCache
+  val shortLivedCaching: ShortLivedHttpCaching
   val sdilConnector: SoftDrinksIndustryLevyConnector
   val testConnector: TestConnector
   val gaConnector: GaConnector

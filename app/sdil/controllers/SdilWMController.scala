@@ -26,6 +26,7 @@ import ltbs.play.scaffold._
 import ltbs.play.scaffold.webmonad._
 import play.api.data.Forms._
 import play.api.data._
+import play.api.data.format.Formatter
 import play.api.data.validation._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -38,7 +39,6 @@ import views.html.uniform
 
 import scala.concurrent._
 import scala.util.Try
-
 import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
 import scala.util.Try
@@ -128,7 +128,11 @@ trait SdilWMController extends WebMonadController
       def reads(v: JsValue) = JsSuccess(())
     }
 
-    val unitMapping: Mapping[Unit] = text.transform(_ => (), _ => "")
+    val unitMapping: Mapping[Unit] = Forms.of[Unit](new Formatter[Unit] {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Unit] = Right(())
+
+      override def unbind(key: String, value: Unit): Map[String, String] = Map.empty
+    })
 
     formPage(id)(unitMapping, none[Unit]){  (path, form, r) =>
       implicit val request: Request[AnyContent] = r

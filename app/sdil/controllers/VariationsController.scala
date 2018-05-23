@@ -18,6 +18,7 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import cats.data.EitherT
 import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold._
@@ -34,7 +35,7 @@ import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.variations._
 import sdil.uniform.{JunkPersistence, SaveForLaterPersistence, SessionCachePersistence}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 
@@ -45,7 +46,7 @@ class VariationsController(
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   keystore: SessionCache,
-  regdata: RegistrationFormDataCache // Bloody DI
+  cache: ShortLivedHttpCaching // Bloody DI
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
@@ -55,7 +56,7 @@ class VariationsController(
   object ChangeType extends Enum[ChangeType] {
     val values = findValues
     case object Sites extends ChangeType
-    case object Activity extends ChangeType
+    //TODO case object Activity extends ChangeType
     case object Deregister extends ChangeType
   }
 
@@ -172,8 +173,9 @@ class VariationsController(
     changeType <- askEnum("changeType", ChangeType)
     base = VariationData(subscription)
     variation  <- changeType match {
-      case ChangeType.Sites      => contactUpdate(base)
-      case ChangeType.Activity   => activityUpdate(base)
+      case ChangeType.Sites if config.uniformDeregOnly => fatFormRedirect
+      case ChangeType.Sites => contactUpdate(base)
+//TODO      case ChangeType.Activity   => activityUpdate(base)
       case ChangeType.Deregister => deregisterUpdate(base)
     }
     _    <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
@@ -184,6 +186,10 @@ class VariationsController(
     _    <- clear
   } yield {
     exit
+  }
+
+  private def fatFormRedirect: WebMonad[VariationData] = EitherT.fromEither[WebInner] {
+    Redirect(sdil.controllers.variation.routes.VariationsController.start()).asLeft[VariationData]
   }
 
   def closedWarehouseSites(variation: VariationData): List[Site] = {
@@ -204,7 +210,7 @@ class VariationsController(
 
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
-    val persistence = SaveForLaterPersistence("variations", sdilRef, regdata.shortLiveCache)
+    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
         runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
