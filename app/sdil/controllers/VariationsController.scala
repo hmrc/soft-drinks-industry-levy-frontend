@@ -178,12 +178,28 @@ class VariationsController(
     }
     _    <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
     path <- getPath
-    _    <- tell("checkyouranswers", uniform.fragments.variationsCYA(variation, path))
+    _    <- tell("checkyouranswers", uniform.fragments.variationsCYA(variation, closedPackagingSites(variation), closedWarehouseSites(variation), path))
     _    <- execute{sdilConnector.submitVariation(Convert(variation), sdilRef)}
     exit <- journeyEnd("variationDone")
     _    <- clear
   } yield {
     exit
+  }
+
+  def closedWarehouseSites(variation: VariationData): List[Site] = {
+    closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
+  }
+
+  def closedPackagingSites(variation: VariationData): List[Site] = {
+    closedSites(variation.original.productionSites, Convert(variation).closeSites.map(x => x.siteReference))
+  }
+
+  private def closedSites(sites: List[Site], closedSites: List[String]): List[Site] = {
+    sites.filter { x =>
+      x.closureDate.fold(true) {
+        _.isAfter(LocalDate.now)
+      }
+    }.filter(x => closedSites.contains(x.ref.getOrElse("")))
   }
 
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
