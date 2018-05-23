@@ -14,77 +14,127 @@
  * limitations under the License.
  *@
 
-@(v: sdil.models.variations.VariationData, path: List[String])(implicit m: Messages)
+@import sdil.models.backend.Site
+@(v: sdil.models.variations.VariationData, closedPackagingSites: List[Site], closedWarehouses: List[Site], path: List[String])(implicit m: Messages)
 
 @formatLitres(value: BigDecimal) = @{
     java.text.NumberFormat.getNumberInstance.format(value)
 }
 
 @if(path.contains("packSites") && v.updatedProductionSites.nonEmpty) {
-<table class="check-your-answers">
-    <caption class="heading-medium">@Messages("variations.cya.packsites")</caption>
 
-    <thead>
-        <tr>
-            <th>
-                <h2 class="heading-small">
+
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.packsites.add")</caption>
+
+        <thead>
+            <tr>
+                <th>
+                    <h2 class="heading-small">
                     @Messages("variations.cya.packsites.address")
-                </h2>
-            </th>
-            <th>
-                <h2 class="heading-small">
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
                     @Messages("variations.cya.postcode")
-                </h2>
-            </th>
-            <th>
-            </th>
-        </tr>
-    </thead>
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
 
-    <tbody>
+        <tbody>
         @for(site <- v.updatedProductionSites) {
-        <tr>
-            <td>
-                <details role="group">
-                    <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@site.address.lines.head</span></summary>
-                    @for(line <- site.address.lines.tail) {
-                       <div aria-hidden="true">@line</div>
-                    }
-                    <div class="postal-code">@site.address.postCode</div>
-                </details>
-            </td>
-            <td>@site.address.postCode</td>
-            <td class="change-answer">
-                <a href="packSites">
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@site.address.lines.head</span></summary>
+                        @for(line <- site.address.lines.tail) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                <td class="change-answer">
+                    <a href="packSites">
                     @Html(Messages("variations.cya.packsites.change"))
-                </a>
-            </td>
-        </tr>
+                    </a>
+                </td>
+            </tr>
         }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+}
+
+@if(path.contains("packSites") && closedPackagingSites.nonEmpty) {
+
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.packsites.remove")</caption>
+        <thead>
+            <tr>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.packsites.address")
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.postcode")
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(site <- closedPackagingSites) {
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@site.address.lines.head</span></summary>
+                        @for(line <- site.address.lines.tail) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                <td class="change-answer">
+                    <a href="packSites">
+                    @Html(Messages("variations.cya.packsites.change"))
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 }
 
 @if(path.contains("warehouses") && v.updatedWarehouseSites.nonEmpty) {
   <table class="check-your-answers">
-    <caption class="heading-medium">Warehouses</caption>
+    <caption class="heading-medium">@Messages("variations.cya.warehouses.add")</caption>
 
-    <thead>
-        <tr>
-            <th>
-                <h2 class="heading-small">
-                    @Messages("variations.cya.warehouses")
-                </h2>
-            </th>
-            <th>
-                <h2 class="heading-small">
-                    @Messages("variations.cya.postcode")
-                </h2>
-            </th>
-            <th>
-            </th>
-        </tr>
-    </thead>
+      <thead>
+          <tr>
+              <th>
+                  <h2 class="heading-small">
+                  @Messages("variations.cya.warehouses")
+                  </h2>
+              </th>
+              <th>
+                  <h2 class="heading-small">
+                  @Messages("variations.cya.postcode")
+                  </h2>
+              </th>
+              <th>
+              </th>
+          </tr>
+      </thead>
 
     <tbody>
       @for(site <- v.updatedWarehouseSites) {
@@ -109,6 +159,51 @@
     </tbody>
   </table>
 }
+
+@if(path.contains("warehouses") && closedWarehouses.nonEmpty) {
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.warehouses.remove")</caption>
+        <thead>
+            <tr>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.warehouses")
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.postcode")
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(site <- closedWarehouses) {
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@site.address.lines.head</span></summary>
+                        @for(line <- site.address.lines.tail) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                <td class="change-answer">
+                    <a href="warehouses">
+                    @Html(Messages("variations.cya.warehouses.change"))
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
 
 @if(path.contains("packLarge")) {
     <h2 class="heading-medium">

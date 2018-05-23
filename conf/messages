@@ -554,7 +554,10 @@ variations.cya.importer=Do you bring liable drinks into the UK?
 variations.cya.importQty=Annual litres brought into the UK
 
 variations.cya.activity=Changes to business activity
-variations.cya.packsites=Packaging sites
+variations.cya.packsites.add=Packaging sites you’re adding
+variations.cya.packsites.remove=Packaging sites you’re removing
+variations.cya.warehouses.add=Warehouses you’re adding
+variations.cya.warehouses.remove=Warehouses you’re removing
 variations.cya.packsites.address=Packaging site address
 variations.cya.packsites.change=Change <span class="visuallyhidden">packaging sites</span>
 variations.cya.warehouses.change=Change <span class="visuallyhidden">warehouses</span>
