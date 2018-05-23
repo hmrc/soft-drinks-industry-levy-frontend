@@ -38,7 +38,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
-
+import StartDateController._
 import scala.concurrent.{ExecutionContext, Future}
 
 class VariationsController(
@@ -155,8 +155,8 @@ class VariationsController(
   private def deregisterUpdate(
     data: VariationData
   ): WebMonad[VariationData] = for {
-    reason    <- askBigText("reason", constraints = List(("error.deregReason.tooLong", _.length <= 255)))
-    deregDate <- ask(dateMapping
+    reason    <- askBigText("reason", constraints = List(("error.deregReason.tooLong", _.length <= 255)), errorOnEmpty = "error.reason.empty")
+    deregDate <- ask(startDate
       .verifying("error.deregDate.nopast",  _ >= LocalDate.now)
       .verifying("error.deregDate.nofuture",_ <  LocalDate.now.plusDays(15)), "deregDate")
   } yield data.copy(

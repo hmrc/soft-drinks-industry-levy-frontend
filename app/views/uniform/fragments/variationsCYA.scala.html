@@ -15,6 +15,7 @@
  *@
 
 @import sdil.models.backend.Site
+@import java.time.format.DateTimeFormatter
 @(v: sdil.models.variations.VariationData, closedPackagingSites: List[Site], closedWarehouses: List[Site], path: List[String])(implicit m: Messages)
 
 @formatLitres(value: BigDecimal) = @{
@@ -491,7 +492,7 @@
                 @Messages("variations.cya.deregistration.date")
             </dt>
             <dd class="cya-answer">
-                <p>@date</p>
+            <p>@{date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}</p>
             </dd>
             <dd class="cya-change">
                 <a href="deregDate">
