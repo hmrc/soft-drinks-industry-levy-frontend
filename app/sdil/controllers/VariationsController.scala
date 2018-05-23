@@ -120,12 +120,10 @@ class VariationsController(
       if (in.isEmpty) None else Litreage(in._1, in._2).some
 
     def askPackSites(existingSites: List[Site], packs: Boolean): WebMonad[List[Site]] =
-      (existingSites, packs) match {
-        case (_, true)    => manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = existingSites)
-        case (Nil, false) => List.empty[Site].pure[WebMonad]
-        case (_, false)   => tell("removePackSites", uniform.confirmOrGoBackTo("removePackSites", "packOpt")) >>
-            List.empty[Site].pure[WebMonad]
-      }
+      manyT("packSites",
+            ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
+            default = existingSites
+      ) emptyUnless (packs)
 
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
@@ -140,10 +138,7 @@ class VariationsController(
                          else for {
                            packSites       <- askPackSites(data.updatedProductionSites.toList, !(packQty, copacks).isEmpty)
                            warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList)
-                           businessAddress <- ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
-                           contact         <- ask(contactDetailsMapping, "contact", data.updatedContactDetails)
                          } yield data.copy (
-                           updatedBusinessAddress = businessAddress,
                            producer               = Producer(packLarge.isDefined, packLarge),
                            usesCopacker           = useCopacker.some.flatten,
                            packageOwn             = packLarge.isDefined.some,
@@ -153,8 +148,7 @@ class VariationsController(
                            imports                = !imports.isEmpty,
                            importsVol             = longTupToLitreage(imports),
                            updatedProductionSites = packSites,
-                           updatedWarehouseSites  = warehouses,
-                           updatedContactDetails  = contact
+                           updatedWarehouseSites  = warehouses
                          )
     } yield variation
   }
