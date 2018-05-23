@@ -31,6 +31,8 @@ trait AppConfig {
   val sdilHomePage: String
   val appName: String
   def variationsEnabled: Boolean
+  def uniformVariationsEnabled: Boolean
+  def uniformDeregOnly: Boolean
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, environment: Environment) extends AppConfig with ServicesConfig {
@@ -58,4 +60,7 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
 
   override val variationsEnabled: Boolean = getBoolean("variations.enabled")
+
+  override val uniformVariationsEnabled: Boolean = getBoolean("uniform.enabled")
+  override val uniformDeregOnly: Boolean = getBoolean("uniform.deregOnly")
 }

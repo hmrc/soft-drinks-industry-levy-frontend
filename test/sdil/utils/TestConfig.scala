@@ -29,4 +29,6 @@ class TestConfig extends AppConfig {
   override val appName: String = "soft-drinks-industry-levy-frontend"
   override val signoutUrl: String = "http://localhost:9025/gg/sign-out"
   override val variationsEnabled = true
+  override def uniformVariationsEnabled: Boolean = true
+  override def uniformDeregOnly: Boolean = true
 }

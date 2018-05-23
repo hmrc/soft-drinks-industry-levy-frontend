@@ -248,7 +248,7 @@ package webmonad {
       save: (String, Map[String, JsValue]) => Future[Unit]
     ): Future[Result] = {
         request.session.get("uuid").fold {
-          Redirect(".").withSession {
+          Redirect(id).withSession {
             request.session + ("uuid" -> java.util.UUID.randomUUID.toString)
           }.pure[Future]
         } { sessionUUID =>
