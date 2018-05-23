@@ -519,11 +519,11 @@ updatedBusinessDetails_orgName.fieldlabel=Organisation Name
 
 heading.updatedBusinessDetails_address=What address should we send correspondence to?
 
-variationDone.title=Updates Sent
+variationDone.title=Updates have been sent
 variationDone.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
 variationDone.what-happens-next=You don’t need to do anything else. We’ll update your details with the information \
   you provided. We’ll send you a letter confirming that the changes have been made, which may take 15 working days.  
-
+variationDone.your.updates=Your updates were sent on {0} at {1}.
 
 #variation confirmation
 sdil.variations.complete.title=Updates sent
@@ -538,8 +538,9 @@ sdil.service-page.variations.submit.change=Make another change
 heading.deregister.reason=Why are you deregistering from the Soft Drinks Industry Levy? 
 deregister.reason.label=Reason for deregistering
 heading.deregDate=What date do you need to deregister from?
-error.deregDate.nopast=Deregistration date can not be in the past
-error.deregDate.nofuture=Deregistration date can not be more than 14 days in the future
+error.deregDate.nopast=Deregistration date cannot be in the past
+error.deregDate.nofuture=Deregistration date cannot be more than 14 days in the future
+error.reason.empty=Enter a reason for deregistration
 
 variations.cya.packLarge=Amount of own brand liable drink produced in the past 12 months
 variations.cya.packLarge.large=1 million litres or more

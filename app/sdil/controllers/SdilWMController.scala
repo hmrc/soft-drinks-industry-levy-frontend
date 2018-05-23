@@ -144,12 +144,15 @@ trait SdilWMController extends WebMonadController
   protected def askBigText(
     id: String,
     default: Option[String] = None,
-    constraints: List[(String, String => Boolean)] = Nil
-  ): WebMonad[String] =
-    formPage(id)(nonEmptyText.verifying(constraintMap(constraints) :_*), default) { (path, b, r) =>
+    constraints: List[(String, String => Boolean)] = Nil,
+    errorOnEmpty: String = "error.required"
+  ): WebMonad[String] = {
+    val mapping = text.verifying(errorOnEmpty, _.nonEmpty).verifying(constraintMap(constraints) :_*)
+    formPage(id)(mapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
       uniform.bigtext(id, b, path)
     }
+  }
 
   val dateMapping: Mapping[LocalDate] = tuple(
     "day" -> number(1,31),
@@ -163,7 +166,6 @@ trait SdilWMController extends WebMonadController
       {case (d, m, y) => LocalDate.of(y, m, d)},
       d => (d.getDayOfMonth, d.getMonthValue, d.getYear)
     )
-
 
   protected def journeyEnd(id: String): WebMonad[Result] =
     webMonad{ (rid, request, path, db) =>
