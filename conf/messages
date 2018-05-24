@@ -488,13 +488,13 @@ packLarge.inner-heading=How many litres worldwide?
 option.packLarge.inner.false=Less than 1 million litres
 option.packLarge.inner.true=1 million litres or more
 
-heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have the rights to manufacture?
+heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
 
 heading.packQty=In the next 12 months, how many litres of liable drink do you expect to package for brands you own or have the rights to manufacture at UK packaging sites you operate?
 packQty.lower=Litres in the low band
 packQty.higher=Litres in the high band
 
-heading.copacker=Do you operate any packaging sites in the UK to package liable drinks as a third party or contact packer?
+heading.copacker=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
 
 heading.copackQty=How many litres of liable drink will you package on behalf of your customers in the next 12 months?
 

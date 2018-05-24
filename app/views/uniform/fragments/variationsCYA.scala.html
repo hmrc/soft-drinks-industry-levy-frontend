@@ -236,7 +236,7 @@
                 </a>
             </dd>
         </div>
-        @if(v.producer.isProducer) {
+        @if(v.packageOwn.getOrElse(false)) {
 
             <div>
                 <dt class="cya-question">
@@ -276,7 +276,7 @@
             </div>
         }
 
-        @if(v.producer.isProducer) {
+        @if(v.usesCopacker.getOrElse(false)) {
 
             <div>
                 <dt class="cya-question">
