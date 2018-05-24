@@ -21,10 +21,11 @@
 @import sdil.config.AppConfig
 @import views.html.uniform.helpers._
 @import sdil.models.Address
+@import ltbs.play._
 
 @(key: String, form: Form[Address], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
 
-@views.html.main_template(Messages("sdil.variations.title"), form = Some(form)) {
+@views.html.main_template(messages.first(s"heading.$key", "sdil.variations.title")(), form = Some(form)) {
 
     @backlink(breadcrumbs)
 

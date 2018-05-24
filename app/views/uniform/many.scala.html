@@ -22,9 +22,10 @@
 @import ltbs.play.scaffold.webmonad._
 @import ltbs.play._
 @import views.html.uniform.helpers._
+@import ltbs.play._
 
 @(key: String, form: Form[String], items: List[Html], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
-@views.html.main_template(Messages("sdil.variations.title"), form = Some(form)) {
+@views.html.main_template(messages.first(s"heading.$key", "sdil.variations.title")(), form = Some(form)) {
 
     @backlink(breadcrumbs)
 

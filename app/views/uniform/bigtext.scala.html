@@ -20,10 +20,11 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 @import views.html.uniform.helpers._
+@import ltbs.play._
 
 @(key: String, form: Form[String], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
 
-@views.html.main_template(Messages("sdil.variations.title"), form = Some(form)) {
+@views.html.main_template(messages.first(s"heading.$key", "sdil.variations.title")(), form = Some(form)) {
 
     @backlink(breadcrumbs)
 

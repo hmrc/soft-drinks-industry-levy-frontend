@@ -33,6 +33,9 @@ import sdil.uniform.SessionCachePersistence
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
+import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents._
+
 
 import scala.concurrent.ExecutionContext
 
@@ -44,7 +47,7 @@ class ReturnsController (
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController with GdsComponents with SdilComponents {
+) extends SdilWMController with FrontendController {
 
   implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
 

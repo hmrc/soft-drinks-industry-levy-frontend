@@ -40,6 +40,8 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 import StartDateController._
 import scala.concurrent.{ExecutionContext, Future}
+import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents._
 
 class VariationsController(
   val messagesApi: MessagesApi,
@@ -50,7 +52,7 @@ class VariationsController(
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController with GdsComponents with SdilComponents {
+) extends SdilWMController with FrontendController {
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
