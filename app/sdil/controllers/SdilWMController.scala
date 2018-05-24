@@ -32,6 +32,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
 import sdil.config.AppConfig
+import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -42,9 +43,10 @@ import scala.util.Try
 import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
 import scala.util.Try
+import ltbs.play.scaffold.GdsComponents._
 
 trait SdilWMController extends WebMonadController
-    with FrontendController with GdsComponents
+    with FrontendController
 {
 
   implicit def config: AppConfig
@@ -56,14 +58,14 @@ trait SdilWMController extends WebMonadController
   ): WebMonad[E] = {
     val possValues: List[String] = e.values.toList.map{_.toString}
     formPage(id)(
-      nonEmptyText.verifying(possValues.contains(_)),
+//      nonEmptyText.verifying(possValues.contains(_)),
+      oneOf(possValues, "error.radio-form.choose-option"),
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
       uniform.radiolist(id, b, possValues, path)
     }.imap(e.withName)(_.toString)
   }
-
 
   protected def askEnumSet[E <: EnumEntry](
     id: String,
@@ -83,19 +85,6 @@ trait SdilWMController extends WebMonadController
       uniform.ask(id, form, innerHtml, path)
     }.imap(_.map{e.withName}.toSet)(_.map(_.toString).toList)
   }
-
-  val litreage: Mapping[Long] = text
-    .verifying("error.litreage.required", _.nonEmpty)
-    .transform[String](_.replaceAll(",", ""), _.toString)
-    .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
-    .transform[BigDecimal](BigDecimal.apply, _.toString)
-    .verifying("error.litreage.numeric", _.isWhole)
-    .verifying("error.litreage.max", _ <= 9999999999999L)
-    .verifying("error.litreage.min", _ >= 0)
-    .transform[Long](_.toLong, BigDecimal.apply)
-
-  val litreagePair: Mapping[(Long,Long)] =
-    tuple("lower" -> litreage, "higher" -> litreage)
 
   implicit class RichMapping[A](mapping: Mapping[A]) {
     def nonEmpty(errorMsg: String)(implicit m: Monoid[A], eq: Eq[A]): Mapping[A] =
@@ -154,19 +143,6 @@ trait SdilWMController extends WebMonadController
     }
   }
 
-  val dateMapping: Mapping[LocalDate] = tuple(
-    "day" -> number(1,31),
-    "month" -> number(1,12),
-    "year" -> number
-  ).verifying(
-    "error.date.invalid", _ match {
-      case (d, m, y) => Try(LocalDate.of(y, m, d)).isSuccess
-    })
-    .transform(
-      {case (d, m, y) => LocalDate.of(y, m, d)},
-      d => (d.getDayOfMonth, d.getMonthValue, d.getYear)
-    )
-
   protected def journeyEnd(id: String): WebMonad[Result] =
     webMonad{ (rid, request, path, db) =>
       implicit val r = request
@@ -175,51 +151,6 @@ trait SdilWMController extends WebMonadController
         (id.some, path, db, Ok(uniform.journeyEnd(id, path)).asRight[Result])
       }
     }
-
-
-  // TODO these were lifted from FormHelpers which has differing implementations of other mappings - resolve
-  lazy val tradingNameMapping: Mapping[String] = {
-    text.transform[String](_.trim, s => s).verifying(optionalTradingNameConstraint)
-  }
-
-  private def optionalTradingNameConstraint: Constraint[String] = Constraint {
-    case b if b.length > 160 => Invalid(s"error.tradingName.over")
-    case a if !a.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid(s"error.tradingName.invalid")
-    case _ => Valid
-  }
-
-  lazy val warehouseSiteMapping: Mapping[Site] = mapping(
-    "address" -> ukAddressMapping,
-    "tradingName" -> optional(tradingNameMapping)
-  ){(a,b) => Site.apply(a, none, b, none)}(Site.unapply(_).map{ case (address, refOpt, tradingName, _) => (address, tradingName) } )
-
-  lazy val packagingSiteMapping: Mapping[Site] = mapping(
-    "address" -> ukAddressMapping
-  ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{ case (address, refOpt, _, _) =>
-    address } )
-
-  protected val addressMapping: play.api.data.Mapping[Address] = mapping(
-    "line1" -> nonEmptyText,
-    "line2" -> text,
-    "line3" -> text,
-    "line4" -> text,
-    "postcode" -> nonEmptyText
-  )(Address.apply)(Address.unapply)
-
-  private val ukAddressMapping: Mapping[UkAddress] =
-    addressMapping.transform(UkAddress.fromAddress, Address.fromUkAddress)
-
-  val contactDetailsMapping: Mapping[ContactDetails] = mapping(
-    "fullName" -> nonEmptyText,
-    "position" -> nonEmptyText,
-    "phoneNumber" -> nonEmptyText,
-    "email" -> nonEmptyText
-  )(ContactDetails.apply)(ContactDetails.unapply)
-
-  implicit val longTupleFormatter: Format[(Long, Long)] = (
-    (JsPath \ "lower").format[Long] and
-    (JsPath \ "higher").format[Long]
-  )((a: Long, b: Long) => (a,b), unlift({x: (Long,Long) => Tuple2.unapply(x)}))
 
   protected def manyT[A](
     id: String,
@@ -261,6 +192,5 @@ trait SdilWMController extends WebMonadController
         if (pred(t)) Valid else Invalid(Seq(ValidationError(error)))
       }
     }
-
 
 }
