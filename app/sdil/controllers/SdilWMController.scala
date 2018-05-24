@@ -32,6 +32,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
 import sdil.config.AppConfig
+import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -56,12 +57,19 @@ trait SdilWMController extends WebMonadController
   ): WebMonad[E] = {
     val possValues: List[String] = e.values.toList.map{_.toString}
     formPage(id)(
-      nonEmptyText.verifying(possValues.contains(_)),
+//      nonEmptyText.verifying(possValues.contains(_)),
+      oneOf(possValues, "error.radio-form.choose-option"),
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
       uniform.radiolist(id, b, possValues, path)
     }.imap(e.withName)(_.toString)
+  }
+
+  // TODO this is lifted from the FormHelpers trait, which we can't use cos of overriding lazy vals
+  def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
+    //have to use optional, or the framework returns `error.required` when no option is selected
+    optional(text).verifying(errorMsg, s => s.exists(options.contains)).transform(_.getOrElse(""), Some.apply)
   }
 
 

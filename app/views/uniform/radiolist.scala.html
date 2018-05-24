@@ -28,6 +28,7 @@
 
     @error_summary(form)
         <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+        <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
         @helper.form(action = play.api.mvc.Call("post", key)) {
             @CSRF.formField
         <div class = "form-group">
