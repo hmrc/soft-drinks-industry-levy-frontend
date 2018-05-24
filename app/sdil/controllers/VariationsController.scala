@@ -56,7 +56,8 @@ class VariationsController(
   object ChangeType extends Enum[ChangeType] {
     val values = findValues
     case object Sites extends ChangeType
-    //TODO case object Activity extends ChangeType
+    // TODO case object Activity extends ChangeType
+    case object Activity extends ChangeType
     case object Deregister extends ChangeType
   }
 
@@ -176,6 +177,7 @@ class VariationsController(
       case ChangeType.Sites if config.uniformDeregOnly => fatFormRedirect
       case ChangeType.Sites => contactUpdate(base)
 //TODO      case ChangeType.Activity   => activityUpdate(base)
+      case ChangeType.Activity   => activityUpdate(base)
       case ChangeType.Deregister => deregisterUpdate(base)
     }
     _    <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))

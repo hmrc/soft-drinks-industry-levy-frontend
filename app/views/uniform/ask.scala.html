@@ -29,31 +29,34 @@
     @backlink(breadcrumbs)
 
     @error_summary(form)
-        <h1 class="heading-large">@Messages(s"heading.$key")</h1>
-        @helper.form(action = play.api.mvc.Call("post", key)) {
-            @CSRF.formField
-            <div class = "form-group">
-              @if(messages.isDefinedAt(s"$key.hint")) {
-                 <span class="form-hint">@Messages(s"$key.hint")</span>
-              }
+    <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+    @if(messages.isDefinedAt(s"$key.lead")) {
+        <p class="lede">@Messages(s"$key.lead")</p>
+    }
+    @helper.form(action = play.api.mvc.Call("post", key)) {
+        @CSRF.formField
+        <div class = "form-group">
+            @if(messages.isDefinedAt(s"$key.hint")) {
+                <span class="form-hint">@Messages(s"$key.hint")</span>
+            }
 
-              @htmlForm
-            </div>
+            @htmlForm
+        </div>
 
-            @if(messages.isDefinedAt(s"$key.help")) {
+        @if(messages.isDefinedAt(s"$key.help")) {
 
-                @details(s"$key.help.header") {
-                    <p>
-                        <span>@Messages(s"$key.help")</span>
-                    </p>
-                }
-           }
+            @details(s"$key.help.header") {
+                <p>
+                    <span>@Messages(s"$key.help")</span>
+                </p>
+            }
+        }
 
-           <button class="button" type="submit" id="continue-button">
-             @Messages("sdil.common.save-continue")
-           </button>
+        <button class="button" type="submit" id="continue-button">
+        @Messages("sdil.common.save-continue")
+        </button>
 
 
-       }
+    }
 
 }

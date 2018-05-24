@@ -51,6 +51,14 @@
                 </tr>
         </table>
         </div>
+        @if(messages.isDefinedAt(s"$key.help")) {
+
+            @details(s"$key.help.header") {
+                <p>
+                    <span>@Messages(s"$key.help")</span>
+                </p>
+            }
+        }
         <button name="@key" value="Done">
             @Messages("sdil.common.save-continue")
         </button>
