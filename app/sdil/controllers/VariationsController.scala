@@ -77,7 +77,8 @@ class VariationsController(
       change          <- askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data.updatedProductionSites.toList)
+        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data
+          .updatedProductionSites.toList, min = data.producer.isProducer)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
@@ -110,6 +111,8 @@ class VariationsController(
         o.map{innerFormatter.writes}.getOrElse(JsNull)
     }
 
+  implicit def bool2int(b:Boolean): Int = if (b) 1 else 0
+
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = {
@@ -119,10 +122,11 @@ class VariationsController(
       if (in.isEmpty) None else Litreage(in._1, in._2).some
 
     def askPackSites(existingSites: List[Site], packs: Boolean): WebMonad[List[Site]] =
-      manyT("packSites",
-            ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
-            default = existingSites
-      ) emptyUnless (packs)
+        manyT("packSites",
+          ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
+          default = existingSites,
+          min = data.producer.isProducer
+        ) emptyUnless (packs)
 
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 

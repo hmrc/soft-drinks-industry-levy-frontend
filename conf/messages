@@ -613,6 +613,10 @@ variations.cya.activity-change.high-band=High band:
 variations.cya.true=Yes
 variations.cya.false=No
 
+packSites.error.items.tooMany=[Too many sites]
+packSites.error.items.tooFew=[You must have at least one packaging site]
+
+
 variations.cya.dereg=Deregistration
 variations.cya.reason=Reason
 variations.cya.deregDate=Date

@@ -241,8 +241,8 @@ trait SdilWMController extends WebMonadController
     many[A](id, min, max, default, confirmation){ case (iid, minA, maxA, items) =>
 
       val mapping = nonEmptyText
-        .verifying("error.items.toFew", a => a != "Done" || items.size >= min)
-        .verifying("error.items.toMany", a => a != "Add" || items.size < max)
+        .verifying(s"$id.error.items.tooFew", a => a != "Done" || items.size >= min)
+        .verifying(s"$id.error.items.tooMany", a => a != "Add" || items.size < max)
 
       formPage(id)(mapping) { (path, b, r) =>
         implicit val request: Request[AnyContent] = r
