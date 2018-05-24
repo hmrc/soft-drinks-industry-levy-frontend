@@ -110,9 +110,7 @@ class VariationsController(
       def writes(o: Option[A]): JsValue =
         o.map{innerFormatter.writes}.getOrElse(JsNull)
     }
-
-  implicit def bool2int(b:Boolean): Int = if (b) 1 else 0
-
+  
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = {
@@ -125,7 +123,7 @@ class VariationsController(
         manyT("packSites",
           ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
           default = existingSites,
-          min = data.producer.isProducer
+          min = 1
         ) emptyUnless (packs)
 
     val litres = litreagePair.nonEmpty("error.litreage.zero")
