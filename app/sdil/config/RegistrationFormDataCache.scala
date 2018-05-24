@@ -26,6 +26,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
 import scala.concurrent.Future
+import scala.util.Try
 
 class RegistrationFormDataCache(val runModeConfiguration: Configuration,
                                 val shortLiveCache: ShortLivedHttpCaching,
@@ -42,7 +43,7 @@ class RegistrationFormDataCache(val runModeConfiguration: Configuration,
 
   def get(internalId: String)
          (implicit hc: HeaderCarrier): Future[Option[RegistrationFormData]] = {
-    fetchAndGetEntry[RegistrationFormData](s"$internalId-sdil-registration", "formData")
+    Try(fetchAndGetEntry[RegistrationFormData](s"$internalId-sdil-registration", "formData")).getOrElse(Future(None))
   }
 
   def clear(internalId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
