@@ -145,7 +145,7 @@
       </thead>
 
     <tbody>
-      @for(site <- new) {
+      @for(site <- newWarehouseSites) {
         <tr>
           <td>
             <details role="group">
@@ -236,6 +236,7 @@
                         }
                     }
                 }
+            }
             </dd>
             <dd class="cya-change">
                 <a href="packLarge">
@@ -243,7 +244,7 @@
                 </a>
             </dd>
         </div>
-        @if(v.producer.isProducer) {
+
 
             <div>
                 <dt class="cya-question">
@@ -260,8 +261,6 @@
                     </a>
                 </dd>
             </div>
-        }
-
         @if(v.packageOwn.getOrElse(false)) {
             <div>
                 <dt class="cya-question">
@@ -283,7 +282,7 @@
             </div>
         }
 
-        @if(v.producer.isProducer) {
+        @if(v.usesCopacker.getOrElse(false)) {
 
             <div>
                 <dt class="cya-question">
@@ -375,7 +374,7 @@
         }
     </dl>
 
-}
+
 
 
 @if(path.contains("contact")) {

@@ -21,19 +21,21 @@ import java.time.LocalDate
 import cats.data.EitherT
 import cats.implicits._
 import enumeratum._
-import ltbs.play.scaffold._
+import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold.webmonad._
-import play.api.i18n._
-import play.api.libs.json._
-import play.api.mvc._
+import play.api.i18n.MessagesApi
+import play.api.libs.json.{JsValue, _}
+import play.api.mvc.{Action, _}
 import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.controllers.StartDateController._
 import sdil.models._
-import sdil.models.backend.{Contact, Site, UkAddress}
-import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
+import sdil.models.backend.Site
+import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
-import sdil.uniform.{JunkPersistence, SaveForLaterPersistence, SessionCachePersistence}
+import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -43,12 +45,15 @@ import scala.concurrent.{ExecutionContext, Future}
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
 
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 class VariationsController(
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   keystore: SessionCache,
-  cache: ShortLivedHttpCaching // Bloody DI
+  cache: ShortLivedHttpCaching
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
@@ -58,7 +63,7 @@ class VariationsController(
   object ChangeType extends Enum[ChangeType] {
     val values = findValues
     case object Sites extends ChangeType
-    //TODO case object Activity extends ChangeType
+    case object Activity extends ChangeType
     case object Deregister extends ChangeType
   }
 
@@ -144,7 +149,7 @@ class VariationsController(
                          } yield data.copy (
                            producer               = Producer(packLarge.isDefined, packLarge),
                            usesCopacker           = useCopacker.some.flatten,
-                           packageOwn             = packLarge.isDefined.some,
+                           packageOwn             = Some(!packQty.isEmpty),
                            packageOwnVol          = longTupToLitreage(packQty),
                            copackForOthers        = !copacks.isEmpty,
                            copackForOthersVol     = longTupToLitreage(copacks),
@@ -174,12 +179,15 @@ class VariationsController(
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    changeType <- askEnum("changeType", ChangeType)
+    changeType <- if (config.uniformDeregOnly)
+                    askOneOf("changeType", List(ChangeType.Sites, ChangeType.Deregister)) 
+                  else
+                    askEnum("changeType", ChangeType)
     base = VariationData(subscription)
     variation  <- changeType match {
       case ChangeType.Sites if config.uniformDeregOnly => fatFormRedirect
       case ChangeType.Sites => contactUpdate(base)
-//TODO      case ChangeType.Activity   => activityUpdate(base)
+      case ChangeType.Activity   => activityUpdate(base)
       case ChangeType.Deregister => deregisterUpdate(base)
     }
     _    <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
@@ -192,7 +200,8 @@ class VariationsController(
       closedWarehouseSites(variation),
       path
     ))
-    _    <- execute{sdilConnector.submitVariation(Convert(variation), sdilRef)}
+    submission = Convert(variation)
+    _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
     exit <- journeyEnd("variationDone")
     _    <- clear
   } yield {
