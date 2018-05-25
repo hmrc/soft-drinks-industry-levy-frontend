@@ -473,7 +473,8 @@ contactChangeType.option.Sites=Add or remove packaging sites or warehouse addres
 contactChangeType.option.ContactPerson=Update our contact person
 contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
 
-heading.packLarge=In the past 12 months, have you packaged or had packaged by third parties, any liable drink for brands you own or have the rights to manufacture, worldwide?
+heading.packLarge=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
+packLarge.lead=This includes brands you own or have the rights to manufacture
 packLarge.help.header=What does ''package'' mean?
 packLarge.help=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
 
@@ -487,13 +488,13 @@ packLarge.inner-heading=How many litres worldwide?
 option.packLarge.inner.false=Less than 1 million litres
 option.packLarge.inner.true=1 million litres or more
 
-heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have the rights to manufacture?
+heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
 
 heading.packQty=In the next 12 months, how many litres of liable drink do you expect to package for brands you own or have the rights to manufacture at UK packaging sites you operate?
 packQty.lower=Litres in the low band
 packQty.higher=Litres in the high band
 
-heading.copacker=Do you operate any packaging sites in the UK to package liable drinks for any customers as a third party?
+heading.copacker=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
 
 heading.copackQty=How many litres of liable drink will you package on behalf of your customers in the next 12 months?
 
@@ -507,6 +508,8 @@ heading.useCopacker=Do you use any third parties in the UK to package liable dri
 
 heading.packSites=Tell us about the packaging sites your business operates in the UK to package liable drinks
 heading.warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+warehouses.help.header=Why register a warehouse?
+warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses you use to store them.
 
 heading.contact=Who is your contact for the Soft Drinks Industry Levy?
 contact.fullName=Full Name
@@ -526,7 +529,7 @@ variationDone.what-happens-next=You don’t need to do anything else. We’ll up
 variationDone.your.updates=Your updates were sent on {0} at {1}.
 
 #variation confirmation
-sdil.variations.complete.title=Updates sent
+sdil.variations.complete.title=Updates have been sent
 sdil.variation.complete.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
 sdil.variation.what-happens.p1=You don’t need to do anything else. We’ll update your details with the information you provided. We’ll send you a letter confirming that the changes have been made, which may take 15 working days.
 sdil.link.back.home=Back to home
