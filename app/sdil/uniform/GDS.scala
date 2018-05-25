@@ -27,7 +27,9 @@ import play.twirl.api.Html
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.uniform
 
-trait GdsComponents {
+import scala.util.Try
+
+object GdsComponents {
 
   val bool: Mapping[Boolean] = optional(boolean)
     .verifying("error.required", _.isDefined)
@@ -82,5 +84,36 @@ trait GdsComponents {
   implicit val dateShow = new HtmlShow[LocalDate] {
     def showHtml(in: LocalDate): Html = Html(in.toString) // ISO YYYY-MM-DD
   }
+
+  def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
+    //have to use optional, or the framework returns `error.required` when no option is selected
+    optional(text).verifying(errorMsg, s => s.exists(options.contains)).transform(_.getOrElse(""), Some.apply)
+  }
+
+  val dateMapping: Mapping[LocalDate] = tuple(
+    "day" -> number(1,31),
+    "month" -> number(1,12),
+    "year" -> number
+  ).verifying(
+    "error.date.invalid", _ match {
+      case (d, m, y) => Try(LocalDate.of(y, m, d)).isSuccess
+    })
+    .transform(
+      {case (d, m, y) => LocalDate.of(y, m, d)},
+      d => (d.getDayOfMonth, d.getMonthValue, d.getYear)
+    )
+
+  val litreage: Mapping[Long] = text
+    .verifying("error.litreage.required", _.nonEmpty)
+    .transform[String](_.replaceAll(",", ""), _.toString)
+    .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
+    .transform[BigDecimal](BigDecimal.apply, _.toString)
+    .verifying("error.litreage.numeric", _.isWhole)
+    .verifying("error.litreage.max", _ <= 9999999999999L)
+    .verifying("error.litreage.min", _ >= 0)
+    .transform[Long](_.toLong, BigDecimal.apply)
+
+  val litreagePair: Mapping[(Long,Long)] =
+    tuple("lower" -> litreage, "higher" -> litreage)
 
 }

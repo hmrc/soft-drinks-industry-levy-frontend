@@ -30,6 +30,7 @@
 
     @error_summary(form)
     <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+    <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
     @if(messages.isDefinedAt(s"$key.lead")) {
         <p class="lede">@Messages(s"$key.lead")</p>
     }
@@ -55,8 +56,5 @@
         <button class="button" type="submit" id="continue-button">
         @Messages("sdil.common.save-continue")
         </button>
-
-
     }
-
 }

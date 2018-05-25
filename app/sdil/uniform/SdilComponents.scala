@@ -16,14 +16,20 @@
 
 package ltbs.play.scaffold
 
+import cats.implicits.none
+import play.api.data.Forms._
 import play.api.data._
+import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.Messages
+import play.api.libs.functional.syntax._
+import play.api.libs.functional.syntax.unlift
+import play.api.libs.json.{Format, JsPath}
 import play.twirl.api.Html
 import sdil.models._
-import sdil.models.backend.Site
+import sdil.models.backend.{Site, UkAddress}
 import views.html.uniform
 
-trait SdilComponents {
+object SdilComponents {
 
   implicit val addressForm = new FormHtml[Address] {
     def asHtmlForm(key: String, form: Form[Address])(implicit messages: Messages): Html = {
@@ -99,4 +105,48 @@ trait SdilComponents {
       )
     }
   }
+
+  lazy val tradingNameMapping: Mapping[String] = {
+    text.transform[String](_.trim, s => s).verifying(optionalTradingNameConstraint)
+  }
+
+  private def optionalTradingNameConstraint: Constraint[String] = Constraint {
+    case b if b.length > 160 => Invalid(s"error.tradingName.over")
+    case a if !a.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid(s"error.tradingName.invalid")
+    case _ => Valid
+  }
+
+  lazy val warehouseSiteMapping: Mapping[Site] = mapping(
+    "address" -> ukAddressMapping,
+    "tradingName" -> optional(tradingNameMapping)
+  ){(a,b) => Site.apply(a, none, b, none)}(Site.unapply(_).map{ case (address, refOpt, tradingName, _) => (address, tradingName) } )
+
+  lazy val packagingSiteMapping: Mapping[Site] = mapping(
+    "address" -> ukAddressMapping
+  ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{ case (address, refOpt, _, _) =>
+    address } )
+
+  protected val addressMapping: play.api.data.Mapping[Address] = mapping(
+    "line1" -> nonEmptyText,
+    "line2" -> text,
+    "line3" -> text,
+    "line4" -> text,
+    "postcode" -> nonEmptyText
+  )(Address.apply)(Address.unapply)
+
+  private val ukAddressMapping: Mapping[UkAddress] =
+    addressMapping.transform(UkAddress.fromAddress, Address.fromUkAddress)
+
+  val contactDetailsMapping: Mapping[ContactDetails] = mapping(
+    "fullName" -> nonEmptyText,
+    "position" -> nonEmptyText,
+    "phoneNumber" -> nonEmptyText,
+    "email" -> nonEmptyText
+  )(ContactDetails.apply)(ContactDetails.unapply)
+
+  implicit val longTupleFormatter: Format[(Long, Long)] = (
+    (JsPath \ "lower").format[Long] and
+      (JsPath \ "higher").format[Long]
+    )((a: Long, b: Long) => (a,b), unlift({x: (Long,Long) => Tuple2.unapply(x)}))
+
 }

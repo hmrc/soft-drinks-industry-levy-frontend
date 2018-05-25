@@ -16,13 +16,13 @@
 
 package sdil.controllers
 
-import java.io.PrintWriter
 import java.time.LocalDate
 
 import cats.data.EitherT
 import cats.implicits._
 import enumeratum._
-import ltbs.play.scaffold._
+import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold.webmonad._
 import play.api.i18n.MessagesApi
 import play.api.libs.json.{JsValue, _}
@@ -43,7 +43,6 @@ import views.html.uniform
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
-import scala.sys.process._
 class VariationsController(
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
@@ -53,7 +52,7 @@ class VariationsController(
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController with GdsComponents with SdilComponents {
+) extends SdilWMController with FrontendController {
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
@@ -81,7 +80,8 @@ class VariationsController(
       change          <- askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data.updatedProductionSites.toList)
+        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data
+          .updatedProductionSites.toList, min = 1) emptyUnless (data.producer.isProducer)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
@@ -113,7 +113,7 @@ class VariationsController(
       def writes(o: Option[A]): JsValue =
         o.map{innerFormatter.writes}.getOrElse(JsNull)
     }
-
+  
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = {
@@ -123,10 +123,11 @@ class VariationsController(
       if (in.isEmpty) None else Litreage(in._1, in._2).some
 
     def askPackSites(existingSites: List[Site], packs: Boolean): WebMonad[List[Site]] =
-      manyT("packSites",
-            ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
-            default = existingSites
-      ) emptyUnless (packs)
+        manyT("packSites",
+          ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
+          default = existingSites,
+          min = 1
+        ) emptyUnless (packs)
 
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
