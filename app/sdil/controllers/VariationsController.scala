@@ -85,7 +85,7 @@ class VariationsController(
 
       packSites       <- if (change.contains(Sites)) {
         manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data
-          .updatedProductionSites.toList, min = 1) emptyUnless (data.producer.isProducer)
+          .updatedProductionSites.toList, min = 1) emptyUnless data.producer.isLarge.contains(true)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
