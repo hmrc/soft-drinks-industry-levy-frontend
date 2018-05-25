@@ -185,7 +185,8 @@ class VariationsController(
     _    <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
     path <- getPath
     _    <- tell("checkyouranswers", uniform.fragments.variationsCYA(variation, closedPackagingSites(variation), closedWarehouseSites(variation), path))
-    _    <- execute{sdilConnector.submitVariation(Convert(variation), sdilRef)}
+    submission = Convert(variation)
+    _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
     exit <- journeyEnd("variationDone")
     _    <- clear
   } yield {
