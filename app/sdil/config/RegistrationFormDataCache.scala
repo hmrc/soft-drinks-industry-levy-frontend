@@ -17,6 +17,7 @@
 package sdil.config
 
 import play.api.Mode.Mode
+import play.api.libs.json.JsResultException
 import play.api.{Configuration, Environment}
 import sdil.models.RegistrationFormData
 import uk.gov.hmrc.crypto.CompositeSymmetricCrypto
@@ -42,7 +43,9 @@ class RegistrationFormDataCache(val runModeConfiguration: Configuration,
 
   def get(internalId: String)
          (implicit hc: HeaderCarrier): Future[Option[RegistrationFormData]] = {
-    fetchAndGetEntry[RegistrationFormData](s"$internalId-sdil-registration", "formData")
+    fetchAndGetEntry[RegistrationFormData](s"$internalId-sdil-registration", "formData").recover {
+      case _: JsResultException => None
+    }
   }
 
   def clear(internalId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
