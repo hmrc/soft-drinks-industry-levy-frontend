@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
 import scala.concurrent.Future
-import scala.util.Try
 
 class RegistrationFormDataCache(val runModeConfiguration: Configuration,
                                 val shortLiveCache: ShortLivedHttpCaching,
