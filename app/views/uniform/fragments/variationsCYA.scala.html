@@ -16,13 +16,20 @@
 
 @import sdil.models.backend.Site
 @import java.time.format.DateTimeFormatter
-@(v: sdil.models.variations.VariationData, closedPackagingSites: List[Site], closedWarehouses: List[Site], path: List[String])(implicit m: Messages)
+@(
+        v: sdil.models.variations.VariationData,
+        newPackingSites: List[Site],
+        closedPackagingSites: List[Site],
+        newWarehouseSites: List[Site],
+        closedWarehouses: List[Site],
+        path: List[String])(implicit m: Messages
+)
 
 @formatLitres(value: BigDecimal) = @{
     java.text.NumberFormat.getNumberInstance.format(value)
 }
 
-@if(path.contains("packSites") && v.updatedProductionSites.nonEmpty) {
+@if(path.contains("packSites") && newPackingSites.nonEmpty) {
 
 
 
@@ -47,7 +54,7 @@
         </thead>
 
         <tbody>
-        @for(site <- v.updatedProductionSites) {
+        @for(site <- newPackingSites) {
             <tr>
                 <td>
                     <details role="group">
@@ -116,7 +123,7 @@
     </table>
 }
 
-@if(path.contains("warehouses") && v.updatedWarehouseSites.nonEmpty) {
+@if(path.contains("warehouses") && newWarehouseSites.nonEmpty) {
   <table class="check-your-answers">
     <caption class="heading-medium">@Messages("variations.cya.warehouses.add")</caption>
 
@@ -138,7 +145,7 @@
       </thead>
 
     <tbody>
-      @for(site <- v.updatedWarehouseSites) {
+      @for(site <- newWarehouseSites) {
         <tr>
           <td>
             <details role="group">
@@ -208,7 +215,7 @@
 
 @if(path.contains("packLarge")) {
     <h2 class="heading-medium">
-        @Messages("variations.cya.activity-change")
+    @Messages("variations.cya.activity-change")
     </h2>
 
     <dl class="govuk-check-your-answers cya-questions-short">
@@ -229,7 +236,6 @@
                         }
                     }
                 }
-            }
             </dd>
             <dd class="cya-change">
                 <a href="packLarge">
@@ -239,37 +245,37 @@
         </div>
 
 
-            <div>
-                <dt class="cya-question">
-                    @Messages("variations.cya.activity-change.package-own")
-                </dt>
-                <dd class="cya-answer">
-                    @v.packageOwn.map { x =>
-                        @Messages(s"variations.cya.$x")
-                    }
-                </dd>
-                <dd class="cya-change">
-                    <a href="packOpt">
-                    @Html(Messages("variations.cya.activity-change.package-own.change"))
-                    </a>
-                </dd>
-            </div>
+        <div>
+            <dt class="cya-question">
+            @Messages("variations.cya.activity-change.package-own")
+            </dt>
+            <dd class="cya-answer">
+            @v.packageOwn.map { x =>
+                @Messages(s"variations.cya.$x")
+            }
+            </dd>
+            <dd class="cya-change">
+                <a href="packOpt">
+                @Html(Messages("variations.cya.activity-change.package-own.change"))
+                </a>
+            </dd>
+        </div>
         @if(v.packageOwn.getOrElse(false)) {
             <div>
                 <dt class="cya-question">
-                    @Messages("variations.cya.activity-change.litres-own")
+                @Messages("variations.cya.activity-change.litres-own")
                 </dt>
                 <dd class="cya-answer">
-                    @v.packageOwnVol.map { x =>
-                        @Messages("variations.cya.activity-change.low-band")
-                        @formatLitres(x.atLowRate) <br/>
-                        @Messages("variations.cya.activity-change.high-band")
-                        @formatLitres(x.atHighRate)
-                    }
+                @v.packageOwnVol.map { x =>
+                    @Messages("variations.cya.activity-change.low-band")
+                    @formatLitres(x.atLowRate) <br/>
+                    @Messages("variations.cya.activity-change.high-band")
+                    @formatLitres(x.atHighRate)
+                }
                 </dd>
                 <dd class="cya-change">
                     <a href="packQty">
-                        @Html(Messages("variations.cya.activity-change.litres-own.change"))
+                    @Html(Messages("variations.cya.activity-change.litres-own.change"))
                     </a>
                 </dd>
             </div>
@@ -297,14 +303,14 @@
 
         <div>
             <dt class="cya-question">
-                @Messages("variations.cya.activity-change.package-others")
+            @Messages("variations.cya.activity-change.package-others")
             </dt>
             <dd class="cya-answer">
-                @Messages(s"variations.cya.${v.copackForOthers}")
+            @Messages(s"variations.cya.${v.copackForOthers}")
             </dd>
             <dd class="cya-change">
                 <a href="copacker">
-                    @Html(Messages("variations.cya.activity-change.package-others.change"))
+                @Html(Messages("variations.cya.activity-change.package-others.change"))
                 </a>
             </dd>
         </div>
@@ -367,7 +373,7 @@
         }
     </dl>
 
-
+}
 
 
 @if(path.contains("contact")) {

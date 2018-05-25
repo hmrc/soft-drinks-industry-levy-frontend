@@ -192,7 +192,14 @@ class VariationsController(
     }
     _    <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
     path <- getPath
-    _    <- tell("checkyouranswers", uniform.fragments.variationsCYA(variation, closedPackagingSites(variation), closedWarehouseSites(variation), path))
+    _    <- tell("checkyouranswers", uniform.fragments.variationsCYA(
+      variation,
+      newPackagingSites(variation),
+      closedPackagingSites(variation),
+      newWarehouseSites(variation),
+      closedWarehouseSites(variation),
+      path
+    ))
     submission = Convert(variation)
     _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
     exit <- journeyEnd("variationDone")
@@ -211,6 +218,14 @@ class VariationsController(
 
   def closedPackagingSites(variation: VariationData): List[Site] = {
     closedSites(variation.original.productionSites, Convert(variation).closeSites.map(x => x.siteReference))
+  }
+
+  def newPackagingSites(variation: VariationData): List[Site] = {
+    variation.updatedProductionSites.diff(variation.original.productionSites).toList
+  }
+
+  def newWarehouseSites(variation: VariationData): List[Site] = {
+    variation.updatedWarehouseSites.diff(variation.original.warehouseSites).toList
   }
 
   private def closedSites(sites: List[Site], closedSites: List[String]): List[Site] = {
