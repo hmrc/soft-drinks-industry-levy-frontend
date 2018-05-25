@@ -40,6 +40,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
+import StartDateController._
+import scala.concurrent.{ExecutionContext, Future}
+import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,7 +57,7 @@ class VariationsController(
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController with GdsComponents with SdilComponents {
+) extends SdilWMController with FrontendController {
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
@@ -81,7 +85,8 @@ class VariationsController(
       change          <- askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data.updatedProductionSites.toList)
+        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data
+          .updatedProductionSites.toList, min = 1) emptyUnless (data.producer.isProducer)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
@@ -113,7 +118,7 @@ class VariationsController(
       def writes(o: Option[A]): JsValue =
         o.map{innerFormatter.writes}.getOrElse(JsNull)
     }
-
+  
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = {
@@ -123,10 +128,11 @@ class VariationsController(
       if (in.isEmpty) None else Litreage(in._1, in._2).some
 
     def askPackSites(existingSites: List[Site], packs: Boolean): WebMonad[List[Site]] =
-      manyT("packSites",
-            ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
-            default = existingSites
-      ) emptyUnless (packs)
+        manyT("packSites",
+          ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
+          default = existingSites,
+          min = 1
+        ) emptyUnless (packs)
 
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 

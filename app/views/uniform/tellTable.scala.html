@@ -21,13 +21,15 @@
 @import views.html.helper.options
 @import ltbs.play.scaffold.webmonad._
 @import views.html.uniform.helpers._
+@import ltbs.play._
 
 @(key: String, form: Form[Unit], breadcrumbs: List[String], headings: List[Html], rows: List[List[Html]])(implicit messages: Messages, request: Request[_], config: AppConfig)
-@views.html.main_template(Messages("sdil.variations.title"), form = Some(form)) {
+@views.html.main_template(messages.first(s"heading.$key", "sdil.variations.title")(), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
         <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+        <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
         @helper.form(action = play.api.mvc.Call("post", key)) {
             @CSRF.formField
 
