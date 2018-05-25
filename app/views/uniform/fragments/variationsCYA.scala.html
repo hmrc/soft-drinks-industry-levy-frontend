@@ -16,13 +16,20 @@
 
 @import sdil.models.backend.Site
 @import java.time.format.DateTimeFormatter
-@(v: sdil.models.variations.VariationData, closedPackagingSites: List[Site], closedWarehouses: List[Site], path: List[String])(implicit m: Messages)
+@(
+        v: sdil.models.variations.VariationData,
+        newPackingSites: List[Site],
+        closedPackagingSites: List[Site],
+        newWarehouseSites: List[Site],
+        closedWarehouses: List[Site],
+        path: List[String])(implicit m: Messages
+)
 
 @formatLitres(value: BigDecimal) = @{
     java.text.NumberFormat.getNumberInstance.format(value)
 }
 
-@if(path.contains("packSites") && v.updatedProductionSites.nonEmpty) {
+@if(path.contains("packSites") && newPackingSites.nonEmpty) {
 
 
 
@@ -47,7 +54,7 @@
         </thead>
 
         <tbody>
-        @for(site <- v.updatedProductionSites) {
+        @for(site <- newPackingSites) {
             <tr>
                 <td>
                     <details role="group">
@@ -116,7 +123,7 @@
     </table>
 }
 
-@if(path.contains("warehouses") && v.updatedWarehouseSites.nonEmpty) {
+@if(path.contains("warehouses") && newWarehouseSites.nonEmpty) {
   <table class="check-your-answers">
     <caption class="heading-medium">@Messages("variations.cya.warehouses.add")</caption>
 
@@ -138,7 +145,7 @@
       </thead>
 
     <tbody>
-      @for(site <- v.updatedWarehouseSites) {
+      @for(site <- new) {
         <tr>
           <td>
             <details role="group">
