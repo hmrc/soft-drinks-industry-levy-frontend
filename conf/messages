@@ -478,10 +478,11 @@ packLarge.lead=This includes brands you own or have the rights to manufacture
 packLarge.help.header=What does ''package'' mean?
 packLarge.help=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
 
-heading.warehouses_add=Enter your new warehouse details
+heading.warehouses_add=Add new warehouse
 heading.warehouses_deleteConfirmation=Are you sure you want to remove this warehouse?
 warehouses_deleteConfirmation.continue=Save and continue
-heading.packSites_add=Enter your new packaging site details
+heading.packSites_add=Enter your packaging site details
+packSites_add.paragraph=Only add the addresses of the packaging sites you operate
 heading.packSites_deleteConfirmation=Are you sure you want to remove this packaging site?
 packSites_deleteConfirmation.continue=Save and continue
 packLarge.inner-heading=How many litres worldwide?
@@ -506,15 +507,17 @@ importQty.higher=Litres in the high band
 
 heading.useCopacker=Do you use any third parties in the UK to package liable drinks on your behalf?
 
-heading.packSites=Tell us about the packaging sites your business operates in the UK to package liable drinks
-heading.warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+heading.packSites=Change your packaging site details
+packSites.paragraph=Only add the addresses of UK packaging sites you operate
+
+heading.warehouses=Change your UK warehouse details
 warehouses.help.header=Why register a warehouse?
 warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses you use to store them.
 
-heading.contact=Who is your contact for the Soft Drinks Industry Levy?
-contact.fullName=Full Name
+heading.contact=Change your contact for the Soft Drinks Industry Levy
+contact.fullName=Full name
 contact.position=Job title
-contact.phoneNumber=Telephone Number
+contact.phoneNumber=Telephone number
 contact.email=Email
 
 heading.updatedBusinessDetails_orgName=Organisation Name

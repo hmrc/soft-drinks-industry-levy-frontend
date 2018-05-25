@@ -31,6 +31,11 @@
     @error_summary(form)
     <h1 class="heading-large">@Messages(s"heading.$key")</h1>
     <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
+    @if(messages.isDefinedAt(s"$key.paragraph")) {
+        <div class="panel-border-narrow panel">
+            <p>@Messages(s"$key.paragraph")</p>
+        </div>
+    }
     @if(messages.isDefinedAt(s"$key.lead")) {
         <p class="lede">@Messages(s"$key.lead")</p>
     }
