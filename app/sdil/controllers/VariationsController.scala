@@ -48,7 +48,7 @@ class VariationsController(
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   keystore: SessionCache,
-  cache: ShortLivedHttpCaching // Bloody DI
+  cache: ShortLivedHttpCaching
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
@@ -58,7 +58,6 @@ class VariationsController(
   object ChangeType extends Enum[ChangeType] {
     val values = findValues
     case object Sites extends ChangeType
-    // TODO case object Activity extends ChangeType
     case object Activity extends ChangeType
     case object Deregister extends ChangeType
   }
@@ -175,12 +174,14 @@ class VariationsController(
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    changeType <- askEnum("changeType", ChangeType)
+    changeType <- if (config.uniformDeregOnly)
+                    askOneOf("changeType", List(ChangeType.Sites, ChangeType.Deregister)) 
+                  else
+                    askEnum("changeType", ChangeType)
     base = VariationData(subscription)
     variation  <- changeType match {
       case ChangeType.Sites if config.uniformDeregOnly => fatFormRedirect
       case ChangeType.Sites => contactUpdate(base)
-//TODO      case ChangeType.Activity   => activityUpdate(base)
       case ChangeType.Activity   => activityUpdate(base)
       case ChangeType.Deregister => deregisterUpdate(base)
     }

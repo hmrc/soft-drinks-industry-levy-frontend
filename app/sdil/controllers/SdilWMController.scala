@@ -55,16 +55,25 @@ trait SdilWMController extends WebMonadController
     id: String,
     e: Enum[E],
     default: Option[E] = None
-  ): WebMonad[E] = {
-    val possValues: List[String] = e.values.toList.map{_.toString}
+  ): WebMonad[E] = askOneOf(id, e.values.toList, default)
+
+  protected def askOneOf[A](
+    id: String,
+    possValues: List[A],
+    default: Option[A] = None
+  ): WebMonad[A] = {
+
+    val valueMap: Map[String,A] =
+      possValues.map{a => (a.toString, a)}.toMap
+
     formPage(id)(
-//      nonEmptyText.verifying(possValues.contains(_)),
-      oneOf(possValues, "error.radio-form.choose-option"),
+      nonEmptyText
+        .verifying("error.radio-form.choose-option", valueMap.isDefinedAt(_)),
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      uniform.radiolist(id, b, possValues, path)
-    }.imap(e.withName)(_.toString)
+      uniform.radiolist(id, b, valueMap.keys.toList, path)
+    }.imap(valueMap(_))(_.toString)
   }
 
   protected def askEnumSet[E <: EnumEntry](
