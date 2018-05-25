@@ -16,13 +16,13 @@
 
 package sdil.controllers
 
-import java.io.PrintWriter
 import java.time.LocalDate
 
 import cats.data.EitherT
 import cats.implicits._
 import enumeratum._
-import ltbs.play.scaffold._
+import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold.webmonad._
 import play.api.i18n.MessagesApi
 import play.api.libs.json.{JsValue, _}
@@ -45,9 +45,9 @@ import scala.concurrent.{ExecutionContext, Future}
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
 
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
-import scala.sys.process._
 class VariationsController(
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
