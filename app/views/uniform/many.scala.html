@@ -33,7 +33,7 @@
 
     <h1 class="heading-large">@Messages(s"heading.$key")</h1>
     <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
-    @if(key == "packSites") {
+    @if(messages.isDefinedAt(s"$key.paragraph")) {
         <p>@Messages(s"$key.paragraph")</p>
     }
     @helper.form(action = play.api.mvc.Call("post", key)) {
