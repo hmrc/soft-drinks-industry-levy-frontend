@@ -43,7 +43,9 @@ case class VariationsSubmission(tradingName: Option[String] = None,
       businessContact,
       correspondenceContact,
       primaryPersonContact,
-      sdilActivity
+      sdilActivity,
+      deregistrationDate,
+      deregistrationText
     ).flatten ++ newSites ++ amendSites ++ closeSites).nonEmpty
   }
 
