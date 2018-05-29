@@ -643,3 +643,5 @@ removePackSites.body=[Based on your answers, you’re no longer packing any soft
 removePackSites.continue=[Remove all packing sites]
 
 heading.businessAddress=Change your contact address for the Soft Drinks Industry Levy
+
+heading.checkyouranswers=Check your answers
