@@ -65,10 +65,8 @@ trait SdilWMController extends WebMonadController
 
     val valueMap: Map[String,A] =
       possValues.map{a => (a.toString, a)}.toMap
-
     formPage(id)(
-      nonEmptyText
-        .verifying("error.radio-form.choose-option", valueMap.isDefinedAt(_)),
+      oneOf(possValues.map{_.toString}, "error.radio-form.choose-option"),
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
