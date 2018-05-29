@@ -20,7 +20,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import sdil.actions.VariationAction
 import sdil.config.AppConfig
-import sdil.controllers.ContactDetailsController
+import sdil.controllers.{ContactDetailsController, ContactDetailsForm}
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.{register, variations}
@@ -39,7 +39,7 @@ class ContactDetailsVariationController(val messagesApi: MessagesApi,
   def show: Action[AnyContent] = variationAction { implicit request =>
     Ok(
       register.contact_details(
-        ContactDetailsController.form.fill(request.data.updatedContactDetails),
+        ContactDetailsForm.form.fill(request.data.updatedContactDetails),
         previousPage,
         formTarget
       )
@@ -47,7 +47,7 @@ class ContactDetailsVariationController(val messagesApi: MessagesApi,
   }
 
   def submit: Action[AnyContent] = variationAction.async { implicit request =>
-    ContactDetailsController.form.bindFromRequest().fold(
+    ContactDetailsForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(register.contact_details(
         formWithErrors,
         previousPage, formTarget))),
