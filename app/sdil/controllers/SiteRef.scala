@@ -19,6 +19,8 @@ package sdil.controllers
 import sdil.forms.FormHelpers
 import sdil.models.backend.Site
 
+import scala.util.Try
+
 trait SiteRef extends FormHelpers {
 
   def nextRef(original: Seq[Site], updated: Seq[Site]): String = (original, updated) match {
@@ -29,6 +31,6 @@ trait SiteRef extends FormHelpers {
   }
 
   private def maxRef(sites: Seq[Site]): Int = {
-    sites.map(_.ref.fold(0)(_.toInt)).max
+    sites.map(_.ref.fold(0)(x => Try(x.toInt).toOption.getOrElse(0))).max
   }
 }
