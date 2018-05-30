@@ -32,12 +32,6 @@ class WarehouseFormSpec extends FormSpec {
       mustValidateAddress(WarehouseForm(), "additionalAddress", secondaryWarehouseData)
     }
 
-    "require a trading name if a warehouse is added" in {
-      val f = WarehouseForm().bind(secondaryWarehouseData.updated(tradingName, ""))
-
-      mustContainError(f, tradingName, "error.tradingName.required")
-    }
-
     "require the trading name to be less than 160 characters" in {
       mustHaveMaxLength(tradingName, 160)(WarehouseForm(), secondaryWarehouseData, "error.tradingName.length")
     }
@@ -66,10 +60,6 @@ class WarehouseFormSpec extends FormSpec {
       val f = WarehouseForm.initial().bind(Map.empty[String, String])
 
       mustContainError(f, addAddress, "error.radio-form.choose-option")
-    }
-
-    "require a trading name if an address is added" in {
-      mustRequire(tradingName)(WarehouseForm.initial(), secondaryWarehouseData, "error.tradingName.required")
     }
 
     "validate the address if an address is added" in {
