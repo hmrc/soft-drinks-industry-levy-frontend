@@ -83,13 +83,6 @@ object SdilComponents {
     }
   }
 
-  // implicit def optFormHtml[A](implicit inner: FormHtml[A]): FormHtml[Option[A]] = {
-  //   def asHtmlForm(key: String, form: Form[Option[A]])(implicit messages: Messages): Html = {
-  //     val innerHtml = inner.asHtmlForm(s"${key}.inner", form(s"${key}.inner"))
-  //     uniform.fragments.innerOpt(key, form, innerHtml)
-  //   }
-  // }
-
   implicit val addressHtml: HtmlShow[Address] =
     HtmlShow.instance { address =>
       val lines = address.nonEmptyLines.mkString("<br />")
@@ -105,44 +98,6 @@ object SdilComponents {
       )
     }
   }
-
-  lazy val tradingNameMapping: Mapping[String] = {
-    text.transform[String](_.trim, s => s).verifying(optionalTradingNameConstraint)
-  }
-
-  private def optionalTradingNameConstraint: Constraint[String] = Constraint {
-    case b if b.length > 160 => Invalid(s"error.tradingName.over")
-    case a if !a.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid(s"error.tradingName.invalid")
-    case _ => Valid
-  }
-
-  lazy val warehouseSiteMapping: Mapping[Site] = mapping(
-    "address" -> ukAddressMapping,
-    "tradingName" -> optional(tradingNameMapping)
-  ){(a,b) => Site.apply(a, none, b, none)}(Site.unapply(_).map{ case (address, refOpt, tradingName, _) => (address, tradingName) } )
-
-  lazy val packagingSiteMapping: Mapping[Site] = mapping(
-    "address" -> ukAddressMapping
-  ){a => Site.apply(a, none, none, none)}(Site.unapply(_).map{ case (address, refOpt, _, _) =>
-    address } )
-
-  protected val addressMapping: play.api.data.Mapping[Address] = mapping(
-    "line1" -> nonEmptyText,
-    "line2" -> text,
-    "line3" -> text,
-    "line4" -> text,
-    "postcode" -> nonEmptyText
-  )(Address.apply)(Address.unapply)
-
-  private val ukAddressMapping: Mapping[UkAddress] =
-    addressMapping.transform(UkAddress.fromAddress, Address.fromUkAddress)
-
-  val contactDetailsMapping: Mapping[ContactDetails] = mapping(
-    "fullName" -> nonEmptyText,
-    "position" -> nonEmptyText,
-    "phoneNumber" -> nonEmptyText,
-    "email" -> nonEmptyText
-  )(ContactDetails.apply)(ContactDetails.unapply)
 
   implicit val longTupleFormatter: Format[(Long, Long)] = (
     (JsPath \ "lower").format[Long] and

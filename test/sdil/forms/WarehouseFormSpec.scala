@@ -16,6 +16,7 @@
 
 package sdil.forms
 
+import sdil.controllers.WarehouseForm
 import sdil.models.{Address, Sites}
 
 class WarehouseFormSpec extends FormSpec {

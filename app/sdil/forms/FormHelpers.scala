@@ -16,12 +16,13 @@
 
 package sdil.forms
 
+import cats.implicits.none
 import play.api.data.Forms._
 import play.api.data.Mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.libs.json.Json
-import sdil.models.Address
-import sdil.models.backend.Site
+import sdil.models.{Address, ContactDetails}
+import sdil.models.backend.{Site, UkAddress}
 
 import scala.util.Try
 
@@ -101,4 +102,18 @@ trait FormHelpers {
     .verifying("error.litreage.numeric", _.isWhole)
     .verifying("error.litreage.max", _ <= 9999999999999L)
     .verifying("error.litreage.min", _ >= 0)
+
+  lazy val warehouseSiteMapping: Mapping[Site] = mapping(
+    "address" -> ukAddressMapping,
+    "tradingName" -> tradingNameMapping
+  ) { (a, b) => Site.apply(a, none, Some(b), none) }(Site.unapply(_).map { case (address, refOpt, tradingName, _) =>
+    (address, tradingName.getOrElse(""))
+  })
+
+  lazy val packagingSiteMapping: Mapping[Site] = mapping(
+    "address" -> ukAddressMapping
+  ) { a => Site.apply(a, none, none, none) }(Site.unapply(_).map { case (address, refOpt, _, _) => address })
+
+  private val ukAddressMapping: Mapping[UkAddress] =
+    addressMapping.transform(UkAddress.fromAddress, Address.fromUkAddress)
 }

@@ -31,6 +31,7 @@ import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.StartDateController._
+import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
@@ -40,11 +41,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
-import StartDateController._
-import scala.concurrent.{ExecutionContext, Future}
-import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents._
-
+import ContactDetailsForm.contactDetailsMapping
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,7 +54,7 @@ class VariationsController(
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController {
+) extends SdilWMController with FrontendController with FormHelpers {
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
