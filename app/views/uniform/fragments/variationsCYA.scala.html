@@ -60,6 +60,23 @@
             </dd>
         </div>
 
+        @if(v.usesCopacker.isDefined) {
+            <div>
+                <dt class="cya-question">
+                @Messages("variations.cya.activity-change.use-copacker")
+                </dt>
+                <dd class="cya-answer">
+                @v.usesCopacker.map { x =>
+                    @Messages(s"variations.cya.$x")
+                }
+                </dd>
+                <dd class="cya-change">
+                    <a href="useCopacker">
+                    @Html(Messages("variations.cya.activity-change.use-copacker.change"))
+                    </a>
+                </dd>
+            </div>
+        }
 
         <div>
             <dt class="cya-question">
@@ -97,26 +114,6 @@
             </div>
         }
 
-        @if(v.usesCopacker.getOrElse(false)) {
-
-            <div>
-                <dt class="cya-question">
-                @Messages("variations.cya.activity-change.use-copacker")
-                </dt>
-                <dd class="cya-answer">
-                @v.usesCopacker.map { x =>
-                    @Messages(s"variations.cya.$x")
-                }
-                </dd>
-                <dd class="cya-change">
-                    <a href="useCopacker">
-                    @Html(Messages("variations.cya.activity-change.use-copacker.change"))
-                    </a>
-                </dd>
-            </div>
-        }
-
-
         <div>
             <dt class="cya-question">
             @Messages("variations.cya.activity-change.package-others")
@@ -137,7 +134,7 @@
                 @Messages("variations.cya.activity-change.litres-others")
                 </dt>
                 <dd class="cya-answer">
-                @v.importsVol.map { x =>
+                @v.copackForOthersVol.map { x =>
                     @Messages("variations.cya.activity-change.low-band")
                     @formatLitres(x.atLowRate) <br/>
                     @Messages("variations.cya.activity-change.high-band")
