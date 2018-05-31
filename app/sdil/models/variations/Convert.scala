@@ -68,7 +68,7 @@ object Convert {
     }
 
     lazy val sdilActivity: Option[SdilActivity] =
-      if (vd.packageOwnVol.isDefined || vd.copackForOthersVol.isDefined || vd.importsVol.isDefined)
+      if (vd.isLiable || vd.isVoluntary)
         Some(newSdilActivity)
       else
         None
