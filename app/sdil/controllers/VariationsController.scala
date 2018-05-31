@@ -135,7 +135,8 @@ class VariationsController(
     for {
       packLarge                   <- ask(innerOpt("packLarge", bool), "packLarge")
       useCopacker                 <- ask(bool,"useCopacker", data.usesCopacker) when packLarge.contains(false)
-      packQty                     <- ask(litres, "packQty") emptyUnless ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
+      packageOwn                  <- ask(bool, "packOpt", data.updatedProductionSites.nonEmpty) when packLarge.isDefined
+      packQty                     <- ask(litres, "packQty") emptyUnless packageOwn.isDefined
       copacks                     <- ask(litres, "copackQty") emptyUnless ask(bool, "copacker", data.copackForOthers)
       imports                     <- ask(litres, "importQty") emptyUnless ask(bool, "importer", data.imports)
       noUkActivity                =  (packQty, copacks, imports).isEmpty
