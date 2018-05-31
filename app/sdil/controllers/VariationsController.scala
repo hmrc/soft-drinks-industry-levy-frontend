@@ -133,28 +133,32 @@ class VariationsController(
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
     for {
-      packLarge       <- ask(innerOpt("packLarge", bool), "packLarge")
-      useCopacker     <- ask(bool,"useCopacker", data.usesCopacker) when packLarge.contains(false)
-      packQty         <- ask(litres, "packQty") emptyUnless ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
-      copacks         <- ask(litres, "copackQty") emptyUnless ask(bool, "copacker", data.copackForOthers)
-      imports         <- ask(litres, "importQty") emptyUnless ask(bool, "importer", data.imports)
-      variation       <- if ((packQty, copacks, imports).isEmpty && packLarge.isEmpty)
-                           tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
-                         else for {
-                           packSites       <- askPackSites(data.updatedProductionSites.toList, !(packQty, copacks).isEmpty)
-                           warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList)
-                         } yield data.copy (
-                           producer               = Producer(packLarge.isDefined, packLarge),
-                           usesCopacker           = useCopacker.some.flatten,
-                           packageOwn             = Some(!packQty.isEmpty),
-                           packageOwnVol          = longTupToLitreage(packQty),
-                           copackForOthers        = !copacks.isEmpty,
-                           copackForOthersVol     = longTupToLitreage(copacks),
-                           imports                = !imports.isEmpty,
-                           importsVol             = longTupToLitreage(imports),
-                           updatedProductionSites = packSites,
-                           updatedWarehouseSites  = warehouses
-                         )
+      packLarge                   <- ask(innerOpt("packLarge", bool), "packLarge")
+      useCopacker                 <- ask(bool,"useCopacker", data.usesCopacker) when packLarge.contains(false)
+      packQty                     <- ask(litres, "packQty") emptyUnless ask(bool, "packOpt", data.updatedProductionSites.nonEmpty)
+      copacks                     <- ask(litres, "copackQty") emptyUnless ask(bool, "copacker", data.copackForOthers)
+      imports                     <- ask(litres, "importQty") emptyUnless ask(bool, "importer", data.imports)
+      noUkActivity                =  (packQty, copacks, imports).isEmpty
+      smallProducerWithNoCopacker =  packLarge.contains(false) && useCopacker.contains(false)
+      shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
+      variation                   <- if (shouldDereg)
+                                       tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
+                                     else for {
+                                       packSites       <- askPackSites(data.updatedProductionSites.toList, !(packQty, copacks).isEmpty)
+                                       isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
+                                       warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
+                                     } yield data.copy (
+                                       producer               = Producer(packLarge.isDefined, packLarge),
+                                       usesCopacker           = useCopacker.some.flatten,
+                                       packageOwn             = Some(!packQty.isEmpty),
+                                       packageOwnVol          = longTupToLitreage(packQty),
+                                       copackForOthers        = !copacks.isEmpty,
+                                       copackForOthersVol     = longTupToLitreage(copacks),
+                                       imports                = !imports.isEmpty,
+                                       importsVol             = longTupToLitreage(imports),
+                                       updatedProductionSites = packSites,
+                                       updatedWarehouseSites  = warehouses
+                                     )
     } yield variation
   }
 
