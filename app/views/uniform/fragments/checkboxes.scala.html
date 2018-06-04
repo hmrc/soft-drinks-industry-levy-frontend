@@ -23,16 +23,20 @@
 
 @(key: String, formIn: Form[List[String]], possibleValues: List[String])(implicit messages: Messages)
 
-@for(option <- possibleValues) {
-    <div class="multiple-choice">
-        <input id="@{key}_@{option}"
-               name="@{key}[]"
-               value="@option"
-               type="checkbox"
-               @formIn.value.getOrElse(Nil).filter( _ == option ).map{_ => checked="checked"} />
+<div class="form-group @if(formIn.hasErrors) {form-group-error}">
+    @formIn.errors.map { err => <span class="error-message">@Messages(err.message)</span> }
 
-        <label for="@{key}_@{option}">
-            @Messages(s"$key.option.$option")
-        </label>
-    </div>
+@for(option <- possibleValues) {
+        <div class="multiple-choice">
+            <input id="@{key}_@{option}"
+                   name="@{key}[]"
+                   value="@option"
+                   type="checkbox"
+                   @formIn.value.getOrElse(Nil).filter( _ == option ).map{_ => checked="checked"} />
+
+            <label for="@{key}_@{option}">
+                @Messages(s"$key.option.$option")
+            </label>
+        </div>
 }
+</div>
