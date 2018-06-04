@@ -117,8 +117,11 @@ html .font-xsmall {
     color: #4c2c92;
 }
 
-.cya-change {
+.cya-change, .cya-question {
     font-weight: bold;
+}
+.cya-change {
+    text-align: right;
 }
 
 button[name="checkyouranswers"] {
