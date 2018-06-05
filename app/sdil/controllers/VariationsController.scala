@@ -114,7 +114,7 @@ class VariationsController(
       def writes(o: Option[A]): JsValue =
         o.map{innerFormatter.writes}.getOrElse(JsNull)
     }
-  
+
   private def activityUpdate(
     data: VariationData
   ): WebMonad[VariationData] = {
@@ -145,7 +145,7 @@ class VariationsController(
       variation                   <- if (shouldDereg)
                                        tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
                                      else for {
-                                       packSites       <- askPackSites(data.updatedProductionSites.toList, !(packQty, copacks).isEmpty)
+                                       packSites       <- askPackSites(data.updatedProductionSites.toList, packLarge.contains(true) || !copacks.isEmpty)
                                        isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
                                        warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
                                      } yield data.copy (
@@ -182,7 +182,7 @@ class VariationsController(
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = for {
     changeType <- if (config.uniformDeregOnly)
-                    askOneOf("changeType", List(ChangeType.Sites, ChangeType.Deregister)) 
+                    askOneOf("changeType", List(ChangeType.Sites, ChangeType.Deregister))
                   else
                     askEnum("changeType", ChangeType)
     base = VariationData(subscription)
