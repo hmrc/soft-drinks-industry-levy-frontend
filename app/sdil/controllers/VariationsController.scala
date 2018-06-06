@@ -78,11 +78,13 @@ class VariationsController(
 
     import ContactChangeType._
     for {
-      change          <- if (data.isVoluntary) {
-        askSet("contactChangeType", Set(ContactChangeType.ContactPerson, ContactChangeType.ContactAddress), minSize = 1)
-      } else {
-        askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
-      }
+      change          <- {
+        if (data.isVoluntary) {
+          askSet("contactChangeType", Set(ContactChangeType.ContactPerson, ContactChangeType.ContactAddress), minSize = 1)
+        } else {
+          askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
+        }
+      } : WebMonad[Set[ContactChangeType]]
 
       packSites       <- if (change.contains(Sites)) {
         manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data
@@ -145,7 +147,7 @@ class VariationsController(
       imports                     <- ask(litres, "importQty") emptyUnless ask(bool, "importer", data.imports)
       noUkActivity                =  (packQty, copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
-      shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
+      shouldDereg                 =  noUkActivity || smallProducerWithNoCopacker
       variation                   <- if (shouldDereg)
                                        tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
                                      else for {
