@@ -29,7 +29,7 @@
     java.text.NumberFormat.getNumberInstance.format(value)
 }
 
-@if(path.contains("packLarge")) {
+@if(path.contains("packLarge") && !path.contains("deregDate")) {
     <h2 class="heading-medium">
     @Messages("variations.cya.activity-change")
     </h2>
@@ -495,7 +495,7 @@
                     @Messages("variations.cya.deregistration.reason")
                 </td>
                 <td>
-                    <p>@reason</p>
+                    @reason
                 <td/>
                 <td class="cya-change">
                     <a href="reason">
@@ -511,7 +511,7 @@
                     @Messages("variations.cya.deregistration.date")
                 </td>
                 <td>
-                    <p>@{date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}</p>
+                    @{date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}
                 <td/>
                 <td class="cya-change">
                     <a href="deregDate">

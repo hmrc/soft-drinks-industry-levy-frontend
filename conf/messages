@@ -473,8 +473,7 @@ contactChangeType.option.Sites=Add or remove packaging sites or warehouse addres
 contactChangeType.option.ContactPerson=Update our contact person
 contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
 
-heading.packLarge=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
-packLarge.lead=This includes brands you own or have the rights to manufacture
+heading.packLarge=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink for brands you own or have the rights to manufacture, worldwide?
 packLarge.help.header=What does ''package'' mean?
 packLarge.help=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
 
