@@ -76,15 +76,16 @@ class VariationsController(
       case object ContactAddress extends ContactChangeType
     }
 
+    def askContactChangeType: WebMonad[Set[ContactChangeType]] = if (data.isVoluntary) {
+      askSet("contactChangeType", Set(ContactChangeType.ContactPerson, ContactChangeType.ContactAddress), minSize = 1)
+    } else {
+      askSet("contactChangeType", ContactChangeType.values.toSet, minSize = 1)
+    }
+
     import ContactChangeType._
     for {
-      change          <- {
-        if (data.isVoluntary) {
-          askSet("contactChangeType", Set(ContactChangeType.ContactPerson, ContactChangeType.ContactAddress), minSize = 1)
-        } else {
-          askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
-        }
-      } : WebMonad[Set[ContactChangeType]]
+
+      change          <- askContactChangeType
 
       packSites       <- if (change.contains(Sites)) {
         manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data
