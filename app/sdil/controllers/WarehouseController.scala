@@ -16,8 +16,9 @@
 
 package sdil.controllers
 
+
 import play.api.data.Form
-import play.api.data.Forms.{ignored, mapping, seq}
+import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, Result}
 import sdil.actions.{FormAction, RegistrationFormRequest}
@@ -28,7 +29,6 @@ import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.register.secondaryWarehouse
-import play.api.data.Forms.{boolean, ignored, mapping, seq}
 
 import scala.concurrent.Future
 
@@ -67,19 +67,19 @@ class WarehouseController(val messagesApi: MessagesApi,
         Journey.previousPage(WarehouseSitesPage).show,
         formTarget)),
       {
-        case Sites(_, _, tradingName, Some(addr)) =>
+        case Sites(_, _, Some(tradingName), Some(addr)) =>
           val updatedSites = request.formData.secondaryWarehouses match {
             case Some(addrs) if addrs.nonEmpty =>
               addrs :+ Site(
                 UkAddress.fromAddress(addr),
                 None,
-                tradingName,
+                Some(tradingName),
                 None
               )
             case _ => Seq(Site(
               UkAddress.fromAddress(addr),
               None,
-              tradingName,
+              Some(tradingName),
               None
             ))
           }
@@ -112,7 +112,7 @@ object WarehouseForm extends FormHelpers {
   def apply(): Form[Sites] = Form(mapping(
     "additionalSites" -> seq(siteJsonMapping),
     "addAddress" -> boolean,
-    "tradingName" -> mandatoryIfTrue("addAddress", tradingNameMapping),
+    "tradingName" ->  optional(tradingNameMapping),
     "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
   )(Sites.apply)(Sites.unapply))
 
@@ -120,7 +120,7 @@ object WarehouseForm extends FormHelpers {
     mapping(
       "additionalSites" -> ignored(Seq.empty[Site]),
       "addAddress" -> mandatoryBoolean,
-      "tradingName" -> mandatoryIfTrue("addAddress", tradingNameMapping),
+      "tradingName" ->  optional(tradingNameMapping),
       "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
     )(Sites.apply)(Sites.unapply)
   )
