@@ -74,23 +74,24 @@ trait SdilWMController extends WebMonadController
     }.imap(valueMap(_))(_.toString)
   }
 
-  protected def askEnumSet[E <: EnumEntry](
-    id: String,
-    e: Enum[E],
-    minSize: Int = 0,
-    default: Option[Set[E]] = None
-  ): WebMonad[Set[E]] = {
-    val possValues: Set[String] = e.values.toList.map{_.toString}.toSet
+  protected def askSet[E](
+                                  id: String,
+                                  possibleValues: Set[E],
+                                  minSize: Int = 0,
+                                  default: Option[Set[E]] = None
+                                          ): WebMonad[Set[E]] = {
+    val valueMap: Map[String,E] =
+      possibleValues.map{a => (a.toString, a)}.toMap
     formPage(id)(
       list(nonEmptyText)
-        .verifying(_.toSet subsetOf possValues)
+        .verifying(_.toSet subsetOf possibleValues.map(_.toString))
         .verifying("error.radio-form.choose-one-option", _.size >= minSize),
       default.map{_.map{_.toString}.toList}
     ) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
-      val innerHtml = uniform.fragments.checkboxes(id, form, possValues.toList)
+      val innerHtml = uniform.fragments.checkboxes(id, form, valueMap.keys.toList)
       uniform.ask(id, form, innerHtml, path)
-    }.imap(_.map{e.withName}.toSet)(_.map(_.toString).toList)
+    }.imap(_.map {valueMap(_)}.toSet)(_.map(_.toString).toList)
   }
 
   implicit class RichMapping[A](mapping: Mapping[A]) {
