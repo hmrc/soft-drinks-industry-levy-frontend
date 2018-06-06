@@ -63,7 +63,7 @@ class VariationsController(
     case object Activity extends ChangeType
     case object Deregister extends ChangeType
   }
-  
+
   private def contactUpdate(
     data: VariationData
   ): WebMonad[VariationData] = {
