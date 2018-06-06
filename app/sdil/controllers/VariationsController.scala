@@ -78,7 +78,11 @@ class VariationsController(
 
     import ContactChangeType._
     for {
-      change          <- askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
+      change          <- if (data.isVoluntary) {
+        askSet("contactChangeType", Set(ContactChangeType.ContactPerson, ContactChangeType.ContactAddress), minSize = 1)
+      } else {
+        askEnumSet("contactChangeType", ContactChangeType, minSize = 1)
+      }
 
       packSites       <- if (change.contains(Sites)) {
         manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data
