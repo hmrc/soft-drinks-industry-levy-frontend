@@ -144,7 +144,7 @@ trait SdilWMController extends WebMonadController
     constraints: List[(String, String => Boolean)] = Nil,
     errorOnEmpty: String = "error.required"
   ): WebMonad[String] = {
-    val mapping = text.verifying(errorOnEmpty, _.nonEmpty).verifying(constraintMap(constraints) :_*)
+    val mapping = text.verifying(errorOnEmpty, _.trim.nonEmpty).verifying(constraintMap(constraints) :_*)
     formPage(id)(mapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
       uniform.bigtext(id, b, path)
@@ -185,7 +185,7 @@ trait SdilWMController extends WebMonadController
 
       formPage(id)(mapping) { (path, b, r) =>
         implicit val request: Request[AnyContent] = r
-        uniform.many(id, b, items.map{_.showHtml}, path)
+        uniform.many(id, b, items.map{_.showHtml}, path, min)
       }.imap(outf)(inf)
     }(wm)
   }

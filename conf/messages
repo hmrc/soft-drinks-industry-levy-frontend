@@ -483,7 +483,7 @@ warehouses_deleteConfirmation.continue=Save and continue
 heading.packSites_add=Enter your packaging site details
 packSites_add.paragraph=Only add the addresses of the packaging sites you operate
 heading.packSites_deleteConfirmation=Are you sure you want to remove this packaging site?
-packSites_deleteConfirmation.continue=Save and continue
+packSites_deleteConfirmation.continue=Remove
 packLarge.inner-heading=How many litres worldwide?
 option.packLarge.inner.false=Less than 1 million litres
 option.packLarge.inner.true=1 million litres or more
@@ -507,7 +507,7 @@ importQty.higher=Litres in the high band
 heading.useCopacker=Do you use any third parties in the UK to package liable drinks on your behalf?
 
 heading.packSites=Change your packaging site details
-packSites.paragraph=Only add the addresses of UK packaging sites you operate
+packSites.paragraph=Only add the addresses of UK packaging sites you operate. You must have at least one registered packaging site.
 
 heading.warehouses=Change your UK warehouse details
 warehouses.help.header=Why register a warehouse?

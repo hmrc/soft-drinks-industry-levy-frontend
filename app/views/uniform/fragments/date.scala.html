@@ -37,8 +37,14 @@
                        id="@{key}.@{field}"
                        name="@{key}.@{field}"
                        value="@{form(s"$key.$field").value}"
-                       type="number"
-                       pattern="[0-9]*">
+                       pattern="[0-9]*"
+                       @{field match {
+                           case "year" =>
+                               "maxlength=4"
+                           case _ =>
+                               "maxlength=2"
+                       }}
+                >
               </div>
             }
 
