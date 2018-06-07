@@ -105,12 +105,14 @@ html .font-xsmall {
   background: none;
   border: none;
   color: #005ea5;
-  padding: none;
   text-decoration: underline;
   cursor: pointer;
   -webkit-box-shadow: none;
   outline: 0;
   position: relative;
+  padding-left: 0;
+  padding-right: 0;
+  margin-right: 0;
 }
 
 .link-button:hover {
@@ -130,4 +132,8 @@ button[name="checkyouranswers"] {
 
 .form-field--error .error-notification {
     font-weight: bold;
+}
+
+.align-right {
+    text-align: right;
 }

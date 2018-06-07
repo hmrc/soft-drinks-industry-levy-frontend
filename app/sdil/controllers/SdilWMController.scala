@@ -185,7 +185,7 @@ trait SdilWMController extends WebMonadController
 
       formPage(id)(mapping) { (path, b, r) =>
         implicit val request: Request[AnyContent] = r
-        uniform.many(id, b, items.map{_.showHtml}, path)
+        uniform.many(id, b, items.map{_.showHtml}, path, min)
       }.imap(outf)(inf)
     }(wm)
   }
