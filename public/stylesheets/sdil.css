@@ -137,3 +137,9 @@ button[name="checkyouranswers"] {
 .align-right {
     text-align: right;
 }
+
+@media print {
+    .print-link {
+        display: none;
+    }
+}
