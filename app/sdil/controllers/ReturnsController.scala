@@ -128,7 +128,8 @@ class ReturnsController (
   }
 
   def askLitreageOpt(key: String): WebMonad[(Long, Long)] =
-    ask(litreagePair.nonEmpty, key + "Qty") emptyUnless ask(bool, key + "YesNo")
+    askOption(litreagePair.nonEmpty, key).map(_.getOrElse((0L,0L)))
+//    ask(litreagePair.nonEmpty, key + "Qty") emptyUnless ask(bool, key + "YesNo")
 
   private val askReturn: WebMonad[SdilReturn] = (
     manyT("packageSmall", ask(smallProducer,_), min = 1) emptyUnless ask(bool, "packageSmallYN"),

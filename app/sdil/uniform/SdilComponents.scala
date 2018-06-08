@@ -16,14 +16,14 @@
 
 package ltbs.play.scaffold
 
-import cats.implicits.none
+import cats.implicits._
 import play.api.data.Forms._
 import play.api.data._
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.Messages
 import play.api.libs.functional.syntax._
 import play.api.libs.functional.syntax.unlift
-import play.api.libs.json.{Format, JsPath}
+import play.api.libs.json._
 import play.twirl.api.Html
 import sdil.models._
 import sdil.models.backend.{Site, UkAddress}
@@ -74,12 +74,6 @@ object SdilComponents {
   implicit val contactDetailsForm = new FormHtml[ContactDetails] {
     def asHtmlForm(key: String, form: Form[ContactDetails])(implicit messages: Messages): Html = {
       uniform.fragments.contactdetails(key, form)
-    }
-  }
-
-  implicit val optBoolForm = new FormHtml[Option[Boolean]] {
-    def asHtmlForm(key: String, form: Form[Option[Boolean]])(implicit messages: Messages): Html = {
-      uniform.fragments.optBoolean(key, form)
     }
   }
 

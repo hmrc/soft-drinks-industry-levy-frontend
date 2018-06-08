@@ -17,6 +17,9 @@
 package ltbs
 
 import _root_.play.api.i18n._
+import _root_.play.api.data.Forms._
+import _root_.play.api.data._
+import _root_.play.api.data.format.Formats._
 
 package object play {
 
@@ -33,4 +36,14 @@ package object play {
       m(definedKey, args :_*)
     }
   }
+
+  // implicit class RichForm(f: Form[_]) {
+  //   def subForm(key: String): Form[Any] = {
+  //     val mappings = f.mapping.mappings.toList.collect {
+  //       case FieldMapping(key, constraints) => FieldMapping(key.replace("key", ""), constraints)
+  //     }
+
+  //     Form(mappings)
+  //   }
+  // }
 }

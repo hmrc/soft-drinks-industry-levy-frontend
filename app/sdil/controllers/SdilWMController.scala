@@ -28,6 +28,7 @@ import play.api.data.Forms._
 import play.api.data._
 import play.api.data.format.Formatter
 import play.api.data.validation._
+import play.api.i18n.Messages
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
@@ -99,6 +100,69 @@ trait SdilWMController extends WebMonadController
       mapping.verifying(errorMsg, {!_.isEmpty})
 
     def nonEmpty(implicit m: Monoid[A], eq: Eq[A]): Mapping[A] = nonEmpty("error.empty")
+  }
+
+
+  implicit def optFormatter[A](implicit innerFormatter: Format[A]): Format[Option[A]] =
+    new Format[Option[A]] {
+      def reads(json: JsValue): JsResult[Option[A]] = json match {
+        case JsNull => JsSuccess(none[A])
+        case a      => innerFormatter.reads(a).map{_.some}
+      }
+      def writes(o: Option[A]): JsValue =
+        o.map{innerFormatter.writes}.getOrElse(JsNull)
+    }
+
+
+  def askOption[T](innerMapping: Mapping[T], key: String, default: Option[Option[T]] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[Option[T]] = {
+    import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
+
+    val outerMapping: Mapping[Option[T]] = mapping(
+      "outer" -> bool,
+      "inner" -> mandatoryIfTrue(s"${key}.outer", innerMapping)
+    ){(_,_) match { case (outer, inner) => inner }
+    }( a => (a.isDefined, a).some )
+
+    formPage(key)(outerMapping, default) { (path, form, r) =>
+      implicit val request: Request[AnyContent] = r
+
+      val innerForm: Form[T] = Form(single { key -> single { "inner" -> innerMapping }})
+      println(form.data)
+      val innerFormBound = if (form.data.get(s"$key.outer") != Some("true")) innerForm else innerForm.bind(form.data)
+      val innerHtml = htmlForm.asHtmlForm(key + ".inner", innerFormBound)
+
+      val outerHtml = {
+        import ltbs.play._
+        views.html.softdrinksindustrylevy.helpers.inlineRadioButtonWithConditionalContent(
+          form(s"${key}.outer"),
+          Seq(
+            "true" -> ("Yes", Some("hiddenTarget")),
+            "false" -> ("No", None)
+          ),
+          Some(innerHtml),
+          '_labelClass -> "block-label",
+          '_labelAfter -> true,
+          '_groupClass -> "form-field-group inline",
+          '_dataTargetTrue -> s"anything",
+          '_legendClass -> "visuallyhidden"
+        )
+      }
+
+      uniform.ask(key, form, outerHtml, path)
+    }
+  }
+
+  def askEmptyOption[T](
+    innerMapping: Mapping[T],
+    key: String,
+    default: Option[T] = None
+  )(implicit htmlForm: FormHtml[T],
+    fmt: Format[T],
+    mon: Monoid[T]
+  ): WebMonad[T] = {
+    val monDefault: Option[Option[T]] = default.map{_.some.filter{_ != mon.empty}}
+    askOption[T](innerMapping, key, monDefault)
+      .map{_.getOrElse(mon.empty)}
   }
 
   def ask[T](mapping: Mapping[T], key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
