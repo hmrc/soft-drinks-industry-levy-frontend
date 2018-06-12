@@ -73,6 +73,19 @@ case class VariationData(original: RetrievedSubscription,
       deregDate.isDefined
     ).foldLeft(false)(_ || _)
   }
+
+  def noVariation: Boolean = {
+    val orig = VariationData(original)
+    updatedContactDetails == orig.updatedContactDetails &&
+      updatedBusinessAddress == orig.updatedBusinessAddress &&
+      updatedProductionSites == orig.updatedProductionSites &&
+      updatedWarehouseSites == orig.updatedWarehouseSites &&
+      producer == orig.producer &&
+      packageOwn == orig.packageOwn &&
+      usesCopacker == orig.usesCopacker &&
+      copackForOthers == orig.copackForOthers &&
+      imports == orig.imports
+  }
 }
 
 object VariationData {
