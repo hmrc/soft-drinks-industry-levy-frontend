@@ -20,20 +20,22 @@
 
 @(id: String, breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
 
-@views.html.main_template(title = Messages(s"$id.title")) {
+@views.html.main_template(title = Messages(s"variationDone.title")) {
 
     <div class="govuk-box-highlight">
-        <h1 class="heading-xlarge">@Messages(s"$id.title")</h1>
+        <h1 class="heading-xlarge">@Messages(s"variationDone.title")</h1>
 
-        <p class="font-large">@Messages(s"$id.subheading")</p>
+        <p class="font-large">@Messages(s"variationDone.subheading")</p>
     </div>
 
     <p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
-    <p>@Messages(s"$id.your.updates", LocalDate.now.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), LocalTime.now
+    <p>@Messages(s"variationDone.your.updates", LocalDate.now.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), LocalTime.now
             (ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("HH:mm")))</p>
-    <h2 class="heading-medium">@Messages("sdil.complete.what-happens.title")</h2>
+    <h2 class="heading-medium">@Messages(s"$id.what-happens.title")</h2>
 
     <p>@Messages(s"$id.what-happens-next")</p>
+
+    @Html(Messages("variations.cya.noChangeEnd", sdil.controllers.routes.ServicePageController.show()))
 
 }
 
