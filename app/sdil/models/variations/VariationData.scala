@@ -62,8 +62,10 @@ case class VariationData(original: RetrievedSubscription,
     * A material change must by law be reported as a variation
     * whereas a non-material change cannot be submitted as a variation.
     */
+
+  lazy val orig = VariationData(original)
+
   def isMaterialChange: Boolean = {
-    val orig = VariationData(original)
 
     List(
       updatedContactDetails != orig.updatedContactDetails,
@@ -73,7 +75,13 @@ case class VariationData(original: RetrievedSubscription,
       deregDate.isDefined
     ).foldLeft(false)(_ || _)
   }
+
+  lazy val volToMan: Boolean = orig.isVoluntary && isLiable
+
+  lazy val manToVol: Boolean = orig.isLiable && isVoluntary
 }
+
+
 
 object VariationData {
   implicit val callWrites: Format[Call] = new Format[Call] {
