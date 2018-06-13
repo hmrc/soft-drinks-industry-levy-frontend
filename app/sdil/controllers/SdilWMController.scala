@@ -71,7 +71,9 @@ trait SdilWMController extends WebMonadController
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      uniform.radiolist(id, b, valueMap.keys.toList, path)
+      uniform.fragments.radiolist(id, b, valueMap.keys.toList)
+      val inner = uniform.fragments.radiolist(id, b, valueMap.keys.toList)
+      uniform.ask(id, b, inner, path)
     }.imap(valueMap(_))(_.toString)
   }
 
@@ -129,6 +131,8 @@ trait SdilWMController extends WebMonadController
       val innerForm: Form[T] = Form(single { key -> single { "inner" -> innerMapping }})
       println(form.data)
       val innerFormBound = if (form.data.get(s"$key.outer") != Some("true")) innerForm else innerForm.bind(form.data)
+
+      val innerHead = views.html.uniform.fragments.innerhead(key)
       val innerHtml = htmlForm.asHtmlForm(key + ".inner", innerFormBound)
 
       val outerHtml = {
@@ -139,7 +143,7 @@ trait SdilWMController extends WebMonadController
             "true" -> ("Yes", Some("hiddenTarget")),
             "false" -> ("No", None)
           ),
-          Some(innerHtml),
+          Some(innerHead |+| innerHtml),
           '_labelClass -> "block-label",
           '_labelAfter -> true,
           '_groupClass -> "form-field-group inline",
@@ -202,16 +206,36 @@ trait SdilWMController extends WebMonadController
     }
   }
 
+  protected def askList[A](
+    innerMapping: Mapping[A],
+    id: String,
+    min: Int = 0,
+    max: Int = 100,
+    default: List[A] = List.empty[A]
+  )(implicit hs: HtmlShow[A], htmlForm: FormHtml[A], format: Format[A]): WebMonad[List[A]] =
+    manyT[A](id, ask(innerMapping, _), min, max, default)
+
   protected def askBigText(
     id: String,
     default: Option[String] = None,
     constraints: List[(String, String => Boolean)] = Nil,
     errorOnEmpty: String = "error.required"
   ): WebMonad[String] = {
+
+    def constraintMap[T](
+      constraints: List[(String, T => Boolean)]
+    ): List[Constraint[T]] =
+      constraints.map{ case (error, pred) =>
+        Constraint { t: T =>
+          if (pred(t)) Valid else Invalid(Seq(ValidationError(error)))
+        }
+      }
+
     val mapping = text.verifying(errorOnEmpty, _.nonEmpty).verifying(constraintMap(constraints) :_*)
     formPage(id)(mapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      uniform.bigtext(id, b, path)
+      val fragment = uniform.fragments.bigtext(id, b)
+      uniform.ask(id,  b, fragment, path)
     }
   }
 
@@ -253,16 +277,5 @@ trait SdilWMController extends WebMonadController
       }.imap(outf)(inf)
     }(wm)
   }
-
-  // TODO: Prevent this ugliness by making the mapping the centre of the
-  // webmonad form construction
-  private def constraintMap[T](
-    constraints: List[(String, T => Boolean)]
-  ): List[Constraint[T]] =
-    constraints.map{ case (error, pred) =>
-      Constraint { t: T =>
-        if (pred(t)) Valid else Invalid(Seq(ValidationError(error)))
-      }
-    }
 
 }

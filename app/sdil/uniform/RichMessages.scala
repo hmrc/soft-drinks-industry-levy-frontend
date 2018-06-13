@@ -20,30 +20,34 @@ import _root_.play.api.i18n._
 import _root_.play.api.data.Forms._
 import _root_.play.api.data._
 import _root_.play.api.data.format.Formats._
+import cats.implicits._
 
 package object play {
 
-  implicit class RichMessages(m: Messages) {
-    def first(
-      key: String,
-      sndKey: String,
-      fallbackKeys: String*
-    )(args: Any*)(implicit lang: Lang): String = {
-      val definedKey = (key :: sndKey :: fallbackKeys.toList)
-        .find(m.isDefinedAt)
-        .getOrElse(key)
+  implicit class RichMessages(mo: Messages.type) {
 
-      m(definedKey, args :_*)
+    def get(key: String, args: Any*)(implicit provider: Messages): Option[String] = {
+      if (provider.isDefinedAt(key))
+        provider.messages(key, args:_*).some
+      else
+        none[String]
     }
+
+    def many(
+      key: String,
+      args: Any*)(implicit provider: Messages): List[String] =
+    {
+
+      @annotation.tailrec
+      def inner(cnt: Int = 2, list: List[String] = Nil): List[String] =
+        get(s"$key.$cnt", args:_*) match {
+          case Some(_) => inner(cnt+1, provider.messages(s"$key.$cnt", args:_*) :: list)
+          case None       => list
+        }
+
+      List(key, s"$key.1").map(get(_, args)).flatten ++ inner().reverse
+    }
+
   }
 
-  // implicit class RichForm(f: Form[_]) {
-  //   def subForm(key: String): Form[Any] = {
-  //     val mappings = f.mapping.mappings.toList.collect {
-  //       case FieldMapping(key, constraints) => FieldMapping(key.replace("key", ""), constraints)
-  //     }
-
-  //     Form(mappings)
-  //   }
-  // }
 }

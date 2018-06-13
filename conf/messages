@@ -644,3 +644,60 @@ removePackSites.continue=[Remove all packing sites]
 heading.businessAddress=Change your contact address for the Soft Drinks Industry Levy
 
 heading.checkyouranswers=Check your answers
+
+# Returns
+heading.own-brands=Do you need to report any of the liable drink you’ve packaged for your own brands at sites you operate?
+own-brands.inner-heading=How many litres do you need to report?
+heading.copack-large=Do you need to report any of the liable drink you’ve packaged as a third party or contract packer at sites you operate?
+copack-large.inner-heading=How many litres do you need to report?
+copack-large.inner-paragraph=Do not include drinks you’ve packaged for small producers. 
+heading.copack-small-yn=Do you need to claim an exemption for any of the liable drink you’ve packaged for small producers?
+heading.copack-small=Enter the small producer’s details
+copack-small.paragraph=These details will be saved and shown in future returns
+heading.copack-small_add=Enter the amount of liable drink you’re reporting for this small producer
+heading.imports-large=Do you need to report any of the liable drink you’ve brought into the UK?
+imports-large.paragraph=Do not include liable drinks imported from small producers outside of the UK.
+imports-large.paragraph.2=If you’re a small producer and you’re bringing your own brands of liable drinks in to the UK, do not include them.
+heading.imports-small=Were any of the liable drinks you brought into the UK from small producers?
+imports-small.inner-heading=How many litres?
+heading.export=Do you want to claim a credit for liable drink that has been exported?
+export.help.header=What can I claim a credit for?
+export.help=You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You’ll need to get and keep evidence of details such as the: \
+  <ul class="list list-bullet"><li>brand of the liable drinks</li><li>supplier or consigner</li><li>customer and destination the liable drinks are supplied to</li><li>method of delivery</li></ul> \
+  To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drink and \
+  whether it was in the low band or the high band.
+
+export.inner-heading=How many litres are you claiming a credit for?
+heading.waste=Do you want to claim a credit for any liable drinks which have been lost or destroyed?
+waste.inner-Heading=How many litres are you claiming a credit for?
+
+returns-cya.balance.due=Balance due {0}
+returns-cya.cost=Cost
+returns-cya.litres=Litres
+returns-cya.band=Band
+returns-cya.activity=Activity
+returns-cya.own-brands=Own Brand
+returns-cya.copack-small=Contract packed for small producers
+returns-cya.copack-large=Contract packed
+returns-cya.imports-small=Brought into the UK from small producers
+returns-cya.imports-large=Brought into the UK
+returns-cya.export=Exported
+returns-cya.waste=Lost, damaged or destroyed
+returns-cya.subtotal=Subtotal
+returns-cya.balance.brought.forward=Balance brought forward
+returns-cya.total=Total
+returns-cya.low=Low
+returns-cya.high=High
+returns-cya.change=Change
+returns-cya.change.own-brands=volume of own brand
+returns-cya.change.copack-small=volume contract packed for small producers
+returns-cya.change.copack-large=volume contract packed
+returns-cya.change.imports-small=volume brought into the UK from small producers
+returns-cya.change.imports-large=volume brought into the UK
+returns-cya.change.export=volume exported
+returns-cya.change.waste=volume lost, damaged or destroyed
+returns-cya.submit-subheading=Submit your return
+returns-cya.submit-paragraph=By submitting this notification you are confirming that, to the best of your knowledge, the details you are providing are correct.
+
+returnsDone.title=Complete
+returnsDone.subheading=We’ve received your return

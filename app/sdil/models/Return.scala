@@ -17,8 +17,9 @@
 package sdil.models
 
 case class SdilReturn(
-  packageSmall : List[SmallProducer],
-  packageLarge : (Long,Long),
+  ownBrand     : (Long,Long),
+  packLarge    : (Long,Long),
+  packSmall    : List[SmallProducer],
   importSmall  : (Long,Long),
   importLarge  : (Long,Long),
   export       : (Long,Long),

@@ -21,7 +21,7 @@
 @import sdil.config.AppConfig
 @import views.html.uniform.helpers._
 
-@(key: String, form: Form[(Long,Long)])(implicit messages: Messages)
+@(key: String, form: Form[(Long,Long)], approximate: Boolean)(implicit messages: Messages)
 
  <div class="form-group form-litres">
      @inputText(
@@ -48,7 +48,8 @@
      </p>
 }
 
+@if(approximate) {
  @details("sdil.litreage.volumes.help") {
      <p>@Messages("sdil.litreage.volumes.content.p1")</p>
+ }
 }
-

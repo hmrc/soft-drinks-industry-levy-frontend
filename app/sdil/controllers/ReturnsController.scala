@@ -34,7 +34,7 @@ import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents._
+import ltbs.play.scaffold.SdilComponents.{litreageForm => _, _}
 
 
 import scala.concurrent.ExecutionContext
@@ -48,6 +48,16 @@ class ReturnsController (
   val config: AppConfig,
   val ec: ExecutionContext
 ) extends SdilWMController with FrontendController {
+
+  implicit val litreageForm = new FormHtml[(Long,Long)] {
+    import play.api.data.Forms._
+    import play.api.data._
+    import play.api.i18n.Messages
+
+    def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {
+      uniform.fragments.litreage(key, form, false)(messages)
+    }
+  }
 
   implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
 
@@ -71,79 +81,49 @@ class ReturnsController (
                            id: String,
                            headings: List[Html],
                            rows: List[List[Html]]
-                         ): WebMonad[Unit] = {
+                         ): WebMonad[Unit] = ???
 
-    // Because I decided earlier on to make everything based off of JSON
-    // I have to write silly things like this. TODO
-    implicit val formatUnit: Format[Unit] = new Format[Unit] {
-      def writes(u: Unit) = JsNull
-      def reads(v: JsValue) = JsSuccess(())
-    }
-
-    val unitMapping: Mapping[Unit] = text.transform(_ => (), _ => "")
-    formPage(id)(unitMapping, none[Unit]){  (path, form, r) =>
-      implicit val request: Request[AnyContent] = r
-
-      uniform.tellTable(id, form, path, headings, rows)
-    }
-  }
-
-  def checkYourAnswers(key: String)(sdilReturn: SdilReturn): WebMonad[Unit] = {
-
-    //TODO: The rates should be read in from somewhere not just dumped in
-    // a function
-    def taxRow(in: (Long, Long), rate: Int = 1): (Long, Long, BigDecimal, BigDecimal) = {
-      val tax = in.combineN(rate)
-      (in._1, in._2, BigDecimal("0.18") * tax._1, BigDecimal("0.24") * tax._2)
-    }
-
-    implicit def stringToHtml(i: String): Html = Html(i)
+  def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal): WebMonad[Unit] = {
 
     val data = List(
-      "packageSmall" -> taxRow(sdilReturn.packageSmall.map{_.litreage}.combineAll, 0),
-      "packageLarge" -> taxRow(sdilReturn.packageLarge),
-      "importSmall"  -> taxRow(sdilReturn.importSmall),
-      "importLarge"  -> taxRow(sdilReturn.importLarge),
-      "export"       -> taxRow(sdilReturn.export, -1),
-      "wastage"      -> taxRow(sdilReturn.wastage, -1)
+      ("own-brands", sdilReturn.ownBrand, 1),
+      ("copack-large", sdilReturn.packLarge, 1),
+      ("copack-small", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
+      ("imports-large", sdilReturn.importLarge, 1),
+      ("imports-small", sdilReturn.importSmall, 1),
+      ("export", sdilReturn.export, -1),
+      ("waste", sdilReturn.wastage, -1)
     )
 
-    val totals = ("total" -> data.map{_._2}.combineAll)
+    val costLower = BigDecimal("0.18")
+    val costHigher = BigDecimal("0.24")
+    val subtotal = data.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
 
-    tellTable(
-      key,
-      headings = List("", "litres.lower", "litres.higher", "tax.lower", "tax.higher", "subtotal"),
-      rows = {data :+ totals}.map{
-        case (key, (lower, higher, taxLow, taxHigh)) =>
-        List(
-          key,
-          f"$lower%,d",
-          f"$higher%,d",
-          f"£$taxLow%,.2f",
-          f"£$taxHigh%,.2f",
-          f"£${taxLow+taxHigh}%,.2f"
-        ).map(stringToHtml)
-      }
-    )
+    val inner = uniform.fragments.returnsCYA(
+      key = key,
+      lineItems = data,
+      costLower,
+      costHigher,
+      subtotal = subtotal,
+      broughtForward = broughtForward,
+      total = subtotal + broughtForward)
+    tell(key, inner)
   }
 
-  def askLitreageOpt(key: String): WebMonad[(Long, Long)] =
-    askOption(litreagePair.nonEmpty, key).map(_.getOrElse((0L,0L)))
-//    ask(litreagePair.nonEmpty, key + "Qty") emptyUnless ask(bool, key + "YesNo")
-
   private val askReturn: WebMonad[SdilReturn] = (
-    manyT("packageSmall", ask(smallProducer,_), min = 1) emptyUnless ask(bool, "packageSmallYN"),
-    askLitreageOpt("packageLarge"),
-    askLitreageOpt("importSmall"),
-    askLitreageOpt("importLarge"),
-    askLitreageOpt("export"),
-    askLitreageOpt("wastage")
+    askEmptyOption(litreagePair.nonEmpty, "own-brands"),
+    askEmptyOption(litreagePair.nonEmpty, "copack-large"),
+    askList(smallProducer, "copack-small", min = 1) emptyUnless ask(bool, "copack-small-yn"),
+    askEmptyOption(litreagePair.nonEmpty, "imports-large"),
+    askEmptyOption(litreagePair.nonEmpty, "imports-small"),
+    askEmptyOption(litreagePair.nonEmpty, "export"),
+    askEmptyOption(litreagePair.nonEmpty, "waste")
   ).mapN(SdilReturn.apply)
 
   private val program: WebMonad[Result] = for {
-    sdilReturn   <- askReturn
-    _            <- checkYourAnswers("check")(sdilReturn)
-    exit         <- journeyEnd("returnsDone")
+    sdilReturn     <- askReturn
+    broughtForward <- BigDecimal("0").pure[WebMonad]
+    exit           <- checkYourAnswers("returns-cya", sdilReturn, broughtForward) >> journeyEnd("returnsDone")
   } yield {
     exit
   }

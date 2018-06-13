@@ -27,8 +27,8 @@
 @inputRadioGroup(
     form(key),
     options(
-        "true" -> messages.first(s"option.$key.true","sdil.common.yes")(),
-        "false" -> messages.first(s"option.$key.false", "sdil.common.no")()
+        "true" -> Messages(Seq(s"option.$key.true","sdil.common.yes")),
+        "false" -> Messages(Seq(s"option.$key.false", "sdil.common.no"))
     ),
     '_labelClass -> "block-label",
     '_labelAfter -> true,

@@ -25,11 +25,11 @@
 @import ltbs.play._
 
 @(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig)
-@views.html.main_template(messages.first(s"heading.$key", "sdil.variations.title")(), form = Some(form)) {
+@views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
   @backlink(breadcrumbs)
 
   <h1 class="heading-large">
-        @messages.first(s"heading.$key", "sdil.declaration.heading")()
+        @Messages(Seq(s"heading.$key", "sdil.declaration.heading"))
   </h1>
     @helper.form(action = play.api.mvc.Call("post", key)) {
         <div class="form-group">
@@ -37,7 +37,7 @@
         @tell
         </div>
         <button class="button" type="submit" name="@key" value="Next" formmethod="post">
-            @messages.first(s"$key.continue", "sdil.declaration.continue")()
+            @Messages(Seq(s"$key.continue", "sdil.declaration.continue"))
         </button>
     }
 }
