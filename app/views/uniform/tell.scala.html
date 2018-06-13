@@ -24,7 +24,7 @@
 @import views.html.uniform.helpers._
 @import ltbs.play._
 
-@(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html, disabled: Boolean = false)(implicit messages: Messages, request: Request[_], config: AppConfig)
 @views.html.main_template(messages.first(s"heading.$key", "sdil.variations.title")(), form = Some(form)) {
   @backlink(breadcrumbs)
 
@@ -36,8 +36,10 @@
         @CSRF.formField
         @tell
         </div>
-        <button class="button" type="submit" name="@key" value="Next" formmethod="post">
+        @if(!disabled) {
+            <button class="button" type="submit" name="@key" value="Next" formmethod="post">
             @messages.first(s"$key.continue", "sdil.declaration.continue")()
-        </button>
+            </button>
+        }
     }
 }

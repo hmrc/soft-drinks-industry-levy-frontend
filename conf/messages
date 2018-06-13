@@ -624,7 +624,7 @@ variations.cya.false=No
 
 variations.cya.noChange=The answers you gave are the same as the information you already have registered. If your \
   answers are accurate you do not need to do anything and can <a href="{0}"> view your registered details</a>. Otherwise, you need to change your answers.
-
+variations.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 packSites.error.items.tooMany=[Too many sites]
 packSites.error.items.tooFew=[You must have at least one packaging site]
 
