@@ -29,7 +29,7 @@
     java.text.NumberFormat.getNumberInstance.format(value)
 }
 
-@if(v.noVariation){
+@if(v.noVariation || v.noChangeToActorStatus){
     <div class="panel panel-border-narrow" id="details-content-0">
         @Html(Messages("variations.cya.noChange", sdil.controllers.routes.ServicePageController.show()))
     </div>
@@ -293,7 +293,7 @@
     </table>
 }
 
-@if(newPackingSites.isEmpty && closedPackagingSites.isEmpty) {
+@if(newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
     <table class="check-your-answers">
         <caption class="heading-medium">@Messages("variations.cya.packsites.same")</caption>
         <tbody>
@@ -338,29 +338,41 @@
           </tr>
       </thead>
 
-    <tbody>
+      <tbody>
       @for(site <- newWarehouseSites) {
-        <tr>
-          <td>
-            <details role="group">
-              <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-                  <span class="summary">@site.address.lines.head</span>
-              </summary>
-              @for(line <- site.address.lines.tail) {
-                <div aria-hidden="true">@line</div>
-              }
-              <div class="postal-code">@site.address.postCode</div>
-            </details>
-          </td>
-          <td>@site.address.postCode</td>
-          <td class="change-answer">
-            <a href="warehouses">
-              @Html(Messages("variations.cya.warehouses.change"))
-            </a>
-          </td>
-        </tr>
-        }
-    </tbody>
+          <tr>
+              <td>
+                  <details role="group">
+                      <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                          <span class="summary">
+                          @if(site.tradingName.isDefined) {
+                              @site.tradingName
+                          } else {
+                              @site.address.lines.head
+                          }
+                          </span>
+                      </summary>
+                      @if(site.tradingName.isDefined) {
+                          @for(line <- site.address.lines) {
+                              <div aria-hidden="true">@line</div>
+                          }
+                      } else {
+                          @for(line <- site.address.lines.tail) {
+                              <div aria-hidden="true">@line</div>
+                          }
+                      }
+                      <div class="postal-code">@site.address.postCode</div>
+                  </details>
+              </td>
+              <td>@site.address.postCode</td>
+              <td class="change-answer">
+                  <a href="warehouses">
+                  @Html(Messages("variations.cya.warehouses.change"))
+                  </a>
+              </td>
+          </tr>
+      }
+      </tbody>
   </table>
 }
 
@@ -390,10 +402,22 @@
                 <td>
                     <details role="group">
                         <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-                            <span class="summary">@site.address.lines.head</span>
+                            <span class="summary">
+                            @if(site.tradingName.isDefined) {
+                                @site.tradingName
+                            } else {
+                                @site.address.lines.head
+                            }
+                            </span>
                         </summary>
-                        @for(line <- site.address.lines.tail) {
-                            <div aria-hidden="true">@line</div>
+                        @if(site.tradingName.isDefined) {
+                            @for(line <- site.address.lines) {
+                                <div aria-hidden="true">@line</div>
+                            }
+                        } else {
+                            @for(line <- site.address.lines.tail) {
+                                <div aria-hidden="true">@line</div>
+                            }
                         }
                         <div class="postal-code">@site.address.postCode</div>
                     </details>
@@ -410,7 +434,7 @@
     </table>
 }
 
-@if(newWarehouseSites.isEmpty && closedWarehouses.isEmpty) {
+@if(newWarehouseSites.isEmpty && closedWarehouses.isEmpty && v.deregDate.isEmpty) {
 
 
     <table class="check-your-answers">

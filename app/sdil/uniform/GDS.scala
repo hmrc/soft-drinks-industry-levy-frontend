@@ -32,7 +32,7 @@ import scala.util.Try
 object GdsComponents {
 
   val bool: Mapping[Boolean] = optional(boolean)
-    .verifying("error.required", _.isDefined)
+    .verifying("error.radio-form.choose-option", _.isDefined)
     .transform(_.getOrElse(false),{x: Boolean => x.some})
 
   def innerOpt[A](key: String, innerMap: Mapping[A]): Mapping[Option[A]] =
