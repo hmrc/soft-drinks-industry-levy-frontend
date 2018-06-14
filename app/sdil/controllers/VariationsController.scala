@@ -209,7 +209,11 @@ class VariationsController(
     _ <- if (variation.noVariation) end("noVariation", cya) else tell("checkyouranswers", cya)
     submission = Convert(variation)
     _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
-    exit <- journeyEnd("variationDone")
+    exit <- variation match {
+      case a if a.volToMan => journeyEnd("volToMan")
+      case b if b.manToVol => journeyEnd("manToVol")
+      case _ => journeyEnd("variationDone")
+  }
     _    <- clear
   } yield {
     exit
