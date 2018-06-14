@@ -136,7 +136,7 @@ class VariationsController(
       packQty                     <- ask(litres, "packQty") emptyUnless packageOwn.contains(true)
       copacks                     <- askEmptyOption(litres, "copack")
       imports                     <- askEmptyOption(litres, "import")
-      noUkActivity                =  (packQty, copacks, imports).isEmpty
+      noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity || smallProducerWithNoCopacker
       variation                   <- if (shouldDereg)
@@ -201,7 +201,11 @@ class VariationsController(
     ))
     submission = Convert(variation)
     _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
-    exit <- journeyEnd("variationDone")
+    exit <- variation match {
+      case a if a.volToMan => journeyEnd("volToMan")
+      case b if b.manToVol => journeyEnd("manToVol")
+      case _ => journeyEnd("variationDone")
+  }
     _    <- clear
   } yield {
     exit

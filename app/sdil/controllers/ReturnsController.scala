@@ -35,8 +35,6 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.{litreageForm => _, _}
-
-
 import scala.concurrent.ExecutionContext
 
 class ReturnsController (
@@ -76,12 +74,6 @@ class ReturnsController (
   }{
     case SmallProducer(ref, (l,h)) => (ref,l,h).some
   }
-
-  protected def tellTable(
-                           id: String,
-                           headings: List[Html],
-                           rows: List[List[Html]]
-                         ): WebMonad[Unit] = ???
 
   def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal): WebMonad[Unit] = {
 
@@ -123,10 +115,9 @@ class ReturnsController (
   private val program: WebMonad[Result] = for {
     sdilReturn     <- askReturn
     broughtForward <- BigDecimal("0").pure[WebMonad]
-    exit           <- checkYourAnswers("returns-cya", sdilReturn, broughtForward) >> journeyEnd("returnsDone")
-  } yield {
-    exit
-  }
+    _              <- checkYourAnswers("returns-cya", sdilReturn, broughtForward)
+    end              <- journeyEnd("returnsDone")
+  } yield end
 
   def index(id: String): Action[AnyContent] = Action.async { implicit request =>
     val persistence = SessionCachePersistence("returns", keystore)

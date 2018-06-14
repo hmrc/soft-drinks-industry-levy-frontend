@@ -24,7 +24,7 @@
 @import views.html.uniform.helpers._
 @import ltbs.play._
 
-@(key: String, form: Form[String], items: List[Html], breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[String], items: List[Html], breadcrumbs: List[String], min: Int)(implicit messages: Messages, request: Request[_], config: AppConfig)
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
     @backlink(breadcrumbs)
@@ -45,9 +45,11 @@
                     <td>
                         @item
                     </td>
-                    <td>
-                        <button name="@key" value="Delete.@id" class="link-button">@Messages(Seq(s"$key.delete", "delete"))</button>
-                    </td>
+                    @if( items.length > min) {
+                        <td class="align-right">
+                            <button name="@key" value="Delete.@id" class="link-button">@Messages(Seq(s"$key.delete", "delete"))</button>
+                        </td>
+                    }
                 </tr>
                 }
                 <tr>

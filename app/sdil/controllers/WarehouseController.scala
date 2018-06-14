@@ -67,19 +67,19 @@ class WarehouseController(val messagesApi: MessagesApi,
         Journey.previousPage(WarehouseSitesPage).show,
         formTarget)),
       {
-        case Sites(_, _, Some(tradingName), Some(addr)) =>
+        case Sites(_, _, tradingName, Some(addr)) =>
           val updatedSites = request.formData.secondaryWarehouses match {
             case Some(addrs) if addrs.nonEmpty =>
               addrs :+ Site(
                 UkAddress.fromAddress(addr),
                 None,
-                Some(tradingName),
+                tradingName,
                 None
               )
             case _ => Seq(Site(
               UkAddress.fromAddress(addr),
               None,
-              Some(tradingName),
+              tradingName,
               None
             ))
           }
