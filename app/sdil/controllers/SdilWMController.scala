@@ -32,6 +32,7 @@ import play.api.i18n.Messages
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
+import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
 import sdil.models._
@@ -240,12 +241,17 @@ trait SdilWMController extends WebMonadController
     }
   }
 
-  protected def journeyEnd(id: String): WebMonad[Result] =
+  protected def journeyEnd(
+    id: String,
+    now: LocalDate = LocalDate.now,
+    subheading: Option[Html] = None,
+    whatHappensNext: Option[Html] = None
+  ): WebMonad[Result] =
     webMonad{ (rid, request, path, db) =>
       implicit val r = request
 
       Future.successful {
-        (id.some, path, db, Ok(uniform.journeyEnd(id, path)).asRight[Result])
+        (id.some, path, db, Ok(uniform.journeyEnd(id, path, now, subheading, whatHappensNext)).asLeft[Result])
       }
     }
 

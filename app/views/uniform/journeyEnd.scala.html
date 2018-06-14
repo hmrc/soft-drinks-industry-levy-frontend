@@ -18,7 +18,7 @@
 @import java.time.{LocalDate, LocalTime, ZoneId}
 @import java.time.format.DateTimeFormatter
 
-@(id: String, breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(id: String, breadcrumbs: List[String], now: LocalDate = LocalDate.now, updateTimeMessage: Option[Html] = None, whatHappensNext: Option[Html] = None)(implicit messages: Messages, request: Request[_], config: AppConfig)
 
 @views.html.main_template(title = Messages(s"$id.title")) {
 
@@ -29,13 +29,14 @@
     </div>
 
     <p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
-    <p>@Messages(s"$id.your.updates", LocalDate.now.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), LocalTime.now
-            (ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("HH:mm")))</p>
-    <h2 class="heading-medium">@Messages(s"$id.what-happens.title")</h2>
 
-    <p>@Messages(s"$id.what-happens-next")</p>
+    <p>
+    @{updateTimeMessage.getOrElse(Messages(s"$id.your.updates", LocalDate.now.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), LocalTime.now
+        (ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("HH:mm"))))}
+    </p>
+    <h2 class="heading-medium">@Messages(Seq(s"$id.what-happens-next-heading", "sdil.complete.what-happens.title"))</h2>
 
-    @Html(Messages(s"$id.cya.noChangeEnd", sdil.controllers.routes.ServicePageController.show()))
+    @{whatHappensNext.getOrElse{Html(Messages(s"$id.what-happens-next"))}}
 
 }
 

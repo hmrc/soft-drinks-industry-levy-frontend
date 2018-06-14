@@ -715,3 +715,13 @@ returns-cya.submit-paragraph=By submitting this notification you are confirming 
 
 returnsDone.title=Complete
 returnsDone.subheading=We’ve received your return
+
+returnsDone.returnsDoneMessage=Your return for {0} to {1} {2} for {3} was sent at {4} on {5}.
+returnsDone.paymentsBlurb.payby=You need to pay by {0}.
+returnsDone.paymentsBlurb.payusing=You can pay by Bacs or CHAPS using:
+returnsDone.paymentsBlurb.payDetails.1=sort code: 20-05-17
+returnsDone.paymentsBlurb.payDetails.2=account number: 40204374
+returnsDone.paymentsBlurb.payDetails.3=payment reference: RLSDIL7728128
+returnsDone.paymentsBlurb.chapsDelay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
+    Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline. 
+

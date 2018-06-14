@@ -21,7 +21,7 @@ import ltbs.play.scaffold._
 import ltbs.play.scaffold.webmonad._
 import play.api.data.Forms._
 import play.api.data.Mapping
-import play.api.i18n.MessagesApi
+import play.api.i18n.{ Messages, MessagesApi }
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
@@ -112,11 +112,19 @@ class ReturnsController (
     askEmptyOption(litreagePair.nonEmpty, "waste")
   ).mapN(SdilReturn.apply)
 
+
+  private def confirmationPage(key: String)(implicit messages: Messages): WebMonad[Result] = {
+    val now = java.time.LocalDate.now
+    val returnDate = messages("returnsDone.returnsDoneMessage", "April", "June", "2018", "ABC Drinks", "12:12", "12th June")
+    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(now)(messages).some
+    journeyEnd(key, now, Html(returnDate).some, whatHappensNext)
+  }
+
   private val program: WebMonad[Result] = for {
     sdilReturn     <- askReturn
     broughtForward <- BigDecimal("0").pure[WebMonad]
     _              <- checkYourAnswers("returns-cya", sdilReturn, broughtForward)
-    end              <- journeyEnd("returnsDone")
+    end            <- confirmationPage("returnsDone")
   } yield end
 
   def index(id: String): Action[AnyContent] = Action.async { implicit request =>
