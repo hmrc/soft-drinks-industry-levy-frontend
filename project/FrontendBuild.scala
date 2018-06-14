@@ -82,7 +82,8 @@ object FrontendBuild extends Build {
         "org.jsoup" % "jsoup" % "1.11.2" % "test",
         "com.typesafe.play" %% "play-test" % PlayVersion.current % "test",
         "org.mockito" % "mockito-core" % "2.13.0" % "test",
-        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % "test"
+        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % "test",
+        "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
       ),
       retrieveManaged := true,
       resolvers ++= Seq(

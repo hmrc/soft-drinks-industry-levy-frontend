@@ -112,9 +112,9 @@ class ReturnsController (
     askEmptyOption(litreagePair.nonEmpty, "waste")
   ).mapN(SdilReturn.apply)
 
-
   private def confirmationPage(key: String)(implicit messages: Messages): WebMonad[Result] = {
     val now = java.time.LocalDate.now
+
     val returnDate = messages("returnsDone.returnsDoneMessage", "April", "June", "2018", "ABC Drinks", "12:12", "12th June")
     val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(now)(messages).some
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext)
