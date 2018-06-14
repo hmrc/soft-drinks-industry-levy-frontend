@@ -152,7 +152,7 @@ class VariationsController(
       variation                   <- if (shouldDereg)
                                        tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
                                      else for {
-                                       packSites       <- askPackSites(data.updatedProductionSites.toList, packLarge.contains(true) || !copacks.isEmpty)
+                                       packSites       <- askPackSites(data.updatedProductionSites.toList, (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty)
                                        isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
                                        warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
                                      } yield data.copy (
