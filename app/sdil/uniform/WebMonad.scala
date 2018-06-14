@@ -178,14 +178,14 @@ package webmonad {
         }
       }
 
-    implicit def resultToWebMonad(result: Result): WebMonad[Result] =
+    implicit def resultToWebMonad[A](result: Result): WebMonad[A] =
 
-      EitherT[WebInner, Result, Result] {
+      EitherT[WebInner, Result, A] {
         RWST { case ((_, r), (path, st)) =>
           (
             List.empty[String],
             (path, st),
-            result.asRight[Result]
+            result.asLeft[A]
           ).pure[Future]
         }
       }

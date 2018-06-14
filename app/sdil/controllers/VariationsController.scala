@@ -182,8 +182,6 @@ class VariationsController(
     deregDate = deregDate.some
   )
 
-  def errorPage(id: String): WebMonad[Result] = Ok(s"Error $id")
-
   private def program(
     subscription: RetrievedSubscription,
     sdilRef: String
@@ -199,16 +197,16 @@ class VariationsController(
       case ChangeType.Activity   => activityUpdate(base)
       case ChangeType.Deregister => deregisterUpdate(base)
     }
-    _    <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
     path <- getPath
-    _    <- tell("checkyouranswers", uniform.fragments.variationsCYA(
+    cya = uniform.fragments.variationsCYA(
       variation,
       newPackagingSites(variation),
       closedPackagingSites(variation),
       newWarehouseSites(variation),
       closedWarehouseSites(variation),
       path
-    ))
+    )
+    _ <- if (variation.noVariation) end("noVariation", cya) else tell("checkyouranswers", cya)
     submission = Convert(variation)
     _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
     exit <- variation match {

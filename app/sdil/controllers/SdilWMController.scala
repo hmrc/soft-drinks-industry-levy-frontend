@@ -113,10 +113,10 @@ trait SdilWMController extends WebMonadController
   def ask[T](mapping: Mapping[T], key: String, default: T)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
     ask(mapping, key, default.some)
 
-  protected def tell[A](
+  protected def tell[A: HtmlShow](
     id: String,
-    a: A
-  )(implicit show: HtmlShow[A]): WebMonad[Unit] = {
+    a: A 
+  ): WebMonad[Unit] = {
 
     // Because I decided earlier on to make everything based off of JSON
     // I have to write silly things like this. TODO
@@ -159,6 +159,16 @@ trait SdilWMController extends WebMonadController
         (id.some, path, db, Ok(uniform.journeyEnd(id, path)).asRight[Result])
       }
     }
+
+  protected def end[A : HtmlShow, R](id: String, input: A): WebMonad[R] =
+    webMonad{ (rid, request, path, db) =>
+      implicit val r = request
+
+      Future.successful {
+        (id.some, path, db, Ok(uniform.end(id, path, input.showHtml)).asLeft[R])
+      }
+    }
+
 
   protected def manyT[A](
     id: String,

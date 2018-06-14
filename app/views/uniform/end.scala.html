@@ -20,24 +20,17 @@
 @import sdil.config.AppConfig
 @import views.html.helper.options
 @import ltbs.play.scaffold.webmonad._
-@import ltbs.play._
 @import views.html.uniform.helpers._
 @import ltbs.play._
 
-@(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig)
-@views.html.main_template(messages.first(s"heading.$key", "sdil.variations.title")(), form = Some(form)) {
+@(key: String, breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig)
+@views.html.main_template(messages.first(s"heading.$key", "sdil.variations.title")()) {
   @backlink(breadcrumbs)
 
   <h1 class="heading-large">
         @messages.first(s"heading.$key", "sdil.declaration.heading")()
   </h1>
-    @helper.form(action = play.api.mvc.Call("post", key)) {
-        <div class="form-group">
-        @CSRF.formField
-        @tell
-        </div>
-            <button class="button" type="submit" name="@key" value="Next" formmethod="post">
-            @messages.first(s"$key.continue", "sdil.declaration.continue")()
-            </button>
-    }
+  <div class="form-group">
+    @tell
+  </div>
 }
