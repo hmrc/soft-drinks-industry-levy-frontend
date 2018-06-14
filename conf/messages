@@ -526,16 +526,19 @@ heading.updatedBusinessDetails_address=What address should we send correspondenc
 
 variationDone.title=Updates have been sent
 variationDone.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
-variationDone.what-happens-next=You don’t need to do anything else. We’ll update your details with the information \
-  you provided. We’ll send you confirmation that the changes have been made.
-variationDone.your.updates=Your updates were sent on {0} at {1}.
 variationDone.what-happens.title=What happens next
+variationDone.what-happens-next=You don’t need to do anything else. We’ll update your details with the information \
+you provided. We’ll send you confirmation that the changes have been made.
+variationDone.your.updates=Your updates were sent on {0} at {1}.
+variationDone.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
 volToMan.title=Updates have been sent
 volToMan.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
 volToMan.what-happens.title=Your registration has been changed
 volToMan.what-happens-next=You will now need to file quarterly returns. You’ll get a new reference number in the post, \
   which may take 15 working days. You need to keep this number.
+volToMan.your.updates=Your updates were sent on {0} at {1}.
+volToMan.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
 manToVol.title=Updates have been sent
 manToVol.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
@@ -543,6 +546,8 @@ manToVol.what-happens.title=Your registration has been changed
 manToVol.what-happens-next=You are now registered as a small producer who only uses a third party to package their \
   liable drinks, which means you do not have to file returns. You’ll get a new reference number in the post, which \
   you’ll need to give to your contract packer so they can claim an exemption for the drinks they package on your behalf.
+manToVol.your.updates=Your updates were sent on {0} at {1}.
+manToVol.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
 #variation confirmation
 sdil.variations.complete.title=Updates have been sent
