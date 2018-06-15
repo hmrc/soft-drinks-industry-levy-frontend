@@ -69,8 +69,6 @@ case class VariationData(original: RetrievedSubscription,
 
   lazy val manToVol: Boolean = orig.isLiable && isVoluntary
 
-  lazy val noChangeToActorStatus: Boolean = (isLiable && orig.isLiable) || (isVoluntary && orig.isVoluntary)
-
   def isMaterialChange: Boolean = {
 
     List(

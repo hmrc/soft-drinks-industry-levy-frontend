@@ -66,9 +66,12 @@
                 </p>
             }
         }
-        <button name="@key" class="button" value="Done">
+        
+        @if(min < items.size) {
+            <button name="@key" class="button" value="Done">
             @Messages("sdil.common.save-continue")
-        </button>
+            </button>
+        }
     }
 
 }

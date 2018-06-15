@@ -29,7 +29,7 @@
     java.text.NumberFormat.getNumberInstance.format(value)
 }
 
-@if(v.noVariation || v.noChangeToActorStatus){
+@if(v.noVariation){
     <div class="panel panel-border-narrow" id="details-content-0">
         @Html(Messages("variations.cya.noChange", sdil.controllers.routes.ServicePageController.show()))
     </div>
@@ -293,7 +293,7 @@
     </table>
 }
 
-@if(newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
+@if(path.contains("packSites") && newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
     <table class="check-your-answers">
         <caption class="heading-medium">@Messages("variations.cya.packsites.same")</caption>
         <tbody>
@@ -434,7 +434,7 @@
     </table>
 }
 
-@if(newWarehouseSites.isEmpty && closedWarehouses.isEmpty && v.deregDate.isEmpty) {
+@if(path.contains("warehouses") && newWarehouseSites.isEmpty && closedWarehouses.isEmpty && v.deregDate.isEmpty) {
 
 
     <table class="check-your-answers">
