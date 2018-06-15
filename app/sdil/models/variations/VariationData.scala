@@ -85,11 +85,7 @@ case class VariationData(original: RetrievedSubscription,
       updatedBusinessAddress == orig.updatedBusinessAddress &&
       updatedProductionSites == orig.updatedProductionSites &&
       updatedWarehouseSites == orig.updatedWarehouseSites &&
-      producer == orig.producer &&
-      packageOwn == orig.packageOwn &&
-      usesCopacker == orig.usesCopacker &&
-      copackForOthers == orig.copackForOthers &&
-      imports == orig.imports
+      deregDate.isEmpty
   }
 }
 

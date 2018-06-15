@@ -293,7 +293,7 @@
     </table>
 }
 
-@if(newPackingSites.isEmpty && closedPackagingSites.isEmpty) {
+@if(path.contains("packSites") && newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
     <table class="check-your-answers">
         <caption class="heading-medium">@Messages("variations.cya.packsites.same")</caption>
         <tbody>
@@ -338,29 +338,29 @@
           </tr>
       </thead>
 
-    <tbody>
+      <tbody>
       @for(site <- newWarehouseSites) {
-        <tr>
-          <td>
-            <details role="group">
-              <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-                  <span class="summary">@site.address.lines.head</span>
-              </summary>
-              @for(line <- site.address.lines.tail) {
-                <div aria-hidden="true">@line</div>
-              }
-              <div class="postal-code">@site.address.postCode</div>
-            </details>
-          </td>
-          <td>@site.address.postCode</td>
-          <td class="change-answer">
-            <a href="warehouses">
-              @Html(Messages("variations.cya.warehouses.change"))
-            </a>
-          </td>
-        </tr>
-        }
-    </tbody>
+          <tr>
+              <td>
+                  <details role="group">
+                      <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                          <span class="summary">
+                            @site.getLines.head
+                          </span>
+                      </summary>
+                        @site.getLines.tail
+                      <div class="postal-code">@site.address.postCode</div>
+                  </details>
+              </td>
+              <td>@site.address.postCode</td>
+              <td class="change-answer">
+                  <a href="warehouses">
+                  @Html(Messages("variations.cya.warehouses.change"))
+                  </a>
+              </td>
+          </tr>
+      }
+      </tbody>
   </table>
 }
 
@@ -390,11 +390,11 @@
                 <td>
                     <details role="group">
                         <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-                            <span class="summary">@site.address.lines.head</span>
+                            <span class="summary">
+                                @site.getLines.head
+                            </span>
                         </summary>
-                        @for(line <- site.address.lines.tail) {
-                            <div aria-hidden="true">@line</div>
-                        }
+                            @site.getLines.tail
                         <div class="postal-code">@site.address.postCode</div>
                     </details>
                 </td>
@@ -410,7 +410,7 @@
     </table>
 }
 
-@if(newWarehouseSites.isEmpty && closedWarehouses.isEmpty) {
+@if(path.contains("warehouses") && newWarehouseSites.isEmpty && closedWarehouses.isEmpty && v.deregDate.isEmpty) {
 
 
     <table class="check-your-answers">
