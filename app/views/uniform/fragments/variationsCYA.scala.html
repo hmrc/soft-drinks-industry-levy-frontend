@@ -345,22 +345,10 @@
                   <details role="group">
                       <summary role="button" aria-controls="details-content-1" aria-expanded="false">
                           <span class="summary">
-                          @if(site.tradingName.isDefined) {
-                              @site.tradingName
-                          } else {
-                              @site.address.lines.head
-                          }
+                            @site.getLines.head
                           </span>
                       </summary>
-                      @if(site.tradingName.isDefined) {
-                          @for(line <- site.address.lines) {
-                              <div aria-hidden="true">@line</div>
-                          }
-                      } else {
-                          @for(line <- site.address.lines.tail) {
-                              <div aria-hidden="true">@line</div>
-                          }
-                      }
+                        @site.getLines.tail
                       <div class="postal-code">@site.address.postCode</div>
                   </details>
               </td>
@@ -403,22 +391,10 @@
                     <details role="group">
                         <summary role="button" aria-controls="details-content-1" aria-expanded="false">
                             <span class="summary">
-                            @if(site.tradingName.isDefined) {
-                                @site.tradingName
-                            } else {
-                                @site.address.lines.head
-                            }
+                                @site.getLines.head
                             </span>
                         </summary>
-                        @if(site.tradingName.isDefined) {
-                            @for(line <- site.address.lines) {
-                                <div aria-hidden="true">@line</div>
-                            }
-                        } else {
-                            @for(line <- site.address.lines.tail) {
-                                <div aria-hidden="true">@line</div>
-                            }
-                        }
+                            @site.getLines.tail
                         <div class="postal-code">@site.address.postCode</div>
                     </details>
                 </td>
