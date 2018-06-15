@@ -348,7 +348,9 @@
                             @site.getLines.head
                           </span>
                       </summary>
-                        @site.getLines.tail
+                      @for(line <- site.getLines.tail.dropRight(1)) {
+                          <div aria-hidden="true">@line</div>
+                      }
                       <div class="postal-code">@site.address.postCode</div>
                   </details>
               </td>
@@ -394,7 +396,9 @@
                                 @site.getLines.head
                             </span>
                         </summary>
-                            @site.getLines.tail
+                        @for(line <- site.getLines.tail.dropRight(1)) {
+                            <div aria-hidden="true">@line</div>
+                        }
                         <div class="postal-code">@site.address.postCode</div>
                     </details>
                 </td>
