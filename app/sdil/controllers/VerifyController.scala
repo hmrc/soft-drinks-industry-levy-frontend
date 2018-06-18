@@ -62,7 +62,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormData
     form.bindFromRequest().fold(
       errors => BadRequest(register.verify(errors, request.formData.utr, request.formData.rosmData.organisationName, request.formData.rosmData.address)),
       {
-        case DetailsCorrect.No => Redirect(routes.IdentifyController.show())
+        case DetailsCorrect.No => Redirect(routes.AuthenticationController.signOutNoFeedback())
         case detailsCorrect =>
           val updated = request.formData.copy(verify = Some(detailsCorrect))
           cache.cache(request.internalId, updated) map { _ =>
