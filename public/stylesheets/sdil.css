@@ -8,7 +8,6 @@ body {
 
 .check-your-answers .change-answer {
     text-align: right;
-    font-weight: bold;
     padding-right: 0;
 }
 
@@ -119,9 +118,6 @@ html .font-xsmall {
     color: #4c2c92;
 }
 
-.cya-change, .cya-question {
-    font-weight: bold;
-}
 .cya-change {
     text-align: right;
 }
