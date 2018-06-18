@@ -28,6 +28,7 @@ trait AppConfig {
   val betaFeedbackUrlAuth: String
   val ggLoginUrl: String
   val signoutUrl: String
+  val signoutUrlNoFeedback: String
   val sdilHomePage: String
   val appName: String
   def variationsEnabled: Boolean
@@ -57,6 +58,7 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   lazy val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
   lazy val feedbackSurveyUrl: String = loadConfig("microservice.services.feedback-survey.url")
   lazy val signoutUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath?continue=$feedbackSurveyUrl?origin=SDIL"
+  lazy val signoutUrlNoFeedback: String = s"$companyAuthFrontend$companyAuthSignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
 
   override val variationsEnabled: Boolean = getBoolean("variations.enabled")

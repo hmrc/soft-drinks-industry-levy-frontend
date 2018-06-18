@@ -63,12 +63,12 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(res) mustBe Some(routes.OrganisationTypeController.show().url)
     }
 
-    "redirect to the identify page if the details are incorrect" in {
+    "redirect to the gg sign in page if the details are incorrect" in {
       val request = FakeRequest().withFormUrlEncodedBody("detailsCorrect" -> "no")
       val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe routes.IdentifyController.show().url
+      redirectLocation(res).value mustBe routes.AuthenticationController.signOutNoFeedback().url
     }
 
     "store the form data in keystore if it is valid" in {

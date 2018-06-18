@@ -63,6 +63,7 @@ GET         /register/complete                                 sdil.controllers.
 
 GET         /sign-in                                           sdil.controllers.AuthenticationController.signIn()
 GET         /sign-out                                          sdil.controllers.AuthenticationController.signOut()
+GET         /sign-out-no-feedback                              sdil.controllers.AuthenticationController.signOutNoFeedback()
 
 GET         /returns                                           sdil.controllers.ReturnsController.index(id = "")
 GET         /returns/:id                                       sdil.controllers.ReturnsController.index(id: String)
