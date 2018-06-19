@@ -19,6 +19,7 @@ package sdil.controllers
 import cats.implicits._
 import ltbs.play.scaffold._
 import ltbs.play.scaffold.webmonad._
+import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.Mapping
 import play.api.i18n.{ Messages, MessagesApi }
@@ -36,6 +37,8 @@ import views.html.uniform
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.{litreageForm => _, _}
 import scala.concurrent.ExecutionContext
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 class ReturnsController (
   val messagesApi: MessagesApi,
@@ -61,18 +64,49 @@ class ReturnsController (
 
   implicit val smallProducerHtml: HtmlShow[SmallProducer] =
     HtmlShow.instance { producer =>
-      Html(s"${producer.sdilRef} ${producer.litreage}")
+      Html(s"<h3>${producer.alias} (${producer.sdilRef})</h3> <br />" ++
+        f"Lower band: ${producer.litreage._1}%,d litres <br />" ++
+        f"Upper band: ${producer.litreage._2}%,d litres")
     }
 
+  // Ugh... need that pickling.
+  implicit val refAndNameFormat: Format[(String, String)] = (
+    (JsPath \ "sdilRef").format[String] and (JsPath \ "alias").format[String]
+  )(Tuple2.apply, unlift(Tuple2.unapply))
+
+  implicit def askSmallProducer(key: String): WebMonad[SmallProducer] = {
+
+    implicit val refAndNameForm = new FormHtml[(String, String)] {
+      def asHtmlForm(
+        key: String,
+        form: Form[(String, String)]
+      )(implicit messages: Messages): Html = {
+        uniform.fragments.refAndName(key, form)(messages)
+      }
+    }
+
+    implicit val refAndName: Mapping[(String, String)] = tuple(
+      "sdilRef" -> nonEmptyText
+        .verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$")),
+      "alias"   -> nonEmptyText)
+
+    for {
+      w <-       ask(refAndName, s"$key.ref")
+      litreage <- ask(litreagePair.nonEmpty, s"$key.volume")
+    } yield SmallProducer(w._1, w._2, litreage)
+  }
+
+
   implicit val smallProducer: Mapping[SmallProducer] = mapping(
+    "alias" -> nonEmptyText,
     "sdilRef" -> nonEmptyText
       .verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$")),
     "lower"   -> litreage,
     "higher"  -> litreage
   ){
-    (ref,l,h) => SmallProducer(ref, (l,h))
+    (alias, ref,l,h) => SmallProducer(alias, ref, (l,h))
   }{
-    case SmallProducer(ref, (l,h)) => (ref,l,h).some
+    case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
   }
 
   def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal): WebMonad[Unit] = {
@@ -105,7 +139,8 @@ class ReturnsController (
   private val askReturn: WebMonad[SdilReturn] = (
     askEmptyOption(litreagePair.nonEmpty, "own-brands"),
     askEmptyOption(litreagePair.nonEmpty, "copack-large"),
-    askList(smallProducer, "copack-small", min = 1) emptyUnless ask(bool, "copack-small-yn"),
+    //askList(smallProducer, "copack-small", min = 1) emptyUnless ask(bool, "copack-small-yn"),
+    manyT("copack-small", {ask(smallProducer, _)}, min = 1) emptyUnless ask(bool, "copack-small-yn"),
     askEmptyOption(litreagePair.nonEmpty, "imports-large"),
     askEmptyOption(litreagePair.nonEmpty, "imports-small"),
     askEmptyOption(litreagePair.nonEmpty, "export"),
@@ -128,6 +163,10 @@ class ReturnsController (
   } yield end
 
   def index(id: String): Action[AnyContent] = Action.async { implicit request =>
+
+    if (!config.returnsEnabled)
+      throw new NotImplementedError("Returns are not enabled")
+
     val persistence = SessionCachePersistence("returns", keystore)
     runInner(request)(program)(id)(persistence.dataGet,persistence.dataPut)
   }

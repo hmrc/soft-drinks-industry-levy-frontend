@@ -21,9 +21,10 @@ import play.api.mvc.{Action, AnyContent}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.Address
+import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import views.html.softdrinksindustrylevy.service_page
 
 class ServicePageController(val messagesApi: MessagesApi,
                             sdilConnector: SoftDrinksIndustryLevyConnector,
@@ -35,8 +36,15 @@ class ServicePageController(val messagesApi: MessagesApi,
   def show: Action[AnyContent] = registeredAction.async { implicit request =>
     sdilConnector.retrieveSubscription(request.sdilEnrolment.value) map {
       case Some(s) =>
+
+        val returnPeriods =
+          if (config.returnsEnabled)
+            List(ReturnPeriod(0))
+          else
+            Nil
+
         val addr = Address.fromUkAddress(s.address)
-        Ok(views.html.softdrinksindustrylevy.service_page(addr, request.sdilEnrolment.value, s))
+        Ok(service_page(addr, request.sdilEnrolment.value, s, returnPeriods))
       case None => NotFound(errorHandler.notFoundTemplate)
     }
   }

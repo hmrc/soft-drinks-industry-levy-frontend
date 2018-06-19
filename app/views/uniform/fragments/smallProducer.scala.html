@@ -24,6 +24,13 @@
 
 @(key: String, form: Form[SmallProducer])(implicit messages: Messages)
 @inputText(
+    form(s"$key.alias"),
+    Messages("sdil.alias"),
+    '_inputType -> "text",
+    '_inputClass -> "input--no-spinner"
+)
+
+@inputText(
     form(s"$key.sdilRef"),
     Messages("sdil.sdilRef"),
     '_inputType -> "text",

@@ -21,8 +21,25 @@ import _root_.play.api.data.Forms._
 import _root_.play.api.data._
 import _root_.play.api.data.format.Formats._
 import cats.implicits._
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter.ofPattern
 
 package object play {
+
+  implicit class RichLocalDate(ld: LocalDate) {
+
+    def suffix: String = {ld.getDayOfMonth % 10} match {
+      case 1 => "st"
+      case 2 => "nd"
+      case 3 => "rd"
+      case _ => "th"
+    }
+
+    def format(fmt: String): String = {
+      val fmt2 = fmt.replace("!", "'" ++ suffix ++ "'")
+      ld.format(ofPattern(fmt2))
+    }
+  }
 
   implicit class RichMessages(mo: Messages.type) {
 

@@ -725,3 +725,7 @@ returnsDone.paymentsBlurb.payDetails.3=payment reference: RLSDIL7728128
 returnsDone.paymentsBlurb.chapsDelay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
     Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline. 
 
+warning=Warning
+returnsHome.returnsDue=The return for {0} from {1} to {2} is due by the {3}.
+returnsHome.returnsOverdue=[The return for {0} from {1} to {2} was due on the {3}.]
+return.file=File return

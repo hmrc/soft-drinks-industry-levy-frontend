@@ -75,3 +75,7 @@ POST        /ufvariations                                        sdil.controller
 POST        /ufvariations/:id                                    sdil.controllers.VariationsController.index(id: String)
 
 ->          /variations                                        variations.Routes
+GET         /registration                                           sdil.controllers.RegistrationController.index(id = "")
+GET         /registration/:id                                       sdil.controllers.RegistrationController.index(id: String)
+POST        /registration                                           sdil.controllers.RegistrationController.index(id = "")
+POST        /registration/:id                                       sdil.controllers.RegistrationController.index(id: String)
