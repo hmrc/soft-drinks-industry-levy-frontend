@@ -65,6 +65,10 @@ case class VariationData(original: RetrievedSubscription,
 
   lazy val orig = VariationData(original)
 
+  lazy val volToMan: Boolean = orig.isVoluntary && isLiable
+
+  lazy val manToVol: Boolean = orig.isLiable && isVoluntary
+
   def isMaterialChange: Boolean = {
 
     List(
@@ -76,11 +80,14 @@ case class VariationData(original: RetrievedSubscription,
     ).foldLeft(false)(_ || _)
   }
 
-  lazy val volToMan: Boolean = orig.isVoluntary && isLiable
-
-  lazy val manToVol: Boolean = orig.isLiable && isVoluntary
+  def noVariation: Boolean = {
+    updatedContactDetails == orig.updatedContactDetails &&
+      updatedBusinessAddress == orig.updatedBusinessAddress &&
+      updatedProductionSites == orig.updatedProductionSites &&
+      updatedWarehouseSites == orig.updatedWarehouseSites &&
+      deregDate.isEmpty
+  }
 }
-
 
 
 object VariationData {

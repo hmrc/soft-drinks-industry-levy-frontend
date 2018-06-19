@@ -121,7 +121,7 @@ class VariationsController(
       if (in.isEmpty) None else Litreage(in._1, in._2).some
 
     def askPackSites(existingSites: List[Site], packs: Boolean): WebMonad[List[Site]] =
-        manyT("packSites",
+        manyT("packSitesActivity",
           ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
           default = existingSites,
           min = 1
@@ -142,9 +142,9 @@ class VariationsController(
       variation                   <- if (shouldDereg)
                                        tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
                                      else for {
-                                       packSites       <- askPackSites(data.updatedProductionSites.toList, packLarge.contains(true) || !copacks.isEmpty)
+                                       packSites       <- askPackSites(data.updatedProductionSites.toList, (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty)
                                        isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
-                                       warehouses      <- manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
+                                       warehouses      <- manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
                                      } yield data.copy (
                                        producer               = Producer(packLarge.isDefined, packLarge),
                                        usesCopacker           = useCopacker.some.flatten,
@@ -172,8 +172,6 @@ class VariationsController(
     deregDate = deregDate.some
   )
 
-  def errorPage(id: String): WebMonad[Result] = Ok(s"Error $id")
-
   private def program(
     subscription: RetrievedSubscription,
     sdilRef: String
@@ -189,16 +187,16 @@ class VariationsController(
       case ChangeType.Activity   => activityUpdate(base)
       case ChangeType.Deregister => deregisterUpdate(base)
     }
-    _    <- when (!variation.isMaterialChange) (errorPage("noVariationNeeded"))
     path <- getPath
-    _    <- tell("checkyouranswers", uniform.fragments.variationsCYA(
+    cya = uniform.fragments.variationsCYA(
       variation,
       newPackagingSites(variation),
       closedPackagingSites(variation),
       newWarehouseSites(variation),
       closedWarehouseSites(variation),
       path
-    ))
+    )
+    _ <- if (variation.noVariation) end("noVariation", cya) else tell("checkyouranswers", cya)
     submission = Convert(variation)
     _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
     exit <- variation match {

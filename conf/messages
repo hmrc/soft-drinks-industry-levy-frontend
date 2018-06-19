@@ -46,7 +46,7 @@ sdil.verify.organisation=Business name
 sdil.verify.address=Business address
 sdil.verify.detailsCorrect.yes=Yes, this is the business and the address I want to register
 sdil.verify.detailsCorrect.differentAddress=Yes, but I want to add a new contact address for the Soft Drinks Industry Levy
-sdil.verify.detailsCorrect.no=No, I need to enter a different UTR and postcode
+sdil.verify.detailsCorrect.no=No, I need to sign in using a different Government Gateway user ID
 sdil.verify.address.heading=Enter a primary address for the Soft Drinks Industry Levy
 sdil.verify.address.legend=Enter a primary address for the Soft Drinks Industry Levy
 sdil.verify.address.line1=Address line 1
@@ -329,16 +329,16 @@ sdil.service-page.support.link1=https://www.gov.uk/guidance/soft-drinks-industry
 sdil.service-page.support.p3=Soft Drinks Industry Levy guidance
 sdil.service-page.support.link2=https://www.legislation.gov.uk/uksi/2018/41/made
 sdil.service-page.support.p4=Soft Drinks Industry Levy legislation
+sdil.service-page.support.p5=Soft Drink Industry Levy general enquiries:
+sdil.service-page.support.p6=0300 200 3700
 sdil.service-page.variations.title=Change registered details
 sdil.service-page.variations.p1=You must tell HMRC when you:
 sdil.service-page.variations.li.1=start or stop using a warehouse or packaging site
 sdil.service-page.variations.li.2=change your contact details
-sdil.service-page.variations.li.3=change your business activity, including becoming a small producer
+sdil.service-page.variations.li.3=change your business activity
 sdil.service-page.variations.li.4=need to deregister from the Soft Drinks Industry Levy
 sdil.service-page.variations.li.5=need to make an adjustment of £10,000 or more to a previous return
 sdil.service-page.variations.change=Tell HMRC about a change
-sdil.service-page.variations.p2=To change your business activity or deregister from the Soft Drinks Industry Levy, call 0300 200 3700.
-sdil.service-page.variations.p3=You can tell HMRC about changes to warehouses, packaging sites and contact details online.
 sdil.service-page.variations.p4=Changes can take up to 15 working days to process.
 
 #Already registered
@@ -464,7 +464,7 @@ edit=Edit
 # Uniform variation process
 heading.changeType=Which change do you need to make?
 changeType.option.sites=Update contact, packaging site or warehouse details
-changeType.option.activity=Change our business activity, including becoming a small producer
+changeType.option.activity=Change our business activity
 changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
 
 heading.contactChangeType=What do you need to change?
@@ -473,30 +473,39 @@ contactChangeType.option.Sites=Add or remove packaging sites or warehouse addres
 contactChangeType.option.ContactPerson=Update our contact person
 contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
 
-heading.packLarge=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink for brands you own or have the rights to manufacture, worldwide?
-packLarge.help.header=What does ''package'' mean?
-packLarge.help=A liable drink is ‘packaged’ if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
+heading.packLarge=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink for brands \
+  you own or have the rights to manufacture, worldwide?
+packLarge.help.header=What does ’packaged’ mean?
+packLarge.help=A liable drink is packaged if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
 
-heading.warehouses_add=Add new warehouse
+heading.warehouses_add=Enter your warehouse details
+heading.warehousesActivity_add=Enter your warehouse details
 heading.warehouses_deleteConfirmation=Are you sure you want to remove this warehouse?
-warehouses_deleteConfirmation.continue=Save and continue
+heading.warehousesActivity_deleteConfirmation=Are you sure you want to remove this warehouse?
+warehouses_deleteConfirmation.continue=Remove
+warehousesActivity_deleteConfirmation.continue=Remove
 heading.packSites_add=Enter your packaging site details
+heading.packSitesActivity_add=Enter your packaging site details
 packSites_add.paragraph=Only add the addresses of the packaging sites you operate
 heading.packSites_deleteConfirmation=Are you sure you want to remove this packaging site?
+heading.packSitesActivity_deleteConfirmation=Are you sure you want to remove this packaging site?
 packSites_deleteConfirmation.continue=Remove
+packSitesActivity_deleteConfirmation.continue=Remove
 packLarge.inner-heading=How many litres worldwide?
 option.packLarge.inner.false=Less than 1 million litres
 option.packLarge.inner.true=1 million litres or more
 
-heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
+heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have \
+  the rights to manufacture?
 
-heading.packQty=In the next 12 months, how many litres of liable drink do you expect to package for brands you own or have the rights to manufacture at UK packaging sites you operate?
+heading.packQty=In the next 12 months, how many litres of liable drink do you expect to package for brands you own or \
+  have the rights to manufacture at UK packaging sites you operate?
 packQty.lower=Litres in the low band
 packQty.higher=Litres in the high band
 
-heading.copacker=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
+heading.copacker=Do you operate any packaging sites in the UK to package liable drinks for your customers as a third party?
 
-heading.copackQty=How many litres of liable drink will you package on behalf of your customers in the next 12 months?
+heading.copackQty=In the next 12 months, how many litres of liable drink do you expect to package for your customers at UK packaging sites you operate?
 
 heading.importer=Do you bring liable drinks into the UK from anywhere outside of the UK?
 
@@ -507,11 +516,14 @@ importQty.higher=Litres in the high band
 heading.useCopacker=Do you use any third parties in the UK to package liable drinks on your behalf?
 
 heading.packSites=Change your packaging site details
+heading.packSitesActivity=Tell us about the packaging sites you operate in the UK to package liable drinks
 packSites.paragraph=Only add the addresses of UK packaging sites you operate. You must have at least one registered packaging site.
 
 heading.warehouses=Change your UK warehouse details
+heading.warehousesActivity=Do you want to register any of the UK warehouses you use to store liable drinks?
 warehouses.help.header=Why register a warehouse?
-warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses you use to store them.
+warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses \
+  you use to store them.
 
 heading.contact=Change your contact for the Soft Drinks Industry Levy
 contact.fullName=Full name
@@ -526,16 +538,19 @@ heading.updatedBusinessDetails_address=What address should we send correspondenc
 
 variationDone.title=Updates have been sent
 variationDone.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
-variationDone.what-happens-next=You don’t need to do anything else. We’ll update your details with the information \
-  you provided. We’ll send you confirmation that the changes have been made.
-variationDone.your.updates=Your updates were sent on {0} at {1}.
 variationDone.what-happens.title=What happens next
+variationDone.what-happens-next=You don’t need to do anything else. We’ll update your details with the information \
+you provided. We’ll send you confirmation that the changes have been made.
+variationDone.your.updates=Your updates were sent on {0} at {1}.
+variationDone.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
 volToMan.title=Updates have been sent
 volToMan.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
 volToMan.what-happens.title=Your registration has been changed
 volToMan.what-happens-next=You will now need to file quarterly returns. You’ll get a new reference number in the post, \
   which may take 15 working days. You need to keep this number.
+volToMan.your.updates=Your updates were sent on {0} at {1}.
+volToMan.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
 manToVol.title=Updates have been sent
 manToVol.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
@@ -543,6 +558,8 @@ manToVol.what-happens.title=Your registration has been changed
 manToVol.what-happens-next=You are now registered as a small producer who only uses a third party to package their \
   liable drinks, which means you do not have to file returns. You’ll get a new reference number in the post, which \
   you’ll need to give to your contract packer so they can claim an exemption for the drinks they package on your behalf.
+manToVol.your.updates=Your updates were sent on {0} at {1}.
+manToVol.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
 #variation confirmation
 sdil.variations.complete.title=Updates have been sent
@@ -576,13 +593,17 @@ variations.cya.importQty=Annual litres brought into the UK
 variations.cya.activity=Changes to business activity
 variations.cya.packsites.add=Packaging sites you’re adding
 variations.cya.packsites.remove=Packaging sites you’re removing
+variations.cya.packsites.addOrRemove=Add or remove packaging sites
+variations.cya.packsites.same=Packaging site details
 variations.cya.warehouses.add=Warehouses you’re adding
 variations.cya.warehouses.remove=Warehouses you’re removing
-variations.cya.packsites.address=Packaging site address
+variations.cya.warehouses.addOrRemove=Add or remove warehouses
+variations.cya.warehouses.same=Warehouse details
+variations.cya.packsites.address=Address
 variations.cya.packsites.change=Change <span class="visuallyhidden">packaging sites</span>
 variations.cya.warehouses.change=Change <span class="visuallyhidden">warehouses</span>
 variations.cya.postcode=Postcode
-variations.cya.warehouses=Warehouse addresses
+variations.cya.warehouses=Address
 variations.cya.contact=Contact person
 variations.cya.contact.fullName=Full name
 variations.cya.contact.change.fullName=Change<span class="visually-hidden"> full name</span>
@@ -606,7 +627,7 @@ day=Day
 month=Month
 year=Year
 
-variations.cya.activity-change=Changes to business activity 
+variations.cya.activity-change=Changes to business activity
 variations.cya.activity-change.producer=Own brand packaged in past 12 months?
 variations.cya.activity-change.use-copacker=Use third party packagers?
 variations.cya.activity-change.use-copacker.change=Change<span class="visually-hidden"> use third party \
@@ -632,6 +653,9 @@ variations.cya.activity-change.high-band=High band:
 variations.cya.true=Yes
 variations.cya.false=No
 
+variations.cya.noChange=The answers you gave are the same as the information you already have registered. If your \
+  answers are accurate you do not need to do anything and can <a href="{0}"> view your registered details</a>. Otherwise, you need to change your answers.
+variations.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 packSites.error.items.tooMany=[Too many sites]
 packSites.error.items.tooFew=[You must have at least one packaging site]
 

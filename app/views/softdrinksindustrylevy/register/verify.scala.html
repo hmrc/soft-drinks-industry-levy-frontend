@@ -30,9 +30,7 @@
 }
 
 @main_template(title = verifyTitle, form = Some(verifyForm)) {
-
-    <a class="link-back" href="@sdil.controllers.routes.IdentifyController.show()">@Messages("sdil.common.back")</a>
-
+    
     @error_summary(verifyForm)
 
     <h1 class="heading-large">
@@ -73,7 +71,7 @@
                 '_legendClass -> "visuallyhidden"
             )
 
-            <input class="button" value="@Messages("sdil.common.save-continue")" type="submit">
+            <input class="button" value="@Messages("sdil.common.continue")" type="submit">
         }
     } else {
         @Html(Messages("sdil.already.received.for.utr.info", sdil.controllers.routes.IdentifyController.show()))
