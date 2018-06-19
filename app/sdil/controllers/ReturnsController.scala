@@ -69,34 +69,6 @@ class ReturnsController (
         f"Upper band: ${producer.litreage._2}%,d litres")
     }
 
-  // Ugh... need that pickling.
-  implicit val refAndNameFormat: Format[(String, String)] = (
-    (JsPath \ "sdilRef").format[String] and (JsPath \ "alias").format[String]
-  )(Tuple2.apply, unlift(Tuple2.unapply))
-
-  implicit def askSmallProducer(key: String): WebMonad[SmallProducer] = {
-
-    implicit val refAndNameForm = new FormHtml[(String, String)] {
-      def asHtmlForm(
-        key: String,
-        form: Form[(String, String)]
-      )(implicit messages: Messages): Html = {
-        uniform.fragments.refAndName(key, form)(messages)
-      }
-    }
-
-    implicit val refAndName: Mapping[(String, String)] = tuple(
-      "sdilRef" -> nonEmptyText
-        .verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$")),
-      "alias"   -> nonEmptyText)
-
-    for {
-      w <-       ask(refAndName, s"$key.ref")
-      litreage <- ask(litreagePair.nonEmpty, s"$key.volume")
-    } yield SmallProducer(w._1, w._2, litreage)
-  }
-
-
   implicit val smallProducer: Mapping[SmallProducer] = mapping(
     "alias" -> nonEmptyText,
     "sdilRef" -> nonEmptyText
