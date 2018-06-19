@@ -159,6 +159,7 @@ class ReturnsController (
     sdilReturn     <- askReturn
     broughtForward <- BigDecimal("0").pure[WebMonad]
     _              <- checkYourAnswers("returns-cya", sdilReturn, broughtForward)
+    _              <- clear    
     end            <- confirmationPage("returnsDone")
   } yield end
 
