@@ -34,6 +34,7 @@ trait AppConfig {
   def variationsEnabled: Boolean
   def uniformVariationsEnabled: Boolean
   def uniformDeregOnly: Boolean
+  def returnsEnabled: Boolean  
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, environment: Environment) extends AppConfig with ServicesConfig {
@@ -65,4 +66,5 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
 
   override val uniformVariationsEnabled: Boolean = getBoolean("uniform.enabled")
   override val uniformDeregOnly: Boolean = getBoolean("uniform.deregOnly")
+  override val returnsEnabled: Boolean = getBoolean("returns.enabled")
 }

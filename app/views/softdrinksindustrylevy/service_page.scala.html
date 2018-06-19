@@ -17,13 +17,14 @@
 @import sdil.config.AppConfig
 @import sdil.models.backend.UkAddress
 @import views.html.softdrinksindustrylevy.helpers._
-@import sdil.models.Address
-
+@import sdil.models._
 @import sdil.models.backend.Subscription
 @import sdil.models.RegistrationFormData
 @import sdil.models.retrieved.RetrievedSubscription
 @import uk.gov.hmrc.play.views.html.helpers._
-@(address: Address, sdilReference: String, subscription: RetrievedSubscription)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@import java.time.format.DateTimeFormatter.ofPattern
+
+@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 
 @main_template(Messages("sdil.registered.title"), noArticle = true) {
@@ -37,6 +38,23 @@
                 @sdilReference
             </p>
 
+	    @for(period <- periodsDue) { 
+	    <div class="notice">
+	      <i class="icon icon-important" style="top: 25%" >
+		<span class="visually-hidden">@Messages("warning")</span>
+	      </i>
+	      <p>
+		<strong class="bold-small">
+		  @Messages("returnsHome.returnsDue", subscription.orgName, period.start.format("MMMM"), period.end.format("MMMM yyyy"), period.deadline.format("d! MMMM"))
+		</strong>
+	      </p>
+	      <div>
+		<a href="@sdil.controllers.routes.ReturnsController.index("-")" class="button">@Messages("return.file")</a>
+	      </div>
+	      
+	    </div>
+	    }
+	    
             @if(subscription.activity.voluntaryRegistration) {
                 <div class="panel panel-border-wide">
                     <p>

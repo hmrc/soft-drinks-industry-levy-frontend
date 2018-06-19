@@ -16,6 +16,6 @@
 
 package sdil.models
 
-case class SmallProducer(sdilRef: String, litreage: (Long, Long))
+case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long))
 
 

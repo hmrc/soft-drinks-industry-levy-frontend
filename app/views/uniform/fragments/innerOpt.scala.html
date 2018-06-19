@@ -20,14 +20,26 @@
 
 @(key: String, form: Form[Option[_]], inner: Html)(implicit messages: Messages)
 
+@innerSection={ 
+  @if(messages.isDefinedAt(s"${key}.inner-heading")) {
+    <h2 class="heading-medium">@Messages(s"${key}.inner-heading")</h2>
+  }
+  @if(messages.isDefinedAt(s"${key}.inner-paragraph")) {
+    <div class="panel-border-narrow panel">
+        <p>@Messages(s"${key}.inner-paragraph")</p>
+    </div>
+  }
+  @inner
+}
+
 @inlineRadioButtonWithConditionalContent(
     form(s"${key}.outer"),
     Seq(
-        "true" -> ((messages.first(s"option.$key.true","sdil.common.yes")(), Some("hiddenTarget"))),
-        "false" -> ((messages.first(s"option.$key.false", "sdil.common.no")(), None))
+        "true" -> ((Messages(Seq(s"option.$key.true","sdil.common.yes")), Some("hiddenTarget"))),
+        "false" -> ((messages(Seq(s"option.$key.false", "sdil.common.no")), None))
     ),
-    Some(inner),
-    '_labelClass -> "block-label",
+    Some(innerSection),
+    '_labelclass -> "block-label",
     '_labelAfter -> true,
     '_groupClass -> "form-field-group inline",
     '_dataTargetTrue -> s"anything",

@@ -16,6 +16,7 @@
 
 package ltbs.play.scaffold
 
+import cats.Monoid
 import java.time.LocalDate
 
 import cats.implicits._
@@ -35,12 +36,15 @@ object GdsComponents {
     .verifying("error.radio-form.choose-option", _.isDefined)
     .transform(_.getOrElse(false),{x: Boolean => x.some})
 
-  def innerOpt[A](key: String, innerMap: Mapping[A]): Mapping[Option[A]] =
+  def innerOptEmpty[A](key: String, innerMap: Mapping[A])(implicit mon: Monoid[A]): Mapping[A] =
     mapping(
       "outer" -> bool,
       "inner" -> mandatoryIfTrue(s"${key}.outer", innerMap)
-    ){(_,_) match { case (outer, inner) => inner }
-    }( a => (a.isDefined, a).some )
+    ){(_,_) match {
+        case (true, inner) => inner.get
+        case (false, _)    => mon.empty
+      }
+    }( a => (a == mon.empty, a.some.filter(_ != mon.empty)).some )
 
   implicit class RichEnum[A <: EnumEntry](e: Enum[A]) {
     lazy val possValues: Set[String] = e.values.map{_.toString}.toSet
@@ -85,10 +89,13 @@ object GdsComponents {
     def showHtml(in: LocalDate): Html = Html(in.toString) // ISO YYYY-MM-DD
   }
 
-  def oneOf(options: Seq[String], errorMsg: String): Mapping[String] = {
-    //have to use optional, or the framework returns `error.required` when no option is selected
-    optional(text).verifying(errorMsg, s => s.exists(options.contains)).transform(_.getOrElse(""), Some.apply)
-  }
+  def oneOf(
+    options: Seq[String],
+    errorMsg: String = "error.required"
+  ): Mapping[String] =
+    optional(text)
+      .verifying(errorMsg, s => s.exists(options.contains))
+      .transform(_.getOrElse(""), Some.apply)
 
   val dateMapping: Mapping[LocalDate] = tuple(
     "day" -> number(1,31),

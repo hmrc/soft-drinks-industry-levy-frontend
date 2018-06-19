@@ -14,12 +14,13 @@
  * limitations under the License.
  *@
 
-@import ltbs.play._
+@(key: String)(implicit messages: Messages)
 
-@(key: String, abortLink: String)(implicit messages: Messages)
+@if(messages.isDefinedAt(s"${key}.inner-heading")) {
+    <h2 class="heading-medium">@Messages(s"$key.inner-heading")</h2>
+}
 
-<p>
-    @Messages(s"$key.body")
+@for(msg <- Messages.many(s"${key}.inner-paragraph")) {
+      <p class="lede">@msg</p>
+}
 
-    @Messages(Seq(s"$key.doubt1", "doubt1")) <a href="@abortLink">@Messages(Seq(s"$key.doubt1", "doubt2"))</a>.
-</p>

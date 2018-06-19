@@ -14,12 +14,17 @@
  * limitations under the License.
  *@
 
-@import ltbs.play._
+@(paymentDate: java.time.LocalDate)(implicit messages: Messages)
 
-@(key: String, abortLink: String)(implicit messages: Messages)
+<p>@Messages("returnsDone.paymentsBlurb.payby", paymentDate)</p>
 
-<p>
-    @Messages(s"$key.body")
+<p>@Messages("returnsDone.paymentsBlurb.payusing")</p>
 
-    @Messages(Seq(s"$key.doubt1", "doubt1")) <a href="@abortLink">@Messages(Seq(s"$key.doubt1", "doubt2"))</a>.
-</p>
+<ul class="list list-bullet">
+    @for(line <- Messages.many("returnsDone.paymentsBlurb.payDetails")) {
+      <li>@line</li>
+    }
+</ul>
+
+<p>@Messages("returnsDone.paymentsBlurb.chapsDelay")</p>
+

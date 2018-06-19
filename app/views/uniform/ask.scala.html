@@ -24,16 +24,16 @@
 
 @(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], appConfig: AppConfig)
 
-@views.html.main_template(messages.first(s"heading.$key", "sdil.variations.title")(), form = Some(form)) {
+@views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
     @error_summary(form)
     <h1 class="heading-large">@Messages(s"heading.$key")</h1>
     <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
-    @if(messages.isDefinedAt(s"$key.paragraph")) {
-        <div class="panel-border-narrow panel">
-            <p>@Messages(s"$key.paragraph")</p>
+    @for(msg <- Messages.many(s"${key}.paragraph")) {
+        <div class="lede">
+            <p>@msg</p>
         </div>
     }
     @if(messages.isDefinedAt(s"$key.lead")) {
@@ -44,16 +44,15 @@
         <div class = "form-group">
             @if(messages.isDefinedAt(s"$key.hint")) {
                 <span class="form-hint">@Messages(s"$key.hint")</span>
-            }
+                }
 
-            @htmlForm
+                @htmlForm
         </div>
 
-        @if(messages.isDefinedAt(s"$key.help")) {
-
-            @details(s"$key.help.header") {
+        @for((help,title) <- Messages.many(s"$key.help") zip Messages.many(s"$key.help.header")) {
+            @details(title) {
                 <p>
-                    <span>@Messages(s"$key.help")</span>
+                    <span>@Html(help)</span>
                 </p>
             }
         }

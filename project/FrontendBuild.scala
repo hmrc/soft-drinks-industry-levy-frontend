@@ -14,6 +14,7 @@ import com.typesafe.sbt.web.Import._
 import net.ground5hark.sbt.concat.Import._
 import com.typesafe.sbt.uglify.Import._
 import com.typesafe.sbt.web.SbtWeb
+import play.twirl.sbt.Import.TwirlKeys
 
 object FrontendBuild extends Build {
 
@@ -45,8 +46,10 @@ object FrontendBuild extends Build {
   lazy val microservice = Project("soft-drinks-industry-levy-frontend", file("."))
     .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
     .settings(scalaSettings: _*)
+    .settings(TwirlKeys.templateImports += "ltbs.play._")
     .settings(publishingSettings: _*)
     .settings(defaultSettings(): _*)
+    .settings(initialCommands in console := "import cats.implicits._")
     .settings(
       scoverageSettings,
       libraryDependencies ++= Seq(
@@ -79,7 +82,8 @@ object FrontendBuild extends Build {
         "org.jsoup" % "jsoup" % "1.11.2" % "test",
         "com.typesafe.play" %% "play-test" % PlayVersion.current % "test",
         "org.mockito" % "mockito-core" % "2.13.0" % "test",
-        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % "test"
+        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % "test",
+        "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
       ),
       retrieveManaged := true,
       resolvers ++= Seq(

@@ -28,9 +28,11 @@ import play.api.data.Forms._
 import play.api.data._
 import play.api.data.format.Formatter
 import play.api.data.validation._
+import play.api.i18n.Messages
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
+import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.forms.FormHelpers
 import sdil.models._
@@ -70,7 +72,9 @@ trait SdilWMController extends WebMonadController
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      uniform.radiolist(id, b, valueMap.keys.toList, path)
+      uniform.fragments.radiolist(id, b, valueMap.keys.toList)
+      val inner = uniform.fragments.radiolist(id, b, valueMap.keys.toList)
+      uniform.ask(id, b, inner, path)
     }.imap(valueMap(_))(_.toString)
   }
 
@@ -99,6 +103,71 @@ trait SdilWMController extends WebMonadController
       mapping.verifying(errorMsg, {!_.isEmpty})
 
     def nonEmpty(implicit m: Monoid[A], eq: Eq[A]): Mapping[A] = nonEmpty("error.empty")
+  }
+
+
+  implicit def optFormatter[A](implicit innerFormatter: Format[A]): Format[Option[A]] =
+    new Format[Option[A]] {
+      def reads(json: JsValue): JsResult[Option[A]] = json match {
+        case JsNull => JsSuccess(none[A])
+        case a      => innerFormatter.reads(a).map{_.some}
+      }
+      def writes(o: Option[A]): JsValue =
+        o.map{innerFormatter.writes}.getOrElse(JsNull)
+    }
+
+
+  def askOption[T](innerMapping: Mapping[T], key: String, default: Option[Option[T]] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[Option[T]] = {
+    import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
+
+    val outerMapping: Mapping[Option[T]] = mapping(
+      "outer" -> bool,
+      "inner" -> mandatoryIfTrue(s"${key}.outer", innerMapping)
+    ){(_,_) match { case (outer, inner) => inner }
+    }( a => (a.isDefined, a).some )
+
+    formPage(key)(outerMapping, default) { (path, form, r) =>
+      implicit val request: Request[AnyContent] = r
+
+      val innerForm: Form[T] = Form(single { key -> single { "inner" -> innerMapping }})
+      println(form.data)
+      val innerFormBound = if (form.data.get(s"$key.outer") != Some("true")) innerForm else innerForm.bind(form.data)
+
+      val innerHead = views.html.uniform.fragments.innerhead(key)
+      val innerHtml = htmlForm.asHtmlForm(key + ".inner", innerFormBound)
+
+      val outerHtml = {
+        import ltbs.play._
+        views.html.softdrinksindustrylevy.helpers.inlineRadioButtonWithConditionalContent(
+          form(s"${key}.outer"),
+          Seq(
+            "true" -> ("Yes", Some("hiddenTarget")),
+            "false" -> ("No", None)
+          ),
+          Some(innerHead |+| innerHtml),
+          '_labelClass -> "block-label",
+          '_labelAfter -> true,
+          '_groupClass -> "form-field-group inline",
+          '_dataTargetTrue -> s"anything",
+          '_legendClass -> "visuallyhidden"
+        )
+      }
+
+      uniform.ask(key, form, outerHtml, path)
+    }
+  }
+
+  def askEmptyOption[T](
+    innerMapping: Mapping[T],
+    key: String,
+    default: Option[T] = None
+  )(implicit htmlForm: FormHtml[T],
+    fmt: Format[T],
+    mon: Monoid[T]
+  ): WebMonad[T] = {
+    val monDefault: Option[Option[T]] = default.map{_.some.filter{_ != mon.empty}}
+    askOption[T](innerMapping, key, monDefault)
+      .map{_.getOrElse(mon.empty)}
   }
 
   def ask[T](mapping: Mapping[T], key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
@@ -138,25 +207,51 @@ trait SdilWMController extends WebMonadController
     }
   }
 
+  protected def askList[A](
+    innerMapping: Mapping[A],
+    id: String,
+    min: Int = 0,
+    max: Int = 100,
+    default: List[A] = List.empty[A]
+  )(implicit hs: HtmlShow[A], htmlForm: FormHtml[A], format: Format[A]): WebMonad[List[A]] =
+    manyT[A](id, ask(innerMapping, _), min, max, default)
+
   protected def askBigText(
     id: String,
     default: Option[String] = None,
     constraints: List[(String, String => Boolean)] = Nil,
     errorOnEmpty: String = "error.required"
   ): WebMonad[String] = {
+
+    def constraintMap[T](
+      constraints: List[(String, T => Boolean)]
+    ): List[Constraint[T]] =
+      constraints.map{ case (error, pred) =>
+        Constraint { t: T =>
+          if (pred(t)) Valid else Invalid(Seq(ValidationError(error)))
+        }
+      }
+
     val mapping = text.verifying(errorOnEmpty, _.trim.nonEmpty).verifying(constraintMap(constraints) :_*)
+
     formPage(id)(mapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      uniform.bigtext(id, b, path)
+      val fragment = uniform.fragments.bigtext(id, b)
+      uniform.ask(id,  b, fragment, path)
     }
   }
 
-  protected def journeyEnd(id: String): WebMonad[Result] =
+  protected def journeyEnd(
+    id: String,
+    now: LocalDate = LocalDate.now,
+    subheading: Option[Html] = None,
+    whatHappensNext: Option[Html] = None
+  ): WebMonad[Result] =
     webMonad{ (rid, request, path, db) =>
       implicit val r = request
 
       Future.successful {
-        (id.some, path, db, Ok(uniform.journeyEnd(id, path)).asRight[Result])
+        (id.some, path, db, Ok(uniform.journeyEnd(id, path, now, subheading, whatHappensNext)).asLeft[Result])
       }
     }
 
@@ -199,16 +294,5 @@ trait SdilWMController extends WebMonadController
       }.imap(outf)(inf)
     }(wm)
   }
-
-  // TODO: Prevent this ugliness by making the mapping the centre of the
-  // webmonad form construction
-  private def constraintMap[T](
-    constraints: List[(String, T => Boolean)]
-  ): List[Constraint[T]] =
-    constraints.map{ case (error, pred) =>
-      Constraint { t: T =>
-        if (pred(t)) Valid else Invalid(Seq(ValidationError(error)))
-      }
-    }
 
 }
