@@ -32,4 +32,5 @@ class TestConfig extends AppConfig {
   override val variationsEnabled = true
   override def uniformVariationsEnabled: Boolean = true
   override def uniformDeregOnly: Boolean = true
+  override val returnsEnabled = true  
 }
