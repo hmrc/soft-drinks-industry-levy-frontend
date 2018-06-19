@@ -134,8 +134,8 @@ class VariationsController(
       useCopacker                 <- ask(bool,"useCopacker", data.usesCopacker) when packLarge.contains(false)
       packageOwn                  <- ask(bool, "packOpt", data.updatedProductionSites.nonEmpty) when packLarge.isDefined
       packQty                     <- ask(litres, "packQty") emptyUnless packageOwn.contains(true)
-      copacks                     <- askEmptyOption(litres, "copack")
-      imports                     <- askEmptyOption(litres, "import")
+      copacks                     <- ask(litres, "copackQty") emptyUnless ask(bool, "copacker", data.copackForOthers)
+      imports <- ask(litres, "importQty") emptyUnless ask(bool, "importer", data.imports)      
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity || smallProducerWithNoCopacker
