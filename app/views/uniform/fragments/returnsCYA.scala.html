@@ -34,7 +34,11 @@
          <td rowspan="2">@Messages(s"$key.$lineKey")</td>
          <td>@Messages(s"$key.low")</td>
          <td>@{f"${litres._1}%,d"}</td>
-         <td>&pound;@{f"${costLower * litres._1 * multiplier}%,.2f"}</td>
+         <td>
+         @if(costLower * litres._1 * multiplier < 0){
+             
+         }
+         @{f"£${costLower * litres._1 * multiplier}%,.2f"}</td>
          <td>
              <a href="@lineKey">
                  @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
@@ -43,8 +47,8 @@
       </tr>
       <tr>
           <td>@Messages(s"$key.high")</td>
-          <td>@{litres._2}</td>
-          <td>&pound;@{f"${costHigher * litres._2 * multiplier}%,.2f"}</td>
+          <td>@{f"${litres._2}%,d"}</td>
+          <td>@{f"£${costHigher * litres._2 * multiplier}%,.2f"}</td>
           <td>
               <a href="@lineKey">
                   @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
