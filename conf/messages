@@ -753,3 +753,6 @@ warning=Warning
 returnsHome.returnsDue=The return for {0} from {1} to {2} is due by the {3}.
 returnsHome.returnsOverdue=[The return for {0} from {1} to {2} was due on the {3}.]
 return.file=File return
+
+sdil.sdilRef=[Soft Drinks Industry Reference Number]
+sdil.alias=[Name of Small Producer]
