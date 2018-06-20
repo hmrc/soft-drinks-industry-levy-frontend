@@ -37,23 +37,6 @@
                 <br>
                 @sdilReference
             </p>
-
-	    @for(period <- periodsDue) { 
-	    <div class="notice">
-	      <i class="icon icon-important" style="top: 25%" >
-		<span class="visually-hidden">@Messages("warning")</span>
-	      </i>
-	      <p>
-		<strong class="bold-small">
-		  @Messages("returnsHome.returnsDue", subscription.orgName, period.start.format("MMMM"), period.end.format("MMMM yyyy"), period.deadline.format("d! MMMM"))
-		</strong>
-	      </p>
-	      <div>
-		<a href="@sdil.controllers.routes.ReturnsController.index("own-brands")" class="button">@Messages("return.file")</a>
-	      </div>
-	      
-	    </div>
-	    }
 	    
             @if(subscription.activity.voluntaryRegistration) {
                 <div class="panel panel-border-wide">
@@ -61,6 +44,23 @@
                     @Messages("sdil.service-page.p2.voluntary-only")
                     </p>
                 </div>
+	    } else {
+	      @for(period <- periodsDue) { 
+	      <div class="notice">
+	        <i class="icon icon-important" style="top: 25%" >
+		  <span class="visually-hidden">@Messages("warning")</span>
+	        </i>
+	        <p>
+		  <strong class="bold-small">
+		    @Messages("returnsHome.returnsDue", subscription.orgName, period.start.format("MMMM"), period.end.format("MMMM yyyy"), period.deadline.format("d! MMMM"))
+		  </strong>
+	        </p>
+	        <div>
+		  <a href="@sdil.controllers.routes.ReturnsController.index("own-brands")" class="button">@Messages("return.file")</a>
+	        </div>
+	      
+	      </div>
+	      }
             }
 
             @declaration_table("service-page", "business-details.title") {
