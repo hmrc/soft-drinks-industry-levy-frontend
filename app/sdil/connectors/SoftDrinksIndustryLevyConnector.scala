@@ -25,6 +25,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
+import play.api.libs.json._
 
 import scala.concurrent.Future
 
@@ -56,5 +57,36 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
 
   def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Unit] = {
     http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map { _ => () }
+  }
+
+  object returns { 
+    implicit val returnPeriodJson = Json.format[ReturnPeriod]
+    import ltbs.play.scaffold.SdilComponents.longTupleFormatter
+    implicit val smallProducerJson = Json.format[SmallProducer]    
+    implicit val returnJson = Json.format[SdilReturn]
+
+    def pending(
+      utr: String
+    )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
+      http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
+    }
+
+    def update(
+      utr: String,
+      period: ReturnPeriod,
+      sdilReturn: SdilReturn
+    )(implicit hc: HeaderCarrier): Future[Unit] = {
+      val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+      http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map { _ => () }
+    }
+
+    def get(
+      utr: String,
+      period: ReturnPeriod
+    )(implicit hc: HeaderCarrier): Future[Option[SdilReturn]] = {
+      val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+      http.GET[Option[SdilReturn]](uri)
+    }
+    
   }
 }

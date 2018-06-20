@@ -36,9 +36,11 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.{litreageForm => _, _}
-import scala.concurrent.ExecutionContext
+import scala.concurrent._
+import scala.concurrent.duration._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import uk.gov.hmrc.http.HeaderCarrier
 
 class ReturnsController (
   val messagesApi: MessagesApi,
@@ -69,10 +71,15 @@ class ReturnsController (
         f"Upper band: ${producer.litreage._2}%,d litres")
     }
 
-  implicit val smallProducer: Mapping[SmallProducer] = mapping(
+  // TODO: At present this uses an Await.result to check the small producer status, thus
+  // blocking a thread. At a later date uniform should be updated to include the capability
+  // for a subsequent stage to invalidate a prior one.
+  implicit def smallProducer(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
     "alias" -> nonEmptyText,
     "sdilRef" -> nonEmptyText
-      .verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$")),
+      .verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$"))
+      .verifying("error.sdilref.invalid", _ => true) // modulus check
+      .verifying("error.sdilref.notsmall", ref => Await.result(isSmallProducer(ref), 20.seconds)),
     "lower"   -> litreage,
     "higher"  -> litreage
   ){
@@ -108,7 +115,7 @@ class ReturnsController (
     tell(key, inner)
   }
 
-  private val askReturn: WebMonad[SdilReturn] = (
+  private def askReturn(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = (
     askEmptyOption(litreagePair.nonEmpty, "own-brands"),
     askEmptyOption(litreagePair.nonEmpty, "copack-large"),
     //askList(smallProducer, "copack-small", min = 1) emptyUnless ask(bool, "copack-small-yn"),
@@ -127,20 +134,39 @@ class ReturnsController (
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext)
   }
 
-  private val program: WebMonad[Result] = for {
+  private def program(period: ReturnPeriod, utr: String)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn
     broughtForward <- BigDecimal("0").pure[WebMonad]
     _              <- checkYourAnswers("returns-cya", sdilReturn, broughtForward)
-    _              <- clear    
-    end            <- confirmationPage("returnsDone")
+    _              <- cachedFuture(s"return-${period.count}")(
+                        sdilConnector.returns(utr, period) = sdilReturn)
+    end            <- clear >> confirmationPage("returnsDone")
+
   } yield end
 
-  def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-
+  def index(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     if (!config.returnsEnabled)
       throw new NotImplementedError("Returns are not enabled")
+    val sdilRef = request.sdilEnrolment.value
+    //val utr = request.utr.get
 
-    val persistence = SessionCachePersistence("returns", keystore)
-    runInner(request)(program)(id)(persistence.dataGet,persistence.dataPut)
+    val period = ReturnPeriod(year, quarter)
+    val persistence = SessionCachePersistence(s"returns-${period.year}-${period.quarter}", keystore)
+
+    for {
+      utr <- sdilConnector.retrieveSubscription(sdilRef).map{_.get.utr}
+      pendingReturns <- sdilConnector.returns.pending(utr)
+      r   <- if (pendingReturns.contains(period))
+               runInner(request)(program(period, utr))(id)(persistence.dataGet,persistence.dataPut)
+             else 
+               Ok("Unexpected").pure[Future]
+    } yield r
   }
+
+  def isSmallProducer(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] = 
+    sdilConnector.retrieveSubscription(sdilRef).flatMap {
+      case Some(x) => x.activity.smallProducer
+      case None    => false
+    }
+
 }
