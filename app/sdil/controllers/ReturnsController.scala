@@ -135,7 +135,7 @@ class ReturnsController (
     end            <- confirmationPage("returnsDone")
   } yield end
 
-  def index(id: String): Action[AnyContent] = Action.async { implicit request =>
+  def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
 
     if (!config.returnsEnabled)
       throw new NotImplementedError("Returns are not enabled")
