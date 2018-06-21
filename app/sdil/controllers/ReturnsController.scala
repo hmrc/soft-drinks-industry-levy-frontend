@@ -63,14 +63,14 @@ class ReturnsController (
   implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
 
   implicit val smallProducerHtml: HtmlShow[SmallProducer] =
-    HtmlShow.instance { producer =>
-      Html(s"<h3>${producer.alias} (${producer.sdilRef})</h3> <br />" ++
-        f"Lower band: ${producer.litreage._1}%,d litres <br />" ++
-        f"Upper band: ${producer.litreage._2}%,d litres")
-    }
+      HtmlShow.instance { producer =>
+        Html(s"<h3>${producer.alias.getOrElse("")} <br/>${producer.sdilRef}</h3> <br />" ++
+          f"Lower band: ${producer.litreage._1}%,d litres <br />" ++
+          f"Upper band: ${producer.litreage._2}%,d litres")
+      }
 
   implicit val smallProducer: Mapping[SmallProducer] = mapping(
-    "alias" -> nonEmptyText,
+    "alias" -> optional(text),
     "sdilRef" -> nonEmptyText
       .verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$")),
     "lower"   -> litreage,
@@ -87,10 +87,10 @@ class ReturnsController (
       ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1),
       ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
       ("small-producer-details", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
-      ("imports-large", sdilReturn.importLarge, 1),
-      ("imports-small", sdilReturn.importSmall, 0),
-      ("export", sdilReturn.export, -1),
-      ("waste", sdilReturn.wastage, -1)
+      ("brought-into-uk", sdilReturn.importLarge, 1),
+      ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
+      ("claim-credits-for-exports", sdilReturn.export, -1),
+      ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
     )
 
     val costLower = BigDecimal("0.18")
@@ -113,10 +113,10 @@ class ReturnsController (
     askEmptyOption(litreagePair.nonEmpty, "packaged-as-a-contract-packer"),
     //askList(smallProducer, "copack-small", min = 1) emptyUnless ask(bool, "copack-small-yn"),
     manyT("small-producer-details", {ask(smallProducer, _)}, min = 1) emptyUnless ask(bool, "exemptions-for-small-producers"),
-    askEmptyOption(litreagePair.nonEmpty, "imports-large"),
-    askEmptyOption(litreagePair.nonEmpty, "imports-small"),
-    askEmptyOption(litreagePair.nonEmpty, "export"),
-    askEmptyOption(litreagePair.nonEmpty, "waste")
+    askEmptyOption(litreagePair.nonEmpty, "brought-into-uk"),
+    askEmptyOption(litreagePair.nonEmpty, "brought-into-uk-from-small-producers"),
+    askEmptyOption(litreagePair.nonEmpty, "claim-credits-for-exports"),
+    askEmptyOption(litreagePair.nonEmpty, "claim-credits-for-lost-damaged")
   ).mapN(SdilReturn.apply)
 
   private def confirmationPage(key: String)(implicit messages: Messages): WebMonad[Result] = {

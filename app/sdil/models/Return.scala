@@ -22,8 +22,8 @@ case class SdilReturn(
   ownBrand     : (Long,Long),
   packLarge    : (Long,Long),
   packSmall    : List[SmallProducer],
-  importSmall  : (Long,Long),
   importLarge  : (Long,Long),
+  importSmall  : (Long,Long),
   export       : (Long,Long),
   wastage      : (Long,Long)
 )
