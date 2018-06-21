@@ -684,6 +684,7 @@ heading.businessAddress=Change your contact address for the Soft Drinks Industry
 heading.checkyouranswers=Check your answers
 
 # Returns
+error.empty=Number of litres must be 1 or more
 heading.own-brands=Are you reporting your own brands of liable drink you’ve packaged at UK sites you operate?
 own-brands.inner-heading=How many litres do you need to report?
 heading.copack-large=Are you reporting liable drink you’ve packaged as a third party or contract packer at UK sites you operate?
