@@ -84,9 +84,9 @@ class ReturnsController (
   def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal): WebMonad[Unit] = {
 
     val data = List(
-      ("own-brands", sdilReturn.ownBrand, 1),
-      ("copack-large", sdilReturn.packLarge, 1),
-      ("copack-small", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
+      ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1),
+      ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
+      ("small-producer-details", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
       ("imports-large", sdilReturn.importLarge, 1),
       ("imports-small", sdilReturn.importSmall, 0),
       ("export", sdilReturn.export, -1),
@@ -109,10 +109,10 @@ class ReturnsController (
   }
 
   private val askReturn: WebMonad[SdilReturn] = (
-    askEmptyOption(litreagePair.nonEmpty, "own-brands"),
-    askEmptyOption(litreagePair.nonEmpty, "copack-large"),
+    askEmptyOption(litreagePair.nonEmpty, "own-brands-packaged-at-own-sites"),
+    askEmptyOption(litreagePair.nonEmpty, "packaged-as-a-contract-packer"),
     //askList(smallProducer, "copack-small", min = 1) emptyUnless ask(bool, "copack-small-yn"),
-    manyT("copack-small", {ask(smallProducer, _)}, min = 1) emptyUnless ask(bool, "copack-small-yn"),
+    manyT("small-producer-details", {ask(smallProducer, _)}, min = 1) emptyUnless ask(bool, "exemptions-for-small-producers"),
     askEmptyOption(litreagePair.nonEmpty, "imports-large"),
     askEmptyOption(litreagePair.nonEmpty, "imports-small"),
     askEmptyOption(litreagePair.nonEmpty, "export"),

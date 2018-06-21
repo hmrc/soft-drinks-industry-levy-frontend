@@ -685,14 +685,14 @@ heading.checkyouranswers=Check your answers
 
 # Returns
 error.empty=Number of litres must be 1 or more
-heading.own-brands=Are you reporting your own brands of liable drink you’ve packaged at UK sites you operate?
-own-brands.inner-heading=How many litres do you need to report?
-heading.copack-large=Are you reporting liable drink you’ve packaged as a third party or contract packer at UK sites you operate?
-copack-large.inner-heading=How many litres do you need to report?
-copack-large.inner-paragraph=Do not include drinks you’ve packaged for small producers.
-heading.copack-small-yn=Do you need to claim an exemption for any of the liable drink you’ve packaged for small producers?
-heading.copack-small=Enter the small producer’s details
-copack-small.paragraph=These details will be saved and shown in future returns
+heading.own-brands-packaged-at-own-sites=Are you reporting your own brands of liable drink you’ve packaged at UK sites you operate?
+own-brands-packaged-at-own-sites.inner-heading=How many litres do you need to report?
+heading.packaged-as-a-contract-packer=Are you reporting liable drink you’ve packaged as a third party or contract packer at UK sites you operate?
+packaged-as-a-contract-packer.inner-heading=How many litres do you need to report?
+packaged-as-a-contract-packer.inner-paragraph=Do not include drinks you’ve packaged for small producers.
+heading.exemptions-for-small-producers=Do you need to claim an exemption for any of the liable drink you’ve packaged for small producers?
+heading.small-producer-details=Enter the small producer’s details
+small-producer-details.paragraph=These details will be saved and shown in future returns
 heading.copack-small_add=Enter the amount of liable drink you’re reporting for this small producer
 heading.imports-large=Are you reporting liable drink you’ve brought into the UK from anywhere outside of the UK?
 imports-large.inner-heading=How many litres do you need to report?
