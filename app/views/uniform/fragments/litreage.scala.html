@@ -23,7 +23,7 @@
 
 @(key: String, form: Form[(Long,Long)], approximate: Boolean)(implicit messages: Messages)
 
- <div class="form-group form-litres">
+ <div class="form-group form-litres-3-4">
      @inputText(
          form(s"$key.lower"),
          Messages("sdil.litreage.lowRate"),
@@ -32,7 +32,7 @@
      )
  </div>
 
- <div class="form-group form-litres">
+ <div class="form-group form-litres-3-4">
      @inputText(
          form(s"$key.higher"),
          Messages("sdil.litreage.highRate"),

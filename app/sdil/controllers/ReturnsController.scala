@@ -88,7 +88,7 @@ class ReturnsController (
       ("copack-large", sdilReturn.packLarge, 1),
       ("copack-small", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
       ("imports-large", sdilReturn.importLarge, 1),
-      ("imports-small", sdilReturn.importSmall, 1),
+      ("imports-small", sdilReturn.importSmall, 0),
       ("export", sdilReturn.export, -1),
       ("waste", sdilReturn.wastage, -1)
     )
