@@ -64,10 +64,11 @@ class ReturnsController (
 
   implicit val smallProducerHtml: HtmlShow[SmallProducer] =
       HtmlShow.instance { producer =>
-        Html(s"<h3>${producer.alias.getOrElse("")} <br/>${producer.sdilRef}</h3> <br />" ++
-          f"Lower band: ${producer.litreage._1}%,d litres <br />" ++
-          f"Upper band: ${producer.litreage._2}%,d litres")
-      }
+        val customerName = producer.alias.map( x => s"<h3>Name: ${x}").getOrElse("")
+          Html(customerName ++ s"<br/>Reference number: ${producer.sdilRef}</h3> <br />" ++
+            f"Low band: ${producer.litreage._1}%,d litres <br />" ++
+            f"High band: ${producer.litreage._2}%,d litres")
+        }
 
   implicit val smallProducer: Mapping[SmallProducer] = mapping(
     "alias" -> optional(text),
