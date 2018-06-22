@@ -25,7 +25,7 @@
 }
 
 <table class="check-your-answers">
-    <caption class="heading-medium">@Messages(s"$key.balance.due", f"£$total%,.2f")</caption>
+    <caption class="heading-medium">@Messages(s"$key.balance.due", formatMoney(total))</caption>
   <thead>
     <tr>
       <th>@Messages(s"$key.activity")</th>
@@ -65,21 +65,21 @@
       <th scope="row"><h4 class="heading-small">@Messages(s"$key.subtotal")</h4></th>
       <td class="numeric"></td>
       <td class="numeric"></td>
-      <td class="numeric"><h4 class="heading-small">£@{f"$subtotal%,.2f"}</h4></td>
+      <td class="numeric"><h4 class="heading-small">@formatMoney(subtotal)</h4></td>
       <td></td>
     </tr>
     <tr>
         <th scope="row"><h4 class="heading-small">@Messages(s"$key.balance.brought.forward")</h4></th>
         <td class="numeric"></td>
         <td class="numeric"></td>
-        <td class="numeric"><h4 class="heading-small">£@{f"$broughtForward%,.2f"}</h4></td>
+        <td class="numeric"><h4 class="heading-small">@formatMoney(broughtForward)</h4></td>
         <td></td>
     </tr>
     <tr>
         <th scope="row"><h4 class="heading-small">@Messages(s"$key.total")</h4></th>
         <td class="numeric"></td>
         <td class="numeric"></td>
-        <td class="numeric"><h4 class="heading-small">&pound;@{f"$total%,.2f"}</h4></td>
+        <td class="numeric"><h4 class="heading-small">@formatMoney(total)</h4></td>
         <td></td>
     </tr>
   </tbody>
