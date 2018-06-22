@@ -22,7 +22,7 @@ import ltbs.play.scaffold.webmonad._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.Mapping
-import play.api.i18n.{ Messages, MessagesApi }
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
@@ -36,6 +36,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.{litreageForm => _, _}
+
 import scala.concurrent.ExecutionContext
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
@@ -64,11 +65,18 @@ class ReturnsController (
 
   implicit val smallProducerHtml: HtmlShow[SmallProducer] =
       HtmlShow.instance { producer =>
-        val customerName = producer.alias.map( x => s"<h3>Name: ${x}").getOrElse("")
-          Html(customerName ++ s"<br/>Reference number: ${producer.sdilRef}</h3> <br />" ++
-            f"Low band: ${producer.litreage._1}%,d litres <br />" ++
-            f"High band: ${producer.litreage._2}%,d litres")
-        }
+        Html(producer.alias.map { x =>
+          "<h3>" ++ Messages("small-producer-details.name", x) ++"<br/>"
+        }.getOrElse(
+          "<h3>"
+        ) 
+          ++ Messages("small-producer-details.refNumber", producer.sdilRef) ++ "</h3>"
+          ++ "<br/>"
+          ++ Messages("small-producer-details.lowBand", f"${producer.litreage._1}%,d")
+          ++ "<br/>"
+          ++ Messages("small-producer-details.highBand", f"${producer.litreage._2}%,d")
+        )
+      }
 
   implicit val smallProducer: Mapping[SmallProducer] = mapping(
     "alias" -> optional(text),
