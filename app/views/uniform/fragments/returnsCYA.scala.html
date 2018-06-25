@@ -17,15 +17,11 @@
 @(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal)(implicit m: Messages)
 
 @formatMoney(value: BigDecimal) = {
-@if(value < 0) {
-    @{
-        f"-£${value.abs}%,.2f"
+    @if(value < 0) {
+        @{f"-£${value.abs}%,.2f"}
+    } else {
+        @{f"£$value%,.2f"}
     }
-} else {
-    @{
-        f"£$value%,.2f"
-    }
-}
 }
 
 <table class="check-your-answers">
@@ -45,9 +41,7 @@
             <tr>
                 <td rowspan="2">@Messages(s"$key.$lineKey")</td>
                 <td>@Messages(s"$key.low")</td>
-                <td>@{
-                    f"${litres._1}%,d"
-                }</td>
+                <td>@{f"${litres._1}%,d"}</td>
                 <td class="no-minus-wrapping">@formatMoney(costLower * litres._1 * multiplier)</td>
                 <td>
                     <a href="@lineKey">
@@ -57,9 +51,7 @@
             </tr>
             <tr>
                 <td>@Messages(s"$key.high")</td>
-                <td>@{
-                    f"${litres._2}%,d"
-                }</td>
+                <td>@{f"${litres._2}%,d"}</td>
                 <td class="no-minus-wrapping"> @formatMoney(costHigher * litres._2 * multiplier)</td>
                 <td>
                     <a href="@lineKey">
