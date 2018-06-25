@@ -131,7 +131,7 @@ class ReturnsController (
   private def confirmationPage(key: String)(implicit messages: Messages): WebMonad[Result] = {
     val now = java.time.LocalDate.now
 
-    val returnDate = messages("returnsDone.returnsDoneMessage", "April", "June", "2018", "ABC Drinks", "12:12", "12th June")
+    val returnDate = messages("return-sent.returnsDoneMessage", "April", "June", "2018", "ABC Drinks", "12:12", "12th June")
     val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(now)(messages).some
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext)
   }
@@ -139,9 +139,9 @@ class ReturnsController (
   private val program: WebMonad[Result] = for {
     sdilReturn     <- askReturn
     broughtForward <- BigDecimal("0").pure[WebMonad]
-    _              <- checkYourAnswers("returns-cya", sdilReturn, broughtForward)
+    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward)
     _              <- clear    
-    end            <- confirmationPage("returnsDone")
+    end            <- confirmationPage("return-sent")
   } yield end
 
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
