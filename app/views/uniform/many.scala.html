@@ -50,13 +50,13 @@
                     </td>
                     @if( items.length > min) {
                         <td class="align-right">
-                            <button name="@key" value="Delete.@id" class="link-button">@Messages(Seq(s"$key.delete", "delete"))</button>
+                            <button name="@key" value="Delete.@id" class="link-button no-shadow">@Messages(Seq(s"$key.delete", "delete"))</button>
                         </td>
                     }
                 </tr>
                 }
                 <tr>
-                    <td><button name="@key" value="Add" class="link-button">@Messages(Seq(s"$key.add", "add"))</button></td>
+                    <td><button name="@key" value="Add" class="link-button no-shadow">@Messages(Seq(s"$key.add", "add"))</button></td>
                     <td />
                 </tr>
         </table>

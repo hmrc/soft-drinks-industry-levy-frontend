@@ -7,6 +7,10 @@
     padding-right: 0;
 }
 
+.no-shadow {
+    box-shadow: none;
+}
+
 
 @media (min-width: 641px) {
     body {
