@@ -197,14 +197,14 @@
 }
 
 
-@if(path.contains("packSites") && newPackingSites.nonEmpty) {
+@if(newPackingSites.nonEmpty) {
 
     <table class="check-your-answers">
         <caption class="heading-medium">@Messages("variations.cya.packsites.add")</caption>
 
         <thead>
             <tr>
-                <th>
+                <th class="cya-width">
                     <h2 class="heading-small">
                     @Messages("variations.cya.packsites.address")
                     </h2>
@@ -235,7 +235,11 @@
                 </td>
                 <td>@site.address.postCode</td>
                 <td class="change-answer">
-                    <a href="packSites">
+                    @if(path.contains("packSitesActivity")){
+                        <a href="packSitesActivity">
+                    } else {
+                        <a href="packSites">
+                    }
                     @Html(Messages("variations.cya.packsites.change"))
                     </a>
                 </td>
@@ -252,7 +256,7 @@
         <caption class="heading-medium">@Messages("variations.cya.packsites.remove")</caption>
         <thead>
             <tr>
-                <th>
+                <th class="cya-width">
                     <h2 class="heading-small">
                     @Messages("variations.cya.packsites.address")
                     </h2>
@@ -283,7 +287,11 @@
                 </td>
                 <td>@site.address.postCode</td>
                 <td class="change-answer">
-                    <a href="packSites">
+                    @if(path.contains("packSitesActivity")){
+                            <a href="packSitesActivity">
+                        } else {
+                            <a href="packSites">
+                        }
                     @Html(Messages("variations.cya.packsites.change"))
                     </a>
                 </td>
@@ -317,13 +325,13 @@
 }
 
 
-@if(path.contains("warehouses") && newWarehouseSites.nonEmpty) {
+@if(newWarehouseSites.nonEmpty) {
   <table class="check-your-answers">
     <caption class="heading-medium">@Messages("variations.cya.warehouses.add")</caption>
 
       <thead>
           <tr>
-              <th>
+              <th class="cya-width">
                   <h2 class="heading-small">
                   @Messages("variations.cya.warehouses")
                   </h2>
@@ -356,7 +364,11 @@
               </td>
               <td>@site.address.postCode</td>
               <td class="change-answer">
-                  <a href="warehouses">
+                  @if(path.contains("warehousesActivity")){
+                      <a href="warehousesActivity">
+                      } else {
+                      <a href="warehouses">
+                      }
                   @Html(Messages("variations.cya.warehouses.change"))
                   </a>
               </td>
@@ -371,7 +383,7 @@
         <caption class="heading-medium">@Messages("variations.cya.warehouses.remove")</caption>
         <thead>
             <tr>
-                <th>
+                <th class="cya-width">
                     <h2 class="heading-small">
                     @Messages("variations.cya.warehouses")
                     </h2>
@@ -404,7 +416,11 @@
                 </td>
                 <td>@site.address.postCode</td>
                 <td class="change-answer">
-                    <a href="warehouses">
+                    @if(path.contains("warehousesActivity")){
+                        <a href="warehousesActivity">
+                        } else {
+                        <a href="warehouses">
+                        }
                     @Html(Messages("variations.cya.warehouses.change"))
                     </a>
                 </td>
