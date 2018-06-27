@@ -235,11 +235,11 @@
                 </td>
                 <td>@site.address.postCode</td>
                 <td class="change-answer">
-                    @if(path.contains("packSitesActivity")){
-                        <a href="packSitesActivity">
+                    <a href="@if(path.contains("packSitesActivity")){
+                        packSitesActivity
                     } else {
-                        <a href="packSites">
-                    }
+                        packSites
+                    }">
                     @Html(Messages("variations.cya.packsites.change"))
                     </a>
                 </td>
@@ -287,11 +287,11 @@
                 </td>
                 <td>@site.address.postCode</td>
                 <td class="change-answer">
-                    @if(path.contains("packSitesActivity")){
-                            <a href="packSitesActivity">
+                    <a href="@if(path.contains("packSitesActivity")){
+                            packSitesActivity
                         } else {
-                            <a href="packSites">
-                        }
+                            packSites
+                        }">
                     @Html(Messages("variations.cya.packsites.change"))
                     </a>
                 </td>
@@ -364,11 +364,11 @@
               </td>
               <td>@site.address.postCode</td>
               <td class="change-answer">
-                  @if(path.contains("warehousesActivity")){
-                      <a href="warehousesActivity">
+                      <a href="@if(path.contains("warehousesActivity")){
+                          warehousesActivity
                       } else {
-                      <a href="warehouses">
-                      }
+                          warehouses
+                      }">
                   @Html(Messages("variations.cya.warehouses.change"))
                   </a>
               </td>
@@ -416,11 +416,11 @@
                 </td>
                 <td>@site.address.postCode</td>
                 <td class="change-answer">
-                    @if(path.contains("warehousesActivity")){
-                        <a href="warehousesActivity">
+                    <a href="@if(path.contains("warehousesActivity")){
+                        warehousesActivity
                         } else {
-                        <a href="warehouses">
-                        }
+                        warehouses
+                        }">
                     @Html(Messages("variations.cya.warehouses.change"))
                     </a>
                 </td>
