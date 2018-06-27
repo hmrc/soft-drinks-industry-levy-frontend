@@ -138,7 +138,7 @@ class VariationsController(
       imports <- ask(litres, "importQty") emptyUnless ask(bool, "importer", data.imports)      
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
-      shouldDereg                 =  noUkActivity || smallProducerWithNoCopacker
+      shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
       variation                   <- if (shouldDereg)
                                        tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
                                      else for {
