@@ -205,7 +205,7 @@ package webmonad {
       (wm: String => WebMonad[A])
       (implicit format: Format[A]): WebMonad[List[A]] =
     {
-      val innerId = s"${id}_add"
+      val innerId = s"add-$id"
       val innerPage: WebMonad[A] = wm(innerId)
 
       val dataKey = s"${id}_data"

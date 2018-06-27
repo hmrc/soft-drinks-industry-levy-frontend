@@ -280,7 +280,7 @@ trait SdilWMController extends WebMonadController
     def inf(x: Control): String = x.toString
 
     def confirmation(q: A): WebMonad[Boolean] =
-      tell(s"${id}_deleteConfirmation", q).map{_ => true}
+      tell(s"remove-$id", q).map{_ => true}
 
     many[A](id, min, max, default, confirmation){ case (iid, minA, maxA, items) =>
 

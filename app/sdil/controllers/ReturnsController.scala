@@ -22,7 +22,7 @@ import ltbs.play.scaffold.webmonad._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.Mapping
-import play.api.i18n.{ Messages, MessagesApi }
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
@@ -66,17 +66,25 @@ class ReturnsController (
   implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
 
   implicit val smallProducerHtml: HtmlShow[SmallProducer] =
-    HtmlShow.instance { producer =>
-      Html(s"<h3>${producer.alias} (${producer.sdilRef})</h3> <br />" ++
-        f"Lower band: ${producer.litreage._1}%,d litres <br />" ++
-        f"Upper band: ${producer.litreage._2}%,d litres")
-    }
+      HtmlShow.instance { producer =>
+        Html(producer.alias.map { x =>
+          "<h3>" ++ Messages("small-producer-details.name", x) ++"<br/>"
+        }.getOrElse(
+          "<h3>"
+        ) 
+          ++ Messages("small-producer-details.refNumber", producer.sdilRef) ++ "</h3>"
+          ++ "<br/>"
+          ++ Messages("small-producer-details.lowBand", f"${producer.litreage._1}%,d")
+          ++ "<br/>"
+          ++ Messages("small-producer-details.highBand", f"${producer.litreage._2}%,d")
+        )
+      }
 
   // TODO: At present this uses an Await.result to check the small producer status, thus
   // blocking a thread. At a later date uniform should be updated to include the capability
   // for a subsequent stage to invalidate a prior one.
   implicit def smallProducer(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
-    "alias" -> nonEmptyText,
+    "alias" -> optional(text),
     "sdilRef" -> nonEmptyText
       .verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$"))
       .verifying("error.sdilref.invalid", x => isCheckCorrect(x,1))
@@ -92,13 +100,13 @@ class ReturnsController (
   def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal): WebMonad[Unit] = {
 
     val data = List(
-      ("own-brands", sdilReturn.ownBrand, 1),
-      ("copack-large", sdilReturn.packLarge, 1),
-      ("copack-small", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
-      ("imports-large", sdilReturn.importLarge, 1),
-      ("imports-small", sdilReturn.importSmall, 1),
-      ("export", sdilReturn.export, -1),
-      ("waste", sdilReturn.wastage, -1)
+      ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1),
+      ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
+      ("small-producer-details", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
+      ("brought-into-uk", sdilReturn.importLarge, 1),
+      ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
+      ("claim-credits-for-exports", sdilReturn.export, -1),
+      ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
     )
 
     val costLower = BigDecimal("0.18")
@@ -117,14 +125,13 @@ class ReturnsController (
   }
 
   private def askReturn(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = (
-    askEmptyOption(litreagePair.nonEmpty, "own-brands"),
-    askEmptyOption(litreagePair.nonEmpty, "copack-large"),
-    //askList(smallProducer, "copack-small", min = 1) emptyUnless ask(bool, "copack-small-yn"),
-    manyT("copack-small", {ask(smallProducer, _)}, min = 1) emptyUnless ask(bool, "copack-small-yn"),
-    askEmptyOption(litreagePair.nonEmpty, "imports-large"),
-    askEmptyOption(litreagePair.nonEmpty, "imports-small"),
-    askEmptyOption(litreagePair.nonEmpty, "export"),
-    askEmptyOption(litreagePair.nonEmpty, "waste")
+    askEmptyOption(litreagePair.nonEmpty, "own-brands-packaged-at-own-sites"),
+    askEmptyOption(litreagePair.nonEmpty, "packaged-as-a-contract-packer"),
+    manyT("small-producer-details", {ask(smallProducer, _)}, min = 1) emptyUnless ask(bool, "exemptions-for-small-producers"),
+    askEmptyOption(litreagePair.nonEmpty, "brought-into-uk"),
+    askEmptyOption(litreagePair.nonEmpty, "brought-into-uk-from-small-producers"),
+    askEmptyOption(litreagePair.nonEmpty, "claim-credits-for-exports"),
+    askEmptyOption(litreagePair.nonEmpty, "claim-credits-for-lost-damaged")
   ).mapN(SdilReturn.apply)
 
   private def confirmationPage(key: String)(implicit messages: Messages): WebMonad[Result] = {
@@ -160,7 +167,7 @@ class ReturnsController (
       r   <- if (pendingReturns.contains(period))
                runInner(request)(program(period, utr))(id)(persistence.dataGet,persistence.dataPut)
              else 
-               Ok("Unexpected").pure[Future]
+               Redirect(routes.ServicePageController.show()).pure[Future]
     } yield r
   }
 

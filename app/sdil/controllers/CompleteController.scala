@@ -34,11 +34,13 @@ class CompleteController(val messagesApi: MessagesApi,
 
   def show(): Action[AnyContent] = Action.async { implicit request =>
     keystore.fetchAndGetEntry[SubmissionData]("submissionData") map {
-      case Some(SubmissionData(e, ts, iv)) => Ok(register.complete(e, ts.format(dateFormatter), ts.format(timeFormatter), iv))
+      case Some(SubmissionData(e, ts, iv)) => Ok(
+        register.complete(e, ts.format(dateFormatter), ts.format(timeFormatter).toLowerCase(), iv)
+      )
       case None => BadRequest(errorHandler.badRequestTemplate)
     }
   }
 
   lazy val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-  lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("h:mm a")
+  lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("h:mma")
 }
