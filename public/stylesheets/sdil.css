@@ -145,6 +145,10 @@ button[name="checkyouranswers"] {
     text-align: left;
 }
 
+.cya-width {
+    width: 60%;
+}
+
 @media print {
     .print-link {
         display: none;
