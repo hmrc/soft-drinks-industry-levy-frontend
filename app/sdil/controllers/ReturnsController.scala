@@ -142,7 +142,7 @@ class ReturnsController (
     val now = LocalDate.now
     import ltbs.play._
     val returnDate = messages(
-      "returnsDone.returnsDoneMessage",
+      "returns-sent.returnsDoneMessage",
       period.start.format("MMMM"),
       period.end.format("MMMM"),
       period.start.getYear.toString,
@@ -158,11 +158,10 @@ class ReturnsController (
   private def program(period: ReturnPeriod, subscription: Subscription)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn
     broughtForward <- BigDecimal("0").pure[WebMonad]
-    _              <- checkYourAnswers("returns-cya", sdilReturn, broughtForward)
+    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward)
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
-    end            <- clear >> confirmationPage("returnsDone", period, subscription)
-
+    end            <- clear >> confirmationPage("return-sent", period, subscription)
   } yield end
 
   def index(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>

@@ -16,15 +16,15 @@
 
 @(paymentDate: java.time.LocalDate)(implicit messages: Messages)
 
-<p>@Messages("returnsDone.paymentsBlurb.payby", paymentDate.format("dd! MMMM"))</p>
+<p>@Messages("return-sent.paymentsBlurb.payby", paymentDate.format("dd! MMMM"))</p>
 
-<p>@Messages("returnsDone.paymentsBlurb.payusing")</p>
+<p>@Messages("return-sent.paymentsBlurb.payusing")</p>
 
 <ul class="list list-bullet">
-    @for(line <- Messages.many("returnsDone.paymentsBlurb.payDetails")) {
+    @for(line <- Messages.many("return-sent.paymentsBlurb.payDetails")) {
       <li>@line</li>
     }
 </ul>
 
-<p>@Messages("returnsDone.paymentsBlurb.chapsDelay")</p>
+<p>@Messages("return-sent.paymentsBlurb.chapsDelay")</p>
 

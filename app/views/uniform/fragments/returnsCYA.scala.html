@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(key: String, lineItems: List[(String, (Long,Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal)(implicit m: Messages)
+@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal)(implicit m: Messages)
 
 @formatMoney(value: BigDecimal) = {
     @if(value < 0) {
@@ -26,64 +26,57 @@
 
 <table class="check-your-answers">
     <caption class="heading-medium">@Messages(s"$key.balance.due", formatMoney(total))</caption>
-  <thead>
-    <tr>
-      <th>@Messages(s"$key.activity")</th>
-      <th>@Messages(s"$key.band")</th>
-      <th>@Messages(s"$key.litres")</th>
-      <th>@Messages(s"$key.cost")</th>
-      <th></th>
-    </tr>
-  </thead>
+    <thead>
+        <tr>
+            <th>@Messages(s"$key.activity")</th>
+            <th>@Messages(s"$key.band")</th>
+            <th>@Messages(s"$key.litres")</th>
+            <th>@Messages(s"$key.cost")</th>
+            <th></th>
+        </tr>
+    </thead>
 
-  <tbody>
-    @for( (lineKey, litres, multiplier) <- lineItems) {
-      <tr>
-         <td rowspan="2">@Messages(s"$key.$lineKey")</td>
-         <td>@Messages(s"$key.low")</td>
-         <td>@{f"${litres._1}%,d"}</td>
-         <td>@formatMoney(costLower * litres._1 * multiplier)</td>
-         <td>
-             <a href="@lineKey">
-                 @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
-              </a>
-         </td>
-      </tr>
-      <tr>
-          <td>@Messages(s"$key.high")</td>
-          <td>@{f"${litres._2}%,d"}</td>
-          <td> @formatMoney(costHigher * litres._2 * multiplier)</td>
-          <td>
-              <a href="@lineKey">
-                  @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
-              </a>
-          </td>
-      </tr>
-    }
-
-    <tr>
-      <th scope="row"><h4 class="heading-small">@Messages(s"$key.subtotal")</h4></th>
-      <td class="numeric"></td>
-      <td class="numeric"></td>
-      <td class="numeric"><h4 class="heading-small">@formatMoney(subtotal)</h4></td>
-      <td></td>
-    </tr>
-    <tr>
-        <th scope="row"><h4 class="heading-small">@Messages(s"$key.balance.brought.forward")</h4></th>
-        <td class="numeric"></td>
-        <td class="numeric"></td>
-        <td class="numeric"><h4 class="heading-small">@formatMoney(broughtForward)</h4></td>
-        <td></td>
-    </tr>
-    <tr>
-        <th scope="row"><h4 class="heading-small">@Messages(s"$key.total")</h4></th>
-        <td class="numeric"></td>
-        <td class="numeric"></td>
-        <td class="numeric"><h4 class="heading-small">@formatMoney(total)</h4></td>
-        <td></td>
-    </tr>
-  </tbody>
+    <tbody>
+        @for((lineKey, litres, multiplier) <- lineItems) {
+            <tr>
+                <td rowspan="2">@Messages(s"$key.$lineKey")</td>
+                <td>@Messages(s"$key.low")</td>
+                <td>@{f"${litres._1}%,d"}</td>
+                <td class="no-minus-wrapping">@formatMoney(costLower * litres._1 * multiplier)</td>
+                <td>
+                    <a href="@lineKey">
+                        @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>@Messages(s"$key.high")</td>
+                <td>@{f"${litres._2}%,d"}</td>
+                <td class="no-minus-wrapping"> @formatMoney(costHigher * litres._2 * multiplier)</td>
+                <td>
+                    <a href="@lineKey">
+                        @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
+                    </a>
+                </td>
+            </tr>
+        }
+        <tr>
+            <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.subtotal")</h4></th>
+            <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(subtotal)</h4></td>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.balance.brought.forward")</h4></th>
+            <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(broughtForward)</h4></td>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.total")</h4></th>
+            <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(total)</h4></td>
+            <td></td>
+        </tr>
+    </tbody>
 </table>
-<h3 class="heading-medium">@Messages("returns-cya.submit-subheading")</h3>
-<p>@Messages("returns-cya.submit-paragraph")</p>
+<h3 class="heading-medium">@Messages(s"$key.submit-subheading")</h3>
+<p>@Messages(s"$key.submit-paragraph")</p>
 <p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>

@@ -1,7 +1,3 @@
-body {
-    overflow-x: hidden;
-}
-
 .black-border {
     border: 2px solid #0b0c0c;
 }
@@ -11,8 +7,15 @@ body {
     padding-right: 0;
 }
 
+.no-shadow {
+    box-shadow: none;
+}
+
 
 @media (min-width: 641px) {
+    body {
+        overflow-x: hidden;
+    }
 
     .table-row-answer.word-break {
         word-break: break-word;
@@ -136,6 +139,14 @@ button[name="checkyouranswers"] {
 
 .align-right {
     text-align: right;
+}
+.no-minus-wrapping {
+    white-space: nowrap;
+    text-align: left;
+}
+
+.cya-width {
+    width: 60%;
 }
 
 @media print {

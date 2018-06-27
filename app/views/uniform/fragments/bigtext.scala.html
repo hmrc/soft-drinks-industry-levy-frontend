@@ -32,10 +32,6 @@
             </span>
         }
     </label>
-
-    @if(messages.isDefinedAt(s"$key.hint")) {
-       <span class="form-hint">@Messages(s"$key.hint")</span>
-    }
     
     <textarea class="form-control form-control-3-4 @if(form.hasErrors) {form-control-error}"
               id="@key"
