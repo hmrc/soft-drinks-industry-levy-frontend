@@ -31,6 +31,7 @@ import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.uniform.SessionCachePersistence
+import uk.gov.hmrc.domain.Modulus23Check
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
@@ -50,7 +51,7 @@ class ReturnsController (
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController {
+) extends SdilWMController with FrontendController with Modulus23Check {
 
   implicit val litreageForm = new FormHtml[(Long,Long)] {
     import play.api.data.Forms._
@@ -86,7 +87,7 @@ class ReturnsController (
     "alias" -> optional(text),
     "sdilRef" -> nonEmptyText
       .verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$"))
-      .verifying("error.sdilref.invalid", _ => true) // modulus check
+      .verifying("error.sdilref.invalid", x => isCheckCorrect(x,1))
       .verifying("error.sdilref.notsmall", ref => Await.result(isSmallProducer(ref), 20.seconds)),
     "lower"   -> litreage,
     "higher"  -> litreage
