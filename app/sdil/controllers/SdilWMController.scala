@@ -182,17 +182,17 @@ trait SdilWMController extends WebMonadController
   def ask[T](mapping: Mapping[T], key: String, default: T)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
     ask(mapping, key, default.some)
 
+  // Because I decided earlier on to make everything based off of JSON
+  // I have to write silly things like this. TODO
+  implicit val formatUnit: Format[Unit] = new Format[Unit] {
+    def writes(u: Unit) = JsNull
+    def reads(v: JsValue) = JsSuccess(())
+  }
+
   protected def tell[A: HtmlShow](
     id: String,
     a: A 
   ): WebMonad[Unit] = {
-
-    // Because I decided earlier on to make everything based off of JSON
-    // I have to write silly things like this. TODO
-    implicit val formatUnit: Format[Unit] = new Format[Unit] {
-      def writes(u: Unit) = JsNull
-      def reads(v: JsValue) = JsSuccess(())
-    }
 
     val unitMapping: Mapping[Unit] = Forms.of[Unit](new Formatter[Unit] {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Unit] = Right(())
