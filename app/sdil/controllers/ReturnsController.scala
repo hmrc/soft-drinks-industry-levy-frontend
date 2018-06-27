@@ -30,7 +30,8 @@ import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.uniform.SessionCachePersistence
+import sdil.models.retrieved.{RetrievedSubscription => Subscription}
+import sdil.uniform._
 import uk.gov.hmrc.domain.Modulus23Check
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -42,6 +43,8 @@ import scala.concurrent.duration._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import uk.gov.hmrc.http.HeaderCarrier
+import java.time._
+import java.time.format._
 
 class ReturnsController (
   val messagesApi: MessagesApi,
@@ -86,9 +89,10 @@ class ReturnsController (
   implicit def smallProducer(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
     "alias" -> optional(text),
     "sdilRef" -> nonEmptyText
-      .verifying("error.sdilref.invalid", _.matches("^X[A-Z]SDIL000[0-9]{6}$"))
-      .verifying("error.sdilref.invalid", x => isCheckCorrect(x,1))
-      .verifying("error.sdilref.notsmall", ref => Await.result(isSmallProducer(ref), 20.seconds)),
+      .verifying("error.sdilref.invalid", x =>
+        x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
+          isCheckCorrect(x,1) &&
+          Await.result(isSmallProducer(x), 20.seconds)),
     "lower"   -> litreage,
     "higher"  -> litreage
   ){
@@ -134,21 +138,30 @@ class ReturnsController (
     askEmptyOption(litreagePair.nonEmpty, "claim-credits-for-lost-damaged")
   ).mapN(SdilReturn.apply)
 
-  private def confirmationPage(key: String)(implicit messages: Messages): WebMonad[Result] = {
-    val now = java.time.LocalDate.now
+  private def confirmationPage(key: String, period: ReturnPeriod, subscription: Subscription)(implicit messages: Messages): WebMonad[Result] = {
+    val now = LocalDate.now
+    import ltbs.play._
+    val returnDate = messages(
+      "returnsDone.returnsDoneMessage",
+      period.start.format("MMMM"),
+      period.end.format("MMMM"),
+      period.start.getYear.toString,
+      subscription.orgName,
+      LocalTime.now.format(DateTimeFormatter.ofPattern("HH:mm")),
+      now.format("dd! MMMM")
+    )
 
-    val returnDate = messages("returnsDone.returnsDoneMessage", "April", "June", "2018", "ABC Drinks", "12:12", "12th June")
-    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(now)(messages).some
+    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(period.deadline)(messages).some
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext)
   }
 
-  private def program(period: ReturnPeriod, utr: String)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
+  private def program(period: ReturnPeriod, subscription: Subscription)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn
     broughtForward <- BigDecimal("0").pure[WebMonad]
     _              <- checkYourAnswers("returns-cya", sdilReturn, broughtForward)
     _              <- cachedFuture(s"return-${period.count}")(
-                        sdilConnector.returns(utr, period) = sdilReturn)
-    end            <- clear >> confirmationPage("returnsDone")
+                        sdilConnector.returns(subscription.utr, period) = sdilReturn)
+    end            <- clear >> confirmationPage("returnsDone", period, subscription)
 
   } yield end
 
@@ -156,17 +169,15 @@ class ReturnsController (
     if (!config.returnsEnabled)
       throw new NotImplementedError("Returns are not enabled")
     val sdilRef = request.sdilEnrolment.value
-    //val utr = request.utr.get
-
     val period = ReturnPeriod(year, quarter)
     val persistence = SessionCachePersistence(s"returns-${period.year}-${period.quarter}", keystore)
 
     for {
-      utr <- sdilConnector.retrieveSubscription(sdilRef).map{_.get.utr}
-      pendingReturns <- sdilConnector.returns.pending(utr)
+      subscription <- sdilConnector.retrieveSubscription(sdilRef).map{_.get}
+      pendingReturns <- sdilConnector.returns.pending(subscription.utr)
       r   <- if (pendingReturns.contains(period))
-               runInner(request)(program(period, utr))(id)(persistence.dataGet,persistence.dataPut)
-             else 
+               runInner(request)(program(period, subscription))(id)(persistence.dataGet,persistence.dataPut)
+             else
                Redirect(routes.ServicePageController.show()).pure[Future]
     } yield r
   }

@@ -16,7 +16,7 @@
 
 @(paymentDate: java.time.LocalDate)(implicit messages: Messages)
 
-<p>@Messages("returnsDone.paymentsBlurb.payby", paymentDate)</p>
+<p>@Messages("returnsDone.paymentsBlurb.payby", paymentDate.format("dd! MMMM"))</p>
 
 <p>@Messages("returnsDone.paymentsBlurb.payusing")</p>
 
