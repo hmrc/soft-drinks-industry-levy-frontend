@@ -36,6 +36,9 @@
     @if(messages.isDefinedAt(s"$key.paragraph")) {
         <p>@Messages(s"$key.paragraph")</p>
     }
+    @if(messages.isDefinedAt(s"$key.paragraph.nonEmpty") && items.nonEmpty) {
+        <p>@Messages(s"$key.paragraph.nonEmpty")</p>
+    }
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
         <div class="form-group">
