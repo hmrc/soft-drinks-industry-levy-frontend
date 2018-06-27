@@ -142,7 +142,7 @@ class ReturnsController (
     val now = LocalDate.now
     import ltbs.play._
     val returnDate = messages(
-      "returns-sent.returnsDoneMessage",
+      "return-sent.returnsDoneMessage",
       period.start.format("MMMM"),
       period.end.format("MMMM"),
       period.start.getYear.toString,
