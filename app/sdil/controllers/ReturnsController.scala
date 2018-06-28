@@ -138,21 +138,41 @@ class ReturnsController (
     askEmptyOption(litreagePair.nonEmpty, "claim-credits-for-lost-damaged")
   ).mapN(SdilReturn.apply)
 
-  private def confirmationPage(key: String, period: ReturnPeriod, subscription: Subscription)(implicit messages: Messages): WebMonad[Result] = {
+  private def confirmationPage(key: String, period: ReturnPeriod, subscription: Subscription,
+                               sdilReturn: SdilReturn, broughtForward: BigDecimal)(implicit messages: Messages): WebMonad[Result] = {
     val now = LocalDate.now
     import ltbs.play._
+
+    val data = List(
+      ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1),
+      ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
+      ("small-producer-details", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
+      ("brought-into-uk", sdilReturn.importLarge, 1),
+      ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
+      ("claim-credits-for-exports", sdilReturn.export, -1),
+      ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
+    )
+
+    val costLower = BigDecimal("0.18")
+    val costHigher = BigDecimal("0.24")
+    val subtotal = data.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
+
+    val total = subtotal + broughtForward
+
+    val getTotal = messages("return-sent.subheading", total.toString(), period.deadline.toString())
+
     val returnDate = messages(
       "return-sent.returnsDoneMessage",
       period.start.format("MMMM"),
       period.end.format("MMMM"),
       period.start.getYear.toString,
       subscription.orgName,
-      LocalTime.now.format(DateTimeFormatter.ofPattern("HH:mm")),
-      now.format("dd! MMMM")
+      LocalTime.now.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
+      now.format("dd MMMM yyyy")
     )
 
     val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(period.deadline)(messages).some
-    journeyEnd(key, now, Html(returnDate).some, whatHappensNext)
+    journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
 
   private def program(period: ReturnPeriod, subscription: Subscription)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
@@ -161,7 +181,7 @@ class ReturnsController (
     _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward)
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
-    end            <- clear >> confirmationPage("return-sent", period, subscription)
+    end            <- clear >> confirmationPage("return-sent", period, subscription, sdilReturn, broughtForward)
   } yield end
 
   def index(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>

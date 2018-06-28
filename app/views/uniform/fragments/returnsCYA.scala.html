@@ -60,16 +60,17 @@
                 </td>
             </tr>
         }
-        <tr>
-            <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.subtotal")</h4></th>
-            <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(subtotal)</h4></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.balance.brought.forward")</h4></th>
-            <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(broughtForward)</h4></td>
-            <td></td>
-        </tr>
+        @*Insert subtotal and amount brought forward back in Q2 filing*@
+        @*<tr>*@
+            @*<th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.subtotal")</h4></th>*@
+            @*<td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(subtotal)</h4></td>*@
+            @*<td></td>*@
+        @*</tr>*@
+        @*<tr>*@
+            @*<th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.balance.brought.forward")</h4></th>*@
+            @*<td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(broughtForward)</h4></td>*@
+            @*<td></td>*@
+        @*</tr>*@
         <tr>
             <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.total")</h4></th>
             <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(total)</h4></td>
