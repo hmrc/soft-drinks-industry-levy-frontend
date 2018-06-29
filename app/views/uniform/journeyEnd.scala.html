@@ -18,14 +18,15 @@
 @import java.time.{LocalDate, LocalTime, ZoneId}
 @import java.time.format.DateTimeFormatter
 
-@(id: String, breadcrumbs: List[String], now: LocalDate = LocalDate.now, updateTimeMessage: Option[Html] = None, whatHappensNext: Option[Html] = None)(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(id: String, breadcrumbs: List[String], now: LocalDate = LocalDate.now, updateTimeMessage: Option[Html] = None,
+        whatHappensNext: Option[Html] = None, getTotal: Option[Html] = None)(implicit messages: Messages, request: Request[_], config: AppConfig)
 
 @views.html.main_template(title = Messages(s"$id.title")) {
 
     <div class="govuk-box-highlight">
         <h1 class="heading-xlarge">@Messages(s"$id.title")</h1>
 
-        <p class="font-large">@Messages(s"$id.subheading")</p>
+        <p class="font-large">@{getTotal.getOrElse{Html(Messages(s"$id.subheading"))}}</p>
     </div>
 
     <p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>

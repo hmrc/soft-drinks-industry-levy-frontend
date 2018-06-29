@@ -14,17 +14,23 @@
  * limitations under the License.
  *@
 
-@(paymentDate: java.time.LocalDate)(implicit messages: Messages)
+ @import sdil.models.ReturnPeriod
 
-<p>@Messages("return-sent.paymentsBlurb.payby", paymentDate.format("dd! MMMM"))</p>
+@(paymentDate: ReturnPeriod, sdilRef: String)(implicit messages: Messages)
+
+<p>@Messages("return-sent.paymentsBlurb.payby", paymentDate.deadline.format("dd MMMM yyyy"))</p>
 
 <p>@Messages("return-sent.paymentsBlurb.payusing")</p>
 
 <ul class="list list-bullet">
-    @for(line <- Messages.many("return-sent.paymentsBlurb.payDetails")) {
+    @for(line <- Messages.many("return-sent.paymentsBlurb.payDetails", sdilRef)) {
       <li>@line</li>
     }
 </ul>
 
 <p>@Messages("return-sent.paymentsBlurb.chapsDelay")</p>
+
+<p>@Messages("return-sent.paymentsBlurb.nextReturn", paymentDate.next.start.format("MMMM"), paymentDate.next.end.format("MMMM yyyy") , paymentDate.next.deadline.format("dd MMMM yyyy"))</p>
+
+<a>@Html(Messages("return-sent.paymentsBlurb.servicePage", sdil.controllers.routes.ServicePageController.show()))</a>
 

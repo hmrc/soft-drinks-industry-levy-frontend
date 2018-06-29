@@ -689,12 +689,14 @@ heading.own-brands-packaged-at-own-sites=Are you reporting your own brands of li
 own-brands-packaged-at-own-sites.inner-heading=How many litres do you need to report?
 heading.packaged-as-a-contract-packer=Are you reporting liable drink you’ve packaged as a third party or contract packer at UK sites you operate?
 packaged-as-a-contract-packer.inner-heading=How many litres do you need to report?
-packaged-as-a-contract-packer.paragraph=Do not include drinks you’ve packaged for registered small producers.
-heading.exemptions-for-small-producers=Do you need to claim an exemption for any of the liable drink you’ve packaged for small producers?
+packaged-as-a-contract-packer.paragraph=Do not include liable drinks you’ve packaged for registered small producers.
+heading.exemptions-for-small-producers=Do you need to claim an exemption for any of the liable drink you’ve packaged for registered small producers?
 heading.small-producer-details=Your small producer exemptions
 small-producer-details.paragraph.nonEmpty=Names and reference numbers will be saved and shown in future returns
 heading.add-small-producer-details=Enter the registered small producer’s details
 add-small-producer-details.paragraph=Names and reference numbers will be saved and shown in future returns
+add-small-producer-details.help.header=What are the bands?
+add-small-producer-details.help=The low band is from 5 grams to 7.9 grams of sugar per 100 millilitres.<br>The high band is 8 grams of sugar or more per 100 millilitres.
 small-producer-details.name=Name: {0}
 small-producer-details.refNumber=Reference number: {0}
 small-producer-details.lowBand=Low band: {0} litres
@@ -707,15 +709,31 @@ heading.remove-small-producer-details=Are you sure you want to remove this small
 remove-small-producer-details.continue=Remove
 heading.brought-into-uk=Are you reporting liable drink you’ve brought into the UK from anywhere outside of the UK?
 brought-into-uk.inner-heading=How many litres do you need to report?
-brought-into-uk.paragraph=Do not include liable drinks imported from small producers.
-heading.brought-into-uk-from-small-producers=Were any of the liable drinks you brought into the UK from small producers?
+brought-into-uk.paragraph=Do not include liable drink from small producers or your own brands if you are a registered small producer.
+brought-into-uk.help.header=What is a small producer?
+brought-into-uk.help=A business is a small producer if it:\
+  <ul class="list list-bullet">\
+  <li>has had less than 1 million litres of its own brands of liable drink packaged globally in the past 12 months</li>\
+  <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
+  </ul>
+heading.brought-into-uk-from-small-producers=Are you reporting any liable drink you’ve brought into the UK from small producers?
 brought-into-uk-from-small-producers.inner-heading=How many litres?
+brought-into-uk-from-small-producers.help.header=Liable drink from small producers
+brought-into-uk-from-small-producers.help=<p>If you are a registered small producer and you bring your own brand of \
+  liable drink into the UK, you still need to report them but you will not pay the levy on them.</p> \
+<p>If you bring liable drink into the UK from someone else who would be considered a small producer, \
+  you need to get evidence of the:<p> \
+  <ul class="list list-bullet">\
+  <li>contact details, EU VAT number (if they have one) and website of the business</li>\
+  <li>amount of litres of liable drink packaged globally for brands the business owns in the past 12 months</li> \
+  <li>signature of someone from the business, their position and the date of the signature</li></ul>
 heading.claim-credits-for-exports=Do you want to claim a credit for liable drink that has been exported?
 claim-credits-for-exports.help.header=What can I claim a credit for?
 claim-credits-for-exports.help=You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You’ll need to get and keep evidence of details such as the: \
-  <ul class="list list-bullet"><li>brand of the liable drinks</li><li>supplier or consigner</li><li>customer and destination the liable drinks are supplied to</li><li>method of delivery</li></ul>
+  <ul class="list list-bullet"><li>brand of the liable drinks</li><li>supplier or consigner</li><li>customer and destination the liable drinks are supplied to</li><li>method of delivery</li></ul> \
+  <p>If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.</p>
 claim-credits-for-exports.inner-heading=How many litres are you claiming a credit for?
-heading.claim-credits-for-lost-damaged=Do you want to claim a credit for any liable drinks which have been lost or destroyed?
+heading.claim-credits-for-lost-damaged=Do you want to claim a credit for any liable drink which have been lost or destroyed?
 claim-credits-for-lost-damaged.inner-heading=How many litres are you claiming a credit for?
 claim-credits-for-lost-damaged.help.header=What can I claim credit for?
 claim-credits-for-lost-damaged.help=You can claim a credit for liable drinks that have been:<ul class="list list-bullet"><li>lost</li><li>destroyed</li>\
@@ -723,18 +741,18 @@ claim-credits-for-lost-damaged.help=You can claim a credit for liable drinks tha
   <p>To be able to claim this credit, you must have documentation containing information such as the details of the incident,\
    how and where it occurred, the amount of liable drink and whether it was in the low band or the high band.</p>
 
-check-your-answers.balance.due=Balance due {0}
+check-your-answers.balance.due=Balance due: {0}
 check-your-answers.cost=Cost
 check-your-answers.litres=Litres
 check-your-answers.band=Band
 check-your-answers.activity=Activity
-check-your-answers.own-brands-packaged-at-own-sites=Own Brand
-check-your-answers.small-producer-details=Contract packed for small producers
+check-your-answers.own-brands-packaged-at-own-sites=Own brands packaged at your own site
 check-your-answers.packaged-as-a-contract-packer=Contract packed
-check-your-answers.brought-into-uk-from-small-producers=Brought into the UK from small producers
+check-your-answers.small-producer-details=Contract packed for registered small producers
 check-your-answers.brought-into-uk=Brought into the UK
+check-your-answers.brought-into-uk-from-small-producers=Brought into the UK from small producers
 check-your-answers.claim-credits-for-exports=Exported
-check-your-answers.claim-credits-for-lost-damaged=Lost, damaged or destroyed
+check-your-answers.claim-credits-for-lost-damaged=Lost or destroyed
 check-your-answers.subtotal=Subtotal
 check-your-answers.balance.brought.forward=Balance brought forward
 check-your-answers.total=Total
@@ -748,22 +766,40 @@ check-your-answers.change.brought-into-uk-from-small-producers=volume brought in
 check-your-answers.change.brought-into-uk=volume brought into the UK
 check-your-answers.change.claim-credits-for-exports=volume exported
 check-your-answers.change.claim-credits-for-lost-damaged=volume lost, damaged or destroyed
+check-your-answers.continue=Confirm and submit
 check-your-answers.submit-subheading=Submit your return
-check-your-answers.submit-paragraph=By submitting this notification you are confirming that, to the best of your knowledge, the details you are providing are correct.
+check-your-answers.submit-paragraph=By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
 
-return-sent.title=Complete
-return-sent.subheading=We’ve received your return
-return-sent.returnsDoneMessage=Your return for {0} to {1} {2} for {3} was sent at {4} on {5}.
+return-sent.title=Return submitted
+return-sent.subheading=You need to pay {0} </br> by {1}
+return-sent.what-happens-next-heading=What you need to do next
+return-sent.returnsDoneMessage=Your Soft Drinks Industry Levy return for {0} to {1} {2} for {3} was sent at {4} on {5}.
 return-sent.paymentsBlurb.payby=You need to pay by {0}.
 return-sent.paymentsBlurb.payusing=You can pay by Bacs or CHAPS using:
 return-sent.paymentsBlurb.payDetails.1=sort code: 20-05-17
 return-sent.paymentsBlurb.payDetails.2=account number: 40204374
-return-sent.paymentsBlurb.payDetails.3=payment reference: RLSDIL7728128
+return-sent.paymentsBlurb.payDetails.3=account name: HMRC General Business Tax Receipts
+return-sent.paymentsBlurb.payDetails.4=payment reference: {0}
 return-sent.paymentsBlurb.chapsDelay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
-    Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline. 
+    Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
+return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must submit it and make any payments due by {2}.
+return-sent.paymentsBlurb.servicePage=<a href="{0}">View your Soft Drinks Industry Levy details</a>
 
 warning=Warning
-returnsHome.returnsDue=The return for {0} from {1} to {2} is due by the {3}.
+returnsHome.returnsDue=The return for {0} from {1} to {2} is due by {3}.
 returnsHome.returnsOverdue=[The return for {0} from {1} to {2} was due on the {3}.]
-return.file=File return
+returnsHome.help.title=What you’ll need to tell us in your return
+returnsHome.help.p1=You’ll need to tell us how many litres of liable drink in each band you need to report that were:
+returnsHome.help.li1=packaged for your own brand or as a contract packer, not including those packaged for small producers
+returnsHome.help.li2=packaged for each small producer and the reference number of each small producer
+returnsHome.help.li3=brought into the UK from anywhere outside of the UK, not including those from small producers
+returnsHome.help.li4=brought into the UK from small producers
+returnsHome.help.p2=If the drink is dilutable, you must report the amount of ready-to-drink litres made when it’s diluted according to the dilution ratio stated on the packaging.
+returnsHome.help.p3=You can claim a credit for liable drinks that you have reported in either a previous or the current return that have been:
+returnsHome.help.li5=exported, or are expected to be exported
+returnsHome.help.li6=lost or destroyed
+returnsHome.help.guidance=You must get and keep <a href="{0}">certain types of evidence</a> to be able to claim a credit.
+returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-levy-credit-for-exported-lost-or-destroyed-drinks-notice-4
+
+return.file=Submit the return
 
