@@ -50,4 +50,33 @@ window.onload = function () {
         ga('send', 'event', 'pending', 'visited', 'pendingPageVisited');
     }
 
+    // for returns
+    if (document.getElementsByClassName("error-summary-list").length > 0) {
+        ga('send', 'event', 'validationError', 'error', document.getElementsByClassName("error-summary-list").innerText);
+    }
+
+    if(document.getElementById('exemptions-for-small-producers-true')) {
+        document.getElementById('exemptions-for-small-producers-true').addEventListener('click', function() {
+            ga('send', 'event', 'smallProducerExemption', 'click', 'Yes');
+        });
+    }
+
+    $('form[action="exemptions-for-small-producers"] button').click(function(){
+        ga('send', 'event', 'smallProducerExemption', 'click', 'Submit');
+    });
+
+    $('.returns-change-link').each(function(i,e){
+        $(this).click(function(){
+            ga('send', 'event', 'changeLinks', 'click', e.pathname);
+        });
+    });
+
+    $('form[action="check-your-answers"] button').click(function(){
+        ga('send', 'event', 'checkYourAnswers', 'click', 'Submit');
+    });
+
+    if ($('h1')[0].innerText == 'Return submitted') {
+        ga('send', 'event', 'visited', 'load', 'Return submitted');
+    };
+
 };
