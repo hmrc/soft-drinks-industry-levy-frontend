@@ -36,13 +36,26 @@
     linkElem = Some(linksElement),
     headScripts = None)
     <meta name="format-detection" content="telephone=no" />
+    <script type="text/javascript">
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+
+            ga('create', @Some(appConfig.analyticsToken), 'auto');
+
+
+
+            ga('send', 'pageview', { 'anonymizeIp': true });
+    </script>
 }
 
 @linksElement = {
     <link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/sdil.css")'>
     <link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/print.css")' media="print">
     <script defer src='@routes.Assets.at("javascripts/sdil-frontend-app.js")'></script>
-    <script defer src='@routes.Assets.at("javascripts/show-hide-content2.js")'></script>
+    <script defer src='@routes.Assets.at("javascripts/show-hide-content.js")'></script>
 }
 
 @headerNavLinks = {
