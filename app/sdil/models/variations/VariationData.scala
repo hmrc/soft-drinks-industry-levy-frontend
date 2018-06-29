@@ -20,7 +20,6 @@ import java.time.LocalDate
 
 import play.api.libs.json._
 import play.api.mvc.Call
-import sdil.controllers.variation.routes
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer}
@@ -125,6 +124,6 @@ object VariationData {
       original.contact.positionInCompany.getOrElse(""),
       original.contact.phoneNumber,
       original.contact.email),
-    previousPages = List(routes.VariationsController.show)
+    previousPages = Nil
   )
 }
