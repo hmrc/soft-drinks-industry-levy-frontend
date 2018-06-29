@@ -47,19 +47,36 @@
 	    } else {
 	      @for(period <- periodsDue) { 
 	      <div class="notice">
-	        <i class="icon icon-important" style="top: 25%" >
-		  <span class="visually-hidden">@Messages("warning")</span>
-	        </i>
+              <i class="icon icon-important" style="top: 43%">
+                  <span class="visually-hidden">@Messages("warning")</span>
+              </i>
 	        <p>
-		  <strong class="bold-small">
-		    @Messages("returnsHome.returnsDue", subscription.orgName, period.start.format("MMMM"), period.end.format("MMMM yyyy"), period.deadline.format("d! MMMM"))
-		  </strong>
+              <strong class="bold-small">
+                @Messages("returnsHome.returnsDue", subscription.orgName, period.start.format("MMMM"), period.end.format("MMMM yyyy"), period.deadline.format("d MMMM yyyy"))
+              </strong>
 	        </p>
+          </div>
+              <div>
+                  @details("returnsHome.help.title") {
+                      <p>@messages("returnsHome.help.p1")</p>
+                      <ul class="list list-bullet">
+                          <li>@Messages("returnsHome.help.li1")</li>
+                          <li>@Messages("returnsHome.help.li2")</li>
+                          <li>@Messages("returnsHome.help.li3")</li>
+                          <li>@Messages("returnsHome.help.li4")</li>
+                      </ul>
+                      <p>@Messages("returnsHome.help.p2")</p>
+                      <p>@Messages("returnsHome.help.p3")</p>
+                      <ul class="list list-bullet">
+                          <li>@Messages("returnsHome.help.li5")</li>
+                          <li>@Messages("returnsHome.help.li6")</li>
+                      </ul>
+                      <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
+                  }
+              </div>
 	        <div>
 		        <a href="@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, "own-brands-packaged-at-own-sites")" class="button">@Messages("return.file")</a>
 	        </div>
-	      
-	      </div>
 	      }
             }
 
