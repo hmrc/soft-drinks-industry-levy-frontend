@@ -740,7 +740,7 @@ claim-credits-for-lost-damaged.help=You can claim a credit for liable drinks tha
   <li>disposed of as waste</li><li>reprocessed</li><li>spilled and cannot be used</li></ul>\
   <p>To be able to claim this credit, you must have documentation containing information such as the details of the incident,\
    how and where it occurred, the amount of liable drink and whether it was in the low band or the high band.</p>
-
+heading.check-your-answers=Check your answers
 check-your-answers.balance.due=Balance due: {0}
 check-your-answers.cost=Cost
 check-your-answers.litres=Litres
