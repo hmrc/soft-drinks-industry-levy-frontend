@@ -89,10 +89,13 @@ class ReturnsController (
   implicit def smallProducer(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
     "alias" -> optional(text),
     "sdilRef" -> nonEmptyText
-      .verifying("error.sdilref.invalid", x =>
-        x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
-          isCheckCorrect(x,1) &&
-          Await.result(isSmallProducer(x), 20.seconds)),
+      .verifying(
+        "error.sdilref.invalid", x => {
+          x.isEmpty ||
+            (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
+            isCheckCorrect(x, 1) &&
+            Await.result(isSmallProducer(x), 20.seconds))
+        }),
     "lower"   -> litreage,
     "higher"  -> litreage
   ){
