@@ -44,7 +44,7 @@
                 <td>@{f"${litres._1}%,d"}</td>
                 <td class="no-minus-wrapping">@formatMoney(costLower * litres._1 * multiplier)</td>
                 <td>
-                    <a href="@lineKey">
+                    <a href="@lineKey" class="returns-change-link">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
                     </a>
                 </td>
@@ -54,7 +54,7 @@
                 <td>@{f"${litres._2}%,d"}</td>
                 <td class="no-minus-wrapping"> @formatMoney(costHigher * litres._2 * multiplier)</td>
                 <td>
-                    <a href="@lineKey">
+                    <a href="@lineKey" class="returns-change-link">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
                     </a>
                 </td>
@@ -80,4 +80,8 @@
 </table>
 <h3 class="heading-medium">@Messages(s"$key.submit-subheading")</h3>
 <p>@Messages(s"$key.submit-paragraph")</p>
-<p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
+<p>
+    <a href="javascript:window.print()" class="print-link" onclick="ga('send', 'event', 'print', 'click', 'Print')">
+        @Messages("sdil.common.print")
+    </a>
+</p>
