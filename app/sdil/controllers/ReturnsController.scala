@@ -166,7 +166,7 @@ class ReturnsController (
       period.end.format("MMMM"),
       period.start.getYear.toString,
       subscription.orgName,
-      LocalTime.now.format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
+      LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
       now.format("dd MMMM yyyy")
     )
 
