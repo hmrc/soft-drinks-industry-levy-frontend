@@ -109,7 +109,7 @@ class ReturnsController (
     val data = List(
       ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1),
       ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
-      ("small-producer-details", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
+      ("exemptions-for-small-producers", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
       ("brought-into-uk", sdilReturn.importLarge, 1),
       ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
       ("claim-credits-for-exports", sdilReturn.export, -1),
