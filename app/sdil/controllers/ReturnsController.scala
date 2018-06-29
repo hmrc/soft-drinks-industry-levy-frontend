@@ -105,7 +105,7 @@ class ReturnsController (
     case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
   }
 
-  def d(sdilReturn: SdilReturn) = {
+  def returnAmount(sdilReturn: SdilReturn) = {
     List(
       ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1),
       ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
@@ -123,7 +123,7 @@ class ReturnsController (
 
   def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal): WebMonad[Unit] = {
 
-    val data = d(sdilReturn)
+    val data = returnAmount(sdilReturn)
     val subtotal = calculateSubtotal(data)
     val total: BigDecimal = subtotal + broughtForward
 
@@ -143,7 +143,7 @@ class ReturnsController (
     val now = LocalDate.now
     import ltbs.play._
 
-    val data = d(sdilReturn)
+    val data = returnAmount(sdilReturn)
     val subtotal = calculateSubtotal(data)
 
     val total = subtotal + broughtForward
