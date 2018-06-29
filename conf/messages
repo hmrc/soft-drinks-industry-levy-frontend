@@ -771,7 +771,7 @@ check-your-answers.submit-subheading=Submit your return
 check-your-answers.submit-paragraph=By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
 
 return-sent.title=Return submitted
-return-sent.subheading=You need to pay {0} by {1}
+return-sent.subheading=You need to pay {0} </br> by {1}
 return-sent.what-happens-next-heading=What you need to do next
 return-sent.returnsDoneMessage=Your Soft Drinks Industry Levy return for {0} to {1} {2} for {3} was sent at {4} on {5}.
 return-sent.paymentsBlurb.payby=You need to pay by {0}.
@@ -779,16 +779,16 @@ return-sent.paymentsBlurb.payusing=You can pay by Bacs or CHAPS using:
 return-sent.paymentsBlurb.payDetails.1=sort code: 20-05-17
 return-sent.paymentsBlurb.payDetails.2=account number: 40204374
 return-sent.paymentsBlurb.payDetails.3=account name: HMRC General Business Tax Receipts
-return-sent.paymentsBlurb.payDetails.4=payment reference: NOT HARD CODED SDIL REF
+return-sent.paymentsBlurb.payDetails.4=payment reference: {0}
 return-sent.paymentsBlurb.chapsDelay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
     Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
-return-sent.paymentsBlurb.nextReturn=Your next return will be for July to September 2018. You must submit this return and make any payments due by 30 October 2018.
+return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must submit it and make any payments due by {2}.
 return-sent.paymentsBlurb.servicePage=<a href="{0}">View your Soft Drinks Industry Levy details</a>
 
 warning=Warning
 returnsHome.returnsDue=The return for {0} from {1} to {2} is due by {3}.
 returnsHome.returnsOverdue=[The return for {0} from {1} to {2} was due on the {3}.]
-returnsHome.help.title=What you’ll need to tell us in your return.
+returnsHome.help.title=What you’ll need to tell us in your return
 returnsHome.help.p1=You’ll need to tell us how many litres of liable drink in each band you need to report that were:
 returnsHome.help.li1=packaged for your own brand or as a contract packer, not including those packaged for small producers
 returnsHome.help.li2=packaged for each small producer and the reference number of each small producer
