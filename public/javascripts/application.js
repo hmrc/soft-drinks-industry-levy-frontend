@@ -51,32 +51,63 @@ window.onload = function () {
     }
 
     // for returns
-    if (document.getElementsByClassName("error-summary-list").length > 0) {
-        ga('send', 'event', 'validationError', 'error', document.getElementsByClassName("error-summary-list").innerText);
-    }
-
     if(document.getElementById('exemptions-for-small-producers-true')) {
         document.getElementById('exemptions-for-small-producers-true').addEventListener('click', function() {
             ga('send', 'event', 'smallProducerExemption', 'click', 'Yes');
         });
     }
 
-    $('form[action="exemptions-for-small-producers"] button').click(function(){
-        ga('send', 'event', 'smallProducerExemption', 'click', 'Submit');
-    });
-
-    $('.returns-change-link').each(function(i,e){
-        $(this).click(function(){
-            ga('send', 'event', 'changeLinks', 'click', e.pathname);
+    // TODO - not working
+    if(document.getElementsByTagName('form').length > 0 && document.getElementsByTagName('form')[0].action.endsWith('exemptions-for-small-producers')) {
+        document.getElementsByTagName('button')[0].addEventListener('click', function() {
+            ga('send', 'event', 'smallProducerExemptionButton', 'click', 'Submit');
         });
-    });
+    }
 
-    $('form[action="check-your-answers"] button').click(function(){
-        ga('send', 'event', 'checkYourAnswers', 'click', 'Submit');
-    });
+    var arr = document.getElementsByClassName('returns-change-link');
+    if (typeof arr !== "undefined") {
+        for (var i = 0, len = arr.length; i < len; i++) {
+            var redirectUrl = arr[i].href;
+            arr[i].addEventListener('click', function (e) {
+                e.preventDefault();
+                gaWithCallback('send', 'event', 'changeLinks', 'click', e.pathname, function () {
+                    window.location.href = redirectUrl;
+                });
+            });
+        }
+    }
 
-    if ($('h1')[0].innerText == 'Return submitted') {
+    // TODO - not working
+    if(document.getElementsByTagName('form').length > 0 && document.getElementsByTagName('form')[0].action.endsWith('check-your-answers')) {
+        document.getElementsByTagName('button')[0].addEventListener('click', function() {
+            ga('send', 'event', 'checkYourAnswers', 'click', 'Submit');
+        });
+    }
+
+    // also not working
+    // $('form[action="check-your-answers"] button').attr('onclick',"ga('send', 'event', 'checkYourAnswers', 'click', 'Submit');");
+
+    if (document.getElementsByTagName('h1').length > 0 && document.getElementsByTagName('h1')[0].innerText == 'Return submitted') {
         ga('send', 'event', 'visited', 'load', 'Return submitted');
-    };
+    }
+
+    if (document.getElementsByClassName("error-summary-list").length > 0) {
+        ga('send', 'event', 'validationError', 'error', document.getElementsByClassName("error-summary-list").innerText);
+    }
+
+    function gaWithCallback(send, event, category, action, label, callback) {
+        ga(send, event, category, action, label, {
+            hitCallback: gaCallback
+        });
+        var gaCallbackCalled = false;
+        setTimeout(gaCallback, 5000);
+
+        function gaCallback() {
+            if(!gaCallbackCalled) {
+                callback();
+                gaCallbackCalled = true;
+            }
+        }
+    }
 
 };
