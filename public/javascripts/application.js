@@ -57,12 +57,6 @@ window.onload = function () {
         });
     }
 
-    // TODO - not working
-    if(document.getElementsByTagName('form').length > 0 && document.getElementsByTagName('form')[0].action.endsWith('exemptions-for-small-producers')) {
-        document.getElementsByTagName('button')[0].addEventListener('click', function() {
-            ga('send', 'event', 'smallProducerExemptionButton', 'click', 'Submit');
-        });
-    }
 
     var arr = document.getElementsByClassName('returns-change-link');
     if (typeof arr !== "undefined") {
@@ -77,15 +71,11 @@ window.onload = function () {
         }
     }
 
-    // TODO - not working
-    if(document.getElementsByTagName('form').length > 0 && document.getElementsByTagName('form')[0].action.endsWith('check-your-answers')) {
-        document.getElementsByTagName('button')[0].addEventListener('click', function() {
-            ga('send', 'event', 'checkYourAnswers', 'click', 'Submit');
-        });
-    }
+    $('form[action="exemptions-for-small-producers"] button').wrap("<span id='exemptions-click-wrapper'></span>");
+    $('form[action="exemptions-for-small-producers"] #exemptions-click-wrapper').attr('onclick',"ga('send', 'event', 'checkYourAnswers', 'click', 'Submit');");
 
-    // also not working
-    // $('form[action="check-your-answers"] button').attr('onclick',"ga('send', 'event', 'checkYourAnswers', 'click', 'Submit');");
+    $('form[action="check-your-answers"] button').wrap("<span id='cya-click-wrapper'></span>");
+    $('form[action="check-your-answers"] #cya-click-wrapper').attr('onclick',"ga('send', 'event', 'checkYourAnswers', 'click', 'Submit');");
 
     if (document.getElementsByTagName('h1').length > 0 && document.getElementsByTagName('h1')[0].innerText == 'Return submitted') {
         ga('send', 'event', 'visited', 'load', 'Return submitted');
