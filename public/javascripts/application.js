@@ -72,7 +72,7 @@ window.onload = function () {
     }
 
     $('form[action="exemptions-for-small-producers"] button').wrap("<span id='exemptions-click-wrapper'></span>");
-    $('form[action="exemptions-for-small-producers"] #exemptions-click-wrapper').attr('onclick',"ga('send', 'event', 'checkYourAnswers', 'click', 'Submit');");
+    $('form[action="exemptions-for-small-producers"] #exemptions-click-wrapper').attr('onclick',"ga('send', 'event', 'smallProducerExemptionButton', 'click', 'Submit');");
 
     $('form[action="check-your-answers"] button').wrap("<span id='cya-click-wrapper'></span>");
     $('form[action="check-your-answers"] #cya-click-wrapper').attr('onclick',"ga('send', 'event', 'checkYourAnswers', 'click', 'Submit');");
