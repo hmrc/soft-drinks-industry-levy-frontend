@@ -130,7 +130,6 @@ trait SdilWMController extends WebMonadController
       implicit val request: Request[AnyContent] = r
 
       val innerForm: Form[T] = Form(single { key -> single { "inner" -> innerMapping }})
-      println(form.data)
       val innerFormBound = if (form.data.get(s"$key.outer") != Some("true")) innerForm else innerForm.bind(form.data)
 
       val innerHead = views.html.uniform.fragments.innerhead(key)
