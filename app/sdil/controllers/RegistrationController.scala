@@ -78,7 +78,7 @@ class RegistrationController(val messagesApi: MessagesApi,
 
     for {
       orgType       <- askOneOf("organisationType", orgTypes ++ soleTrader)
-      _             <- if (orgType.value.pure[String] == "partnership") { Ok(partnerships()) } else (()).pure[WebMonad]
+      _             <- if (orgType.value.pure[String] === "partnership") { Ok(partnerships()) } else (()).pure[WebMonad]
       packLarge     <- askOption(bool, "packLarge")
       useCopacker   <- ask(bool,"useCopacker") when packLarge.contains(false)
 
