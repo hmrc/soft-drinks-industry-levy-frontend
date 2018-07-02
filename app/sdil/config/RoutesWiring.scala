@@ -21,10 +21,9 @@ import com.softwaremill.macwire.wire
 import controllers.Assets
 import play.api.inject.DefaultApplicationLifecycle
 import play.api.routing.Router
-import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction, VariationAction}
+import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.connectors._
 import sdil.controllers.test.TestingController
-import sdil.controllers.variation._
 import sdil.controllers.{VariationsController => UniformVariationsController, _}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
@@ -45,7 +44,6 @@ trait RoutesWiring extends CommonWiring {
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
   lazy val formAction: FormAction = wire[FormAction]
   lazy val registeredAction: RegisteredAction = wire[RegisteredAction]
-  lazy val variationAction: VariationAction = wire[VariationAction]
   lazy val assets: Assets = wire[Assets]
   lazy val servicePageController: ServicePageController = wire[ServicePageController]
   lazy val completeController: CompleteController = wire[CompleteController]
@@ -63,20 +61,6 @@ trait RoutesWiring extends CommonWiring {
   lazy val signoutController: AuthenticationController = wire[AuthenticationController]
   lazy val testController: TestingController = wire[TestingController]
   lazy val producerController: ProducerController = wire[ProducerController]
-  lazy val variationsController: variation.VariationsController = wire[variation.VariationsController]
-  lazy val businessDetailsController: BusinessDetailsController = wire[BusinessDetailsController]
-  lazy val producerVariationsController: ProducerVariationsController = wire[ProducerVariationsController]
-  lazy val usesCopackerController: UsesCopackerController = wire[UsesCopackerController]
-  lazy val packageOwnController: PackageOwnController = wire[PackageOwnController]
-  lazy val packageOwnVolController: PackageOwnVolController = wire[PackageOwnVolController]
-  lazy val copackForOthersController: CopackForOthersController = wire[CopackForOthersController]
-  lazy val copackForOthersVolController: CopackForOthersVolController = wire[CopackForOthersVolController]
-  lazy val importsController: ImportsController = wire[ImportsController]
-  lazy val importsVolController: ImportsVolController = wire[ImportsVolController]
-  lazy val contactDetailsVariationController: ContactDetailsVariationController = wire[ContactDetailsVariationController]
-  lazy val warehouseVariationController: WarehouseVariationController = wire[WarehouseVariationController]
-  lazy val productionSiteVariationController: ProductionSiteVariationController = wire[ProductionSiteVariationController]
-  lazy val variationsSummaryController: VariationsSummaryController = wire[VariationsSummaryController]
 
   lazy val uniformVariationsController: UniformVariationsController = wire[UniformVariationsController]
   lazy val returnsController: ReturnsController = wire[ReturnsController]
@@ -85,7 +69,6 @@ trait RoutesWiring extends CommonWiring {
   private lazy val healthRoutes = new health.Routes()
   private lazy val templateRoutes = new template.Routes()
   private lazy val prodRoutes: prod.Routes = wire[prod.Routes]
-  private lazy val variationsRoutes: variations.Routes = wire[variations.Routes]
 
   private lazy val testOnlyRoutes: testOnlyDoNotUseInAppConf.Routes = wire[testOnlyDoNotUseInAppConf.Routes]
 

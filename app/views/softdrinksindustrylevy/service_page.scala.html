@@ -137,15 +137,9 @@
                     <div class="panel-border-narrow panel">
                         <p>@Messages("sdil.service-page.variations.p4")</p>
                     </div>
-                    @if(config.uniformVariationsEnabled) {
-                        <a href="@sdil.controllers.routes.VariationsController.index("changeType")" class="button--secondary">
-                            @Messages("sdil.service-page.variations.change")
-                        </a>
-                    } else {
-                        <a href="@sdil.controllers.variation.routes.VariationsController.start()" class="button--secondary">
-                            @Messages("sdil.service-page.variations.change")
-                        </a>
-                    }
+                    <a href="@sdil.controllers.routes.VariationsController.index("changeType")" class="button--secondary">
+                       @Messages("sdil.service-page.variations.change")
+                    </a>
                 </div>
             }
         </div>

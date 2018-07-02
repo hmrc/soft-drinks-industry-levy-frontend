@@ -176,13 +176,9 @@ class VariationsController(
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    changeType <- if (config.uniformDeregOnly)
-                    askOneOf("changeType", List(ChangeType.Sites, ChangeType.Deregister))
-                  else
-                    askEnum("changeType", ChangeType)
+    changeType <- askOneOf("changeType", List(ChangeType.Sites, ChangeType.Deregister))
     base = VariationData(subscription)
     variation  <- changeType match {
-      case ChangeType.Sites if config.uniformDeregOnly => fatFormRedirect
       case ChangeType.Sites => contactUpdate(base)
       case ChangeType.Activity   => activityUpdate(base)
       case ChangeType.Deregister => deregisterUpdate(base)
@@ -207,10 +203,6 @@ class VariationsController(
     }
   } yield {
     exit
-  }
-
-  private def fatFormRedirect: WebMonad[VariationData] = EitherT.fromEither[WebInner] {
-    Redirect(sdil.controllers.variation.routes.VariationsController.start()).asLeft[VariationData]
   }
 
   def closedWarehouseSites(variation: VariationData): List[Site] = {
