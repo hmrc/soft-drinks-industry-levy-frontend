@@ -14,18 +14,8 @@
  * limitations under the License.
  *@
 
-@import helper.{inputRadioGroup => _, _}
-@import play.api.Configuration
-@import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
-@import views.html.helper.options
-@import views.html.uniform.helpers._
 
-@(key: String, form: Form[String], possibleValues: List[String], sort: (((String, String),(String,String)) => Boolean))(implicit messages: Messages)
-@inputRadioGroup(
-    form(key),
-    possibleValues.map{v => (v, Messages(key + ".option." + v.toLowerCase))}.sortWith(sort),
-    '_labelClass -> "block-label",
-    '_labelAfter -> true,
-    '_groupClass -> "form-field-group"
-)
+@()(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+<p>@Messages("sdil.partnership.info.p1")</p>

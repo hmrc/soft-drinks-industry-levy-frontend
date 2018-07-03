@@ -62,7 +62,8 @@ trait SdilWMController extends WebMonadController
   protected def askOneOf[A](
     id: String,
     possValues: List[A],
-    default: Option[A] = None
+    default: Option[A] = None,
+    sort: (((String, String),(String,String)) => Boolean) = _._2 < _._2
   ): WebMonad[A] = {
 
     val valueMap: Map[String,A] =
@@ -72,8 +73,7 @@ trait SdilWMController extends WebMonadController
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      uniform.fragments.radiolist(id, b, valueMap.keys.toList)
-      val inner = uniform.fragments.radiolist(id, b, valueMap.keys.toList)
+      val inner = uniform.fragments.radiolist(id, b, valueMap.keys.toList, sort)
       uniform.ask(id, b, inner, path)
     }.imap(valueMap(_))(_.toString)
   }

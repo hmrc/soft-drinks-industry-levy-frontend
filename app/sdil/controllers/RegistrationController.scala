@@ -34,11 +34,11 @@ import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
-import views.html.softdrinksindustrylevy.register.partnerships
 import views.html.uniform
 import ltbs.play.scaffold.webmonad._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
+import views.html.uniform.fragments.partnerships
 
 
 class RegistrationController(val messagesApi: MessagesApi,
@@ -52,9 +52,9 @@ class RegistrationController(val messagesApi: MessagesApi,
                             ) extends SdilWMController with FrontendController {
 
   val orgTypes: List[String] = List(
+    "partnership",
     "limitedCompany",
     "limitedLiabilityPartnership",
-    "partnership",
     "unincorporatedBody"
   )
   def orgTypes(hasCTEnrolment: Boolean): List[String] = {
@@ -63,26 +63,34 @@ class RegistrationController(val messagesApi: MessagesApi,
   }
 
 
-  def index: Action[AnyContent] = authorisedAction.async { implicit request =>
+  def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)
-    val fd = cache.shortLiveCache.fetch(request.internalId)
-    val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
-    //    runInner(request)(program(fd: RegistrationFormData)(persistence.dataGet,persistence.dataPut)
-      NotFound("").pure[Future]
+    cache.get(request.internalId) flatMap {
+      case Some(fd) => runInner(request)(program(request, fd))(id)(persistence.dataGet,persistence.dataPut)
+      case None => NotFound("").pure[Future]
+    }
   }
 
 
-  private def program(fd: RegistrationFormData, request: AuthorisedRequest[AnyContent]): WebMonad[Result] = {
+  private def program(request: AuthorisedRequest[AnyContent], fd: RegistrationFormData): WebMonad[Result] = {
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
     val soleTrader = if (hasCTEnrolment) Nil else Seq("soleTrader")
+    val litres = litreagePair.nonEmpty("error.litreage.zero")
 
     for {
-      orgType       <- askOneOf("organisationType", orgTypes ++ soleTrader)
-      _             <- if (orgType.value.pure[String] === "partnership") { Ok(partnerships()) } else (()).pure[WebMonad]
+      orgType       <- askOneOf("orgType", (orgTypes ++ soleTrader).sortWith(_<_))
+      noPartners    = uniform.fragments.partnerships()(request, implicitly, implicitly)
+      _             <- if (orgType === "partnership") {
+                            end("partners",noPartners)
+                       } else (()).pure[WebMonad]
       packLarge     <- askOption(bool, "packLarge")
+      packageOwn                  <- ask(bool, "packOpt") when packLarge.isDefined
       useCopacker   <- ask(bool,"useCopacker") when packLarge.contains(false)
-
-    } yield NotFound("").pure[Future] // TODO fix
+      packQty                     <- ask(litres, "packQty") emptyUnless packageOwn.contains(true)
+      copacks                     <- ask(litres, "copackQty") emptyUnless ask(bool, "copacker")
+      imports <- ask(litres, "importQty") emptyUnless ask(bool, "importer")
+      end <- journeyEnd("foobar")
+    } yield end
   }
 
 
