@@ -33,7 +33,7 @@ import sdil.models._
 import sdil.models.retrieved.{RetrievedSubscription => Subscription}
 import sdil.uniform._
 import uk.gov.hmrc.domain.Modulus23Check
-import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 import ltbs.play.scaffold.GdsComponents._
@@ -50,7 +50,7 @@ class ReturnsController (
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
-  keystore: SessionCache
+  cache: ShortLivedHttpCaching
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
@@ -175,13 +175,13 @@ class ReturnsController (
   }
 
   private def askReturn(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = (
-    askEmptyOption(litreagePair.nonEmpty, "own-brands-packaged-at-own-sites"),
-    askEmptyOption(litreagePair.nonEmpty, "packaged-as-a-contract-packer"),
+    askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites"),
+    askEmptyOption(litreagePair, "packaged-as-a-contract-packer"),
     manyT("small-producer-details", {ask(smallProducer, _)}, min = 1) emptyUnless ask(bool, "exemptions-for-small-producers"),
-    askEmptyOption(litreagePair.nonEmpty, "brought-into-uk"),
-    askEmptyOption(litreagePair.nonEmpty, "brought-into-uk-from-small-producers"),
-    askEmptyOption(litreagePair.nonEmpty, "claim-credits-for-exports"),
-    askEmptyOption(litreagePair.nonEmpty, "claim-credits-for-lost-damaged")
+    askEmptyOption(litreagePair, "brought-into-uk"),
+    askEmptyOption(litreagePair, "brought-into-uk-from-small-producers"),
+    askEmptyOption(litreagePair, "claim-credits-for-exports"),
+    askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
   ).mapN(SdilReturn.apply)
 
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
@@ -198,7 +198,7 @@ class ReturnsController (
       throw new NotImplementedError("Returns are not enabled")
     val sdilRef = request.sdilEnrolment.value
     val period = ReturnPeriod(year, quarter)
-    val persistence = SessionCachePersistence(s"returns-${period.year}-${period.quarter}", keystore)
+    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
 
     for {
       subscription <- sdilConnector.retrieveSubscription(sdilRef).map{_.get}

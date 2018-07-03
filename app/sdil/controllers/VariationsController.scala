@@ -49,7 +49,6 @@ class VariationsController(
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
-  keystore: SessionCache,
   cache: ShortLivedHttpCaching
 )(implicit
   val config: AppConfig,
