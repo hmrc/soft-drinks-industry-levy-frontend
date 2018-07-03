@@ -16,8 +16,6 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
 import com.softwaremill.macwire._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matching}

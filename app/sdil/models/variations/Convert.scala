@@ -17,10 +17,10 @@
 package sdil.models.variations
 
 import java.time.LocalDate
+import scala.util.Try
 
-import cats.implicits._
+import sdil.models.backend.{Activity, Site}
 import sdil.models.{Address, Litreage}
-import sdil.models.backend.{Activity, Site, UkAddress}
 
 object Convert {
 
@@ -67,6 +67,12 @@ object Convert {
       )
     }
 
+    lazy val sdilActivity: Option[SdilActivity] =
+      if (vd.isLiable || vd.isVoluntary)
+        Some(newSdilActivity)
+      else
+        None
+
     lazy val newSdilActivity = {
       val activity = Activity(
         if (vd.packageOwn.contains(true) && vd.producer.isProducer) vd.packageOwnVol else None,
@@ -94,18 +100,22 @@ object Convert {
         Some(vd.updatedContactDetails.email)
       )
 
-      val ps = productionSites map { site =>
+      val highestNum = {orig.productionSites ++ orig.warehouseSites}.foldLeft(0) { (id, site) =>
+        Math.max(id, site.ref.flatMap{x => Try(x.toInt).toOption}.getOrElse(0))
+      }
+
+      val ps = productionSites.zipWithIndex map { case (site,id) =>
         VariationsSite(
           site.tradingName.getOrElse(""),
-          site.ref.getOrElse("1"),
+          site.ref.getOrElse({highestNum + id + 1}.toString),
           contact.copy(address = Some(Address.fromUkAddress(site.address))),
           "Production Site")
       }
 
-      val w = warehouses map { warehouse =>
+      val w = warehouses.zipWithIndex map { case (warehouse,id) =>
         VariationsSite(
           warehouse.tradingName.getOrElse(""),
-          warehouse.ref.getOrElse("1"),
+          warehouse.ref.getOrElse({highestNum + id + 1 + productionSites.size}.toString),
           contact.copy(address = Some(Address.fromUkAddress(warehouse.address))),
           "Warehouse"
         )
@@ -122,11 +132,13 @@ object Convert {
     }
 
     val closedSites: List[ClosedSite] = {
-      val closedProductionSites = orig.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))).diff(
-        vd.updatedProductionSites
-      ) map { site =>
-        ClosedSite("", site.ref.getOrElse("1"), "This site is no longer open.")
-      }
+
+      val closedProductionSites = orig.productionSites
+        .filter(_.closureDate.forall(_.isAfter(LocalDate.now)))
+        .diff(vd.updatedProductionSites)
+        .map { site =>
+          ClosedSite("", site.ref.getOrElse("1"), "This site is no longer open.")
+        }
 
       val closedWarehouses = orig.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))).diff(
         vd.updatedWarehouseSites
@@ -141,8 +153,9 @@ object Convert {
       businessContact = newBusinessContact.ifNonEmpty,
       correspondenceContact = newBusinessContact.ifNonEmpty,
       primaryPersonContact = newPersonalDetails.ifNonEmpty,
-      sdilActivity = None, // TODO: not enabled for initial release
-      deregistrationText = None,
+      sdilActivity = sdilActivity,
+      deregistrationText = vd.reason,
+      deregistrationDate = vd.deregDate,
       newSites = newSites,
       amendSites = Nil,
       closeSites = closedSites

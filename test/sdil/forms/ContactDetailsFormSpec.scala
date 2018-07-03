@@ -16,7 +16,7 @@
 
 package sdil.forms
 
-import sdil.controllers.ContactDetailsController.form
+import sdil.controllers.ContactDetailsForm.form
 import sdil.models.ContactDetails
 
 class ContactDetailsFormSpec extends FormSpec {

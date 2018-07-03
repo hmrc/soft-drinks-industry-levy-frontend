@@ -33,6 +33,7 @@ case class VariationsSubmission(tradingName: Option[String] = None,
                                 primaryPersonContact: Option[VariationsPersonalDetails],
                                 sdilActivity: Option[SdilActivity],
                                 deregistrationText: Option[String] = None,
+                                deregistrationDate: Option[LocalDate] = None,
                                 newSites: List[VariationsSite] = Nil,
                                 amendSites: List[VariationsSite] = Nil,
                                 closeSites: List[ClosedSite] = Nil) {
@@ -42,7 +43,9 @@ case class VariationsSubmission(tradingName: Option[String] = None,
       businessContact,
       correspondenceContact,
       primaryPersonContact,
-      sdilActivity
+      sdilActivity,
+      deregistrationDate,
+      deregistrationText
     ).flatten ++ newSites ++ amendSites ++ closeSites).nonEmpty
   }
 

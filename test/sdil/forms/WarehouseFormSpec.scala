@@ -16,6 +16,7 @@
 
 package sdil.forms
 
+import sdil.controllers.WarehouseForm
 import sdil.models.{Address, Sites}
 
 class WarehouseFormSpec extends FormSpec {
@@ -29,12 +30,6 @@ class WarehouseFormSpec extends FormSpec {
 
     "validate the address if there is a warehouse" in {
       mustValidateAddress(WarehouseForm(), "additionalAddress", secondaryWarehouseData)
-    }
-
-    "require a trading name if a warehouse is added" in {
-      val f = WarehouseForm().bind(secondaryWarehouseData.updated(tradingName, ""))
-
-      mustContainError(f, tradingName, "error.tradingName.required")
     }
 
     "require the trading name to be less than 160 characters" in {
@@ -65,10 +60,6 @@ class WarehouseFormSpec extends FormSpec {
       val f = WarehouseForm.initial().bind(Map.empty[String, String])
 
       mustContainError(f, addAddress, "error.radio-form.choose-option")
-    }
-
-    "require a trading name if an address is added" in {
-      mustRequire(tradingName)(WarehouseForm.initial(), secondaryWarehouseData, "error.tradingName.required")
     }
 
     "validate the address if an address is added" in {

@@ -20,6 +20,8 @@ sdil.hint.optional=Optional
 sdil.common.error=Error
 sdil.common.cancel=Cancel
 
+error.sdilref.invalid=Invalid SDIL Number
+
 #Address lines
 sdil.address.line1=Address line 1
 sdil.address.line2=Address line 2
@@ -45,7 +47,7 @@ sdil.verify.organisation=Business name
 sdil.verify.address=Business address
 sdil.verify.detailsCorrect.yes=Yes, this is the business and the address I want to register
 sdil.verify.detailsCorrect.differentAddress=Yes, but I want to add a new contact address for the Soft Drinks Industry Levy
-sdil.verify.detailsCorrect.no=No, I need to enter a different UTR and postcode
+sdil.verify.detailsCorrect.no=No, I need to sign in using a different Government Gateway user ID
 sdil.verify.address.heading=Enter a primary address for the Soft Drinks Industry Levy
 sdil.verify.address.legend=Enter a primary address for the Soft Drinks Industry Levy
 sdil.verify.address.line1=Address line 1
@@ -328,16 +330,16 @@ sdil.service-page.support.link1=https://www.gov.uk/guidance/soft-drinks-industry
 sdil.service-page.support.p3=Soft Drinks Industry Levy guidance
 sdil.service-page.support.link2=https://www.legislation.gov.uk/uksi/2018/41/made
 sdil.service-page.support.p4=Soft Drinks Industry Levy legislation
+sdil.service-page.support.p5=Soft Drink Industry Levy general enquiries:
+sdil.service-page.support.p6=0300 200 3700
 sdil.service-page.variations.title=Change registered details
 sdil.service-page.variations.p1=You must tell HMRC when you:
 sdil.service-page.variations.li.1=start or stop using a warehouse or packaging site
 sdil.service-page.variations.li.2=change your contact details
-sdil.service-page.variations.li.3=change your business activity, including becoming a small producer
+sdil.service-page.variations.li.3=change your business activity
 sdil.service-page.variations.li.4=need to deregister from the Soft Drinks Industry Levy
 sdil.service-page.variations.li.5=need to make an adjustment of £10,000 or more to a previous return
 sdil.service-page.variations.change=Tell HMRC about a change
-sdil.service-page.variations.p2=To change your business activity or deregister from the Soft Drinks Industry Levy, call 0300 200 3700.
-sdil.service-page.variations.p3=You can tell HMRC about changes to warehouses, packaging sites and contact details online.
 sdil.service-page.variations.p4=Changes can take up to 15 working days to process.
 
 #Already registered
@@ -449,14 +451,119 @@ sdil.variations.contact-details.change=You have changed your contact details
 sdil.variations.deregister=Your company needs to deregister
 #Update warehouse sites
 sdil.variation.add-link=Add new
-sdil.tradingName=Trading name
+sdil.tradingName.optional=Trading name (optional)
 sdil.variations.change-address=Change your contact address for the Soft Drinks Industry Levy
 
 sdil.variation.copack-for-others-vol=How many litres do you contract pack for others?
 sdil.variation.imports-vol=How many litres do you import?
 
+# Uniform common messages
+delete=Remove
+add=Add
+edit=Edit
+
+# Uniform variation process
+heading.changeType=Which change do you need to make?
+changeType.option.sites=Update contact, packaging site or warehouse details
+changeType.option.activity=Change our business activity
+changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
+
+heading.contactChangeType=What do you need to change?
+contactChangeType.hint=Select all that apply
+contactChangeType.option.Sites=Add or remove packaging sites or warehouse addresses
+contactChangeType.option.ContactPerson=Update our contact person
+contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
+
+heading.packLarge=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink for brands \
+  you own or have the rights to manufacture, worldwide?
+packLarge.help.header=What does ’packaged’ mean?
+packLarge.help=A liable drink is packaged if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
+
+heading.add-warehouses=Enter your warehouse details
+heading.add-warehousesActivity=Enter your warehouse details
+heading.remove-warehouses=Are you sure you want to remove this warehouse?
+heading.remove-warehousesActivity=Are you sure you want to remove this warehouse?
+remove-warehouses.continue=Remove
+remove-warehousesActivity.continue=Remove
+heading.add-packSites=Enter your packaging site details
+heading.add-packSitesActivity=Enter your packaging site details
+add-packSites.paragraph=Only add the addresses of the packaging sites you operate
+heading.remove-packSites=Are you sure you want to remove this packaging site?
+heading.remove-packSitesActivity=Are you sure you want to remove this packaging site?
+remove-packSites.continue=Remove
+remove-packSitesActivity.continue=Remove
+packLarge.inner-heading=How many litres worldwide?
+option.packLarge.inner.false=Less than 1 million litres
+option.packLarge.inner.true=1 million litres or more
+
+heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have \
+  the rights to manufacture?
+
+heading.packQty=In the next 12 months, how many litres of liable drink do you expect to package for brands you own or \
+  have the rights to manufacture at UK packaging sites you operate?
+packQty.lower=Litres in the low band
+packQty.higher=Litres in the high band
+
+heading.copacker=Do you operate any packaging sites in the UK to package liable drinks for your customers as a third party?
+
+heading.copackQty=In the next 12 months, how many litres of liable drink do you expect to package for your customers at UK packaging sites you operate?
+
+heading.importer=Do you bring liable drinks into the UK from anywhere outside of the UK?
+
+heading.importQty=In the next 12 months, how many litres of liable drink do you expect to bring into the UK?
+importQty.lower=Litres in the low band
+importQty.higher=Litres in the high band
+
+heading.useCopacker=Do you use any third parties in the UK to package liable drinks on your behalf?
+
+heading.packSites=Change your packaging site details
+heading.packSitesActivity=Tell us about the packaging sites you operate in the UK to package liable drinks
+packSites.paragraph=Only add the addresses of UK packaging sites you operate. You must have at least one registered packaging site.
+
+heading.warehouses=Change your UK warehouse details
+heading.warehousesActivity=Do you want to register any of the UK warehouses you use to store liable drinks?
+warehouses.help.header=Why register a warehouse?
+warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses \
+  you use to store them.
+
+heading.contact=Change your contact for the Soft Drinks Industry Levy
+contact.fullName=Full name
+contact.position=Job title
+contact.phoneNumber=Telephone number
+contact.email=Email
+
+heading.updatedBusinessDetails_orgName=Organisation Name
+updatedBusinessDetails_orgName.fieldlabel=Organisation Name
+
+heading.updatedBusinessDetails_address=What address should we send correspondence to?
+
+variationDone.title=Updates have been sent
+variationDone.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
+variationDone.what-happens.title=What happens next
+variationDone.what-happens-next=You don’t need to do anything else. We’ll update your details with the information \
+you provided. We’ll send you confirmation that the changes have been made.
+variationDone.your.updates=Your updates were sent on {0} at {1}.
+variationDone.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
+
+volToMan.title=Updates have been sent
+volToMan.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
+volToMan.what-happens.title=Your registration has been changed
+volToMan.what-happens-next=You will now need to file quarterly returns. You’ll get a new reference number in the post, \
+  which may take 15 working days. You need to keep this number.
+volToMan.your.updates=Your updates were sent on {0} at {1}.
+volToMan.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
+
+manToVol.title=Updates have been sent
+manToVol.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
+manToVol.what-happens.title=Your registration has been changed
+manToVol.what-happens-next=You are now registered as a small producer who only uses a third party to package their \
+  liable drinks, which means you do not have to file returns. You’ll get a new reference number in the post, which \
+  you’ll need to give to your contract packer so they can claim an exemption for the drinks they package on your behalf.
+manToVol.your.updates=Your updates were sent on {0} at {1}.
+manToVol.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
+
 #variation confirmation
-sdil.variations.complete.title=Updates sent
+sdil.variations.complete.title=Updates have been sent
 sdil.variation.complete.subheading=We’ve received the updates to your Soft Drinks Industry Levy details
 sdil.variation.what-happens.p1=You don’t need to do anything else. We’ll update your details with the information you provided. We’ll send you a letter confirming that the changes have been made, which may take 15 working days.
 sdil.link.back.home=Back to home
@@ -466,3 +573,238 @@ sdil.service-page.variations.submit.change=Make another change
 #time out
 sdil.time-out.title=For your security, we signed you out
 sdil.time-out.p1=We have saved your answers
+sdil.variation.anotherChange=If you need to make another change,
+sdil.variation.anotherChangeLink=go back and start again
+sdil.service-page.variations.submit.change=Make another change
+
+heading.deregister.reason=Why are you deregistering from the Soft Drinks Industry Levy? 
+deregister.reason.label=Reason for deregistering
+heading.deregDate=What date do you need to deregister from?
+error.deregDate.nopast=Deregistration date cannot be in the past
+error.deregDate.nofuture=Deregistration date cannot be more than 14 days in the future
+error.reason.empty=Enter a reason for deregistration
+
+variations.cya.packLarge=Amount of own brand liable drink produced in the past 12 months
+variations.cya.packLarge.large=1 million litres or more
+variations.cya.packLarge.small=[Less than 1 million litres]
+variations.cya.packLarge.none=[None]
+
+variations.cya.packOpt=Do you package at your own site?
+variations.cya.packQty=Annual litres for your own brands
+variations.cya.useCopacker=Do you use third party packagers? 
+variations.cya.copackQty=Annual litres for your customers
+variations.cya.importer=Do you bring liable drinks into the UK?
+variations.cya.importQty=Annual litres brought into the UK
+
+variations.cya.activity=Changes to business activity
+variations.cya.packsites.add=Packaging sites you’re adding
+variations.cya.packsites.remove=Packaging sites you’re removing
+variations.cya.packsites.addOrRemove=Add or remove packaging sites
+variations.cya.packsites.same=Packaging site details
+variations.cya.warehouses.add=Warehouses you’re adding
+variations.cya.warehouses.remove=Warehouses you’re removing
+variations.cya.warehouses.addOrRemove=Add or remove warehouses
+variations.cya.warehouses.same=Warehouse details
+variations.cya.packsites.address=Address
+variations.cya.packsites.change=Change <span class="visuallyhidden">packaging sites</span>
+variations.cya.warehouses.change=Change <span class="visuallyhidden">warehouses</span>
+variations.cya.postcode=Postcode
+variations.cya.warehouses=Address
+variations.cya.contact=Contact person
+variations.cya.contact.fullName=Full name
+variations.cya.contact.change.fullName=Change<span class="visually-hidden"> full name</span>
+variations.cya.contact.jobTitle=Job title
+variations.cya.contact.change.jobTitle=Change<span class="visually-hidden"> job title</span>
+variations.cya.contact.telephone=Telephone number
+variations.cya.contact.change.telephone=Change<span class="visually-hidden"> telephone number</span>
+variations.cya.contact.email=Email
+variations.cya.contact.change.email=Change<span class="visually-hidden"> email</span>
+variations.cya.contact.address=Contact address
+variations.cya.contact.address.sub=Address
+variations.cya.contact.change.address=Change<span class="visually-hidden"> home address</span>
+variations.cya.deregistration=Deregistration
+variations.cya.deregistration.reason=Reason
+variations.cya.deregistration.change.reason=Change<span class="visually-hidden"> deregistration reason</span>
+variations.cya.deregistration.date=Date
+variations.cya.deregistration.change.date=Change<span class="visually-hidden"> deregistration date</span>
+
+error.deregReason.tooLong=Deregistration reason must be 255 characters or less
+day=Day
+month=Month
+year=Year
+
+variations.cya.activity-change=Changes to business activity
+variations.cya.activity-change.producer=Own brand packaged in past 12 months?
+variations.cya.activity-change.use-copacker=Use third party packagers?
+variations.cya.activity-change.use-copacker.change=Change<span class="visually-hidden"> use third party \
+  packagers</span> 
+variations.cya.activity-change.package-own=Package your own brand at your own sites?
+variations.cya.activity-change.package-own.change=Change<span class="visually-hidden"> do you package at your own site</span>
+variations.cya.activity-change.litres-own=Litres in next 12 months
+variations.cya.activity-change.litres-own.change=Change<span class="visually-hidden"> litres in next 12 months</span>
+variations.cya.activity-change.package-others=Package for customers at your own sites?
+variations.cya.activity-change.litres-others=Litres in next 12 months
+variations.cya.activity-change.litres-others.change=Change<span class="visually-hidden"> litres in next 12 months</span>
+
+variations.cya.activity-change.package-others.change=Change<span class="visually-hidden"> do you package for \
+  customers</span>
+variations.cya.activity-change.import=Do you bring liable drinks into the UK?
+variations.cya.activity-change.import.change=Change<span class="visually-hidden"> do you bring liable drinks into the\
+   UK?</span> 
+variations.cya.activity-change.litres-import=Litres in next 12 months
+variations.cya.activity-change.litres-import.change=Change<span class="visually-hidden"> litres in next 12 months</span>
+
+variations.cya.activity-change.low-band=Low band:
+variations.cya.activity-change.high-band=High band:
+variations.cya.true=Yes
+variations.cya.false=No
+
+variations.cya.noChange=The answers you gave are the same as the information you already have registered. If your \
+  answers are accurate you do not need to do anything and can <a href="{0}"> view your registered details</a>. Otherwise, you need to change your answers.
+variations.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
+packSites.error.items.tooMany=[Too many sites]
+packSites.error.items.tooFew=[You must have at least one packaging site]
+
+
+variations.cya.dereg=Deregistration
+variations.cya.reason=Reason
+variations.cya.deregDate=Date
+
+heading.reason=Why are you deregistering from the Soft Drinks Industry Levy?
+reason.label=Reason for deregistering
+reason.hint=Enter a maximum of 255 characters
+
+heading.suggestDereg=You need to deregister
+suggestDereg.body=Based on your answers, you’re a small producer who doesn’t use a third party to package liable drinks. This means you can deregister from the Soft Drinks Industry Levy.
+suggestDereg.continue=Deregister
+
+doubt1=If you don’t think this is right you need to
+doubt2=go back and change your answers
+
+heading.removePackSites=[Remove your packing sites?]
+removePackSites.body=[Based on your answers, you’re no longer packing any soft drinks and therefore will not be operating any packing sites. In continuing all packing sites will be removed.]
+removePackSites.continue=[Remove all packing sites]
+
+heading.businessAddress=Change your contact address for the Soft Drinks Industry Levy
+
+heading.checkyouranswers=Check your answers
+
+# Returns
+error.empty=Number of litres must be 1 or more
+heading.own-brands-packaged-at-own-sites=Are you reporting your own brands of liable drink you’ve packaged at UK sites you operate?
+own-brands-packaged-at-own-sites.inner-heading=How many litres do you need to report?
+heading.packaged-as-a-contract-packer=Are you reporting liable drink you’ve packaged as a third party or contract packer at UK sites you operate?
+packaged-as-a-contract-packer.inner-heading=How many litres do you need to report?
+packaged-as-a-contract-packer.paragraph=Do not include liable drinks you’ve packaged for registered small producers.
+heading.exemptions-for-small-producers=Do you need to claim an exemption for any of the liable drink you’ve packaged for registered small producers?
+heading.small-producer-details=Your small producer exemptions
+small-producer-details.paragraph.nonEmpty=Names and reference numbers will be saved and shown in future returns
+heading.add-small-producer-details=Enter the registered small producer’s details
+add-small-producer-details.paragraph=Names and reference numbers will be saved and shown in future returns
+add-small-producer-details.help.header=What are the bands?
+add-small-producer-details.help=The low band is from 5 grams to 7.9 grams of sugar per 100 millilitres.<br>The high band is 8 grams of sugar or more per 100 millilitres.
+small-producer-details.name=Name: {0}
+small-producer-details.refNumber=Reference number: {0}
+small-producer-details.lowBand=Low band: {0} litres
+small-producer-details.highBand=High band: {0} litres
+sdil.alias=Customer name (optional)
+sdil.sdilRef=Soft Drinks Industry Levy reference number
+sdil.litreage.highRate.smallProducer=Litres in the high band for this quarter
+sdil.litreage.lowRate.smallProducer=Litres in the low band for this quarter
+heading.remove-small-producer-details=Are you sure you want to remove this small producer?
+remove-small-producer-details.continue=Remove
+heading.brought-into-uk=Are you reporting liable drink you’ve brought into the UK from anywhere outside of the UK?
+brought-into-uk.inner-heading=How many litres do you need to report?
+brought-into-uk.paragraph=Do not include liable drink from small producers or your own brands if you are a registered small producer.
+brought-into-uk.help.header=What is a small producer?
+brought-into-uk.help=A business is a small producer if it:\
+  <ul class="list list-bullet">\
+  <li>has had less than 1 million litres of its own brands of liable drink packaged globally in the past 12 months</li>\
+  <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
+  </ul>
+heading.brought-into-uk-from-small-producers=Are you reporting any liable drink you’ve brought into the UK from small producers?
+brought-into-uk-from-small-producers.inner-heading=How many litres?
+brought-into-uk-from-small-producers.help.header=Liable drink from small producers
+brought-into-uk-from-small-producers.help=<p>If you are a registered small producer and you bring your own brand of \
+  liable drink into the UK, you still need to report them but you will not pay the levy on them.</p> \
+<p>If you bring liable drink into the UK from someone else who would be considered a small producer, \
+  you need to get evidence of the:<p> \
+  <ul class="list list-bullet">\
+  <li>contact details, EU VAT number (if they have one) and website of the business</li>\
+  <li>amount of litres of liable drink packaged globally for brands the business owns in the past 12 months</li> \
+  <li>signature of someone from the business, their position and the date of the signature</li></ul>
+heading.claim-credits-for-exports=Do you want to claim a credit for liable drink that has been exported?
+claim-credits-for-exports.help.header=What can I claim a credit for?
+claim-credits-for-exports.help=You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You’ll need to get and keep evidence of details such as the: \
+  <ul class="list list-bullet"><li>brand of the liable drinks</li><li>supplier or consigner</li><li>customer and destination the liable drinks are supplied to</li><li>method of delivery</li></ul> \
+  <p>If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.</p>
+claim-credits-for-exports.inner-heading=How many litres are you claiming a credit for?
+heading.claim-credits-for-lost-damaged=Do you want to claim a credit for any liable drink which have been lost or destroyed?
+claim-credits-for-lost-damaged.inner-heading=How many litres are you claiming a credit for?
+claim-credits-for-lost-damaged.help.header=What can I claim credit for?
+claim-credits-for-lost-damaged.help=You can claim a credit for liable drinks that have been:<ul class="list list-bullet"><li>lost</li><li>destroyed</li>\
+  <li>disposed of as waste</li><li>reprocessed</li><li>spilled and cannot be used</li></ul>\
+  <p>To be able to claim this credit, you must have documentation containing information such as the details of the incident,\
+   how and where it occurred, the amount of liable drink and whether it was in the low band or the high band.</p>
+heading.check-your-answers=Check your answers
+check-your-answers.balance.due=Balance due: {0}
+check-your-answers.cost=Cost
+check-your-answers.litres=Litres
+check-your-answers.band=Band
+check-your-answers.activity=Activity
+check-your-answers.exemptions-for-small-producers=Contract packed for registered small producers
+check-your-answers.own-brands-packaged-at-own-sites=Own brands packaged at your own site
+check-your-answers.packaged-as-a-contract-packer=Contract packed
+check-your-answers.brought-into-uk=Brought into the UK
+check-your-answers.brought-into-uk-from-small-producers=Brought into the UK from small producers
+check-your-answers.claim-credits-for-exports=Exported
+check-your-answers.claim-credits-for-lost-damaged=Lost or destroyed
+check-your-answers.subtotal=Subtotal
+check-your-answers.balance.brought.forward=Balance brought forward
+check-your-answers.total=Total
+check-your-answers.low=Low
+check-your-answers.high=High
+check-your-answers.change=Change
+check-your-answers.change.own-brands-packaged-at-own-sites=volume of own brand
+check-your-answers.change.exemptions-for-small-producers=volume contract packed for small producers
+check-your-answers.change.packaged-as-a-contract-packer=volume contract packed
+check-your-answers.change.brought-into-uk-from-small-producers=volume brought into the UK from small producers
+check-your-answers.change.brought-into-uk=volume brought into the UK
+check-your-answers.change.claim-credits-for-exports=volume exported
+check-your-answers.change.claim-credits-for-lost-damaged=volume lost, damaged or destroyed
+check-your-answers.continue=Confirm and submit
+check-your-answers.submit-subheading=Submit your return
+check-your-answers.submit-paragraph=By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
+
+return-sent.title=Return submitted
+return-sent.subheading=You need to pay {0} </br> by {1}
+return-sent.what-happens-next-heading=What you need to do next
+return-sent.returnsDoneMessage=Your Soft Drinks Industry Levy return for {0} to {1} {2} for {3} was sent at {4} on {5}.
+return-sent.paymentsBlurb.payby=You need to pay by {0}.
+return-sent.paymentsBlurb.payusing=You can pay by Bacs or CHAPS using:
+return-sent.paymentsBlurb.payDetails.1=sort code: 20-05-17
+return-sent.paymentsBlurb.payDetails.2=account number: 40204374
+return-sent.paymentsBlurb.payDetails.3=account name: HMRC General Business Tax Receipts
+return-sent.paymentsBlurb.payDetails.4=payment reference: {0}
+return-sent.paymentsBlurb.chapsDelay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
+    Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
+return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must submit it and make any payments due by {2}.
+return-sent.paymentsBlurb.servicePage=<a href="{0}">View your Soft Drinks Industry Levy details</a>
+
+warning=Warning
+returnsHome.returnsDue=The return for {0} from {1} to {2} is due by {3}.
+returnsHome.returnsOverdue=[The return for {0} from {1} to {2} was due on the {3}.]
+returnsHome.help.title=What you’ll need to tell us in your return
+returnsHome.help.p1=You’ll need to tell us how many litres of liable drink in each band you need to report that were:
+returnsHome.help.li1=packaged for your own brand or as a contract packer, not including those packaged for small producers
+returnsHome.help.li2=packaged for each small producer and the reference number of each small producer
+returnsHome.help.li3=brought into the UK from anywhere outside of the UK, not including those from small producers
+returnsHome.help.li4=brought into the UK from small producers
+returnsHome.help.p2=If the drink is dilutable, you must report the amount of ready-to-drink litres made when it’s diluted according to the dilution ratio stated on the packaging.
+returnsHome.help.p3=You can claim a credit for liable drinks that you have reported in either a previous or the current return that have been:
+returnsHome.help.li5=exported, or are expected to be exported
+returnsHome.help.li6=lost or destroyed
+returnsHome.help.guidance=You must get and keep <a href="{0}">certain types of evidence</a> to be able to claim a credit.
+returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-levy-credit-for-exported-lost-or-destroyed-drinks-notice-4
+
+return.file=Submit the return

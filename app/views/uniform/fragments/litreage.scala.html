@@ -1,0 +1,55 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helper.{inputText => _,_}
+@import play.api.Configuration
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.softdrinksindustrylevy.helpers._
+@import sdil.config.AppConfig
+@import views.html.uniform.helpers._
+
+@(key: String, form: Form[(Long,Long)], approximate: Boolean)(implicit messages: Messages)
+
+ <div class="form-group form-litres-3-4">
+     @inputText(
+         form(s"$key.lower"),
+         Messages("sdil.litreage.lowRate"),
+         '_inputType -> "text",
+         '_inputClass -> "input--no-spinner volume"
+     )
+ </div>
+
+ <div class="form-group form-litres-3-4">
+     @inputText(
+         form(s"$key.higher"),
+         Messages("sdil.litreage.highRate"),
+         '_inputType -> "text",
+         '_inputClass -> "input--no-spinner volume"
+     )
+ </div>
+
+ @details("sdil.litreage.rates.help") {
+     <p>
+         <span>@Messages("sdil.litreage.rates.content.p1")</span>
+         <span>@Messages("sdil.litreage.rates.content.p2")</span>
+     </p>
+}
+
+@if(approximate) {
+ @details("sdil.litreage.volumes.help") {
+     <p>@Messages("sdil.litreage.volumes.content.p1")</p>
+ }
+}

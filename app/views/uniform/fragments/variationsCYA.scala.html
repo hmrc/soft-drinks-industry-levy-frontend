@@ -1,0 +1,608 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import sdil.models.backend.Site
+@import java.time.format.DateTimeFormatter
+@(
+        v: sdil.models.variations.VariationData,
+        newPackingSites: List[Site],
+        closedPackagingSites: List[Site],
+        newWarehouseSites: List[Site],
+        closedWarehouses: List[Site],
+        path: List[String])(implicit m: Messages
+)
+
+@formatLitres(value: BigDecimal) = @{
+    java.text.NumberFormat.getNumberInstance.format(value)
+}
+
+@if(v.noVariation){
+    <div class="panel panel-border-narrow" id="details-content-0">
+        @Html(Messages("variations.cya.noChange", sdil.controllers.routes.ServicePageController.show()))
+    </div>
+}
+
+@if(path.contains("packLarge") && !path.contains("deregDate")) {
+    <h2 class="heading-medium">
+    @Messages("variations.cya.activity-change")
+    </h2>
+    <table class="check-your-answers">
+        <tbody>
+
+            <tr>
+                <td class="cya-question">
+                @Messages("variations.cya.activity-change.producer")
+                </td>
+                <td>
+                    @Messages(s"variations.cya.${v.producer.isProducer}")
+                    @if(v.producer.isProducer) {
+                        @v.producer.isLarge.map {
+                            case true => {
+                                : @Messages("sdil.declaration.largeProducer")
+                            }
+                            case _ => {
+                                : @Messages("sdil.declaration.smallProducer")
+                            }
+                        }
+                    }
+                <td/>
+                <td class="cya-change">
+                    <a href="packLarge">
+                    @Html(Messages("variations.cya.activity-change.package-own.change"))
+                    </a>
+                </td>
+            </tr>
+
+            @if(v.usesCopacker.isDefined) {
+                <tr>
+                    <td class="cya-question">
+                    @Messages("variations.cya.activity-change.use-copacker")
+                    </td>
+                    <td>
+                    @v.usesCopacker.map { x =>
+                        @Messages(s"variations.cya.$x")
+                    }
+                    <td/>
+                    <td class="cya-change">
+                        <a href="useCopacker">
+                        @Html(Messages("variations.cya.activity-change.use-copacker.change"))
+                        </a>
+                    </td>
+                </tr>
+            }
+
+            <tr>
+                <td class="cya-question">
+                @Messages("variations.cya.activity-change.package-own")
+                </td>
+                <td>
+                @v.packageOwn.map { x =>
+                    @Messages(s"variations.cya.$x")
+                }
+                <td/>
+                <td class="cya-change">
+                    <a href="packOpt">
+                    @Html(Messages("variations.cya.activity-change.package-own.change"))
+                    </a>
+                </td>
+            </tr>
+
+            @if(v.packageOwn.getOrElse(false)) {
+                <tr>
+                    <td class="cya-question">
+                    @Messages("variations.cya.activity-change.litres-own")
+                    </td>
+                    <td>
+                    @v.packageOwnVol.map { x =>
+                        @Messages("variations.cya.activity-change.low-band")
+                        @formatLitres(x.atLowRate) <br/>
+                    @Messages("variations.cya.activity-change.high-band")
+                    @formatLitres(x.atHighRate)
+                    }
+                    <td/>
+                    <td class="cya-change">
+                        <a href="packQty">
+                        @Html(Messages("variations.cya.activity-change.litres-own.change"))
+                        </a>
+                    </td>
+                </tr>
+            }
+
+            <tr>
+                <td class="cya-question">
+                @Messages("variations.cya.activity-change.package-others")
+                </td>
+                <td>
+                @Messages(s"variations.cya.${v.copackForOthers}")
+                <td/>
+                <td class="cya-change">
+                    <a href="copacker">
+                    @Html(Messages("variations.cya.activity-change.package-others.change"))
+                    </a>
+                </td>
+            </tr>
+
+            @if(v.copackForOthers) {
+                <tr>
+                    <td class="cya-question">
+                    @Messages("variations.cya.activity-change.litres-others")
+                    </td>
+                    <td>
+                    @v.copackForOthersVol.map { x =>
+                        @Messages("variations.cya.activity-change.low-band")
+                        @formatLitres(x.atLowRate) <br/>
+                    @Messages("variations.cya.activity-change.high-band")
+                    @formatLitres(x.atHighRate)
+                    }
+                    <td/>
+                    <td class="cya-change">
+                        <a href="copackQty">
+                        @Html(Messages("variations.cya.activity-change.litres-others.change"))
+                        </a>
+                    </td>
+                </tr>
+            }
+
+            <tr>
+                <td class="cya-question">
+                @Messages("variations.cya.activity-change.import")
+                </td>
+                <td>
+                @Messages(s"variations.cya.${v.imports}")
+                <td/>
+                <td class="cya-change">
+                    <a href="importer">
+                    @Html(Messages("variations.cya.activity-change.import.change"))
+                    </a>
+                </td>
+            </tr>
+
+            @if(v.imports) {
+                <tr>
+                    <td class="cya-question">
+                    @Messages("variations.cya.activity-change.litres-import")
+                    </td>
+                    <td>
+                    @v.importsVol.map { x =>
+                        @Messages("variations.cya.activity-change.low-band")
+                        @formatLitres(x.atLowRate) <br/>
+                    @Messages("variations.cya.activity-change.high-band")
+                    @formatLitres(x.atHighRate)
+                    }
+                    <td/>
+                    <td class="cya-change">
+                        <a href="importQty">
+                        @Html(Messages("variations.cya.activity-change.litres-import.change"))
+                        </a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+}
+
+
+@if(newPackingSites.nonEmpty) {
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.packsites.add")</caption>
+
+        <thead>
+            <tr>
+                <th class="cya-width">
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.packsites.address")
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.postcode")
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(site <- newPackingSites) {
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                            <span class="summary">@site.address.lines.head</span>
+                        </summary>
+                        @for(line <- site.address.lines.tail) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                <td class="change-answer">
+                    <a href="@if(path.contains("packSitesActivity")){
+                        packSitesActivity
+                    } else {
+                        packSites
+                    }">
+                    @Html(Messages("variations.cya.packsites.change"))
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if(closedPackagingSites.nonEmpty) {
+
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.packsites.remove")</caption>
+        <thead>
+            <tr>
+                <th class="cya-width">
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.packsites.address")
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.postcode")
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(site <- closedPackagingSites) {
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                            <span class="summary">@site.address.lines.head</span>
+                        </summary>
+                        @for(line <- site.address.lines.tail) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                <td class="change-answer">
+                    <a href="@if(path.contains("packSitesActivity")){
+                            packSitesActivity
+                        } else {
+                            packSites
+                        }">
+                    @Html(Messages("variations.cya.packsites.change"))
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if(path.contains("packSites") && newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.packsites.same")</caption>
+        <tbody>
+            <tr>
+                <th>
+                    @Messages("variations.cya.packsites.addOrRemove")
+                </th>
+                <th>
+                    @Messages("variations.cya.false")
+                </th>
+                <th>
+                    <td class="change-answer">
+                            <a href="packSites">
+                            @Html(Messages("variations.cya.packsites.change"))
+                            </a>
+                    </td>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+}
+
+
+@if(newWarehouseSites.nonEmpty) {
+  <table class="check-your-answers">
+    <caption class="heading-medium">@Messages("variations.cya.warehouses.add")</caption>
+
+      <thead>
+          <tr>
+              <th class="cya-width">
+                  <h2 class="heading-small">
+                  @Messages("variations.cya.warehouses")
+                  </h2>
+              </th>
+              <th>
+                  <h2 class="heading-small">
+                  @Messages("variations.cya.postcode")
+                  </h2>
+              </th>
+              <th>
+              </th>
+          </tr>
+      </thead>
+
+      <tbody>
+      @for(site <- newWarehouseSites) {
+          <tr>
+              <td>
+                  <details role="group">
+                      <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                          <span class="summary">
+                            @site.getLines.head
+                          </span>
+                      </summary>
+                      @for(line <- site.getLines.tail.dropRight(1)) {
+                          <div aria-hidden="true">@line</div>
+                      }
+                      <div class="postal-code">@site.address.postCode</div>
+                  </details>
+              </td>
+              <td>@site.address.postCode</td>
+              <td class="change-answer">
+                      <a href="@if(path.contains("warehousesActivity")){
+                          warehousesActivity
+                      } else {
+                          warehouses
+                      }">
+                  @Html(Messages("variations.cya.warehouses.change"))
+                  </a>
+              </td>
+          </tr>
+      }
+      </tbody>
+  </table>
+}
+
+@if(closedWarehouses.nonEmpty) {
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.warehouses.remove")</caption>
+        <thead>
+            <tr>
+                <th class="cya-width">
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.warehouses")
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.postcode")
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(site <- closedWarehouses) {
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                            <span class="summary">
+                                @site.getLines.head
+                            </span>
+                        </summary>
+                        @for(line <- site.getLines.tail.dropRight(1)) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                <td class="change-answer">
+                    <a href="@if(path.contains("warehousesActivity")){
+                        warehousesActivity
+                        } else {
+                        warehouses
+                        }">
+                    @Html(Messages("variations.cya.warehouses.change"))
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if(path.contains("warehouses") && newWarehouseSites.isEmpty && closedWarehouses.isEmpty && v.deregDate.isEmpty) {
+
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.warehouses.same")</caption>
+        <tbody>
+            <tr>
+                <td>
+                    @Messages("variations.cya.warehouses.addOrRemove")
+                </td>
+                <td>
+                    @Messages("variations.cya.false")
+                </td>
+                <th>
+                    <td class="change-answer">
+                        <a href="warehouses">
+                            @Html(Messages("variations.cya.warehouses.change"))
+                        </a>
+                    </td>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@if(path.contains("contact")) {
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">
+        @Messages("variations.cya.contact")
+        </caption>
+        <tbody>
+
+            <tr>
+                <td class="cya-question">
+                @Messages("variations.cya.contact.fullName")
+                </td>
+                <td>
+                @v.updatedContactDetails.fullName
+                <td/>
+                <td class="cya-change">
+                    <a href="contact">
+                    @Html(Messages("variations.cya.contact.change.fullName"))
+                    </a>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="cya-question">
+                @Messages("variations.cya.contact.jobTitle")
+                </td>
+                <td>
+                @v.updatedContactDetails.position
+                <td/>
+                <td class="cya-change">
+                    <a href="contact">
+                    @Html(Messages("variations.cya.contact.change.jobTitle"))
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="cya-question">
+                @Messages("variations.cya.contact.telephone")
+                </td>
+                <td>
+                @v.updatedContactDetails.phoneNumber
+                <td/>
+                <td class="cya-change">
+                    <a href="contact">
+                    @Html(Messages("variations.cya.contact.change.telephone"))
+                    </a>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="cya-question">
+                @Messages("variations.cya.contact.email")
+                </td>
+                <td>
+                @v.updatedContactDetails.email
+                <td/>
+                <td class="cya-change">
+                    <a href="contact">
+                    @Html(Messages("variations.cya.contact.change.email"))
+                    </a>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+}
+
+@if(path.contains("businessAddress")) {
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">
+        @Messages("variations.cya.contact.address")
+        </caption>
+        <tbody>
+
+            <tr>
+                <td class="cya-question">
+                @Messages("variations.cya.contact.address.sub")
+                </td>
+                <td>
+                    @v.updatedBusinessAddress.nonEmptyLines.head
+                    @for(line <- v.updatedBusinessAddress.nonEmptyLines.tail) {
+                        <br />
+                @line
+                }
+                <td/>
+                <td class="cya-change">
+                    <a href="businessAddress">
+                    @Html(Messages("variations.cya.contact.change.address"))
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+}
+
+@if(path.contains("deregDate") || path.contains("reason")) {
+
+    <h2 class="heading-medium">
+        @Messages("variations.cya.deregistration")
+    </h2>
+
+
+    <table class="check-your-answers">
+        <tbody>
+        @v.reason.map{ reason =>
+            <tr>
+                <td class="cya-question">
+                    @Messages("variations.cya.deregistration.reason")
+                </td>
+                <td>
+                    @reason
+                <td/>
+                <td class="cya-change">
+                    <a href="reason">
+                    @Html(Messages("variations.cya.deregistration.change.reason"))
+                    </a>
+                </td>
+            </tr>
+        }
+
+        @v.deregDate.map{ date =>
+            <tr>
+                <td class="cya-question">
+                    @Messages("variations.cya.deregistration.date")
+                </td>
+                <td>
+                    @{date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}
+                <td/>
+                <td class="cya-change">
+                    <a href="deregDate">
+                    @Html(Messages("variations.cya.deregistration.change.date"))
+                    </a>
+                </td>
+            </tr>
+        }
+
+        </tbody>
+    </table>
+}
+
+<br/>
+@if(v.noVariation) {
+    @Html(Messages("variations.cya.noChangeEnd", sdil.controllers.routes.ServicePageController.show()))
+}
+
+<p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>

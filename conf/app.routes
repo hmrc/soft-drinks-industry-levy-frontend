@@ -64,7 +64,16 @@ GET         /register/complete                                 sdil.controllers.
 GET         /sign-in                                           sdil.controllers.AuthenticationController.signIn()
 GET         /time-in                                           sdil.controllers.AuthenticationController.timeIn(referrer)
 GET         /sign-out                                          sdil.controllers.AuthenticationController.signOut()
+GET         /sign-out-no-feedback                              sdil.controllers.AuthenticationController.signOutNoFeedback()
 
 GET         /time-out                                          sdil.controllers.AuthenticationController.timeOut()
 
-->          /variations                                        variations.Routes
+GET         /submit-return/year/:year/quarter/:quarter         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id = "")
+GET         /submit-return/year/:year/quarter/:quarter/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id: String)
+POST        /submit-return/year/:year/quarter/:quarter         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id = "")
+POST        /submit-return/year/:year/quarter/:quarter/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id: String)
+
+GET         /ufvariations                                        sdil.controllers.VariationsController.index(id = "")
+GET         /ufvariations/:id                                    sdil.controllers.VariationsController.index(id: String)
+POST        /ufvariations                                        sdil.controllers.VariationsController.index(id = "")
+POST        /ufvariations/:id                                    sdil.controllers.VariationsController.index(id: String)

@@ -16,10 +16,7 @@
 
 package sdil.models
 
-import java.time.LocalDate
-
 import play.api.mvc.Call
-import sdil.config.AppConfig
 import sdil.controllers.routes
 
 sealed trait Page {

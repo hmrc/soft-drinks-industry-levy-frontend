@@ -16,15 +16,18 @@
 
 package sdil.controllers
 
+
 import play.api.data.Form
+import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, Result}
 import sdil.actions.{FormAction, RegistrationFormRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
-import sdil.forms.WarehouseForm
+import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 import views.html.softdrinksindustrylevy.register.secondaryWarehouse
 
 import scala.concurrent.Future
@@ -103,3 +106,23 @@ class WarehouseController(val messagesApi: MessagesApi,
     }
   }
 }
+
+object WarehouseForm extends FormHelpers {
+
+  def apply(): Form[Sites] = Form(mapping(
+    "additionalSites" -> seq(siteJsonMapping),
+    "addAddress" -> boolean,
+    "tradingName" ->  optional(tradingNameMapping),
+    "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
+  )(Sites.apply)(Sites.unapply))
+
+  def initial(): Form[Sites] = Form(
+    mapping(
+      "additionalSites" -> ignored(Seq.empty[Site]),
+      "addAddress" -> mandatoryBoolean,
+      "tradingName" ->  optional(tradingNameMapping),
+      "additionalAddress" -> mandatoryIfTrue("addAddress", addressMapping)
+    )(Sites.apply)(Sites.unapply)
+  )
+}
+  

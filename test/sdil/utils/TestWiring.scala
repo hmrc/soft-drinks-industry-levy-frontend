@@ -27,7 +27,7 @@ import play.api.libs.concurrent.Execution.defaultContext
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
-import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction, VariationAction}
+import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.config.RegistrationFormDataCache
 import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
@@ -95,5 +95,4 @@ trait TestWiring extends MockitoSugar {
   lazy val formAction: FormAction = wire[FormAction]
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
   lazy val registeredAction: RegisteredAction = wire[RegisteredAction]
-  lazy val variationAction: VariationAction = wire[VariationAction]
 }

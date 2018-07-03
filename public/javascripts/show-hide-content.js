@@ -4,7 +4,7 @@
     var $ = global.jQuery;
     var GOVUK = global.GOVUK || {};
 
-    function ShowHideContent () {
+    function ShowHideContentFoo () {
         var self = this;
 
         // Radio and Checkbox selectors
@@ -16,7 +16,7 @@
 
         // Escape name attribute for use in DOM selector
         function escapeElementName (str) {
-            return str.replace('[', '\\[').replace(']', '\\]')
+            return str.replace('[', '\\[').replace(']', '\\]').replace('.', '\\.')
         }
 
         // Adds ARIA attributes to control + associated content
@@ -161,12 +161,12 @@
         }
     }
 
-    ShowHideContent.prototype.init = function ($container) {
+    ShowHideContentFoo.prototype.init = function ($container) {
         this.showHideRadioToggledContent($container);
         this.showHideCheckboxToggledContent($container)
     };
 
-    GOVUK.ShowHideContent = ShowHideContent;
+    GOVUK.ShowHideContentFoo = ShowHideContentFoo;
 
     global.GOVUK = GOVUK
 })(window);

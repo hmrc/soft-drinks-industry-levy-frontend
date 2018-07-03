@@ -20,10 +20,10 @@ import java.time.LocalDate
 
 import play.api.libs.json._
 import play.api.mvc.Call
-import sdil.controllers.variation.routes
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer}
+
 
 case class VariationData(original: RetrievedSubscription,
                          updatedBusinessAddress: Address,
@@ -38,7 +38,9 @@ case class VariationData(original: RetrievedSubscription,
                          updatedProductionSites: Seq[Site],
                          updatedWarehouseSites: Seq[Site],
                          updatedContactDetails: ContactDetails,
-                         previousPages: Seq[Call]
+                         previousPages: Seq[Call],
+                         reason: Option[String] = None,
+                         deregDate: Option[LocalDate] = None
                         ) {
 
   def isLiablePacker: Boolean = {
@@ -53,7 +55,39 @@ case class VariationData(original: RetrievedSubscription,
     usesCopacker.getOrElse(false) && producer.isLarge.contains(false) && !isLiable
   }
 
+  /** Material changes are updates to sites, reporting liability or
+    * contact details.
+    *
+    * A material change must by law be reported as a variation
+    * whereas a non-material change cannot be submitted as a variation.
+    */
+
+  lazy val orig = VariationData(original)
+
+  lazy val volToMan: Boolean = orig.isVoluntary && isLiable
+
+  lazy val manToVol: Boolean = orig.isLiable && isVoluntary
+
+  def isMaterialChange: Boolean = {
+
+    List(
+      updatedContactDetails != orig.updatedContactDetails,
+      isLiable != orig.isLiable,
+      updatedWarehouseSites.nonEmpty,
+      updatedProductionSites.nonEmpty,
+      deregDate.isDefined
+    ).foldLeft(false)(_ || _)
+  }
+
+  def noVariation: Boolean = {
+    updatedContactDetails == orig.updatedContactDetails &&
+      updatedBusinessAddress == orig.updatedBusinessAddress &&
+      updatedProductionSites == orig.updatedProductionSites &&
+      updatedWarehouseSites == orig.updatedWarehouseSites &&
+      deregDate.isEmpty
+  }
 }
+
 
 object VariationData {
   implicit val callWrites: Format[Call] = new Format[Call] {
@@ -90,6 +124,6 @@ object VariationData {
       original.contact.positionInCompany.getOrElse(""),
       original.contact.phoneNumber,
       original.contact.email),
-    previousPages = List(routes.VariationsController.show)
+    previousPages = Nil
   )
 }

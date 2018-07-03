@@ -1,19 +1,21 @@
-body {
-    overflow-x: hidden;
-}
-
 .black-border {
     border: 2px solid #0b0c0c;
 }
 
 .check-your-answers .change-answer {
     text-align: right;
-    font-weight: bold;
     padding-right: 0;
+}
+
+.no-shadow {
+    box-shadow: none;
 }
 
 
 @media (min-width: 641px) {
+    body {
+        overflow-x: hidden;
+    }
 
     .table-row-answer.word-break {
         word-break: break-word;
@@ -35,6 +37,10 @@ body {
 
     .form-litres {
         width: 50%;
+    }
+
+    .form-litres-3-4 {
+        width: 75%;
     }
 
     .form-control-1-4 {
@@ -98,4 +104,53 @@ html .font-xsmall {
 
 .margin-bottom-25 {
     margin-bottom: 25px;
+}
+
+.link-button, .link-button:hover, .link-button:focus, .link-button:active {
+  display: inline;
+  background: none;
+  border: none;
+  color: #005ea5;
+  text-decoration: underline;
+  cursor: pointer;
+  -webkit-box-shadow: none;
+  outline: 0;
+  position: relative;
+  padding-left: 0;
+  padding-right: 0;
+  margin-right: 0;
+}
+
+.link-button:hover {
+    color: #4c2c92;
+}
+
+.cya-change {
+    text-align: right;
+}
+
+button[name="checkyouranswers"] {
+    margin-top: 30px;
+}
+
+.form-field--error .error-notification {
+    font-weight: bold;
+}
+
+.align-right {
+    text-align: right;
+}
+.no-minus-wrapping {
+    white-space: nowrap;
+    text-align: left;
+}
+
+.cya-width {
+    width: 60%;
+}
+
+@media print {
+    .print-link {
+        display: none;
+    }
 }

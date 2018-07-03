@@ -1,0 +1,36 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helper.{inputRadioGroup => _, _}
+@import play.api.Configuration
+@import views.html.softdrinksindustrylevy.helpers._
+@import sdil.config.AppConfig
+@import views.html.helper.options
+@import ltbs.play.scaffold.webmonad._
+@import views.html.uniform.helpers._
+@import ltbs.play._
+
+@(key: String, breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig)
+@views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title"))) {
+  @backlink(breadcrumbs)
+
+  <h1 class="heading-large">
+        @messages(Seq(s"heading.$key", "sdil.declaration.heading"))
+  </h1>
+  <div class="form-group">
+    @tell
+  </div>
+}

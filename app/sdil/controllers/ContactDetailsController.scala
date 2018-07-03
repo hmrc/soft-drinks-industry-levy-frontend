@@ -16,7 +16,7 @@
 
 package sdil.controllers
 
-import play.api.data.Form
+import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,7 +34,7 @@ class ContactDetailsController(val messagesApi: MessagesApi, cache: Registration
                               (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
-  import ContactDetailsController._
+  import ContactDetailsForm._
 
   lazy val formTarget: Call = routes.ContactDetailsController.submit()
 
@@ -62,39 +62,41 @@ class ContactDetailsController(val messagesApi: MessagesApi, cache: Registration
   }
 }
 
-object ContactDetailsController extends FormHelpers {
+object ContactDetailsForm extends FormHelpers {
   val form = Form(
-    mapping(
-      "fullName" -> text.verifying(Constraint { x: String =>
-        x match {
-          case "" => Invalid("error.fullName.required")
-          case name if name.length > 40 => Invalid("error.fullName.over")
-          case name if !name.matches("^[a-zA-Z &`\\-\\'\\.^]{1,40}$") =>
-            Invalid("error.fullName.invalid")
-          case _ => Valid
-        }
-      }),
-      "position" -> text.verifying(Constraint { x: String =>
-        x match {
-          case "" => Invalid("error.position.required")
-          case position if position.length > 155 => Invalid("error.position.over")
-          case position if !position.matches("^[a-zA-Z &`\\-\\'\\.^]{1,155}$") =>
-            Invalid("error.position.invalid")
-          case _ => Valid
-        }
-      }),
-      "phoneNumber" -> text.verifying(Constraint { x: String =>
-        x match {
-          case "" => Invalid("error.phoneNumber.required")
-          case phone if phone.length > 24 => Invalid("error.phoneNumber.over")
-          case phone if !phone.matches("^[A-Z0-9 )/(\\-*#+]{1,24}$") =>
-            Invalid("error.phoneNumber.invalid")
-          case _ => Valid
-        }
-      }),
-      "email" -> text
-        .verifying("error.email.over", _.length <= 132)
-        .verifying(combine(required("email"), Constraints.emailAddress))
-    )(ContactDetails.apply)(ContactDetails.unapply)
+    contactDetailsMapping
   )
+
+  lazy val contactDetailsMapping: Mapping[ContactDetails] = mapping(
+    "fullName" -> text.verifying(Constraint { x: String =>
+      x match {
+        case "" => Invalid("error.fullName.required")
+        case name if name.length > 40 => Invalid("error.fullName.over")
+        case name if !name.matches("^[a-zA-Z &`\\-\\'\\.^]{1,40}$") =>
+          Invalid("error.fullName.invalid")
+        case _ => Valid
+      }
+    }),
+    "position" -> text.verifying(Constraint { x: String =>
+      x match {
+        case "" => Invalid("error.position.required")
+        case position if position.length > 155 => Invalid("error.position.over")
+        case position if !position.matches("^[a-zA-Z &`\\-\\'\\.^]{1,155}$") =>
+          Invalid("error.position.invalid")
+        case _ => Valid
+      }
+    }),
+    "phoneNumber" -> text.verifying(Constraint { x: String =>
+      x match {
+        case "" => Invalid("error.phoneNumber.required")
+        case phone if phone.length > 24 => Invalid("error.phoneNumber.over")
+        case phone if !phone.matches("^[A-Z0-9 )/(\\-*#+]{1,24}$") =>
+          Invalid("error.phoneNumber.invalid")
+        case _ => Valid
+      }
+    }),
+    "email" -> text
+      .verifying("error.email.over", _.length <= 132)
+      .verifying(combine(required("email"), Constraints.emailAddress))
+  )(ContactDetails.apply)(ContactDetails.unapply)
 }

@@ -16,8 +16,6 @@
 
 package sdil.config
 
-import java.time.LocalDate
-
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -30,9 +28,11 @@ trait AppConfig {
   val betaFeedbackUrlAuth: String
   val ggLoginUrl: String
   val signoutUrl: String
+  val signoutUrlNoFeedback: String
   val sdilHomePage: String
   val appName: String
   def variationsEnabled: Boolean
+  def returnsEnabled: Boolean  
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, environment: Environment) extends AppConfig with ServicesConfig {
@@ -57,7 +57,9 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   lazy val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
   lazy val feedbackSurveyUrl: String = loadConfig("microservice.services.feedback-survey.url")
   lazy val signoutUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath?continue=$feedbackSurveyUrl?origin=SDIL"
+  lazy val signoutUrlNoFeedback: String = s"$companyAuthFrontend$companyAuthSignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
 
   override val variationsEnabled: Boolean = getBoolean("variations.enabled")
+  override val returnsEnabled: Boolean = getBoolean("returns.enabled")
 }

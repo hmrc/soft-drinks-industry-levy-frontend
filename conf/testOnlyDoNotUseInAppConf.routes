@@ -13,5 +13,6 @@
 ->         /                                                                   prod.Routes
 GET        /soft-drinks-industry-levy/test-only/:url                           sdil.controllers.test.TestingController.reset(url)
 GET        /soft-drinks-industry-levy/test-only/get-file/:envId/:fileId        sdil.controllers.test.TestingController.getFile(envId, fileId)
+GET        /soft-drinks-industry-levy/test-only/get-last-variation/:sdilRef    sdil.controllers.test.TestingController.getVariationHtml(sdilRef)
 
 

@@ -21,9 +21,13 @@ import play.api.mvc.{Action, AnyContent}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.Address
+import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import views.html.softdrinksindustrylevy.service_page
+import cats.implicits._
+import cats.data.OptionT
+import scala.concurrent._
 
 class ServicePageController(val messagesApi: MessagesApi,
                             sdilConnector: SoftDrinksIndustryLevyConnector,
@@ -33,11 +37,20 @@ class ServicePageController(val messagesApi: MessagesApi,
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = registeredAction.async { implicit request =>
-    sdilConnector.retrieveSubscription(request.sdilEnrolment.value) map {
-      case Some(s) =>
-        val addr = Address.fromUkAddress(s.address)
-        Ok(views.html.softdrinksindustrylevy.service_page(addr, request.sdilEnrolment.value, s))
-      case None => NotFound(errorHandler.notFoundTemplate)
+
+    type FutOpt[A] = OptionT[Future, A]
+
+    val ret = for {
+      subscription <- OptionT(sdilConnector.retrieveSubscription(request.sdilEnrolment.value))
+      returnPeriods <- if (config.returnsEnabled)
+                         OptionT(sdilConnector.returns.pending(subscription.utr).map(_.some))
+                       else 
+                         Nil.pure[FutOpt]
+    } yield {
+      val addr = Address.fromUkAddress(subscription.address)
+      Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods))
     }
+
+    ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
   }
 }

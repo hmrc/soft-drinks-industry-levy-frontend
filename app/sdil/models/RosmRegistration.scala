@@ -16,8 +16,8 @@
 
 package sdil.models
 
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 case class RosmRegistration(safeId: String,
                             organisation: Option[OrganisationDetails],

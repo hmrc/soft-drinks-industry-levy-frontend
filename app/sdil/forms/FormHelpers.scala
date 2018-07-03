@@ -16,11 +16,12 @@
 
 package sdil.forms
 
+import cats.implicits.none
 import play.api.data.Forms._
 import play.api.data.Mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.libs.json.Json
-import sdil.models.Address
+import sdil.models.{Address, ContactDetails}
 import sdil.models.backend.{Site, UkAddress}
 
 import scala.util.Try
@@ -72,7 +73,6 @@ trait FormHelpers {
   }
 
   private def optionalTradingNameConstraint: Constraint[String] = Constraint {
-    case "" => Invalid("error.tradingName.required")
     case s if s.length > 160 => Invalid("error.tradingName.length")
     case s if !s.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid("error.tradingName.invalid")
     case _ => Valid
@@ -101,4 +101,18 @@ trait FormHelpers {
     .verifying("error.litreage.numeric", _.isWhole)
     .verifying("error.litreage.max", _ <= 9999999999999L)
     .verifying("error.litreage.min", _ >= 0)
+
+  lazy val warehouseSiteMapping: Mapping[Site] = mapping(
+    "address" -> ukAddressMapping,
+    "tradingName" -> optional(tradingNameMapping)
+  ) { (a, b) => Site.apply(a, none, b, none) }(Site.unapply(_).map { case (address, refOpt, tradingName, _) =>
+    (address, tradingName)
+  })
+
+  lazy val packagingSiteMapping: Mapping[Site] = mapping(
+    "address" -> ukAddressMapping
+  ) { a => Site.apply(a, none, none, none) }(Site.unapply(_).map { case (address, refOpt, _, _) => address })
+
+  private val ukAddressMapping: Mapping[UkAddress] =
+    addressMapping.transform(UkAddress.fromAddress, Address.fromUkAddress)
 }

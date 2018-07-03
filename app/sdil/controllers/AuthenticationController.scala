@@ -41,4 +41,7 @@ class AuthenticationController(val messagesApi: MessagesApi)
     Ok(views.html.time_out()).withNewSession
   }
 
+  def signOutNoFeedback: Action[AnyContent] = Action { implicit request =>
+    Redirect(config.signoutUrlNoFeedback).withNewSession
+  }
 }
