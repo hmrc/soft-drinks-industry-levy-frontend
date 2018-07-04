@@ -88,7 +88,7 @@
             @if(packageOwn) {
                 @formData.volumeForOwnBrand.map { ownVol =>
                     @declaration_details_litres(
-                        "declaration.package-own",
+                        "package-own",
                         sdil.controllers.routes.LitreageController.show("packageOwnVol"),
                         ownVol
                     )
@@ -108,7 +108,7 @@
             @if(copacks) {
                 @formData.volumeForCustomerBrands.map { copackedVol =>
                     @declaration_details_litres(
-                        "declaration.customerVol",
+                        "customerVol",
                         sdil.controllers.routes.LitreageController.show("packageCopackVol"),
                         copackedVol
                     )
@@ -123,7 +123,7 @@
 
             @if(imports) {
                 @formData.importVolume.map { volumes =>
-                    @declaration_details_litres("declaration.import-volume",
+                    @declaration_details_litres("import-volume",
                         sdil.controllers.routes.LitreageController.show(pageName = "importVolume"), volumes)
                 }
             }
