@@ -175,7 +175,7 @@ class VariationsController(
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    changeType <- askOneOf("changeType", List(ChangeType.Sites, ChangeType.Deregister))
+    changeType <- askOneOf("changeType", ChangeType.values.toList)
     base = VariationData(subscription)
     variation  <- changeType match {
       case ChangeType.Sites => contactUpdate(base)
