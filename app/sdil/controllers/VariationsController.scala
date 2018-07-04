@@ -30,7 +30,6 @@ import play.api.mvc.{Action, _}
 import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.controllers.StartDateController._
 import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend.Site
@@ -116,16 +115,6 @@ class VariationsController(
     data: VariationData
   ): WebMonad[VariationData] = {
 
-    // workaround for intermediate data structures
-    def longTupToLitreage(in: (Long,Long)): Option[Litreage] =
-      if (in.isEmpty) None else Litreage(in._1, in._2).some
-
-    def askPackSites(existingSites: List[Site], packs: Boolean): WebMonad[List[Site]] =
-        manyT("packSitesActivity",
-          ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
-          default = existingSites,
-          min = 1
-        ) emptyUnless (packs)
 
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 

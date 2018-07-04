@@ -1,0 +1,176 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.softdrinksindustrylevy.helpers._
+@import java.time.format.DateTimeFormatter
+@import java.time.LocalDate
+@import sdil.config.AppConfig
+
+@import sdil.models.RegistrationFormData
+@import sdil.models.Producer
+@(formData: RegistrationFormData)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+
+    @declaration_table("declaration","your-business") {
+        @declaration_details_table_row("declaration", "utr", None, formData.utr, '_colspan -> "2")
+
+        @declaration_details_table_row("declaration", "business-name", None,
+            formData.rosmData.organisationName, '_colspan -> "2")
+
+        <tr>
+            <td colspan = "2">@Messages("sdil.declaration.address")</td>
+            <td>
+                @formData.primaryAddress.nonEmptyLines.map { l =>
+                  <div>@l</div>
+                }
+                <div>@Messages("sdil.declaration.uk")</div>
+            </td>
+        </tr>
+    }
+
+    @declaration_table("declaration","liable-activity") {
+        @formData.producer.map { producer =>
+            @declaration_details_table_row(
+                "declaration",
+                "producer",
+                Some(sdil.controllers.routes.ProducerController.show()),
+                Messages(s"sdil.declaration.${producer.isProducer}"),
+                '_colspan -> "2"
+            )
+            @if(producer.isProducer) {
+                @declaration_details_table_row(
+                    "declaration",
+                    "isLargeProducer",
+                    Some(sdil.controllers.routes.ProducerController.show()),
+                    if(producer.isLarge.contains(true)) {
+                        Messages("sdil.declaration.largeProducer")
+                    } else {
+                        Messages("sdil.declaration.smallProducer")
+                    },
+                    '_colspan -> "2"
+                )
+            }
+        }
+
+        @formData.usesCopacker.map { copacked =>
+            @declaration_details_table_row("declaration", "third-party",
+                Some(sdil.controllers.routes.RadioFormController.show(page = "copacked")),
+                Messages(s"sdil.declaration.$copacked"), '_colspan -> "2")
+        }
+
+        @formData.isPackagingForSelf.map { packageOwn =>
+            @declaration_details_table_row(
+                "declaration",
+                "packaging",
+                Some(sdil.controllers.routes.RadioFormController.show("packageOwnUk")),
+                Messages(s"sdil.declaration.$packageOwn"),
+                '_colspan -> "2"
+            )
+
+            @if(packageOwn) {
+                @formData.volumeForOwnBrand.map { ownVol =>
+                    @declaration_details_litres(
+                        "declaration.package-own",
+                        sdil.controllers.routes.LitreageController.show("packageOwnVol"),
+                        ownVol
+                    )
+                }
+            }
+        }
+
+        @formData.packagesForOthers.map { copacks =>
+            @declaration_details_table_row(
+                "declaration",
+                "customers",
+                Some(sdil.controllers.routes.RadioFormController.show("packageCopack")),
+                Messages(s"sdil.declaration.$copacks"),
+                '_colspan -> "2"
+            )
+
+            @if(copacks) {
+                @formData.volumeForCustomerBrands.map { copackedVol =>
+                    @declaration_details_litres(
+                        "declaration.customerVol",
+                        sdil.controllers.routes.LitreageController.show("packageCopackVol"),
+                        copackedVol
+                    )
+                }
+            }
+        }
+
+        @formData.isImporter.map { imports =>
+            @declaration_details_table_row("declaration", "import",
+                Some(sdil.controllers.routes.RadioFormController.show(page = "import")),
+                Messages(s"sdil.declaration.${imports}"), '_colspan -> "2")
+
+            @if(imports) {
+                @formData.importVolume.map { volumes =>
+                    @declaration_details_litres("declaration.import-volume",
+                        sdil.controllers.routes.LitreageController.show(pageName = "importVolume"), volumes)
+                }
+            }
+        }
+    }
+
+    @if(!formData.isVoluntary) {
+        @declaration_table("declaration", "liable-date") {
+            @formData.startDate.map { date =>
+                @declaration_details_table_row("declaration", "date",
+                    Some(sdil.controllers.routes.StartDateController.show()),
+                    date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+            }
+        }
+    }
+
+  @if(formData.secondaryWarehouses.exists(_.nonEmpty) || formData.productionSites.exists(_.nonEmpty)) {
+        @declaration_table("declaration", "registered-sites") {
+            @if(formData.productionSites.exists(_.nonEmpty)) {
+                @formData.productionSites.map { sites =>
+                    @declaration_details_table_row("declaration", "production-sites",
+                        Some(sdil.controllers.routes.ProductionSiteController.show()), sites.size.toString)
+                }
+            }
+            @if(formData.secondaryWarehouses.exists(_.nonEmpty)) {
+                @formData.secondaryWarehouses.map { sites =>
+                    @declaration_details_table_row("declaration", "warehouses",
+                        Some(sdil.controllers.routes.WarehouseController.show()), sites.size.toString)
+                }
+            }
+        }
+    }
+
+    @declaration_table("declaration", "contact-details") {
+        @formData.contactDetails.map { details =>
+            @declaration_details_table_row("declaration", "name",
+                Some(sdil.controllers.routes.ContactDetailsController.show()), details.fullName)
+            @declaration_details_table_row("declaration", "position",
+                Some(sdil.controllers.routes.ContactDetailsController.show()), details.position)
+            @declaration_details_table_row("declaration", "phone-number",
+                Some(sdil.controllers.routes.ContactDetailsController.show()), details.phoneNumber)
+            @declaration_details_table_row("declaration", "email",
+                Some(sdil.controllers.routes.ContactDetailsController.show()), details.email)
+        }
+    }
+
+    <br/>
+    <p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
+
+
+    @form(sdil.controllers.routes.DeclarationController.submit()) {
+        <input class="button" value="@Messages("sdil.declaration.continue")" type="submit">
+    }
+

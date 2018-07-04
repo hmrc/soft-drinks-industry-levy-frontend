@@ -803,10 +803,12 @@ returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-
 
 return.file=Submit the return
 
-heading.partners=You can't register online as a parnership
-heading.orgType=Which of these best describes your business?
-orgType.option.limitedliabilitypartnership=Limited liability partnership (LLP)
-orgType.option.partnership=Partnership
-orgType.option.soletrader=Sole trader
-orgType.option.unincorporatedbody=Unincorporated body
-orgType.option.limitedcompany=Limited company
+heading.partners=You can’t register online as a partnership
+heading.organisation-type=Which of these best describes your business?
+organisation-type.option.limitedliabilitypartnership=Limited liability partnership (LLP)
+organisation-type.option.partnership=Partnership
+organisation-type.option.soletrader=Sole trader
+organisation-type.option.unincorporatedbody=Unincorporated body
+organisation-type.option.limitedcompany=Limited company
+
+heading.do-not-register=You don’t need to register

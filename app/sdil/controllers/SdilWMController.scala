@@ -39,13 +39,14 @@ import sdil.models._
 import sdil.models.backend._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
-
+import ltbs.play.scaffold.SdilComponents._
 import scala.concurrent._
 import scala.util.Try
 import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
 import scala.util.Try
 import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents.packagingSiteForm
 
 trait SdilWMController extends WebMonadController
     with FrontendController
@@ -295,4 +296,11 @@ trait SdilWMController extends WebMonadController
     }(wm)
   }
 
+  def askPackSites(existingSites: List[Site], packs: Boolean): WebMonad[List[Site]] =
+    manyT("packSitesActivity",
+      ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
+      default = existingSites,
+      min = 1
+    ) emptyUnless (packs)
 }
+

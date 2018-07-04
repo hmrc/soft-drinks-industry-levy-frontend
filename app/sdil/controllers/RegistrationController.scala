@@ -16,29 +16,27 @@
 
 package sdil.controllers
 
-import cats.data.OptionT
-import ltbs.play.scaffold.webmonad.WebMonad
-import org.omg.CosNaming.NamingContextPackage.NotFound
-import cats.implicits._
-import ltbs.play.scaffold.GdsComponents.bool
-import ltbs.play.scaffold.SdilComponents.warehouseSiteForm
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalDateTime, ZoneId}
 
-import scala.concurrent.{ExecutionContext, Future}
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result, Results}
+import cats.implicits._
+import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents._
+import ltbs.play.scaffold.webmonad._
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Result}
 import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.{Producer, RegistrationFormData}
+import sdil.forms.FormHelpers
+import sdil.models.{Litreage, RegistrationFormData}
+import sdil.models.backend._
 import sdil.uniform.SaveForLaterPersistence
-import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.softdrinksindustrylevy.register
 import views.html.uniform
-import ltbs.play.scaffold.webmonad._
-import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents._
-import views.html.uniform.fragments.partnerships
+
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class RegistrationController(val messagesApi: MessagesApi,
@@ -49,18 +47,7 @@ class RegistrationController(val messagesApi: MessagesApi,
                             )(implicit
                               val config: AppConfig,
                               val ec: ExecutionContext
-                            ) extends SdilWMController with FrontendController {
-
-  val orgTypes: List[String] = List(
-    "partnership",
-    "limitedCompany",
-    "limitedLiabilityPartnership",
-    "unincorporatedBody"
-  )
-  def orgTypes(hasCTEnrolment: Boolean): List[String] = {
-    val soleTrader: Seq[String] = if (hasCTEnrolment) Nil else Seq("soleTrader")
-    orgTypes ++ soleTrader
-  }
+                            ) extends SdilWMController with FrontendController with FormHelpers {
 
 
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
@@ -71,17 +58,17 @@ class RegistrationController(val messagesApi: MessagesApi,
     }
   }
 
-
-  private def program(request: AuthorisedRequest[AnyContent], fd: RegistrationFormData): WebMonad[Result] = {
+  // TODO - refactor data structures
+  private def program(request: AuthorisedRequest[AnyContent], fd: RegistrationFormData)(implicit hc: HeaderCarrier): WebMonad[Result] = {
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
     val soleTrader = if (hasCTEnrolment) Nil else Seq("soleTrader")
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
     for {
-      orgType       <- askOneOf("orgType", (orgTypes ++ soleTrader).sortWith(_<_))
+      orgType       <- askOneOf("organisation-type", (orgTypes ++ soleTrader))
       noPartners    = uniform.fragments.partnerships()(request, implicitly, implicitly)
       _             <- if (orgType === "partnership") {
-                            end("partners",noPartners)
+                         end("partners",noPartners)
                        } else (()).pure[WebMonad]
       packLarge     <- askOption(bool, "packLarge")
       packageOwn                  <- ask(bool, "packOpt") when packLarge.isDefined
@@ -89,27 +76,56 @@ class RegistrationController(val messagesApi: MessagesApi,
       packQty                     <- ask(litres, "packQty") emptyUnless packageOwn.contains(true)
       copacks                     <- ask(litres, "copackQty") emptyUnless ask(bool, "copacker")
       imports <- ask(litres, "importQty") emptyUnless ask(bool, "importer")
-      end <- journeyEnd("foobar")
+      noUkActivity                =  (copacks, imports).isEmpty
+      smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
+      shouldNotReg                 =  noUkActivity && smallProducerWithNoCopacker
+      noReg          = uniform.fragments.registration_not_required()(request, implicitly, implicitly)
+      _              <- if (shouldNotReg) {
+                          end("do-not-register",noReg)
+                        } else (()).pure[WebMonad]
+      regDate        <- ask(startDate
+                              .verifying("error.deregDate.nopast",  _ < LocalDate.now)
+                              .verifying("error.deregDate.nofuture",_ < LocalDate.of(2018, 4, 6)), "regDate")
+      packSites       <- askPackSites(List.empty[Site], (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty)
+      isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
+      warehouses      <- manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly)) emptyUnless !isVoluntary
+      contactDetails  <- ask(contactDetailsMapping, "contact")
+      declaration     = uniform.fragments.declaration(fd)(request, implicitly, implicitly)
+      _               <- tell("declaration", declaration)
+      activity        = Activity(
+        longTupToLitreage(packQty),
+        longTupToLitreage(imports),
+        longTupToLitreage(copacks),
+        useCopacker.collect { case true => Litreage(1, 1) },
+        packLarge.getOrElse(false)
+      )
+      contact = Contact(
+        name = Some(contactDetails.fullName),
+        positionInCompany = Some(contactDetails.position),
+        phoneNumber = contactDetails.phoneNumber,
+        email = contactDetails.email
+      )
+      subscription    = Subscription(
+        fd.utr,
+        fd.rosmData.organisationName,
+        orgType,
+        UkAddress.fromAddress(fd.rosmData.address),
+        activity,
+        regDate,
+        packSites,
+        warehouses,
+        contact
+      )
+      _               <- execute(sdilConnector.submit(subscription, fd.rosmData.safeId))
+      end <- clear >> confirmationPage("suscription-sent", contact.email, LocalDateTime.now(ZoneId.of("Europe/London")), isVoluntary)
     } yield end
   }
 
+  def confirmationPage(key: String, email: String, now: LocalDateTime, isVoluntary: Boolean)(implicit messages: Messages): WebMonad[Result] = {
 
-//    for {
-//      _ <- Nil
-//    } yield NotFound("").pure[Future]
-//
+    lazy val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+    lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("h:mma")
 
-
-//  private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
-//    start <- identify()
-//    verify <- verify()
-//
-//    //    sdilReturn     <- askReturn
-//    //    broughtForward <- BigDecimal("0").pure[WebMonad]
-//    //    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward)
-//    //    _              <- cachedFuture(s"return-${period.count}")(
-//    //      sdilConnector.returns(subscription.utr, period) = sdilReturn)
-//    end <- clear >> confirmationPage("return-sent", period, subscription, sdilReturn, broughtForward, sdilRef)
-//  } yield end
-
+    end("registration-complete", uniform.fragments.registrationComplete(email, now.format(dateFormatter), now.format(timeFormatter).toLowerCase, isVoluntary))
+  }
 }
