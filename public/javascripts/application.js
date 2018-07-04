@@ -57,20 +57,6 @@ window.onload = function () {
         });
     }
 
-
-    var arr = document.getElementsByClassName('returns-change-link');
-    if (typeof arr !== "undefined") {
-        for (var i = 0, len = arr.length; i < len; i++) {
-            var redirectUrl = arr[i].href;
-            arr[i].addEventListener('click', function (e) {
-                e.preventDefault();
-                gaWithCallback('send', 'event', 'changeLinks', 'click', e.pathname, function () {
-                    window.location.href = redirectUrl;
-                });
-            });
-        }
-    }
-
     $('form[action="exemptions-for-small-producers"] button').wrap("<span id='exemptions-click-wrapper'></span>");
     $('form[action="exemptions-for-small-producers"] #exemptions-click-wrapper').attr('onclick',"ga('send', 'event', 'smallProducerExemptionButton', 'click', 'Submit');");
 
@@ -84,6 +70,17 @@ window.onload = function () {
     if (document.getElementsByClassName("error-summary-list").length > 0) {
         ga('send', 'event', 'validationError', 'error', document.getElementsByClassName("error-summary-list").innerText);
     }
+
+
+    $(".returns-change-link").click(function(event) {
+        event.preventDefault();
+        var redirectUrl = $(this).attr('href');
+        gaWithCallback('send', 'event', 'changeLinks', 'click', redirectUrl, function() {
+            window.location.href = redirectUrl;
+        });
+    });
+
+
 
     function gaWithCallback(send, event, category, action, label, callback) {
         ga(send, event, category, action, label, {
