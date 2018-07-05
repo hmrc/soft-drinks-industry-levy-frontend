@@ -121,7 +121,8 @@ class RegistrationController(val messagesApi: MessagesApi,
       tf = DateTimeFormatter.ofPattern("h:mma")
       now = LocalDateTime.now(ZoneId.of("Europe/London"))
       complete = uniform.fragments.registrationComplete(contact.email, now.format(df), now.format(tf).toLowerCase, isVoluntary)(request, implicitly, implicitly)
-      end <- clear >> end("suscription-sent", complete)
+//      end <- clear >> end("suscription-sent", complete)
+      end <- clear >> journeyEnd("registration-complete")
     } yield end
   }
 

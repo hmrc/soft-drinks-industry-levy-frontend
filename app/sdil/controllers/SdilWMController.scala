@@ -265,7 +265,6 @@ trait SdilWMController extends WebMonadController
       }
     }
 
-
   protected def manyT[A](
     id: String,
     wm: String => WebMonad[A],
