@@ -23,9 +23,11 @@ import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.HtmlShow
 import ltbs.play.scaffold.SdilComponents._
+import ltbs.play.scaffold._
 import ltbs.play.scaffold.webmonad._
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
+import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -84,8 +86,8 @@ class RegistrationController(val messagesApi: MessagesApi,
                           end("do-not-register",noReg)
                         } else (()).pure[WebMonad]
       regDate        <- ask(startDate
-                              .verifying("error.deregDate.nopast",  _ < LocalDate.now)
-                              .verifying("error.deregDate.nofuture",_ < LocalDate.of(2018, 4, 6)), "regDate")
+                              .verifying("error.start-date.in-future", !_.isAfter(LocalDate.now))
+                              .verifying("error.start-date.before-tax-start", !_.isBefore(LocalDate.of(2018, 4, 6))), "regDate")
       packSites       <- askPackSites(List.empty[Site], (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty)
       isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
       warehouses      <- manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly)) emptyUnless !isVoluntary
@@ -122,6 +124,8 @@ class RegistrationController(val messagesApi: MessagesApi,
       now = LocalDateTime.now(ZoneId.of("Europe/London"))
       complete = uniform.fragments.registrationComplete(contact.email, now.format(df), now.format(tf).toLowerCase, isVoluntary)(request, implicitly, implicitly)
 //      end <- clear >> end("suscription-sent", complete)
+//      subheading = messages("sdil.complete.subheading")
+//      end <- clear >> journeyEnd("registration-complete", now, Html(subheading).some, Html(complete).some)
       end <- clear >> journeyEnd("registration-complete")
     } yield end
   }
