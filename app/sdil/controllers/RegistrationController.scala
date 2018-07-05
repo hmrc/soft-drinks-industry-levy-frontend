@@ -122,7 +122,8 @@ class RegistrationController(val messagesApi: MessagesApi,
       now = LocalDateTime.now(ZoneId.of("Europe/London"))
       complete = uniform.fragments.registrationComplete(contact.email, now.format(df), now.format(tf).toLowerCase, isVoluntary)(request, implicitly, implicitly)
 //      end <- clear >> end("suscription-sent", complete)
-      end <- clear >> journeyEnd("registration-complete")
+      subheading = messages("sdil.complete.subheading")
+      end <- clear >> journeyEnd("registration-complete", now, Html(subheading).some, Html(complete).some)
     } yield end
   }
 

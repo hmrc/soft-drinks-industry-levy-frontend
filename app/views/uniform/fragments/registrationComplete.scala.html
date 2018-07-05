@@ -18,13 +18,6 @@
 
 @(email: String, submissionDate: String, submissionTime: String, isVoluntary: Boolean)(implicit request: Request[_], messages: Messages,    config: AppConfig)
 
-
-    <div class="govuk-box-highlight">
-        <h1 class="heading-xlarge">@Messages("sdil.complete.title")</h1>
-
-        <p class="font-large">@Messages("sdil.complete.subheading")</p>
-    </div>
-
     <p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
     <p>@Messages("sdil.complete.p1", submissionDate, submissionTime.replaceAll(" (.)M", "$1m").toLowerCase)</p>
 
