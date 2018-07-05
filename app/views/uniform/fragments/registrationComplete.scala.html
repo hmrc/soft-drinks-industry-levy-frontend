@@ -16,7 +16,7 @@
 
 @import sdil.config.AppConfig
 
-@(email: String, submissionDate: String, submissionTime: String, isVoluntary: Boolean)(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(email: String, submissionDate: String, submissionTime: String, isVoluntary: Boolean)(implicit request: Request[_], messages: Messages,    config: AppConfig)
 
 
     <div class="govuk-box-highlight">

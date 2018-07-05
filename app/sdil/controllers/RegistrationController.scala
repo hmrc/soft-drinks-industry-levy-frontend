@@ -21,16 +21,16 @@ import java.time.{LocalDate, LocalDateTime, ZoneId}
 
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.HtmlShow
 import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold.webmonad._
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.forms.FormHelpers
-import sdil.models.{Litreage, RegistrationFormData}
 import sdil.models.backend._
+import sdil.models.{Litreage, RegistrationFormData}
 import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -47,7 +47,7 @@ class RegistrationController(val messagesApi: MessagesApi,
                             )(implicit
                               val config: AppConfig,
                               val ec: ExecutionContext
-                            ) extends SdilWMController with FrontendController with FormHelpers {
+                            ) extends SdilWMController with FrontendController {
 
 
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
@@ -117,15 +117,20 @@ class RegistrationController(val messagesApi: MessagesApi,
         contact
       )
       _               <- execute(sdilConnector.submit(subscription, fd.rosmData.safeId))
-      end <- clear >> confirmationPage("suscription-sent", contact.email, LocalDateTime.now(ZoneId.of("Europe/London")), isVoluntary)
+      df = DateTimeFormatter.ofPattern("d MMMM yyyy")
+      tf = DateTimeFormatter.ofPattern("h:mma")
+      now = LocalDateTime.now(ZoneId.of("Europe/London"))
+      complete = uniform.fragments.registrationComplete(contact.email, now.format(df), now.format(tf).toLowerCase, isVoluntary)(request, implicitly, implicitly)
+      end <- clear >> end("suscription-sent", complete)
     } yield end
   }
 
-  def confirmationPage(key: String, email: String, now: LocalDateTime, isVoluntary: Boolean)(implicit messages: Messages): WebMonad[Result] = {
-
-    lazy val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-    lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("h:mma")
-
-    end("registration-complete", uniform.fragments.registrationComplete(email, now.format(dateFormatter), now.format(timeFormatter).toLowerCase, isVoluntary))
-  }
+//  def confirmationPage(key: String, email: String, now: LocalDateTime, isVoluntary: Boolean)(implicit messages: Messages): WebMonad[Result] = {
+//
+//    lazy val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+//    lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("h:mma")
+////    println(implicitly)
+//    end("registration-complete", uniform.fragments.registrationComplete(email, now.format(dateFormatter), now.format(timeFormatter).toLowerCase, isVoluntary))
+//    journeyEnd("foobar")
+//  }
 }
