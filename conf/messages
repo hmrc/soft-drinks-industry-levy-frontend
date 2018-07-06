@@ -830,3 +830,18 @@ returnsHome.help.guidance=You must get and keep <a href="{0}">certain types of e
 returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-levy-credit-for-exported-lost-or-destroyed-drinks-notice-4
 
 return.file=Submit the return
+
+account.balance=Account Balance
+account.balance.amount=Your balance is £{0}.
+account.balance.pay.zero=You have nothing to pay.
+account.balance.pay.negative=[You need to make a payment].
+account.balance.pay.positive=[You are in credit].
+view.balance.history=View Balance History
+balance.history=Balance History
+
+date.time=Date/Time
+transaction=Transaction
+pound.credits=£ Credits
+pound.debits=£ Debits
+pound.balance=£ Balance
+

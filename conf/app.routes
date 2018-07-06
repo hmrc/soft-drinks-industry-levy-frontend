@@ -2,6 +2,7 @@
 GET         /assets/*file                                      controllers.Assets.at(path="/public", file)
 
 GET         /home                                              sdil.controllers.ServicePageController.show
+GET         /balanceHistory                                    sdil.controllers.ServicePageController.balanceHistory
 
 GET         /register/start                                    sdil.controllers.IdentifyController.start
 GET         /register/identify                                 sdil.controllers.IdentifyController.show()
