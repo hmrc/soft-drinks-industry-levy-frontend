@@ -37,7 +37,9 @@
     </p>
     <h2 class="heading-medium">@Messages(Seq(s"$id.what-happens-next-heading", "sdil.complete.what-happens.title"))</h2>
 
-    @{whatHappensNext.getOrElse{Html(Messages(s"$id.what-happens-next"))}}
+    <p>@{whatHappensNext.getOrElse{Html(Messages(s"$id.what-happens-next"))}}</p>
+
+    <p>@Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))</p>
 
 }
 

@@ -12,6 +12,7 @@ sdil.common.yes=Yes
 sdil.common.no=No
 sdil.common.print=Print
 sdil.common.sign-out=Sign out
+sdil.common.sign-in=Sign in
 sdil.common.return-to-sign-in=Return to Government Gateway sign in
 sdil.registered.title=Soft Drinks Industry Levy
 sdil.variations.title=Change your Soft Drinks Industry Levy details
@@ -279,10 +280,8 @@ sdil.declaration.third-party=Use third party packagers?
 sdil.declaration.third-party-produced=Annual litres packaged by third parties
 sdil.declaration.import=Bring liable drinks into the UK?
 sdil.declaration.import-volume=Litres in next 12 months
-
 sdil.declaration.liable-date=Soft Drinks Industry Levy liability date
 sdil.declaration.date=Date liable from
-
 sdil.declaration.registered-sites=Registered sites
 sdil.declaration.production-sites=Packaging sites
 sdil.declaration.warehouses=Warehouses
@@ -294,6 +293,30 @@ sdil.declaration.phone-number=Telephone
 sdil.declaration.email=Email
 sdil.declaration.confirmation=By continuing you’re confirming that the details provided are true and complete.
 sdil.declaration.continue=Confirm and send
+
+#visually hidden change links
+sdil.hidden.declaration.producer=Change your own brand packaged in the past 12 months
+sdil.hidden.declaration.isLargeProducer=Change amount of litres of your own brand packaged worldwide
+sdil.hidden.declaration.packaging=Change whether you package for your own brand at your own sites
+sdil.hidden.declaration.customers=Change whether you package as a contract packer at your own sites
+sdil.hidden.declaration.low-band.package-own=Change litres in the low band packaged for your own brand at your own sites
+sdil.hidden.declaration.high-band.package-own=Change litres in the high band packaged for your own brand at your own sites
+sdil.hidden.declaration.low-band.customerVol=Change litres in the low band packaged as a contract packer at your own sites
+sdil.hidden.declaration.high-band.customerVol=Change litres in the high band packaged as a contract packer at your own sites
+sdil.hidden.declaration.third-party=Change whether you use third parties or contract packers
+sdil.hidden.declaration.import=Change whether you bring liable drinks into the UK
+sdil.hidden.declaration.import-volume=Litres in next 12 months
+sdil.hidden.declaration.low-band.import-volume=Change litres in the low band brought into the UK
+sdil.hidden.declaration.high-band.import-volume=Change litres in the high band brought into the UK
+
+sdil.hidden.declaration.date=Change Soft Drinks Levy Liability date
+sdil.hidden.declaration.production-sites=Change packaging site details
+sdil.hidden.declaration.warehouses=Change warehouse details
+
+sdil.hidden.declaration.name=Change contact name
+sdil.hidden.declaration.position=Change job title
+sdil.hidden.declaration.phone-number=Change telephone number
+sdil.hidden.declaration.email=Change email address
 
 #Complete
 sdil.complete.title=Application complete
@@ -568,6 +591,11 @@ sdil.variation.complete.subheading=We’ve received the updates to your Soft Dri
 sdil.variation.what-happens.p1=You don’t need to do anything else. We’ll update your details with the information you provided. We’ll send you a letter confirming that the changes have been made, which may take 15 working days.
 sdil.link.back.home=Back to home
 sdil.variation.complete.p1=Your updates for the Soft Drinks Industry Levy were submitted on {0} at {1}.
+sdil.service-page.variations.submit.change=Make another change
+
+#time out
+sdil.time-out.title=For your security, we signed you out
+sdil.time-out.p1=We have saved your answers
 sdil.variation.anotherChange=If you need to make another change,
 sdil.variation.anotherChangeLink=go back and start again
 sdil.service-page.variations.submit.change=Make another change
@@ -749,7 +777,7 @@ check-your-answers.band=Band
 check-your-answers.activity=Activity
 check-your-answers.exemptions-for-small-producers=Contract packed for registered small producers
 check-your-answers.own-brands-packaged-at-own-sites=Own brands packaged at your own site
-check-your-answers.packaged-as-a-contract-packer=Contract packed
+check-your-answers.packaged-as-a-contract-packer=Contract packed at your own site
 check-your-answers.brought-into-uk=Brought into the UK
 check-your-answers.brought-into-uk-from-small-producers=Brought into the UK from small producers
 check-your-answers.claim-credits-for-exports=Exported
@@ -761,8 +789,8 @@ check-your-answers.low=Low
 check-your-answers.high=High
 check-your-answers.change=Change
 check-your-answers.change.own-brands-packaged-at-own-sites=volume of own brand
-check-your-answers.change.exemptions-for-small-producers=volume contract packed for small producers
-check-your-answers.change.packaged-as-a-contract-packer=volume contract packed
+check-your-answers.change.exemptions-for-small-producers=volume contract packed for registered small producers
+check-your-answers.change.packaged-as-a-contract-packer=volume contract packed at your own site
 check-your-answers.change.brought-into-uk-from-small-producers=volume brought into the UK from small producers
 check-your-answers.change.brought-into-uk=volume brought into the UK
 check-your-answers.change.claim-credits-for-exports=volume exported
@@ -775,6 +803,7 @@ return-sent.title=Return submitted
 return-sent.subheading=You need to pay {0} </br> by {1}
 return-sent.what-happens-next-heading=What you need to do next
 return-sent.returnsDoneMessage=Your Soft Drinks Industry Levy return for {0} to {1} {2} for {3} was sent at {4} on {5}.
+return-sent.servicePage=<a href="{0}">View your Soft Drinks Industry Levy details</a>
 return-sent.paymentsBlurb.payby=You need to pay by {0}.
 return-sent.paymentsBlurb.payusing=You can pay by Bacs or CHAPS using:
 return-sent.paymentsBlurb.payDetails.1=sort code: 20-05-17
@@ -782,9 +811,8 @@ return-sent.paymentsBlurb.payDetails.2=account number: 40204374
 return-sent.paymentsBlurb.payDetails.3=account name: HMRC General Business Tax Receipts
 return-sent.paymentsBlurb.payDetails.4=payment reference: {0}
 return-sent.paymentsBlurb.chapsDelay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
-    Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
+Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
 return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must submit it and make any payments due by {2}.
-return-sent.paymentsBlurb.servicePage=<a href="{0}">View your Soft Drinks Industry Levy details</a>
 
 warning=Warning
 returnsHome.returnsDue=The return for {0} from {1} to {2} is due by {3}.
