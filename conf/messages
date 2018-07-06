@@ -802,6 +802,7 @@ return-sent.title=Return submitted
 return-sent.subheading=You need to pay {0} </br> by {1}
 return-sent.what-happens-next-heading=What you need to do next
 return-sent.returnsDoneMessage=Your Soft Drinks Industry Levy return for {0} to {1} {2} for {3} was sent at {4} on {5}.
+return-sent.servicePage=<a href="{0}">View your Soft Drinks Industry Levy details</a>
 return-sent.paymentsBlurb.payby=You need to pay by {0}.
 return-sent.paymentsBlurb.payusing=You can pay by Bacs or CHAPS using:
 return-sent.paymentsBlurb.payDetails.1=sort code: 20-05-17
@@ -809,9 +810,8 @@ return-sent.paymentsBlurb.payDetails.2=account number: 40204374
 return-sent.paymentsBlurb.payDetails.3=account name: HMRC General Business Tax Receipts
 return-sent.paymentsBlurb.payDetails.4=payment reference: {0}
 return-sent.paymentsBlurb.chapsDelay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
-    Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
+Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
 return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must submit it and make any payments due by {2}.
-return-sent.paymentsBlurb.servicePage=<a href="{0}">View your Soft Drinks Industry Levy details</a>
 
 warning=Warning
 returnsHome.returnsDue=The return for {0} from {1} to {2} is due by {3}.
