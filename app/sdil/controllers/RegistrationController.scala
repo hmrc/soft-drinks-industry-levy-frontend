@@ -20,11 +20,13 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime, ZoneId}
 
 import cats.implicits._
+import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.HtmlShow
 import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold._
 import ltbs.play.scaffold.webmonad._
+import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import play.twirl.api.Html
@@ -60,28 +62,46 @@ class RegistrationController(val messagesApi: MessagesApi,
     }
   }
 
+//  implicit val booleanForm = new FormHtml[Boolean] {
+//    def asHtmlForm(key: String, form: Form[Boolean])(implicit messages: Messages): Html = {
+//      uniform.fragments.boolean(key, form)
+//    }
+//  }
+
+
   // TODO - refactor data structures
   private def program(request: AuthorisedRequest[AnyContent], fd: RegistrationFormData)(implicit hc: HeaderCarrier): WebMonad[Result] = {
+
+//    sealed trait Producer extends EnumEntry
+//    object Producer extends Enum[Producer] {
+//      val values = findValues
+//      case object NonProducer extends Producer
+//      case object LargeProducer extends Producer
+//      case object SmallProducer extends Producer
+//    }
+
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
     val soleTrader = if (hasCTEnrolment) Nil else Seq("soleTrader")
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
-
     for {
-      orgType       <- askOneOf("organisation-type", (orgTypes ++ soleTrader))
-      noPartners    = uniform.fragments.partnerships()(request, implicitly, implicitly)
-      _             <- if (orgType === "partnership") {
+      orgType        <- askOneOf("organisation-type", (orgTypes ++ soleTrader))
+      noPartners     = uniform.fragments.partnerships()(request, implicitly, implicitly)
+      _              <- if (orgType === "partnership") {
                          end("partners",noPartners)
                        } else (()).pure[WebMonad]
-      packLarge     <- askOption(bool, "packLarge")
-      packageOwn                  <- ask(bool, "packOpt") when packLarge.isDefined
-      useCopacker   <- ask(bool,"useCopacker") when packLarge.contains(false)
-      packQty                     <- ask(litres, "packQty") emptyUnless packageOwn.contains(true)
-      copacks                     <- ask(litres, "copackQty") emptyUnless ask(bool, "copacker")
-      imports <- ask(litres, "importQty") emptyUnless ask(bool, "importer")
-      noUkActivity                =  (copacks, imports).isEmpty
+      packLarge       <- askOneOf("packLarge", producerTypes) map {
+        case "large" => Some(true)
+        case "small" => Some(false)
+        case _ => None
+      }
+      useCopacker    <- ask(bool,"useCopacker") when packLarge.contains(false)
+      packageOwn     <- askOption(litreagePair.nonEmpty, "own-brands-packaged-at-own-sites") when packLarge.nonEmpty
+      copacks        <- askOption(litreagePair.nonEmpty, "packaged-as-a-contract-packer")
+      imports        <- askOption(litreagePair.nonEmpty, "brought-into-uk")
+      noUkActivity   =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
-      shouldNotReg                 =  noUkActivity && smallProducerWithNoCopacker
+      shouldNotReg   =  noUkActivity && smallProducerWithNoCopacker
       noReg          = uniform.fragments.registration_not_required()(request, implicitly, implicitly)
       _              <- if (shouldNotReg) {
                           end("do-not-register",noReg)
@@ -93,51 +113,53 @@ class RegistrationController(val messagesApi: MessagesApi,
       isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
       warehouses      <- manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly)) emptyUnless !isVoluntary
       contactDetails  <- ask(contactDetailsMapping, "contact")
-      declaration     = uniform.fragments.declaration(fd)(request, implicitly, implicitly)
-      _               <- tell("declaration", declaration)
       activity        = Activity(
-        longTupToLitreage(packQty),
-        longTupToLitreage(imports),
-        longTupToLitreage(copacks),
+        longTupToLitreage(packageOwn.flatten.getOrElse((0,0))), // TODO use this in declaration above!
+        longTupToLitreage(imports.getOrElse((0,0))),
+        longTupToLitreage(copacks.getOrElse((0,0))),
         useCopacker.collect { case true => Litreage(1, 1) },
         packLarge.getOrElse(false)
       )
-      contact = Contact(
-        name = Some(contactDetails.fullName),
-        positionInCompany = Some(contactDetails.position),
-        phoneNumber = contactDetails.phoneNumber,
-        email = contactDetails.email
-      )
+      declaration     = uniform.fragments.declaration(
+                          fd,
+                          packLarge,
+                          useCopacker,
+//                          longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
+                          activity.ProducedOwnBrand,
+                          activity.CopackerAll,
+                          activity.Imported,
+                          isVoluntary,
+                          regDate,
+                          warehouses,
+                          packSites,
+                          contactDetails
+                        )(request, implicitly, implicitly)
+      _               <- tell("declaration", declaration)
+      contact         = Contact(
+                          name = Some(contactDetails.fullName),
+                          positionInCompany = Some(contactDetails.position),
+                          phoneNumber = contactDetails.phoneNumber,
+                          email = contactDetails.email
+                        )
       subscription    = Subscription(
-        fd.utr,
-        fd.rosmData.organisationName,
-        orgType,
-        UkAddress.fromAddress(fd.rosmData.address),
-        activity,
-        regDate,
-        packSites,
-        warehouses,
-        contact
-      )
+                          fd.utr,
+                          fd.rosmData.organisationName,
+                          orgType,
+                          UkAddress.fromAddress(fd.rosmData.address),
+                          activity,
+                          regDate,
+                          packSites,
+                          warehouses,
+                          contact
+                        )
       _               <- execute(sdilConnector.submit(subscription, fd.rosmData.safeId))
-      df = DateTimeFormatter.ofPattern("d MMMM yyyy")
-      tf = DateTimeFormatter.ofPattern("h:mma")
-      now = LocalDateTime.now(ZoneId.of("Europe/London"))
-      complete = uniform.fragments.registrationComplete(contact.email, now.format(df), now.format(tf).toLowerCase, isVoluntary)(request, implicitly, implicitly)
-//      end <- clear >> end("suscription-sent", complete)
-//      m = implicitly[Messages]()
-//      sh = m("sdil.complete.subheading")
-//      end <- clear >> journeyEnd("registration-complete", subheading = Html(sh).some, whatHappensNext = complete.some)
-      end <- clear >> journeyEnd("registration-complete")
+      df              = DateTimeFormatter.ofPattern("d MMMM yyyy")
+      tf              = DateTimeFormatter.ofPattern("h:mma")
+      now             = LocalDateTime.now(ZoneId.of("Europe/London"))
+      complete        = uniform.fragments.registrationComplete(contact.email, now.format(df), now.format(tf).toLowerCase, isVoluntary)(request, implicitly, implicitly)
+      sh              = Messages("sdil.complete.subheading")
+      end             <- clear >> journeyEnd("registration-complete", subheading = Html(sh).some, whatHappensNext = complete.some)
     } yield end
   }
 
-//  def confirmationPage(key: String, email: String, now: LocalDateTime, isVoluntary: Boolean)(implicit messages: Messages): WebMonad[Result] = {
-//
-//    lazy val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-//    lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("h:mma")
-////    println(implicitly)
-//    end("registration-complete", uniform.fragments.registrationComplete(email, now.format(dateFormatter), now.format(timeFormatter).toLowerCase, isVoluntary))
-//    journeyEnd("foobar")
-//  }
 }

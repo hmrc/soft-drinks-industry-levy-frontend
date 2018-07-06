@@ -21,8 +21,22 @@
 @import sdil.config.AppConfig
 
 @import sdil.models.RegistrationFormData
-@import sdil.models.Producer
-@(formData: RegistrationFormData)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@import sdil.models.backend.Site
+@import sdil.models.Litreage
+@import sdil.models.ContactDetails
+@(
+        formData: RegistrationFormData,
+        packLarge: Option[Boolean],
+        useCopacker: Option[Boolean],
+        packageOwn: Option[Litreage],
+        copacks: Option[Litreage],
+        imports: Option[Litreage],
+        isVoluntary: Boolean,
+        startDate: LocalDate,
+        warehouses: List[Site],
+        packagingSites: List[Site],
+        contactDetails: ContactDetails
+)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 
     @declaration_table("declaration","your-business") {
@@ -43,134 +57,125 @@
     }
 
     @declaration_table("declaration","liable-activity") {
-        @formData.producer.map { producer =>
+        @declaration_details_table_row(
+            "declaration",
+            "producer",
+            Some(sdil.controllers.routes.RegistrationController.index("packLarge")),
+            Messages(s"sdil.declaration.${packLarge.getOrElse(false)}"),
+            '_colspan -> "2"
+        )
+        @if(packLarge.nonEmpty) {
             @declaration_details_table_row(
                 "declaration",
-                "producer",
-                Some(sdil.controllers.routes.ProducerController.show()),
-                Messages(s"sdil.declaration.${producer.isProducer}"),
+                "isLargeProducer",
+                Some(sdil.controllers.routes.RegistrationController.index("packLarge")),
+                if(packLarge.getOrElse(false)) {
+                    Messages("sdil.declaration.largeProducer")
+                } else {
+                    Messages("sdil.declaration.smallProducer")
+                },
                 '_colspan -> "2"
             )
-            @if(producer.isProducer) {
-                @declaration_details_table_row(
-                    "declaration",
-                    "isLargeProducer",
-                    Some(sdil.controllers.routes.ProducerController.show()),
-                    if(producer.isLarge.contains(true)) {
-                        Messages("sdil.declaration.largeProducer")
-                    } else {
-                        Messages("sdil.declaration.smallProducer")
-                    },
-                    '_colspan -> "2"
+        }
+
+        @if(useCopacker.nonEmpty) {
+            @declaration_details_table_row("declaration", "third-party",
+                Some(sdil.controllers.routes.RegistrationController.index("useCopacker")),
+                Messages(s"sdil.declaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
+        }
+
+        @if(packageOwn.nonEmpty) {
+            @declaration_details_table_row(
+                "declaration",
+                "packaging",
+                Some(sdil.controllers.routes.RegistrationController.index("own-brands-packaged-at-own-sites")),
+                Messages(s"sdil.declaration.${packageOwn.fold(false)(_ => true)}"),
+                '_colspan -> "2"
+            )
+
+            @if(packageOwn.fold(false)(_ => true)) {
+                @declaration_details_litres(
+                    "declaration.package-own",
+                    sdil.controllers.routes.RegistrationController.index("own-brands-packaged-at-own-sites"),
+                    packageOwn.getOrElse(Litreage(0, 0))
                 )
             }
         }
 
-        @formData.usesCopacker.map { copacked =>
-            @declaration_details_table_row("declaration", "third-party",
-                Some(sdil.controllers.routes.RadioFormController.show(page = "copacked")),
-                Messages(s"sdil.declaration.$copacked"), '_colspan -> "2")
-        }
 
-        @formData.isPackagingForSelf.map { packageOwn =>
-            @declaration_details_table_row(
-                "declaration",
-                "packaging",
-                Some(sdil.controllers.routes.RadioFormController.show("packageOwnUk")),
-                Messages(s"sdil.declaration.$packageOwn"),
-                '_colspan -> "2"
-            )
-
-            @if(packageOwn) {
-                @formData.volumeForOwnBrand.map { ownVol =>
-                    @declaration_details_litres(
-                        "declaration.package-own",
-                        sdil.controllers.routes.LitreageController.show("packageOwnVol"),
-                        ownVol
-                    )
-                }
-            }
-        }
-
-        @formData.packagesForOthers.map { copacks =>
+        @if(copacks.nonEmpty) {
             @declaration_details_table_row(
                 "declaration",
                 "customers",
-                Some(sdil.controllers.routes.RadioFormController.show("packageCopack")),
-                Messages(s"sdil.declaration.$copacks"),
+                Some(sdil.controllers.routes.RegistrationController.index("packaged-as-a-contract-packer")),
+                Messages(s"sdil.declaration.${copacks.fold(false)(_ => true)}"),
                 '_colspan -> "2"
             )
 
-            @if(copacks) {
-                @formData.volumeForCustomerBrands.map { copackedVol =>
-                    @declaration_details_litres(
-                        "declaration.customerVol",
-                        sdil.controllers.routes.LitreageController.show("packageCopackVol"),
-                        copackedVol
-                    )
-                }
+            @if(copacks.fold(false)(_ => true)) {
+                @declaration_details_litres(
+                    "declaration.customerVol",
+                    sdil.controllers.routes.RegistrationController.index("packaged-as-a-contract-packer"),
+                    copacks.getOrElse(Litreage(0,0))
+                )
             }
         }
 
-        @formData.isImporter.map { imports =>
+        @if(imports.nonEmpty) {
             @declaration_details_table_row("declaration", "import",
-                Some(sdil.controllers.routes.RadioFormController.show(page = "import")),
-                Messages(s"sdil.declaration.${imports}"), '_colspan -> "2")
+                Some(sdil.controllers.routes.RegistrationController.index("brought-into-uk")),
+                Messages(s"sdil.declaration.${imports.fold(false)(_ => true)}"), '_colspan -> "2")
 
-            @if(imports) {
-                @formData.importVolume.map { volumes =>
-                    @declaration_details_litres("declaration.import-volume",
-                        sdil.controllers.routes.LitreageController.show(pageName = "importVolume"), volumes)
-                }
+            @if(imports.fold(false)(_ => true)) {
+                @declaration_details_litres(
+                    "declaration.import-volume",
+                    sdil.controllers.routes.RegistrationController.index("brought-into-uk"),
+                    imports.getOrElse(Litreage(0,0))
+                )
             }
         }
     }
 
-    @if(!formData.isVoluntary) {
+    @if(!isVoluntary) {
         @declaration_table("declaration", "liable-date") {
-            @formData.startDate.map { date =>
                 @declaration_details_table_row("declaration", "date",
-                    Some(sdil.controllers.routes.StartDateController.show()),
-                    date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-            }
+                    Some(sdil.controllers.routes.RegistrationController.index("regDate")),
+                    startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
         }
     }
 
-  @if(formData.secondaryWarehouses.exists(_.nonEmpty) || formData.productionSites.exists(_.nonEmpty)) {
+  @if(warehouses.nonEmpty || packagingSites.nonEmpty) {
         @declaration_table("declaration", "registered-sites") {
-            @if(formData.productionSites.exists(_.nonEmpty)) {
-                @formData.productionSites.map { sites =>
-                    @declaration_details_table_row("declaration", "production-sites",
-                        Some(sdil.controllers.routes.ProductionSiteController.show()), sites.size.toString)
-                }
+            @if(packagingSites.nonEmpty) {
+                @declaration_details_table_row(
+                    "declaration",
+                    "production-sites",
+                    Some(sdil.controllers.routes.RegistrationController.index("packSitesActivity")),
+                    packagingSites.size.toString
+                )
             }
-            @if(formData.secondaryWarehouses.exists(_.nonEmpty)) {
-                @formData.secondaryWarehouses.map { sites =>
-                    @declaration_details_table_row("declaration", "warehouses",
-                        Some(sdil.controllers.routes.WarehouseController.show()), sites.size.toString)
-                }
+            @if(warehouses.nonEmpty) {
+                @declaration_details_table_row(
+                    "declaration",
+                    "warehouses",
+                    Some(sdil.controllers.routes.RegistrationController.index("warehousesActivity")),
+                    warehouses.size.toString
+                )
             }
         }
     }
 
     @declaration_table("declaration", "contact-details") {
-        @formData.contactDetails.map { details =>
             @declaration_details_table_row("declaration", "name",
-                Some(sdil.controllers.routes.ContactDetailsController.show()), details.fullName)
+                Some(sdil.controllers.routes.RegistrationController.index("contactDetails")), contactDetails.fullName)
             @declaration_details_table_row("declaration", "position",
-                Some(sdil.controllers.routes.ContactDetailsController.show()), details.position)
+                Some(sdil.controllers.routes.RegistrationController.index("contactDetails")), contactDetails.position)
             @declaration_details_table_row("declaration", "phone-number",
-                Some(sdil.controllers.routes.ContactDetailsController.show()), details.phoneNumber)
+                Some(sdil.controllers.routes.RegistrationController.index("contactDetails")), contactDetails.phoneNumber)
             @declaration_details_table_row("declaration", "email",
-                Some(sdil.controllers.routes.ContactDetailsController.show()), details.email)
-        }
+                Some(sdil.controllers.routes.RegistrationController.index("contactDetails")), contactDetails.email)
     }
 
     <br/>
     <p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
-
-
-    @form(sdil.controllers.routes.DeclarationController.submit()) {
-        <input class="button" value="@Messages("sdil.declaration.continue")" type="submit">
-    }
 

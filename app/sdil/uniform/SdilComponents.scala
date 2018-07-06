@@ -157,6 +157,13 @@ object SdilComponents {
     "unincorporatedBody"
   )
 
+
+  val producerTypes: List[String] = List(
+    "large",
+    "small",
+    "not"
+  )
+
   def orgTypes(hasCTEnrolment: Boolean): List[String] = {
     val soleTrader: Seq[String] = if (hasCTEnrolment) Nil else Seq("soleTrader")
     orgTypes ++ soleTrader
