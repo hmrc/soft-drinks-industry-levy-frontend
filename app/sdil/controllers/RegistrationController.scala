@@ -66,6 +66,7 @@ class RegistrationController(val messagesApi: MessagesApi,
     val soleTrader = if (hasCTEnrolment) Nil else Seq("soleTrader")
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
+
     for {
       orgType       <- askOneOf("organisation-type", (orgTypes ++ soleTrader))
       noPartners    = uniform.fragments.partnerships()(request, implicitly, implicitly)
@@ -124,8 +125,9 @@ class RegistrationController(val messagesApi: MessagesApi,
       now = LocalDateTime.now(ZoneId.of("Europe/London"))
       complete = uniform.fragments.registrationComplete(contact.email, now.format(df), now.format(tf).toLowerCase, isVoluntary)(request, implicitly, implicitly)
 //      end <- clear >> end("suscription-sent", complete)
-//      subheading = messages("sdil.complete.subheading")
-//      end <- clear >> journeyEnd("registration-complete", now, Html(subheading).some, Html(complete).some)
+//      m = implicitly[Messages]()
+//      sh = m("sdil.complete.subheading")
+//      end <- clear >> journeyEnd("registration-complete", subheading = Html(sh).some, whatHappensNext = complete.some)
       end <- clear >> journeyEnd("registration-complete")
     } yield end
   }
