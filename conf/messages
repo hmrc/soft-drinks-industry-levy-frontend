@@ -526,30 +526,9 @@ packLarge.help.2=<h2>Liable drinks</h2>\
 <li>it’s infant formula, follow-on formula, baby foods, formulated food intended as a\
    total diet replacement or dietary food used for special medical purposes</li></ul>
 
-sdil.producer.liable-drinks.title=What is a liable drink?
-sdil.producer.liable-drinks.h1=Liable drinks
-sdil.producer.liable-drinks.p1=A drink is liable if it meets all the following conditions:
-sdil.producer.liable-drinks.li1=it has a content of 1.2% alcohol by volume or less
-sdil.producer.liable-drinks.li2=it’s either ready to drink, or to be drunk it must be diluted with water, mixed with \
-  crushed ice or processed to make crushed ice, mixed with carbon dioxide or a combination of these
-sdil.producer.liable-drinks.li3=it’s packaged ready for sale
-sdil.producer.liable-drinks.li4=it has had sugar added during production, including pure cane sugars like sucrose and\
-   glucose as well as substances (other than fruit juice, vegetable juice and milk) that contain sugar, such as honey
-sdil.producer.liable-drinks.li5=it contains at least 5 grams (g) of sugar per 100 millilitres (ml) in its ready to\
-   drink or diluted form
-sdil.producer.exempt-drinks.h1=Exempt drinks
-sdil.producer.exempt-drinks.p1=A drink is exempt if it meets one of the following conditions:
-sdil.producer.exempt-drinks.li1=it contains at least 75% milk
-sdil.producer.exempt-drinks.li2=it’s a milk-substitute which contains at least 120 milligrams of calcium per 100ml,\
-   for example soya or almond milk
-sdil.producer.exempt-drinks.li3=it’s an alcohol replacement drink, for example de-alcoholised beer or wine
-sdil.producer.exempt-drinks.li4=it’s infant formula, follow-on formula, baby foods, formulated food intended as a\
-   total diet replacement or dietary food used for special medical purposes
-
-
-
-
-
+registration-complete.title=Application complete
+registration-complete.subheading=We’ve received your application to register for the Soft Drinks Industry Levy
+registration-complete.your.updates=Your application to register for the Soft Drinks Industry Levy was submitted on {0} at {1}.
 
 heading.add-warehouses=Enter your warehouse details
 heading.add-warehousesActivity=Enter your warehouse details

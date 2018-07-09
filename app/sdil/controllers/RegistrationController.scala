@@ -145,12 +145,8 @@ class RegistrationController(val messagesApi: MessagesApi,
                           contact
                         )
       _               <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
-      df              = DateTimeFormatter.ofPattern("d MMMM yyyy")
-      tf              = DateTimeFormatter.ofPattern("h:mma")
-      now             = LocalDateTime.now(ZoneId.of("Europe/London"))
-      complete        = uniform.fragments.registrationComplete(contact.email, now.format(df), now.format(tf).toLowerCase, isVoluntary)(request, implicitly, implicitly)
-      sh              = Messages("sdil.complete.subheading")
-      end             <- clear >> journeyEnd("registration-complete", subheading = Html(sh).some, whatHappensNext = complete.some)
+      complete        = uniform.fragments.registrationComplete(contact.email)(request, implicitly, implicitly)
+      end             <- clear >> journeyEnd("registration-complete", whatHappensNext = complete.some)
     } yield end
   }
 
