@@ -62,13 +62,6 @@ class RegistrationController(val messagesApi: MessagesApi,
     }
   }
 
-//  implicit val booleanForm = new FormHtml[Boolean] {
-//    def asHtmlForm(key: String, form: Form[Boolean])(implicit messages: Messages): Html = {
-//      uniform.fragments.boolean(key, form)
-//    }
-//  }
-
-
   // TODO - refactor data structures
   private def program(request: AuthorisedRequest[AnyContent], fd: RegistrationFormData)(implicit hc: HeaderCarrier): WebMonad[Result] = {
 
@@ -114,7 +107,7 @@ class RegistrationController(val messagesApi: MessagesApi,
       warehouses      <- manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly)) emptyUnless !isVoluntary
       contactDetails  <- ask(contactDetailsMapping, "contact")
       activity        = Activity(
-        longTupToLitreage(packageOwn.flatten.getOrElse((0,0))), // TODO use this in declaration above!
+        longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
         longTupToLitreage(imports.getOrElse((0,0))),
         longTupToLitreage(copacks.getOrElse((0,0))),
         useCopacker.collect { case true => Litreage(1, 1) },
@@ -124,7 +117,6 @@ class RegistrationController(val messagesApi: MessagesApi,
                           fd,
                           packLarge,
                           useCopacker,
-//                          longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
                           activity.ProducedOwnBrand,
                           activity.CopackerAll,
                           activity.Imported,
@@ -152,7 +144,7 @@ class RegistrationController(val messagesApi: MessagesApi,
                           warehouses,
                           contact
                         )
-      _               <- execute(sdilConnector.submit(subscription, fd.rosmData.safeId))
+      _               <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
       df              = DateTimeFormatter.ofPattern("d MMMM yyyy")
       tf              = DateTimeFormatter.ofPattern("h:mma")
       now             = LocalDateTime.now(ZoneId.of("Europe/London"))
