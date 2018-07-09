@@ -83,15 +83,15 @@ class RegistrationController(val messagesApi: MessagesApi,
       _              <- if (orgType === "partnership") {
                          end("partners",noPartners)
                        } else (()).pure[WebMonad]
-      packLarge       <- askOneOf("packLarge", producerTypes) map {
+      packLarge       <- askOneOf("producer", producerTypes) map {
         case "large" => Some(true)
         case "small" => Some(false)
         case _ => None
       }
-      useCopacker    <- ask(bool,"useCopacker") when packLarge.contains(false)
-      packageOwn     <- askOption(litreagePair.nonEmpty, "own-brands-packaged-at-own-sites") when packLarge.nonEmpty
-      copacks        <- askOption(litreagePair.nonEmpty, "packaged-as-a-contract-packer")
-      imports        <- askOption(litreagePair.nonEmpty, "brought-into-uk")
+      useCopacker    <- ask(bool,"copacked") when packLarge.contains(false)
+      packageOwn     <- askOption(litreagePair.nonEmpty, "package-own-uk") when packLarge.nonEmpty
+      copacks        <- askOption(litreagePair.nonEmpty, "package-copack")
+      imports        <- askOption(litreagePair.nonEmpty, "import")
       noUkActivity   =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldNotReg   =  noUkActivity && smallProducerWithNoCopacker
@@ -101,11 +101,11 @@ class RegistrationController(val messagesApi: MessagesApi,
                         } else (()).pure[WebMonad]
       regDate        <- ask(startDate
                               .verifying("error.start-date.in-future", !_.isAfter(LocalDate.now))
-                              .verifying("error.start-date.before-tax-start", !_.isBefore(LocalDate.of(2018, 4, 6))), "regDate")
+                              .verifying("error.start-date.before-tax-start", !_.isBefore(LocalDate.of(2018, 4, 6))), "start-date")
       packSites       <- askPackSites(List.empty[Site], (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty)
       isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
       warehouses      <- manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly)) emptyUnless !isVoluntary
-      contactDetails  <- ask(contactDetailsMapping, "contact")
+      contactDetails  <- ask(contactDetailsMapping, "contact-details")
       activity        = Activity(
         longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
         longTupToLitreage(imports.getOrElse((0,0))),
@@ -146,7 +146,7 @@ class RegistrationController(val messagesApi: MessagesApi,
                         )
       _               <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
       complete        = uniform.fragments.registrationComplete(contact.email)(request, implicitly, implicitly)
-      end             <- clear >> journeyEnd("registration-complete", whatHappensNext = complete.some)
+      end             <- clear >> journeyEnd("complete", whatHappensNext = complete.some)
     } yield end
   }
 

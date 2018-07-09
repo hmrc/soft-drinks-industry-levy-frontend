@@ -60,7 +60,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
-      
+
       List(
         Some(routes.OrganisationTypeController.show().url),
         Some(routes.RegistrationController.index("orgType").url)

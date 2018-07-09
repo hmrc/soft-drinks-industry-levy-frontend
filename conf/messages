@@ -484,28 +484,17 @@ delete=Remove
 add=Add
 edit=Edit
 
-# Uniform variation process
-heading.changeType=Which change do you need to make?
-changeType.option.sites=Update contact, packaging site or warehouse details
-changeType.option.activity=Change our business activity
-changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
+# Uniform registration process
+heading.producer=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
+producer.lead=This includes brands you own or have the rights to manufacture.
+producer.option.large=1 million litres or more
+producer.option.small=Less than 1 million litres
+producer.option.not=None
 
-heading.contactChangeType=What do you need to change?
-contactChangeType.hint=Select all that apply
-contactChangeType.option.Sites=Add or remove packaging sites or warehouse addresses
-contactChangeType.option.ContactPerson=Update our contact person
-contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
-
-heading.packLarge=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
-packLarge.lead=This includes brands you own or have the rights to manufacture.
-packLarge.option.large=1 million litres or more
-packLarge.option.small=Less than 1 million litres
-packLarge.option.not=None
-
-packLarge.help.header.1=What does ’packaged’ mean?
-packLarge.help.1=A liable drink is packaged if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
-packLarge.help.header.2=What is a liable drink?
-packLarge.help.2=<h2>Liable drinks</h2>\
+producer.help.header.1=What does ’packaged’ mean?
+producer.help.1=A liable drink is packaged if it is bottled, canned or otherwise packaged so it’s ready to either drink or dilute.
+producer.help.header.2=What is a liable drink?
+producer.help.2=<h2>Liable drinks</h2>\
 <p>A drink is liable if it meets all the following conditions:</p>\
 <ul class="list list-bullet">\
 <li>it has a content of 1.2% alcohol by volume or less</li>\
@@ -526,9 +515,42 @@ packLarge.help.2=<h2>Liable drinks</h2>\
 <li>it’s infant formula, follow-on formula, baby foods, formulated food intended as a\
    total diet replacement or dietary food used for special medical purposes</li></ul>
 
-registration-complete.title=Application complete
-registration-complete.subheading=We’ve received your application to register for the Soft Drinks Industry Levy
-registration-complete.your.updates=Your application to register for the Soft Drinks Industry Levy was submitted on {0} at {1}.
+heading.copacked=Do you use any third parties in the UK to package liable drinks on your behalf?
+
+heading.package-own-uk=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
+package-own-uk.inner-heading=How many litres will you package in the next 12 months?
+
+heading.package-copack=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
+package-copack.inner-heading=How many litres will you package in the next 12 months?
+
+heading.import=Do you bring liable drinks into the UK from anywhere outside of the UK?
+import.inner-heading=How many litres will you bring into the UK in the next 12 months?
+
+heading.start-date=What date did you become liable to register for the Soft Drinks Industry Levy?
+
+heading.contact-details=Who is your contact for the Soft Drinks Industry Levy?
+contact-details.fullName=Full name
+contact-details.position=Job title
+contact-details.phoneNumber=Telephone number
+contact-details.email=Email
+
+sdil.declaration.package-own-uk=Litres in next 12 months
+
+complete.title=Application complete
+complete.subheading=We’ve received your application to register for the Soft Drinks Industry Levy
+complete.your.updates=Your application to register for the Soft Drinks Industry Levy was submitted on {0} at {1}.
+
+# Uniform variation process
+heading.changeType=Which change do you need to make?
+changeType.option.sites=Update contact, packaging site or warehouse details
+changeType.option.activity=Change our business activity
+changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
+
+heading.contactChangeType=What do you need to change?
+contactChangeType.hint=Select all that apply
+contactChangeType.option.Sites=Add or remove packaging sites or warehouse addresses
+contactChangeType.option.ContactPerson=Update our contact person
+contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
 
 heading.add-warehouses=Enter your warehouse details
 heading.add-warehousesActivity=Enter your warehouse details
