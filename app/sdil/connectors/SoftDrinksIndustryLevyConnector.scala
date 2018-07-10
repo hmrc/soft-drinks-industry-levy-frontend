@@ -42,7 +42,6 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
   }
 
   def submit(subscription: Subscription, safeId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    println("###################################### w00t")
     http.POST[Subscription, HttpResponse](s"$sdilUrl/subscription/utr/${subscription.utr}/${safeId}", subscription) map { _ => () }
   }
 
