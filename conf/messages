@@ -616,7 +616,6 @@ variationDone.what-happens.title=What happens next
 variationDone.what-happens-next=You don’t need to do anything else. We’ll update your details with the information \
 you provided. We’ll send you confirmation that the changes have been made.
 
-<p>@Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))</p>
 
 variationDone.your.updates=Your updates were sent on {0} at {1}.
 variationDone.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>

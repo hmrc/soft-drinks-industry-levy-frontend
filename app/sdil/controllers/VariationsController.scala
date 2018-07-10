@@ -211,7 +211,6 @@ class VariationsController(
     submission = Convert(variation)
     _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
     _    <- clear
-//    complete = uniform.fragments.variationsWHN()
     exit <- variation match {
       case a if a.volToMan => journeyEnd("volToMan")
       case b if b.manToVol => journeyEnd("manToVol")
@@ -219,7 +218,6 @@ class VariationsController(
         val complete = uniform.fragments.variationsWHN()
         journeyEnd("variationDone", whatHappensNext = complete.some)
       }
-//        val whatHappensNext: Option[Html] = uniform.fragments.variationsWhatHappensNext.some
     }
   } yield {
     exit
