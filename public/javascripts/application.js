@@ -29,9 +29,6 @@ $(document).ready(function () {
         $(document).scrollTop(errorSummary.offset().top);
         $(errorSummary).focus();
     }
-
-
-    $.timeoutDialog = timeoutDialog;
 });
 
 window.onload = function () {
