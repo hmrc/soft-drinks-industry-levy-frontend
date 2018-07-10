@@ -1,3 +1,5 @@
+
+if(window.location.pathname !== "/soft-drinks-industry-levy/time-out") {
 $.timeoutDialog({
     timeout: 900,
     countdown: 120,
@@ -6,4 +8,4 @@ $.timeoutDialog({
     logout_url: '/soft-drinks-industry-levy/time-out',
     keep_alive_button_text: 'Stay signed in',
     sign_out_button_text: 'Sign out'
-});
+})};
