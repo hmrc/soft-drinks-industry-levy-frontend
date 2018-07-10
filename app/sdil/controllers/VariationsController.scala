@@ -18,18 +18,17 @@ package sdil.controllers
 
 import java.time.LocalDate
 
-import cats.data.EitherT
 import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold.webmonad._
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json.{JsValue, _}
-import play.api.mvc.{Action, _}
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, Result}
 import sdil.actions.RegisteredAction
-import sdil.config._
+import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.controllers.ContactDetailsForm.contactDetailsMapping
 import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend.Site
@@ -37,37 +36,9 @@ import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
-import ContactDetailsForm.contactDetailsMapping
-import play.twirl.api.Html
-
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime, ZoneId}
-
-import cats.implicits._
-import enumeratum._
-import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.HtmlShow
-import ltbs.play.scaffold.SdilComponents._
-import ltbs.play.scaffold._
-import ltbs.play.scaffold.webmonad._
-import play.api.data.Form
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
-import play.twirl.api.Html
-import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
-import sdil.config.{AppConfig, RegistrationFormDataCache}
-import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.backend._
-import sdil.models.{Litreage, RegistrationFormData}
-import sdil.uniform.SaveForLaterPersistence
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.uniform
-
-import scala.concurrent.{ExecutionContext, Future}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
