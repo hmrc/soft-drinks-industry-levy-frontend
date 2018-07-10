@@ -16,20 +16,14 @@
 
 package sdil.controllers
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime, ZoneId}
+import java.time.LocalDate
 
 import cats.implicits._
-import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.HtmlShow
 import ltbs.play.scaffold.SdilComponents._
-import ltbs.play.scaffold._
 import ltbs.play.scaffold.webmonad._
-import play.api.data.Form
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
-import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -53,7 +47,7 @@ class RegistrationController(val messagesApi: MessagesApi,
                               val ec: ExecutionContext
                             ) extends SdilWMController with FrontendController {
 
-
+  // TODO - when the old registration code is removed we can replace fd and create a Registration data structure
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)
     cache.get(request.internalId) flatMap {
@@ -62,32 +56,22 @@ class RegistrationController(val messagesApi: MessagesApi,
     }
   }
 
-  // TODO - refactor data structures
   private def program(request: AuthorisedRequest[AnyContent], fd: RegistrationFormData)(implicit hc: HeaderCarrier): WebMonad[Result] = {
-
-//    sealed trait Producer extends EnumEntry
-//    object Producer extends Enum[Producer] {
-//      val values = findValues
-//      case object NonProducer extends Producer
-//      case object LargeProducer extends Producer
-//      case object SmallProducer extends Producer
-//    }
 
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
     val soleTrader = if (hasCTEnrolment) Nil else Seq("soleTrader")
-    val litres = litreagePair.nonEmpty("error.litreage.zero")
 
     for {
       orgType        <- askOneOf("organisation-type", (orgTypes ++ soleTrader))
-      noPartners     = uniform.fragments.partnerships()(request, implicitly, implicitly)
+      noPartners     =  uniform.fragments.partnerships()(request, implicitly, implicitly)
       _              <- if (orgType === "partnership") {
-                         end("partners",noPartners)
-                       } else (()).pure[WebMonad]
+                          end("partners",noPartners)
+                        } else (()).pure[WebMonad]
       packLarge       <- askOneOf("producer", producerTypes) map {
-        case "large" => Some(true)
-        case "small" => Some(false)
-        case _ => None
-      }
+                          case "large" => Some(true)
+                          case "small" => Some(false)
+                          case _ => None
+                        }
       useCopacker    <- ask(bool,"copacked") when packLarge.contains(false)
       packageOwn     <- askOption(litreagePair.nonEmpty, "package-own-uk") when packLarge.nonEmpty
       copacks        <- askOption(litreagePair.nonEmpty, "package-copack")
@@ -95,7 +79,7 @@ class RegistrationController(val messagesApi: MessagesApi,
       noUkActivity   =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldNotReg   =  noUkActivity && smallProducerWithNoCopacker
-      noReg          = uniform.fragments.registration_not_required()(request, implicitly, implicitly)
+      noReg          =  uniform.fragments.registration_not_required()(request, implicitly, implicitly)
       _              <- if (shouldNotReg) {
                           end("do-not-register",noReg)
                         } else (()).pure[WebMonad]
@@ -106,46 +90,47 @@ class RegistrationController(val messagesApi: MessagesApi,
       isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
       warehouses      <- manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly)) emptyUnless !isVoluntary
       contactDetails  <- ask(contactDetailsMapping, "contact-details")
-      activity        = Activity(
-        longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
-        longTupToLitreage(imports.getOrElse((0,0))),
-        longTupToLitreage(copacks.getOrElse((0,0))),
-        useCopacker.collect { case true => Litreage(1, 1) },
-        packLarge.getOrElse(false)
-      )
-      declaration     = uniform.fragments.declaration(
-                          fd,
-                          packLarge,
-                          useCopacker,
-                          activity.ProducedOwnBrand,
-                          activity.CopackerAll,
-                          activity.Imported,
-                          isVoluntary,
-                          regDate,
-                          warehouses,
-                          packSites,
-                          contactDetails
-                        )(request, implicitly, implicitly)
+      activity        =  Activity(
+                           longTupToLitreage(packageOwn. flatten.getOrElse((0,0))),
+                           longTupToLitreage(imports.getOrElse((0,0))),
+                           longTupToLitreage(copacks.getOrElse((0,0))),
+                           useCopacker.collect { case true => Litreage(1, 1) },
+                           packLarge.getOrElse(false)
+                         )
+      contact         =  Contact(
+                           name = Some(contactDetails.fullName),
+                           positionInCompany = Some(contactDetails.position),
+                           phoneNumber = contactDetails.phoneNumber,
+                           email = contactDetails.email
+                         )
+      subscription    =  Subscription(
+                           fd.utr,
+                           fd.rosmData.organisationName,
+                           orgType,
+                           UkAddress.fromAddress(fd.rosmData.address),
+                           activity,
+                           regDate,
+                           packSites,
+                           warehouses,
+                           contact
+                         )
+      declaration     =  uniform.fragments.declaration(
+                           fd,
+                           packLarge,
+                           useCopacker,
+                           activity.ProducedOwnBrand,
+                           activity.CopackerAll,
+                           activity.Imported,
+                           isVoluntary,
+                           regDate,
+                           warehouses,
+                           packSites,
+                           contactDetails
+                         )(request, implicitly, implicitly)
       _               <- tell("declaration", declaration)
-      contact         = Contact(
-                          name = Some(contactDetails.fullName),
-                          positionInCompany = Some(contactDetails.position),
-                          phoneNumber = contactDetails.phoneNumber,
-                          email = contactDetails.email
-                        )
-      subscription    = Subscription(
-                          fd.utr,
-                          fd.rosmData.organisationName,
-                          orgType,
-                          UkAddress.fromAddress(fd.rosmData.address),
-                          activity,
-                          regDate,
-                          packSites,
-                          warehouses,
-                          contact
-                        )
       _               <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
-      complete        = uniform.fragments.registrationComplete(contact.email)(request, implicitly, implicitly)
+      _               <- execute(cache.clear(request.internalId))
+      complete        =  uniform.fragments.registrationComplete(contact.email)(request, implicitly, implicitly)
       end             <- clear >> journeyEnd("complete", whatHappensNext = complete.some)
     } yield end
   }
