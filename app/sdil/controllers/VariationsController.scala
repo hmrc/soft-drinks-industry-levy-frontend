@@ -24,7 +24,7 @@ import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold.webmonad._
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsValue, _}
 import play.api.mvc.{Action, _}
 import sdil.actions.RegisteredAction
@@ -41,6 +41,33 @@ import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 import ContactDetailsForm.contactDetailsMapping
+import play.twirl.api.Html
+
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalDateTime, ZoneId}
+
+import cats.implicits._
+import enumeratum._
+import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.HtmlShow
+import ltbs.play.scaffold.SdilComponents._
+import ltbs.play.scaffold._
+import ltbs.play.scaffold.webmonad._
+import play.api.data.Form
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Result}
+import play.twirl.api.Html
+import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
+import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.models.backend._
+import sdil.models.{Litreage, RegistrationFormData}
+import sdil.uniform.SaveForLaterPersistence
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.uniform
+
+import scala.concurrent.{ExecutionContext, Future}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -184,10 +211,12 @@ class VariationsController(
     submission = Convert(variation)
     _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
     _    <- clear
+    complete = uniform.fragments.variationsWHN()
     exit <- variation match {
       case a if a.volToMan => journeyEnd("volToMan")
       case b if b.manToVol => journeyEnd("manToVol")
-      case _ => journeyEnd("variationDone")
+      case _ => journeyEnd("variationDone", whatHappensNext = complete.some)
+//        val whatHappensNext: Option[Html] = uniform.fragments.variationsWhatHappensNext.some
     }
   } yield {
     exit

@@ -167,13 +167,13 @@
 
     @declaration_table("declaration", "contact-details") {
             @declaration_details_table_row("declaration", "name",
-                Some(sdil.controllers.routes.RegistrationController.index("contactDetails")), contactDetails.fullName)
+                Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.fullName)
             @declaration_details_table_row("declaration", "position",
-                Some(sdil.controllers.routes.RegistrationController.index("contactDetails")), contactDetails.position)
+                Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.position)
             @declaration_details_table_row("declaration", "phone-number",
-                Some(sdil.controllers.routes.RegistrationController.index("contactDetails")), contactDetails.phoneNumber)
+                Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.phoneNumber)
             @declaration_details_table_row("declaration", "email",
-                Some(sdil.controllers.routes.RegistrationController.index("contactDetails")), contactDetails.email)
+                Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.email)
     }
 
     <br/>

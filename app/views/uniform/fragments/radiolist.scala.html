@@ -25,7 +25,7 @@
 @inputRadioGroup(
     form(key),
     possibleValues.map{v => (v, Messages(key + ".option." + v.toLowerCase))}.sortWith(sort),
-    '_labelClass -> "block-label",
+    '_labelClass -> "block-label less-padding",
     '_labelAfter -> true,
     '_groupClass -> "form-field-group"
 )

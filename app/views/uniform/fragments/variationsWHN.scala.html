@@ -15,16 +15,10 @@
  *@
 
 @import sdil.config.AppConfig
+ 
+@()(implicit messages: Messages, config: AppConfig)
 
-@(summaryKey: String)(panelContent: Html)(implicit messages: Messages)
+<p>@Messages("variationDone.what-happens.title")</p>
+<p>@Messages("variationDone.what-happens-next")</p>
 
-<details class="padding-bottom-10">
-    <summary>
-        <span class="summary" onclick="ga('send', 'event', 'helpLinks', 'help', '@Messages(summaryKey)')">
-        @Messages(summaryKey)
-        </span>
-    </summary>
-    <div class="panel panel-border-narrow margin-bottom-1" id="details-content-0">
-    @panelContent
-    </div>
-</details>
+<p>@Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))</p>
