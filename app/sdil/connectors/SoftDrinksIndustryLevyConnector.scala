@@ -26,12 +26,14 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 import play.api.libs.json._
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 
 import scala.concurrent.Future
 
 class SoftDrinksIndustryLevyConnector(http: HttpClient,
                                       environment: Environment,
-                                      val runModeConfiguration: Configuration) extends ServicesConfig {
+                                      val runModeConfiguration: Configuration,
+                                      val shortLiveCache: ShortLivedHttpCaching) extends ServicesConfig {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
 
@@ -42,7 +44,7 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
   }
 
   def submit(subscription: Subscription, safeId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POST[Subscription, HttpResponse](s"$sdilUrl/subscription/utr/${subscription.utr}/${safeId}", subscription) map { _ => () }
+    http.POST[Subscription, HttpResponse](s"$sdilUrl/subscription/utr/${subscription.utr}/$safeId", subscription) map { _ => () }
   }
 
   def checkPendingQueue(utr: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
@@ -52,7 +54,17 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
   }
 
   def retrieveSubscription(sdilNumber: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
-    http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/sdil/$sdilNumber")
+    shortLiveCache.fetchAndGetEntry[RetrievedSubscription]("sdil-foo", s"$sdilNumber") flatMap {
+      case Some(s) => Future.successful(Some(s))
+      case _ =>
+        http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/sdil/$sdilNumber").flatMap {
+          case Some(a) =>
+            shortLiveCache.cache("sdil-foo", s"$sdilNumber", a).map {
+              _ => Some(a)
+            }
+          case _ => Future.successful(None)
+        }
+    }
   }
 
   def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Unit] = {
