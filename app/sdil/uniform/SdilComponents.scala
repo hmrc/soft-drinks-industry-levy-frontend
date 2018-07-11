@@ -157,7 +157,6 @@ object SdilComponents {
     "unincorporatedBody"
   )
 
-
   val producerTypes: List[String] = List(
     "large",
     "small",

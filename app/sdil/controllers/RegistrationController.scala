@@ -37,15 +37,18 @@ import views.html.uniform
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class RegistrationController(val messagesApi: MessagesApi,
-                             authorisedAction: AuthorisedAction,
-                             sdilConnector: SoftDrinksIndustryLevyConnector,
-                             registeredAction: RegisteredAction,
-                             cache: RegistrationFormDataCache
-                            )(implicit
+class RegistrationController(
+                              val messagesApi: MessagesApi,
+                              authorisedAction: AuthorisedAction,
+                              sdilConnector: SoftDrinksIndustryLevyConnector,
+                              registeredAction: RegisteredAction,
+                              cache: RegistrationFormDataCache
+                            )(
+                              implicit
                               val config: AppConfig,
                               val ec: ExecutionContext
-                            ) extends SdilWMController with FrontendController {
+                            )
+  extends SdilWMController with FrontendController {
 
   // TODO - when the old registration code is removed we can replace fd and create a Registration data structure
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
@@ -56,7 +59,26 @@ class RegistrationController(val messagesApi: MessagesApi,
     }
   }
 
-  private def program(request: AuthorisedRequest[AnyContent], fd: RegistrationFormData)(implicit hc: HeaderCarrier): WebMonad[Result] = {
+  private def askRegDate = {
+    ask(
+      startDate
+        .verifying(
+          "error.start-date.in-future",
+          !_.isAfter(LocalDate.now)
+        ).verifying(
+        "error.start-date.before-tax-start",
+        !_.isBefore(LocalDate.of(2018, 4, 6))),
+      "start-date"
+    )
+  }
+
+  private def askWarehouses = {
+    manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly))
+  }
+
+  private def program(
+                       request: AuthorisedRequest[AnyContent],
+                       fd: RegistrationFormData)(implicit hc: HeaderCarrier): WebMonad[Result] = {
 
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
     val soleTrader = if (hasCTEnrolment) Nil else Seq("soleTrader")
@@ -78,20 +100,19 @@ class RegistrationController(val messagesApi: MessagesApi,
       imports        <- askOption(litreagePair.nonEmpty, "import")
       noUkActivity   =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
-      shouldNotReg   =  noUkActivity && smallProducerWithNoCopacker
       noReg          =  uniform.fragments.registration_not_required()(request, implicitly, implicitly)
-      _              <- if (shouldNotReg) {
+      _              <- if (noUkActivity && smallProducerWithNoCopacker) {
                           end("do-not-register",noReg)
                         } else (()).pure[WebMonad]
-      regDate        <- ask(startDate
-                              .verifying("error.start-date.in-future", !_.isAfter(LocalDate.now))
-                              .verifying("error.start-date.before-tax-start", !_.isBefore(LocalDate.of(2018, 4, 6))), "start-date")
-      packSites       <- askPackSites(List.empty[Site], (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty)
+      regDate        <- askRegDate
+      packSites      <- askPackSites(
+                          List.empty[Site]) emptyUnless
+                          (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
       isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
-      warehouses      <- manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly)) emptyUnless !isVoluntary
+      warehouses      <- askWarehouses emptyUnless !isVoluntary
       contactDetails  <- ask(contactDetailsMapping, "contact-details")
       activity        =  Activity(
-                           longTupToLitreage(packageOwn. flatten.getOrElse((0,0))),
+                           longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
                            longTupToLitreage(imports.getOrElse((0,0))),
                            longTupToLitreage(copacks.getOrElse((0,0))),
                            useCopacker.collect { case true => Litreage(1, 1) },
