@@ -14,9 +14,7 @@
  * limitations under the License.
  *@
 
-@import sdil.config.AppConfig
-
-@(email: String)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(email: String)(implicit messages: Messages)
 
     <p>@Messages("sdil.complete.what-happens.p1", email)</p>
     <p>@Messages("sdil.complete.what-happens.p2")</p>

@@ -39,10 +39,10 @@
 )(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 
-    @declaration_table("declaration","your-business") {
-        @declaration_details_table_row("declaration", "utr", None, formData.utr, '_colspan -> "2")
+    @declaration_table("registerDeclaration","your-business") {
+        @declaration_details_table_row("registerDeclaration", "utr", None, formData.utr, '_colspan -> "2")
 
-        @declaration_details_table_row("declaration", "business-name", None,
+        @declaration_details_table_row("registerDeclaration", "business-name", None,
             formData.rosmData.organisationName, '_colspan -> "2")
 
         <tr>
@@ -56,17 +56,17 @@
         </tr>
     }
 
-    @declaration_table("declaration","liable-activity") {
+    @declaration_table("registerDeclaration","liable-activity") {
         @declaration_details_table_row(
-            "declaration",
+            "registerDeclaration",
             "producer",
             Some(sdil.controllers.routes.RegistrationController.index("producer")),
-            Messages(s"sdil.declaration.${producer.getOrElse(false)}"),
+            Messages(s"sdil.registerDeclaration.${producer.getOrElse(false)}"),
             '_colspan -> "2"
         )
         @if(producer.nonEmpty) {
             @declaration_details_table_row(
-                "declaration",
+                "registerDeclaration",
                 "isLargeProducer",
                 Some(sdil.controllers.routes.RegistrationController.index("producer")),
                 if(producer.getOrElse(false)) {
@@ -79,17 +79,17 @@
         }
 
         @if(useCopacker.nonEmpty) {
-            @declaration_details_table_row("declaration", "third-party",
+            @declaration_details_table_row("registerDeclaration", "third-party",
                 Some(sdil.controllers.routes.RegistrationController.index("copacked")),
-                Messages(s"sdil.declaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
+                Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
         }
 
         @if(packageOwn.nonEmpty) {
             @declaration_details_table_row(
-                "declaration",
+                "registerDeclaration",
                 "packaging",
                 Some(sdil.controllers.routes.RegistrationController.index("package-own-uk")),
-                Messages(s"sdil.declaration.${packageOwn.fold(false)(_ => true)}"),
+                Messages(s"sdil.registerDeclaration.${packageOwn.fold(false)(_ => true)}"),
                 '_colspan -> "2"
             )
 
@@ -105,10 +105,10 @@
 
         @if(copacks.nonEmpty) {
             @declaration_details_table_row(
-                "declaration",
+                "registerDeclaration",
                 "customers",
                 Some(sdil.controllers.routes.RegistrationController.index("package-copack")),
-                Messages(s"sdil.declaration.${copacks.fold(false)(_ => true)}"),
+                Messages(s"sdil.registerDeclaration.${copacks.fold(false)(_ => true)}"),
                 '_colspan -> "2"
             )
 
@@ -122,9 +122,9 @@
         }
 
         @if(imports.nonEmpty) {
-            @declaration_details_table_row("declaration", "import",
+            @declaration_details_table_row("registerDeclaration", "import",
                 Some(sdil.controllers.routes.RegistrationController.index("import")),
-                Messages(s"sdil.declaration.${imports.fold(false)(_ => true)}"), '_colspan -> "2")
+                Messages(s"sdil.registerDeclaration.${imports.fold(false)(_ => true)}"), '_colspan -> "2")
 
             @if(imports.fold(false)(_ => true)) {
                 @declaration_details_litres(
@@ -137,18 +137,18 @@
     }
 
     @if(!isVoluntary) {
-        @declaration_table("declaration", "liable-date") {
-                @declaration_details_table_row("declaration", "date",
+        @declaration_table("registerDeclaration", "liable-date") {
+                @declaration_details_table_row("registerDeclaration", "date",
                     Some(sdil.controllers.routes.RegistrationController.index("regDate")),
                     startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
         }
     }
 
   @if(warehouses.nonEmpty || packagingSites.nonEmpty) {
-        @declaration_table("declaration", "registered-sites") {
+        @declaration_table("registerDeclaration", "registered-sites") {
             @if(packagingSites.nonEmpty) {
                 @declaration_details_table_row(
-                    "declaration",
+                    "registerDeclaration",
                     "production-sites",
                     Some(sdil.controllers.routes.RegistrationController.index("packSitesActivity")),
                     packagingSites.size.toString
@@ -156,7 +156,7 @@
             }
             @if(warehouses.nonEmpty) {
                 @declaration_details_table_row(
-                    "declaration",
+                    "registerDeclaration",
                     "warehouses",
                     Some(sdil.controllers.routes.RegistrationController.index("warehousesActivity")),
                     warehouses.size.toString
@@ -165,14 +165,14 @@
         }
     }
 
-    @declaration_table("declaration", "contact-details") {
-            @declaration_details_table_row("declaration", "name",
+    @declaration_table("registerDeclaration", "contact-details") {
+            @declaration_details_table_row("registerDeclaration", "name",
                 Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.fullName)
-            @declaration_details_table_row("declaration", "position",
+            @declaration_details_table_row("registerDeclaration", "position",
                 Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.position)
-            @declaration_details_table_row("declaration", "phone-number",
+            @declaration_details_table_row("registerDeclaration", "phone-number",
                 Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.phoneNumber)
-            @declaration_details_table_row("declaration", "email",
+            @declaration_details_table_row("registerDeclaration", "email",
                 Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.email)
     }
 

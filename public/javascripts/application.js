@@ -99,4 +99,21 @@ window.onload = function () {
         }
     }
 
+
+    $('form[action="organisation-type"] button').wrap("<span id='org-type-click-wrapper'></span>");
+    var radioValue = $("input[name='organisation-type']:checked").val();
+    $('form[action="organisation-type"] #org-type-click-wrapper').attr('onclick',"ga('send', 'event', 'orgType', 'selectOrg', '"+radioValue+"');");
+    //
+    // $("#org-type-click-wrapper").click(function(){
+    //
+    //
+    //
+    //     if(radioValue){
+    //
+    //         confirm("Your are a - " + radioValue);
+    //
+    //     }
+    //
+    // });
+
 };

@@ -85,7 +85,7 @@ class RegistrationController(
 
     for {
       orgType        <- askOneOf("organisation-type", (orgTypes ++ soleTrader))
-      noPartners     =  uniform.fragments.partnerships()(request, implicitly, implicitly)
+      noPartners     =  uniform.fragments.partnerships
       _              <- if (orgType === "partnership") {
                           end("partners",noPartners)
                         } else (()).pure[WebMonad]
@@ -135,7 +135,7 @@ class RegistrationController(
                            warehouses,
                            contact
                          )
-      declaration     =  uniform.fragments.declaration(
+      declaration     =  uniform.fragments.registerDeclaration(
                            fd,
                            packLarge,
                            useCopacker,
@@ -148,10 +148,10 @@ class RegistrationController(
                            packSites,
                            contactDetails
                          )(request, implicitly, implicitly)
-      _               <- tell("declaration", declaration)
+      _               <- tell("registerDeclaration", declaration)
       _               <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
       _               <- execute(cache.clear(request.internalId))
-      complete        =  uniform.fragments.registrationComplete(contact.email)(request, implicitly, implicitly)
+      complete        =  uniform.fragments.registrationComplete(contact.email)
       end             <- clear >> journeyEnd("complete", whatHappensNext = complete.some)
     } yield end
   }

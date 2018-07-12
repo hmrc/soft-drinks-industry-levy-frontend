@@ -20,13 +20,12 @@
 
 <p>@Messages("sdil.registration-not-required.p1")</p>
 
+
+
 <ul class="list-bullet">
-    <li>@Messages("sdil.registration-not-required.li1")</li>
-    <li>@Messages("sdil.registration-not-required.li2")</li>
-    <li>@Messages("sdil.registration-not-required.li3")</li>
-    <li>@Messages("sdil.registration-not-required.li4")</li>
-    <li>@Messages("sdil.registration-not-required.li5")</li>
-    <li>@Messages("sdil.registration-not-required.li6")</li>
+    @for(msg <- Messages.many("sdil.registration-not-required.li")) {
+        <li>@msg</li>
+    }
 </ul>
 
 <p>@Html(Messages("sdil.registration-not-required.p3", sdil.controllers.routes.RegistrationController.index("packLarge")))</p>

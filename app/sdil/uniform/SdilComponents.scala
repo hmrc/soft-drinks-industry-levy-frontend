@@ -163,31 +163,26 @@ object SdilComponents {
     "not"
   )
 
-  def orgTypes(hasCTEnrolment: Boolean): List[String] = {
-    val soleTrader: Seq[String] = if (hasCTEnrolment) Nil else Seq("soleTrader")
-    orgTypes ++ soleTrader
-  }
-
   lazy val warehouseSiteMapping: Mapping[Site] = mapping(
     "address" -> ukAddressMapping,
     "tradingName" -> optional(tradingNameMapping)
-  ) { (a, b) => Site.apply(a, none, b, none) }(Site.unapply(_).map { case (address, refOpt, tradingName, _) =>
+  ) { (a, b) => Site.apply(a, none, b, none) }(Site.unapply(_).map { case (address, _, tradingName, _) =>
     (address, tradingName)
   })
 
   lazy val tradingNameMapping: Mapping[String] = {
-    text.transform[String](_.trim, s => s).verifying(optionalTradingNameConstraint)
+    text.transform[String](_.trim, identity).verifying(optionalTradingNameConstraint)
   }
 
   private def optionalTradingNameConstraint: Constraint[String] = Constraint {
     case s if s.length > 160 => Invalid("error.tradingName.length")
-    case s if !s.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid("error.tradingName.invalid")
+    case s if !s.matches("""^[a-zA-Z0-9 '.&\\/]$""") => Invalid("error.tradingName.invalid")
     case _ => Valid
   }
 
   lazy val packagingSiteMapping: Mapping[Site] = mapping(
     "address" -> ukAddressMapping
-  ) { a => Site.apply(a, none, none, none) }(Site.unapply(_).map { case (address, refOpt, _, _) => address })
+  ) { a => Site.apply(a, none, none, none) }(Site.unapply(_).map(x => x._1))
 
   private val ukAddressMapping: Mapping[UkAddress] =
     addressMapping.transform(UkAddress.fromAddress, Address.fromUkAddress)
@@ -214,17 +209,21 @@ object SdilComponents {
     case _ => Valid
   }
 
-  lazy val postcode: Mapping[String] = text.transform[String](_.toUpperCase.trim, s => s).verifying(Constraint { x: String =>
-    x match {
-      case "" => Invalid("error.postcode.empty")
-      case pc if !pc.matches(specialRegex) => Invalid("error.postcode.special")
-      case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
-      case _ => Valid
-    }
-  })
+  private def postcode: Mapping[String] = {
+    val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$"
+    val specialRegex = """^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"""
 
-  private lazy val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$"
-  private lazy val specialRegex = """^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"""
+    text.transform[String](_.toUpperCase.trim, identity)
+      .verifying(Constraint { x: String =>
+        x match {
+          case "" => Invalid("error.postcode.empty")
+          case pc if !pc.matches(specialRegex) => Invalid("error.postcode.special")
+          case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
+          case _ => Valid
+        }
+      }
+      )
+  }
 
   def longTupToLitreage(in: (Long,Long)): Option[Litreage] =
     if (in.isEmpty) None else Litreage(in._1, in._2).some
