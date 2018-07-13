@@ -158,7 +158,11 @@ class ReturnsController (
         f"£$total%,.2f"
       }
 
-    val getTotal = messages("return-sent.subheading", formatMoney(total), period.deadline.format("dd MMMM yyyy"))
+    val getTotal =
+      if (total == 0)
+        messages("return-sent.subheading.nil-return")
+      else
+        messages("return-sent.subheading", formatMoney(total), period.deadline.format("dd MMMM yyyy"))
 
     val returnDate = messages(
       "return-sent.returnsDoneMessage",
@@ -170,21 +174,23 @@ class ReturnsController (
       now.format("dd MMMM yyyy")
     )
 
-    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(period, sdilRef)(messages).some
+    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(period, sdilRef, total)(messages).some
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
 
   private def askReturn(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = (
     askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites"),
     askEmptyOption(litreagePair, "packaged-as-a-contract-packer"),
-    manyT("small-producer-details", {ask(smallProducer, _)}, min = 1) emptyUnless ask(bool, "exemptions-for-small-producers"),
+    manyT("small-producer-details", {ask(smallProducer, _)}, min = 1)
+      emptyUnless ask(bool, "exemptions-for-small-producers"),
     askEmptyOption(litreagePair, "brought-into-uk"),
     askEmptyOption(litreagePair, "brought-into-uk-from-small-producers"),
     askEmptyOption(litreagePair, "claim-credits-for-exports"),
     askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
   ).mapN(SdilReturn.apply)
 
-  private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
+  private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
+                     (implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn
     broughtForward <- BigDecimal("0").pure[WebMonad]
     _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward)
