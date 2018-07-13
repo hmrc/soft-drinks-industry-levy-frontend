@@ -649,7 +649,6 @@ sdil.time-out.title=For your security, we signed you out
 sdil.time-out.p1=We have saved your answers
 sdil.variation.anotherChange=If you need to make another change,
 sdil.variation.anotherChangeLink=go back and start again
-sdil.service-page.variations.submit.change=Make another change
 
 heading.deregister.reason=Why are you deregistering from the Soft Drinks Industry Levy? 
 deregister.reason.label=Reason for deregistering
