@@ -14,21 +14,26 @@
  * limitations under the License.
  *@
 
- @import sdil.models.ReturnPeriod
+@import sdil.models.ReturnPeriod
 
-@(paymentDate: ReturnPeriod, sdilRef: String)(implicit messages: Messages)
+@(paymentDate: ReturnPeriod, sdilRef: String, total: BigDecimal)(implicit messages: Messages)
 
-<p>@Messages("return-sent.paymentsBlurb.payby", paymentDate.deadline.format("dd MMMM yyyy"))</p>
+@if(total > 0) {
+    <p>@Messages("return-sent.paymentsBlurb.payby", paymentDate.deadline.format("dd MMMM yyyy"))</p>
 
-<p>@Messages("return-sent.paymentsBlurb.payusing")</p>
+    <p>@Messages("return-sent.paymentsBlurb.payusing")</p>
 
-<ul class="list list-bullet">
+    <ul class="list list-bullet">
     @for(line <- Messages.many("return-sent.paymentsBlurb.payDetails", sdilRef)) {
-      <li>@line</li>
+        <li>@line</li>
     }
-</ul>
+    </ul>
 
-<p>@Messages("return-sent.paymentsBlurb.chapsDelay")</p>
+    <p>@Messages("return-sent.paymentsBlurb.chapsDelay")</p>
+}
+@if(total == 0) {
+    <p>@Messages("return-sent.paymentsBlurb.noReturn")</p>
+}
 
-<p>@Messages("return-sent.paymentsBlurb.nextReturn", paymentDate.next.start.format("MMMM"), paymentDate.next.end.format("MMMM yyyy") , paymentDate.next.deadline.format("dd MMMM yyyy"))</p>
+<p>@Messages("return-sent.paymentsBlurb.nextReturn", paymentDate.next.start.format("MMMM"), paymentDate.next.end.format("MMMM yyyy"), paymentDate.next.deadline.format("dd MMMM yyyy"))</p>
 
