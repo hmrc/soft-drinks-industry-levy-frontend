@@ -182,7 +182,7 @@ object SdilComponents {
 
   private def optionalTradingNameConstraint: Constraint[String] = Constraint {
     case s if s.length > 160 => Invalid("error.tradingName.length")
-    case s if !s.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid("error.tradingName.invalid")
+    case s if !s.matches("""^[a-zA-Z0-9 '.&\\/]*$""") => Invalid("error.tradingName.invalid")
     case _ => Valid
   }
 
