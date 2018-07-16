@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
 import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold.webmonad._
 import play.api.i18n.{Messages, MessagesApi}
@@ -54,7 +55,7 @@ class RegistrationController(
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)
     cache.get(request.internalId) flatMap {
-      case Some(fd) => runInner(request)(program(request, fd))(id)(persistence.dataGet,persistence.dataPut)
+      case Some(fd) => runInner(request)(program(fd)(request, implicitly))(id)(persistence.dataGet,persistence.dataPut)
       case None => NotFound("").pure[Future]
     }
   }
@@ -76,9 +77,8 @@ class RegistrationController(
     manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly))
   }
 
-  private def program(
-                       request: AuthorisedRequest[AnyContent],
-                       fd: RegistrationFormData)(implicit hc: HeaderCarrier): WebMonad[Result] = {
+  private def program(fd: RegistrationFormData)
+                     (implicit request: AuthorisedRequest[AnyContent], hc: HeaderCarrier): WebMonad[Result] = {
 
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
     val soleTrader = if (hasCTEnrolment) Nil else Seq("soleTrader")
@@ -90,9 +90,9 @@ class RegistrationController(
       _              <- if (orgType === "partnership") {
                           end("partners",noPartners)
                         } else (()).pure[WebMonad]
-      packLarge       <- askOneOf("producer", producerTypes) map {
-                          case "large" => Some(true)
-                          case "small" => Some(false)
+      packLarge       <- askEnum("producer", ProducerType) map {
+                          case Large => Some(true)
+                          case Small => Some(false)
                           case _ => None
                         }
       useCopacker    <- ask(bool,"copacked") when packLarge.contains(false)

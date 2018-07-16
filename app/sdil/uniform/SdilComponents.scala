@@ -19,12 +19,12 @@ package ltbs.play.scaffold
 import java.time.LocalDate
 
 import cats.implicits._
+import enumeratum._
 import play.api.data.Forms._
 import play.api.data._
 import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
 import play.api.i18n.Messages
-import play.api.libs.functional.syntax._
-import play.api.libs.functional.syntax.unlift
+import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json._
 import play.twirl.api.Html
 import sdil.controllers.ContactDetailsForm.{combine, required}
@@ -157,11 +157,13 @@ object SdilComponents {
     "unincorporatedBody"
   )
 
-  val producerTypes: List[String] = List(
-    "large",
-    "small",
-    "not"
-  )
+  sealed trait ProducerType extends EnumEntry
+  object ProducerType extends Enum[ProducerType] {
+    val values = findValues
+    case object Large extends ProducerType
+    case object Small extends ProducerType
+    case object Not extends ProducerType
+  }
 
   lazy val warehouseSiteMapping: Mapping[Site] = mapping(
     "address" -> ukAddressMapping,
