@@ -150,12 +150,16 @@ object SdilComponents {
     .verifying("error.number", v => v.isEmpty || Try(v.toInt).isSuccess)
     .transform[Int](_.toInt, _.toString)
 
-  val orgTypes: List[String] = List(
-    "partnership",
-    "limitedCompany",
-    "limitedLiabilityPartnership",
-    "unincorporatedBody"
-  )
+  sealed trait OrganisationType extends EnumEntry
+  object OrganisationType extends Enum[OrganisationType] {
+    val values = findValues
+    // TODO can uppercase these when we refactor
+    case object limitedCompany extends OrganisationType
+    case object limitedLiabilityPartnership extends OrganisationType
+    case object partnership extends OrganisationType
+    case object soleTrader extends OrganisationType
+    case object unincorporatedBody extends OrganisationType
+  }
 
   sealed trait ProducerType extends EnumEntry
   object ProducerType extends Enum[ProducerType] {

@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents.OrganisationType.{Partnership, SoleTrader}
 import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
 import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold.webmonad._
@@ -82,15 +83,19 @@ class RegistrationController(
 
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
     val soleTrader = if (hasCTEnrolment) Nil else Seq("soleTrader")
-    val organisationTypes = (orgTypes ++ soleTrader).sortBy(x => Messages("organisation-type.option."+x.toLowerCase))
+    val organisationTypes = OrganisationType.values.toList
+      .filterNot(_== SoleTrader && hasCTEnrolment)
+      .sortBy(x => Messages("organisation-type.option." + x.toString.toLowerCase))
+
+
 
     for {
       orgType        <- askOneOf("organisation-type", organisationTypes)
       noPartners     =  uniform.fragments.partnerships
-      _              <- if (orgType === "partnership") {
+      _              <- if (orgType == Partnership) {
                           end("partners",noPartners)
                         } else (()).pure[WebMonad]
-      packLarge       <- askEnum("producer", ProducerType) map {
+      packLarge       <- askOneOf("producer", ProducerType.values.toList) map {
                           case Large => Some(true)
                           case Small => Some(false)
                           case _ => None
@@ -128,7 +133,7 @@ class RegistrationController(
       subscription    =  Subscription(
                            fd.utr,
                            fd.rosmData.organisationName,
-                           orgType,
+                           orgType.toString,
                            UkAddress.fromAddress(fd.rosmData.address),
                            activity,
                            regDate,
