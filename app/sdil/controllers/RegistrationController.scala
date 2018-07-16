@@ -22,7 +22,7 @@ import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold.webmonad._
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
@@ -82,9 +82,10 @@ class RegistrationController(
 
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
     val soleTrader = if (hasCTEnrolment) Nil else Seq("soleTrader")
+    val organisationTypes = (orgTypes ++ soleTrader).sortBy(x => Messages("organisation-type.option."+x.toLowerCase))
 
     for {
-      orgType        <- askOneOf("organisation-type", (orgTypes ++ soleTrader))
+      orgType        <- askOneOf("organisation-type", organisationTypes)
       noPartners     =  uniform.fragments.partnerships
       _              <- if (orgType === "partnership") {
                           end("partners",noPartners)
