@@ -293,6 +293,48 @@ sdil.declaration.email=Email
 sdil.declaration.confirmation=By continuing you’re confirming that the details provided are true and complete.
 sdil.declaration.continue=Confirm and send
 
+# TODO these can be deleted when we remove old style registration
+sdil.registerDeclaration.heading=Check your answers
+sdil.registerDeclaration.change-link=Change
+sdil.registerDeclaration.true=Yes
+sdil.registerDeclaration.false=No
+
+sdil.registerDeclaration.your-business=Business details
+sdil.registerDeclaration.utr=Unique Taxpayer Reference (UTR)
+sdil.registerDeclaration.business-name=Business name
+sdil.registerDeclaration.address=Business address
+sdil.registerDeclaration.uk=UK
+sdil.registerDeclaration.producer=Own brand packaged in past 12 months?
+sdil.registerDeclaration.isLargeProducer=How many litres worldwide?
+sdil.registerDeclaration.largeProducer=1 million or more
+sdil.registerDeclaration.smallProducer=Less than 1 million
+sdil.registerDeclaration.customers=Package for customers at your own sites?
+sdil.registerDeclaration.liable-activity=Business activity
+sdil.registerDeclaration.low-band=Low band
+sdil.registerDeclaration.high-band=High band
+sdil.registerDeclaration.packaging=Package your own brand at your own sites?
+sdil.registerDeclaration.package-own=Litres in next 12 months
+sdil.registerDeclaration.customerVol=Litres in next 12 months
+sdil.registerDeclaration.small-producers=Annual litres for small producers
+sdil.registerDeclaration.third-party=Use third party packagers?
+sdil.registerDeclaration.third-party-produced=Annual litres packaged by third parties
+sdil.registerDeclaration.import=Bring liable drinks into the UK?
+sdil.registerDeclaration.import-volume=Litres in next 12 months
+sdil.registerDeclaration.liable-date=Soft Drinks Industry Levy liability date
+sdil.registerDeclaration.date=Date liable from
+sdil.registerDeclaration.registered-sites=Registered sites
+sdil.registerDeclaration.production-sites=Packaging sites
+sdil.registerDeclaration.warehouses=Warehouses
+sdil.registerDeclaration.contact-details=Contact details
+sdil.registerDeclaration.name=Name
+sdil.registerDeclaration.position=Job title
+sdil.registerDeclaration.phone-number=Telephone
+sdil.registerDeclaration.email=Email
+sdil.registerDeclaration.confirmation=By continuing you’re confirming that the details provided are true and complete.
+sdil.registerDeclaration.continue=Confirm and send
+
+
+
 #visually hidden change links
 sdil.hidden.declaration.producer=Change your own brand packaged in the past 12 months
 sdil.hidden.declaration.isLargeProducer=Change amount of litres of your own brand packaged worldwide

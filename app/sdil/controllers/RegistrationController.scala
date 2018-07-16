@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents.OrganisationType.{Partnership, SoleTrader}
+import ltbs.play.scaffold.SdilComponents.OrganisationType.{partnership, soleTrader}
 import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
 import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold.webmonad._
@@ -82,9 +82,8 @@ class RegistrationController(
                      (implicit request: AuthorisedRequest[AnyContent], hc: HeaderCarrier): WebMonad[Result] = {
 
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
-    val soleTrader = if (hasCTEnrolment) Nil else Seq("soleTrader")
     val organisationTypes = OrganisationType.values.toList
-      .filterNot(_== SoleTrader && hasCTEnrolment)
+      .filterNot(_== soleTrader && hasCTEnrolment)
       .sortBy(x => Messages("organisation-type.option." + x.toString.toLowerCase))
 
 
@@ -92,7 +91,7 @@ class RegistrationController(
     for {
       orgType        <- askOneOf("organisation-type", organisationTypes)
       noPartners     =  uniform.fragments.partnerships
-      _              <- if (orgType == Partnership) {
+      _              <- if (orgType == partnership) {
                           end("partners",noPartners)
                         } else (()).pure[WebMonad]
       packLarge       <- askOneOf("producer", ProducerType.values.toList) map {
