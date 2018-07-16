@@ -80,11 +80,13 @@
 	      }
             }
 
+        @if(config.balanceEnabled) {
         <div>
             <h2 class="heading-medium">@Messages("account.balance")</h2>
             <p>@printbalance("account.balance.amount", balance) @printbalance("account.balance.pay", balance)</p>
             <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
         </div>
+        }
 
             @declaration_table("service-page", "business-details.title") {
                 @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")

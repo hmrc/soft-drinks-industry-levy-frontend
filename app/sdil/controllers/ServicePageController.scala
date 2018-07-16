@@ -28,6 +28,7 @@ import views.html.softdrinksindustrylevy._
 import cats.implicits._
 import cats.data.OptionT
 import scala.concurrent._
+import java.time.LocalDate
 
 class ServicePageController(val messagesApi: MessagesApi,
                             sdilConnector: SoftDrinksIndustryLevyConnector,
@@ -47,7 +48,9 @@ class ServicePageController(val messagesApi: MessagesApi,
                          OptionT(sdilConnector.returns.pending(subscription.utr).map(_.some))
                        else
                          Nil.pure[FutOpt]
-      balance       <- OptionT(sdilConnector.balance(sdilRef).map(_.some))
+      balance       <- if (config.balanceEnabled)
+                         OptionT(sdilConnector.balance(sdilRef).map(_.some))
+                       else BigDecimal(0).pure[FutOpt]
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
       Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, balance))
@@ -57,6 +60,9 @@ class ServicePageController(val messagesApi: MessagesApi,
   }
 
   def balanceHistory: Action[AnyContent] = registeredAction.async { implicit request =>
+
+    if(!config.balanceEnabled)
+      throw new NotImplementedError("Balance page is not enabled")
 
     val sdilRef = request.sdilEnrolment.value
 
