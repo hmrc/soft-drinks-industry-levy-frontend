@@ -74,6 +74,7 @@
             <input class="button" value="@Messages("sdil.common.continue")" type="submit">
         }
     } else {
-        @Html(Messages("sdil.already.received.for.utr.info", sdil.controllers.routes.IdentifyController.show()))
+        <p>@Messages("sdil.already.received.for.utr.info.p1")</p>
+        <p>@Html(Messages("sdil.already.received.for.utr.info.p2", sdil.controllers.routes.AuthenticationController.signOutNoFeedback()))</p>
     }
 }
