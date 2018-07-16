@@ -14,18 +14,9 @@
  * limitations under the License.
  *@
 
-@import helper.{inputRadioGroup => _, _}
-@import play.api.Configuration
-@import views.html.softdrinksindustrylevy.helpers._
-@import sdil.config.AppConfig
-@import views.html.helper.options
-@import views.html.uniform.helpers._
+ 
+@()(implicit messages: Messages)
 
-@(key: String, form: Form[String], possibleValues: List[String])(implicit messages: Messages)
-@inputRadioGroup(
-    form(key),
-    possibleValues.map{v => (v, Messages(key + ".option." + v.toLowerCase))},
-    '_labelClass -> "block-label less-padding",
-    '_labelAfter -> true,
-    '_groupClass -> "form-field-group"
-)
+<p>@Messages("variationDone.what-happens-next")</p>
+
+<p>@Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))</p>

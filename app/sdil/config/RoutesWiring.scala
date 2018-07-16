@@ -24,7 +24,7 @@ import play.api.routing.Router
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.connectors._
 import sdil.controllers.test.TestingController
-import sdil.controllers.{VariationsController => UniformVariationsController, _}
+import sdil.controllers.{VariationsController, RegistrationController => UniformRegistrationController, _}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
@@ -62,8 +62,9 @@ trait RoutesWiring extends CommonWiring {
   lazy val testController: TestingController = wire[TestingController]
   lazy val producerController: ProducerController = wire[ProducerController]
 
-  lazy val uniformVariationsController: UniformVariationsController = wire[UniformVariationsController]
+  lazy val VariationsController: VariationsController = wire[VariationsController]
   lazy val returnsController: ReturnsController = wire[ReturnsController]
+  lazy val uniformRegistrationsController: UniformRegistrationController = wire[UniformRegistrationController]
 
   private lazy val appRoutes: app.Routes = wire[app.Routes]
   private lazy val healthRoutes = new health.Routes()

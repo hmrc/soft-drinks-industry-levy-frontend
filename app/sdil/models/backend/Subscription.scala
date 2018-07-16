@@ -31,6 +31,8 @@ case class Subscription(utr: String,
                         warehouseSites: Seq[Site],
                         contact: Contact)
 
+
+
 object Subscription {
   implicit val format: Format[Subscription] = Json.format[Subscription]
 
@@ -66,6 +68,10 @@ object Subscription {
         )
       )
     }
+  }
+
+  def desify(subscription: Subscription): Subscription = {
+    subscription.copy(orgType = toEnum(subscription.orgType))
   }
 
   private def toEnum: String => String = {

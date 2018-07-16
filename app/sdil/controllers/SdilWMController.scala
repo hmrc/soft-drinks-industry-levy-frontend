@@ -39,13 +39,14 @@ import sdil.models._
 import sdil.models.backend._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
-
+import ltbs.play.scaffold.SdilComponents._
 import scala.concurrent._
 import scala.util.Try
 import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
 import scala.util.Try
 import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents.packagingSiteForm
 
 trait SdilWMController extends WebMonadController
     with FrontendController
@@ -64,7 +65,6 @@ trait SdilWMController extends WebMonadController
     possValues: List[A],
     default: Option[A] = None
   ): WebMonad[A] = {
-
     val valueMap: Map[String,A] =
       possValues.map{a => (a.toString, a)}.toMap
     formPage(id)(
@@ -72,8 +72,7 @@ trait SdilWMController extends WebMonadController
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      uniform.fragments.radiolist(id, b, valueMap.keys.toList)
-      val inner = uniform.fragments.radiolist(id, b, valueMap.keys.toList)
+      val inner = uniform.fragments.radiolist(id, b, possValues.map(_.toString))
       uniform.ask(id, b, inner, path)
     }.imap(valueMap(_))(_.toString)
   }
@@ -264,7 +263,6 @@ trait SdilWMController extends WebMonadController
       }
     }
 
-
   protected def manyT[A](
     id: String,
     wm: String => WebMonad[A],
@@ -295,4 +293,11 @@ trait SdilWMController extends WebMonadController
     }(wm)
   }
 
+  def askPackSites(existingSites: List[Site]): WebMonad[List[Site]] =
+    manyT("packSitesActivity",
+      ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
+      default = existingSites,
+      min = 1
+    )
 }
+

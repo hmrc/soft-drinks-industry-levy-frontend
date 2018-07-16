@@ -18,19 +18,17 @@ package sdil.controllers
 
 import java.time.LocalDate
 
-import cats.data.EitherT
 import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
 import ltbs.play.scaffold.webmonad._
 import play.api.i18n.MessagesApi
-import play.api.libs.json.{JsValue, _}
-import play.api.mvc.{Action, _}
+import play.api.mvc.{Action, AnyContent, Result}
 import sdil.actions.RegisteredAction
-import sdil.config._
+import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.controllers.StartDateController._
+import sdil.controllers.ContactDetailsForm.contactDetailsMapping
 import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend.Site
@@ -38,10 +36,9 @@ import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
-import ContactDetailsForm.contactDetailsMapping
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -115,16 +112,6 @@ class VariationsController(
     data: VariationData
   ): WebMonad[VariationData] = {
 
-    // workaround for intermediate data structures
-    def longTupToLitreage(in: (Long,Long)): Option[Litreage] =
-      if (in.isEmpty) None else Litreage(in._1, in._2).some
-
-    def askPackSites(existingSites: List[Site], packs: Boolean): WebMonad[List[Site]] =
-        manyT("packSitesActivity",
-          ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
-          default = existingSites,
-          min = 1
-        ) emptyUnless (packs)
 
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
@@ -134,14 +121,14 @@ class VariationsController(
       packageOwn                  <- ask(bool, "packOpt", data.updatedProductionSites.nonEmpty) when packLarge.isDefined
       packQty                     <- ask(litres, "packQty") emptyUnless packageOwn.contains(true)
       copacks                     <- ask(litres, "copackQty") emptyUnless ask(bool, "copacker", data.copackForOthers)
-      imports <- ask(litres, "importQty") emptyUnless ask(bool, "importer", data.imports)      
+      imports                     <- ask(litres, "importQty") emptyUnless ask(bool, "importer", data.imports)
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
       variation                   <- if (shouldDereg)
                                        tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
                                      else for {
-                                       packSites       <- askPackSites(data.updatedProductionSites.toList, (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty)
+                                       packSites       <- askPackSites(data.updatedProductionSites.toList) emptyUnless (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
                                        isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
                                        warehouses      <- manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
                                      } yield data.copy (
@@ -198,7 +185,9 @@ class VariationsController(
     exit <- variation match {
       case a if a.volToMan => journeyEnd("volToMan")
       case b if b.manToVol => journeyEnd("manToVol")
-      case _ => journeyEnd("variationDone")
+      case _ => {
+        journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+      }
     }
   } yield {
     exit
