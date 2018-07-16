@@ -75,6 +75,9 @@
         }
     } else {
         <p>@Messages("sdil.already.received.for.utr.info.p1")</p>
-        <p>@Html(Messages("sdil.already.received.for.utr.info.p2", sdil.controllers.routes.AuthenticationController.signOutNoFeedback()))</p>
+        <p>
+            @Html(Messages("sdil.already.received.for.utr.info.p2",
+                sdil.controllers.routes.AuthenticationController.signOutNoFeedback()))
+        </p>
     }
 }
