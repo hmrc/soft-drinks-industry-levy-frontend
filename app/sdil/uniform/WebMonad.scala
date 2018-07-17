@@ -166,6 +166,9 @@ package webmonad {
   case class Delete(i: Int) extends Control {
     override def toString = s"Delete.$i"
   }
+  case class Edit(i: Int) extends Control {
+    override def toString = s"Edit.$i"
+  }
 
   trait WebMonadController extends Controller with i18n.I18nSupport {
 
@@ -196,17 +199,21 @@ package webmonad {
     }
 
     def many[A](
-      id: String,
-      min: Int = 0,
-      max: Int = 1000,
-      default: List[A] = List.empty[A],
-      deleteConfirmation: A => WebMonad[Boolean] = {_: A => true.pure[WebMonad]}
+                 id: String,
+                 min: Int = 0,
+                 max: Int = 1000,
+                 default: List[A] = List.empty[A],
+                 deleteConfirmation: A => WebMonad[Boolean] = {_: A => true.pure[WebMonad]},
+                 itemEdit: Option[A => WebMonad[A]] = None
     )(listingPage: (String, Int, Int, List[A]) => WebMonad[Control])
       (wm: String => WebMonad[A])
       (implicit format: Format[A]): WebMonad[List[A]] =
     {
       val innerId = s"add-$id"
       val innerPage: WebMonad[A] = wm(innerId)
+
+      val editId = s"edit-$id"
+      val editPage: WebMonad[A] = wm(editId)
 
       val dataKey = s"${id}_data"
       val updateProgram: WebMonad[List[A]] = for {
@@ -230,10 +237,23 @@ package webmonad {
         throw new IllegalStateException("Redirect failing for deletion!")
       }
 
+      def editProgram(index: Int): WebMonad[List[A]] = for {
+        allItems <- read[List[A]](dataKey).map{_.getOrElse(default)}
+        addItem <- itemEdit.get(allItems(index)) // TODO fixme
+        _ <- update[List[A]](dataKey) { x => {
+          val all = x.getOrElse(default)
+          all.take(index) ++ List(addItem) ++ all.drop(index + 1) // TODO check for neater way
+        }.some }
+
+        _ <- clear(editId)
+        i <- many(id, min, max)(listingPage)(wm)
+      } yield i
+
       for {
         items <- read[List[A]](dataKey).map{_.getOrElse(default)}
         res <- listingPage(id,min,max,items).flatMap {
           case Add => updateProgram
+          case Edit(index) => editProgram(index)
           case Done => read[List[A]](dataKey).map {
             _.getOrElse(default)
           }: WebMonad[List[A]]
@@ -300,7 +320,7 @@ package webmonad {
 
           implicit val request: Request[AnyContent] = r
 
-          val post = request.method.toLowerCase == "post"
+//          val post = request.method.toLowerCase == "post"
           val method = request.method.toLowerCase
           val data = st.get(id);
           {
