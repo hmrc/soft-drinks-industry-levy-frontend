@@ -148,6 +148,11 @@ button[name="checkyouranswers"] {
 .align-right {
     text-align: right;
 }
+
+.align-centre {
+    text-align: center;
+}
+
 .no-minus-wrapping {
     white-space: nowrap;
     text-align: left;

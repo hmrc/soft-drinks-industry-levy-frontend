@@ -49,18 +49,21 @@
                         @item
                     </td>
                     @if( items.length > min) {
-                        <td class="align-right">
+                        <td class="@if(showEdit) {align-centre} else {align-right}">
                             <button name="@key" value="Delete.@id" class="link-button no-shadow">@Messages(Seq(s"$key.delete", "delete"))</button>
-                            @if(showEdit) {
-                                <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "edit"))</button>
-                            }
                         </td>
+                        @if(showEdit) {
+                            <td class="align-right">
+                                <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "edit"))</button>
+                            </td>
+                        }
                     }
                 </tr>
                 }
                 <tr>
                     <td><button name="@key" value="Add" class="link-button no-shadow">@Messages(Seq(s"$key.add", "add"))</button></td>
                     <td />
+                    @if(showEdit) { <td/> }
                 </tr>
         </table>
         </div>

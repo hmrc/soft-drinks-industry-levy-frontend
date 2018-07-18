@@ -611,6 +611,9 @@ packLarge.inner-heading=How many litres worldwide?
 option.packLarge.inner.false=Less than 1 million litres
 option.packLarge.inner.true=1 million litres or more
 
+packSitesActivity.edit=Change
+packSitesActivity.delete=Remove
+
 heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have \
   the rights to manufacture?
 

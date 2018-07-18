@@ -212,7 +212,7 @@ trait SdilWMController extends WebMonadController
     max: Int = 100,
     default: List[A] = List.empty[A]
   )(implicit hs: HtmlShow[A], htmlForm: FormHtml[A], format: Format[A]): WebMonad[List[A]] =
-    manyT[A](id, ask(innerMapping, _), min, max, default, editSingleForm = None, formA = None)
+    manyT[A](id, ask(innerMapping, _), min, max, default)
 
   protected def askBigText(
     id: String,
@@ -284,7 +284,7 @@ trait SdilWMController extends WebMonadController
 
     def edit(q: A): WebMonad[A] = {
       editSingleForm.fold(NotFound: WebMonad[A]) { x =>
-        ask(x._1, s"edit-$id", q)(x._2, implicitly) // TODO fix these gets
+        ask(x._1, s"edit-$id", q)(x._2, implicitly)
       }
     }
 

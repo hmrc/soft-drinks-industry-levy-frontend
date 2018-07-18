@@ -226,40 +226,50 @@ package webmonad {
         i <- many(id, min, max)(listingPage)(wm)
       } yield i
 
+      def allItems: EitherT[WebInner, Result, List[A]] = read[List[A]](dataKey).map{_.getOrElse(default)}
+
+      def replaceItem(index: Int, item: A) = updateItem(index, List(item))
+      def removeItem(index: Int) = updateItem(index, Nil)
+      def updateItem(index: Int, item: List[A]): WebMonad[Unit] =
+        update[List[A]](dataKey) { x =>
+          {
+            val all = x.getOrElse(default)
+            all.take(index) ++ item ++ all.drop(index + 1)
+          }.some
+        }
+
       def deleteProgram(index: Int): WebMonad[List[A]] = for {
-        allItems <- read[List[A]](dataKey).map{_.getOrElse(default)}
-        _ <- update[List[A]](dataKey) { x => {
-               val all = x.getOrElse(default)
-               all.take(index) ++ all.drop(index + 1)
-             }.some } when deleteConfirmation(allItems(index))
+        allItems <- allItems
+        _ <- removeItem(index) when deleteConfirmation(allItems(index))
         _ <- redirect(id)
       } yield {
         throw new IllegalStateException("Redirect failing for deletion!")
       }
 
-      def editProgram(index: Int): WebMonad[List[A]] = for {
-        allItems <- read[List[A]](dataKey).map{_.getOrElse(default)}
-        addItem <- itemEdit.get(allItems(index)) // TODO fixme
-        _ <- update[List[A]](dataKey) { x => {
-          val all = x.getOrElse(default)
-          all.take(index) ++ List(addItem) ++ all.drop(index + 1) // TODO check for neater way
-        }.some }
-
-        _ <- clear(editId)
-        i <- many(id, min, max)(listingPage)(wm)
-      } yield i
+      def editProgram(index: Int): WebMonad[List[A]] = {
+        itemEdit match {
+          case Some(editor) =>
+            for {
+              allItems <- allItems
+              changedItem <- editor(allItems(index))
+              _ <- replaceItem(index, changedItem)
+              _ <- clear(editId)
+              i <- many(id, min, max)(listingPage)(wm)
+            } yield i
+          case _ =>
+            many(id, min, max)(listingPage)(wm)
+        }
+      }
 
       for {
         items <- read[List[A]](dataKey).map{_.getOrElse(default)}
         res <- listingPage(id,min,max,items).flatMap {
           case Add => updateProgram
           case Edit(index) => editProgram(index)
-          case Done => read[List[A]](dataKey).map {
-            _.getOrElse(default)
-          }: WebMonad[List[A]]
+          case Done => allItems
           case Delete(index) => deleteProgram(index)
         }
-      } yield (res)
+      } yield res
 
     }
 
@@ -320,7 +330,6 @@ package webmonad {
 
           implicit val request: Request[AnyContent] = r
 
-//          val post = request.method.toLowerCase == "post"
           val method = request.method.toLowerCase
           val data = st.get(id);
           {

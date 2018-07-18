@@ -75,7 +75,7 @@ class RegistrationController(
   }
 
   private def askWarehouses = {
-    manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly))
+    manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
   }
 
   private def program(fd: RegistrationFormData)
