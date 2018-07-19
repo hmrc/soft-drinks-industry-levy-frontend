@@ -167,6 +167,10 @@ package webmonad {
     override def toString = s"Delete.$i"
   }
 
+  case class Edit(i: Int) extends Control {
+    override def toString = s"Edit.$i"
+  }
+
   trait WebMonadController extends Controller with i18n.I18nSupport {
 
     implicit def ec: ExecutionContext

@@ -26,7 +26,7 @@ case class Subscription(utr: String,
                         orgType: String,
                         address: UkAddress,
                         activity: Activity,
-                        liabilityDate: LocalDate,
+                        liabilityDate: Option[LocalDate],
                         productionSites: Seq[Site],
                         warehouseSites: Seq[Site],
                         contact: Contact)
@@ -57,7 +57,7 @@ object Subscription {
           formData.usesCopacker.collect { case true => Litreage(1, 1) },
           producer.isLarge.contains(true)
         ),
-        liabilityDate = startDate,
+        liabilityDate = Some(startDate),
         productionSites = productionSites,
         warehouseSites = secondaryWarehouses,
         contact = Contact(

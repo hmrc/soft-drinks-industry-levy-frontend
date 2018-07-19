@@ -69,7 +69,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormData
             Redirect(if (!config.uniformRegistrationsEnabled) {
               Journey.nextPage(VerifyPage, updated).show
             } else {
-              routes.RegistrationController.index("orgType")
+              routes.RegistrationController.index("organisation-type")
             }
           )
         }

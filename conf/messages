@@ -313,7 +313,7 @@ sdil.registerDeclaration.liable-activity=Business activity
 sdil.registerDeclaration.low-band=Low band
 sdil.registerDeclaration.high-band=High band
 sdil.registerDeclaration.packaging=Package your own brand at your own sites?
-sdil.registerDeclaration.package-own=Litres in next 12 months
+sdil.registerDeclaration.package-own-uk=Litres in next 12 months
 sdil.registerDeclaration.customerVol=Litres in next 12 months
 sdil.registerDeclaration.small-producers=Annual litres for small producers
 sdil.registerDeclaration.third-party=Use third party packagers?
@@ -926,7 +926,7 @@ returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-
 
 return.file=Submit the return
 
-heading.partners=You can’t register online as a partnership
+heading.partnerships=You can’t register online as a partnership
 heading.organisation-type=Which of these best describes your business?
 organisation-type.option.limitedliabilitypartnership=Limited liability partnership (LLP)
 organisation-type.option.partnership=Partnership
