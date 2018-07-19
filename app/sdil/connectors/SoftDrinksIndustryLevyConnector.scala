@@ -99,6 +99,19 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
       val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
       http.GET[Option[SdilReturn]](uri)
     }
-    
   }
+
+  def balance(
+    sdil: String
+  )(implicit hc: HeaderCarrier): Future[BigDecimal] = {
+    http.GET[BigDecimal](s"$sdilUrl/balance/$sdil")
+  }
+
+  def balanceHistory(
+    sdil: String
+  )(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
+    import FinancialLineItem.formatter
+    http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdil/history")
+  }
+
 }
