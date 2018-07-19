@@ -95,10 +95,10 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
     http.GET[BigDecimal](s"$sdilUrl/balance/$sdil")
   }
 
-  implicit val format = Json.format[FinancialLineItem]
   def balanceHistory(
     sdil: String
   )(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
+    import FinancialLineItem.formatter
     http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdil/history")
   }
 

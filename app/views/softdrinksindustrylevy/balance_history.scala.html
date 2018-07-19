@@ -19,23 +19,22 @@
 @import sdil.config.AppConfig
 @import java.time.format.DateTimeFormatter
 
-@(lineItems: List[(FinancialLineItem, BigDecimal)])(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(lineItems: List[(FinancialLineItem, BigDecimal)], balance: BigDecimal)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("balance.history")) {
 
     <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
 
     <div class="grid-row">
-        <div class="column-two-thirds">
             <fieldset class="">
                 <legend>
                     <h1 class="heading-large">@Messages("balance.history")</h1>
                     <h2 class="heading-medium">
-                        @printbalance("account.balance.amount", lineItems.lastOption.fold(BigDecimal(0))(_._2))
+                        @printbalance("account.balance.amount", balance)
                     </h2>
-                    <p>@printbalance("account.balance.pay", lineItems.lastOption.fold(BigDecimal(0))(_._2))</p>
+                    <p>@printbalance("account.balance.pay", balance)</p>
                 </legend>
-
+                @if(lineItems.nonEmpty) {
                 <div class="form-group">
                     <table>
                         <thead>
@@ -61,7 +60,7 @@
                         </tbody>
                     </table>
                 </div>
+                }
             </fieldset>
-        </div>
     </div>
 }
