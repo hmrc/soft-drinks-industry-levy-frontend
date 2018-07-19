@@ -22,12 +22,9 @@ import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
 
 trait ConfigWiring extends CommonWiring {
-  val httpClient: HttpClient
-
   implicit lazy val appConfig: AppConfig = wire[FrontendAppConfig]
   private lazy val applicationCrypto: ApplicationCryptoDI = wire[ApplicationCryptoDI]
   private implicit lazy val crypto: CompositeSymmetricCrypto = applicationCrypto.JsonCrypto
-  lazy val shortLivedCaching: ShortLivedHttpCaching = wire[SDILShortLivedCaching]
   lazy val cache: RegistrationFormDataCache = wire[RegistrationFormDataCache]
   lazy val errorHandler: FrontendErrorHandler = wire[SDILErrorHandler]
   lazy val keystore: SDILSessionCache = wire[SDILSessionCache]

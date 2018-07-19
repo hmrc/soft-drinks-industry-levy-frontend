@@ -37,7 +37,7 @@ import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents.{litreageForm => _, _}
+import ltbs.play.scaffold.SdilComponents._
 import scala.concurrent._
 import scala.concurrent.duration._
 import play.api.libs.json._
@@ -59,16 +59,6 @@ class ReturnsController (
   //TODO extract to config
   val costLower = BigDecimal("0.18")
   val costHigher = BigDecimal("0.24")
-
-  implicit val litreageForm = new FormHtml[(Long,Long)] {
-    import play.api.data.Forms._
-    import play.api.data._
-    import play.api.i18n.Messages
-
-    def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {
-      uniform.fragments.litreage(key, form, false)(messages)
-    }
-  }
 
   implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
 
@@ -158,7 +148,11 @@ class ReturnsController (
         f"£$total%,.2f"
       }
 
-    val getTotal = messages("return-sent.subheading", formatMoney(total), period.deadline.format("dd MMMM yyyy"))
+    val getTotal =
+      if (total == 0)
+        messages("return-sent.subheading.nil-return")
+      else
+        messages("return-sent.subheading", formatMoney(total), period.deadline.format("dd MMMM yyyy"))
 
     val returnDate = messages(
       "return-sent.returnsDoneMessage",
@@ -170,21 +164,23 @@ class ReturnsController (
       now.format("dd MMMM yyyy")
     )
 
-    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(period, sdilRef)(messages).some
+    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(period, sdilRef, total)(messages).some
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
 
   private def askReturn(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = (
     askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites"),
     askEmptyOption(litreagePair, "packaged-as-a-contract-packer"),
-    manyT("small-producer-details", {ask(smallProducer, _)}, min = 1) emptyUnless ask(bool, "exemptions-for-small-producers"),
+    manyT("small-producer-details", {ask(smallProducer, _)}, min = 1)
+      emptyUnless ask(bool, "exemptions-for-small-producers"),
     askEmptyOption(litreagePair, "brought-into-uk"),
     askEmptyOption(litreagePair, "brought-into-uk-from-small-producers"),
     askEmptyOption(litreagePair, "claim-credits-for-exports"),
     askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
   ).mapN(SdilReturn.apply)
 
-  private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)(implicit hc: HeaderCarrier): WebMonad[Result] = for {
+  private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
+                     (implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn
     broughtForward <- BigDecimal("0").pure[WebMonad]
     _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward)

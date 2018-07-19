@@ -1,0 +1,181 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.softdrinksindustrylevy.helpers._
+@import java.time.format.DateTimeFormatter
+@import java.time.LocalDate
+@import sdil.config.AppConfig
+
+@import sdil.models.RegistrationFormData
+@import sdil.models.backend.Site
+@import sdil.models.Litreage
+@import sdil.models.ContactDetails
+@(
+        formData: RegistrationFormData,
+        producer: Option[Boolean],
+        useCopacker: Option[Boolean],
+        packageOwn: Option[Litreage],
+        copacks: Option[Litreage],
+        imports: Option[Litreage],
+        isVoluntary: Boolean,
+        startDate: LocalDate,
+        warehouses: List[Site],
+        packagingSites: List[Site],
+        contactDetails: ContactDetails
+)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+
+    @declaration_table("registerDeclaration","your-business") {
+        @declaration_details_table_row("registerDeclaration", "utr", None, formData.utr, '_colspan -> "2")
+
+        @declaration_details_table_row("registerDeclaration", "business-name", None,
+            formData.rosmData.organisationName, '_colspan -> "2")
+
+        <tr>
+            <td colspan = "2">@Messages("sdil.declaration.address")</td>
+            <td>
+                @formData.primaryAddress.nonEmptyLines.map { l =>
+                  <div>@l</div>
+                }
+                <div>@Messages("sdil.declaration.uk")</div>
+            </td>
+        </tr>
+    }
+
+    @declaration_table("registerDeclaration","liable-activity") {
+        @declaration_details_table_row(
+            "registerDeclaration",
+            "producer",
+            Some(sdil.controllers.routes.RegistrationController.index("producer")),
+            Messages(s"sdil.registerDeclaration.${producer.getOrElse(false)}"),
+            '_colspan -> "2"
+        )
+        @if(producer.nonEmpty) {
+            @declaration_details_table_row(
+                "registerDeclaration",
+                "isLargeProducer",
+                Some(sdil.controllers.routes.RegistrationController.index("producer")),
+                if(producer.getOrElse(false)) {
+                    Messages("sdil.declaration.largeProducer")
+                } else {
+                    Messages("sdil.declaration.smallProducer")
+                },
+                '_colspan -> "2"
+            )
+        }
+
+        @if(useCopacker.nonEmpty) {
+            @declaration_details_table_row("registerDeclaration", "third-party",
+                Some(sdil.controllers.routes.RegistrationController.index("copacked")),
+                Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
+        }
+
+        @if(packageOwn.nonEmpty) {
+            @declaration_details_table_row(
+                "registerDeclaration",
+                "packaging",
+                Some(sdil.controllers.routes.RegistrationController.index("package-own-uk")),
+                Messages(s"sdil.registerDeclaration.${packageOwn.fold(false)(_ => true)}"),
+                '_colspan -> "2"
+            )
+
+            @if(packageOwn.fold(false)(_ => true)) {
+                @declaration_details_litres(
+                    "package-own-uk",
+                    sdil.controllers.routes.RegistrationController.index("package-own-uk"),
+                    packageOwn.getOrElse(Litreage(0, 0))
+                )
+            }
+        }
+
+
+        @if(copacks.nonEmpty) {
+            @declaration_details_table_row(
+                "registerDeclaration",
+                "customers",
+                Some(sdil.controllers.routes.RegistrationController.index("package-copack")),
+                Messages(s"sdil.registerDeclaration.${copacks.fold(false)(_ => true)}"),
+                '_colspan -> "2"
+            )
+
+            @if(copacks.fold(false)(_ => true)) {
+                @declaration_details_litres(
+                    "customerVol",
+                    sdil.controllers.routes.RegistrationController.index("package-copack"),
+                    copacks.getOrElse(Litreage(0,0))
+                )
+            }
+        }
+
+        @if(imports.nonEmpty) {
+            @declaration_details_table_row("registerDeclaration", "import",
+                Some(sdil.controllers.routes.RegistrationController.index("import")),
+                Messages(s"sdil.registerDeclaration.${imports.fold(false)(_ => true)}"), '_colspan -> "2")
+
+            @if(imports.fold(false)(_ => true)) {
+                @declaration_details_litres(
+                    "import-volume",
+                    sdil.controllers.routes.RegistrationController.index("import"),
+                    imports.getOrElse(Litreage(0,0))
+                )
+            }
+        }
+    }
+
+    @if(!isVoluntary) {
+        @declaration_table("registerDeclaration", "liable-date") {
+                @declaration_details_table_row("registerDeclaration", "date",
+                    Some(sdil.controllers.routes.RegistrationController.index("regDate")),
+                    startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        }
+    }
+
+  @if(warehouses.nonEmpty || packagingSites.nonEmpty) {
+        @declaration_table("registerDeclaration", "registered-sites") {
+            @if(packagingSites.nonEmpty) {
+                @declaration_details_table_row(
+                    "registerDeclaration",
+                    "production-sites",
+                    Some(sdil.controllers.routes.RegistrationController.index("packSitesActivity")),
+                    packagingSites.size.toString
+                )
+            }
+            @if(warehouses.nonEmpty) {
+                @declaration_details_table_row(
+                    "registerDeclaration",
+                    "warehouses",
+                    Some(sdil.controllers.routes.RegistrationController.index("warehousesActivity")),
+                    warehouses.size.toString
+                )
+            }
+        }
+    }
+
+    @declaration_table("registerDeclaration", "contact-details") {
+            @declaration_details_table_row("registerDeclaration", "name",
+                Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.fullName)
+            @declaration_details_table_row("registerDeclaration", "position",
+                Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.position)
+            @declaration_details_table_row("registerDeclaration", "phone-number",
+                Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.phoneNumber)
+            @declaration_details_table_row("registerDeclaration", "email",
+                Some(sdil.controllers.routes.RegistrationController.index("contact-details")), contactDetails.email)
+    }
+
+    <br/>
+    <p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
+

@@ -66,8 +66,13 @@ class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormData
         case detailsCorrect =>
           val updated = request.formData.copy(verify = Some(detailsCorrect))
           cache.cache(request.internalId, updated) map { _ =>
-            Redirect(Journey.nextPage(VerifyPage, updated).show)
-          }
+            Redirect(if (!config.uniformRegistrationsEnabled) {
+              Journey.nextPage(VerifyPage, updated).show
+            } else {
+              routes.RegistrationController.index("orgType")
+            }
+          )
+        }
       }
     )
   }

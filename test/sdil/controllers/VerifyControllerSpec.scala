@@ -19,7 +19,7 @@ package sdil.controllers
 import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
+import org.scalatest._
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -60,7 +60,11 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
-      redirectLocation(res) mustBe Some(routes.OrganisationTypeController.show().url)
+
+      List(
+        Some(routes.OrganisationTypeController.show().url),
+        Some(routes.RegistrationController.index("orgType").url)
+      ) contains redirectLocation(res)
     }
 
     "redirect to the gg sign in page if the details are incorrect" in {

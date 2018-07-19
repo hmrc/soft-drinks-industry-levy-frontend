@@ -11,6 +11,14 @@
     box-shadow: none;
 }
 
+.less-padding{
+  padding-top: 2px !important;
+  padding-bottom: 3px !important;
+}
+
+.margin-bottom-1{
+    margin-bottom: 1% !important;
+}
 
 @media (min-width: 641px) {
     body {

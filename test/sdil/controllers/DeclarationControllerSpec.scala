@@ -30,8 +30,8 @@ import sdil.models.backend._
 class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "Declaration controller" should {
-    "return Status: 200 when user is logged in and loads declaration page" in {
-      val request = FakeRequest("GET", "/declaration")
+    "return Status: 200 when user is logged in and loads registerDeclaration page" in {
+      val request = FakeRequest("GET", "/registerDeclaration")
       val result = testController.show.apply(request)
 
       status(result) mustBe OK
@@ -48,14 +48,14 @@ class DeclarationControllerSpec extends ControllerSpec with BeforeAndAfterEach {
         importVolume = None
       )
 
-      val res = testController.show()(FakeRequest("GET", "/declaration"))
+      val res = testController.show()(FakeRequest("GET", "/registerDeclaration"))
 
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe routes.RegistrationNotRequiredController.show().url
     }
 
-    "return Status: See Other when POST from declaration" in {
-      val request = FakeRequest("POST", "/declaration")
+    "return Status: See Other when POST from registerDeclaration" in {
+      val request = FakeRequest("POST", "/registerDeclaration")
       val result = testController.submit().apply(request)
 
       status(result) mustBe SEE_OTHER
