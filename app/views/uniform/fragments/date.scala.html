@@ -33,7 +33,7 @@
             @for(field <- List("day", "month", "year")) {
               <div class="form-group form-group-@{field}">
                 <label class="form-label" for="@{key}.@{field}">@Messages(field)</label>
-                <input type="number" class="form-control @if(form(s"$key.$field").hasErrors) {form-control-error}"
+                <input class="form-control @if(form(s"$key.$field").hasErrors) {form-control-error}"
                        id="@{key}.@{field}"
                        name="@{key}.@{field}"
                        value="@{form(s"$key.$field").value}"
