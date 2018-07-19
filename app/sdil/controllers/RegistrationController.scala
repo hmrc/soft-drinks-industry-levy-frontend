@@ -113,7 +113,7 @@ class RegistrationController(
       regDate        <- askRegDate when (!isVoluntary)
       packSites      <- askPackSites(
           List.empty[Site]) emptyUnless
-      (packLarge.contains(true) && packageOwn.nonEmpty) || !copacks.isEmpty
+      (packLarge.contains(true) && packageOwn.flatten.nonEmpty) || !copacks.isEmpty
       warehouses      <- askWarehouses emptyUnless !isVoluntary
       contactDetails  <- ask(contactDetailsMapping, "contact-details")
       activity        =  Activity(
