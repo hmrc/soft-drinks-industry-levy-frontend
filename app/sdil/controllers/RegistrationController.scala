@@ -113,7 +113,7 @@ class RegistrationController(
       regDate        <- askRegDate when (!isVoluntary)
       packSites      <- askPackSites(
           List.empty[Site]) emptyUnless
-      (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
+      (packLarge.contains(true) && packageOwn.nonEmpty) || !copacks.isEmpty
       warehouses      <- askWarehouses emptyUnless !isVoluntary
       contactDetails  <- ask(contactDetailsMapping, "contact-details")
       activity        =  Activity(
@@ -135,7 +135,7 @@ class RegistrationController(
                            orgType.toString,
                            UkAddress.fromAddress(fd.rosmData.address),
                            activity,
-                            regDate,
+                            regDate.getOrElse(LocalDate.now),
                            packSites,
                            warehouses,
                            contact

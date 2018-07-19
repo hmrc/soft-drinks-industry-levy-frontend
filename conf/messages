@@ -294,6 +294,7 @@ sdil.declaration.confirmation=By continuing you’re confirming that the details
 sdil.declaration.continue=Confirm and send
 
 # TODO these can be deleted when we remove old style registration
+heading.declaration=Check your answers
 sdil.registerDeclaration.heading=Check your answers
 sdil.registerDeclaration.change-link=Change
 sdil.registerDeclaration.true=Yes
@@ -358,6 +359,29 @@ sdil.hidden.declaration.name=Change contact name
 sdil.hidden.declaration.position=Change job title
 sdil.hidden.declaration.phone-number=Change telephone number
 sdil.hidden.declaration.email=Change email address
+
+
+sdil.hidden.registerDeclaration.producer=Change your own brand packaged in the past 12 months
+sdil.hidden.registerDeclaration.isLargeProducer=Change amount of litres of your own brand packaged worldwide
+sdil.hidden.registerDeclaration.packaging=Change whether you package for your own brand at your own sites
+sdil.hidden.registerDeclaration.customers=Change whether you package as a contract packer at your own sites
+sdil.hidden.registerDeclaration.low-band.package-own=Change litres in the low band packaged for your own brand at your own sites
+sdil.hidden.registerDeclaration.high-band.package-own=Change litres in the high band packaged for your own brand at your own sites
+sdil.hidden.registerDeclaration.low-band.customerVol=Change litres in the low band packaged as a contract packer at your own sites
+sdil.hidden.registerDeclaration.high-band.customerVol=Change litres in the high band packaged as a contract packer at your own sites
+sdil.hidden.registerDeclaration.third-party=Change whether you use third parties or contract packers
+sdil.hidden.registerDeclaration.import=Change whether you bring liable drinks into the UK
+sdil.hidden.registerDeclaration.import-volume=Litres in next 12 months
+sdil.hidden.registerDeclaration.low-band.import-volume=Change litres in the low band brought into the UK
+sdil.hidden.registerDeclaration.high-band.import-volume=Change litres in the high band brought into the UK
+sdil.hidden.registerDeclaration.date=Change Soft Drinks Levy Liability date
+sdil.hidden.registerDeclaration.production-sites=Change packaging site details
+sdil.hidden.registerDeclaration.warehouses=Change warehouse details
+sdil.hidden.registerDeclaration.name=Change contact name
+sdil.hidden.registerDeclaration.position=Change job title
+sdil.hidden.registerDeclaration.phone-number=Change telephone number
+sdil.hidden.registerDeclaration.email=Change email address
+
 
 #Complete
 sdil.complete.title=Application complete
