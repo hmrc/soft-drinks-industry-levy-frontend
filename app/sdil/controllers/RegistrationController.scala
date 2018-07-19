@@ -135,7 +135,7 @@ class RegistrationController(
                            orgType.toString,
                            UkAddress.fromAddress(fd.rosmData.address),
                            activity,
-                            regDate.getOrElse(LocalDate.now),
+                           regDate.getOrElse(LocalDate.now),
                            packSites,
                            warehouses,
                            contact
@@ -148,7 +148,7 @@ class RegistrationController(
                            activity.CopackerAll,
                            activity.Imported,
                            isVoluntary,
-                            regDate,
+                           regDate,
                            warehouses,
                            packSites,
                            contactDetails
