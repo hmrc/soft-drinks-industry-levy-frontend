@@ -32,7 +32,7 @@
         copacks: Option[Litreage],
         imports: Option[Litreage],
         isVoluntary: Boolean,
-        startDate: LocalDate,
+        startDate: Option[LocalDate],
         warehouses: List[Site],
         packagingSites: List[Site],
         contactDetails: ContactDetails
@@ -76,22 +76,19 @@
                 },
                 '_colspan -> "2"
             )
-        }
 
-        @if(useCopacker.nonEmpty) {
-            @declaration_details_table_row("registerDeclaration", "third-party",
-                Some(sdil.controllers.routes.RegistrationController.index("copacked")),
-                Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
-        }
+            @if(useCopacker.nonEmpty) {
+                @declaration_details_table_row("registerDeclaration", "third-party",
+                    Some(sdil.controllers.routes.RegistrationController.index("copacked")),
+                    Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
+            }
 
-        @if(packageOwn.nonEmpty) {
             @declaration_details_table_row(
                 "registerDeclaration",
                 "packaging",
                 Some(sdil.controllers.routes.RegistrationController.index("package-own-uk")),
                 Messages(s"sdil.registerDeclaration.${packageOwn.fold(false)(_ => true)}"),
-                '_colspan -> "2"
-            )
+                '_colspan -> "2")
 
             @if(packageOwn.fold(false)(_ => true)) {
                 @declaration_details_litres(
@@ -100,10 +97,9 @@
                     packageOwn.getOrElse(Litreage(0, 0))
                 )
             }
+
         }
 
-
-        @if(copacks.nonEmpty) {
             @declaration_details_table_row(
                 "registerDeclaration",
                 "customers",
@@ -119,9 +115,7 @@
                     copacks.getOrElse(Litreage(0,0))
                 )
             }
-        }
 
-        @if(imports.nonEmpty) {
             @declaration_details_table_row("registerDeclaration", "import",
                 Some(sdil.controllers.routes.RegistrationController.index("import")),
                 Messages(s"sdil.registerDeclaration.${imports.fold(false)(_ => true)}"), '_colspan -> "2")
@@ -134,15 +128,17 @@
                 )
             }
         }
-    }
 
     @if(!isVoluntary) {
         @declaration_table("registerDeclaration", "liable-date") {
                 @declaration_details_table_row("registerDeclaration", "date",
-                    Some(sdil.controllers.routes.RegistrationController.index("regDate")),
-                    startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                    Some(sdil.controllers.routes.RegistrationController.index("start-date")),
+                    startDate.fold(""){x =>
+                        x.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))})
+            }
         }
-    }
+
+
 
   @if(warehouses.nonEmpty || packagingSites.nonEmpty) {
         @declaration_table("registerDeclaration", "registered-sites") {
