@@ -135,6 +135,7 @@ class RegistrationController(
                            orgType.toString,
                            UkAddress.fromAddress(fd.rosmData.address),
                            activity,
+                           //TODO in refactor make start date non-optional & default to now.
                            regDate.getOrElse(LocalDate.now),
                            packSites,
                            warehouses,
