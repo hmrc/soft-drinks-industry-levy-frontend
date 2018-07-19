@@ -72,8 +72,25 @@ object SdilComponents {
     }
   }
 
-  implicit def htmlShow: HtmlShow[Site] = new HtmlShow[Site] {
-    override def showHtml(in: Site): Html = Html(  in.getLines.mkString("<br />"))
+  implicit val siteProgressiveRevealHtml: HtmlShow[Site] = {
+
+    def lines(s: Site): String = {
+      s.address.lines.tail.map { line =>
+        s"""<div aria-hidden="true" class="address progressive-reveal">$line</div>"""
+      }
+    }.mkString
+
+    HtmlShow.instance { site =>
+      Html(
+        s"""<details role="group">
+        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+          <span class="summary">${site.address.lines.head}</span>
+        </summary>""" +
+          lines(site) +
+          s"""<div class="address postal-code progressive-reveal">${site.address.postCode}</div>
+        </details>"""
+      )
+    }
   }
 
   implicit val contactDetailsForm = new FormHtml[ContactDetails] {

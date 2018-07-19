@@ -75,7 +75,7 @@ class RegistrationController(
   }
 
   private def askWarehouses = {
-    manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
+    manyT("secondary-warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
   }
 
   private def program(fd: RegistrationFormData)
@@ -110,9 +110,15 @@ class RegistrationController(
                           end("do-not-register",noReg)
                         } else (()).pure[WebMonad]
       regDate        <- askRegDate
-      packSites      <- askPackSites(
-                          List.empty[Site]) emptyUnless
-                          (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
+      askPackingSites = (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
+      useBusinessAddress <- ask(bool, "pack-at-business-address") when askPackingSites
+      packingSites   = if (useBusinessAddress.getOrElse(false)) {
+                          List(Site.fromAddress(fd.rosmData.address))
+                       } else {
+                         List.empty[Site]
+                       }
+      firstPackingSite      <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly) when packingSites.isEmpty
+      packSites       <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless askPackingSites
       isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
       warehouses      <- askWarehouses emptyUnless !isVoluntary
       contactDetails  <- ask(contactDetailsMapping, "contact-details")

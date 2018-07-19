@@ -302,7 +302,7 @@ trait SdilWMController extends WebMonadController
   }
 
   def askPackSites(existingSites: List[Site]): WebMonad[List[Site]] =
-    manyT("packSitesActivity",
+    manyT("production-sites",
       ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
       default = existingSites,
       min = 1,

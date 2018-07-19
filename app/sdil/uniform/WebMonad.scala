@@ -109,11 +109,11 @@ package object webmonad {
       (none[String], path, db - key, ().asRight[Result]).pure[Future]
     }
 
-  def clear(implicit ec: ExecutionContext): WebMonad[Unit] =
+  def clear(implicit ec: ExecutionContext): WebMonad[Unit] = {
     webMonad { (_, _, path, db) =>
-      (none[String], path, Map.empty[String,JsValue], ().asRight[Result]).pure[Future]
+      (none[String], path, Map.empty[String, JsValue], ().asRight[Result]).pure[Future]
     }
-
+  }
 
   def cachedFuture[A]
     (cacheId: String)

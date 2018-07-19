@@ -130,7 +130,7 @@ class VariationsController(
                                      else for {
                                        packSites       <- askPackSites(data.updatedProductionSites.toList) emptyUnless (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
                                        isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
-                                       warehouses      <- manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
+                                       warehouses      <- manyT("secondary-warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
                                      } yield data.copy (
                                        producer               = Producer(packLarge.isDefined, packLarge),
                                        usesCopacker           = useCopacker.some.flatten,

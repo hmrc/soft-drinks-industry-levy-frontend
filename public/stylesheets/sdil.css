@@ -153,9 +153,14 @@ button[name="checkyouranswers"] {
     text-align: center;
 }
 
+
 .no-minus-wrapping {
     white-space: nowrap;
     text-align: left;
+}
+
+details .address.progressive-reveal {
+    padding-left: 25px;
 }
 
 .cya-width {
