@@ -133,8 +133,10 @@ sdil.importVolume.heading=In the next 12 months, how many litres of liable drink
 sdil.litreage.lowRate=Litres in the low band
 sdil.litreage.highRate=Litres in the high band
 sdil.litreage.rates.help=What are the bands?
-sdil.litreage.rates.content.p1=The low band is from 5 grams to 7.9 grams of sugar per 100 millilitres.
-sdil.litreage.rates.content.p2=The high band is 8 grams of sugar or more per 100 millilitres.
+sdil.litreage.rates.content.p1=The low band applies where the liable drink contains at least 5 grams of sugar per 100 \
+  millilitres.
+sdil.litreage.rates.content.p2=The high band applies where the liable drink contains at least 8 grams of sugar \
+  per 100 millilitres.
 sdil.litreage.volumes.help=I don’t know these volumes
 sdil.litreage.volumes.content.p1=If you don’t have the exact volumes you can enter an estimate.
 
@@ -852,7 +854,9 @@ small-producer-details.paragraph.nonEmpty=Names and reference numbers will be sa
 heading.add-small-producer-details=Enter the registered small producer’s details
 add-small-producer-details.paragraph=Names and reference numbers will be saved and shown in future returns
 add-small-producer-details.help.header=What are the bands?
-add-small-producer-details.help=The low band is from 5 grams to 7.9 grams of sugar per 100 millilitres.<br>The high band is 8 grams of sugar or more per 100 millilitres.
+add-small-producer-details.help=The low band applies where the liable drink contains at least 5 grams of sugar per 100 \
+  millilitres in its ready to drink or diluted form.</br>The high band applies where the liable drink contains at least \
+  8 grams or more of sugar per 100 millilitres in its ready to drink or diluted form.
 small-producer-details.name=Name: {0}
 small-producer-details.refNumber=Reference number: {0}
 small-producer-details.lowBand=Low band: {0} litres
