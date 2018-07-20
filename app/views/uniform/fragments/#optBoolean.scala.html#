@@ -20,6 +20,7 @@
 @import sdil.config.AppConfig
 @import views.html.helper.options
 @import views.html.uniform.helpers._
+@import ltbs.play._
 
 @(key: String, form: Form[Option[Boolean]])(implicit messages: Messages)
 

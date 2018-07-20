@@ -22,7 +22,7 @@ import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
-import ltbs.play.scaffold.webmonad._
+import uniform.webmonad._
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import sdil.actions.RegisteredAction

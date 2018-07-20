@@ -16,6 +16,8 @@
 
 package ltbs.play.scaffold
 
+import uniform._
+
 import cats.Monoid
 import java.time.LocalDate
 
