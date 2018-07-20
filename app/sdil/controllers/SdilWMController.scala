@@ -168,16 +168,16 @@ trait SdilWMController extends WebMonadController
       .map{_.getOrElse(mon.empty)}
   }
 
-  def ask[T](mapping: Mapping[T], key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
+  def ask[T](mapping: Mapping[T], key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
     formPage(key)(mapping, default) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
       uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path)
     }
 
-  def ask[T](mapping: Mapping[T], key: String)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
+  def ask[T](mapping: Mapping[T], key: String)(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
     ask(mapping, key, None)
 
-  def ask[T](mapping: Mapping[T], key: String, default: T)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
+  def ask[T](mapping: Mapping[T], key: String, default: T)(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
     ask(mapping, key, default.some)
 
   // Because I decided earlier on to make everything based off of JSON
@@ -284,7 +284,7 @@ trait SdilWMController extends WebMonadController
 
     def edit(q: A): WebMonad[A] = {
       editSingleForm.fold(NotFound: WebMonad[A]) { x =>
-        ask(x._1, s"edit-$id", q)(x._2, implicitly)
+        ask(x._1, s"edit-$id", q)(x._2, implicitly, implicitly)
       }
     }
 
@@ -303,7 +303,7 @@ trait SdilWMController extends WebMonadController
 
   def askPackSites(existingSites: List[Site]): WebMonad[List[Site]] =
     manyT("production-sites",
-      ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
+      ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly),
       default = existingSites,
       min = 1,
       editSingleForm = Some((packagingSiteMapping, packagingSiteForm))

@@ -24,7 +24,11 @@ import cats.implicits._
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter.ofPattern
 
+import sdil.models.ExtraMessages
+
 package object play {
+
+
 
   implicit class RichLocalDate(ld: LocalDate) {
 
@@ -65,6 +69,12 @@ package object play {
       List(key, s"$key.1").map(get(_, args)).flatten ++ inner().reverse
     }
 
-  }
+    def extraMessage(key: String, args: Any*)(implicit lang: Lang, messages: Messages, extraMessages: ExtraMessages): String = {
+      if (extraMessages.messages.get(key).nonEmpty) {
+        extraMessages.messages(key)
+      } else mo.apply(key, args)
 
+    }
+
+  }
 }

@@ -18,6 +18,7 @@ package ltbs.play.scaffold
 
 import java.time.LocalDate
 
+import ltbs.play._
 import cats.implicits._
 import enumeratum._
 import play.api.data.Forms._
@@ -71,6 +72,8 @@ object SdilComponents {
       uniform.fragments.warehouseSite(key, form)
     }
   }
+
+  implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map.empty[String, String])
 
   implicit val siteProgressiveRevealHtml: HtmlShow[Site] = {
 

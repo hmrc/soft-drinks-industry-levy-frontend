@@ -21,8 +21,9 @@
 @import views.html.helper.options
 @import views.html.uniform.helpers._
 @import ltbs.play._
+@import sdil.models.ExtraMessages
 
-@(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], appConfig: AppConfig)
+@(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages)
 
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
@@ -36,8 +37,8 @@
             <p>@msg</p>
         </div>
     }
-    @if(messages.isDefinedAt(s"$key.lead")) {
-        <p class="lede">@Messages(s"$key.lead")</p>
+    @if(messages.isDefinedAt(s"$key.lead") || extraMessages.messages.get(s"$key.lead").nonEmpty) {
+        <p class="lede">@Messages.extraMessage(s"$key.lead")</p>
     }
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
