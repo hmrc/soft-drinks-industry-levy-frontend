@@ -51,24 +51,25 @@ object FrontendBuild extends Build {
     .settings(defaultSettings(): _*)
     .settings(initialCommands in console := "import cats.implicits._")
     .settings(
+      scalaVersion := "2.11.12",
       scoverageSettings,
       libraryDependencies ++= Seq(
         ws,
         "uk.gov.hmrc" %% "bootstrap-play-25" % "1.7.0",
-        "uk.gov.hmrc" %% "domain" % "4.1.0",
-        "uk.gov.hmrc" %% "govuk-template" % "5.17.0",
-        "uk.gov.hmrc" %% "play-ui" % "7.13.0",
+        "uk.gov.hmrc" %% "domain" % "5.2.0",
+        "uk.gov.hmrc" %% "govuk-template" % "5.22.0",
+        "uk.gov.hmrc" %% "play-ui" % "7.17.0",
         "uk.gov.hmrc" %% "play-partials" % "6.1.0",
         "com.typesafe.play" %% "play-json" % "2.5.18",
-        "org.scalactic" %% "scalactic" % "3.0.4",
-        "uk.gov.hmrc" %% "auth-client" % "2.5.0",
+        "org.scalactic" %% "scalactic" % "3.0.5",
+        "uk.gov.hmrc" %% "auth-client" % "2.6.0",
         "uk.gov.hmrc" %% "http-caching-client" % "7.1.0",
         "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0",
-        "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided",
-        "com.softwaremill.macwire" %% "macrosakka" % "2.3.0" % "provided",
-        "com.softwaremill.macwire" %% "util" % "2.3.0",
-        "com.softwaremill.macwire" %% "proxy" % "2.3.0",
-        "org.typelevel" %% "cats-core" % "1.0.1",
+        "com.softwaremill.macwire" %% "macros" % "2.3.1" % "provided",
+        "com.softwaremill.macwire" %% "macrosakka" % "2.3.1" % "provided",
+        "com.softwaremill.macwire" %% "util" % "2.3.1",
+        "com.softwaremill.macwire" %% "proxy" % "2.3.1",
+        "org.typelevel" %% "cats-core" % "1.1.0",
 
         // scaffolding
         "com.chuusai" %% "shapeless" % "2.3.3",
@@ -78,9 +79,9 @@ object FrontendBuild extends Build {
 
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % "test",
-        "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+        "org.scalatest" %% "scalatest" % "3.0.5" % "test",
         "org.pegdown" % "pegdown" % "1.6.0" % "test",
-        "org.jsoup" % "jsoup" % "1.11.2" % "test",
+        "org.jsoup" % "jsoup" % "1.11.3" % "test",
         "com.typesafe.play" %% "play-test" % PlayVersion.current % "test",
         "org.mockito" % "mockito-core" % "2.13.0" % "test",
         "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % "test",
@@ -94,7 +95,7 @@ object FrontendBuild extends Build {
     )
     .settings(
       PlayKeys.playDefaultPort := 8700,
-      addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+      addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
     )
     .settings(
       // concatenate js
