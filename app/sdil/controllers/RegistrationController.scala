@@ -108,7 +108,7 @@ class RegistrationController(
                           end("do-not-register",noReg)
                         } else (()).pure[WebMonad]
       regDate        <- askRegDate
-      askPackingSites = (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
+      askPackingSites = (packLarge.contains(true) && packageOwn.flatten.nonEmpty) || !copacks.isEmpty
       extraMessages   = ExtraMessages(messages = Map("pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}"))
       useBusinessAddress <- ask(bool, "pack-at-business-address")(implicitly, implicitly, extraMessages) when askPackingSites
       packingSites   = if (useBusinessAddress.getOrElse(false)) {
