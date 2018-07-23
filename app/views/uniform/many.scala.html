@@ -42,30 +42,41 @@
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
         <div class="form-group">
-        <table>
-            @for((item, id) <- items.zipWithIndex) {
-                <tr>
-                    <td>
-                        @item
-                    </td>
-                    @if( items.length > min) {
-                        <td class="@if(showEdit) {align-centre} else {align-right}">
-                            <button name="@key" value="Delete.@id" class="link-button no-shadow">@Messages(Seq(s"$key.delete", "delete"))</button>
+            <table>
+                @for((item, id) <- items.zipWithIndex) {
+                    <tr>
+                        <td>
+                            @item
                         </td>
-                        @if(showEdit) {
-                            <td class="align-right">
-                                <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "edit"))</button>
+                        @if( items.length > min) {
+                            <td class="@if(showEdit) {align-centre} else {align-right}">
+                                <button name="@key" value="Delete.@id" class="link-button no-shadow">@Messages(Seq(s"$key.delete", "delete"))</button>
                             </td>
+                            @if(showEdit) {
+                                <td class="align-right">
+                                    <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "edit"))</button>
+                                </td>
+                            }
                         }
+                    </tr>
                     }
-                </tr>
-                }
-                <tr>
-                    <td><button name="@key" value="Add" class="link-button no-shadow">@Messages(Seq(s"$key.add", "add"))</button></td>
-                    <td />
-                    @if(showEdit) { <td/> }
-                </tr>
-        </table>
+            </table>
+            <br/>
+            @if(messages.isDefinedAt(s"$key.list-control.heading")) {
+                <span class="bold-small">@Messages(s"$key.list-control.heading")</span>
+            }
+            @if(messages.isDefinedAt(s"$key.list-control.lead")) {
+                <span class="form-hint">@Messages(s"$key.list-control.lead")</span>
+            }
+            @inputRadioGroup(
+                form(key),
+                List[Control](Add, Done).map(_.toString).map{v => (v, Messages(key + ".option." + v.toLowerCase))},
+                '_labelClass -> "block-label",
+                '_labelAfter -> true,
+                '_groupClass -> "inline",
+                '_legend -> messages.messages(s"heading.$key"),
+                '_legendClass -> "visuallyhidden"
+            )
         </div>
         @if(messages.isDefinedAt(s"$key.help")) {
 
@@ -77,7 +88,7 @@
         }
 
         @if(min <= items.size) {
-            <button name="@key" class="button" value="Done">
+            <button class="button" type="submit">
             @Messages("sdil.common.save-continue")
             </button>
         }

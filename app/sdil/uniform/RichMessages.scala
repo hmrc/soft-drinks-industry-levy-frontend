@@ -73,7 +73,6 @@ package object play {
       if (extraMessages.messages.get(key).nonEmpty) {
         extraMessages.messages(key)
       } else mo.apply(key, args)
-
     }
 
   }
