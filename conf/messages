@@ -856,9 +856,8 @@ small-producer-details.paragraph.nonEmpty=Names and reference numbers will be sa
 heading.add-small-producer-details=Enter the registered small producer’s details
 add-small-producer-details.paragraph=Names and reference numbers will be saved and shown in future returns
 add-small-producer-details.help.header=What are the bands?
-add-small-producer-details.help=The low band applies where the liable drink contains at least 5 grams of sugar per 100 \
-  millilitres in its ready to drink or diluted form.</br>The high band applies where the liable drink contains at least \
-  8 grams or more of sugar per 100 millilitres in its ready to drink or diluted form.
+add-small-producer-details.help=<p>The low band applies where the liable drink contains at least 5 grams of sugar per 100 \
+  millilitres.</p><p>The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
 small-producer-details.name=Name: {0}
 small-producer-details.refNumber=Reference number: {0}
 small-producer-details.lowBand=Low band: {0} litres
