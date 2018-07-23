@@ -25,14 +25,27 @@
 @import ltbs.play._
 
 @(key: String, form: Form[String], items: List[Html], breadcrumbs: List[String], min: Int, showEdit: Boolean = false)(implicit messages: Messages, request: Request[_], config: AppConfig)
+@singular(items: List[Html]) = {
+    @if(items.length == 1) {
+        site
+    } else {
+        sites
+    }
+}
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
     @error_summary(form)
+    @if(items.isEmpty){
+        <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+        <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
+    }
 
-    <h1 class="heading-large">@Messages(s"heading.$key")</h1>
-    <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
+    @if(items.nonEmpty){
+        <h1 class="heading-large">@Messages(s"heading.multi.$key", items.length, singular(items))</h1>
+        <legend class="visuallyhidden">@Messages(s"heading.multi.$key", items.length, singular(items))</legend>
+    }
     @if(messages.isDefinedAt(s"$key.paragraph")) {
         <p>@Messages(s"$key.paragraph")</p>
     }
