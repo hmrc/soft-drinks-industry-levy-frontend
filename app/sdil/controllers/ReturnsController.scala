@@ -17,9 +17,9 @@
 package sdil.controllers
 
 import cats.implicits._
-import uniform._
-import uniform.webmonad._
-import uniform.playutil._
+import uk.gov.hmrc.uniform._
+import uk.gov.hmrc.uniform.webmonad._
+import uk.gov.hmrc.uniform.playutil._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.Mapping

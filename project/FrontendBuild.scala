@@ -46,7 +46,7 @@ object FrontendBuild extends Build {
   lazy val microservice = Project("soft-drinks-industry-levy-frontend", file("."))
     .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
     .settings(scalaSettings: _*)
-    .settings(TwirlKeys.templateImports += "_root_.uniform.playutil._")
+    .settings(TwirlKeys.templateImports += "uk.gov.hmrc.uniform.playutil._")
     .settings(publishingSettings: _*)
     .settings(defaultSettings(): _*)
     .settings(initialCommands in console := "import cats.implicits._")
@@ -70,7 +70,7 @@ object FrontendBuild extends Build {
         "com.softwaremill.macwire" %% "util" % "2.3.1",
         "com.softwaremill.macwire" %% "proxy" % "2.3.1",
         "org.typelevel" %% "cats-core" % "1.1.0",
-        "ltbs" %% "uniform" % "1.0.0-SNAPSHOT",
+        "uk.gov.hmrc" %% "uniform" % "0.1.3",
 
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % "test",

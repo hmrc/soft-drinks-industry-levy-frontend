@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 
 import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
-import _root_.uniform._
+import uk.gov.hmrc.uniform._
 
 case class SessionCachePersistence(
   journeyName: String,

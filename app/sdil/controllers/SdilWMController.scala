@@ -21,9 +21,9 @@ import java.time.LocalDate
 import cats.implicits._
 import cats.{Eq, Monoid}
 import enumeratum._
-import uniform.HtmlShow.ops._
-import uniform._
-import uniform.webmonad._
+import uk.gov.hmrc.uniform.HtmlShow.ops._
+import uk.gov.hmrc.uniform._
+import uk.gov.hmrc.uniform.webmonad._
 import play.api.data.Forms._
 import play.api.data._
 import play.api.data.format.Formatter
