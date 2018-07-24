@@ -19,9 +19,7 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 @import views.html.helper.options
-@import ltbs.play.scaffold.webmonad._
 @import views.html.uniform.helpers._
-@import ltbs.play._
 
 @(key: String, breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig)
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title"))) {
