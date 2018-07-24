@@ -290,9 +290,13 @@ trait SdilWMController extends WebMonadController
 
     many[A](id, min, max, default, confirmation, Some(edit)){ case (iid, minA, maxA, items) =>
 
-      val mapping = nonEmptyText
+      val mapping = text
         .verifying(s"$id.error.items.tooFew", a => a != "Done" || items.size >= min)
         .verifying(s"$id.error.items.tooMany", a => a != "Add" || items.size < max)
+        .verifying(
+          "error.radio-form.choose-option",
+          a => a == "Done" || a == "Add" || a.startsWith("Edit") || a.startsWith("Delete")
+        )
 
       formPage(id)(mapping) { (path, b, r) =>
         implicit val request: Request[AnyContent] = r
