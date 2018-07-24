@@ -47,7 +47,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import java.time._
 import java.time.format._
 
-
 class ReturnsController (
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
@@ -63,6 +62,12 @@ class ReturnsController (
   val costHigher = BigDecimal("0.24")
 
   implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
+
+  implicit val litreageForm = new FormHtml[(Long,Long)] {
+    def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {
+      uniform.fragments.litreage(key, form, false)(messages)
+    }
+  }
 
   implicit val smallProducerHtml: HtmlShow[SmallProducer] =
       HtmlShow.instance { producer =>
