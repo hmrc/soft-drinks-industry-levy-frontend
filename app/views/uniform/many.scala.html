@@ -24,7 +24,7 @@
 @import views.html.uniform.helpers._
 @import ltbs.play._
 
-@(key: String, form: Form[String], items: List[Html], breadcrumbs: List[String], min: Int, showEdit: Boolean = false)(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[Option[String]], items: List[Html], breadcrumbs: List[String], min: Int, showEdit: Boolean = false)(implicit messages: Messages, request: Request[_], config: AppConfig)
 @singular(items: List[Html]) = {
     @if(items.length > 1) {
         s

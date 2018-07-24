@@ -271,13 +271,13 @@ trait SdilWMController extends WebMonadController
                           default: List[A] = List.empty[A],
                           editSingleForm: Option[(Mapping[A],FormHtml[A])] = None
   )(implicit hs: HtmlShow[A], format: Format[A]): WebMonad[List[A]] = {
-    def outf(x: String): Control = x match {
-      case "Add" => Add
-      case "Done" => Done
-      case x if x.startsWith("Delete") => Delete(x.split("\\.").last.toInt)
-      case y if y.startsWith("Edit") => Edit(y.split("\\.").last.toInt)
+    def outf(x: Option[String]): Control = x match {
+      case Some("Add") => Add
+      case Some("Done") => Done
+      case Some(a) if a.startsWith("Delete") => Delete(a.split("\\.").last.toInt)
+      case Some(b) if b.startsWith("Edit") => Edit(b.split("\\.").last.toInt)
     }
-    def inf(x: Control): String = x.toString
+    def inf(x: Control): Option[String] = Some(x.toString)
 
     def confirmation(q: A): WebMonad[Boolean] =
       tell(s"remove-$id", q).map{_ => true}
@@ -290,13 +290,10 @@ trait SdilWMController extends WebMonadController
 
     many[A](id, min, max, default, confirmation, Some(edit)){ case (iid, minA, maxA, items) =>
 
-      val mapping = text
-        .verifying(s"$id.error.items.tooFew", a => a != "Done" || items.size >= min)
-        .verifying(s"$id.error.items.tooMany", a => a != "Add" || items.size < max)
-        .verifying(
-          "error.radio-form.choose-option",
-          a => a == "Done" || a == "Add" || a.startsWith("Edit") || a.startsWith("Delete")
-        )
+      val mapping = optional(text) // N.b. ideally this would just be 'text' but sadly text triggers the default play "required" message for 'text'
+        .verifying("error.radio-form.choose-option", a => a.nonEmpty)
+        .verifying(s"$id.error.items.tooFew", a => !a.contains("Done")  || items.size >= min)
+        .verifying(s"$id.error.items.tooMany", a => !a.contains("Add") || items.size < max)
 
       formPage(id)(mapping) { (path, b, r) =>
         implicit val request: Request[AnyContent] = r
