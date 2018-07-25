@@ -18,7 +18,6 @@ package ltbs.play.scaffold
 
 import java.time.LocalDate
 
-import ltbs.play._
 import cats.implicits._
 import enumeratum._
 import play.api.data.Forms._
@@ -31,6 +30,7 @@ import play.twirl.api.Html
 import sdil.controllers.ContactDetailsForm.{combine, required}
 import sdil.models._
 import sdil.models.backend.{Site, UkAddress}
+import uk.gov.hmrc.uniform._
 import views.html.uniform
 
 import scala.util.Try

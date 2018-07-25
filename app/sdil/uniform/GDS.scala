@@ -16,6 +16,8 @@
 
 package ltbs.play.scaffold
 
+import uk.gov.hmrc.uniform._
+
 import cats.Monoid
 import java.time.LocalDate
 

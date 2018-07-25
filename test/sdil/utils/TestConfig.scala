@@ -32,4 +32,5 @@ class TestConfig extends AppConfig {
   override val variationsEnabled = true
   override val returnsEnabled = true  
   override val uniformRegistrationsEnabled = true
+  override val balanceEnabled = true
 }

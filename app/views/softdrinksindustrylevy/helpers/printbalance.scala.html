@@ -14,7 +14,13 @@
  * limitations under the License.
  *@
 
- 
-@()(implicit messages: Messages)
-
-<p>@Messages("sdil.partnership.info.p1")</p>
+@(prefix: String, balance: BigDecimal)(implicit messages: Messages)
+@if(balance == 0) {
+  @Messages(Seq(s"${prefix}.zero", prefix), f"$balance%,.2f")
+}
+@if(balance < 0) {
+  @Messages(Seq(s"${prefix}.negative", prefix), f"$balance%,.2f")
+}
+@if(balance > 0) {
+  @Messages(Seq(s"${prefix}.positive", prefix), f"$balance%,.2f")
+}
