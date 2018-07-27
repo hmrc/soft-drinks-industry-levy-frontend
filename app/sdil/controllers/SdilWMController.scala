@@ -47,6 +47,8 @@ import scala.concurrent._
 import scala.util.Try
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.packagingSiteForm
+import uk.gov.hmrc.uniform.webmonad._
+import uk.gov.hmrc.uniform.playutil._
 
 trait SdilWMController extends WebMonadController
     with FrontendController
@@ -309,5 +311,26 @@ trait SdilWMController extends WebMonadController
       min = 1,
       editSingleForm = Some((packagingSiteMapping, packagingSiteForm))
     )
+
+  def askRegDate: WebMonad[LocalDate] = {
+    ask(
+      startDate
+        .verifying(
+          "error.start-date.in-future",
+          !_.isAfter(LocalDate.now)
+        ).verifying(
+        "error.start-date.before-tax-start",
+        !_.isBefore(LocalDate.of(2018, 4, 6))),
+      "start-date"
+    )
+  }
+
+  def askWarehouses(sites: List[Site]): WebMonad[List[Site]] = {
+    manyT("secondary-warehouses",
+      ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly),
+      default = sites,
+      editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
+  }
+
 }
 

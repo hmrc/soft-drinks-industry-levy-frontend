@@ -631,14 +631,21 @@ contactChangeType.option.Sites=Add or remove packaging sites or warehouse addres
 contactChangeType.option.ContactPerson=Update our contact person
 contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
 
+heading.ask-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+heading.first-warehouse=Enter your UK warehouse details
+ask-secondary-warehouses.help.header=Why register a warehouse?
+ask-secondary-warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register \
+  the warehouses you use to store them.
 heading.add-warehouses=Enter your warehouse details
-heading.add-secondary-warehouses=Enter your warehouse details
+heading.add-secondary-warehouses=Enter your UK warehouse details
 heading.remove-warehouses=Are you sure you want to remove this warehouse?
 heading.remove-secondary-warehouses=Are you sure you want to remove this warehouse?
 remove-warehouses.continue=Remove
 remove-secondary-warehouses.continue=Remove
 heading.add-packSites=Enter your packaging site details
 heading.add-production-sites=Enter your UK packaging site details
+heading.first-production-site=Enter your UK packaging site details
+first-production-site.paragraph=Only add the addresses of the packaging sites you operate
 add-packSites.paragraph=Only add the addresses of the packaging sites you operate
 add-production-sites.paragraph=Only add the addresses of the packaging sites you operate
 heading.remove-packSites=Are you sure you want to remove this packaging site?

@@ -24,13 +24,14 @@ import ltbs.play.scaffold.SdilComponents.OrganisationType.{partnership, soleTrad
 import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
 import ltbs.play.scaffold.SdilComponents._
 import uk.gov.hmrc.uniform.webmonad._
+import uk.gov.hmrc.uniform.playutil._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.backend._
-import sdil.models.{ExtraMessages, Litreage, RegistrationFormData}
+import sdil.models.{Litreage, RegistrationFormData}
 import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -59,23 +60,6 @@ class RegistrationController(
       case Some(fd) => runInner(request)(program(fd)(request, implicitly))(id)(persistence.dataGet,persistence.dataPut)
       case None => NotFound("").pure[Future]
     }
-  }
-
-  private def askRegDate = {
-    ask(
-      startDate
-        .verifying(
-          "error.start-date.in-future",
-          !_.isAfter(LocalDate.now)
-        ).verifying(
-        "error.start-date.before-tax-start",
-        !_.isBefore(LocalDate.of(2018, 4, 6))),
-      "start-date"
-    )
-  }
-
-  private def askWarehouses = {
-    manyT("secondary-warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly), editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
   }
 
   private def program(fd: RegistrationFormData)
@@ -107,23 +91,21 @@ class RegistrationController(
       _              <- if (noUkActivity && smallProducerWithNoCopacker) {
                           end("do-not-register",noReg)
                         } else (()).pure[WebMonad]
-      regDate        <- askRegDate
+      isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
+      regDate        <- askRegDate when (!isVoluntary)
       askPackingSites = (packLarge.contains(true) && packageOwn.flatten.nonEmpty) || !copacks.isEmpty
       extraMessages   = ExtraMessages(messages = Map("pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}"))
       useBusinessAddress <- ask(bool, "pack-at-business-address")(implicitly, implicitly, extraMessages) when askPackingSites
-      packingSites   = if (useBusinessAddress.getOrElse(false)) {
+        packingSites   = if (useBusinessAddress.getOrElse(false)) {
                           List(Site.fromAddress(fd.rosmData.address))
-                       } else {
-                         List.empty[Site]
-                       }
-      firstPackingSite      <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when packingSites.isEmpty
+                         } else {
+                          List.empty[Site]
+                         }
+      firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when packingSites.isEmpty
       packSites       <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless askPackingSites
-      isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
-      regDate        <- askRegDate when (!isVoluntary)
-      packSites      <- askPackSites(
-          List.empty[Site]) emptyUnless
-      (packLarge.contains(true) && packageOwn.flatten.nonEmpty) || !copacks.isEmpty
-      warehouses      <- askWarehouses emptyUnless !isVoluntary
+      addWarehouses   <- ask(bool, "ask-secondary-warehouses")(implicitly, implicitly, extraMessages) when !isVoluntary
+      firstWarehouse  <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages()) when addWarehouses.getOrElse(false)
+      warehouses      <- askWarehouses(List.empty[Site] ++ firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless addWarehouses.getOrElse(false)
       contactDetails  <- ask(contactDetailsMapping, "contact-details")(implicitly, implicitly, ExtraMessages())
       activity        =  Activity(
                            longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),

@@ -31,6 +31,7 @@ import sdil.controllers.ContactDetailsForm.{combine, required}
 import sdil.models._
 import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.uniform._
+import uk.gov.hmrc.uniform.playutil._
 import views.html.uniform
 
 import scala.util.Try
