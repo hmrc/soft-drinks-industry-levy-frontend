@@ -266,12 +266,12 @@ trait SdilWMController extends WebMonadController
     }
 
   protected def manyT[A](
-                          id: String,
-                          wm: String => WebMonad[A],
-                          min: Int = 0,
-                          max: Int = 100,
-                          default: List[A] = List.empty[A],
-                          editSingleForm: Option[(Mapping[A],FormHtml[A])] = None
+    id: String,
+    wm: String => WebMonad[A],
+    min: Int = 0,
+    max: Int = 100,
+    default: List[A] = List.empty[A],
+    editSingleForm: Option[(Mapping[A], FormHtml[A])] = None
   )(implicit hs: HtmlShow[A], format: Format[A]): WebMonad[List[A]] = {
     def outf(x: Option[String]): Control = x match {
       case Some("Add") => Add
