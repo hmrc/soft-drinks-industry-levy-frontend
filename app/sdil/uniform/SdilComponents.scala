@@ -16,8 +16,9 @@
 
 package ltbs.play.scaffold
 
-import java.time.LocalDate
+import uk.gov.hmrc.uniform._
 
+import java.time.LocalDate
 import cats.implicits._
 import enumeratum._
 import play.api.data.Forms._
@@ -30,8 +31,6 @@ import play.twirl.api.Html
 import sdil.controllers.ContactDetailsForm.{combine, required}
 import sdil.models._
 import sdil.models.backend.{Site, UkAddress}
-import uk.gov.hmrc.uniform._
-import uk.gov.hmrc.uniform.playutil._
 import views.html.uniform
 
 import scala.util.Try
@@ -74,32 +73,8 @@ object SdilComponents {
     }
   }
 
-  implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map.empty[String, String])
-
-  implicit val siteProgressiveRevealHtml: HtmlShow[Site] = {
-
-    def lines(s: Site): String = {
-      val lines = s.tradingName.fold(s.address.lines.tail)(_ => s.address.lines)
-      lines.map { line =>
-        s"""<div aria-hidden="true" class="address progressive-reveal">$line</div>"""
-      }
-    }.mkString
-
-    def visibleText(s: Site): String = {
-      s.tradingName.fold(s.address.lines.head)(x=>x)
-    }
-
-    HtmlShow.instance { site =>
-      Html(
-        s"""<details role="group">
-        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-          <span class="summary">${visibleText(site)}</span>
-        </summary>""" +
-          lines(site) +
-          s"""<div class="address postal-code progressive-reveal">${site.address.postCode}</div>
-        </details>"""
-      )
-    }
+  implicit def htmlShow: HtmlShow[Site] = new HtmlShow[Site] {
+    override def showHtml(in: Site): Html = Html(  in.getLines.mkString("<br />"))
   }
 
   implicit val contactDetailsForm = new FormHtml[ContactDetails] {

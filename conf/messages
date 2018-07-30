@@ -631,39 +631,22 @@ contactChangeType.option.Sites=Add or remove packaging sites or warehouse addres
 contactChangeType.option.ContactPerson=Update our contact person
 contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
 
-heading.ask-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
-heading.first-warehouse=Enter your UK warehouse details
-ask-secondary-warehouses.help.header=Why register a warehouse?
-ask-secondary-warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register \
-  the warehouses you use to store them.
 heading.add-warehouses=Enter your warehouse details
-heading.add-secondary-warehouses=Enter your UK warehouse details
+heading.add-warehousesActivity=Enter your warehouse details
 heading.remove-warehouses=Are you sure you want to remove this warehouse?
-heading.remove-secondary-warehouses=Are you sure you want to remove this warehouse?
+heading.remove-warehousesActivity=Are you sure you want to remove this warehouse?
 remove-warehouses.continue=Remove
-remove-secondary-warehouses.continue=Remove
+remove-warehousesActivity.continue=Remove
 heading.add-packSites=Enter your packaging site details
-heading.add-production-sites=Enter your UK packaging site details
-heading.first-production-site=Enter your UK packaging site details
-first-production-site.paragraph=Only add the addresses of the packaging sites you operate
+heading.add-packSitesActivity=Enter your packaging site details
 add-packSites.paragraph=Only add the addresses of the packaging sites you operate
-add-production-sites.paragraph=Only add the addresses of the packaging sites you operate
 heading.remove-packSites=Are you sure you want to remove this packaging site?
-heading.remove-production-sites=Are you sure you want to remove this packaging site?
+heading.remove-packSitesActivity=Are you sure you want to remove this packaging site?
 remove-packSites.continue=Remove
-remove-production-sites.continue=Remove
+remove-packSitesActivity.continue=Remove
 packLarge.inner-heading=How many litres worldwide?
 option.packLarge.inner.false=Less than 1 million litres
 option.packLarge.inner.true=1 million litres or more
-
-production-sites.option.add=Yes
-production-sites.option.done=No
-secondary-warehouses.option.add=Yes
-secondary-warehouses.option.done=No
-
-production-sites.edit=Change
-production-sites.delete=Remove
-heading.pack-at-business-address=Is your registered business address a UK packaging site that you operate to produce liable drinks?
 
 heading.packLarge=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink \
   for brands you own or have the rights to manufacture, worldwide?
@@ -688,25 +671,14 @@ importQty.higher=Litres in the high band
 heading.useCopacker=Do you use any third parties in the UK to package liable drinks on your behalf?
 
 heading.packSites=Change your packaging site details
-heading.production-sites=Tell us about the packaging sites you operate in the UK to package liable drinks
-heading.multi.production-sites=You have added {0} packaging site{1}
-production-sites.paragraph=Only add the addresses of the UK packaging sites you operate to produce liable drinks. You \
-must have at least one registered packaging site.
-production-sites.list-control.heading=Do you need to add another packaging site?
-production-sites.list-control.lead=You must tell us about all your packaging sites
-packSites.paragraph=Only add the addresses of UK packaging sites you operate. \
-  You must have at least one registered packaging site.
-heading.edit-production-sites=Enter your UK packaging site details
-edit-production-sites.paragraph=Only add the addresses of UK packaging sites you operate.
+heading.packSitesActivity=Tell us about the packaging sites you operate in the UK to package liable drinks
+packSites.paragraph=Only add the addresses of UK packaging sites you operate. You must have at least one registered packaging site.
 
 heading.warehouses=Change your UK warehouse details
-heading.secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
-heading.multi.secondary-warehouses=You have added {0} warehouse{1}
-secondary-warehouses.list-control.heading=Do you want to add another warehouse?
+heading.warehousesActivity=Do you want to register any of the UK warehouses you use to store liable drinks?
 warehouses.help.header=Why register a warehouse?
 warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses \
   you use to store them.
-heading.edit-secondary-warehouses=Enter your UK warehouse details
 
 heading.contact=Change your contact for the Soft Drinks Industry Levy
 contact.fullName=Full name
