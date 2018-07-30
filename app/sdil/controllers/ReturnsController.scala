@@ -178,7 +178,8 @@ class ReturnsController (
   private def askReturn(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = (
     askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites"),
     askEmptyOption(litreagePair, "packaged-as-a-contract-packer"),
-    manyT("small-producer-details", {ask(smallProducer, _)}, min = 1)
+
+    manyT("small-producer-details", {ask(smallProducer, _)}, min = 1, editSingleForm = Some((smallProducer, smallProducerForm)))
       emptyUnless ask(bool, "exemptions-for-small-producers"),
     askEmptyOption(litreagePair, "brought-into-uk"),
     askEmptyOption(litreagePair, "brought-into-uk-from-small-producers"),

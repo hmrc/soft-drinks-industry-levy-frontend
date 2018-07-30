@@ -880,6 +880,10 @@ packaged-as-a-contract-packer.inner-heading=How many litres do you need to repor
 packaged-as-a-contract-packer.paragraph=Do not include liable drinks you’ve packaged for registered small producers.
 heading.exemptions-for-small-producers=Do you need to claim an exemption for any of the liable drink you’ve packaged for registered small producers?
 heading.small-producer-details=Your small producer exemptions
+
+small-producer-details.option.add=Yes
+small-producer-details.option.done=No
+
 small-producer-details.paragraph.nonEmpty=Names and reference numbers will be saved and shown in future returns
 heading.add-small-producer-details=Enter the registered small producer’s details
 add-small-producer-details.paragraph=Names and reference numbers will be saved and shown in future returns
