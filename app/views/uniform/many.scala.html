@@ -20,43 +20,75 @@
 @import sdil.config.AppConfig
 @import views.html.helper.options
 @import views.html.uniform.helpers._
+@import uk.gov.hmrc.uniform.webmonad._
 
-@(key: String, form: Form[String], items: List[Html], breadcrumbs: List[String], min: Int)(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[Option[String]], items: List[Html], breadcrumbs: List[String], min: Int, showEdit: Boolean = false)(implicit messages: Messages, request: Request[_], config: AppConfig)
+@singular(items: List[Html]) = {
+    @if(items.nonEmpty && items.length > 1) {
+        s
+    }
+}
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
     @error_summary(form)
+    @if(items.isEmpty){
+        <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+        <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
+    }
 
-    <h1 class="heading-large">@Messages(s"heading.$key")</h1>
-    <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
+    @if(items.nonEmpty){
+        <h1 class="heading-large">@Messages(s"heading.multi.$key", items.length, singular(items).toString.replaceAll("\\s", ""))</h1>
+        <legend class="visuallyhidden">@Messages(s"heading.multi.$key", items.length, singular(items))</legend>
+    }
+
     @if(messages.isDefinedAt(s"$key.paragraph")) {
         <p>@Messages(s"$key.paragraph")</p>
     }
+
     @if(messages.isDefinedAt(s"$key.paragraph.nonEmpty") && items.nonEmpty) {
         <p>@Messages(s"$key.paragraph.nonEmpty")</p>
     }
+
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
         <div class="form-group">
-        <table>
-            @for((item, id) <- items.zipWithIndex) {
-                <tr>
-                    <td>
-                        @item
-                    </td>
-                    @if( items.length > min) {
-                        <td class="align-right">
-                            <button name="@key" value="Delete.@id" class="link-button no-shadow">@Messages(Seq(s"$key.delete", "delete"))</button>
+            <table>
+                @for((item, id) <- items.zipWithIndex) {
+                    <tr>
+                        <td>
+                            @item
                         </td>
+                        @if( items.length > min) {
+                            <td class="@if(showEdit) {align-centre} else {align-right}">
+                                <button name="@key" value="Delete.@id" class="link-button no-shadow">@Messages(Seq(s"$key.delete", "delete"))</button>
+                            </td>
+                            @if(showEdit) {
+                                <td class="align-right">
+                                    <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "edit"))</button>
+                                </td>
+                            }
+                        }
+                    </tr>
                     }
-                </tr>
-                }
-                <tr>
-                    <td><button name="@key" value="Add" class="link-button no-shadow">@Messages(Seq(s"$key.add", "add"))</button></td>
-                    <td />
-                </tr>
-        </table>
+            </table>
+            @if(messages.isDefinedAt(s"$key.list-control.heading") && items.nonEmpty) {
+            </br>
+                <span class="bold-small">@Messages(s"$key.list-control.heading")</span>
+            }
+            @if(messages.isDefinedAt(s"$key.list-control.lead")) {
+                <span class="form-hint">@Messages(s"$key.list-control.lead")</span>
+            }
+            @inputRadioGroup(
+                form(key),
+                List[Control](Add, Done).map(_.toString).map{v => (v, Messages(key + ".option." + v.toLowerCase))},
+                '_labelClass -> "block-label",
+                '_labelAfter -> true,
+                '_groupClass -> "inline",
+                '_legend -> messages.messages(s"heading.$key"),
+                '_legendClass -> "visuallyhidden"
+            )
         </div>
         @if(messages.isDefinedAt(s"$key.help")) {
 
@@ -68,7 +100,7 @@
         }
 
         @if(min <= items.size) {
-            <button name="@key" class="button" value="Done">
+            <button class="button" type="submit">
             @Messages("sdil.common.save-continue")
             </button>
         }
