@@ -47,8 +47,6 @@ import scala.concurrent._
 import scala.util.Try
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.packagingSiteForm
-import uk.gov.hmrc.uniform.webmonad._
-import uk.gov.hmrc.uniform.playutil._
 
 trait SdilWMController extends WebMonadController
     with FrontendController
@@ -170,16 +168,16 @@ trait SdilWMController extends WebMonadController
       .map{_.getOrElse(mon.empty)}
   }
 
-  def ask[T](mapping: Mapping[T], key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
+  def ask[T](mapping: Mapping[T], key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
     formPage(key)(mapping, default) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
       uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path)
     }
 
-  def ask[T](mapping: Mapping[T], key: String)(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
+  def ask[T](mapping: Mapping[T], key: String)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
     ask(mapping, key, None)
 
-  def ask[T](mapping: Mapping[T], key: String, default: T)(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
+  def ask[T](mapping: Mapping[T], key: String, default: T)(implicit htmlForm: FormHtml[T], fmt: Format[T]): WebMonad[T] =
     ask(mapping, key, default.some)
 
   // Because I decided earlier on to make everything based off of JSON
@@ -270,67 +268,36 @@ trait SdilWMController extends WebMonadController
     wm: String => WebMonad[A],
     min: Int = 0,
     max: Int = 100,
-    default: List[A] = List.empty[A],
-    editSingleForm: Option[(Mapping[A], FormHtml[A])] = None
+    default: List[A] = List.empty[A]
   )(implicit hs: HtmlShow[A], format: Format[A]): WebMonad[List[A]] = {
-    def outf(x: Option[String]): Control = x match {
-      case Some("Add") => Add
-      case Some("Done") => Done
-      case Some(a) if a.startsWith("Delete") => Delete(a.split("\\.").last.toInt)
-      case Some(b) if b.startsWith("Edit") => Edit(b.split("\\.").last.toInt)
+    def outf(x: String): Control = x match {
+      case "Add" => Add
+      case "Done" => Done
+      case x if x.startsWith("Delete") => Delete(x.split("\\.").last.toInt)
     }
-    def inf(x: Control): Option[String] = Some(x.toString)
+    def inf(x: Control): String = x.toString
 
     def confirmation(q: A): WebMonad[Boolean] =
       tell(s"remove-$id", q).map{_ => true}
 
-    def edit(q: A): WebMonad[A] = {
-      editSingleForm.fold(NotFound: WebMonad[A]) { x =>
-        ask(x._1, s"edit-$id", q)(x._2, implicitly, implicitly)
-      }
-    }
+    many[A](id, min, max, default, confirmation){ case (iid, minA, maxA, items) =>
 
-    many[A](id, min, max, default, confirmation, Some(edit)){ case (iid, minA, maxA, items) =>
-
-      val mapping = optional(text) // N.b. ideally this would just be 'text' but sadly text triggers the default play "required" message for 'text'
-        .verifying("error.radio-form.choose-option", a => a.nonEmpty)
-        .verifying(s"$id.error.items.tooFew", a => !a.contains("Done")  || items.size >= min)
-        .verifying(s"$id.error.items.tooMany", a => !a.contains("Add") || items.size < max)
+      val mapping = nonEmptyText
+        .verifying(s"$id.error.items.tooFew", a => a != "Done" || items.size >= min)
+        .verifying(s"$id.error.items.tooMany", a => a != "Add" || items.size < max)
 
       formPage(id)(mapping) { (path, b, r) =>
         implicit val request: Request[AnyContent] = r
-        uniform.many(id, b, items.map{_.showHtml}, path, min, editSingleForm.nonEmpty)
+        uniform.many(id, b, items.map{_.showHtml}, path, min)
       }.imap(outf)(inf)
     }(wm)
   }
 
   def askPackSites(existingSites: List[Site]): WebMonad[List[Site]] =
-    manyT("production-sites",
-      ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly),
+    manyT("packSitesActivity",
+      ask(packagingSiteMapping,_)(packagingSiteForm, implicitly),
       default = existingSites,
-      min = 1,
-      editSingleForm = Some((packagingSiteMapping, packagingSiteForm))
+      min = 1
     )
-
-  def askRegDate: WebMonad[LocalDate] = {
-    ask(
-      startDate
-        .verifying(
-          "error.start-date.in-future",
-          !_.isAfter(LocalDate.now)
-        ).verifying(
-        "error.start-date.before-tax-start",
-        !_.isBefore(LocalDate.of(2018, 4, 6))),
-      "start-date"
-    )
-  }
-
-  def askWarehouses(sites: List[Site]): WebMonad[List[Site]] = {
-    manyT("secondary-warehouses",
-      ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly),
-      default = sites,
-      editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
-  }
-
 }
 
