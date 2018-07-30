@@ -73,8 +73,8 @@
                     </tr>
                     }
             </table>
-            <br/>
-            @if(messages.isDefinedAt(s"$key.list-control.heading")) {
+            @if(messages.isDefinedAt(s"$key.list-control.heading") && items.nonEmpty) {
+            </br>
                 <span class="bold-small">@Messages(s"$key.list-control.heading")</span>
             }
             @if(messages.isDefinedAt(s"$key.list-control.lead")) {

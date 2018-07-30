@@ -79,16 +79,21 @@ object SdilComponents {
   implicit val siteProgressiveRevealHtml: HtmlShow[Site] = {
 
     def lines(s: Site): String = {
-      s.address.lines.tail.map { line =>
+      val lines = s.tradingName.fold(s.address.lines.tail)(_ => s.address.lines)
+      lines.map { line =>
         s"""<div aria-hidden="true" class="address progressive-reveal">$line</div>"""
       }
     }.mkString
+
+    def visibleText(s: Site): String = {
+      s.tradingName.fold(s.address.lines.head)(x=>x)
+    }
 
     HtmlShow.instance { site =>
       Html(
         s"""<details role="group">
         <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-          <span class="summary">${site.address.lines.head}</span>
+          <span class="summary">${visibleText(site)}</span>
         </summary>""" +
           lines(site) +
           s"""<div class="address postal-code progressive-reveal">${site.address.postCode}</div>

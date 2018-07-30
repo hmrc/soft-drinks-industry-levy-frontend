@@ -694,7 +694,10 @@ production-sites.paragraph=Only add the addresses of the UK packaging sites you 
 must have at least one registered packaging site.
 production-sites.list-control.heading=Do you need to add another packaging site?
 production-sites.list-control.lead=You must tell us about all your packaging sites
-packSites.paragraph=Only add the addresses of UK packaging sites you operate. You must have at least one registered packaging site.
+packSites.paragraph=Only add the addresses of UK packaging sites you operate. \
+  You must have at least one registered packaging site.
+heading.edit-production-sites=Enter your UK packaging site details
+edit-production-sites.paragraph=Only add the addresses of UK packaging sites you operate.
 
 heading.warehouses=Change your UK warehouse details
 heading.secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
@@ -703,6 +706,7 @@ secondary-warehouses.list-control.heading=Do you want to add another warehouse?
 warehouses.help.header=Why register a warehouse?
 warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses \
   you use to store them.
+heading.edit-secondary-warehouses=Enter your UK warehouse details
 
 heading.contact=Change your contact for the Soft Drinks Industry Levy
 contact.fullName=Full name
