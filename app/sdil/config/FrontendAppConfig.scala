@@ -27,7 +27,8 @@ trait AppConfig {
   val reportAProblemNonJSUrl: String
   val betaFeedbackUrlAuth: String
   val ggLoginUrl: String
-  val signoutUrl: String
+  val signoutRegVarUrl: String
+  val signoutReturnsUrl: String
   val signoutUrlNoFeedback: String
   val sdilHomePage: String
   val appName: String
@@ -58,7 +59,9 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   private lazy val companyAuthSignOutPath = getConfString("company-auth.sign-out-path", "")
   lazy val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
   lazy val feedbackSurveyUrl: String = loadConfig("microservice.services.feedback-survey.url")
-  lazy val signoutUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath?continue=$feedbackSurveyUrl?origin=SDIL"
+  lazy val signOutSdilUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath?continue=$feedbackSurveyUrl"
+  lazy val signoutRegVarUrl: String = s"$signOutSdilUrl?origin=SDIL"
+  lazy val signoutReturnsUrl: String = s"$signOutSdilUrl?origin=SDILRETURN"
   lazy val signoutUrlNoFeedback: String = s"$companyAuthFrontend$companyAuthSignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
 
