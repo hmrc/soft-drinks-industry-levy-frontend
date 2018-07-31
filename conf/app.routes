@@ -65,6 +65,7 @@ GET         /register/complete                                 sdil.controllers.
 GET         /sign-in                                           sdil.controllers.AuthenticationController.signIn()
 GET         /time-in                                           sdil.controllers.AuthenticationController.timeIn(referrer)
 GET         /sign-out                                          sdil.controllers.AuthenticationController.signOut()
+GET         /sign-out-returns                                  sdil.controllers.AuthenticationController.signOutReturns()
 GET         /sign-out-no-feedback                              sdil.controllers.AuthenticationController.signOutNoFeedback()
 
 GET         /time-out                                          sdil.controllers.AuthenticationController.timeOut()

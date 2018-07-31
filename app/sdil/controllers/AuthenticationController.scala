@@ -30,7 +30,11 @@ class AuthenticationController(val messagesApi: MessagesApi)
   }
 
   def signOut: Action[AnyContent] = Action { implicit request =>
-    Redirect(config.signoutUrl).withNewSession
+    Redirect(config.signoutRegVarUrl).withNewSession
+  }
+
+  def signOutReturns: Action[AnyContent] = Action { implicit request =>
+    Redirect(config.signoutReturnsUrl).withNewSession
   }
 
   def timeIn(referrer: String) = Action { implicit request =>
