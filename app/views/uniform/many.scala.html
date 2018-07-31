@@ -64,12 +64,17 @@
                             <td class="@if(showEdit) {align-centre} else {align-right}">
                                 <button name="@key" value="Delete.@id" class="link-button no-shadow">@Messages(Seq(s"$key.delete", "delete"))</button>
                             </td>
-                            @if(showEdit) {
-                                <td class="align-right">
-                                    <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "edit"))</button>
-                                </td>
-                            }
+                        } else {
+                            <td/>
                         }
+                        @if(showEdit) {
+                            <td class="align-right">
+                                <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "edit"))</button>
+                            </td>
+                        } else {
+                            <td/>
+                        }
+
                     </tr>
                     }
             </table>
@@ -99,11 +104,9 @@
             }
         }
 
-        @if(min <= items.size) {
-            <button class="button" type="submit">
-            @Messages("sdil.common.save-continue")
-            </button>
-        }
+        <button class="button" type="submit">
+        @Messages("sdil.common.save-continue")
+        </button>
     }
 
 }

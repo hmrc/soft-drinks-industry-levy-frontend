@@ -21,7 +21,7 @@ import java.time.LocalDate
 import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents._
+import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, _}
 import uk.gov.hmrc.uniform.webmonad._
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
@@ -85,11 +85,12 @@ class VariationsController(
 
       packSites       <- if (change.contains(Sites)) {
         manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly), default = data
-          .updatedProductionSites.toList, min = 1) emptyUnless (data.producer.isLarge.contains(true) || data.copackForOthers)
+          .updatedProductionSites.toList, min = 1, editSingleForm = Some((packagingSiteMapping, packagingSiteForm))) emptyUnless (data.producer.isLarge.contains(true) || data.copackForOthers)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
-        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly), default = data.updatedWarehouseSites.toList)
+        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly), default = data
+          .updatedWarehouseSites.toList, editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
       } else data.updatedWarehouseSites.pure[WebMonad]
 
       contact         <- if (change.contains(ContactPerson)) {
@@ -130,7 +131,7 @@ class VariationsController(
                                      else for {
                                        packSites       <- askPackSites(data.updatedProductionSites.toList) emptyUnless (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
                                        isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
-                                       warehouses      <- manyT("secondary-warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly), default = data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
+                                       warehouses      <- askWarehouses(data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
                                      } yield data.copy (
                                        producer               = Producer(packLarge.isDefined, packLarge),
                                        usesCopacker           = useCopacker.some.flatten,

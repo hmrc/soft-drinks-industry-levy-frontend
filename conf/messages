@@ -698,15 +698,24 @@ packSites.paragraph=Only add the addresses of UK packaging sites you operate. \
   You must have at least one registered packaging site.
 heading.edit-production-sites=Enter your UK packaging site details
 edit-production-sites.paragraph=Only add the addresses of UK packaging sites you operate.
+heading.multi.packSites=Change your packaging site details
+packSites.list-control.heading=Do you want to add another packaging site?
+packSites.option.add=Yes
+packSites.option.done=No
+heading.edit-packSites=Enter your UK packaging site details
 
-heading.warehouses=Change your UK warehouse details
 heading.secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
 heading.multi.secondary-warehouses=You have added {0} warehouse{1}
 secondary-warehouses.list-control.heading=Do you want to add another warehouse?
 warehouses.help.header=Why register a warehouse?
 warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register the warehouses \
-  you use to store them.
+you use to store them.
 heading.edit-secondary-warehouses=Enter your UK warehouse details
+heading.multi.warehouses=Change your UK warehouse details
+heading.warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+warehouses.list-control.heading=Do you want to add another warehouse?
+warehouses.option.add=Yes
+warehouses.option.done=No
 
 heading.contact=Change your contact for the Soft Drinks Industry Levy
 contact.fullName=Full name
@@ -880,11 +889,23 @@ packaged-as-a-contract-packer.inner-heading=How many litres do you need to repor
 packaged-as-a-contract-packer.paragraph=Do not include liable drinks you’ve packaged for registered small producers.
 heading.exemptions-for-small-producers=Do you need to claim an exemption for any of the liable drink you’ve packaged for registered small producers?
 heading.small-producer-details=Your small producer exemptions
+heading.multi.small-producer-details=You have added {0} small producer{1}
+small-producer-details.list-control.heading=Do you want to add another small producer?
+
+small-producer-details.option.add=Yes
+small-producer-details.option.done=No
+
 small-producer-details.paragraph.nonEmpty=Names and reference numbers will be saved and shown in future returns
 heading.add-small-producer-details=Enter the registered small producer’s details
+heading.first-small-producer-details=Enter the registered small producer’s details
 add-small-producer-details.paragraph=Names and reference numbers will be saved and shown in future returns
+first-small-producer-details.paragraph=Names and reference numbers will be saved and shown in future returns
 add-small-producer-details.help.header=What are the bands?
+first-small-producer-details.help.header=What are the bands?
 add-small-producer-details.help=<p>The low band applies where the liable drink contains at least 5 grams of sugar per \
+  100 millilitres.</p><p>The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
+  millilitres.</p>
+first-small-producer-details.help=<p>The low band applies where the liable drink contains at least 5 grams of sugar per \
   100 millilitres.</p><p>The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
   millilitres.</p>
 small-producer-details.name=Name: {0}
