@@ -880,11 +880,23 @@ packaged-as-a-contract-packer.inner-heading=How many litres do you need to repor
 packaged-as-a-contract-packer.paragraph=Do not include liable drinks you’ve packaged for registered small producers.
 heading.exemptions-for-small-producers=Do you need to claim an exemption for any of the liable drink you’ve packaged for registered small producers?
 heading.small-producer-details=Your small producer exemptions
+heading.multi.small-producer-details=You have added {0} small producer{1}
+small-producer-details.list-control.heading=Do you want to add another small producer?
+
+small-producer-details.option.add=Yes
+small-producer-details.option.done=No
+
 small-producer-details.paragraph.nonEmpty=Names and reference numbers will be saved and shown in future returns
 heading.add-small-producer-details=Enter the registered small producer’s details
+heading.first-small-producer-details=Enter the registered small producer’s details
 add-small-producer-details.paragraph=Names and reference numbers will be saved and shown in future returns
+first-small-producer-details.paragraph=Names and reference numbers will be saved and shown in future returns
 add-small-producer-details.help.header=What are the bands?
+first-small-producer-details.help.header=What are the bands?
 add-small-producer-details.help=<p>The low band applies where the liable drink contains at least 5 grams of sugar per \
+  100 millilitres.</p><p>The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
+  millilitres.</p>
+first-small-producer-details.help=<p>The low band applies where the liable drink contains at least 5 grams of sugar per \
   100 millilitres.</p><p>The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
   millilitres.</p>
 small-producer-details.name=Name: {0}

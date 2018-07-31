@@ -175,16 +175,24 @@ class ReturnsController (
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
 
-  private def askReturn(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = (
-    askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites"),
-    askEmptyOption(litreagePair, "packaged-as-a-contract-packer"),
-    manyT("small-producer-details", {ask(smallProducer, _)}, min = 1)
-      emptyUnless ask(bool, "exemptions-for-small-producers"),
-    askEmptyOption(litreagePair, "brought-into-uk"),
-    askEmptyOption(litreagePair, "brought-into-uk-from-small-producers"),
-    askEmptyOption(litreagePair, "claim-credits-for-exports"),
-    askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
-  ).mapN(SdilReturn.apply)
+
+  private def askReturn(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
+    ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites")
+    contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
+    askSmallProd   <- ask(bool, "exemptions-for-small-producers")
+    firstSmallProd <- ask(smallProducer, "first-small-producer-details") when askSmallProd
+    smallProds     <- manyT("small-producer-details",
+                            {ask(smallProducer, _)},
+                            min = 1,
+                            default = firstSmallProd.fold(List.empty[SmallProducer])(x => List(x)),
+                            editSingleForm = Some((smallProducer, smallProducerForm))
+                           ) when askSmallProd
+    imports        <- askEmptyOption(litreagePair, "brought-into-uk")
+    importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers")
+    exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports")
+    wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
+    sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
+  } yield sdilReturn
 
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
