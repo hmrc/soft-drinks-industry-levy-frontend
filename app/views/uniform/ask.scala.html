@@ -15,13 +15,14 @@
  *@
 
 @import helper.{inputRadioGroup => _, _}
-@import play.api.Configuration
-@import views.html.softdrinksindustrylevy.helpers._
+@import ltbs.play._
 @import sdil.config.AppConfig
-@import views.html.helper.options
+@import uk.gov.hmrc.uniform.playutil._
+@import views.html.softdrinksindustrylevy.helpers._
 @import views.html.uniform.helpers._
 
-@(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], appConfig: AppConfig)
+
+@(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String])(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages)
 
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
@@ -35,8 +36,8 @@
             <p>@msg</p>
         </div>
     }
-    @if(messages.isDefinedAt(s"$key.lead")) {
-        <p class="lede">@Messages(s"$key.lead")</p>
+    @if(messages.isDefinedAt(s"$key.lead") || extraMessages.messages.get(s"$key.lead").nonEmpty) {
+        <p class="lede">@Messages.extraMessage(s"$key.lead")</p>
     }
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField

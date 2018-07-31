@@ -84,12 +84,12 @@ class VariationsController(
       change          <- askContactChangeType
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly), default = data
+        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly), default = data
           .updatedProductionSites.toList, min = 1) emptyUnless (data.producer.isLarge.contains(true) || data.copackForOthers)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
-        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList)
+        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly), default = data.updatedWarehouseSites.toList)
       } else data.updatedWarehouseSites.pure[WebMonad]
 
       contact         <- if (change.contains(ContactPerson)) {
@@ -130,7 +130,7 @@ class VariationsController(
                                      else for {
                                        packSites       <- askPackSites(data.updatedProductionSites.toList) emptyUnless (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
                                        isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
-                                       warehouses      <- manyT("warehousesActivity", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly), default = data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
+                                       warehouses      <- manyT("secondary-warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly), default = data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
                                      } yield data.copy (
                                        producer               = Producer(packLarge.isDefined, packLarge),
                                        usesCopacker           = useCopacker.some.flatten,
