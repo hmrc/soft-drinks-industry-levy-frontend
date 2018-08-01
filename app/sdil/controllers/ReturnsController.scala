@@ -39,6 +39,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
+
 import scala.concurrent._
 import scala.concurrent.duration._
 import play.api.libs.json._
@@ -46,6 +47,8 @@ import play.api.libs.functional.syntax._
 import uk.gov.hmrc.http.HeaderCarrier
 import java.time._
 import java.time.format._
+
+import sdil.models.backend.Site
 
 class ReturnsController (
   val messagesApi: MessagesApi,
@@ -194,9 +197,37 @@ class ReturnsController (
     sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
   } yield sdilReturn
 
+  implicit class LongComparison(x :(Long,Long)) {
+    def + (y:(Long,Long)): (Long,Long) = {
+      (x._1 + y._1, x._2 + y._2)
+    }
+    def > (y:Long): Boolean = {
+        x._1 + x._2 > y
+    }
+  }
+
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn
+    isNewImporter  = (sdilReturn.importLarge + sdilReturn.importSmall) > 0 && !subscription.activity.importer && subscription.warehouseSites.isEmpty
+    addWarehouses  <- ask(bool, "ask-secondary-warehouses-in-return")(implicitly, implicitly, extraMessages) when isNewImporter
+    firstWarehouse  <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages()) when addWarehouses.getOrElse(false)
+    warehouses      <- askWarehouses(List.empty[Site] ++ firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless addWarehouses.getOrElse(false)
+
+    isNewLargeProd = sdilReturn.ownBrand > 1000000 && !subscription.activity.largeProducer
+    isNewPacker    = sdilReturn.packLarge > 0 && !subscription.activity.contractPacker
+    packs          = isNewLargeProd || isNewPacker
+    extraMessages   = ExtraMessages(messages = Map("pack-at-business-address-in-return.lead" -> s"Registered address: ${Address.fromUkAddress(subscription.address).nonEmptyLines.mkString(", ")}"))
+    useBusinessAddress <- ask(bool, "pack-at-business-address-in-return")(implicitly, implicitly, extraMessages) when packs
+    packingSites   = if (useBusinessAddress.getOrElse(false)) {
+      List(Site.fromAddress(Address.fromUkAddress(subscription.address)))
+    } else {
+      List.empty[Site]
+    }
+    firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when packingSites.isEmpty && packs
+    packSites       <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless packs
+    
+
     broughtForward <- BigDecimal("0").pure[WebMonad]
     _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward)
     _              <- cachedFuture(s"return-${period.count}")(
