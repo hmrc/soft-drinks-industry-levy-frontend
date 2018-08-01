@@ -30,11 +30,12 @@ import cats.data.OptionT
 import scala.concurrent._
 import java.time.LocalDate
 
-class ServicePageController(val messagesApi: MessagesApi,
-                            sdilConnector: SoftDrinksIndustryLevyConnector,
-                            registeredAction: RegisteredAction,
-                            errorHandler: FrontendErrorHandler)
-                           (implicit config: AppConfig)
+class ServicePageController(
+  val messagesApi: MessagesApi,
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  registeredAction: RegisteredAction,
+  errorHandler: FrontendErrorHandler)
+  (implicit config: AppConfig)
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = registeredAction.async { implicit request =>
@@ -42,26 +43,27 @@ class ServicePageController(val messagesApi: MessagesApi,
     type FutOpt[A] = OptionT[Future, A]
 
     val sdilRef = request.sdilEnrolment.value
-    val ret = for {
-      subscription  <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
+    for {
+      subscription  <- sdilConnector.retrieveSubscription(sdilRef).map {
+        _.getOrElse(throw new IllegalStateException(""))
+      }
       returnPeriods <- if (config.returnsEnabled)
-                         OptionT(sdilConnector.returns.pending(subscription.utr).map(_.some))
+                          sdilConnector.returns.pending(subscription.utr)
                        else
-                         Nil.pure[FutOpt]
+                          Nil.pure[Future]
+      lastReturn    <- sdilConnector.returns.get(subscription.utr, ReturnPeriod(LocalDate.now).previous)
       balance       <- if (config.balanceEnabled)
-                         OptionT(sdilConnector.balance(sdilRef).map(_.some))
-                       else BigDecimal(0).pure[FutOpt]
+                          sdilConnector.balance(sdilRef)
+                       else BigDecimal(0).pure[Future]
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
-      Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, balance))
+      Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance))
     }
-
-    ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
   }
 
   def balanceHistory: Action[AnyContent] = registeredAction.async { implicit request =>
 
-    if(!config.balanceEnabled)
+    if (!config.balanceEnabled)
       throw new NotImplementedError("Balance page is not enabled")
 
     val sdilRef = request.sdilEnrolment.value
@@ -69,8 +71,8 @@ class ServicePageController(val messagesApi: MessagesApi,
     sdilConnector.balanceHistory(request.sdilEnrolment.value) >>= { items =>
 
       val itemsWithRunningTotal =
-        items.foldLeft(List.empty[(FinancialLineItem,BigDecimal)]){
-          (acc,n) => (n,acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
+        items.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) {
+          (acc, n) => (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
         }
       val total = itemsWithRunningTotal.headOption.fold(BigDecimal(0))(_._2)
       Ok(balance_history(itemsWithRunningTotal, total))
