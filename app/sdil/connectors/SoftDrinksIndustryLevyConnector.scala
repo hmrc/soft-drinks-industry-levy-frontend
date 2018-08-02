@@ -18,7 +18,7 @@ package sdil.connectors
 
 import play.api.{Configuration, Environment}
 import sdil.models._
-import sdil.models.backend.Subscription
+import sdil.models.backend.{Site, Subscription}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.VariationsSubmission
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
@@ -71,6 +71,8 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
     http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map { _ => () }
   }
 
+
+
   object returns { 
     implicit val returnPeriodJson = Json.format[ReturnPeriod]
     import ltbs.play.scaffold.SdilComponents.longTupleFormatter
@@ -99,6 +101,11 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
       val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
       http.GET[Option[SdilReturn]](uri)
     }
+
+    def variation(variation: ReturnsVariation, sdilRef: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+      http.POST[ReturnsVariation, HttpResponse](s"$sdilUrl/returns/variation/sdil/$sdilRef", variation) map { _ => () }
+    }
+
   }
 
   def balance(

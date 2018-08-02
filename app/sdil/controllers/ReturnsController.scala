@@ -31,7 +31,9 @@ import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
+import sdil.models.backend.Activity
 import sdil.models.retrieved.{RetrievedSubscription => Subscription}
+import sdil.models.variations.{SdilActivity, VariationData, VariationsSubmission}
 import sdil.uniform._
 import uk.gov.hmrc.domain.Modulus23Check
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
@@ -209,14 +211,20 @@ class ReturnsController (
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn
-    isNewImporter  = (sdilReturn.importLarge + sdilReturn.importSmall) > 0 && !subscription.activity.importer && subscription.warehouseSites.isEmpty
-    addWarehouses  <- ask(bool, "ask-secondary-warehouses-in-return")(implicitly, implicitly, extraMessages) when isNewImporter
+    isNewImporter  = (sdilReturn.importLarge + sdilReturn.importSmall) > 0 && !subscription.activity.importer //TODO uncomment.. && subscription.warehouseSites.isEmpty
+    _              <- execute(println("################################### isNewImporter " + isNewImporter))
+    // we only offer to add warehouses if they have none
+    addWarehouses  <- ask(bool, "ask-secondary-warehouses-in-return")(implicitly, implicitly, extraMessages) when isNewImporter //TODO uncomment.. && subscription.warehouseSites.isEmpty
     firstWarehouse  <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages()) when addWarehouses.getOrElse(false)
     warehouses      <- askWarehouses(List.empty[Site] ++ firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless addWarehouses.getOrElse(false)
 
     isNewLargeProd = sdilReturn.ownBrand > 1000000 && !subscription.activity.largeProducer
+    _              <- execute(println("################################### isNewLargeProd " + isNewLargeProd))
     isNewPacker    = sdilReturn.packLarge > 0 && !subscription.activity.contractPacker
-    packs          = isNewLargeProd || isNewPacker
+    _              <- execute(println("################################### isNewPacker " + isNewPacker))
+
+    // we only ask for packing sites if they have none
+    packs          = isNewLargeProd || isNewPacker // TODO uncomment.. && subscription.productionSites.isEmpty
     extraMessages   = ExtraMessages(messages = Map("pack-at-business-address-in-return.lead" -> s"Registered address: ${Address.fromUkAddress(subscription.address).nonEmptyLines.mkString(", ")}"))
     useBusinessAddress <- ask(bool, "pack-at-business-address-in-return")(implicitly, implicitly, extraMessages) when packs
     packingSites   = if (useBusinessAddress.getOrElse(false)) {
@@ -226,12 +234,15 @@ class ReturnsController (
     }
     firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when packingSites.isEmpty && packs
     packSites       <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless packs
-    
+    // N.b. all sites are new sites
+    variation     = ReturnsVariation(isNewLargeProd, isNewImporter, isNewPacker, warehouses, packingSites, subscription.contact.phoneNumber, subscription.contact.email)
+
 
     broughtForward <- BigDecimal("0").pure[WebMonad]
     _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward)
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
+    _              <- execute(sdilConnector.returns.variation(variation, sdilRef))
     end            <- clear >> confirmationPage("return-sent", period, subscription, sdilReturn, broughtForward, sdilRef)
   } yield end
 
