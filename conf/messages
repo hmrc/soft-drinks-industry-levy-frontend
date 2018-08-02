@@ -662,6 +662,9 @@ secondary-warehouses.option.add=Yes
 secondary-warehouses.option.done=No
 
 production-sites.edit=Change
+ask-secondary-warehouses.edit=Change
+secondary-warehouses.edit=Change
+small-producer-details.edit=Change
 production-sites.delete=Remove
 heading.pack-at-business-address=Is your registered business address a UK packaging site that you operate to produce liable drinks?
 
@@ -891,6 +894,9 @@ heading.exemptions-for-small-producers=Do you need to claim an exemption for any
 heading.small-producer-details=Your small producer exemptions
 heading.multi.small-producer-details=You have added {0} small producer{1}
 small-producer-details.list-control.heading=Do you want to add another small producer?
+heading.edit-small-producer-details=Enter the registered small producer’s details
+edit-small-producer-details.paragraph=Names and reference numbers will be saved and shown in future returns
+edit-small-producer-details.paragraph.nonEmpty=Names and reference numbers will be saved and shown in future returns
 
 small-producer-details.option.add=Yes
 small-producer-details.option.done=No
