@@ -39,7 +39,7 @@
       if(items.isEmpty) {
         Messages(Seq(s"heading.$key", "sdil.variations.title"))
     } else {
-        Messages(s"heading.multi.$key", items.length, singular(items).toString.replaceAll("\\s", ""))
+        Messages(s"heading.multi.$key", items.length, singular(items).toString)
     },
      form = Some(form)) {
 
