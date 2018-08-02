@@ -28,19 +28,37 @@
         s
     }
 }
-@views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
+
+@multiTitle(items: List[Html]) = {
+    @if(items.isEmpty){
+        @Messages(s"heading.$key")
+    } else {
+        @Messages(s"heading.multi.$key", items.length, singular(items).toString.replaceAll("\\s", ""))
+    }
+}
+
+
+
+@views.html.main_template(
+                          if(items.isEmpty) {
+                            Messages(Seq(s"heading.$key", "sdil.variations.title"))
+                        } else {
+                            Messages(s"heading.multi.$key", items.length, singular(items).toString.replaceAll("\\s", ""))
+                        },
+                         form = Some(form)) {
 
     @backlink(breadcrumbs)
 
     @error_summary(form)
+
     @if(items.isEmpty){
-        <h1 class="heading-large">@Messages(s"heading.$key")</h1>
-        <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
+        <h1 class="heading-large">@multiTitle(items)</h1>
+        <legend class="visuallyhidden">@multiTitle(items)</legend>
     }
 
     @if(items.nonEmpty){
-        <h1 class="heading-large">@Messages(s"heading.multi.$key", items.length, singular(items).toString.replaceAll("\\s", ""))</h1>
-        <legend class="visuallyhidden">@Messages(s"heading.multi.$key", items.length, singular(items))</legend>
+        <h1 class="heading-large">@multiTitle(items)</h1>
+        <legend class="visuallyhidden">@multiTitle(items)</legend>
     }
 
     @if(messages.isDefinedAt(s"$key.paragraph")) {
