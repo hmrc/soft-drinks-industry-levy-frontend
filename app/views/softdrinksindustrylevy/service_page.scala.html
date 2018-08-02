@@ -23,7 +23,7 @@
 @import sdil.models.retrieved.RetrievedSubscription
 @import uk.gov.hmrc.play.views.html.helpers._
 @import java.time.format.DateTimeFormatter.ofPattern
-import java.time.LocalDate
+@import java.time.LocalDate
 
 @(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
@@ -48,7 +48,7 @@ import java.time.LocalDate
 	    } else {
                 @lastReturn.map { lr =>
                     <div class="panel-border-narrow panel">
-                  <p>@Messages("sdil.service-page.completed-return", "", ReturnPeriod(LocalDate.now).previous, "")</p>
+                  <p>@Messages("sdil.service-page.completed-return", "databaseFoo", ReturnPeriod(LocalDate.now), "")</p>
                     </div>
                 }
 	      @for(period <- periodsDue) { 
