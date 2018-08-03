@@ -48,7 +48,7 @@
 	    } else {
                 @lastReturn.map { lr =>
                     <div class="panel-border-narrow panel">
-                  <p>@Messages("sdil.service-page.completed-return", "databaseFoo", ReturnPeriod(LocalDate.now), "")</p>
+                  <p>@Messages("sdil.service-page.completed-return", ReturnPeriod(LocalDate.now).previous, ReturnPeriod(LocalDate.now), "")</p>
                     </div>
                 }
 	      @for(period <- periodsDue) { 
