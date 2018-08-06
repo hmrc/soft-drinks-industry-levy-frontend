@@ -20,13 +20,13 @@ import play.api.libs.json.{Format, Json}
 import sdil.models.backend.Site
 
 case class ReturnsVariation(
-  isNewLargeProd: Boolean,
-  isNewImporter: Boolean,
-  isNewPacker: Boolean,
-  warehouses: List[Site],
-  packingSites: List[Site],
+  importer: (Boolean, (Long,Long)) = (false, (0,0)),
+  packer: (Boolean, (Long,Long)) = (false, (0,0)),
+  warehouses: List[Site] = Nil,
+  packingSites: List[Site] = Nil,
   phoneNumber: String,
-  email: String)
+  email: String,
+  taxEstimation: BigDecimal)
 object ReturnsVariation {
   implicit val format: Format[ReturnsVariation] = Json.format[ReturnsVariation]
 }
