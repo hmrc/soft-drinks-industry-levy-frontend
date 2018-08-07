@@ -62,9 +62,6 @@
                       )
                   </p>
                     </div>
-
-@*//                @{updateTimeMessage.getOrElse(Messages(s"$id.your.updates", now.format("d MMMM yyyy"), LocalTime.now*@
-@*//                        (ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase))}*@
                 }
 	      @for(period <- periodsDue) { 
 	      <div class="notice">
