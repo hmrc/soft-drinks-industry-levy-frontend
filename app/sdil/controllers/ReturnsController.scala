@@ -126,7 +126,7 @@ class ReturnsController (
     d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
   }
 
-  def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal): WebMonad[Unit] = {
+  def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal, variation: ReturnsVariation): WebMonad[Unit] = {
 
     val data = returnAmount(sdilReturn)
     val subtotal = calculateSubtotal(data)
@@ -139,7 +139,8 @@ class ReturnsController (
       costHigher,
       subtotal,
       broughtForward,
-      total)
+      total,
+      variation)
     tell(key, inner)
   }
 
@@ -247,10 +248,14 @@ class ReturnsController (
 
 
     broughtForward <- BigDecimal("0").pure[WebMonad]
-    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward)
+    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, variation)
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
-    _              <- if (isNewImporter || isNewPacker) execute(sdilConnector.returns.variation(variation, sdilRef))
+    _              <- if (isNewImporter || isNewPacker) {
+                        execute(sdilConnector.returns.variation(variation, sdilRef))
+                      } else {
+                        (()).pure[WebMonad]
+                      }
     end            <- clear >> confirmationPage("return-sent", period, subscription, sdilReturn, broughtForward, sdilRef)
   } yield end
 
@@ -279,7 +284,7 @@ class ReturnsController (
 
   def taxEstimation(r: SdilReturn): BigDecimal = {
     val t = r.packLarge + r.importLarge + r.ownBrand
-    t._1 * costLower + t._2 * costHigher
+    (t._1 * costLower + t._2 * costHigher) * 4
   }
 
 }

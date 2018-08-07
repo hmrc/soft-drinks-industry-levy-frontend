@@ -14,7 +14,8 @@
  * limitations under the License.
  *@
 
-@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal)(implicit m: Messages)
+@import sdil.models.ReturnsVariation
+@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: ReturnsVariation)(implicit m: Messages)
 
 @formatMoney(value: BigDecimal) = {
     @if(value < 0) {
@@ -78,8 +79,114 @@
         </tr>
     </tbody>
 </table>
+
+@if(variation.packingSites.nonEmpty) {
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.packsites.add")</caption>
+
+        <thead>
+            <tr>
+                <th class="cya-width">
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.packsites.address")
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.postcode")
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(site <- variation.packingSites) {
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                            <span class="summary">@site.address.lines.head</span>
+                        </summary>
+                        @for(line <- site.address.lines.tail) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                <td class="change-answer">
+                    <a href="production-sites">
+                    @Html(Messages("variations.cya.packsites.change"))
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if(variation.warehouses.nonEmpty) {
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.warehouses.add")</caption>
+
+        <thead>
+            <tr>
+                <th class="cya-width">
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.warehouses")
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.postcode")
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(site <- variation.warehouses) {
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                            <span class="summary">
+                            @site.getLines.head
+                            </span>
+                        </summary>
+                        @for(line <- site.getLines.tail.dropRight(1)) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                <td class="change-answer">
+                    <a href="secondary-warehouses">
+                    @Html(Messages("variations.cya.warehouses.change"))
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+
+
+
 <h3 class="heading-medium">@Messages(s"$key.submit-subheading")</h3>
 <p>@Messages(s"$key.submit-paragraph")</p>
+
+@if(variation.importer._1 || variation.packer._1) {
+    <p>[Your return is changing your registration - you are now an importer/copacker.]</p>
+}
+
 <p>
     <a href="javascript:window.print()" class="print-link" onclick="ga('send', 'event', 'print', 'click', 'Print')">
         @Messages("sdil.common.print")
