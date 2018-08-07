@@ -46,7 +46,7 @@ object FrontendBuild extends Build {
   lazy val microservice = Project("soft-drinks-industry-levy-frontend", file("."))
     .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
     .settings(scalaSettings: _*)
-    .settings(TwirlKeys.templateImports += "uk.gov.hmrc.uniform.playutil._")
+    .settings(TwirlKeys.templateImports ++= Seq("uk.gov.hmrc.uniform.playutil._", "sdil.utility._"))
     .settings(publishingSettings: _*)
     .settings(defaultSettings(): _*)
     .settings(initialCommands in console := "import cats.implicits._")
