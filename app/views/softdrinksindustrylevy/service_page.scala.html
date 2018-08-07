@@ -52,11 +52,13 @@
                   <p>
                       @Messages(
                           "sdil.service-page.completed-return",
-                          ReturnPeriod(LocalDate.now).previous,
+                          ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
+                          ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
                           lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("h:mma")).toLowerCase,
                           lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")).toLowerCase,
-                          ReturnPeriod(LocalDate.now),
-                          ReturnPeriod(LocalDate.now).deadline
+                          ReturnPeriod(LocalDate.now).start.format("MMMM"),
+                          ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
+                          ReturnPeriod(LocalDate.now).deadline.format("d MMMM yyyy")
                       )
                   </p>
                     </div>
