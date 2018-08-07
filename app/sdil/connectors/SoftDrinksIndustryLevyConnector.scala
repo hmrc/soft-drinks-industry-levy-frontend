@@ -97,7 +97,7 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
       period: ReturnPeriod
     )(implicit hc: HeaderCarrier): Future[Option[SdilReturn]] = {
       val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
-      http.GET[Option[SdilReturn]](uri)
+      http.GET[Option[(SdilReturn)]](uri)
     }
   }
 

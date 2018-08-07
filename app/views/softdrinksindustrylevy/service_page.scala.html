@@ -22,7 +22,8 @@
 @import sdil.models.RegistrationFormData
 @import sdil.models.retrieved.RetrievedSubscription
 @import uk.gov.hmrc.play.views.html.helpers._
-@import java.time.format.DateTimeFormatter.ofPattern
+@import java.time.format.DateTimeFormatter._
+@import java.time.LocalDateTime
 @import java.time.LocalDate
 
 @(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal)(implicit request: Request[_], messages: Messages, config: AppConfig)
@@ -48,8 +49,20 @@
 	    } else {
                 @lastReturn.map { lr =>
                     <div class="panel-border-narrow panel">
-                  <p>@Messages("sdil.service-page.completed-return", ReturnPeriod(LocalDate.now).previous, ReturnPeriod(LocalDate.now), "")</p>
+                  <p>
+                      @Messages(
+                          "sdil.service-page.completed-return",
+                          ReturnPeriod(LocalDate.now).previous,
+                          lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("h:mma")).toLowerCase,
+                          lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")).toLowerCase,
+                          ReturnPeriod(LocalDate.now),
+                          ReturnPeriod(LocalDate.now).deadline
+                      )
+                  </p>
                     </div>
+
+@*//                @{updateTimeMessage.getOrElse(Messages(s"$id.your.updates", now.format("d MMMM yyyy"), LocalTime.now*@
+@*//                        (ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase))}*@
                 }
 	      @for(period <- periodsDue) { 
 	      <div class="notice">

@@ -191,7 +191,7 @@ class ReturnsController (
     importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers")
     exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports")
     wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
-    sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
+    sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage,submittedOn = None)
   } yield sdilReturn
 
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
