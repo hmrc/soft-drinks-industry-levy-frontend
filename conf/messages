@@ -1024,7 +1024,7 @@ return.file=Submit the return
 
 heading.partnerships=You can’t register online as a partnership
 account.balance=Account Balance
-account.balance.amount=Your balance is £{0}.
+account.balance.amount=Your balance is {0}.
 account.balance.pay.zero=You have nothing to pay.
 account.balance.pay.negative=[You need to make a payment].
 account.balance.pay.positive=[You are in credit].
