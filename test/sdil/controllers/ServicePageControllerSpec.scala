@@ -22,6 +22,8 @@ import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Message
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.backend._

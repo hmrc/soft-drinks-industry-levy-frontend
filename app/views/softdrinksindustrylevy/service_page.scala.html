@@ -22,9 +22,11 @@
 @import sdil.models.RegistrationFormData
 @import sdil.models.retrieved.RetrievedSubscription
 @import uk.gov.hmrc.play.views.html.helpers._
-@import java.time.format.DateTimeFormatter.ofPattern
+@import java.time.format.DateTimeFormatter._
+@import java.time.LocalDateTime
+@import java.time.LocalDate
 
-@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, balance: BigDecimal)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 
 @main_template(Messages("sdil.registered.title"), noArticle = true) {
@@ -45,6 +47,22 @@
                     </p>
                 </div>
 	    } else {
+                @lastReturn.map { lr =>
+                    <div class="panel-border-narrow panel">
+                  <p>
+                      @Messages(
+                          "sdil.service-page.completed-return",
+                          ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
+                          ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
+                          lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("h:mma")).toLowerCase,
+                          lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")),
+                          ReturnPeriod(LocalDate.now).start.format("MMMM"),
+                          ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
+                          ReturnPeriod(LocalDate.now).deadline.format("d MMMM yyyy")
+                      )
+                  </p>
+                    </div>
+                }
 	      @for(period <- periodsDue) { 
 	      <div class="notice">
               <i class="icon icon-important" style="top: 43%">

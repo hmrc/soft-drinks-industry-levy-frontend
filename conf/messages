@@ -402,6 +402,8 @@ sdil.service-page.p1=Your Soft Drinks Industry Levy reference is:
 sdil.service-page.p2.voluntary-only= You’re registered as a small producer only, which means you don’t have to file returns. You need\
  to give your reference number to your third party packagers so they can claim an exemption for the liable drinks\
  they package for you. You need to contact us if your situation changes.
+sdil.service-page.completed-return=Your return for {0} to {1} was submitted at {2} on {3}.\
+  Your next return will be for {4} to {5}. You must submit this return and make any payments due by {6}.
 sdil.service-page.business-details.title=Registered business details
 sdil.service-page.contact-details.title=Contact details
 sdil.service-page.name=Name
@@ -494,6 +496,7 @@ error.phone-number.invalid=Enter a valid phone number
 error.email=Enter a valid email address
 error.radio-form.choose-option=Choose an option
 error.radio-form.choose-one-option=Choose at least one option
+error.no-such-element=Sorry, we’re experiencing technical difficulties
 
 # Beta registration
 sdil.register-for-beta.title=Sign up to register early
