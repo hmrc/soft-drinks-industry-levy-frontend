@@ -39,13 +39,12 @@ class ServicePageController(
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = registeredAction.async { implicit request =>
-
     type FutOpt[A] = OptionT[Future, A]
 
     val sdilRef = request.sdilEnrolment.value
     for {
       subscription  <- sdilConnector.retrieveSubscription(sdilRef).map {
-        _.getOrElse(throw new IllegalStateException(""))
+        _.getOrElse(throw new NoSuchElementException("Subscription not found"))
       }
       returnPeriods <- if (config.returnsEnabled)
                           sdilConnector.returns.pending(subscription.utr)

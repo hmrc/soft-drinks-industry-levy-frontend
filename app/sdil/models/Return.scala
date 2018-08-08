@@ -27,7 +27,7 @@ case class SdilReturn(
   importSmall  : (Long,Long),
   export       : (Long,Long),
   wastage      : (Long,Long),
-  submittedOn  : Option[LocalDateTime]
+  submittedOn  : Option[LocalDateTime] = None
 )
 
 case class ReturnPeriod(year: Int, quarter: Int) {
