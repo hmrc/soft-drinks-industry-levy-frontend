@@ -55,7 +55,7 @@
                           ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
                           ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
                           lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("h:mma")).toLowerCase,
-                          lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")).toLowerCase,
+                          lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")),
                           ReturnPeriod(LocalDate.now).start.format("MMMM"),
                           ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
                           ReturnPeriod(LocalDate.now).deadline.format("d MMMM yyyy")
