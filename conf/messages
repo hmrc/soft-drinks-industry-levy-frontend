@@ -496,6 +496,7 @@ error.phone-number.invalid=Enter a valid phone number
 error.email=Enter a valid email address
 error.radio-form.choose-option=Choose an option
 error.radio-form.choose-one-option=Choose at least one option
+error.no-such-element=Sorry, we’re experiencing technical difficulties
 
 # Beta registration
 sdil.register-for-beta.title=Sign up to register early

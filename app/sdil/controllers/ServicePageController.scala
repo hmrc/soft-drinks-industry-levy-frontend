@@ -39,25 +39,26 @@ class ServicePageController(
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = registeredAction.async { implicit request =>
+
     type FutOpt[A] = OptionT[Future, A]
 
     val sdilRef = request.sdilEnrolment.value
-    for {
-      subscription  <- sdilConnector.retrieveSubscription(sdilRef).map {
-        _.getOrElse(throw new NoSuchElementException("Subscription not found"))
-      }
+    val ret = for {
+      subscription  <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
       returnPeriods <- if (config.returnsEnabled)
-                          sdilConnector.returns.pending(subscription.utr)
+                          OptionT(sdilConnector.returns.pending(subscription.utr).map(_.some))
                        else
-                          Nil.pure[Future]
-      lastReturn    <- sdilConnector.returns.get(subscription.utr, ReturnPeriod(LocalDate.now).previous)
+                          Nil.pure[FutOpt]
+      lastReturn    <- OptionT(sdilConnector.returns.get(subscription.utr, ReturnPeriod(LocalDate.now).previous).map(_.some))
       balance       <- if (config.balanceEnabled)
-                          sdilConnector.balance(sdilRef)
-                       else BigDecimal(0).pure[Future]
+                          OptionT(sdilConnector.balance(sdilRef).map(_.some))
+                       else BigDecimal(0).pure[FutOpt]
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
       Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance))
     }
+    ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
+
   }
 
   def balanceHistory: Action[AnyContent] = registeredAction.async { implicit request =>
