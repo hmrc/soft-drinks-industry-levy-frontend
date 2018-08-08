@@ -20,6 +20,7 @@ import play.api.libs.json.{Format, Json}
 import sdil.models.backend.Site
 
 case class ReturnsVariation(
+  orgName: String,
   importer: (Boolean, (Long,Long)) = (false, (0,0)),
   packer: (Boolean, (Long,Long)) = (false, (0,0)),
   warehouses: List[Site] = Nil,

@@ -209,43 +209,53 @@ class ReturnsController (
     }
   }
 
+  private def askNewWarehouses()(implicit hc: HeaderCarrier): WebMonad[List[Site]] = for {
+    addWarehouses  <- ask(bool, "ask-secondary-warehouses-in-return")(implicitly, implicitly, extraMessages)
+    firstWarehouse <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages()) when
+      addWarehouses
+    warehouses     <- askWarehouses(firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless
+      addWarehouses
+  } yield warehouses
+
+  private def askNewPackingSites(subscription: Subscription)(implicit hc: HeaderCarrier): WebMonad[List[Site]] = {
+    val extraMessages  = ExtraMessages(
+      messages = Map(
+        "pack-at-business-address-in-return.lead" -> s"Registered address: ${Address.fromUkAddress(subscription.address).nonEmptyLines.mkString(", ")}")
+    )
+    for {
+      usePPOBAddress   <- ask(bool, "pack-at-business-address-in-return")(implicitly, implicitly, extraMessages)
+      packingSites     = if (usePPOBAddress) {
+        List(Site.fromAddress(Address.fromUkAddress(subscription.address)))
+      } else {
+        List.empty[Site]
+      }
+      firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when
+        packingSites.isEmpty
+      packingSites     <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x)))
+    } yield packingSites
+  }
+
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn
-    isNewImporter  = (sdilReturn.importLarge + sdilReturn.importSmall) > 0 && !subscription.activity.importer //TODO uncomment.. && subscription.warehouseSites.isEmpty
-    _              <- execute(println("################################### isNewImporter " + isNewImporter))
-    // we only offer to add warehouses if they have none
-    addWarehouses  <- ask(bool, "ask-secondary-warehouses-in-return")(implicitly, implicitly, extraMessages) when isNewImporter //TODO uncomment.. && subscription.warehouseSites.isEmpty
-    firstWarehouse  <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages()) when addWarehouses.getOrElse(false)
-    warehouses      <- askWarehouses(List.empty[Site] ++ firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless addWarehouses.getOrElse(false)
-
-//    isNewLargeProd = sdilReturn.ownBrand > 1000000 && !subscription.activity.largeProducer
-//    _              <- execute(println("################################### isNewLargeProd " + isNewLargeProd))
+    // check if they need to vary
+    isNewImporter  = (sdilReturn.importLarge + sdilReturn.importSmall) > 0 && !subscription.activity.importer
     isNewPacker    = sdilReturn.packLarge > 0 && !subscription.activity.contractPacker
-    _              <- execute(println("################################### isNewPacker " + isNewPacker))
+    inner          = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
+    _              <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
+    newWarehouses     <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
+    newPackingSites <- askNewPackingSites(subscription) when isNewPacker // TODO uncomment && subscription.productionSites.isEmpty
 
-    // we only ask for packing sites if they have none
-    packs          = isNewPacker // TODO uncomment.. && subscription.productionSites.isEmpty
-    extraMessages   = ExtraMessages(messages = Map("pack-at-business-address-in-return.lead" -> s"Registered address: ${Address.fromUkAddress(subscription.address).nonEmptyLines.mkString(", ")}"))
-    useBusinessAddress <- ask(bool, "pack-at-business-address-in-return")(implicitly, implicitly, extraMessages) when packs
-    packingSites   = if (useBusinessAddress.getOrElse(false)) {
-      List(Site.fromAddress(Address.fromUkAddress(subscription.address)))
-    } else {
-      List.empty[Site]
-    }
-    firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when packingSites.isEmpty && packs
-    packSites       <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless packs
-    // N.b. all sites are new sites
     variation     = ReturnsVariation(
+      orgName = subscription.orgName,
       importer = (isNewImporter, sdilReturn.importLarge + sdilReturn.importSmall),
       packer = (isNewPacker, sdilReturn.packLarge),
-      warehouses = warehouses,
-      packingSites = packSites,
+      warehouses = newWarehouses.getOrElse(List.empty[Site]),
+      packingSites = newPackingSites.getOrElse(List.empty[Site]),
       phoneNumber = subscription.contact.phoneNumber,
       email = subscription.contact.email,
       taxEstimation = taxEstimation(sdilReturn)
     )
-
 
     broughtForward <- BigDecimal("0").pure[WebMonad]
     _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, variation)

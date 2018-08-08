@@ -1018,6 +1018,12 @@ returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-
 
 return.file=Submit the return
 
+heading.return-change-registration=Your registration details have changed
+return-change-registration.continue=Update registration
+returns.variation.new-importer-explanation=You’ve declared in this return that you’ve brought liable drinks into the UK. This activity isn’t reflected in your current registration. If this is not accurate you need to go back and change your answers, otherwise we’ll update your registration for you.
+returns.variation.new-packer-explanation=You’ve declared in this return that you’ve packaged liable drinks in the UK. This activity isn’t reflected in your current registration. If this is not accurate you need to go back and change your answers, otherwise we’ll update your registration for you.
+returns.variation.new-packer-and-importer-explanation=You’ve declared in this return that that you’ve brought liable drinks into the UK and that you’ve packaged liable drinks in the UK. This activity isn’t reflected in your current registration. If this is not accurate you need to go back and change your answers, otherwise we’ll update your registration for you.
+
 heading.partnerships=You can’t register online as a partnership
 account.balance=Account Balance
 account.balance.amount=Your balance is £{0}.
