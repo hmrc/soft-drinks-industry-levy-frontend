@@ -150,6 +150,8 @@ object Convert {
     }
 
     VariationsSubmission(
+      displayOrgName = orig.orgName,
+      PPOBAddress = orig.address,
       businessContact = newBusinessContact.ifNonEmpty,
       correspondenceContact = newBusinessContact.ifNonEmpty,
       primaryPersonContact = newPersonalDetails.ifNonEmpty,
