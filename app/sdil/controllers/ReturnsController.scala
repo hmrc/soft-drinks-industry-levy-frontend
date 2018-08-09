@@ -244,10 +244,11 @@ class ReturnsController (
     inner          = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
     _              <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
     newWarehouses     <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
-    newPackingSites <- askNewPackingSites(subscription) when isNewPacker // TODO uncomment && subscription.productionSites.isEmpty
+    newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
 
     variation     = ReturnsVariation(
       orgName = subscription.orgName,
+      ppobAddress = subscription.address,
       importer = (isNewImporter, sdilReturn.importLarge + sdilReturn.importSmall),
       packer = (isNewPacker, sdilReturn.packLarge),
       warehouses = newWarehouses.getOrElse(List.empty[Site]),
