@@ -26,10 +26,11 @@ object VariationsSubmission {
   implicit val writes: Writes[VariationsSubmission] = Json.writes[VariationsSubmission]
 }
 
+
 /** The payload that is sent to GForms */
 case class VariationsSubmission(tradingName: Option[String] = None,
                                 displayOrgName : String,
-                                PPOBAddress : UkAddress,
+                                ppobAddress : UkAddress,
                                 businessContact: Option[VariationsContact],
                                 correspondenceContact: Option[VariationsContact],
                                 primaryPersonContact: Option[VariationsPersonalDetails],
