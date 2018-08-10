@@ -75,7 +75,7 @@ class ServicePageController(
           (acc, n) => (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
         }
       val total = itemsWithRunningTotal.headOption.fold(BigDecimal(0))(_._2)
-      Ok(balance_history(itemsWithRunningTotal, total))
+      Ok(balance_history(itemsWithRunningTotal, total, request.sdilEnrolment.value))
     }
   }
 }

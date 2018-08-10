@@ -101,9 +101,12 @@
         @if(config.balanceEnabled) {
         <div>
             <h2 class="heading-medium">@Messages("account.balance")</h2>
-            <p>@printbalance("account.balance.amount", balance) @printbalance("account.balance.pay", balance)</p>
-            <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
+            <p>
+                @printbalance("account.balance.amount", balance)
+                <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
+            </p>
         </div>
+        @helpers.howToPay(sdilReference)
         }
 
             @declaration_table("service-page", "business-details.title") {
