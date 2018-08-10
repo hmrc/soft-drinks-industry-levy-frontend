@@ -1034,7 +1034,7 @@ account.balance.pay.positive=[You are in credit].
 view.balance.history=View Balance History
 balance.history=Balance History
 
-date.time=Date/Time
+date.time=Date
 transaction=Transaction
 pound.credits=£ Credits
 pound.debits=£ Debits
@@ -1049,3 +1049,13 @@ organisation-type.option.unincorporatedbody=Unincorporated body
 organisation-type.option.limitedcompany=Limited company
 
 heading.do-not-register=You don’t need to register
+
+how-to-pay.title=How to pay
+how-to-pay.pay-by=You can pay by Bacs or CHAPS using:
+how-to-pay.sort-code=sort code: 20-05-17
+how-to-pay.acct-no=account number: 40204374
+how-to-pay.acct-name=account name: HMRC General Business Tax Receipts
+how-to-pay.payment-ref=payment reference: {0}
+how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
+    Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
+
