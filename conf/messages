@@ -862,6 +862,7 @@ variations.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 packSites.error.items.tooMany=[Too many sites]
 packSites.error.items.tooFew=[You must have at least one packaging site]
 
+heading.edit-warehouses=Enter your UK warehouse details
 
 variations.cya.dereg=Deregistration
 variations.cya.reason=Reason
