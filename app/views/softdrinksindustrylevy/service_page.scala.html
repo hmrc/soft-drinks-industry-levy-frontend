@@ -25,6 +25,7 @@
 @import java.time.format.DateTimeFormatter._
 @import java.time.LocalDateTime
 @import java.time.LocalDate
+@import java.time.ZoneId
 
 @(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
@@ -54,7 +55,7 @@
                           "sdil.service-page.completed-return",
                           ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
                           ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
-                          lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("h:mma")).toLowerCase,
+                          lr.submittedOn.getOrElse(LocalDateTime.now).atZone(ZoneId.of("Europe/London")).format(ofPattern("h:mma")).toLowerCase,
                           lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")),
                           ReturnPeriod(LocalDate.now).start.format("MMMM"),
                           ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
