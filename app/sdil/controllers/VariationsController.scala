@@ -140,7 +140,7 @@ class VariationsController(
                                           pSites = if (usePPOBAddress.getOrElse(false)) {
                                             List(Site.fromAddress(Address.fromUkAddress(data.original.address)))
                                           } else {
-                                            data.original.productionSites
+                                            data.updatedProductionSites.toList
                                           }
                                           firstPackingSite <- ask(packagingSiteMapping, "first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when
                                             pSites.isEmpty && packer
