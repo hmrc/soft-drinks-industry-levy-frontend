@@ -127,6 +127,7 @@ class VariationsController(
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
+      packer                      =  (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
       variation                   <- if (shouldDereg)
                                        tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
                                      else {
@@ -135,15 +136,17 @@ class VariationsController(
                                             "pack-at-business-address.lead" -> s"Registered address: ${Address.fromUkAddress(data.original.address).nonEmptyLines.mkString(", ")}")
                                         )
                                         for {
-                                          usePPOBAddress <- ask(bool, "pack-at-business-address")(implicitly, implicitly, extraMessages)
-                                          pSites = if (usePPOBAddress) {
+                                          usePPOBAddress <- ask(bool, "pack-at-business-address")(implicitly, implicitly, extraMessages) when packer && data.original.productionSites.isEmpty
+                                          pSites = if (usePPOBAddress.getOrElse(false)) {
                                             List(Site.fromAddress(Address.fromUkAddress(data.original.address)))
                                           } else {
-                                            List.empty[Site]
+                                            data.original.productionSites
                                           }
                                           firstPackingSite <- ask(packagingSiteMapping, "first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when
-                                            pSites.isEmpty
-                                          packSites <- askPackSites(pSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x)))
+                                            pSites.isEmpty && packer
+                                          packSites <- askPackSites(pSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless packer
+
+
                                           isVoluntary = packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
                                           warehouses <- askWarehouses(data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
                                         } yield data.copy(
