@@ -31,7 +31,7 @@ import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.retrieved.{RetrievedSubscription => Subscription}
+import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription => Subscription}
 import sdil.uniform._
 import uk.gov.hmrc.domain.Modulus23Check
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
@@ -39,6 +39,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
+
 import scala.concurrent._
 import scala.concurrent.duration._
 import play.api.libs.json._
@@ -176,8 +177,8 @@ class ReturnsController (
   }
 
 
-  private def askReturn(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
-    ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites")
+  private def askReturn(subscription: Subscription)(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
+    ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites") emptyUnless !subscription.activity.smallProducer
     contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
     askSmallProd   <- ask(bool, "exemptions-for-small-producers")
     firstSmallProd <- ask(smallProducer, "first-small-producer-details") when askSmallProd
@@ -196,7 +197,7 @@ class ReturnsController (
 
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    sdilReturn     <- askReturn
+    sdilReturn     <- askReturn(subscription)
     broughtForward <- BigDecimal("0").pure[WebMonad]
     _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward)
     _              <- cachedFuture(s"return-${period.count}")(
