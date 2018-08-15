@@ -41,9 +41,7 @@
             <tr>
                 <td rowspan="2">@Messages(s"$key.$lineKey")</td>
                 <td>@Messages(s"$key.low")</td>
-                <td>@{
-                    f"${litres._1}%,d"
-                }</td>
+                <td>@{f"${litres._1}%,d"}</td>
                 <td class="no-minus-wrapping">@formatMoney(costLower * litres._1 * multiplier)</td>
                 <td>
                     <a href="@lineKey" class="returns-change-link">
@@ -53,9 +51,7 @@
             </tr>
             <tr>
                 <td>@Messages(s"$key.high")</td>
-                <td>@{
-                    f"${litres._2}%,d"
-                }</td>
+                <td>@{f"${litres._2}%,d"}</td>
                 <td class="no-minus-wrapping"> @formatMoney(costHigher * litres._2 * multiplier)</td>
                 <td>
                     <a href="@lineKey" class="returns-change-link">
