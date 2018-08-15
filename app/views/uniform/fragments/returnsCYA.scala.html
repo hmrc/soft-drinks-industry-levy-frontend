@@ -38,32 +38,32 @@
 
     <tbody>
         @for((lineKey, litres, multiplier) <- lineItems) {
-                <tr>
-                    <td rowspan="2">@Messages(s"$key.$lineKey")</td>
-                    <td>@Messages(s"$key.low")</td>
-                    <td>@{
-                        f"${litres._1}%,d"
-                    }</td>
-                    <td class="no-minus-wrapping">@formatMoney(costLower * litres._1 * multiplier)</td>
-                    <td>
-                        <a href="@lineKey" class="returns-change-link">
-                            @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>@Messages(s"$key.high")</td>
-                    <td>@{
-                        f"${litres._2}%,d"
-                    }</td>
-                    <td class="no-minus-wrapping"> @formatMoney(costHigher * litres._2 * multiplier)</td>
-                    <td>
-                        <a href="@lineKey" class="returns-change-link">
-                            @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
-                        </a>
-                    </td>
-                </tr>
-            }
+            <tr>
+                <td rowspan="2">@Messages(s"$key.$lineKey")</td>
+                <td>@Messages(s"$key.low")</td>
+                <td>@{
+                    f"${litres._1}%,d"
+                }</td>
+                <td class="no-minus-wrapping">@formatMoney(costLower * litres._1 * multiplier)</td>
+                <td>
+                    <a href="@lineKey" class="returns-change-link">
+                        @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>@Messages(s"$key.high")</td>
+                <td>@{
+                    f"${litres._2}%,d"
+                }</td>
+                <td class="no-minus-wrapping"> @formatMoney(costHigher * litres._2 * multiplier)</td>
+                <td>
+                    <a href="@lineKey" class="returns-change-link">
+                        @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
+                    </a>
+                </td>
+            </tr>
+        }
         @*Insert subtotal and amount brought forward back in Q2 filing*@
         @*<tr>*@
             @*<th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.subtotal")</h4></th>*@
