@@ -39,7 +39,6 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.uniform
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
-
 import scala.concurrent._
 import scala.concurrent.duration._
 import play.api.libs.json._
