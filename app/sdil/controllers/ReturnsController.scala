@@ -127,23 +127,26 @@ class ReturnsController (
     val subtotal = calculateSubtotal(data)
     val total: BigDecimal = subtotal + broughtForward
 
+    def removePackageOwn(isSmallProducer: Boolean, data: List[(String, (Long, Long), Int)]) = {
+      if (isSmallProducer)
+        data.drop(1)
+      else
+        data
+    }
     val inner = uniform.fragments.returnsCYA(
       key,
-      data,
+      removePackageOwn(isSmallProducer, data),
       costLower,
       costHigher,
       subtotal,
       broughtForward,
-      total,
-      isSmallProducer)
+      total)
     tell(key, inner)
   }
 
   private def confirmationPage(key: String, period: ReturnPeriod, subscription: Subscription,
                                sdilReturn: SdilReturn, broughtForward: BigDecimal, sdilRef: String)(implicit messages: Messages): WebMonad[Result] = {
     val now = LocalDate.now
-    import ltbs.play._
-
     val data = returnAmount(sdilReturn)
     val subtotal = calculateSubtotal(data)
 

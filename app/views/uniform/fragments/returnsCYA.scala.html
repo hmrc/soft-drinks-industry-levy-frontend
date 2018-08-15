@@ -14,8 +14,7 @@
  * limitations under the License.
  *@
 
-@import sdil.models.SmallProducer
-@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, isSmallProducer: Boolean)(implicit m: Messages)
+@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal)(implicit m: Messages)
 
 @formatMoney(value: BigDecimal) = {
     @if(value < 0) {
@@ -39,7 +38,6 @@
 
     <tbody>
         @for((lineKey, litres, multiplier) <- lineItems) {
-            @if(lineKey != "own-brands-packaged-at-own-sites" || !isSmallProducer) {
                 <tr>
                     <td rowspan="2">@Messages(s"$key.$lineKey")</td>
                     <td>@Messages(s"$key.low")</td>
@@ -66,7 +64,6 @@
                     </td>
                 </tr>
             }
-        }
         @*Insert subtotal and amount brought forward back in Q2 filing*@
         @*<tr>*@
             @*<th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.subtotal")</h4></th>*@
