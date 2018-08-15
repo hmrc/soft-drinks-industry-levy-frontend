@@ -31,7 +31,7 @@ import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription => Subscription}
+import sdil.models.retrieved.{RetrievedSubscription => Subscription}
 import sdil.uniform._
 import uk.gov.hmrc.domain.Modulus23Check
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
@@ -122,7 +122,7 @@ class ReturnsController (
     d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
   }
 
-  def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal): WebMonad[Unit] = {
+  def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal, isSmallProducer: Boolean): WebMonad[Unit] = {
 
     val data = returnAmount(sdilReturn)
     val subtotal = calculateSubtotal(data)
@@ -135,7 +135,8 @@ class ReturnsController (
       costHigher,
       subtotal,
       broughtForward,
-      total)
+      total,
+      isSmallProducer)
     tell(key, inner)
   }
 
@@ -199,7 +200,7 @@ class ReturnsController (
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn(subscription)
     broughtForward <- BigDecimal("0").pure[WebMonad]
-    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward)
+    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, subscription.activity.smallProducer)
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
     end            <- clear >> confirmationPage("return-sent", period, subscription, sdilReturn, broughtForward, sdilRef)
