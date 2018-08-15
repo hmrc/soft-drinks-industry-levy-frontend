@@ -105,9 +105,8 @@ class ReturnsController (
     case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
   }
 
-  def returnAmount(sdilReturn: SdilReturn) = {
-    List(
-      ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1),
+  def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean) = {
+    val ra = List(
       ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
       ("exemptions-for-small-producers", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
       ("brought-into-uk", sdilReturn.importLarge, 1),
@@ -115,6 +114,10 @@ class ReturnsController (
       ("claim-credits-for-exports", sdilReturn.export, -1),
       ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
     )
+    if(!isSmallProducer)
+      ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
+    else
+      ra
   }
 
   private def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal = {
@@ -123,19 +126,13 @@ class ReturnsController (
 
   def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal, isSmallProducer: Boolean): WebMonad[Unit] = {
 
-    val data = returnAmount(sdilReturn)
+    val data = returnAmount(sdilReturn, isSmallProducer)
     val subtotal = calculateSubtotal(data)
     val total: BigDecimal = subtotal + broughtForward
 
-    def removePackageOwn(isSmallProducer: Boolean, data: List[(String, (Long, Long), Int)]) = {
-      if (isSmallProducer)
-        data.drop(1)
-      else
-        data
-    }
     val inner = uniform.fragments.returnsCYA(
       key,
-      removePackageOwn(isSmallProducer, data),
+      data,
       costLower,
       costHigher,
       subtotal,
@@ -145,9 +142,9 @@ class ReturnsController (
   }
 
   private def confirmationPage(key: String, period: ReturnPeriod, subscription: Subscription,
-                               sdilReturn: SdilReturn, broughtForward: BigDecimal, sdilRef: String)(implicit messages: Messages): WebMonad[Result] = {
+                               sdilReturn: SdilReturn, broughtForward: BigDecimal, sdilRef: String, isSmallProducer: Boolean)(implicit messages: Messages): WebMonad[Result] = {
     val now = LocalDate.now
-    val data = returnAmount(sdilReturn)
+    val data = returnAmount(sdilReturn, isSmallProducer)
     val subtotal = calculateSubtotal(data)
 
     val total = subtotal + broughtForward
@@ -205,7 +202,15 @@ class ReturnsController (
     _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, subscription.activity.smallProducer)
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
-    end            <- clear >> confirmationPage("return-sent", period, subscription, sdilReturn, broughtForward, sdilRef)
+    end <- clear >> confirmationPage(
+      "return-sent",
+      period,
+      subscription,
+      sdilReturn,
+      broughtForward,
+      sdilRef,
+      subscription.activity.smallProducer
+    )
   } yield end
 
   def index(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
