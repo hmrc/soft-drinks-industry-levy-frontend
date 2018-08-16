@@ -890,6 +890,7 @@ heading.checkyouranswers=Check your answers
 # Returns
 error.empty=Number of litres must be 1 or more
 heading.own-brands-packaged-at-own-sites=Are you reporting your own brands of liable drink you’ve packaged at UK sites you operate?
+own-brands-packaged-at-own-sites.lead=This includes brands you own or have the rights to manufacture.
 own-brands-packaged-at-own-sites.inner-heading=How many litres do you need to report?
 heading.packaged-as-a-contract-packer=Are you reporting liable drink you’ve packaged as a third party or contract packer at UK sites you operate?
 packaged-as-a-contract-packer.inner-heading=How many litres do you need to report?
