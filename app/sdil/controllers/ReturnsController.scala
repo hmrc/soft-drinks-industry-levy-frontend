@@ -126,7 +126,7 @@ class ReturnsController (
     d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
   }
 
-  def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal, variation: ReturnsVariation): WebMonad[Unit] = {
+  def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal, variation: ReturnsVariation, subscription: Subscription): WebMonad[Unit] = {
 
     val data = returnAmount(sdilReturn)
     val subtotal = calculateSubtotal(data)
@@ -140,7 +140,8 @@ class ReturnsController (
       subtotal,
       broughtForward,
       total,
-      variation)
+      variation,
+      subscription)
     tell(key, inner)
   }
 
@@ -220,7 +221,7 @@ class ReturnsController (
   private def askNewPackingSites(subscription: Subscription)(implicit hc: HeaderCarrier): WebMonad[List[Site]] = {
     val extraMessages  = ExtraMessages(
       messages = Map(
-        "pack-at-business-address-in-return.lead" -> s"Registered address: ${Address.fromUkAddress(subscription.address).nonEmptyLines.mkString(", ")}")
+        "pack-at-business-address-in-return.lead" -> s"${Address.fromUkAddress(subscription.address).nonEmptyLines.mkString("<br/>")}")
     )
     for {
       usePPOBAddress   <- ask(bool, "pack-at-business-address-in-return")(implicitly, implicitly, extraMessages)
@@ -237,14 +238,14 @@ class ReturnsController (
 
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    sdilReturn     <- askReturn
+    sdilReturn      <- askReturn
     // check if they need to vary
-    isNewImporter  = (sdilReturn.importLarge + sdilReturn.importSmall) > 0 && !subscription.activity.importer
-    isNewPacker    = sdilReturn.packLarge > 0 && !subscription.activity.contractPacker
-    inner          = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
-    _              <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
-    newWarehouses     <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
+    isNewImporter   = (sdilReturn.importLarge + sdilReturn.importSmall) > 0 && !subscription.activity.importer
+    isNewPacker     = sdilReturn.packLarge > 0 && !subscription.activity.contractPacker
+    inner           = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
+    _               <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
     newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
+    newWarehouses   <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
 
     variation     = ReturnsVariation(
       orgName = subscription.orgName,
@@ -259,7 +260,7 @@ class ReturnsController (
     )
 
     broughtForward <- BigDecimal("0").pure[WebMonad]
-    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, variation)
+    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, variation, subscription)
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
     _              <- if (isNewImporter || isNewPacker) {

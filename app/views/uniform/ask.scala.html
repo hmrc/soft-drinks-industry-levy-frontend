@@ -37,7 +37,7 @@
         </div>
     }
     @if(messages.isDefinedAt(s"$key.lead") || extraMessages.messages.get(s"$key.lead").nonEmpty) {
-        <p class="lede">@Messages.extraMessage(s"$key.lead")</p>
+        <p class="lede">@Html(Messages.extraMessage(s"$key.lead"))</p>
     }
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField

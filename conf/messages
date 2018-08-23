@@ -632,7 +632,11 @@ contactChangeType.option.ContactPerson=Update our contact person
 contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
 
 heading.ask-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
-heading.ask-secondary-warehouses-in-return=[Because you're changing your registration we need to know if you want to register any of the UK warehouses you use to store liable drinks?] 
+heading.ask-secondary-warehouses-in-return=Do you want to register any UK warehouses you use to store liable drinks?
+ask-secondary-warehouses-in-return.help.header=Why register a warehouse?
+ask-secondary-warehouses-in-return.help=You can delay when you have to report liable drinks in your quarterly return if \
+  you register the warehouses you use to store them.<p>Because you changed your business activity,  \
+  you can choose to register any of the UK warehouses you use to store liable drinks.</p>
 heading.first-warehouse=Enter your UK warehouse details
 ask-secondary-warehouses.help.header=Why register a warehouse?
 ask-secondary-warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register \
@@ -665,7 +669,9 @@ secondary-warehouses.option.done=No
 production-sites.edit=Change
 production-sites.delete=Remove
 heading.pack-at-business-address=Is your registered business address a UK packaging site that you operate to produce liable drinks?
-heading.pack-at-business-address-in-return=[Because you're changing your registration... is your ppob a packaging site??]
+heading.pack-at-business-address-in-return=Is this address a UK packaging site you operate to produce liable drinks?
+pack-at-business-address-in-return.help.header=Why we need these details
+pack-at-business-address-in-return.help=Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate
 
 heading.packLarge=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink \
   for brands you own or have the rights to manufacture, worldwide?
@@ -982,6 +988,13 @@ check-your-answers.change.claim-credits-for-lost-damaged=volume lost, damaged or
 check-your-answers.continue=Confirm and submit
 check-your-answers.submit-subheading=Submit your return
 check-your-answers.submit-paragraph=By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
+check-your-answers.variations.subheading=Changes to business activity
+check-your-answers.variations.import-with-warehouses=You declared in this return that you brought liable drinks into \
+  the UK. You can <a href="secondary-warehouses">register your warehouses</a> before sending your return.
+check-your-answers.variations.import-without-warehouses=You declared in this return that you brought liable drinks into the UK.
+check-your-answers.variations.import-with-packSites=You declared in this return that you packaged liable drinks in \
+  the UK. You must <a href="production-sites">register your packaging sites</a> before sending your return.
+check-your-answers.variations.import-withot-packSites=You declared in this return that you packaged liable drinks in the UK.
 
 return-sent.title=Return submitted
 return-sent.subheading=You need to pay {0} </br> by {1}

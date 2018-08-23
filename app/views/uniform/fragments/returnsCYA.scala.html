@@ -15,7 +15,9 @@
  *@
 
 @import sdil.models.ReturnsVariation
-@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: ReturnsVariation)(implicit m: Messages)
+@import sdil.models.backend.Subscription
+@import sdil.models.retrieved.RetrievedSubscription
+@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: ReturnsVariation, subscription: RetrievedSubscription)(implicit m: Messages)
 
 @formatMoney(value: BigDecimal) = {
     @if(value < 0) {
@@ -177,15 +179,29 @@
     </table>
 }
 
+@if(variation.orgName.nonEmpty) {
+    <h3 class="heading-medium">@Messages(s"$key.variations.subheading")</h3>
+}
 
+@if(variation.importer._1 && subscription.warehouseSites.isEmpty) {
+    <p>@Html(Messages("check-your-answers.variations.import-with-warehouses"))</p>
+}
 
+@if(variation.importer._1 && subscription.warehouseSites.nonEmpty) {
+    <p>@Messages("check-your-answers.variations.import-without-warehouses")</p>
+}
+
+@if(variation.packer._1 && subscription.productionSites.isEmpty) {
+    <p>@Html(Messages("check-your-answers.variations.import-with-packSites"))</p>
+}
+
+@if(variation.packer._1 && subscription.productionSites.nonEmpty) {
+    <p>@Html(Messages("check-your-answers.variations.import-with-packSites"))</p>
+}
 
 <h3 class="heading-medium">@Messages(s"$key.submit-subheading")</h3>
 <p>@Messages(s"$key.submit-paragraph")</p>
 
-@if(variation.importer._1 || variation.packer._1) {
-    <p>[Your return is changing your registration - you are now an importer/copacker.]</p>
-}
 
 <p>
     <a href="javascript:window.print()" class="print-link" onclick="ga('send', 'event', 'print', 'click', 'Print')">
