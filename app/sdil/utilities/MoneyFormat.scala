@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(prefix: String, balance: BigDecimal)(implicit messages: Messages)
-@if(balance == 0) {
-  @Messages(Seq(s"${prefix}.zero", prefix), balance.pounds)
+package sdil
+
+object utility {
+  implicit class MoneyFormat(in: BigDecimal) {
+    def pounds: String = f"£${in}%,.2f".replace("£-","-£")
+  }
 }
-@if(balance < 0) {
-    @Messages(Seq(s"${prefix}.negative", prefix), balance.pounds)
-}
-@if(balance > 0) {
-    @Messages(Seq(s"${prefix}.positive", prefix), balance.pounds)
-}
+

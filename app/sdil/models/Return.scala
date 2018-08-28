@@ -17,7 +17,8 @@
 package sdil.models
 
 import cats.Order
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
+
 case class SdilReturn(
   ownBrand     : (Long,Long),
   packLarge    : (Long,Long),
@@ -25,7 +26,8 @@ case class SdilReturn(
   importLarge  : (Long,Long),
   importSmall  : (Long,Long),
   export       : (Long,Long),
-  wastage      : (Long,Long)
+  wastage      : (Long,Long),
+  submittedOn  : Option[LocalDateTime] = None
 )
 
 case class ReturnPeriod(year: Int, quarter: Int) {

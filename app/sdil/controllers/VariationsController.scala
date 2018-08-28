@@ -38,6 +38,7 @@ import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import views.html.uniform
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -126,25 +127,42 @@ class VariationsController(
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
+      packer                      =  (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
       variation                   <- if (shouldDereg)
                                        tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
-                                     else for {
-                                       packSites       <- askPackSites(data.updatedProductionSites.toList) emptyUnless (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
-                                       isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
-                                       warehouses      <- askWarehouses(data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
-                                     } yield data.copy (
-                                       producer               = Producer(packLarge.isDefined, packLarge),
-                                       usesCopacker           = useCopacker.some.flatten,
-                                       packageOwn             = Some(!packQty.isEmpty),
-                                       packageOwnVol          = longTupToLitreage(packQty),
-                                       copackForOthers        = !copacks.isEmpty,
-                                       copackForOthersVol     = longTupToLitreage(copacks),
-                                       imports                = !imports.isEmpty,
-                                       importsVol             = longTupToLitreage(imports),
-                                       updatedProductionSites = packSites,
-                                       updatedWarehouseSites  = warehouses
-                                     )
-    } yield variation
+                                     else {
+                                        val extraMessages = ExtraMessages(
+                                          messages = Map(
+                                            "pack-at-business-address.lead" -> s"Registered address: ${Address.fromUkAddress(data.original.address).nonEmptyLines.mkString(", ")}")
+                                        )
+                                        for {
+                                          usePPOBAddress <- ask(bool, "pack-at-business-address")(implicitly, implicitly, extraMessages) when packer && data.original.productionSites.isEmpty
+                                          pSites = if (usePPOBAddress.getOrElse(false)) {
+                                            List(Site.fromAddress(Address.fromUkAddress(data.original.address)))
+                                          } else {
+                                            data.updatedProductionSites.toList
+                                          }
+                                          firstPackingSite <- ask(packagingSiteMapping, "first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when
+                                            pSites.isEmpty && packer
+                                          packSites <- askPackSites(pSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless packer
+
+
+                                          isVoluntary = packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
+                                          warehouses <- askWarehouses(data.updatedWarehouseSites.toList) emptyUnless !isVoluntary
+                                        } yield data.copy(
+                                          producer = Producer(packLarge.isDefined, packLarge),
+                                          usesCopacker = useCopacker.some.flatten,
+                                          packageOwn = Some(!packQty.isEmpty),
+                                          packageOwnVol = longTupToLitreage(packQty),
+                                          copackForOthers = !copacks.isEmpty,
+                                          copackForOthersVol = longTupToLitreage(copacks),
+                                          imports = !imports.isEmpty,
+                                          importsVol = longTupToLitreage(imports),
+                                          updatedProductionSites = packSites,
+                                          updatedWarehouseSites = warehouses
+                                        )
+                                      }
+                                    } yield variation
   }
 
   private def deregisterUpdate(

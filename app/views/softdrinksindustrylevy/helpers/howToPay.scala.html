@@ -14,13 +14,17 @@
  * limitations under the License.
  *@
 
-@(prefix: String, balance: BigDecimal)(implicit messages: Messages)
-@if(balance == 0) {
-  @Messages(Seq(s"${prefix}.zero", prefix), balance.pounds)
-}
-@if(balance < 0) {
-    @Messages(Seq(s"${prefix}.negative", prefix), balance.pounds)
-}
-@if(balance > 0) {
-    @Messages(Seq(s"${prefix}.positive", prefix), balance.pounds)
+@(sdilRef: String)(implicit messages: Messages)
+
+@details(s"how-to-pay.title") {
+  <p>@Messages("how-to-pay.pay-by")</p>
+
+  <ul class="list list-bullet">
+      <li>@Messages("how-to-pay.sort-code")</li>
+      <li>@Messages("how-to-pay.acct-no")</li>
+      <li>@Messages("how-to-pay.acct-name")</li>
+      <li>@Messages("how-to-pay.payment-ref", sdilRef)</li>
+  </ul>
+
+  <p>@Messages("how-to-pay.delay")</p>
 }

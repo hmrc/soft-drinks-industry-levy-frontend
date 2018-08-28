@@ -20,14 +20,17 @@ import java.time.LocalDate
 
 import play.api.libs.json._
 import sdil.models.Address
-import sdil.models.backend.Activity
+import sdil.models.backend.{Activity, UkAddress}
 
 object VariationsSubmission {
   implicit val writes: Writes[VariationsSubmission] = Json.writes[VariationsSubmission]
 }
 
+
 /** The payload that is sent to GForms */
 case class VariationsSubmission(tradingName: Option[String] = None,
+                                displayOrgName : String,
+                                ppobAddress : UkAddress,
                                 businessContact: Option[VariationsContact],
                                 correspondenceContact: Option[VariationsContact],
                                 primaryPersonContact: Option[VariationsPersonalDetails],

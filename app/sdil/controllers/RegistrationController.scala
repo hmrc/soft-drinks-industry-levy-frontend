@@ -101,7 +101,7 @@ class RegistrationController(
                          } else {
                           List.empty[Site]
                          }
-      firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when packingSites.isEmpty
+      firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when packingSites.isEmpty && askPackingSites
       packSites       <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless askPackingSites
       addWarehouses   <- ask(bool, "ask-secondary-warehouses")(implicitly, implicitly, extraMessages) when !isVoluntary
       firstWarehouse  <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages()) when addWarehouses.getOrElse(false)

@@ -37,7 +37,7 @@ class AuthenticationController(val messagesApi: MessagesApi)
     Redirect(config.signoutReturnsUrl).withNewSession
   }
 
-  def timeIn(referrer: String) = Action { implicit request =>
+  def timeIn(referrer: String): Action[AnyContent] = Action { implicit request =>
     Redirect(config.ggLoginUrl, Map("continue" -> Seq(referrer), "origin" -> Seq(config.appName)))
   }
 
