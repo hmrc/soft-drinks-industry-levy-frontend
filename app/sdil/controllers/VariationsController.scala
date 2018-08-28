@@ -197,7 +197,7 @@ class VariationsController(
       closedWarehouseSites(variation),
       path
     )
-    _ <- if (variation.noVariation) end("noVariation", cya) else tell("checkyouranswers", cya)
+    _ <- tell("checkyouranswers", cya)
     submission = Convert(variation)
     _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
     _    <- clear
