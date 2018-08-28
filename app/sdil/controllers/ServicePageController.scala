@@ -45,14 +45,9 @@ class ServicePageController(
     val sdilRef = request.sdilEnrolment.value
     val ret = for {
       subscription  <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
-      returnPeriods <- if (config.returnsEnabled)
-                          OptionT(sdilConnector.returns.pending(subscription.utr).map(_.some))
-                       else
-                          Nil.pure[FutOpt]
+      returnPeriods <- OptionT(sdilConnector.returns.pending(subscription.utr).map(_.some))
       lastReturn    <- OptionT(sdilConnector.returns.get(subscription.utr, ReturnPeriod(LocalDate.now).previous).map(_.some))
-      balance       <- if (config.balanceEnabled)
-                          OptionT(sdilConnector.balance(sdilRef).map(_.some))
-                       else BigDecimal(0).pure[FutOpt]
+      balance       <- OptionT(sdilConnector.balance(sdilRef).map(_.some))
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
       Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance))
@@ -62,9 +57,6 @@ class ServicePageController(
   }
 
   def balanceHistory: Action[AnyContent] = registeredAction.async { implicit request =>
-
-    if (!config.balanceEnabled)
-      throw new NotImplementedError("Balance page is not enabled")
 
     val sdilRef = request.sdilEnrolment.value
 

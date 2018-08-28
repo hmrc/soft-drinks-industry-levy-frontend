@@ -99,7 +99,6 @@
 	      }
             }
 
-        @if(config.balanceEnabled) {
         <div>
             <h2 class="heading-medium">@Messages("account.balance")</h2>
             <p>
@@ -108,7 +107,6 @@
             </p>
         </div>
         @helpers.howToPay(sdilReference)
-        }
 
             @declaration_table("service-page", "business-details.title") {
                 @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
@@ -153,25 +151,23 @@
                 @service_sites(subscription.productionSites, "packaging")
                 @service_sites(subscription.warehouseSites, "warehouse")
             }
-            @if(config.variationsEnabled) {
-                <div>
-                    <h2>@Messages("sdil.service-page.variations.title")</h2>
-                    <p>@Messages("sdil.service-page.variations.p1")</p>
-                    <ul class="list list-bullet">
-                        <li>@Messages("sdil.service-page.variations.li.1")</li>
-                        <li>@Messages("sdil.service-page.variations.li.2")</li>
-                        <li>@Messages("sdil.service-page.variations.li.3")</li>
-                        <li>@Messages("sdil.service-page.variations.li.4")</li>
-                        <li>@Messages("sdil.service-page.variations.li.5")</li>
-                    </ul>
-                    <div class="panel-border-narrow panel">
-                        <p>@Messages("sdil.service-page.variations.p4")</p>
-                    </div>
-                    <a href="@sdil.controllers.routes.VariationsController.index("changeType")" class="button--secondary">
-                       @Messages("sdil.service-page.variations.change")
-                    </a>
+            <div>
+                <h2>@Messages("sdil.service-page.variations.title")</h2>
+                <p>@Messages("sdil.service-page.variations.p1")</p>
+                <ul class="list list-bullet">
+                    <li>@Messages("sdil.service-page.variations.li.1")</li>
+                    <li>@Messages("sdil.service-page.variations.li.2")</li>
+                    <li>@Messages("sdil.service-page.variations.li.3")</li>
+                    <li>@Messages("sdil.service-page.variations.li.4")</li>
+                    <li>@Messages("sdil.service-page.variations.li.5")</li>
+                </ul>
+                <div class="panel-border-narrow panel">
+                    <p>@Messages("sdil.service-page.variations.p4")</p>
                 </div>
-            }
+                <a href="@sdil.controllers.routes.VariationsController.index("changeType")" class="button--secondary">
+                   @Messages("sdil.service-page.variations.change")
+                </a>
+            </div>
         </div>
         <br>
         <br>

@@ -32,10 +32,6 @@ trait AppConfig {
   val signoutUrlNoFeedback: String
   val sdilHomePage: String
   val appName: String
-  def variationsEnabled: Boolean
-  def returnsEnabled: Boolean
-  def balanceEnabled: Boolean
-  def uniformRegistrationsEnabled: Boolean
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, environment: Environment) extends AppConfig with ServicesConfig {
@@ -64,9 +60,4 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   lazy val signoutReturnsUrl: String = s"$signOutSdilUrl?origin=SDILRETURN"
   lazy val signoutUrlNoFeedback: String = s"$companyAuthFrontend$companyAuthSignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
-
-  override val variationsEnabled: Boolean = getBoolean("variations.enabled")
-  override val returnsEnabled: Boolean = getBoolean("returns.enabled")
-  override val balanceEnabled: Boolean = getBoolean("balance.enabled")
-  override val uniformRegistrationsEnabled: Boolean = getBoolean("uniform-registrations.enabled")
 }
