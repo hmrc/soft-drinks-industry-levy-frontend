@@ -147,8 +147,16 @@ class ReturnsController (
     tell(key, inner)
   }
 
-  private def confirmationPage(key: String, period: ReturnPeriod, subscription: Subscription,
-                               sdilReturn: SdilReturn, broughtForward: BigDecimal, sdilRef: String, isSmallProducer: Boolean)(implicit messages: Messages): WebMonad[Result] = {
+  def confirmationPage(
+    key: String,
+    period: ReturnPeriod,
+    subscription: Subscription,
+    sdilReturn: SdilReturn,
+    broughtForward: BigDecimal,
+    sdilRef: String,
+    isSmallProducer: Boolean,
+    variation: ReturnsVariation)(implicit messages: Messages): WebMonad[Result] = {
+
     val now = LocalDate.now
     val data = returnAmount(sdilReturn, isSmallProducer)
     val subtotal = calculateSubtotal(data)
@@ -178,7 +186,13 @@ class ReturnsController (
       now.format("dd MMMM yyyy")
     )
 
-    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(period, sdilRef, total)(messages).some
+    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(
+      period,
+      sdilRef,
+      total,
+      formatMoney(total),
+      Some(variation.orgName))(messages).some
+
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
 
@@ -275,7 +289,8 @@ class ReturnsController (
       sdilReturn,
       broughtForward,
       sdilRef,
-      subscription.activity.smallProducer
+      subscription.activity.smallProducer,
+      variation
     )
   } yield end
 

@@ -1012,17 +1012,21 @@ return-sent.subheading=You need to pay {0} </br> by {1}
 return-sent.subheading.nil-return=You do not owe anything
 return-sent.what-happens-next-heading=What you need to do next
 return-sent.returnsDoneMessage=Your Soft Drinks Industry Levy return for {0} to {1} {2} for {3} was sent at {4} on {5}.
-return-sent.servicePage=<a href="{0}">View your Soft Drinks Industry Levy details</a>
-return-sent.paymentsBlurb.payby=You need to pay by {0}.
-return-sent.paymentsBlurb.payusing=You can pay by Bacs or CHAPS using:
-return-sent.paymentsBlurb.payDetails.1=sort code: 20-05-17
-return-sent.paymentsBlurb.payDetails.2=account number: 40204374
-return-sent.paymentsBlurb.payDetails.3=account name: HMRC General Business Tax Receipts
-return-sent.paymentsBlurb.payDetails.4=payment reference: {0}
-return-sent.paymentsBlurb.chapsDelay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
-Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
+return-sent.servicePage=<a href="{0}">Go back to your Soft Drinks Industry Levy details</a>
+return-sent.paymentsBlurb.payby=You need to pay {0} by {1}.\
+  <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5">See how to pay the levy.</a>
+return-sent.paymentsBlurb.payusing=Make sure you include your Soft Drinks Industry Levy reference <b>{0}</b> \
+  when making a payment
+return-sent.paymentsBlurb.help-heading=Help using this service
+return-sent.paymentsBlurb.help-subheading=Go to your Soft Drinks Levy account to:
+return-sent.paymentsBlurb.payDetails.1=check your account balance
+return-sent.paymentsBlurb.payDetails.2=update warehouses or packaging sites
+return-sent.paymentsBlurb.payDetails.3=send your next return
 return-sent.paymentsBlurb.noReturn=You do not owe anything, so this return is complete.
-return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must submit it and make any payments due by {2}.
+return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must submit it and make any \
+  payments due by {2}.
+return-sent.paymentsBlurb.variation=We will send you a letter to confirm that you have changed your registration \
+  details. This may take up to 15 days.
 
 warning=Warning
 returnsHome.returnsDue=The return for {0} from {1} to {2} is due by {3}.
