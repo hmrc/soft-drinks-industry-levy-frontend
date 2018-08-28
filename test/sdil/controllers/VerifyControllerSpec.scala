@@ -55,18 +55,6 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       contentAsString(res) must include (Messages("sdil.verify.heading"))
     }
 
-    "redirect to the package page if the details are correct" in {
-      val request = FakeRequest().withFormUrlEncodedBody("detailsCorrect" -> "yes")
-      val res = testController.submit()(request)
-
-      status(res) mustBe SEE_OTHER
-
-      List(
-        Some(routes.OrganisationTypeController.show().url),
-        Some(routes.RegistrationController.index("orgType").url)
-      ) contains redirectLocation(res)
-    }
-
     "redirect to the gg sign in page if the details are incorrect" in {
       val request = FakeRequest().withFormUrlEncodedBody("detailsCorrect" -> "no")
       val res = testController.submit()(request)

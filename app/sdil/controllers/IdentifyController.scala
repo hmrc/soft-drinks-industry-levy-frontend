@@ -30,6 +30,7 @@ import sdil.forms.FormHelpers
 import sdil.models.{Address, Identification, RegistrationFormData}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
+import ltbs.play.scaffold.SdilComponents._
 
 import scala.concurrent.Future
 

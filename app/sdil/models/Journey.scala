@@ -22,23 +22,9 @@ import sdil.config.AppConfig
 object Journey {
   private val pages: List[Page] = List(
     IdentifyPage,
-    VerifyPage,
-    OrganisationTypePage,
-    ProducerPage,
-    CopackedPage,
-    PackageOwnUkPage,
-    PackageOwnVolPage,
-    PackageCopackPage,
-    PackageCopackVolPage,
-    ImportPage,
-    ImportVolumePage,
-    DoNotRegisterPage,
-    StartDatePage,
-    ProductionSitesPage,
-    WarehouseSitesPage,
-    ContactDetailsPage
+    VerifyPage
   )
-
+//TODO Lose this file
   private val reversed: List[Page] = pages.reverse
 
   def expectedPage(page: Page)(implicit request: RegistrationFormRequest[_]): Page = {
@@ -47,27 +33,22 @@ object Journey {
     if (page.isVisible) {
       pages.takeWhile(_ != page).find(p => p.isVisible && p.isIncomplete).getOrElse(page)
     } else {
-      pages.find(p => p.isVisible && p.isIncomplete).getOrElse(DeclarationPage)
+      pages.find(p => p.isVisible && p.isIncomplete).getOrElse(pages.last)
     }
   }
 
   def previousPage(page: Page)(implicit request: RegistrationFormRequest[_]): Page = {
     implicit val formData: RegistrationFormData = request.formData
 
-    if (page == IdentifyPage) {
-      IdentifyPage
+    if (page == pages.head) {
+      pages.head
     } else {
-      reversed.dropWhile(_ != page).tail.find(_.isVisible).getOrElse(IdentifyPage)
+      reversed.dropWhile(_ != page).tail.find(_.isVisible).getOrElse(pages.head)
     }
   }
 
   def nextPage(page: Page, formData: RegistrationFormData)(implicit config: AppConfig): Page = {
     implicit val fd: RegistrationFormData = formData
-
-    if (page == ContactDetailsPage) {
-      DeclarationPage
-    } else {
-      pages.dropWhile(_ != page).tail.find(p => p.isVisible).getOrElse(DeclarationPage)
+      pages.dropWhile(_ != page).tail.find(p => p.isVisible).getOrElse(pages.last)
     }
   }
-}

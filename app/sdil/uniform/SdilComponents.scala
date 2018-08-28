@@ -27,7 +27,7 @@ import play.api.i18n.Messages
 import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json._
 import play.twirl.api.Html
-import sdil.controllers.ContactDetailsForm.{combine, required}
+import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend.{Site, UkAddress}
 import uk.gov.hmrc.uniform._
@@ -36,7 +36,7 @@ import views.html.uniform
 
 import scala.util.Try
 
-object SdilComponents {
+object SdilComponents extends FormHelpers {
 
   implicit val addressForm = new FormHtml[Address] {
     def asHtmlForm(key: String, form: Form[Address])(implicit messages: Messages): Html = {
@@ -241,7 +241,7 @@ object SdilComponents {
     case _ => Valid
   }
 
-  private def postcode: Mapping[String] = {
+  def postcode: Mapping[String] = {
     val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$"
     val specialRegex = """^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"""
 

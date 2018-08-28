@@ -27,6 +27,8 @@ import sdil.models.{DetailsCorrect, Journey, VerifyPage}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 import views.html.softdrinksindustrylevy.{errors, register}
+import ltbs.play.scaffold.GdsComponents.oneOf
+import ltbs.play.scaffold.SdilComponents.addressMapping
 
 class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, formAction: FormAction,
                        sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
