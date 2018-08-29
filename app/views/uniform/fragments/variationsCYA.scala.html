@@ -29,12 +29,6 @@
     java.text.NumberFormat.getNumberInstance.format(value)
 }
 
-@if(v.noVariation){
-    <div class="panel panel-border-narrow" id="details-content-0">
-        @Html(Messages("variations.cya.noChange", sdil.controllers.routes.ServicePageController.show()))
-    </div>
-}
-
 @if(path.contains("packLarge") && !path.contains("deregDate")) {
     <h2 class="heading-medium">
     @Messages("variations.cya.activity-change")
@@ -599,10 +593,6 @@
         </tbody>
     </table>
 }
-
 <br/>
-@if(v.noVariation) {
-    @Html(Messages("variations.cya.noChangeEnd", sdil.controllers.routes.ServicePageController.show()))
-}
 
 <p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>

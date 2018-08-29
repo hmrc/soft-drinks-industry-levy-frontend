@@ -25,7 +25,7 @@ import play.api.data.Forms._
 import play.api.data.Mapping
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json._
-import play.api.mvc._
+import play.api.mvc.{AnyContent, _}
 import play.twirl.api.Html
 import sdil.actions.RegisteredAction
 import sdil.config._
@@ -92,7 +92,7 @@ class ReturnsController (
   // TODO: At present this uses an Await.result to check the small producer status, thus
   // blocking a thread. At a later date uniform should be updated to include the capability
   // for a subsequent stage to invalidate a prior one.
-  implicit def smallProducer(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
+  implicit def smallProducer(origSdilRef: String)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
     "alias" -> optional(text),
     "sdilRef" -> nonEmptyText
       .verifying(
@@ -100,7 +100,8 @@ class ReturnsController (
           x.isEmpty ||
             (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
             isCheckCorrect(x, 1) &&
-            Await.result(isSmallProducer(x), 20.seconds))
+            Await.result(isSmallProducer(x), 20.seconds)) &&
+          x != origSdilRef
         }),
     "lower"   -> litreage,
     "higher"  -> litreage
@@ -110,7 +111,7 @@ class ReturnsController (
     case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
   }
 
-  def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean) = {
+  def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
     val ra = List(
       ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
       ("exemptions-for-small-producers", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
@@ -197,16 +198,16 @@ class ReturnsController (
   }
 
 
-  private def askReturn(subscription: Subscription)(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
+  private def askReturn(subscription: Subscription, sdilRef: String)(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
     ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites") emptyUnless !subscription.activity.smallProducer
     contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
     askSmallProd   <- ask(bool, "exemptions-for-small-producers")
-    firstSmallProd <- ask(smallProducer, "first-small-producer-details") when askSmallProd
+    firstSmallProd <- ask(smallProducer(sdilRef), "first-small-producer-details") when askSmallProd
     smallProds     <- manyT("small-producer-details",
-                            {ask(smallProducer, _)},
+                            {ask(smallProducer(sdilRef), _)},
                             min = 1,
                             default = firstSmallProd.fold(List.empty[SmallProducer])(x => List(x)),
-                            editSingleForm = Some((smallProducer, smallProducerForm))
+                            editSingleForm = Some((smallProducer(sdilRef), smallProducerForm))
                            ) when askSmallProd
     imports        <- askEmptyOption(litreagePair, "brought-into-uk")
     importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers")
@@ -253,7 +254,7 @@ class ReturnsController (
 
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    sdilReturn      <- askReturn(subscription)
+    sdilReturn     <- askReturn(subscription, sdilRef)
     // check if they need to vary
     isNewImporter   = (sdilReturn.importLarge |+| sdilReturn.importSmall) > 0 && !subscription.activity.importer
     isNewPacker     = (sdilReturn.packLarge |+| sdilReturn.packSmall.total) > 0 && !subscription.activity.contractPacker
