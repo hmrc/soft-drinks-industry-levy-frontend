@@ -216,12 +216,13 @@ class ReturnsController (
   } yield sdilReturn
 
   implicit class LongComparison(x :(Long,Long)) {
-    def + (y:(Long,Long)): (Long,Long) = {
-      (x._1 + y._1, x._2 + y._2)
-    }
     def > (y:Long): Boolean = {
         x._1 + x._2 > y
     }
+  }
+
+  implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
+    def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
   }
 
   private def askNewWarehouses()(implicit hc: HeaderCarrier): WebMonad[List[Site]] = for {
@@ -254,8 +255,8 @@ class ReturnsController (
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn      <- askReturn(subscription)
     // check if they need to vary
-    isNewImporter   = (sdilReturn.importLarge + sdilReturn.importSmall) > 0 && !subscription.activity.importer
-    isNewPacker     = sdilReturn.packLarge > 0 && !subscription.activity.contractPacker
+    isNewImporter   = (sdilReturn.importLarge |+| sdilReturn.importSmall) > 0 && !subscription.activity.importer
+    isNewPacker     = (sdilReturn.packLarge |+| sdilReturn.packSmall.total) > 0 && !subscription.activity.contractPacker
     inner           = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
     _               <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
     newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
@@ -264,8 +265,8 @@ class ReturnsController (
     variation     = ReturnsVariation(
       orgName = subscription.orgName,
       ppobAddress = subscription.address,
-      importer = (isNewImporter, sdilReturn.importLarge + sdilReturn.importSmall),
-      packer = (isNewPacker, sdilReturn.packLarge),
+      importer = (isNewImporter, (sdilReturn.importLarge |+| sdilReturn.importSmall).combineN(4)),
+      packer = (isNewPacker, (sdilReturn.packLarge |+| sdilReturn.packSmall.total).combineN(4)),
       warehouses = newWarehouses.getOrElse(List.empty[Site]),
       packingSites = newPackingSites.getOrElse(List.empty[Site]),
       phoneNumber = subscription.contact.phoneNumber,
@@ -318,8 +319,8 @@ class ReturnsController (
     }
 
   def taxEstimation(r: SdilReturn): BigDecimal = {
-    val t = r.packLarge + r.importLarge + r.ownBrand
-    (t._1 * costLower + t._2 * costHigher) * 4
+    val t = r.packLarge |+| r.importLarge |+| r.ownBrand
+    (t._1 * costLower |+| t._2 * costHigher) * 4
   }
 
 }
