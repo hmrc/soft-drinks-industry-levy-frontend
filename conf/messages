@@ -1015,7 +1015,7 @@ return-sent.returnsDoneMessage=Your Soft Drinks Industry Levy return for {0} to 
 return-sent.servicePage=<a href="{0}">Go back to your Soft Drinks Industry Levy details</a>
 return-sent.paymentsBlurb.payby=You need to pay {0} by {1}.\
   <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5">See how to pay the levy.</a>
-return-sent.paymentsBlurb.payusing=Make sure you include your Soft Drinks Industry Levy reference <b>{0}</b> \
+return-sent.paymentsBlurb.payusing=Make sure you include your Soft Drinks Industry Levy reference <strong style="font-weight: bold">{0}</strong> \
   when making a payment
 return-sent.paymentsBlurb.help-heading=Help using this service
 return-sent.paymentsBlurb.help-subheading=Go to your Soft Drinks Levy account to:

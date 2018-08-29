@@ -44,7 +44,7 @@
 <p>@Messages("return-sent.paymentsBlurb.help-subheading")</p>
 
     <ul class="list list-bullet">
-    @for(line <- Messages.many("return-sent.paymentsBlurb.payDetails", sdilRef)) {
+    @for(line <- Messages.many("return-sent.paymentsBlurb.payDetails")) {
         <li>@line</li>
     }
     </ul>
