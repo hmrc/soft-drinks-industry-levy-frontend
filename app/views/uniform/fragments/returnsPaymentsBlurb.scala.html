@@ -15,8 +15,9 @@
  *@
 
 @import sdil.models.ReturnPeriod
+@import sdil.models.ReturnsVariation
 
-@(paymentDate: ReturnPeriod, sdilRef: String, total: BigDecimal, formattedTotal: String, variationOrgName: Option[String])(implicit messages: Messages)
+@(paymentDate: ReturnPeriod, sdilRef: String, total: BigDecimal, formattedTotal: String, variation: ReturnsVariation)(implicit messages: Messages)
 
 @if(total > 0) {
     <p>@Html(Messages("return-sent.paymentsBlurb.payby", formattedTotal, paymentDate.deadline.format("dd MMMM yyyy")))</p>
@@ -36,7 +37,7 @@
     paymentDate.next.deadline.format("dd MMMM yyyy"))
 </p>
 
-@if(variationOrgName.nonEmpty) {
+@if(variation.importer._1 || variation.packer._1) {
     <p>@Messages("return-sent.paymentsBlurb.variation")</p>
 }
 
