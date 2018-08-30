@@ -27,6 +27,8 @@ import sdil.models.{DetailsCorrect, Journey, VerifyPage}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 import views.html.softdrinksindustrylevy.{errors, register}
+import ltbs.play.scaffold.GdsComponents.oneOf
+import ltbs.play.scaffold.SdilComponents.addressMapping
 
 class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, formAction: FormAction,
                        sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
@@ -66,11 +68,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormData
         case detailsCorrect =>
           val updated = request.formData.copy(verify = Some(detailsCorrect))
           cache.cache(request.internalId, updated) map { _ =>
-            Redirect(if (!config.uniformRegistrationsEnabled) {
-              Journey.nextPage(VerifyPage, updated).show
-            } else {
-              routes.RegistrationController.index("organisation-type")
-            }
+            Redirect(routes.RegistrationController.index("organisation-type")
           )
         }
       }

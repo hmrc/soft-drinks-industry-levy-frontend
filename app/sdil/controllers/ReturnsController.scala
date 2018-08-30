@@ -216,8 +216,6 @@ class ReturnsController (
   } yield end
 
   def index(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    if (!config.returnsEnabled)
-      throw new NotImplementedError("Returns are not enabled")
     val sdilRef = request.sdilEnrolment.value
     val period = ReturnPeriod(year, quarter)
     val persistence = SaveForLaterPersistence("variations", sdilRef, cache)

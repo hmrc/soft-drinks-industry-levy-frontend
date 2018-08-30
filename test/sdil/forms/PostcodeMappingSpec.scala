@@ -16,6 +16,8 @@
 
 package sdil.forms
 
+import ltbs.play.scaffold.SdilComponents._
+
 class PostcodeMappingSpec extends FormSpec with FormHelpers {
 
   "The postcode mapping" should {

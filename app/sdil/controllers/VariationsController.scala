@@ -28,7 +28,6 @@ import play.api.mvc.{Action, AnyContent, Result}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.controllers.ContactDetailsForm.contactDetailsMapping
 import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend.Site
