@@ -71,8 +71,6 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
     http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map { _ => () }
   }
 
-
-
   object returns { 
     implicit val returnPeriodJson = Json.format[ReturnPeriod]
     import ltbs.play.scaffold.SdilComponents.longTupleFormatter
