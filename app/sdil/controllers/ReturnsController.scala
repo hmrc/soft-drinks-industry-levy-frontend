@@ -216,12 +216,6 @@ class ReturnsController (
     sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
   } yield sdilReturn
 
-  implicit class LongComparison(x :(Long,Long)) {
-    def > (y:Long): Boolean = {
-        x._1 + x._2 > y
-    }
-  }
-
   implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
     def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
   }
@@ -256,8 +250,8 @@ class ReturnsController (
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn(subscription, sdilRef)
     // check if they need to vary
-    isNewImporter   = (sdilReturn.importLarge |+| sdilReturn.importSmall) > 0 && !subscription.activity.importer
-    isNewPacker     = (sdilReturn.packLarge |+| sdilReturn.packSmall.total) > 0 && !subscription.activity.contractPacker
+    isNewImporter   = (!sdilReturn.importLarge.isEmpty || !sdilReturn.importSmall.isEmpty) && !subscription.activity.importer
+    isNewPacker     = (!sdilReturn.packLarge.isEmpty || !sdilReturn.packSmall.total.isEmpty) && !subscription.activity.contractPacker
     inner           = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
     _               <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
     newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
