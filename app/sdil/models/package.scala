@@ -17,10 +17,15 @@
 package sdil
 
 import cats.Order
+import cats.implicits._
 
 package object models {
 
   implicit val returnPeriodOrder: Order[ReturnPeriod] = new Order[ReturnPeriod] {
     def compare(x: ReturnPeriod, y: ReturnPeriod): Int = x.count compare y.count
+  }
+
+  implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
+    def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
   }
 }

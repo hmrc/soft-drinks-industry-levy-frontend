@@ -217,9 +217,6 @@ class ReturnsController (
     sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
   } yield sdilReturn
 
-  implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
-    def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
-  }
 
   private def askNewWarehouses()(implicit hc: HeaderCarrier): WebMonad[List[Site]] = for {
     addWarehouses  <- ask(bool, "ask-secondary-warehouses-in-return")(implicitly, implicitly, extraMessages)
@@ -251,8 +248,8 @@ class ReturnsController (
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn(subscription, sdilRef)
     // check if they need to vary
-    isNewImporter   = (!sdilReturn.importLarge.isEmpty || !sdilReturn.importSmall.isEmpty) && !subscription.activity.importer
-    isNewPacker     = (!sdilReturn.packLarge.isEmpty || !sdilReturn.packSmall.total.isEmpty) && !subscription.activity.contractPacker
+    isNewImporter   = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
+    isNewPacker     = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
     inner           = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
     _               <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
     newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
@@ -261,8 +258,8 @@ class ReturnsController (
     variation     = ReturnsVariation(
       orgName = subscription.orgName,
       ppobAddress = subscription.address,
-      importer = (isNewImporter, (sdilReturn.importLarge |+| sdilReturn.importSmall).combineN(4)),
-      packer = (isNewPacker, (sdilReturn.packLarge |+| sdilReturn.packSmall.total).combineN(4)),
+      importer = (isNewImporter, (sdilReturn.totalImported).combineN(4)),
+      packer = (isNewPacker, (sdilReturn.totalPacked).combineN(4)),
       warehouses = newWarehouses.getOrElse(List.empty[Site]),
       packingSites = newPackingSites.getOrElse(List.empty[Site]),
       phoneNumber = subscription.contact.phoneNumber,
