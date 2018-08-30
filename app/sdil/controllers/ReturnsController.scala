@@ -16,13 +16,14 @@
 
 package sdil.controllers
 
+import java.time._
+import java.time.format._
+
 import cats.implicits._
-import uk.gov.hmrc.uniform._
-import uk.gov.hmrc.uniform.webmonad._
-import uk.gov.hmrc.uniform.playutil._
-import play.api.data.Form
+import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents._
 import play.api.data.Forms._
-import play.api.data.Mapping
+import play.api.data.{Form, Mapping}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, _}
@@ -31,26 +32,20 @@ import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend.Activity
+import sdil.models.backend.Site
 import sdil.models.retrieved.{RetrievedSubscription => Subscription}
-import sdil.models.variations.{SdilActivity, VariationData, VariationsSubmission}
 import sdil.uniform._
 import uk.gov.hmrc.domain.Modulus23Check
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.uniform._
+import uk.gov.hmrc.uniform.playutil._
+import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
-import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents._
 
 import scala.concurrent._
 import scala.concurrent.duration._
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import uk.gov.hmrc.http.HeaderCarrier
-import java.time._
-import java.time.format._
-
-import sdil.models.backend.Site
 
 class ReturnsController (
   val messagesApi: MessagesApi,
@@ -130,7 +125,13 @@ class ReturnsController (
     d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
   }
 
-  def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal, variation: ReturnsVariation, subscription: Subscription): WebMonad[Unit] = {
+  def checkYourAnswers(
+    key: String,
+    sdilReturn: SdilReturn,
+    broughtForward: BigDecimal,
+    variation: ReturnsVariation,
+    subscription: Subscription): WebMonad[Unit] = {
+
     val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
     val subtotal = calculateSubtotal(data)
     val total: BigDecimal = subtotal + broughtForward
