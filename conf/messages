@@ -1000,12 +1000,14 @@ check-your-answers.continue=Confirm and submit
 check-your-answers.submit-subheading=Submit your return
 check-your-answers.submit-paragraph=By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
 check-your-answers.variations.subheading=Changes to business activity
-check-your-answers.variations.import-with-warehouses=You declared in this return that you brought liable drinks into \
+check-your-answers.variations.import-with-warehouses-empty=You declared in this return that you brought liable drinks into \
+  the UK. You can <a href="ask-secondary-warehouses-in-return">register your warehouses</a> before sending your return.
+check-your-answers.variations.import-with-warehouses-some=You declared in this return that you brought liable drinks into \
   the UK. You can <a href="secondary-warehouses">register your warehouses</a> before sending your return.
 check-your-answers.variations.import-without-warehouses=You declared in this return that you brought liable drinks into the UK.
 check-your-answers.variations.import-with-packSites=You declared in this return that you packaged liable drinks in \
   the UK. You must <a href="production-sites">register your packaging sites</a> before sending your return.
-check-your-answers.variations.import-withot-packSites=You declared in this return that you packaged liable drinks in the UK.
+check-your-answers.variations.import-without-packSites=You declared in this return that you packaged liable drinks in the UK.
 
 return-sent.title=Return submitted
 return-sent.subheading=You need to pay {0} </br> by {1}

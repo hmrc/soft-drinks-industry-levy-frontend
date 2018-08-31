@@ -179,12 +179,16 @@
     </table>
 }
 
-@if(variation.orgName.nonEmpty) {
+@if(variation.importer._1 || variation.packer._1) {
     <h3 class="heading-medium">@Messages(s"$key.variations.subheading")</h3>
 }
 
-@if(variation.importer._1 && subscription.warehouseSites.isEmpty) {
-    <p>@Html(Messages("check-your-answers.variations.import-with-warehouses"))</p>
+@if(variation.importer._1 && subscription.warehouseSites.isEmpty && variation.warehouses.nonEmpty) {
+    <p>@Html(Messages("check-your-answers.variations.import-with-warehouses-some"))</p>
+}
+
+@if(variation.importer._1 && subscription.warehouseSites.isEmpty && variation.warehouses.isEmpty) {
+    <p>@Html(Messages("check-your-answers.variations.import-with-warehouses-empty"))</p>
 }
 
 @if(variation.importer._1 && subscription.warehouseSites.nonEmpty) {
@@ -196,7 +200,7 @@
 }
 
 @if(variation.packer._1 && subscription.productionSites.nonEmpty) {
-    <p>@Html(Messages("check-your-answers.variations.import-with-packSites"))</p>
+    <p>@Html(Messages("check-your-answers.variations.import-without-packSites"))</p>
 }
 
 <h3 class="heading-medium">@Messages(s"$key.submit-subheading")</h3>
