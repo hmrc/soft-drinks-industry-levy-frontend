@@ -141,8 +141,8 @@ trait SdilWMController extends WebMonadController
         views.html.softdrinksindustrylevy.helpers.inlineRadioButtonWithConditionalContent(
           form(s"${key}.outer"),
           Seq(
-            "true" -> ("Yes", Some("hiddenTarget")),
-            "false" -> ("No", None)
+            "true" -> (("Yes", Some("hiddenTarget"))),
+            "false" -> (("No", None))
           ),
           Some(innerHead |+| innerHtml),
           '_labelClass -> "block-label",

@@ -33,7 +33,7 @@
         @CSRF.formField
         @tell
         </div>
-        <button class="button" type="submit" name="@key" value="Next" formmethod="post">
+        <button class="button" type="submit" name="@key" id="@key" value="Next" formmethod="post">
             @Messages(Seq(s"$key.continue", "sdil.declaration.continue"))
         </button>
     }

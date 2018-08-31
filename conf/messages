@@ -635,6 +635,11 @@ contactChangeType.option.ContactPerson=Update our contact person
 contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
 
 heading.ask-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+heading.ask-secondary-warehouses-in-return=Do you want to register any UK warehouses you use to store liable drinks?
+ask-secondary-warehouses-in-return.help.header=Why register a warehouse?
+ask-secondary-warehouses-in-return.help=You can delay when you have to report liable drinks in your quarterly return if \
+  you register the warehouses you use to store them.<p>Because you changed your business activity,  \
+  you can choose to register any of the UK warehouses you use to store liable drinks.</p>
 heading.first-warehouse=Enter your UK warehouse details
 ask-secondary-warehouses.help.header=Why register a warehouse?
 ask-secondary-warehouses.help=You can delay the point you’ll have to report liable drinks in a return if you register \
@@ -670,6 +675,9 @@ secondary-warehouses.edit=Change
 small-producer-details.edit=Change
 production-sites.delete=Remove
 heading.pack-at-business-address=Is your registered business address a UK packaging site that you operate to produce liable drinks?
+heading.pack-at-business-address-in-return=Is this address a UK packaging site you operate to produce liable drinks?
+pack-at-business-address-in-return.help.header=Why we need these details
+pack-at-business-address-in-return.help=Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate
 
 heading.packLarge=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink \
   for brands you own or have the rights to manufacture, worldwide?
@@ -991,23 +999,36 @@ check-your-answers.change.claim-credits-for-lost-damaged=volume lost, damaged or
 check-your-answers.continue=Confirm and submit
 check-your-answers.submit-subheading=Submit your return
 check-your-answers.submit-paragraph=By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
+check-your-answers.variations.subheading=Changes to business activity
+check-your-answers.variations.import-with-warehouses-empty=You declared in this return that you brought liable drinks into \
+  the UK. You can <a href="ask-secondary-warehouses-in-return">register your warehouses</a> before sending your return.
+check-your-answers.variations.import-with-warehouses-some=You declared in this return that you brought liable drinks into \
+  the UK. You can <a href="secondary-warehouses">register your warehouses</a> before sending your return.
+check-your-answers.variations.import-without-warehouses=You declared in this return that you brought liable drinks into the UK.
+check-your-answers.variations.import-with-packSites=You declared in this return that you packaged liable drinks in \
+  the UK. You must <a href="production-sites">register your packaging sites</a> before sending your return.
+check-your-answers.variations.import-without-packSites=You declared in this return that you packaged liable drinks in the UK.
 
 return-sent.title=Return submitted
 return-sent.subheading=You need to pay {0} </br> by {1}
 return-sent.subheading.nil-return=You do not owe anything
 return-sent.what-happens-next-heading=What you need to do next
 return-sent.returnsDoneMessage=Your Soft Drinks Industry Levy return for {0} to {1} {2} for {3} was sent at {4} on {5}.
-return-sent.servicePage=<a href="{0}">View your Soft Drinks Industry Levy details</a>
-return-sent.paymentsBlurb.payby=You need to pay by {0}.
-return-sent.paymentsBlurb.payusing=You can pay by Bacs or CHAPS using:
-return-sent.paymentsBlurb.payDetails.1=sort code: 20-05-17
-return-sent.paymentsBlurb.payDetails.2=account number: 40204374
-return-sent.paymentsBlurb.payDetails.3=account name: HMRC General Business Tax Receipts
-return-sent.paymentsBlurb.payDetails.4=payment reference: {0}
-return-sent.paymentsBlurb.chapsDelay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
-Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
+return-sent.servicePage=<a href="{0}">Go back to your Soft Drinks Industry Levy details</a>
+return-sent.paymentsBlurb.payby=You need to pay {0} by {1}.\
+  <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5">See how to pay the levy.</a>
+return-sent.paymentsBlurb.payusing=Make sure you include your Soft Drinks Industry Levy reference <strong style="font-weight: bold">{0}</strong> \
+  when making a payment
+return-sent.paymentsBlurb.help-heading=Help using this service
+return-sent.paymentsBlurb.help-subheading=Go to your Soft Drinks Levy account to:
+return-sent.paymentsBlurb.payDetails.1=check your account balance
+return-sent.paymentsBlurb.payDetails.2=update warehouses or packaging sites
+return-sent.paymentsBlurb.payDetails.3=send your next return
 return-sent.paymentsBlurb.noReturn=You do not owe anything, so this return is complete.
-return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must submit it and make any payments due by {2}.
+return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must submit it and make any \
+  payments due by {2}.
+return-sent.paymentsBlurb.variation=We will send you a letter to confirm that you have changed your registration \
+  details. This may take up to 15 days.
 
 warning=Warning
 returnsHome.returnsDue=The return for {0} from {1} to {2} is due by {3}.
@@ -1026,6 +1047,12 @@ returnsHome.help.guidance=You must get and keep <a href="{0}">certain types of e
 returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-levy-credit-for-exported-lost-or-destroyed-drinks-notice-4
 
 return.file=Submit the return
+
+heading.return-change-registration=Your registration details have changed
+return-change-registration.continue=Update registration
+returns.variation.new-importer-explanation=You’ve declared in this return that you’ve brought liable drinks into the UK. This activity isn’t reflected in your current registration. If this is not accurate you need to go back and change your answers, otherwise we’ll update your registration for you.
+returns.variation.new-packer-explanation=You’ve declared in this return that you’ve packaged liable drinks in the UK. This activity isn’t reflected in your current registration. If this is not accurate you need to go back and change your answers, otherwise we’ll update your registration for you.
+returns.variation.new-packer-and-importer-explanation=You’ve declared in this return that that you’ve brought liable drinks into the UK and that you’ve packaged liable drinks in the UK. This activity isn’t reflected in your current registration. If this is not accurate you need to go back and change your answers, otherwise we’ll update your registration for you.
 
 heading.partnerships=You can’t register online as a partnership
 account.balance=Account Balance

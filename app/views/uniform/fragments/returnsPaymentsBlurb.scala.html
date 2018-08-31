@@ -15,28 +15,39 @@
  *@
 
 @import sdil.models.ReturnPeriod
+@import sdil.models.ReturnsVariation
 
-@(paymentDate: ReturnPeriod, sdilRef: String, total: BigDecimal)(implicit messages: Messages)
+@(paymentDate: ReturnPeriod, sdilRef: String, total: BigDecimal, formattedTotal: String, variation: ReturnsVariation)(implicit messages: Messages)
 
 @if(total > 0) {
-    <p>@Messages("return-sent.paymentsBlurb.payby", paymentDate.deadline.format("dd MMMM yyyy"))</p>
+    <p>@Html(Messages("return-sent.paymentsBlurb.payby", formattedTotal, paymentDate.deadline.format("dd MMMM yyyy")))</p>
 
-    <p>@Messages("return-sent.paymentsBlurb.payusing")</p>
-
-    <ul class="list list-bullet">
-    @for(line <- Messages.many("return-sent.paymentsBlurb.payDetails", sdilRef)) {
-        <li>@line</li>
-    }
-    </ul>
-
-    <p>@Messages("return-sent.paymentsBlurb.chapsDelay")</p>
+    <p>@Html(Messages("return-sent.paymentsBlurb.payusing", sdilRef))</p>
 }
+
 @if(total == 0) {
     <p>@Messages("return-sent.paymentsBlurb.noReturn")</p>
 }
 
-<p>@Messages("return-sent.paymentsBlurb.nextReturn", paymentDate.next.start.format("MMMM"), paymentDate.next.end.format("MMMM yyyy"), paymentDate.next.deadline.format("dd MMMM yyyy"))</p>
+<p>
+    @Messages(
+    "return-sent.paymentsBlurb.nextReturn",
+    paymentDate.next.start.format("MMMM"),
+    paymentDate.next.end.format("MMMM yyyy"),
+    paymentDate.next.deadline.format("dd MMMM yyyy"))
+</p>
+
+@if(variation.importer._1 || variation.packer._1) {
+    <p>@Messages("return-sent.paymentsBlurb.variation")</p>
+}
+
+<h2 class="heading-medium">@Messages("return-sent.paymentsBlurb.help-heading")</h2>
+<p>@Messages("return-sent.paymentsBlurb.help-subheading")</p>
+
+    <ul class="list list-bullet">
+    @for(line <- Messages.many("return-sent.paymentsBlurb.payDetails")) {
+        <li>@line</li>
+    }
+    </ul>
 
 <p>@Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))</p>
-
-

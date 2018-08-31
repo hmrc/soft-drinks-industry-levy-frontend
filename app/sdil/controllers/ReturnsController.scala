@@ -16,13 +16,14 @@
 
 package sdil.controllers
 
+import java.time._
+import java.time.format._
+
 import cats.implicits._
-import uk.gov.hmrc.uniform._
-import uk.gov.hmrc.uniform.webmonad._
-import uk.gov.hmrc.uniform.playutil._
-import play.api.data.Form
+import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents._
 import play.api.data.Forms._
-import play.api.data.Mapping
+import play.api.data.{Form, Mapping}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, _}
@@ -31,22 +32,20 @@ import sdil.actions.RegisteredAction
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
+import sdil.models.backend.Site
 import sdil.models.retrieved.{RetrievedSubscription => Subscription}
 import sdil.uniform._
 import uk.gov.hmrc.domain.Modulus23Check
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.uniform._
+import uk.gov.hmrc.uniform.playutil._
+import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
-import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents._
 
 import scala.concurrent._
 import scala.concurrent.duration._
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import uk.gov.hmrc.http.HeaderCarrier
-import java.time._
-import java.time.format._
 
 class ReturnsController (
   val messagesApi: MessagesApi,
@@ -126,9 +125,14 @@ class ReturnsController (
     d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
   }
 
-  def checkYourAnswers(key: String, sdilReturn: SdilReturn, broughtForward: BigDecimal, isSmallProducer: Boolean): WebMonad[Unit] = {
+  def checkYourAnswers(
+    key: String,
+    sdilReturn: SdilReturn,
+    broughtForward: BigDecimal,
+    variation: ReturnsVariation,
+    subscription: Subscription): WebMonad[Unit] = {
 
-    val data = returnAmount(sdilReturn, isSmallProducer)
+    val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
     val subtotal = calculateSubtotal(data)
     val total: BigDecimal = subtotal + broughtForward
 
@@ -139,12 +143,22 @@ class ReturnsController (
       costHigher,
       subtotal,
       broughtForward,
-      total)
+      total,
+      variation,
+      subscription)
     tell(key, inner)
   }
 
-  private def confirmationPage(key: String, period: ReturnPeriod, subscription: Subscription,
-                               sdilReturn: SdilReturn, broughtForward: BigDecimal, sdilRef: String, isSmallProducer: Boolean)(implicit messages: Messages): WebMonad[Result] = {
+  def confirmationPage(
+    key: String,
+    period: ReturnPeriod,
+    subscription: Subscription,
+    sdilReturn: SdilReturn,
+    broughtForward: BigDecimal,
+    sdilRef: String,
+    isSmallProducer: Boolean,
+    variation: ReturnsVariation)(implicit messages: Messages): WebMonad[Result] = {
+
     val now = LocalDate.now
     val data = returnAmount(sdilReturn, isSmallProducer)
     val subtotal = calculateSubtotal(data)
@@ -174,7 +188,13 @@ class ReturnsController (
       now.format("dd MMMM yyyy")
     )
 
-    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(period, sdilRef, total)(messages).some
+    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(
+      period,
+      sdilRef,
+      total,
+      formatMoney(total),
+      variation)(messages).some
+
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
 
@@ -197,13 +217,64 @@ class ReturnsController (
     sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
   } yield sdilReturn
 
+
+  private def askNewWarehouses()(implicit hc: HeaderCarrier): WebMonad[List[Site]] = for {
+    addWarehouses  <- ask(bool, "ask-secondary-warehouses-in-return")(implicitly, implicitly, extraMessages)
+    firstWarehouse <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages()) when
+      addWarehouses
+    warehouses     <- askWarehouses(firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless
+      addWarehouses
+  } yield warehouses
+
+  private def askNewPackingSites(subscription: Subscription)(implicit hc: HeaderCarrier): WebMonad[List[Site]] = {
+    val extraMessages  = ExtraMessages(
+      messages = Map(
+        "pack-at-business-address-in-return.lead" -> s"${Address.fromUkAddress(subscription.address).nonEmptyLines.mkString("<br/>")}")
+    )
+    for {
+      usePPOBAddress   <- ask(bool, "pack-at-business-address-in-return")(implicitly, implicitly, extraMessages)
+      packingSites     = if (usePPOBAddress) {
+        List(Site.fromAddress(Address.fromUkAddress(subscription.address)))
+      } else {
+        List.empty[Site]
+      }
+      firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when
+        packingSites.isEmpty
+      packingSites     <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x)))
+    } yield packingSites
+  }
+
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn(subscription, sdilRef)
+    // check if they need to vary
+    isNewImporter   = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
+    isNewPacker     = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
+    inner           = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
+    _               <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
+    newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
+    newWarehouses   <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
+
+    variation     = ReturnsVariation(
+      orgName = subscription.orgName,
+      ppobAddress = subscription.address,
+      importer = (isNewImporter, (sdilReturn.totalImported).combineN(4)),
+      packer = (isNewPacker, (sdilReturn.totalPacked).combineN(4)),
+      warehouses = newWarehouses.getOrElse(List.empty[Site]),
+      packingSites = newPackingSites.getOrElse(List.empty[Site]),
+      phoneNumber = subscription.contact.phoneNumber,
+      email = subscription.contact.email,
+      taxEstimation = taxEstimation(sdilReturn)
+    )
     broughtForward <- BigDecimal("0").pure[WebMonad]
-    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, subscription.activity.smallProducer)
+    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, variation, subscription)
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
+    _              <- if (isNewImporter || isNewPacker) {
+                        execute(sdilConnector.returns.variation(variation, sdilRef))
+                      } else {
+                        (()).pure[WebMonad]
+                      }
     end <- clear >> confirmationPage(
       "return-sent",
       period,
@@ -211,7 +282,8 @@ class ReturnsController (
       sdilReturn,
       broughtForward,
       sdilRef,
-      subscription.activity.smallProducer
+      subscription.activity.smallProducer,
+      variation
     )
   } yield end
 
@@ -235,5 +307,10 @@ class ReturnsController (
       case Some(x) => x.activity.smallProducer
       case None    => false
     }
+
+  def taxEstimation(r: SdilReturn): BigDecimal = {
+    val t = r.packLarge |+| r.importLarge |+| r.ownBrand
+    (t._1 * costLower |+| t._2 * costHigher) * 4
+  }
 
 }

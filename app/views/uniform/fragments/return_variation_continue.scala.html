@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package sdil
+@(isNewImporter: Boolean, isNewPacker: Boolean)(implicit messages: Messages)
 
-import cats.Order
-import cats.implicits._
-
-package object models {
-
-  implicit val returnPeriodOrder: Order[ReturnPeriod] = new Order[ReturnPeriod] {
-    def compare(x: ReturnPeriod, y: ReturnPeriod): Int = x.count compare y.count
-  }
-
-  implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
-    def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
-  }
+@if(isNewImporter && isNewPacker) {
+    <p>@Messages("returns.variation.new-packer-and-importer-explanation")</p>
+} else {
+    @if(isNewImporter) {
+        <p>@Messages("returns.variation.new-importer-explanation")</p>
+    }
+    @if(isNewPacker) {
+        <p>@Messages("returns.variation.new-packer-explanation")</p>
+    }
 }
