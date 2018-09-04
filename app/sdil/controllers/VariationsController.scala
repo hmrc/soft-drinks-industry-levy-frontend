@@ -179,12 +179,13 @@ class VariationsController(
   )
 
 
-  def returnUpdate(base: VariationData, returns: List[ReturnPeriod])(implicit headerCarrier: HeaderCarrier): WebMonad[VariationData]  = for {
+  def returnUpdate(base: VariationData, returns: List[ReturnPeriod], sdilRef: String)(implicit headerCarrier: HeaderCarrier): WebMonad[VariationData]  = for {
 //      map = f.groupBy(_.year).mapValues(_.map(_.quarter))
 //      returnYear <- askSomething("returnYear", map) ??
 //      r <- askOneOf("returnYear", returns.map(_.year).distinct) when returns.nonEmpty
       r <- askOneOf("returnYear", returns.map(_.quarter)) when returns.nonEmpty
-    
+      ret = returns.filter(_.quarter == r)
+//      next = askReturn(base.original, sdilRef, sdilConnector)
     } yield base
 
   private def program(
@@ -200,7 +201,7 @@ class VariationsController(
                       ChangeType.values.toList.filter(_ != ChangeType.Returns)
       changeType <- askOneOf("changeType", changeTypes)
       variation <- changeType match {
-        case ChangeType.Returns => returnUpdate(base, variableReturns)
+        case ChangeType.Returns => returnUpdate(base, variableReturns, sdilRef)
         case ChangeType.Sites => contactUpdate(base)
         case ChangeType.Activity => activityUpdate(base)
         case ChangeType.Deregister => deregisterUpdate(base)

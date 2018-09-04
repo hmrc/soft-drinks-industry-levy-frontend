@@ -19,6 +19,7 @@ package sdil.models.backend
 import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
+import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Litreage, RegistrationFormData}
 
 case class Subscription(utr: String,
@@ -35,6 +36,14 @@ case class Subscription(utr: String,
 
 object Subscription {
   implicit val format: Format[Subscription] = Json.format[Subscription]
+
+//  def fromRetrieved(retrievedSubscription: RetrievedSubscription): Subscription = {
+//    Subscription(
+//      utr = retrievedSubscription.utr,
+//      orgName = retrievedSubscription.orgName,
+//      orgType = retrievedSubscription.activity.
+//    )
+//  }
 
   def fromFormData(formData: RegistrationFormData): Option[Subscription] = {
     for {

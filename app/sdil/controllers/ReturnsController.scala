@@ -61,50 +61,50 @@ class ReturnsController (
   val costLower = BigDecimal("0.18")
   val costHigher = BigDecimal("0.24")
 
-  implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
+//  implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
 
-  implicit val litreageForm = new FormHtml[(Long,Long)] {
-    def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {
-      uniform.fragments.litreage(key, form, false)(messages)
-    }
-  }
+//  implicit val litreageForm = new FormHtml[(Long,Long)] {
+//    def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {
+//      uniform.fragments.litreage(key, form, false)(messages)
+//    }
+//  }
 
-  implicit val smallProducerHtml: HtmlShow[SmallProducer] =
-      HtmlShow.instance { producer =>
-        Html(producer.alias.map { x =>
-          "<h3>" ++ Messages("small-producer-details.name", x) ++"<br/>"
-        }.getOrElse(
-          "<h3>"
-        ) 
-          ++ Messages("small-producer-details.refNumber", producer.sdilRef) ++ "</h3>"
-          ++ "<br/>"
-          ++ Messages("small-producer-details.lowBand", f"${producer.litreage._1}%,d")
-          ++ "<br/>"
-          ++ Messages("small-producer-details.highBand", f"${producer.litreage._2}%,d")
-        )
-      }
-
-  // TODO: At present this uses an Await.result to check the small producer status, thus
-  // blocking a thread. At a later date uniform should be updated to include the capability
-  // for a subsequent stage to invalidate a prior one.
-  implicit def smallProducer(origSdilRef: String)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
-    "alias" -> optional(text),
-    "sdilRef" -> nonEmptyText
-      .verifying(
-        "error.sdilref.invalid", x => {
-          x.isEmpty ||
-            (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
-            isCheckCorrect(x, 1) &&
-            Await.result(isSmallProducer(x), 20.seconds)) &&
-          x != origSdilRef
-        }),
-    "lower"   -> litreage,
-    "higher"  -> litreage
-  ){
-    (alias, ref,l,h) => SmallProducer(alias, ref, (l,h))
-  }{
-    case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
-  }
+//  implicit val smallProducerHtml: HtmlShow[SmallProducer] =
+//      HtmlShow.instance { producer =>
+//        Html(producer.alias.map { x =>
+//          "<h3>" ++ Messages("small-producer-details.name", x) ++"<br/>"
+//        }.getOrElse(
+//          "<h3>"
+//        )
+//          ++ Messages("small-producer-details.refNumber", producer.sdilRef) ++ "</h3>"
+//          ++ "<br/>"
+//          ++ Messages("small-producer-details.lowBand", f"${producer.litreage._1}%,d")
+//          ++ "<br/>"
+//          ++ Messages("small-producer-details.highBand", f"${producer.litreage._2}%,d")
+//        )
+//      }
+//
+//  // TODO: At present this uses an Await.result to check the small producer status, thus
+//  // blocking a thread. At a later date uniform should be updated to include the capability
+//  // for a subsequent stage to invalidate a prior one.
+//  implicit def smallProducer(origSdilRef: String)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
+//    "alias" -> optional(text),
+//    "sdilRef" -> nonEmptyText
+//      .verifying(
+//        "error.sdilref.invalid", x => {
+//          x.isEmpty ||
+//            (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
+//            isCheckCorrect(x, 1) &&
+//            Await.result(isSmallProducer(x), 20.seconds)) &&
+//          x != origSdilRef
+//        }),
+//    "lower"   -> litreage,
+//    "higher"  -> litreage
+//  ){
+//    (alias, ref,l,h) => SmallProducer(alias, ref, (l,h))
+//  }{
+//    case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
+//  }
 
   def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
     val ra = List(
@@ -198,26 +198,6 @@ class ReturnsController (
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
 
-
-  private def askReturn(subscription: Subscription, sdilRef: String)(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
-    ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites") emptyUnless !subscription.activity.smallProducer
-    contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
-    askSmallProd   <- ask(bool, "exemptions-for-small-producers")
-    firstSmallProd <- ask(smallProducer(sdilRef), "first-small-producer-details") when askSmallProd
-    smallProds     <- manyT("small-producer-details",
-                            {ask(smallProducer(sdilRef), _)},
-                            min = 1,
-                            default = firstSmallProd.fold(List.empty[SmallProducer])(x => List(x)),
-                            editSingleForm = Some((smallProducer(sdilRef), smallProducerForm))
-                           ) when askSmallProd
-    imports        <- askEmptyOption(litreagePair, "brought-into-uk")
-    importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers")
-    exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports")
-    wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
-    sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
-  } yield sdilReturn
-
-
   private def askNewWarehouses()(implicit hc: HeaderCarrier): WebMonad[List[Site]] = for {
     addWarehouses  <- ask(bool, "ask-secondary-warehouses-in-return")(implicitly, implicitly, extraMessages)
     firstWarehouse <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages()) when
@@ -246,7 +226,7 @@ class ReturnsController (
 
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    sdilReturn     <- askReturn(subscription, sdilRef)
+    sdilReturn     <- askReturn(subscription, sdilRef, sdilConnector)
     // check if they need to vary
     isNewImporter   = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
     isNewPacker     = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
@@ -302,15 +282,34 @@ class ReturnsController (
     } yield r
   }
 
-  def isSmallProducer(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] = 
-    sdilConnector.retrieveSubscription(sdilRef).flatMap {
-      case Some(x) => x.activity.smallProducer
-      case None    => false
-    }
+//  def isSmallProducer(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+//    sdilConnector.retrieveSubscription(sdilRef).flatMap {
+//      case Some(x) => x.activity.smallProducer
+//      case None    => false
+//    }
 
   def taxEstimation(r: SdilReturn): BigDecimal = {
     val t = r.packLarge |+| r.importLarge |+| r.ownBrand
     (t._1 * costLower |+| t._2 * costHigher) * 4
   }
+
+//  def askReturn(subscription: Subscription, sdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
+//    ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites") emptyUnless !subscription.activity.smallProducer
+//    contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
+//    askSmallProd   <- ask(bool, "exemptions-for-small-producers")
+//    firstSmallProd <- ask(smallProducer(sdilRef, sdilConnector), "first-small-producer-details") when askSmallProd
+//    smallProds     <- manyT("small-producer-details",
+//      {ask(smallProducer(sdilRef, sdilConnector), _)},
+//      min = 1,
+//      default = firstSmallProd.fold(List.empty[SmallProducer])(x => List(x)),
+//      editSingleForm = Some((smallProducer(sdilRef, sdilConnector), smallProducerForm))
+//    ) when askSmallProd
+//    imports        <- askEmptyOption(litreagePair, "brought-into-uk")
+//    importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers")
+//    exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports")
+//    wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
+//    sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
+//  } yield sdilReturn
+
 
 }

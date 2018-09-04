@@ -18,40 +18,39 @@ package sdil.controllers
 
 import java.time.LocalDate
 
-import cats.implicits._
 import cats.{Eq, Monoid}
 import enumeratum._
-import uk.gov.hmrc.uniform.HtmlShow.ops._
-import uk.gov.hmrc.uniform._
-import uk.gov.hmrc.uniform.webmonad._
+import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents.{packagingSiteForm, _}
 import play.api.data.Forms._
-import play.api.data._
 import play.api.data.format.Formatter
 import play.api.data.validation._
+import play.api.data.{Form, Mapping, _}
 import play.api.i18n.Messages
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
 import play.twirl.api.Html
 import sdil.config.AppConfig
-import sdil.forms.FormHelpers
+import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend._
+import sdil.models.backend.Site
+import sdil.models.retrieved.RetrievedSubscription
+import uk.gov.hmrc.domain.Modulus23Check
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.uniform
-import ltbs.play.scaffold.SdilComponents._
-import scala.concurrent._
-import scala.util.Try
-import scala.collection.mutable.{Map => MMap}
-import scala.concurrent._
-import scala.util.Try
-import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents.packagingSiteForm
-import uk.gov.hmrc.uniform.webmonad._
+import uk.gov.hmrc.uniform.HtmlShow.ops._
+import uk.gov.hmrc.uniform._
 import uk.gov.hmrc.uniform.playutil._
+import uk.gov.hmrc.uniform.webmonad._
+import views.html.uniform
+
+import scala.concurrent._
+import scala.concurrent.duration._
+
+import cats.implicits._
 
 trait SdilWMController extends WebMonadController
-    with FrontendController
+    with FrontendController with Modulus23Check
 {
 
   implicit def config: AppConfig
@@ -137,7 +136,6 @@ trait SdilWMController extends WebMonadController
       val innerHtml = htmlForm.asHtmlForm(key + ".inner", innerFormBound)
 
       val outerHtml = {
-        import ltbs.play._
         views.html.softdrinksindustrylevy.helpers.inlineRadioButtonWithConditionalContent(
           form(s"${key}.outer"),
           Seq(
@@ -330,6 +328,75 @@ trait SdilWMController extends WebMonadController
       ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly),
       default = sites,
       editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
+  }
+
+  implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
+
+  def askReturn(subscription: RetrievedSubscription, sdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
+    ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites") emptyUnless !subscription.activity.smallProducer
+    contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
+    askSmallProd   <- ask(bool, "exemptions-for-small-producers")
+    firstSmallProd <- ask(smallProducer(sdilRef, sdilConnector), "first-small-producer-details") when askSmallProd
+    smallProds     <- manyT("small-producer-details",
+      {ask(smallProducer(sdilRef, sdilConnector), _)},
+      min = 1,
+      default = firstSmallProd.fold(List.empty[SmallProducer])(x => List(x)),
+      editSingleForm = Some((smallProducer(sdilRef, sdilConnector), smallProducerForm))
+    ) when askSmallProd
+    imports        <- askEmptyOption(litreagePair, "brought-into-uk")
+    importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers")
+    exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports")
+    wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
+    sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
+  } yield sdilReturn
+
+  implicit val smallProducerHtml: HtmlShow[SmallProducer] =
+    HtmlShow.instance { producer =>
+      Html(producer.alias.map { x =>
+        "<h3>" ++ Messages("small-producer-details.name", x) ++"<br/>"
+      }.getOrElse(
+        "<h3>"
+      )
+        ++ Messages("small-producer-details.refNumber", producer.sdilRef) ++ "</h3>"
+        ++ "<br/>"
+        ++ Messages("small-producer-details.lowBand", f"${producer.litreage._1}%,d")
+        ++ "<br/>"
+        ++ Messages("small-producer-details.highBand", f"${producer.litreage._2}%,d")
+      )
+    }
+
+  // TODO: At present this uses an Await.result to check the small producer status, thus
+  // blocking a thread. At a later date uniform should be updated to include the capability
+  // for a subsequent stage to invalidate a prior one.
+  implicit def smallProducer(origSdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
+    "alias" -> optional(text),
+    "sdilRef" -> nonEmptyText
+      .verifying(
+        "error.sdilref.invalid", x => {
+          x.isEmpty ||
+            (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
+              isCheckCorrect(x, 1) &&
+              Await.result(isSmallProducer(x, sdilConnector: SoftDrinksIndustryLevyConnector), 20.seconds)) &&
+              x != origSdilRef
+        }),
+    "lower"   -> litreage,
+    "higher"  -> litreage
+  ){
+    (alias, ref,l,h) => SmallProducer(alias, ref, (l,h))
+  }{
+    case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
+  }
+
+  def isSmallProducer(sdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): Future[Boolean] =
+    sdilConnector.retrieveSubscription(sdilRef).flatMap {
+      case Some(x) => x.activity.smallProducer
+      case None    => false
+    }(mdcExecutionContext)
+
+  implicit val litreageForm = new FormHtml[(Long,Long)] {
+    def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {
+      uniform.fragments.litreage(key, form, false)(messages)
+    }
   }
 
 }
