@@ -83,6 +83,14 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
       http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
     }
 
+    def variable(
+      utr: String
+    )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
+      http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable")
+    }
+
+
+
     def update(
       utr: String,
       period: ReturnPeriod,

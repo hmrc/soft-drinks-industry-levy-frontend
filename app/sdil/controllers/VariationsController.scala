@@ -18,6 +18,7 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import cats.data.OptionT
 import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
@@ -55,6 +56,7 @@ class VariationsController(
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
     val values = findValues
+    case object Returns extends ChangeType
     case object Sites extends ChangeType
     case object Activity extends ChangeType
     case object Deregister extends ChangeType
@@ -176,39 +178,56 @@ class VariationsController(
     deregDate = deregDate.some
   )
 
+
+  def returnUpdate(base: VariationData, returns: List[ReturnPeriod])(implicit headerCarrier: HeaderCarrier): WebMonad[VariationData]  = for {
+//      map = f.groupBy(_.year).mapValues(_.map(_.quarter))
+//      returnYear <- askSomething("returnYear", map) ??
+//      r <- askOneOf("returnYear", returns.map(_.year).distinct) when returns.nonEmpty
+      r <- askOneOf("returnYear", returns.map(_.quarter)) when returns.nonEmpty
+    
+    } yield base
+
   private def program(
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    changeType <- askOneOf("changeType", ChangeType.values.toList)
-    base = VariationData(subscription)
-    variation  <- changeType match {
-      case ChangeType.Sites => contactUpdate(base)
-      case ChangeType.Activity   => activityUpdate(base)
-      case ChangeType.Deregister => deregisterUpdate(base)
-    }
-    path <- getPath
-    cya = uniform.fragments.variationsCYA(
-      variation,
-      newPackagingSites(variation),
-      closedPackagingSites(variation),
-      newWarehouseSites(variation),
-      closedWarehouseSites(variation),
-      path
-    )
-    _ <- tell("checkyouranswers", cya)
-    submission = Convert(variation)
-    _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
-    _    <- clear
-    exit <- variation match {
-      case a if a.volToMan => journeyEnd("volToMan")
-      case b if b.manToVol => journeyEnd("manToVol")
-      case _ => {
-        journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val base = VariationData(subscription)
+    for {
+      variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
+      changeTypes = if (variableReturns.nonEmpty)
+                      ChangeType.values.toList
+                    else
+                      ChangeType.values.toList.filter(_ != ChangeType.Returns)
+      changeType <- askOneOf("changeType", changeTypes)
+      variation <- changeType match {
+        case ChangeType.Returns => returnUpdate(base, variableReturns)
+        case ChangeType.Sites => contactUpdate(base)
+        case ChangeType.Activity => activityUpdate(base)
+        case ChangeType.Deregister => deregisterUpdate(base)
       }
+      path <- getPath
+      cya = uniform.fragments.variationsCYA(
+        variation,
+        newPackagingSites(variation),
+        closedPackagingSites(variation),
+        newWarehouseSites(variation),
+        closedWarehouseSites(variation),
+        path
+      )
+      _ <- tell("checkyouranswers", cya)
+      submission = Convert(variation)
+      _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+      _ <- clear
+      exit <- variation match {
+        case a if a.volToMan => journeyEnd("volToMan")
+        case b if b.manToVol => journeyEnd("manToVol")
+        case _ => {
+          journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+        }
+      }
+    } yield {
+      exit
     }
-  } yield {
-    exit
   }
 
   def closedWarehouseSites(variation: VariationData): List[Site] = {

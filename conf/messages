@@ -1088,3 +1088,14 @@ how-to-pay.payment-ref=payment reference: {0}
 how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
     Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
 
+changeType.option.returns=Correct an error in a previous return
+heading.returnYear=Which return do you need to correct?
+returnYear.help.header=I can't find the return I'm looking for
+returnYear.help=If you did not file a return then it won't be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.
+returnYear.continue=Continue
+
+# TODO remove this hack!
+returnYear.option.0=January to March 2018
+returnYear.option.1=April to June 2018
+returnYear.option.2=July to September 2018
+returnYear.option.3=October to December 2018
