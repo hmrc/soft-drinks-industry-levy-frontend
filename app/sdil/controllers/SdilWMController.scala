@@ -55,6 +55,55 @@ trait SdilWMController extends WebMonadController
 
   implicit def config: AppConfig
 
+  //TODO extract to config
+  val costLower = BigDecimal("0.18")
+  val costHigher = BigDecimal("0.24")
+
+  def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
+    val ra = List(
+      ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
+      ("exemptions-for-small-producers", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
+      ("brought-into-uk", sdilReturn.importLarge, 1),
+      ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
+      ("claim-credits-for-exports", sdilReturn.export, -1),
+      ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
+    )
+    if(!isSmallProducer)
+      ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
+    else
+      ra
+  }
+
+  def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal = {
+    d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
+  }
+
+  def checkYourAnswers(
+    key: String,
+    sdilReturn: SdilReturn,
+    broughtForward: BigDecimal,
+    subscription: RetrievedSubscription,
+    variation: Option[ReturnsVariation] = None): WebMonad[Unit] = {
+
+    val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
+    val subtotal = calculateSubtotal(data)
+    val total: BigDecimal = subtotal + broughtForward
+
+    val inner = uniform.fragments.returnsCYA(
+      key,
+      data,
+      costLower,
+      costHigher,
+      subtotal,
+      broughtForward,
+      total,
+      variation,
+      subscription)
+    tell(key, inner)
+  }
+
+
+
   protected def askEnum[E <: EnumEntry](
     id: String,
     e: Enum[E],

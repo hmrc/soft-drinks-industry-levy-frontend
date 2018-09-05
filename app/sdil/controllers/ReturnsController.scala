@@ -57,97 +57,52 @@ class ReturnsController (
   val ec: ExecutionContext
 ) extends SdilWMController with FrontendController with Modulus23Check with ReturnJourney {
 
-  //TODO extract to config
-  val costLower = BigDecimal("0.18")
-  val costHigher = BigDecimal("0.24")
-
-//  implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
-
-//  implicit val litreageForm = new FormHtml[(Long,Long)] {
-//    def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {
-//      uniform.fragments.litreage(key, form, false)(messages)
-//    }
-//  }
-
-//  implicit val smallProducerHtml: HtmlShow[SmallProducer] =
-//      HtmlShow.instance { producer =>
-//        Html(producer.alias.map { x =>
-//          "<h3>" ++ Messages("small-producer-details.name", x) ++"<br/>"
-//        }.getOrElse(
-//          "<h3>"
-//        )
-//          ++ Messages("small-producer-details.refNumber", producer.sdilRef) ++ "</h3>"
-//          ++ "<br/>"
-//          ++ Messages("small-producer-details.lowBand", f"${producer.litreage._1}%,d")
-//          ++ "<br/>"
-//          ++ Messages("small-producer-details.highBand", f"${producer.litreage._2}%,d")
-//        )
-//      }
+//  //TODO extract to config
+//  val costLower = BigDecimal("0.18")
+//  val costHigher = BigDecimal("0.24")
 //
-//  // TODO: At present this uses an Await.result to check the small producer status, thus
-//  // blocking a thread. At a later date uniform should be updated to include the capability
-//  // for a subsequent stage to invalidate a prior one.
-//  implicit def smallProducer(origSdilRef: String)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
-//    "alias" -> optional(text),
-//    "sdilRef" -> nonEmptyText
-//      .verifying(
-//        "error.sdilref.invalid", x => {
-//          x.isEmpty ||
-//            (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
-//            isCheckCorrect(x, 1) &&
-//            Await.result(isSmallProducer(x), 20.seconds)) &&
-//          x != origSdilRef
-//        }),
-//    "lower"   -> litreage,
-//    "higher"  -> litreage
-//  ){
-//    (alias, ref,l,h) => SmallProducer(alias, ref, (l,h))
-//  }{
-//    case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
+//  def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
+//    val ra = List(
+//      ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
+//      ("exemptions-for-small-producers", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
+//      ("brought-into-uk", sdilReturn.importLarge, 1),
+//      ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
+//      ("claim-credits-for-exports", sdilReturn.export, -1),
+//      ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
+//    )
+//    if(!isSmallProducer)
+//      ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
+//    else
+//      ra
 //  }
-
-  def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
-    val ra = List(
-      ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
-      ("exemptions-for-small-producers", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
-      ("brought-into-uk", sdilReturn.importLarge, 1),
-      ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
-      ("claim-credits-for-exports", sdilReturn.export, -1),
-      ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
-    )
-    if(!isSmallProducer)
-      ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
-    else
-      ra
-  }
-
-  private def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal = {
-    d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
-  }
-
-  def checkYourAnswers(
-    key: String,
-    sdilReturn: SdilReturn,
-    broughtForward: BigDecimal,
-    variation: ReturnsVariation,
-    subscription: Subscription): WebMonad[Unit] = {
-
-    val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
-    val subtotal = calculateSubtotal(data)
-    val total: BigDecimal = subtotal + broughtForward
-
-    val inner = uniform.fragments.returnsCYA(
-      key,
-      data,
-      costLower,
-      costHigher,
-      subtotal,
-      broughtForward,
-      total,
-      variation,
-      subscription)
-    tell(key, inner)
-  }
+//
+//  private def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal = {
+//    d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
+//  }
+//
+//  def checkYourAnswers(
+//    key: String,
+//    sdilReturn: SdilReturn,
+//    broughtForward: BigDecimal,
+//    variation: ReturnsVariation,
+//    subscription: Subscription): WebMonad[Unit] = {
+//
+//    val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
+//    val subtotal = calculateSubtotal(data)
+//    val total: BigDecimal = subtotal + broughtForward
+//
+//    val inner = uniform.fragments.returnsCYA(
+//      key,
+//      data,
+//      costLower,
+//      costHigher,
+//      subtotal,
+//      broughtForward,
+//      total,
+//      variation,
+//      subscription)
+//    tell(key, inner)
+//  }
 
   def confirmationPage(
     key: String,
@@ -246,8 +201,8 @@ class ReturnsController (
       email = subscription.contact.email,
       taxEstimation = taxEstimation(sdilReturn)
     )
-    broughtForward <- BigDecimal("0").pure[WebMonad]
-    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, variation, subscription)
+    broughtForward <- BigDecimal("0").pure[WebMonad] // TODO - check if this should be hardcoded going fwd
+    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
     _              <- if (isNewImporter || isNewPacker) {
@@ -281,12 +236,6 @@ class ReturnsController (
                Redirect(routes.ServicePageController.show()).pure[Future]
     } yield r
   }
-
-//  def isSmallProducer(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] =
-//    sdilConnector.retrieveSubscription(sdilRef).flatMap {
-//      case Some(x) => x.activity.smallProducer
-//      case None    => false
-//    }
 
   def taxEstimation(r: SdilReturn): BigDecimal = {
     val t = r.packLarge |+| r.importLarge |+| r.ownBrand

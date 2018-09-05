@@ -51,7 +51,7 @@ class VariationsController(
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController with FormHelpers {
+) extends SdilWMController with FrontendController with FormHelpers with ReturnJourney {
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
@@ -185,8 +185,10 @@ class VariationsController(
 //      r <- askOneOf("returnYear", returns.map(_.year).distinct) when returns.nonEmpty
       r <- askOneOf("returnYear", returns.map(_.quarter)) when returns.nonEmpty
       ret = returns.filter(_.quarter == r)
-//      next = askReturn(base.original, sdilRef, sdilConnector)
-    } yield base
+      sdilReturn <- askReturn(base.original, sdilRef, sdilConnector)
+      broughtForward <- BigDecimal("0").pure[WebMonad] // TODO - check if this should be hardcoded going fwd
+      _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, base.original)
+  } yield base
 
   private def program(
     subscription: RetrievedSubscription,
