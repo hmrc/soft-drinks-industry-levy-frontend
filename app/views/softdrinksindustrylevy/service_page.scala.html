@@ -64,7 +64,8 @@
                   </p>
                     </div>
                 }
-	      @for(period <- periodsDue) { 
+         
+	      @for(period <- periodsDue.take(1)) { 
 	      <div class="notice">
               <i class="icon icon-important" style="top: 43%">
                   <span class="visually-hidden">@Messages("warning")</span>
