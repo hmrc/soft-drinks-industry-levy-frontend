@@ -55,7 +55,7 @@ class ReturnsController (
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController with Modulus23Check {
+) extends SdilWMController with FrontendController with Modulus23Check with ReturnJourney {
 
   //TODO extract to config
   val costLower = BigDecimal("0.18")
@@ -292,24 +292,5 @@ class ReturnsController (
     val t = r.packLarge |+| r.importLarge |+| r.ownBrand
     (t._1 * costLower |+| t._2 * costHigher) * 4
   }
-
-//  def askReturn(subscription: Subscription, sdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
-//    ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites") emptyUnless !subscription.activity.smallProducer
-//    contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
-//    askSmallProd   <- ask(bool, "exemptions-for-small-producers")
-//    firstSmallProd <- ask(smallProducer(sdilRef, sdilConnector), "first-small-producer-details") when askSmallProd
-//    smallProds     <- manyT("small-producer-details",
-//      {ask(smallProducer(sdilRef, sdilConnector), _)},
-//      min = 1,
-//      default = firstSmallProd.fold(List.empty[SmallProducer])(x => List(x)),
-//      editSingleForm = Some((smallProducer(sdilRef, sdilConnector), smallProducerForm))
-//    ) when askSmallProd
-//    imports        <- askEmptyOption(litreagePair, "brought-into-uk")
-//    importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers")
-//    exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports")
-//    wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
-//    sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
-//  } yield sdilReturn
-
 
 }
