@@ -114,7 +114,7 @@ trait SdilWMController extends WebMonadController
     id: String,
     possValues: List[A],
     default: Option[A] = None
-  ): WebMonad[A] = {
+  )(implicit extraMessages: ExtraMessages): WebMonad[A] = {
     val valueMap: Map[String,A] =
       possValues.map{a => (a.toString, a)}.toMap
     formPage(id)(

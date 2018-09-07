@@ -18,13 +18,12 @@ package sdil.controllers
 
 import java.time.LocalDate
 
-import cats.data.OptionT
 import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, _}
 import uk.gov.hmrc.uniform.webmonad._
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
@@ -35,19 +34,22 @@ import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistence
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import views.html.uniform
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
+
 class VariationsController(
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
-  cache: ShortLivedHttpCaching
+  cache: ShortLivedHttpCaching,
+  errorHandler: FrontendErrorHandler
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
@@ -178,17 +180,27 @@ class VariationsController(
     deregDate = deregDate.some
   )
 
+  def returnUpdate(
+    base: VariationData,
+    returnPeriods: List[ReturnPeriod],
+    sdilRef: String,
+    connector: SoftDrinksIndustryLevyConnector)(implicit headerCarrier: HeaderCarrier): WebMonad[VariationData]  = {
+    implicit val extraMessages: ExtraMessages = ExtraMessages(messages = returnPeriods.map { x =>
+      s"returnYear.option.${x.year}${x.quarter}" -> s"${Messages(s"returnYear.option.${x.quarter}")} ${x.year}"
+    }.toMap)
+    for {
+      returnPeriod <- askOneOf("returnYear", returnPeriods.map(x => s"${x.year}${x.quarter}"))
+        .map (y => returnPeriods.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
 
-  def returnUpdate(base: VariationData, returns: List[ReturnPeriod], sdilRef: String)(implicit headerCarrier: HeaderCarrier): WebMonad[VariationData]  = for {
-//      map = f.groupBy(_.year).mapValues(_.map(_.quarter))
-//      returnYear <- askSomething("returnYear", map) ??
-//      r <- askOneOf("returnYear", returns.map(_.year).distinct) when returns.nonEmpty
-      r <- askOneOf("returnYear", returns.map(_.quarter)) when returns.nonEmpty
-      ret = returns.filter(_.quarter == r)
-      sdilReturn <- askReturn(base.original, sdilRef, sdilConnector)
+      origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
+        .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
+
+      newReturn <- askReturn(base.original, sdilRef, sdilConnector)
       broughtForward <- BigDecimal("0").pure[WebMonad] // TODO - check if this should be hardcoded going fwd
-      _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, base.original)
-  } yield base
+
+      _ <- checkYourAnswers("check-your-answers", newReturn, broughtForward, base.original)
+    } yield base.copy(updatedAndOriginalReturn = (newReturn, origReturn).some) // TODO - consider making VariationData a trait and having implementations for each kind of variation
+  }
 
   private def program(
     subscription: RetrievedSubscription,
@@ -203,11 +215,12 @@ class VariationsController(
                       ChangeType.values.toList.filter(_ != ChangeType.Returns)
       changeType <- askOneOf("changeType", changeTypes)
       variation <- changeType match {
-        case ChangeType.Returns => returnUpdate(base, variableReturns, sdilRef)
+        case ChangeType.Returns => returnUpdate(base, variableReturns, sdilRef, sdilConnector)
         case ChangeType.Sites => contactUpdate(base)
         case ChangeType.Activity => activityUpdate(base)
         case ChangeType.Deregister => deregisterUpdate(base)
       }
+
       path <- getPath
       cya = uniform.fragments.variationsCYA(
         variation,

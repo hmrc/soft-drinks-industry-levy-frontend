@@ -1090,12 +1090,11 @@ how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs pa
 
 changeType.option.returns=Correct an error in a previous return
 heading.returnYear=Which return do you need to correct?
-returnYear.help.header=I can't find the return I'm looking for
+returnYear.help.header=I can’t find the return I’m looking for
 returnYear.help=If you did not file a return then it won't be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.
 returnYear.continue=Continue
 
-# TODO remove this hack!
-returnYear.option.0=January to March 2018
-returnYear.option.1=April to June 2018
-returnYear.option.2=July to September 2018
-returnYear.option.3=October to December 2018
+returnYear.option.0=January to March
+returnYear.option.1=April to June
+returnYear.option.2=July to September
+returnYear.option.3=October to December

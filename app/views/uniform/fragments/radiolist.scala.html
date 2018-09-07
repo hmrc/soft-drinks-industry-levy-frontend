@@ -21,11 +21,11 @@
 @import views.html.helper.options
 @import views.html.uniform.helpers._
 
-@(key: String, form: Form[String], possibleValues: List[String])(implicit messages: Messages)
+@(key: String, form: Form[String], possibleValues: List[String])(implicit messages: Messages, extraMessages: ExtraMessages)
 @inputRadioGroup(
     form(key),
 //    possibleValues.map{v => (v, Messages(Seq(key + ".option." + v.toLowerCase, v)))},
-    possibleValues.map{v => (v, Messages(key + ".option." + v.toLowerCase))},
+    possibleValues.map{v => (v, Messages.extraMessage(key + ".option." + v.toLowerCase))},
     '_labelClass -> "block-label less-padding",
     '_labelAfter -> true,
     '_groupClass -> "form-field-group"

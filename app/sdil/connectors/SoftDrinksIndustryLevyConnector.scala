@@ -72,10 +72,7 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
   }
 
   object returns { 
-    implicit val returnPeriodJson = Json.format[ReturnPeriod]
     import ltbs.play.scaffold.SdilComponents.longTupleFormatter
-    implicit val smallProducerJson = Json.format[SmallProducer]    
-    implicit val returnJson = Json.format[SdilReturn]
 
     def pending(
       utr: String

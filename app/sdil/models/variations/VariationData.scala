@@ -22,7 +22,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
-import sdil.models.{Address, ContactDetails, Litreage, Producer}
+import sdil.models.{Address, ContactDetails, Litreage, Producer, SdilReturn}
 
 
 case class VariationData(original: RetrievedSubscription,
@@ -40,7 +40,8 @@ case class VariationData(original: RetrievedSubscription,
                          updatedContactDetails: ContactDetails,
                          previousPages: Seq[Call],
                          reason: Option[String] = None,
-                         deregDate: Option[LocalDate] = None
+                         deregDate: Option[LocalDate] = None,
+                         updatedAndOriginalReturn: Option[(SdilReturn, SdilReturn)] = None // TODO - turn VD into trait and implement types
                         ) {
 
   def isLiablePacker: Boolean = {
@@ -81,6 +82,8 @@ case class VariationData(original: RetrievedSubscription,
 
 
 object VariationData {
+  import sdil.connectors._
+
   implicit val callWrites: Format[Call] = new Format[Call] {
     override def writes(o: Call): JsValue = {
       Json.obj(
@@ -95,7 +98,9 @@ object VariationData {
     } yield Call(method, url)
   }
 
+  implicit val returnTupleFormat: Format[(SdilReturn,SdilReturn)] = Json.format[(SdilReturn,SdilReturn)]
   implicit val format: Format[VariationData] = Json.format[VariationData]
+
 
   def apply(original: RetrievedSubscription): VariationData = VariationData(
     original,

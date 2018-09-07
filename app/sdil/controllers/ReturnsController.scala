@@ -22,10 +22,7 @@ import java.time.format._
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
-import play.api.data.Forms._
-import play.api.data.{Form, Mapping}
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json._
 import play.api.mvc.{AnyContent, _}
 import play.twirl.api.Html
 import sdil.actions.RegisteredAction
@@ -39,13 +36,11 @@ import uk.gov.hmrc.domain.Modulus23Check
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.uniform._
 import uk.gov.hmrc.uniform.playutil._
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
 
 import scala.concurrent._
-import scala.concurrent.duration._
 
 class ReturnsController (
   val messagesApi: MessagesApi,
@@ -56,53 +51,6 @@ class ReturnsController (
   val config: AppConfig,
   val ec: ExecutionContext
 ) extends SdilWMController with FrontendController with Modulus23Check with ReturnJourney {
-
-//  //TODO extract to config
-//  val costLower = BigDecimal("0.18")
-//  val costHigher = BigDecimal("0.24")
-//
-//  def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
-//    val ra = List(
-//      ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
-//      ("exemptions-for-small-producers", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
-//      ("brought-into-uk", sdilReturn.importLarge, 1),
-//      ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
-//      ("claim-credits-for-exports", sdilReturn.export, -1),
-//      ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
-//    )
-//    if(!isSmallProducer)
-//      ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
-//    else
-//      ra
-//  }
-//
-//  private def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal = {
-//    d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
-//  }
-//
-//  def checkYourAnswers(
-//    key: String,
-//    sdilReturn: SdilReturn,
-//    broughtForward: BigDecimal,
-//    variation: ReturnsVariation,
-//    subscription: Subscription): WebMonad[Unit] = {
-//
-//    val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
-//    val subtotal = calculateSubtotal(data)
-//    val total: BigDecimal = subtotal + broughtForward
-//
-//    val inner = uniform.fragments.returnsCYA(
-//      key,
-//      data,
-//      costLower,
-//      costHigher,
-//      subtotal,
-//      broughtForward,
-//      total,
-//      variation,
-//      subscription)
-//    tell(key, inner)
-//  }
 
   def confirmationPage(
     key: String,
