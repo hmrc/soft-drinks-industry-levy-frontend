@@ -1098,3 +1098,6 @@ returnYear.option.0=January to March
 returnYear.option.1=April to June
 returnYear.option.2=July to September
 returnYear.option.3=October to December
+
+check-your-variation-answers.balance.due=
+check-your-variation-answers.heading={0}

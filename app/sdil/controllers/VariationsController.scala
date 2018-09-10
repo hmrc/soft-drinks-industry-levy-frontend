@@ -195,9 +195,7 @@ class VariationsController(
       origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
         .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
       newReturn <- askReturn(base.original, sdilRef, sdilConnector)
-      // broughtForward <- BigDecimal("0").pure[WebMonad] // TODO - check if this should be hardcoded going fwd
-      // _ <- checkYourReturnAnswers("check-your-answers", newReturn, broughtForward, base.original)
-    } yield ReturnVariationData(origReturn, newReturn)
+    } yield ReturnVariationData(origReturn, newReturn, returnPeriod)
   }
 
   private def program(
@@ -217,16 +215,19 @@ class VariationsController(
       }
 
       path <- getPath
-    _ <- variation match {
-      case v: RegistrationVariationData =>
-        checkYourRegAnswers("checkyouranswers", v, path)
-        val submission = Convert(v)
-        execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
-      case v: ReturnVariationData =>
-        val broughtForward = BigDecimal("0")
-        // TODO create bespoke page
-        checkYourReturnAnswers("check-your-answers", v.revised, broughtForward, base.original)
-    }
+      _ <- variation match {
+        case v: RegistrationVariationData =>
+          checkYourRegAnswers("checkyouranswers", v, path)
+          val submission = Convert(v)
+          execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+        case v: ReturnVariationData =>
+          val broughtForward = BigDecimal("0") // TODO will need setting up properly
+          // TODO create bespoke page
+          implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map(
+            "heading.check-your-variation-answers" -> s"${Messages(s"returnYear.option.${v.period.quarter}")} ${v.period.year} return details"
+          ))
+          checkYourReturnAnswers("check-your-variation-answers", v.revised, broughtForward, base.original)
+        }
 
 
 
@@ -248,9 +249,8 @@ class VariationsController(
       exit <- variation match {
         case a: RegistrationVariationData if a.volToMan => journeyEnd("volToMan")
         case b: RegistrationVariationData if b.manToVol => journeyEnd("manToVol")
-        case _ => {
+        case _: RegistrationVariationData =>
           journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
-        }
       }
     } yield {
       exit

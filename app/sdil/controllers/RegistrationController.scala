@@ -23,6 +23,7 @@ import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.OrganisationType.{partnership, soleTrader}
 import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
 import ltbs.play.scaffold.SdilComponents._
+import ltbs.play.scaffold.SdilComponents.extraMessages
 import uk.gov.hmrc.uniform.webmonad._
 import uk.gov.hmrc.uniform.playutil._
 import play.api.i18n.{Messages, MessagesApi}
@@ -145,7 +146,7 @@ class RegistrationController(
                            packSites,
                            contactDetails
                          )(request, implicitly, implicitly)
-      _               <- tell("declaration", declaration)
+      _               <- tell("declaration", declaration)(implicitly, ltbs.play.scaffold.SdilComponents.extraMessages)
       _               <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
       _               <- execute(cache.clear(request.internalId))
       complete        =  uniform.fragments.registrationComplete(contact.email)

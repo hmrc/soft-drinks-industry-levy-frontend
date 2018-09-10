@@ -22,12 +22,12 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
-import sdil.models.{Address, ContactDetails, Litreage, Producer, SdilReturn}
+import sdil.models.{Address, ContactDetails, Litreage, Producer, ReturnPeriod, SdilReturn}
 
 
 
 sealed trait VariationData
-case class ReturnVariationData(original: SdilReturn, revised: SdilReturn) extends VariationData
+case class ReturnVariationData(original: SdilReturn, revised: SdilReturn, period: ReturnPeriod) extends VariationData
 case class RegistrationVariationData(original: RetrievedSubscription,
                                      updatedBusinessAddress: Address,
                                      producer: Producer,
@@ -44,7 +44,7 @@ case class RegistrationVariationData(original: RetrievedSubscription,
                                      previousPages: Seq[Call],
                                      reason: Option[String] = None,
                                      deregDate: Option[LocalDate] = None
-                        ) extends VariationData { // TODO consider splitting
+                        ) extends VariationData { // TODO consider splitting i.e. DeregVaryData, Contact, Activity etc.
 
   def isLiablePacker: Boolean = {
     producer.isLarge.getOrElse(false) || copackForOthers

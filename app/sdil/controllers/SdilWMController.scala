@@ -83,7 +83,7 @@ trait SdilWMController extends WebMonadController
     sdilReturn: SdilReturn,
     broughtForward: BigDecimal,
     subscription: RetrievedSubscription,
-    variation: Option[ReturnsVariation] = None): WebMonad[Unit] = {
+    variation: Option[ReturnsVariation] = None)(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
 
     val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
     val subtotal = calculateSubtotal(data)
@@ -99,7 +99,7 @@ trait SdilWMController extends WebMonadController
       total,
       variation,
       subscription)
-    tell(key, inner)
+    tell(key, inner)(implicitly, extraMessages)
   }
 
 
@@ -239,7 +239,7 @@ trait SdilWMController extends WebMonadController
   protected def tell[A: HtmlShow](
     id: String,
     a: A 
-  ): WebMonad[Unit] = {
+  )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
 
     val unitMapping: Mapping[Unit] = Forms.of[Unit](new Formatter[Unit] {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Unit] = Right(())
