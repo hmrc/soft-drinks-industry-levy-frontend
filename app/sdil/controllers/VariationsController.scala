@@ -25,6 +25,7 @@ import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, _}
 import uk.gov.hmrc.uniform.webmonad._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
+import play.twirl.api.HtmlFormat
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -65,7 +66,7 @@ class VariationsController(
   }
 
   private def contactUpdate(
-    data: VariationData
+    data: RegistrationVariationData
   ): WebMonad[VariationData] = {
 
     sealed trait ContactChangeType extends EnumEntry
@@ -114,7 +115,7 @@ class VariationsController(
   }
 
   private def activityUpdate(
-    data: VariationData
+    data: RegistrationVariationData
   ): WebMonad[VariationData] = {
 
 
@@ -169,7 +170,7 @@ class VariationsController(
   }
 
   private def deregisterUpdate(
-    data: VariationData
+    data: RegistrationVariationData
   ): WebMonad[VariationData] = for {
     reason    <- askBigText("reason", constraints = List(("error.deregReason.tooLong", _.length <= 255)), errorOnEmpty = "error.reason.empty")
     deregDate <- ask(startDate
@@ -181,38 +182,32 @@ class VariationsController(
   )
 
   def returnUpdate(
-    base: VariationData,
-    returnPeriods: List[ReturnPeriod],
-    sdilRef: String,
-    connector: SoftDrinksIndustryLevyConnector)(implicit headerCarrier: HeaderCarrier): WebMonad[VariationData]  = {
+                    base: RegistrationVariationData,
+                    returnPeriods: List[ReturnPeriod],
+                    sdilRef: String,
+                    connector: SoftDrinksIndustryLevyConnector)(implicit headerCarrier: HeaderCarrier): WebMonad[VariationData]  = {
     implicit val extraMessages: ExtraMessages = ExtraMessages(messages = returnPeriods.map { x =>
       s"returnYear.option.${x.year}${x.quarter}" -> s"${Messages(s"returnYear.option.${x.quarter}")} ${x.year}"
     }.toMap)
     for {
       returnPeriod <- askOneOf("returnYear", returnPeriods.map(x => s"${x.year}${x.quarter}"))
-        .map (y => returnPeriods.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
-
+        .map(y => returnPeriods.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
       origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
         .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
-
       newReturn <- askReturn(base.original, sdilRef, sdilConnector)
-      broughtForward <- BigDecimal("0").pure[WebMonad] // TODO - check if this should be hardcoded going fwd
-
-      _ <- checkYourAnswers("check-your-answers", newReturn, broughtForward, base.original)
-    } yield base.copy(updatedAndOriginalReturn = (newReturn, origReturn).some) // TODO - consider making VariationData a trait and having implementations for each kind of variation
+      // broughtForward <- BigDecimal("0").pure[WebMonad] // TODO - check if this should be hardcoded going fwd
+      // _ <- checkYourReturnAnswers("check-your-answers", newReturn, broughtForward, base.original)
+    } yield ReturnVariationData(origReturn, newReturn)
   }
 
   private def program(
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {
-    val base = VariationData(subscription)
+    val base = RegistrationVariationData(subscription)
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
-      changeTypes = if (variableReturns.nonEmpty)
-                      ChangeType.values.toList
-                    else
-                      ChangeType.values.toList.filter(_ != ChangeType.Returns)
+      changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
       changeType <- askOneOf("changeType", changeTypes)
       variation <- changeType match {
         case ChangeType.Returns => returnUpdate(base, variableReturns, sdilRef, sdilConnector)
@@ -222,21 +217,37 @@ class VariationsController(
       }
 
       path <- getPath
-      cya = uniform.fragments.variationsCYA(
-        variation,
-        newPackagingSites(variation),
-        closedPackagingSites(variation),
-        newWarehouseSites(variation),
-        closedWarehouseSites(variation),
-        path
-      )
-      _ <- tell("checkyouranswers", cya)
-      submission = Convert(variation)
-      _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+    _ <- variation match {
+      case v: RegistrationVariationData =>
+        checkYourRegAnswers("checkyouranswers", v, path)
+        val submission = Convert(v)
+        execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+      case v: ReturnVariationData =>
+        val broughtForward = BigDecimal("0")
+        // TODO create bespoke page
+        checkYourReturnAnswers("check-your-answers", v.revised, broughtForward, base.original)
+    }
+
+
+
+
+
+//      cya = uniform.fragments.variationsCYA(
+//        variation,
+//        newPackagingSites(variation),
+//        closedPackagingSites(variation),
+//        newWarehouseSites(variation),
+//        closedWarehouseSites(variation),
+//        path
+//      )
+
+//      _ <- tell("checkyouranswers", cya)
+//      submission = Convert(variation)
+//      _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
       _ <- clear
       exit <- variation match {
-        case a if a.volToMan => journeyEnd("volToMan")
-        case b if b.manToVol => journeyEnd("manToVol")
+        case a: RegistrationVariationData if a.volToMan => journeyEnd("volToMan")
+        case b: RegistrationVariationData if b.manToVol => journeyEnd("manToVol")
         case _ => {
           journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
         }
@@ -246,19 +257,36 @@ class VariationsController(
     }
   }
 
-  def closedWarehouseSites(variation: VariationData): List[Site] = {
+  def checkYourRegAnswers(
+                              key: String,
+                              v: RegistrationVariationData,
+                              path: List[String]): WebMonad[Unit] = {
+
+    val inner = uniform.fragments.variationsCYA(
+      v,
+      newPackagingSites(v),
+      closedPackagingSites(v),
+      newWarehouseSites(v),
+      closedWarehouseSites(v),
+      path
+
+    )
+    tell(key, inner)
+  }
+
+  def closedWarehouseSites(variation: RegistrationVariationData): List[Site] = {
     closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
   }
 
-  def closedPackagingSites(variation: VariationData): List[Site] = {
+  def closedPackagingSites(variation: RegistrationVariationData): List[Site] = {
     closedSites(variation.original.productionSites, Convert(variation).closeSites.map(x => x.siteReference))
   }
 
-  def newPackagingSites(variation: VariationData): List[Site] = {
+  def newPackagingSites(variation: RegistrationVariationData): List[Site] = {
     variation.updatedProductionSites.diff(variation.original.productionSites).toList
   }
 
-  def newWarehouseSites(variation: VariationData): List[Site] = {
+  def newWarehouseSites(variation: RegistrationVariationData): List[Site] = {
     variation.updatedWarehouseSites.diff(variation.original.warehouseSites).toList
   }
 

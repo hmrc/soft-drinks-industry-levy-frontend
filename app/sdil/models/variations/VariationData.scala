@@ -25,24 +25,26 @@ import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer, SdilReturn}
 
 
-case class VariationData(original: RetrievedSubscription,
-                         updatedBusinessAddress: Address,
-                         producer: Producer,
-                         usesCopacker: Option[Boolean],
-                         packageOwn: Option[Boolean],
-                         packageOwnVol: Option[Litreage],
-                         copackForOthers: Boolean,
-                         copackForOthersVol: Option[Litreage],
-                         imports: Boolean,
-                         importsVol: Option[Litreage],
-                         updatedProductionSites: Seq[Site],
-                         updatedWarehouseSites: Seq[Site],
-                         updatedContactDetails: ContactDetails,
-                         previousPages: Seq[Call],
-                         reason: Option[String] = None,
-                         deregDate: Option[LocalDate] = None,
-                         updatedAndOriginalReturn: Option[(SdilReturn, SdilReturn)] = None // TODO - turn VD into trait and implement types
-                        ) {
+
+sealed trait VariationData
+case class ReturnVariationData(original: SdilReturn, revised: SdilReturn) extends VariationData
+case class RegistrationVariationData(original: RetrievedSubscription,
+                                     updatedBusinessAddress: Address,
+                                     producer: Producer,
+                                     usesCopacker: Option[Boolean],
+                                     packageOwn: Option[Boolean],
+                                     packageOwnVol: Option[Litreage],
+                                     copackForOthers: Boolean,
+                                     copackForOthersVol: Option[Litreage],
+                                     imports: Boolean,
+                                     importsVol: Option[Litreage],
+                                     updatedProductionSites: Seq[Site],
+                                     updatedWarehouseSites: Seq[Site],
+                                     updatedContactDetails: ContactDetails,
+                                     previousPages: Seq[Call],
+                                     reason: Option[String] = None,
+                                     deregDate: Option[LocalDate] = None
+                        ) extends VariationData { // TODO consider splitting
 
   def isLiablePacker: Boolean = {
     producer.isLarge.getOrElse(false) || copackForOthers
@@ -63,7 +65,7 @@ case class VariationData(original: RetrievedSubscription,
     * whereas a non-material change cannot be submitted as a variation.
     */
 
-  lazy val orig = VariationData(original)
+  lazy val orig = RegistrationVariationData(original)
 
   lazy val volToMan: Boolean = orig.isVoluntary && isLiable
 
@@ -81,7 +83,7 @@ case class VariationData(original: RetrievedSubscription,
 }
 
 
-object VariationData {
+object RegistrationVariationData {
   import sdil.connectors._
 
   implicit val callWrites: Format[Call] = new Format[Call] {
@@ -99,10 +101,10 @@ object VariationData {
   }
 
   implicit val returnTupleFormat: Format[(SdilReturn,SdilReturn)] = Json.format[(SdilReturn,SdilReturn)]
-  implicit val format: Format[VariationData] = Json.format[VariationData]
+  implicit val format: Format[RegistrationVariationData] = Json.format[RegistrationVariationData]
 
 
-  def apply(original: RetrievedSubscription): VariationData = VariationData(
+  def apply(original: RetrievedSubscription): RegistrationVariationData = RegistrationVariationData(
     original,
     Address.fromUkAddress(original.address),
     Producer(original.activity.largeProducer || original.activity.smallProducer, Some(original.activity.largeProducer)),

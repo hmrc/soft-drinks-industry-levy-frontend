@@ -150,7 +150,7 @@ class ReturnsController (
       taxEstimation = taxEstimation(sdilReturn)
     )
     broughtForward <- BigDecimal("0").pure[WebMonad] // TODO - check if this should be hardcoded going fwd
-    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))
+    _              <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
     _              <- if (isNewImporter || isNewPacker) {

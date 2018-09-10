@@ -78,7 +78,7 @@ trait SdilWMController extends WebMonadController
     d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
   }
 
-  def checkYourAnswers(
+  def checkYourReturnAnswers(
     key: String,
     sdilReturn: SdilReturn,
     broughtForward: BigDecimal,
