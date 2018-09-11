@@ -68,7 +68,7 @@ trait SdilWMController extends WebMonadController
       ("claim-credits-for-exports", sdilReturn.export, -1),
       ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
     )
-    if(!isSmallProducer)
+    if(!isSmallProducer) // TODO - we need to find a way of ensuring this is correct for the period of the return and not just the latest state
       ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
     else
       ra
@@ -83,7 +83,8 @@ trait SdilWMController extends WebMonadController
     sdilReturn: SdilReturn,
     broughtForward: BigDecimal,
     subscription: RetrievedSubscription,
-    variation: Option[ReturnsVariation] = None)(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
+    variation: Option[ReturnsVariation] = None,
+    originalReturnValue: Option[BigDecimal] = None)(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
 
     val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
     val subtotal = calculateSubtotal(data)
@@ -98,7 +99,8 @@ trait SdilWMController extends WebMonadController
       broughtForward,
       total,
       variation,
-      subscription)
+      subscription,
+      originalReturnValue)
     tell(key, inner)(implicitly, extraMessages)
   }
 

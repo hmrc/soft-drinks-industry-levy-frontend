@@ -70,7 +70,7 @@ object FrontendBuild extends Build {
         "com.softwaremill.macwire" %% "util" % "2.3.1",
         "com.softwaremill.macwire" %% "proxy" % "2.3.1",
         "org.typelevel" %% "cats-core" % "1.1.0",
-        "uk.gov.hmrc" %% "uniform" % "0.1.4",
+        "uk.gov.hmrc" %% "uniform" % "0.1.6",
 
         // test dependencies
         "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % "test",

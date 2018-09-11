@@ -16,14 +16,16 @@
 
 package sdil
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import sdil.models.{ReturnPeriod, SdilReturn, SmallProducer}
 import ltbs.play.scaffold.SdilComponents.longTupleFormatter
+import sdil.models.variations.ReturnVariationData
 
 package object connectors {
 
-  implicit val returnPeriodJson = Json.format[ReturnPeriod]
-  implicit val smallProducerJson = Json.format[SmallProducer]
-  implicit val returnJson = Json.format[SdilReturn]
+  implicit val returnPeriodJson: OFormat[ReturnPeriod] = Json.format[ReturnPeriod]
+  implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
+  implicit val returnJson: OFormat[SdilReturn] = Json.format[SdilReturn]
+  implicit val returnVariationDataFormat: OFormat[ReturnVariationData] = Json.format[ReturnVariationData]
 
 }

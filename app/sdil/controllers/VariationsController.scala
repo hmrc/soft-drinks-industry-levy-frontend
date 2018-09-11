@@ -195,7 +195,7 @@ class VariationsController(
       origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
         .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
       newReturn <- askReturn(base.original, sdilRef, sdilConnector)
-    } yield ReturnVariationData(origReturn, newReturn, returnPeriod)
+    } yield ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address)
   }
 
   private def program(
@@ -215,43 +215,33 @@ class VariationsController(
       }
 
       path <- getPath
-      _ <- variation match {
+      exit <- variation match {
         case v: RegistrationVariationData =>
-          checkYourRegAnswers("checkyouranswers", v, path)
-          val submission = Convert(v)
-          execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+          for {
+            _ <- checkYourRegAnswers("checkyouranswers", v, path)
+            submission = Convert(v)
+            _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+            _ <- clear
+            exit <- if(v.volToMan) {
+              journeyEnd("volToMan")
+            } else if(v.manToVol) {
+              journeyEnd("manToVol")
+            } else journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+          } yield exit
         case v: ReturnVariationData =>
           val broughtForward = BigDecimal("0") // TODO will need setting up properly
           // TODO create bespoke page
           implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map(
             "heading.check-your-variation-answers" -> s"${Messages(s"returnYear.option.${v.period.quarter}")} ${v.period.year} return details"
           ))
-          checkYourReturnAnswers("check-your-variation-answers", v.revised, broughtForward, base.original)
+          // TODO - originalReturnValue is v diff - values used for current return value depend on smallProducer status so we need to get this for the period
+          for {
+            _ <- checkYourReturnAnswers("check-your-variation-answers", v.revised, broughtForward, base.original, originalReturnValue = BigDecimal(1999999999.99).some)
+            _ <- execute(sdilConnector.returns.vary(sdilRef, v))
+            _ <- clear
+            exit <- journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+          } yield exit
         }
-
-
-
-
-
-//      cya = uniform.fragments.variationsCYA(
-//        variation,
-//        newPackagingSites(variation),
-//        closedPackagingSites(variation),
-//        newWarehouseSites(variation),
-//        closedWarehouseSites(variation),
-//        path
-//      )
-
-//      _ <- tell("checkyouranswers", cya)
-//      submission = Convert(variation)
-//      _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
-      _ <- clear
-      exit <- variation match {
-        case a: RegistrationVariationData if a.volToMan => journeyEnd("volToMan")
-        case b: RegistrationVariationData if b.manToVol => journeyEnd("manToVol")
-        case _: RegistrationVariationData =>
-          journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
-      }
     } yield {
       exit
     }

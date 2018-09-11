@@ -20,14 +20,21 @@ import java.time.LocalDate
 
 import play.api.libs.json._
 import play.api.mvc.Call
-import sdil.models.backend.Site
+import sdil.models.backend.{Site, UkAddress}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer, ReturnPeriod, SdilReturn}
 
 
 
 sealed trait VariationData
-case class ReturnVariationData(original: SdilReturn, revised: SdilReturn, period: ReturnPeriod) extends VariationData
+
+case class ReturnVariationData(
+                                original: SdilReturn,
+                                revised: SdilReturn,
+                                period: ReturnPeriod,
+                                orgName: String,
+                                address: UkAddress) extends VariationData
+
 case class RegistrationVariationData(original: RetrievedSubscription,
                                      updatedBusinessAddress: Address,
                                      producer: Producer,

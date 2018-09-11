@@ -37,14 +37,6 @@ case class Subscription(utr: String,
 object Subscription {
   implicit val format: Format[Subscription] = Json.format[Subscription]
 
-//  def fromRetrieved(retrievedSubscription: RetrievedSubscription): Subscription = {
-//    Subscription(
-//      utr = retrievedSubscription.utr,
-//      orgName = retrievedSubscription.orgName,
-//      orgType = retrievedSubscription.activity.
-//    )
-//  }
-
   def fromFormData(formData: RegistrationFormData): Option[Subscription] = {
     for {
       orgType <- formData.organisationType
