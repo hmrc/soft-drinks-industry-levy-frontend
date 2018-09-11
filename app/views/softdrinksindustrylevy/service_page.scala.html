@@ -35,6 +35,22 @@
         <div class="column-two-thirds">
             <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
 
+            @*TODO Content for when the user is now vol but used to be man. To reliably determine this changes need to be made to get method for mongo.
+            @periodsDue.takeRight(1).map { pd =>
+            @if(subscription.activity.voluntaryRegistration) {
+            <div class="panel panel-border-wide">
+            <p>
+            @Messages(
+            "sdil.service-page.p4.voluntary-used-to-be-man",
+            ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
+            ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"))
+            </p>
+            <p>@Html(Messages("sdil.service-page.p5.voluntary-used-to-be-man"), sdil.controllers.routes.VariationsController.index("packLarge"))</p>
+            </div>
+            }
+            }*@
+
+
             @if(subscription.activity.voluntaryRegistration) {
                 <div class="panel panel-border-wide">
                     <p>@Messages("sdil.service-page.p2.voluntary-only")</p>
@@ -120,7 +136,6 @@
         </div>
         }
         }
-
         <hr class="govuk-section-break--visible">
 
         <div>
@@ -134,8 +149,14 @@
             <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
         </div>
         <hr class="govuk-section-break--visible">
-        @if(subscription.activity.isLiable) {
-            @declaration_table("service-page", "business-details.title", Some("man")) {
+
+        @subscription match {
+            case s if s.activity.isLiable => {
+                Some("man")
+                }
+
+
+            @declaration_table("service-page", "business-details.title", s) {
                 @declaration_details_table_row("service-page", "sdil-ref", None, s"$sdilReference")
                 @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
                 @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
@@ -261,5 +282,3 @@
     </div>
     </div>
 }
-    }
-    }

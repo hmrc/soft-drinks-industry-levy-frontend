@@ -29,7 +29,7 @@ case class RetrievedActivity(smallProducer: Boolean, largeProducer: Boolean, con
   }
 
   def isVoluntaryMandatory: Boolean = {
-    voluntaryRegistration && (contractPacker || importer)
+    smallProducer && (contractPacker || importer)
   }
 }
 object RetrievedActivity {
