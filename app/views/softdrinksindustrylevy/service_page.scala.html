@@ -150,59 +150,33 @@
         </div>
         <hr class="govuk-section-break--visible">
 
-        @subscription match {
-            case s if s.activity.isLiable => {
-                Some("man")
+            @defining(
+                subscription match {
+                    case s if s.activity.isLiable => Some("man")
+                    case s if s.activity.isVoluntaryMandatory => Some("volMan")
+                    case _ => None
+                }
+            )   { subKey =>
+
+                @declaration_table("service-page", "business-details.title", subKey) {
+                    @declaration_details_table_row("service-page", "sdil-ref", None, s"$sdilReference")
+                    @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
+                    @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
+
+                        <tr>
+                            <td scope="row">@Messages("sdil.verify.address")</td>
+                            <td>
+                                @address.nonEmptyLines.init.map { l =>
+                                    @l,<br/>
+                                }
+                                @address.postcode
+                            </td>
+                        </tr>
+                    }
                 }
 
 
-            @declaration_table("service-page", "business-details.title", s) {
-                @declaration_details_table_row("service-page", "sdil-ref", None, s"$sdilReference")
-                @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
-                @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
-                <tr>
-                    <td scope="row">@Messages("sdil.verify.address")</td>
-                    <td>
-                        @address.nonEmptyLines.init.map { l =>
-                            @l,<br/>
-                        }
-                        @address.postcode
-                    </td>
-                </tr>
-            }
-        }
-        @if(subscription.activity.voluntaryRegistration) {
-            @declaration_table("service-page", "business-details.title") {
-        @declaration_details_table_row("service-page", "sdil-ref", None, s"$sdilReference")
-        @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
-        @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
-        <tr>
-            <td scope="row">@Messages("sdil.verify.address")</td>
-            <td>
-                @address.nonEmptyLines.init.map { l =>
-                    @l,<br/>
-                }
-                @address.postcode
-            </td>
-        </tr>
-        }
-    }
-        @if(subscription.activity.isVoluntaryMandatory) {
-            @declaration_table("service-page", "business-details.title", Some("volMan")) {
-        @declaration_details_table_row("service-page", "sdil-ref", None, s"$sdilReference")
-        @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
-        @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
-        <tr>
-            <td scope="row">@Messages("sdil.verify.address")</td>
-            <td>
-                @address.nonEmptyLines.init.map { l =>
-                    @l,<br/>
-                }
-                @address.postcode
-            </td>
-        </tr>
-        }
-        }
+        @*
         <table class="check-your-answers">
             <thead>
                 <tr>
@@ -226,6 +200,7 @@
                 @declaration_details_table_row("service-page", "email", None, s"${subscription.contact.email}")
             </tbody>
         </table>
+
         @if(subscription.productionSites.nonEmpty || subscription.warehouseSites.nonEmpty) {
             <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
             <p>@Messages("sdil.service-page.registered-address.p1")</p>
@@ -233,6 +208,7 @@
             @service_sites(subscription.productionSites, "packaging")
             @service_sites(subscription.warehouseSites, "warehouse")
         }
+
         <div>
             <h2>@Messages("sdil.service-page.variations.title")</h2>
             <p>@Messages("sdil.service-page.variations.p1")</p>
@@ -251,8 +227,59 @@
             </a>
         </div>
     </div>
-    <br>
-    <br>
+    *@
+
+        <h2 class="heading-medium">@Messages("sdil.service-page.variations.title")</h2>
+        <div class="grid-row">
+            <div class="column-one-half">
+                <h3 class="heading-small">
+                    <a href="/sdil-prototype/returns/4-0/manage-small-prod">
+                        @Messages("sdil.service-page.variations.subtitle.1")
+                    </a>
+                </h3>
+                <p>@Messages("sdil.service-page.variations.p1")</p>
+            </div>
+
+            <div class="column-one-half">
+                <h3 class="heading-small">
+                    <a href="/sdil-prototype/home/registered-addresses">
+                        @Messages("sdil.service-page.variations.subtitle.2")
+                    </a>
+                </h3>
+                <p>@Messages("sdil.service-page.variations.p2")</p>
+            </div>
+        </div>
+
+        <div class="grid-row">
+            <div class="column-one-half">
+                <h3 class="heading-small">
+                    <a href="/sdil-prototype/variation/2-0">
+                        @Messages("sdil.service-page.variations.subtitle.3")
+                    </a>
+                </h3>
+                <div class="form-group">
+                    <p>@Messages("sdil.service-page.variations.p3")</p>
+                    <ul class="list-bullet">
+                        <li>@Messages("sdil.service-page.variations.li.1")</li>
+                        <li>@Messages("sdil.service-page.variations.li.2")</li>
+                        <li>@Messages("sdil.service-page.variations.li.3")</li>
+                        <li>@Messages("sdil.service-page.variations.li.4")</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="column-one-half">
+                <h3 class="heading-small">
+                    <a href="/sdil-prototype/home/notifications">
+                        @Messages("sdil.service-page.variations.subtitle.4")
+                    </a>
+                </h3>
+                <p>@Messages("sdil.service-page.variations.p4")</p>
+            </div>
+        </div>
+    </div>
+
+        </br>
+        </br>
 
     <div class="column-one-third">
         <div class="section--blue-top"> </div>

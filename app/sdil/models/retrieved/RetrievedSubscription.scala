@@ -25,7 +25,7 @@ case class RetrievedActivity(smallProducer: Boolean, largeProducer: Boolean, con
 
 
   def isLiable: Boolean = {
-    (largeProducer || importer || contractPacker) && !voluntaryRegistration
+    !smallProducer && (largeProducer || contractPacker || importer)
   }
 
   def isVoluntaryMandatory: Boolean = {
