@@ -32,7 +32,7 @@ trait ReturnJourney extends SdilWMController {
   implicit val ec: ExecutionContext
 
   def askReturn(subscription: RetrievedSubscription, sdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
-    ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites") emptyUnless !subscription.activity.smallProducer
+    ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites") emptyUnless !subscription.activity.smallProducer // TODO this needs scoping to the period
     contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
     askSmallProd   <- ask(bool, "exemptions-for-small-producers")
     firstSmallProd <- ask(smallProducer(sdilRef, sdilConnector), "first-small-producer-details") when askSmallProd
