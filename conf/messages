@@ -3,7 +3,7 @@ sdil.common.continue=Continue
 sdil.common.back=Back
 sdil.common.save-continue=Save and continue
 sdil.common.save=Save
-sdil.common.errorSummary=There’s a problem
+sdil.common.errorSummary=There is a problem
 sdil.common.alpha=ALPHA
 sdil.common.beta=BETA
 sdil.common.alpha-info=<span>This is a new service – your <a href="{0}">feedback</a> will help us to improve it.</span>
@@ -209,7 +209,7 @@ sdil.small-prod-confirm.body=If this is not accurate, you need to <a href="{0}" 
 sdil.small-prod-confirm.continue=Accept and continue
 
 #Start date
-heading.regDate=What date did you become liable for the Soft Drinks Levy? 
+heading.regDate=What date did you become liable for the Soft Drinks Levy?
 sdil.start-date.heading=What date did you become liable to register for the Soft Drinks Industry Levy?
 sdil.start-date.example=For example, 6 4 2018
 sdil.start-date.day=Day
@@ -534,7 +534,7 @@ for brands you own or have the rights to manufacture, worldwide?
 sdil.variation.importer=Do you import any liable drink from outside of the UK?
 sdil.variation.uses-copacker=Do you use a third party in the UK to package brands you own or have the rights to manufacture?
 sdil.variation.package-own=Do you operate any packaging sites in the UK which package liable drinks for brands\
-you own or have the rights to manufacture? 
+you own or have the rights to manufacture?
 sdil.variation.package-own-vol=How many litres of liable drink will you package in the UK for the brands you own or \
 have the rights to manufacture, in the next 12 months?
 #Update business details
@@ -782,7 +782,7 @@ sdil.time-out.p1=We have saved your answers
 sdil.variation.anotherChange=If you need to make another change,
 sdil.variation.anotherChangeLink=go back and start again
 
-heading.deregister.reason=Why are you deregistering from the Soft Drinks Industry Levy? 
+heading.deregister.reason=Why are you deregistering from the Soft Drinks Industry Levy?
 deregister.reason.label=Reason for deregistering
 heading.deregDate=What date do you need to deregister from?
 error.deregDate.nopast=Deregistration date cannot be in the past
@@ -796,7 +796,7 @@ variations.cya.packLarge.none=[None]
 
 variations.cya.packOpt=Do you package at your own site?
 variations.cya.packQty=Annual litres for your own brands
-variations.cya.useCopacker=Do you use third party packagers? 
+variations.cya.useCopacker=Do you use third party packagers?
 variations.cya.copackQty=Annual litres for your customers
 variations.cya.importer=Do you bring liable drinks into the UK?
 variations.cya.importQty=Annual litres brought into the UK
@@ -842,7 +842,7 @@ variations.cya.activity-change=Changes to business activity
 variations.cya.activity-change.producer=Own brand packaged in past 12 months?
 variations.cya.activity-change.use-copacker=Use third party packagers?
 variations.cya.activity-change.use-copacker.change=Change<span class="visually-hidden"> use third party \
-  packagers</span> 
+  packagers</span>
 variations.cya.activity-change.package-own=Package your own brand at your own sites?
 variations.cya.activity-change.package-own.change=Change<span class="visually-hidden"> do you package at your own site</span>
 variations.cya.activity-change.litres-own=Litres in next 12 months
@@ -855,7 +855,7 @@ variations.cya.activity-change.package-others.change=Change<span class="visually
   customers</span>
 variations.cya.activity-change.import=Do you bring liable drinks into the UK?
 variations.cya.activity-change.import.change=Change<span class="visually-hidden"> do you bring liable drinks into the\
-   UK?</span> 
+   UK?</span>
 variations.cya.activity-change.litres-import=Litres in next 12 months
 variations.cya.activity-change.litres-import.change=Change<span class="visually-hidden"> litres in next 12 months</span>
 
@@ -1087,4 +1087,3 @@ how-to-pay.acct-name=account name: HMRC General Business Tax Receipts
 how-to-pay.payment-ref=payment reference: {0}
 how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
     Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
-
