@@ -194,7 +194,7 @@ class VariationsController(
         .map(y => returnPeriods.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
       origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
         .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
-      newReturn <- askReturn(base.original, sdilRef, sdilConnector)
+      newReturn <- askReturn(base.original, sdilRef, sdilConnector, origReturn.some)
     } yield ReturnVariationData(origReturn, newReturn, returnPeriod)
   }
 
@@ -303,7 +303,7 @@ class VariationsController(
     val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
-        runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
+        runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(LeapAhead))
       case None => NotFound("").pure[Future]
     }
   }

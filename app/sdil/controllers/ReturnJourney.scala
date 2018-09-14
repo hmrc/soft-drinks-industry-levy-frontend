@@ -15,6 +15,7 @@
  */
 
 package sdil.controllers
+import java.time.LocalDateTime
 import scala.concurrent._
 
 import cats.implicits._
@@ -31,23 +32,28 @@ trait ReturnJourney extends SdilWMController {
 
   implicit val ec: ExecutionContext
 
-  def askReturn(subscription: RetrievedSubscription, sdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
-    ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites") emptyUnless !subscription.activity.smallProducer
-    contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
-    askSmallProd   <- ask(bool, "exemptions-for-small-producers")
-    firstSmallProd <- ask(smallProducer(sdilRef, sdilConnector), "first-small-producer-details") when askSmallProd
+  def askReturn(
+    subscription: RetrievedSubscription,
+    sdilRef: String,
+    sdilConnector: SoftDrinksIndustryLevyConnector,
+    default: Option[SdilReturn] = None
+  )(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
+    ownBrands      <- askEmptyOption(
+      litreagePair, "own-brands-packaged-at-own-sites", default.map{_.ownBrand}
+    ) emptyUnless !subscription.activity.smallProducer
+    contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer", default.map{_.packLarge})
+    askSmallProd   <- ask(bool, "exemptions-for-small-producers", default.map{_.packSmall.nonEmpty})
+    firstSmallProd <- ask(smallProducer(sdilRef, sdilConnector), "first-small-producer-details", default.flatMap{_.packSmall.headOption}) when askSmallProd
     smallProds     <- manyT("small-producer-details",
       {ask(smallProducer(sdilRef, sdilConnector), _)},
       min = 1,
-      default = firstSmallProd.fold(List.empty[SmallProducer])(x => List(x)),
+      default = default.fold(firstSmallProd.toList)(_.packSmall),
       editSingleForm = Some((smallProducer(sdilRef, sdilConnector), smallProducerForm))
-    ) when askSmallProd
-    imports        <- askEmptyOption(litreagePair, "brought-into-uk")
-    importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers")
-    exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports")
-    wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
-    sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
-  } yield sdilReturn
-
+    ) emptyUnless askSmallProd
+    imports        <- askEmptyOption(litreagePair, "brought-into-uk", default.map{_.importLarge})
+    importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers", default.map{_.importSmall})
+    exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports", default.map{_.export})
+    wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged", default.map{_.wastage})
+  } yield SdilReturn(ownBrands,contractPacked,smallProds,imports,importsSmall,exportCredits,wastage)
 
 }

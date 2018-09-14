@@ -19,9 +19,9 @@ GET         /sign-out-no-feedback                              sdil.controllers.
 
 GET         /time-out                                          sdil.controllers.AuthenticationController.timeOut()
 
-GET         /submit-return/year/:year/quarter/:quarter         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id = "")
+GET         /submit-return/year/:year/quarter/:quarter/         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id = "")
 GET         /submit-return/year/:year/quarter/:quarter/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id: String)
-POST        /submit-return/year/:year/quarter/:quarter         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id = "")
+POST        /submit-return/year/:year/quarter/:quarter/         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id = "")
 POST        /submit-return/year/:year/quarter/:quarter/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id: String)
 
 GET         /ufvariations                                        sdil.controllers.VariationsController.index(id = "")
