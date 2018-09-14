@@ -103,7 +103,7 @@
             <ul>
                 <li>
                 @Messages("returnsHome.returnsDueList.li",
-                    periodList.count + 1,
+                    periodsDue.indexOf(periodList) + 1,
                     periodList.start.format("MMMM"),
                     periodList.end.format("MMMM yyyy")
                 )
@@ -132,7 +132,9 @@
         }
         </div>
         <div>
-            <a href="@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, "own-brands-packaged-at-own-sites")" class="button">@Messages("return.file")</a>
+            <a href="@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, "own-brands-packaged-at-own-sites")" class="button">
+                @Messages("return.file")
+            </a>
         </div>
         }
         }
@@ -242,7 +244,7 @@
 
             <div class="column-one-half">
                 <h3 class="heading-small">
-                    <a href="/sdil-prototype/home/registered-addresses">
+                    <a href="@sdil.controllers.routes.ServicePageController.amendBusinessAddresses">
                         @Messages("sdil.service-page.variations.subtitle.2")
                     </a>
                 </h3>
@@ -253,7 +255,7 @@
         <div class="grid-row">
             <div class="column-one-half">
                 <h3 class="heading-small">
-                    <a href="/sdil-prototype/variation/2-0">
+                    <a href="@sdil.controllers.routes.VariationsController.index("changeType")">
                         @Messages("sdil.service-page.variations.subtitle.3")
                     </a>
                 </h3>

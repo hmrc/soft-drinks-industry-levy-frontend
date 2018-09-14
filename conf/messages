@@ -437,7 +437,7 @@ sdil.service-page.support.title2=More options
 sdil.service-page.support.link1=https://www.gov.uk/guidance/soft-drinks-industry-levy
 sdil.service-page.support.p3=Soft Drinks Industry Levy guidance
 sdil.service-page.support.link2=https://www.legislation.gov.uk/uksi/2018/41/made
-sdil.service-page.support.p4=Soft Drinks Industry Levy legislation
+sdil.service-page.support.p4=Draft Legislation: Soft Drinks Industry Levy
 sdil.service-page.support.p5=Soft Drink Industry Levy general enquiries:
 sdil.service-page.support.p6=0300 200 3700
 sdil.service-page.variations.title=Manage your account
@@ -455,6 +455,16 @@ sdil.service-page.variations.li.3=start or stop using a warehouse or packaging s
 sdil.service-page.variations.li.4=cancel your registration for the Soft Drinks Industry Levy
 sdil.service-page.variations.change=Tell HMRC about a change
 sdil.service-page.variations.p4=Changes can take up to 15 working days to process.
+
+#Update business addresses from service page
+sdil.updateBusinessAddresses.heading=Soft Drinks Industry Levy addresses
+sdil.updateBusinessAddresses.link.1=Change business address
+sdil.updateBusinessAddresses.link.2=Change contact details
+sdil.updateBusinessAddresses.link.3=Change warehouses
+sdil.updateBusinessAddresses.link.4=Change packaging sites
+sdil.updateBusinessAddresses.warehouses.title=Warehouses
+sdil.updateBusinessAddresses.packaging.title=Packaging Sites
+
 
 #Already registered
 sdil.already-enrolled.heading=You’re already registered
@@ -1038,7 +1048,7 @@ return-sent.servicePage=<a href="{0}">Go back to your Soft Drinks Industry Levy 
 return-sent.paymentsBlurb.payby=You need to pay {0} by {1}.\
   <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5">See how to pay the levy.</a>
 return-sent.paymentsBlurb.payusing=Make sure you include your Soft Drinks Industry Levy reference <strong style="font-weight: bold">{0}</strong> \
-  when making a payment
+  when making a payment.
 return-sent.paymentsBlurb.help-heading=Help using this service
 return-sent.paymentsBlurb.help-subheading=Go to your Soft Drinks Levy account to:
 return-sent.paymentsBlurb.payDetails.1=check your account balance
