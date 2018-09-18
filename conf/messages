@@ -38,6 +38,16 @@ sdil.identify.heading=Enter the Unique Taxpayer Reference number and postcode fo
 sdil.identify.utr=Unique Taxpayer Reference number (UTR)
 sdil.identify.postcode=Postcode
 error.utr.no-record=This UTR and postcode do not match our records
+sdil.identify.help.header=I do not know my UTR
+sdil.identify.help.p1=Your business’s UTR will be your:
+sdil.identify.help.li1=company UTR for a limited company
+sdil.identify.help.li2=Self Assessment UTR for a partnership
+sdil.identify.help.li3=individual Self Assessment UTR for a sole trader
+sdil.identify.help.p2=A Unique Taxpayer Reference is 10 numbers like 12345 67890. \
+  It will be on tax returns and other letters about Corporation Tax. It may be called 'reference', 'UTR' or 'official use'.
+sdil.identify.help.p3=For other types of business:
+sdil.identify.help.p4=A Unique Taxpayer Reference is 10 numbers like 12345 67890. \
+  It will be on tax returns and other letters about Self Assessment. It may be called 'reference', 'UTR' or 'official use'.
 
 #Verify
 sdil.verify.heading=Is this the business you want to register?

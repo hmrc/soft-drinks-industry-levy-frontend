@@ -31,6 +31,18 @@
 
         @inputText(identifyForm("postcode"), Messages("sdil.identify.postcode"), '_inputClass -> "input--cleared caps")
 
+        @details("sdil.identify.help.header"){
+            <p>@Messages("sdil.identify.help.p1")</p>
+            <ul class="list list-bullet">
+                <li>@Messages("sdil.identify.help.li1")</li>
+                <li>@Messages("sdil.identify.help.li2")</li>
+                <li>@Messages("sdil.identify.help.li3")</li>
+            </ul>
+            <p>@Messages("sdil.identify.help.p2")</p>
+            <p>@Messages("sdil.identify.help.p3")</p>
+            <p>@Messages("sdil.identify.help.p4")</p>
+        }
+
         <input class="button" value="@Messages("sdil.common.continue")" type="submit">
     }
 }
