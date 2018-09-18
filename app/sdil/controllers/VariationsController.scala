@@ -22,10 +22,10 @@ import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, _}
-import uk.gov.hmrc.uniform.webmonad._
+import uk.gov.hmrc.uniform.webmonad.{WebMonad, _}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
-import sdil.actions.RegisteredAction
+import sdil.actions.{RegisteredAction, RegisteredRequest}
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
@@ -209,6 +209,50 @@ class VariationsController(
     }
   } yield {
     exit
+  }
+
+  def indexFoo(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(s) =>
+        runInner(request)(programFoo(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
+      case None => NotFound("").pure[Future]
+    }
+  }
+
+  private def programFoo(subscription: RetrievedSubscription,
+                          sdilRef: String
+                        )(implicit hc: HeaderCarrier, request: RegisteredRequest[AnyContent]): WebMonad[Result] = {
+    val base = VariationData(subscription)
+    val addr = Address.fromUkAddress(subscription.address)
+//    val u = uniform.fragments.update_business_addresses(subscription, addr)
+    val get = uniform.fragments.update_business_addresses(subscription, addr, List("foo"))
+    for {
+      _ <- tell("foo", get)
+      variation <- contactUpdate(base)
+      path <- getPath
+      cya = uniform.fragments.variationsCYA(
+        variation,
+        newPackagingSites(variation),
+        closedPackagingSites(variation),
+        newWarehouseSites(variation),
+        closedWarehouseSites(variation),
+        path
+      )
+      _ <- tell("checkyouranswers", cya)
+      submission = Convert(variation)
+      _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+      _    <- clear
+      exit <- variation match {
+        case a if a.volToMan => journeyEnd("volToMan")
+        case b if b.manToVol => journeyEnd("manToVol")
+        case _ => {
+          journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+        }
+      }
+
+    } yield exit
   }
 
   def closedWarehouseSites(variation: VariationData): List[Site] = {

@@ -20,7 +20,7 @@
 @import views.html.softdrinksindustrylevy.helpers._
 
 @import sdil.config.AppConfig
-@(subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(subscription: RetrievedSubscription, address: Address, path: List[String])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.updateBusinessAddresses.heading"), noArticle = true) {
     <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>

@@ -2,7 +2,7 @@
 GET         /assets/*file                                      controllers.Assets.at(path="/public", file)
 
 GET         /home                                              sdil.controllers.ServicePageController.show
-GET         /amendAddresses                                    sdil.controllers.ServicePageController.amendBusinessAddresses
+#GET         /amendAddresses                                    sdil.controllers.ServicePageController.amendBusinessAddresses
 GET         /balanceHistory                                    sdil.controllers.ServicePageController.balanceHistory
 
 GET         /register/start                                    sdil.controllers.IdentifyController.start
@@ -35,5 +35,7 @@ GET         /uregistrations/:id                                sdil.controllers.
 POST        /uregistrations                                    sdil.controllers.RegistrationController.index(id = "")
 POST        /uregistrations/:id                                sdil.controllers.RegistrationController.index(id: String)
 
-#GET         /business-addresses                                sdil.controllers.AmendFromServicePageController.index(id = "")
-#GET         /business-addresses/:id                            sdil.controllers.AmendFromServicePageController.index(id: String)
+GET         /vary-from-home                                     sdil.controllers.VariationsController.indexFoo(id = "")
+GET         /vary-from-home/:id                                 sdil.controllers.VariationsController.indexFoo(id: String)
+#POST        /vary-from-home                                     sdil.controllers.AmendFromServicePageController.index(id = "")
+#POST        /vary-from-home/:id                                 sdil.controllers.AmendFromServicePageController.index(id: String)

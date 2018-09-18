@@ -177,86 +177,22 @@
                     }
                 }
 
-
-        @*
-        <table class="check-your-answers">
-            <thead>
-                <tr>
-                    <th colspan="2">
-                        <h2 class="heading-medium">
-                        @Messages("sdil.service-page.contact-details.title")
-                        </h2>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @subscription.contact.name.map { name =>
-                    @declaration_details_table_row("service-page", "name", None, name)
-                }
-
-                @subscription.contact.positionInCompany.map { position =>
-                    @declaration_details_table_row("service-page", "job-title", None, position)
-                }
-
-                @declaration_details_table_row("service-page", "telephone", None, s"${subscription.contact.phoneNumber}")
-                @declaration_details_table_row("service-page", "email", None, s"${subscription.contact.email}")
-            </tbody>
-        </table>
-
-        @if(subscription.productionSites.nonEmpty || subscription.warehouseSites.nonEmpty) {
-            <h2 class="heading-medium">@Messages("sdil.service-page.registered-address.title")</h2>
-            <p>@Messages("sdil.service-page.registered-address.p1")</p>
-
-            @service_sites(subscription.productionSites, "packaging")
-            @service_sites(subscription.warehouseSites, "warehouse")
-        }
-
-        <div>
-            <h2>@Messages("sdil.service-page.variations.title")</h2>
-            <p>@Messages("sdil.service-page.variations.p1")</p>
-            <ul class="list list-bullet">
-                <li>@Messages("sdil.service-page.variations.li.1")</li>
-                <li>@Messages("sdil.service-page.variations.li.2")</li>
-                <li>@Messages("sdil.service-page.variations.li.3")</li>
-                <li>@Messages("sdil.service-page.variations.li.4")</li>
-                <li>@Messages("sdil.service-page.variations.li.5")</li>
-            </ul>
-            <div class="panel-border-narrow panel">
-                <p>@Messages("sdil.service-page.variations.p4")</p>
-            </div>
-            <a href="@sdil.controllers.routes.VariationsController.index("changeType")" class="button--secondary">
-            @Messages("sdil.service-page.variations.change")
-            </a>
-        </div>
-    </div>
-    *@
-
-        <h2 class="heading-medium">@Messages("sdil.service-page.variations.title")</h2>
-        <div class="grid-row">
-            <div class="column-one-half">
-                <h3 class="heading-small">
-                    <a href="/sdil-prototype/returns/4-0/manage-small-prod">
-                        @Messages("sdil.service-page.variations.subtitle.1")
-                    </a>
-                </h3>
-                <p>@Messages("sdil.service-page.variations.p1")</p>
-            </div>
-
-            <div class="column-one-half">
-                <h3 class="heading-small">
-                    <a href="@sdil.controllers.routes.ServicePageController.amendBusinessAddresses">
-                        @Messages("sdil.service-page.variations.subtitle.2")
-                    </a>
-                </h3>
-                <p>@Messages("sdil.service-page.variations.p2")</p>
-            </div>
-        </div>
+      <h2 class="heading-medium">@Messages("sdil.service-page.variations.title")</h2>
+        @*<div class="grid-row">*@
+            @*<div class="column-one-half">*@
+                @*<h3 class="heading-small">*@
+                    @*<a href="@sdil.controllers.routes.AmendFromServicePageController.index("exemptions-for-small-producers")">*@
+                        @*@Messages("sdil.service-page.variations.subtitle.1")*@
+                    @*</a>*@
+                @*</h3>*@
+                @*<p>@Messages("sdil.service-page.variations.p1")</p>*@
+            @*</div>*@
 
         <div class="grid-row">
             <div class="column-one-half">
                 <h3 class="heading-small">
                     <a href="@sdil.controllers.routes.VariationsController.index("changeType")">
-                        @Messages("sdil.service-page.variations.subtitle.3")
+                    @Messages("sdil.service-page.variations.subtitle.3")
                     </a>
                 </h3>
                 <div class="form-group">
@@ -271,14 +207,23 @@
             </div>
             <div class="column-one-half">
                 <h3 class="heading-small">
-                    <a href="/sdil-prototype/home/notifications">
-                        @Messages("sdil.service-page.variations.subtitle.4")
+                    <a href="@sdil.controllers.routes.VariationsController.indexFoo("business-addresses")">
+                        @Messages("sdil.service-page.variations.subtitle.2")
                     </a>
                 </h3>
-                <p>@Messages("sdil.service-page.variations.p4")</p>
+                <p>@Messages("sdil.service-page.variations.p2")</p>
             </div>
         </div>
-    </div>
+
+        @*<div class="column-one-half">*@
+                @*<h3 class="heading-small">*@
+                    @*<a href="/sdil-prototype/home/notifications">*@
+                        @*@Messages("sdil.service-page.variations.subtitle.4")*@
+                    @*</a>*@
+                @*</h3>*@
+                @*<p>@Messages("sdil.service-page.variations.p4")</p>*@
+            @*</div>*@
+        </div>
 
         </br>
         </br>
