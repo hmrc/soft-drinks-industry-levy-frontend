@@ -458,6 +458,7 @@ sdil.service-page.variations.p4=Changes can take up to 15 working days to proces
 
 #Update business addresses from service page
 sdil.updateBusinessAddresses.heading=Soft Drinks Industry Levy addresses
+heading.updateBusinessAddresses=Soft Drinks Industry Levy addresses
 sdil.updateBusinessAddresses.link.1=Change business address
 sdil.updateBusinessAddresses.link.2=Change contact details
 sdil.updateBusinessAddresses.link.3=Change warehouses

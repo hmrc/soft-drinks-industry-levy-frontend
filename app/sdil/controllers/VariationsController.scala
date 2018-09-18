@@ -227,9 +227,10 @@ class VariationsController(
     val base = VariationData(subscription)
     val addr = Address.fromUkAddress(subscription.address)
 //    val u = uniform.fragments.update_business_addresses(subscription, addr)
-    val get = uniform.fragments.update_business_addresses(subscription, addr, List("foo"))
+    val businessAddresses = uniform.fragments.update_business_addresses(subscription, addr, List("foo"))
     for {
-      _ <- tell("foo", get)
+      //Want to use an end not a tell
+      _ <- tell("updateBusinessAddresses", businessAddresses)
       variation <- contactUpdate(base)
       path <- getPath
       cya = uniform.fragments.variationsCYA(
