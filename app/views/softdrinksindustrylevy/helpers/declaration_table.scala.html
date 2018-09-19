@@ -24,9 +24,11 @@
                     @Messages(s"sdil.$pageRef.$tableHeading")
                 </h2>
                 @tableContent.map { x =>
+                <p>
                     <h6>
                         @Messages(s"sdil.$pageRef.$tableHeading.$x")
                     </h6>
+                </p>
                 }
             </th>
             <th class="change-answer" colspan="2">

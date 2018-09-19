@@ -211,51 +211,6 @@ class VariationsController(
     exit
   }
 
-  def indexFoo(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    val sdilRef = request.sdilEnrolment.value
-    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
-    sdilConnector.retrieveSubscription(sdilRef) flatMap {
-      case Some(s) =>
-        runInner(request)(programFoo(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
-      case None => NotFound("").pure[Future]
-    }
-  }
-
-  private def programFoo(subscription: RetrievedSubscription,
-                          sdilRef: String
-                        )(implicit hc: HeaderCarrier, request: RegisteredRequest[AnyContent]): WebMonad[Result] = {
-    val base = VariationData(subscription)
-    val addr = Address.fromUkAddress(subscription.address)
-//    val u = uniform.fragments.update_business_addresses(subscription, addr)
-    val businessAddresses = uniform.fragments.update_business_addresses(subscription, addr, List("foo"))
-    for {
-      //Want to use an end not a tell
-      _ <- tell("updateBusinessAddresses", businessAddresses)
-      variation <- contactUpdate(base)
-      path <- getPath
-      cya = uniform.fragments.variationsCYA(
-        variation,
-        newPackagingSites(variation),
-        closedPackagingSites(variation),
-        newWarehouseSites(variation),
-        closedWarehouseSites(variation),
-        path
-      )
-      _ <- tell("checkyouranswers", cya)
-      submission = Convert(variation)
-      _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
-      _    <- clear
-      exit <- variation match {
-        case a if a.volToMan => journeyEnd("volToMan")
-        case b if b.manToVol => journeyEnd("manToVol")
-        case _ => {
-          journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
-        }
-      }
-
-    } yield exit
-  }
-
   def closedWarehouseSites(variation: VariationData): List[Site] = {
     closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
   }

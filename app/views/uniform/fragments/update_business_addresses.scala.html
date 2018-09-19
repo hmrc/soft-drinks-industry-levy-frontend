@@ -20,26 +20,25 @@
 @import views.html.softdrinksindustrylevy.helpers._
 
 @import sdil.config.AppConfig
-@(subscription: RetrievedSubscription, address: Address, path: List[String])(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@*@main_template(Messages("sdil.updateBusinessAddresses.heading"), noArticle = true) {*@
-    @*<a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>*@
-    @*<div class="grid-row">*@
-        @*<div class="column-two-thirds">*@
-            @*<h1>@Messages("sdil.updateBusinessAddresses.heading")</h1>*@
-
-            @declaration_table("service-page", "business-details.title") {
-                @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
-                <tr>
-                    <td scope="row">@Messages("sdil.verify.address")</td>
-                    <td>
-                        @address.nonEmptyLines.init.map { l =>
-                            @l,<br/>
-                        }
-                        @address.postcode
-                    </td>
-                </tr>
-            }
+@main_template(Messages("sdil.updateBusinessAddresses.heading"), noArticle = true) {
+    <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1>@Messages("sdil.updateBusinessAddresses.heading")</h1>
+                @declaration_table("service-page", "business-details.title") {
+                    @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
+                    <tr>
+                        <td scope="row">@Messages("sdil.verify.address")</td>
+                        <td>
+                            @address.nonEmptyLines.init.map { l =>
+                                @l,<br/>
+                            }
+                            @address.postcode
+                        </td>
+                    </tr>
+                }
 
             </br>
             <p>
@@ -69,26 +68,24 @@
             @if(subscription.productionSites.nonEmpty) {
                 <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.warehouses.title")</h2>
                 @service_sites(subscription.productionSites, "packaging")
-            }
-
             </br>
             <p>
                 <a href="@sdil.controllers.routes.VariationsController.index("contactChangeType")">
-                @Messages("sdil.updateBusinessAddresses.link.3")
+                        @Messages("sdil.updateBusinessAddresses.link.3")
                 </a>
             </p>
+            }
 
             @if(subscription.warehouseSites.nonEmpty) {
                 <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.packaging.title")</h2>
                 @service_sites(subscription.warehouseSites, "warehouse")
-            }
-
             </br>
             <p>
                 <a href="@sdil.controllers.routes.VariationsController.index("contactChangeType")">
-                @Messages("sdil.updateBusinessAddresses.link.4")
+                        @Messages("sdil.updateBusinessAddresses.link.4")
                 </a>
             </p>
-        @*</div>*@
-    @*</div>*@
-@*}*@
+            }
+        </div>
+    </div>
+}
