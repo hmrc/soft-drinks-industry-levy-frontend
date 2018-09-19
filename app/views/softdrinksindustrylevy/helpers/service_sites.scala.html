@@ -19,10 +19,9 @@
 @import java.time.LocalDate
 
 @import sdil.config.AppConfig
-@(sites: List[Site], siteType: String)(implicit request: Request[_], messages: Messages,config: AppConfig)
+@(sites: List[Site], siteType: String)(implicit messages: Messages,config: AppConfig)
 
 @if(openSites.nonEmpty) {
-    @details(s"sdil.service-page.$siteType-address.subtitle") {
         <table>
             <thead>
                 <tr>
@@ -49,7 +48,6 @@
             </tbody>
         </table>
     }
-}
 
 @openSites = @{
     sites.filter(_.closureDate.forall(_.isAfter(LocalDate.now)))

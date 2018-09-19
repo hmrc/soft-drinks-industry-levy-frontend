@@ -399,18 +399,32 @@ sdil.complete.what-happens.p3=Returns will be due for fixed quarters ending June
 #Service page
 sdil.service-page.title=Soft Drinks Industry Levy details
 sdil.service-page.p1=Your Soft Drinks Industry Levy reference is:
-sdil.service-page.p2.voluntary-only= You’re registered as a small producer only, which means you don’t have to file returns. You need\
- to give your reference number to your third party packagers so they can claim an exemption for the liable drinks\
- they package for you. You need to contact us if your situation changes.
+sdil.service-page.p2.voluntary-only=You are registered as a small producer, so you do not have to send returns. \
+  Make sure you give your reference number to your third-party packagers so they will not \
+  have to pay the levy for your drinks.
+sdil.service-page.p3.voluntary-only=If you stop being a small producer, you must update your \
+  registered details and send a return on time. After changing your details, allow 15 days for your \
+  Soft Drinks Industry Levy account to be updated. You will also receive a new reference number.
+sdil.service-page.p4.voluntary-used-to-be-man=Although you are now registered as a small producer, \
+  you were liable during July to September 2018. You must send a final return for this period and \
+  make any outstanding payments.ccount to be updated. You will also receive a new reference number.
+sdil.service-page.p5.voluntary-used-to-be-man=If you stop being a small producer, you <a href="{0}">must update your \
+  registered details</a> and send a return on time. After changing your details, allow 15 days for your Soft \
+  Drinks Industry Levy account to be updated. You will also receive a new reference number.
 sdil.service-page.completed-return=Your return for {0} to {1} was submitted at {2} on {3}.\
   Your next return will be for {4} to {5}. You must submit this return and make any payments due by {6}.
 sdil.service-page.business-details.title=Registered business details
+sdil.service-page.sdil-ref=Soft Drinks Industry Reference
 sdil.service-page.contact-details.title=Contact details
 sdil.service-page.name=Name
 sdil.service-page.job-title=Job Title
 sdil.service-page.telephone=Telephone
 sdil.service-page.email=Email
 sdil.service-page.registered-address.title=Registered address
+sdil.service-page.business-details.title.man=You need to send a return to HMRC every quarter, even if you have nothing to report for a period.
+sdil.service-page.business-details.title.volMan=You need to send a return to HMRC every quarter, even if you have \
+  nothing to report for a period. Make sure you give your reference number to your third-party packagers so they \
+  will not have to pay the levy for your drinks.
 sdil.service-page.registered-address.p1=You need to keep these up to date.
 sdil.service-page.packaging-address.subtitle=Your registered packaging sites
 sdil.service-page.warehouse-address.subtitle=Your registered warehouses
@@ -423,18 +437,35 @@ sdil.service-page.support.title2=More options
 sdil.service-page.support.link1=https://www.gov.uk/guidance/soft-drinks-industry-levy
 sdil.service-page.support.p3=Soft Drinks Industry Levy guidance
 sdil.service-page.support.link2=https://www.legislation.gov.uk/uksi/2018/41/made
-sdil.service-page.support.p4=Soft Drinks Industry Levy legislation
+sdil.service-page.support.p4=Draft Legislation: Soft Drinks Industry Levy
 sdil.service-page.support.p5=Soft Drink Industry Levy general enquiries:
 sdil.service-page.support.p6=0300 200 3700
-sdil.service-page.variations.title=Change registered details
-sdil.service-page.variations.p1=You must tell HMRC when you:
-sdil.service-page.variations.li.1=start or stop using a warehouse or packaging site
-sdil.service-page.variations.li.2=change your contact details
-sdil.service-page.variations.li.3=change your business activity
-sdil.service-page.variations.li.4=need to deregister from the Soft Drinks Industry Levy
-sdil.service-page.variations.li.5=need to make an adjustment of £10,000 or more to a previous return
+sdil.service-page.variations.title=Manage your account
+sdil.service-page.variations.subtitle.1=Manage small producer details
+sdil.service-page.variations.subtitle.2=Update registered addresses
+sdil.service-page.variations.subtitle.3=Make a change
+sdil.service-page.variations.subtitle.4=Manage notifications
+sdil.service-page.variations.p1=Add or remove a small producer, and keep their details up-to-date.
+sdil.service-page.variations.p2=Update your contact details, warehouses or packaging sites.
+sdil.service-page.variations.p3=Tell HMRC when you:
+sdil.service-page.variations.p4=Opt in to or stop receiving notifications about the Soft Drinks Industry Levy.
+sdil.service-page.variations.li.1=correct an error in a previous return
+sdil.service-page.variations.li.2=change your registered business activities
+sdil.service-page.variations.li.3=start or stop using a warehouse or packaging site
+sdil.service-page.variations.li.4=cancel your registration for the Soft Drinks Industry Levy
 sdil.service-page.variations.change=Tell HMRC about a change
 sdil.service-page.variations.p4=Changes can take up to 15 working days to process.
+
+#Update business addresses from service page
+sdil.updateBusinessAddresses.heading=Soft Drinks Industry Levy addresses
+heading.updateBusinessAddresses=Soft Drinks Industry Levy addresses
+sdil.updateBusinessAddresses.link.1=Change business address
+sdil.updateBusinessAddresses.link.2=Change contact details
+sdil.updateBusinessAddresses.link.3=Change warehouses
+sdil.updateBusinessAddresses.link.4=Change packaging sites
+sdil.updateBusinessAddresses.warehouses.title=Warehouses
+sdil.updateBusinessAddresses.packaging.title=Packaging Sites
+
 
 #Already registered
 sdil.already-enrolled.heading=You’re already registered
@@ -1026,7 +1057,7 @@ return-sent.servicePage=<a href="{0}">Go back to your Soft Drinks Industry Levy 
 return-sent.paymentsBlurb.payby=You need to pay {0} by {1}.\
   <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5">See how to pay the levy.</a>
 return-sent.paymentsBlurb.payusing=Make sure you include your Soft Drinks Industry Levy reference <strong style="font-weight: bold">{0}</strong> \
-  when making a payment
+  when making a payment.
 return-sent.paymentsBlurb.help-heading=Help using this service
 return-sent.paymentsBlurb.help-subheading=Go to your Soft Drinks Levy account to:
 return-sent.paymentsBlurb.payDetails.1=check your account balance
@@ -1040,6 +1071,9 @@ return-sent.paymentsBlurb.variation=We will send you a letter to confirm that yo
 
 warning=Warning
 returnsHome.returnsDue=The return for {0} from {1} to {2} is due by {3}.
+returnsHome.returnsDueMulti=You have {0} overdue returns.
+returnsHome.returnsDueList.p1=You must send your {0} overdue returns in this order, oldest first:
+returnsHome.returnsDueList.li={0}. {1} to {2}
 returnsHome.returnsOverdue=[The return for {0} from {1} to {2} was due on the {3}.]
 returnsHome.help.title=What you’ll need to tell us in your return
 returnsHome.help.p1=You’ll need to tell us how many litres of liable drink in each band you need to report that were:
@@ -1054,7 +1088,7 @@ returnsHome.help.li6=lost or destroyed
 returnsHome.help.guidance=You must get and keep <a href="{0}">certain types of evidence</a> to be able to claim a credit.
 returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-levy-credit-for-exported-lost-or-destroyed-drinks-notice-4
 
-return.file=Submit the return
+return.file=Send a return
 
 heading.return-change-registration=Your registration details have changed
 return-change-registration.continue=Update registration
@@ -1065,10 +1099,11 @@ returns.variation.new-packer-and-importer-explanation=You’ve declared in this 
 heading.partnerships=You can’t register online as a partnership
 account.balance=Account Balance
 account.balance.amount=Your balance is {0}.
+account.balance.amount.pay=You need to pay.
 account.balance.pay.zero=You have nothing to pay.
 account.balance.pay.negative=[You need to make a payment].
 account.balance.pay.positive=[You are in credit].
-view.balance.history=View Balance History
+view.balance.history=View your balance history
 balance.history=Balance History
 
 date.time=Date

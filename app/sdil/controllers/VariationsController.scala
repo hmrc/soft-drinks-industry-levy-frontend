@@ -22,10 +22,10 @@ import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, _}
-import uk.gov.hmrc.uniform.webmonad._
+import uk.gov.hmrc.uniform.webmonad.{WebMonad, _}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
-import sdil.actions.RegisteredAction
+import sdil.actions.{RegisteredAction, RegisteredRequest}
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers

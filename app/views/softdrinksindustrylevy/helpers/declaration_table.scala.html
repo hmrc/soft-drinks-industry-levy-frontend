@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(pageRef: String, tableHeading: String, changeLink: Option[Call] = None)(rowContent: Html)(implicit messages: Messages, request: Request[_])
+@(pageRef: String, tableHeading: String, tableContent: Option[String] = None, changeLink: Option[Call] = None)(rowContent: Html)(implicit messages: Messages)
 
 <table class="check-your-answers">
     <thead>
@@ -23,6 +23,13 @@
                 <h2 class="heading-medium">
                     @Messages(s"sdil.$pageRef.$tableHeading")
                 </h2>
+                @tableContent.map { x =>
+                <p>
+                    <h6>
+                        @Messages(s"sdil.$pageRef.$tableHeading.$x")
+                    </h6>
+                </p>
+                }
             </th>
             <th class="change-answer" colspan="2">
                 @changeLink.map { link =>
