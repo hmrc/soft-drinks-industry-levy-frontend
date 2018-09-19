@@ -640,6 +640,14 @@ heading.import=Do you bring liable drinks into the UK from anywhere outside of t
 import.inner-heading=How many litres will you bring into the UK in the next 12 months?
 
 heading.start-date=What date did you become liable to register for the Soft Drinks Industry Levy?
+start-date.help.header.1=What is my liability start date?
+start-date.help.p1=You become liable to register within 30 days:
+start-date.help.large-producer.li1=of the end of the month in which you`ve produced over 1 million litres of liable drink in the past 12 months
+start-date.help.large-producer.li2=of the date you know you will produce over 1 million litres of liable drinks in the next 30 days
+start-date.help.copacker.li1=of the end of the month in which you brought liable drinks into the UK
+start-date.help.copacker.li2=of the date you know you will bring liable drinks into the UK
+start-date.help.importer.li1=of the end of the month in which you packaged liable drinks for someone else
+start-date.help.importer.li2=of the date you know you will package liable drinks for someone else
 
 heading.contact-details=Who is your contact for the Soft Drinks Industry Levy?
 contact-details.fullName=Full name
