@@ -60,6 +60,7 @@ trait SdilWMController extends WebMonadController
   val costHigher = BigDecimal("0.24")
 
   def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
+
     val ra = List(
       ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
       ("exemptions-for-small-producers", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
@@ -78,12 +79,70 @@ trait SdilWMController extends WebMonadController
     d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
   }
 
+  def cya(
+    key: String,
+    mainContent: Html,
+    editRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty
+  ): WebMonad[Unit] = {
+
+    def getMapping(path: List[String]) = {
+      text.verifying("error.radio-form.choose-option", a => ("DONE" :: path).contains(a))
+    }
+
+    for {
+      path    <- getPath
+      r  <- formPage(key)(getMapping(path), None) { (path, form, r) =>
+        implicit val request: Request[AnyContent] = r
+        uniform.cya(key, form, path, mainContent)
+      }.flatMap {
+        case "DONE" => ().pure[WebMonad]
+        case x if editRoutes.isDefinedAt(x) => clear(key) >> editRoutes.apply(x)
+        case x     => clear(key) >> resultToWebMonad[Unit](Redirect(x))
+      }
+    } yield { r }
+  }
+
+  def checkYourReturnAnswers2(
+    key: String,
+    sdilReturn: SdilReturn,
+    broughtForward: BigDecimal,
+    subscription: RetrievedSubscription,
+    variation: Option[ReturnsVariation] = None,
+    alternativeRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty
+  )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
+
+    val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
+    val subtotal = calculateSubtotal(data)
+    val total: BigDecimal = subtotal + broughtForward
+
+    val inner = uniform.fragments.returnsCYA2(
+      key,
+      data,
+      costLower,
+      costHigher,
+      subtotal,
+      broughtForward,
+      total,
+      variation,
+      subscription)
+
+    cya(key, inner,
+        {
+          case "exemptions-for-small-producers" =>
+            write[Boolean]("_editSmallProducers", true) >>
+              clear(key) >>
+              resultToWebMonad[Unit](Redirect("exemptions-for-small-producers"))
+        })
+  }
+
   def checkYourReturnAnswers(
     key: String,
     sdilReturn: SdilReturn,
     broughtForward: BigDecimal,
     subscription: RetrievedSubscription,
-    variation: Option[ReturnsVariation] = None)(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
+    variation: Option[ReturnsVariation] = None,
+    alternativeRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty
+  )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
 
     val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
     val subtotal = calculateSubtotal(data)
@@ -99,10 +158,9 @@ trait SdilWMController extends WebMonadController
       total,
       variation,
       subscription)
+
     tell(key, inner)(implicitly, extraMessages)
   }
-
-
 
   protected def askEnum[E <: EnumEntry](
     id: String,
@@ -113,7 +171,8 @@ trait SdilWMController extends WebMonadController
   protected def askOneOf[A](
     id: String,
     possValues: List[A],
-    default: Option[A] = None
+    default: Option[A] = None,
+    configOverride: JourneyConfig => JourneyConfig = identity
   )(implicit extraMessages: ExtraMessages): WebMonad[A] = {
     val valueMap: Map[String,A] =
       possValues.map{a => (a.toString, a)}.toMap
@@ -217,16 +276,38 @@ trait SdilWMController extends WebMonadController
       .map{_.getOrElse(mon.empty)}
   }
 
-  def ask[T](mapping: Mapping[T], key: String, default: Option[T] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
+  def askWithConfigOverride[T](
+    mapping: Mapping[T],
+    key: String,
+    default: Option[T] = None,
+    configOverride: JourneyConfig => JourneyConfig
+  )(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
+    formPage(key)(mapping, default, configOverride) { (path, form, r) =>
+      implicit val request: Request[AnyContent] = r
+      uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path)
+    }
+
+  def ask[T](
+    mapping: Mapping[T],
+    key: String,
+    default: Option[T] = None
+  )(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
     formPage(key)(mapping, default) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
       uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path)
     }
 
-  def ask[T](mapping: Mapping[T], key: String)(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
+  def ask[T](
+    mapping: Mapping[T],
+    key: String
+  )(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
     ask(mapping, key, None)
 
-  def ask[T](mapping: Mapping[T], key: String, default: T)(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
+  def ask[T](
+    mapping: Mapping[T],
+    key: String,
+    default: T
+  )(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
     ask(mapping, key, default.some)
 
   // Because I decided earlier on to make everything based off of JSON
@@ -318,7 +399,8 @@ trait SdilWMController extends WebMonadController
     min: Int = 0,
     max: Int = 100,
     default: List[A] = List.empty[A],
-    editSingleForm: Option[(Mapping[A], FormHtml[A])] = None
+    editSingleForm: Option[(Mapping[A], FormHtml[A])] = None,
+    configOverride: JourneyConfig => JourneyConfig = identity
   )(implicit hs: HtmlShow[A], format: Format[A]): WebMonad[List[A]] = {
     def outf(x: Option[String]): Control = x match {
       case Some("Add") => Add
@@ -344,7 +426,7 @@ trait SdilWMController extends WebMonadController
         .verifying(s"$id.error.items.tooFew", a => !a.contains("Done")  || items.size >= min)
         .verifying(s"$id.error.items.tooMany", a => !a.contains("Add") || items.size < max)
 
-      formPage(id)(mapping) { (path, b, r) =>
+      formPage(id)(mapping, None, configOverride) { (path, b, r) =>
         implicit val request: Request[AnyContent] = r
         uniform.many(id, b, items.map{_.showHtml}, path, min, editSingleForm.nonEmpty)
       }.imap(outf)(inf)

@@ -37,23 +37,33 @@ trait ReturnJourney extends SdilWMController {
     sdilRef: String,
     sdilConnector: SoftDrinksIndustryLevyConnector,
     default: Option[SdilReturn] = None
-  )(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
-    ownBrands      <- askEmptyOption(
-      litreagePair, "own-brands-packaged-at-own-sites", default.map{_.ownBrand}
-    ) emptyUnless !subscription.activity.smallProducer
-    contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer", default.map{_.packLarge})
-    askSmallProd   <- ask(bool, "exemptions-for-small-producers", default.map{_.packSmall.nonEmpty})
-    firstSmallProd <- ask(smallProducer(sdilRef, sdilConnector), "first-small-producer-details", default.flatMap{_.packSmall.headOption}) when askSmallProd
-    smallProds     <- manyT("small-producer-details",
-      {ask(smallProducer(sdilRef, sdilConnector), _)},
-      min = 1,
-      default = default.fold(firstSmallProd.toList)(_.packSmall),
-      editSingleForm = Some((smallProducer(sdilRef, sdilConnector), smallProducerForm))
-    ) emptyUnless askSmallProd
-    imports        <- askEmptyOption(litreagePair, "brought-into-uk", default.map{_.importLarge})
-    importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers", default.map{_.importSmall})
-    exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports", default.map{_.export})
-    wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged", default.map{_.wastage})
-  } yield SdilReturn(ownBrands,contractPacked,smallProds,imports,importsSmall,exportCredits,wastage)
+  )(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = {
+
+
+    def smallProdsJ: WebMonad[List[SmallProducer]] = for {
+      editMode        <- read[Boolean]("_editSmallProducers").map{_.getOrElse(false)}
+      opt             <- ask(bool, "exemptions-for-small-producers", default.map{_.packSmall.nonEmpty})
+      smallProds      <- manyT("small-producer-details",
+                               {ask(smallProducer(sdilRef, sdilConnector), _)},
+                               min = 1,
+                               default = default.fold(List.empty[SmallProducer]){_.packSmall},
+                               editSingleForm = Some((smallProducer(sdilRef, sdilConnector), smallProducerForm)),
+                               configOverride = _.copy(mode = if(editMode) SingleStep else (LeapAhead))
+                              ) emptyUnless opt
+      _               <- write[Boolean]("_editSmallProducers", false)
+    } yield { smallProds }
+
+    for {
+      ownBrands      <- askEmptyOption(
+        litreagePair, "own-brands-packaged-at-own-sites", default.map{_.ownBrand}
+      ) emptyUnless !subscription.activity.smallProducer
+      contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer", default.map{_.packLarge})
+      smallProds     <- smallProdsJ
+      imports        <- askEmptyOption(litreagePair, "brought-into-uk", default.map{_.importLarge})
+      importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers", default.map{_.importSmall})
+      exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports", default.map{_.export})
+      wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged", default.map{_.wastage})
+    } yield SdilReturn(ownBrands,contractPacked,smallProds,imports,importsSmall,exportCredits,wastage)
+  }
 
 }

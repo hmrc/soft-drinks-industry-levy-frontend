@@ -226,7 +226,7 @@ class VariationsController(
           implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map(
             "heading.check-your-variation-answers" -> s"${Messages(s"returnYear.option.${v.period.quarter}")} ${v.period.year} return details"
           ))
-          checkYourReturnAnswers("check-your-variation-answers", v.revised, broughtForward, base.original)
+          checkYourReturnAnswers2("check-your-variation-answers", v.revised, broughtForward, base.original)
         }
 
 
