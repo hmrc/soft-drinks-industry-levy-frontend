@@ -27,12 +27,8 @@ import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.softdrinksindustrylevy._
 import cats.implicits._
 import cats.data.OptionT
-
 import scala.concurrent._
 import java.time.LocalDate
-
-import sdil.models.backend.Subscription
-import sdil.models.retrieved.RetrievedSubscription
 import views.html.uniform.fragments.update_business_addresses
 
 class ServicePageController(
