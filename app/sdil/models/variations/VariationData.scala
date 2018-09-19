@@ -22,7 +22,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import sdil.models.backend.{Site, UkAddress}
 import sdil.models.retrieved.RetrievedSubscription
-import sdil.models.{Address, ContactDetails, Litreage, Producer, ReturnPeriod, SdilReturn}
+import sdil.models.{Address, ContactDetails, Litreage, Producer, ReturnPeriod, SdilReturn, SmallProducer}
 
 
 
@@ -33,7 +33,13 @@ case class ReturnVariationData(
                                 revised: SdilReturn,
                                 period: ReturnPeriod,
                                 orgName: String,
-                                address: UkAddress) extends VariationData
+                                address: UkAddress) extends VariationData {
+
+  def changedLitreages: Map[String, (Long, Long)] = original.compare(revised)
+  def removedSmallProducers: List[SmallProducer] = original.packSmall.filterNot(revised.packSmall.toSet)
+  def addedSmallProducers: List[SmallProducer] = revised.packSmall.filterNot(original.packSmall.toSet)
+
+}
 
 case class RegistrationVariationData(original: RetrievedSubscription,
                                      updatedBusinessAddress: Address,

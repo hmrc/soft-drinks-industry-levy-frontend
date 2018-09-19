@@ -46,8 +46,8 @@ import views.html.uniform
 
 import scala.concurrent._
 import scala.concurrent.duration._
-
 import cats.implicits._
+import sdil.models.variations.ReturnVariationData
 
 trait SdilWMController extends WebMonadController
     with FrontendController with Modulus23Check
@@ -84,7 +84,7 @@ trait SdilWMController extends WebMonadController
     broughtForward: BigDecimal,
     subscription: RetrievedSubscription,
     variation: Option[ReturnsVariation] = None,
-    originalReturnValue: Option[BigDecimal] = None)(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
+    originalReturn: Option[SdilReturn] = None)(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
 
     val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
     val subtotal = calculateSubtotal(data)
@@ -100,11 +100,14 @@ trait SdilWMController extends WebMonadController
       total,
       variation,
       subscription,
-      originalReturnValue)
+      originalReturn)
     tell(key, inner)(implicitly, extraMessages)
   }
 
-
+  def checkReturnChanges(key: String, variation: ReturnVariationData) = {
+    val inner = uniform.fragments.returnVariationDifferences(key, variation)
+    tell(key, inner)
+  }
 
   protected def askEnum[E <: EnumEntry](
     id: String,

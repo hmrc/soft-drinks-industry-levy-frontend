@@ -236,7 +236,8 @@ class VariationsController(
           ))
           // TODO - originalReturnValue is v diff - values used for current return value depend on smallProducer status so we need to get this for the period
           for {
-            _ <- checkYourReturnAnswers("check-your-variation-answers", v.revised, broughtForward, base.original, originalReturnValue = BigDecimal(1999999999.99).some)
+            _ <- checkYourReturnAnswers("check-your-variation-answers", v.revised, broughtForward, base.original, originalReturn = v.original.some)
+            _ <- checkReturnChanges("check-return-differences", v)
             _ <- execute(sdilConnector.returns.vary(sdilRef, v))
             _ <- clear
             exit <- journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
