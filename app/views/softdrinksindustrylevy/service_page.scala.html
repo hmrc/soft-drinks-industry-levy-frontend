@@ -73,7 +73,7 @@
                         </p>
                     </div>
                 }
-                
+
                 @for(period <- periodsDue.take(1)) {
                     <div class="notice">
                         <i class="icon icon-important" style="top: 43%">
@@ -81,64 +81,64 @@
                         </i>
                         <p>
                             <strong class="bold-small">
-                            @if(periodsDue.length == 1) {
-                                @Messages(
-                                    "returnsHome.returnsDue",
-                                    subscription.orgName,
-                                    period.start.format("MMMM"),
-                                    period.end.format("MMMM yyyy"),
-                                    period.deadline.format("d MMMM yyyy")
-                                )
+                    @if(periodsDue.length == 1) {
+                        @Messages(
+                            "returnsHome.returnsDue",
+                            subscription.orgName,
+                            period.start.format("MMMM"),
+                            period.end.format("MMMM yyyy"),
+                            period.deadline.format("d MMMM yyyy")
+                        )
                             </strong>
                         </p>
                     </div>
-                } else {
-                    @Messages("returnsHome.returnsDueMulti", periodsDue.length)
-                        </strong>
+                    } else {
+                        @Messages("returnsHome.returnsDueMulti", periodsDue.length)
+                            </strong>
                         </p>
                     </div>
 
-        <p>@Messages("returnsHome.returnsDueList.p1", periodsDue.length)</p>
+                    <p>@Messages("returnsHome.returnsDueList.p1", periodsDue.length)</p>
 
-        @for(periodList <- periodsDue) {
-            <ul>
-                <li>
-                @Messages("returnsHome.returnsDueList.li",
-                    periodsDue.indexOf(periodList) + 1,
-                    periodList.start.format("MMMM"),
-                    periodList.end.format("MMMM yyyy")
-                )
-                </li>
-            </ul>
-        }
-        </br>
-        }
+                        @for(periodList <- periodsDue) {
+                            <ul>
+                                <li>
+                                @Messages("returnsHome.returnsDueList.li",
+                                    periodsDue.indexOf(periodList) + 1,
+                                    periodList.start.format("MMMM"),
+                                    periodList.end.format("MMMM yyyy")
+                                )
+                                </li>
+                            </ul>
+                        }
+                    <br/>
+                    }
 
         <div>
-        @details("returnsHome.help.title") {
-            <p>@messages("returnsHome.help.p1")</p>
-            <ul class="list list-bullet">
-                <li>@Messages("returnsHome.help.li1")</li>
-                <li>@Messages("returnsHome.help.li2")</li>
-                <li>@Messages("returnsHome.help.li3")</li>
-                <li>@Messages("returnsHome.help.li4")</li>
-            </ul>
-            <p>@Messages("returnsHome.help.p2")</p>
-            <p>@Messages("returnsHome.help.p3")</p>
-            <ul class="list list-bullet">
-                <li>@Messages("returnsHome.help.li5")</li>
-                <li>@Messages("returnsHome.help.li6")</li>
-            </ul>
-            <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
-        }
+                    @details("returnsHome.help.title") {
+                        <p>@messages("returnsHome.help.p1")</p>
+                        <ul class="list list-bullet">
+                            <li>@Messages("returnsHome.help.li1")</li>
+                            <li>@Messages("returnsHome.help.li2")</li>
+                            <li>@Messages("returnsHome.help.li3")</li>
+                            <li>@Messages("returnsHome.help.li4")</li>
+                        </ul>
+                        <p>@Messages("returnsHome.help.p2")</p>
+                        <p>@Messages("returnsHome.help.p3")</p>
+                        <ul class="list list-bullet">
+                            <li>@Messages("returnsHome.help.li5")</li>
+                            <li>@Messages("returnsHome.help.li6")</li>
+                        </ul>
+                        <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
+                    }
         </div>
         <div>
-            <a href="@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, "own-brands-packaged-at-own-sites")" class="button">
+            <a href='@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, "own-brands-packaged-at-own-sites")' class="button">
                 @Messages("return.file")
             </a>
         </div>
-        }
-        }
+                }
+            }
 
         <hr class="govuk-section-break--visible">
 
@@ -193,7 +193,7 @@
         <div class="grid-row">
             <div class="column-one-half">
                 <h3 class="heading-small">
-                    <a href="@sdil.controllers.routes.VariationsController.index("changeType")">
+                    <a href='@sdil.controllers.routes.VariationsController.index("changeType")'>
                     @Messages("sdil.service-page.variations.subtitle.3")
                     </a>
                 </h3>
@@ -227,8 +227,8 @@
             @*</div>*@
         </div>
 
-        </br>
-        </br>
+        <br/>
+        <br/>
 
     <div class="column-one-third">
         <div class="section--blue-top"> </div>
@@ -236,13 +236,13 @@
         @Messages("sdil.service-page.support.title2")
         </h2>
         <p>
-            <a href="@Messages("sdil.service-page.support.link1")"
+            <a href='@Messages("sdil.service-page.support.link1")'
             onclick="ga('send', 'event', 'moreLinks', 'click', 'guidance')">
             @Messages("sdil.service-page.support.p3")
             </a>
         </p>
         <p>
-            <a href="@Messages("sdil.service-page.support.link2")"
+            <a href='@Messages("sdil.service-page.support.link2")'
             onclick="ga('send', 'event', 'moreLinks', 'click', 'legislation')">
             @Messages("sdil.service-page.support.p4")
             </a>

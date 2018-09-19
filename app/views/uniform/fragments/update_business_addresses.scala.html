@@ -40,9 +40,9 @@
                     </tr>
                 }
 
-            </br>
+            <br/>
             <p>
-                <a href="@sdil.controllers.routes.VariationsController.index("contactChangeType")">
+                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeType")'>
                 @Messages("sdil.updateBusinessAddresses.link.1")
                 </a>
             </p>
@@ -58,9 +58,9 @@
                 @declaration_details_table_row("service-page", "email", None, s"${subscription.contact.email}")
             }
 
-            </br>
+            <br/>
             <p>
-                <a href="@sdil.controllers.routes.VariationsController.index("contactChangeType")">
+                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeType")'>
                 @Messages("sdil.updateBusinessAddresses.link.2")
                 </a>
             </p>
@@ -68,9 +68,9 @@
             @if(subscription.productionSites.nonEmpty) {
                 <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.warehouses.title")</h2>
                 @service_sites(subscription.productionSites, "packaging")
-            </br>
+            <br/>
             <p>
-                <a href="@sdil.controllers.routes.VariationsController.index("contactChangeType")">
+                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeType")'>
                         @Messages("sdil.updateBusinessAddresses.link.3")
                 </a>
             </p>
@@ -79,9 +79,9 @@
             @if(subscription.warehouseSites.nonEmpty) {
                 <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.packaging.title")</h2>
                 @service_sites(subscription.warehouseSites, "warehouse")
-            </br>
+            <br/>
             <p>
-                <a href="@sdil.controllers.routes.VariationsController.index("contactChangeType")">
+                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeType")'>
                         @Messages("sdil.updateBusinessAddresses.link.4")
                 </a>
             </p>
