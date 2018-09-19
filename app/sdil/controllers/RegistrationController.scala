@@ -157,6 +157,11 @@ class RegistrationController(
     } yield end
   }
   private def askRegDate(packLarge: Option[Boolean], copacks: Option[(Long, Long)], imports: Option[(Long, Long)]): WebMonad[LocalDate] = {
+    def askRD[T](mapping: Mapping[T], key: String, default: Option[T] = None, helpText: Option[Html])(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
+      formPage(key)(mapping, default) { (path, form, r) =>
+        implicit val request: Request[AnyContent] = r
+        uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path, helpText)
+      }
     askRD(startDate
       .verifying("error.start-date.in-future", !_.isAfter(LocalDate.now))
       .verifying("error.start-date.before-tax-start", !_.isBefore(LocalDate.of(2018, 4, 6))),
@@ -164,10 +169,4 @@ class RegistrationController(
       None,
       Some(uniform.fragments.startDateHelp(packLarge.getOrElse(false), copacks.isDefined, imports.isDefined)))
   }
-
-  private def askRD[T](mapping: Mapping[T], key: String, default: Option[T] = None, helpText: Option[Html])(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
-    formPage(key)(mapping, default) { (path, form, r) =>
-      implicit val request: Request[AnyContent] = r
-      uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path, helpText)
-    }
 }
