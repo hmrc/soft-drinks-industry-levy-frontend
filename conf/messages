@@ -1127,3 +1127,22 @@ check-your-variation-answers.change.claim-credits-for-exports=volume exported
 check-your-variation-answers.change.claim-credits-for-lost-damaged=volume lost, damaged or destroyed
 check-your-variation-answers.continue=Continue
 check-your-variation-answers.submit-subheading=Submit your return
+
+heading.check-return-differences=Check your answers before sending your correction
+check-return-differences.ownBrand=Own brands packaged at your own site
+check-return-differences.packLarge=Contract packed at your own site
+check-return-differences.importLarge=Brought into the UK
+check-return-differences.importSmall=Brought into the UK from small producers
+check-return-differences.export=Exported
+check-return-differences.wastage=Lost or destroyed
+
+#check-return-differences.exemptions-for-small-producers=Contract packed for registered small producers
+
+check-return-differences.correction.title=Correction
+check-return-differences.band.title=Band
+check-return-differences.litres.title=Litres
+check-return-differences.cost.title=Cost
+check-return-differences.correction.label.original=Original amount
+check-return-differences.correction.label.revised=New amount
+check-return-differences.band.label.low=Low
+check-return-differences.band.label.high=High

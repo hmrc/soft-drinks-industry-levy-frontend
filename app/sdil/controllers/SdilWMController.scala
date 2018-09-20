@@ -105,6 +105,8 @@ trait SdilWMController extends WebMonadController
   }
 
   def checkReturnChanges(key: String, variation: ReturnVariationData) = {
+    val routes = List("own-brands-packaged-at-own-sites", "packaged-as-a-contract-packer", "brought-into-uk-from-small-producers","brought-into-uk","claim-credits-for-exports","claim-credits-for-lost-damaged")
+
     val inner = uniform.fragments.returnVariationDifferences(key, variation)
     tell(key, inner)
   }

@@ -19,9 +19,21 @@ package sdil
 import play.api.libs.json._
 import sdil.models.retrieved.RetrievedSubscription
 
+import scala.collection.immutable
+import scala.collection.immutable.ListMap
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
 package object controllers {
   implicit def future[A](a: A): Future[A] = Future.successful(a)
+
+  val returnLiterageMap = ListMap(
+    "ownBrand" -> "own-brands-packaged-at-own-sites",
+    "packLarge" -> "packaged-as-a-contract-packer",
+    "importSmall" -> "brought-into-uk-from-small-producers",
+    "importLarge" -> "brought-into-uk",
+    "packSmall" -> "exemptions-for-small-producers",
+    "export" -> "claim-credits-for-exports",
+    "wastage" -> "claim-credits-for-lost-damaged"
+  )
 }
