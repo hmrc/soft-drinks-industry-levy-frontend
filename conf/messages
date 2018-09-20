@@ -34,10 +34,19 @@ error.utr.length=UTR must be 10 digits long
 error.utr.invalid=UTR must be a number
 
 #Identify
-sdil.identify.heading=Enter the Unique Taxpayer Reference number and postcode for your business
-sdil.identify.utr=Unique Taxpayer Reference number (UTR)
+sdil.identify.heading=Enter your business details
+sdil.identify.utr=Unique Taxpayer Reference (UTR)
 sdil.identify.postcode=Postcode
 error.utr.no-record=This UTR and postcode do not match our records
+sdil.identify.help.header=I do not know my business`s UTR
+sdil.identify.help.hint=Enter the last 10 digits only. For example, 12345 67890
+sdil.identify.help.p1=Your business’s UTR will be your:
+sdil.identify.help.li1=company UTR for a limited company
+sdil.identify.help.li2=Self Assessment UTR for a partnership
+sdil.identify.help.li3=individual Self Assessment UTR for a sole trader
+sdil.identify.help.p2=The UTR will be on tax returns and other letters about Corporation Tax or Self Assessment. \
+  It may be called 'reference', 'UTR' or 'official use'.
+
 
 #Verify
 sdil.verify.heading=Is this the business you want to register?
