@@ -206,9 +206,6 @@ class ReturnsController (
     contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
     askSmallProd   <- ask(bool, "exemptions-for-small-producers")
     firstSmallProd <- ask(smallProducer(sdilRef), "first-small-producer-details") when askSmallProd
-//    smallProdCheck    = Await.result(isSmallProducer(sdilRef), 20.seconds)
-//    inner           = uniform.fragments.update_business_addresses(subscription, subscription)
-//    notSmallProd   <- tell("not-small-producer", None) when !smallProdCheck
     smallProds     <- manyT("small-producer-details",
                             {ask(smallProducer(sdilRef), _)},
                             min = 1,
