@@ -102,20 +102,21 @@ trait SdilWMController extends WebMonadController
     } yield { r }
   }
 
-  def checkYourReturnAnswers2(
+  def checkYourReturnAnswers2( // TODO - notice this doesn't have the original
     key: String,
     sdilReturn: SdilReturn,
     broughtForward: BigDecimal,
     subscription: RetrievedSubscription,
     variation: Option[ReturnsVariation] = None,
-    alternativeRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty
+    alternativeRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty,
+    originalReturn: Option[SdilReturn] = None
   )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
 
     val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
     val subtotal = calculateSubtotal(data)
     val total: BigDecimal = subtotal + broughtForward
 
-    val inner = uniform.fragments.returnsCYA2(
+    val inner = uniform.fragments.returnsCYA(
       key,
       data,
       costLower,
@@ -124,7 +125,8 @@ trait SdilWMController extends WebMonadController
       broughtForward,
       total,
       variation,
-      subscription)
+      subscription,
+      originalReturn)
 
     cya(key, inner,
         {

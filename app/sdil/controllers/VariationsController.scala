@@ -237,7 +237,7 @@ class VariationsController(
           ))
           // TODO - originalReturnValue is v diff - values used for current return value depend on smallProducer status so we need to get this for the period
           for {
-            _ <- checkYourReturnAnswers2("check-your-variation-answers", v.revised, broughtForward, base.original)
+            _ <- checkYourReturnAnswers2("check-your-variation-answers", v.revised, broughtForward, base.original, originalReturn = v.original.some)
             extraMessages = ExtraMessages(
               messages = Map(
                 "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnYear.option.${v.period.quarter}")} return")

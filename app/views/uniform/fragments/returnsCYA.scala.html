@@ -49,9 +49,13 @@
                 <td>@{f"${litres._1}%,d"}</td>
                 <td class="no-minus-wrapping">@formatMoney(costLower * litres._1 * multiplier)</td>
                 <td>
-                    <a href="@lineKey" class="returns-change-link">
+                    <button name="@key" value="@lineKey" id="continue-button" class="link-button">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
-                    </a>
+                    </button>
+
+                    @*<a href="@lineKey" class="returns-change-link">*@
+                        @* @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>*@
+                    @*</a>*@
                 </td>
             </tr>
             <tr>
@@ -59,9 +63,13 @@
                 <td>@{f"${litres._2}%,d"}</td>
                 <td class="no-minus-wrapping"> @formatMoney(costHigher * litres._2 * multiplier)</td>
                 <td>
-                    <a href="@lineKey" class="returns-change-link">
+                    <button name="@key" value="@lineKey" id="continue-button" class="link-button">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
-                    </a>
+                    </button>
+
+                    @*<a href="@lineKey" class="returns-change-link">*@
+                        @* @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>*@
+                    @*</a>*@
                 </td>
             </tr>
         }
