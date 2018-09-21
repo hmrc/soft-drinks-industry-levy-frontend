@@ -194,8 +194,9 @@ class VariationsController(
         .map(y => returnPeriods.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
       origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
         .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
+
       newReturn <- askReturn(base.original, sdilRef, sdilConnector, origReturn.some)
-    } yield ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address)
+    } yield ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
   }
 
   private def program(
@@ -236,11 +237,20 @@ class VariationsController(
           ))
           // TODO - originalReturnValue is v diff - values used for current return value depend on smallProducer status so we need to get this for the period
           for {
-            _ <- checkYourReturnAnswers2("check-your-variation-answers", v.revised, broughtForward, base.original /*, originalReturn = v.original.some*/)
-            _ <- checkReturnChanges("check-return-differences", v)
-            _ <- execute(sdilConnector.returns.vary(sdilRef, v))
+            _ <- checkYourReturnAnswers2("check-your-variation-answers", v.revised, broughtForward, base.original)
+            extraMessages = ExtraMessages(
+              messages = Map(
+                "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnYear.option.${v.period.quarter}")} return")
+            )
+            reason <- askBigText(
+              "return-variation-reason",
+              constraints = List(("error.return-variation-reason.tooLong",
+              _.length <= 255)),
+              errorOnEmpty = "error.return-variation-reason.empty")(extraMessages) //when v.revised.total != v.original.total
+            _ <- checkReturnChanges("check-return-differences", v.copy(reason = reason))
+            _ <- execute(sdilConnector.returns.vary(sdilRef, v.copy(reason = reason)))
             _ <- clear
-            exit <- journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+            exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)
           } yield exit
         }
     } yield {
