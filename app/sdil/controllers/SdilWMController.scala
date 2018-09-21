@@ -46,8 +46,8 @@ import views.html.uniform
 
 import scala.concurrent._
 import scala.concurrent.duration._
-
 import cats.implicits._
+import sdil.models.variations.ReturnVariationData
 
 trait SdilWMController extends WebMonadController
     with FrontendController with Modulus23Check
@@ -69,7 +69,7 @@ trait SdilWMController extends WebMonadController
       ("claim-credits-for-exports", sdilReturn.export, -1),
       ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
     )
-    if(!isSmallProducer)
+    if(!isSmallProducer) // TODO - we need to find a way of ensuring this is correct for the period of the return and not just the latest state
       ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
     else
       ra
@@ -141,7 +141,8 @@ trait SdilWMController extends WebMonadController
     broughtForward: BigDecimal,
     subscription: RetrievedSubscription,
     variation: Option[ReturnsVariation] = None,
-    alternativeRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty
+    alternativeRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty,
+    originalReturn: Option[SdilReturn] = None
   )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
 
     val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
@@ -157,9 +158,14 @@ trait SdilWMController extends WebMonadController
       broughtForward,
       total,
       variation,
-      subscription)
-
+      subscription,
+      originalReturn)
     tell(key, inner)(implicitly, extraMessages)
+  }
+
+  def checkReturnChanges(key: String, variation: ReturnVariationData) = {
+    val inner = uniform.fragments.returnVariationDifferences(key, variation)
+    tell(key, inner)
   }
 
   protected def askEnum[E <: EnumEntry](

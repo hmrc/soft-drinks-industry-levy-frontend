@@ -20,7 +20,7 @@ import play.api.{Configuration, Environment}
 import sdil.models._
 import sdil.models.backend.{Site, Subscription}
 import sdil.models.retrieved.RetrievedSubscription
-import sdil.models.variations.VariationsSubmission
+import sdil.models.variations.{ReturnVariationData, VariationsSubmission}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -86,7 +86,13 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
       http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable")
     }
 
-
+    def vary(
+              sdilRef: String,
+              data: ReturnVariationData
+            )(implicit hc: HeaderCarrier): Future[Unit] = {
+      val uri = s"$sdilUrl/returns/vary/$sdilRef"
+      http.POST[ReturnVariationData, HttpResponse](uri, data) map { _ => () }
+    }
 
     def update(
       utr: String,

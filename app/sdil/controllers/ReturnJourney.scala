@@ -39,7 +39,6 @@ trait ReturnJourney extends SdilWMController {
     default: Option[SdilReturn] = None
   )(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = {
 
-
     def smallProdsJ: WebMonad[List[SmallProducer]] = for {
       editMode        <- read[Boolean]("_editSmallProducers").map{_.getOrElse(false)}
       opt             <- ask(bool, "exemptions-for-small-producers", default.map{_.packSmall.nonEmpty})

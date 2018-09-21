@@ -15,9 +15,11 @@
  *@
 
 @import sdil.models.ReturnsVariation
+@import sdil.models.SdilReturn
 @import sdil.models.backend.Subscription
 @import sdil.models.retrieved.RetrievedSubscription
-@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription)(implicit m: Messages)
+
+@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription, originalReturn: Option[SdilReturn])(implicit m: Messages)
 
 @formatMoney(value: BigDecimal) = {
     @if(value < 0) {
