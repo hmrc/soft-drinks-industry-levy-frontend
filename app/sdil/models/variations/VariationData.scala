@@ -35,7 +35,7 @@ case class ReturnVariationData(
                                 orgName: String,
                                 address: UkAddress) extends VariationData {
 
-  def changedLitreages: Map[String, (Long, Long)] = original.compare(revised)
+  def changedLitreages: Map[String, ((Long, Long),(Long,Long))] = original.compare(revised)
   def removedSmallProducers: List[SmallProducer] = original.packSmall.filterNot(revised.packSmall.toSet)
   def addedSmallProducers: List[SmallProducer] = revised.packSmall.filterNot(original.packSmall.toSet)
 

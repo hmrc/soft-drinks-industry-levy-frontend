@@ -17,7 +17,11 @@
 package sdil.models
 
 import java.time.{LocalDate, LocalDateTime}
+
 import cats.implicits._
+import sdil.controllers.returnLiterageMap
+
+import scala.collection.immutable.ListMap
 
 case class SdilReturn(
   ownBrand     : (Long,Long),
@@ -33,13 +37,19 @@ case class SdilReturn(
   def totalPacked: (Long, Long) = packLarge |+| packSmall.total
   def totalImported: (Long, Long) = importLarge |+| importSmall
 
-  private def toLongs: List[(Long,Long)] = List(ownBrand, packLarge, importSmall, importLarge, export, wastage)
-  private val keys = List("ownBrand","packLarge","importSmall","importLarge","export","wastage")
+  private def toLongs: List[(Long,Long)] = List(ownBrand, packLarge, importLarge, importSmall, packSmall.total, export, wastage)
+  private val keys = returnLiterageMap.keys.toList
   private def sumLitres(l: List[(Long, Long)]) = l.map(x => LitreOps(x).dueLevy).sum
 
-  def compare(other: SdilReturn): Map[String, (Long, Long)] = {
+  /*
+   Produces a map of differing litreage fields containing the revised and original litreages as a tuple
+   and keyed by the field name
+   */
+  def compare(other: SdilReturn): ListMap[String, ((Long, Long),(Long, Long))] = {
     val y = this.toLongs
-    other.toLongs.zipWithIndex.filter { x => x._1 != y(x._2) }.map(x => keys(x._2) -> x._1).toMap
+    ListMap(other.toLongs.zipWithIndex.filter { x => x._1 != y(x._2) }.map {x =>
+      keys(x._2) -> (x._1, y(x._2))
+    } : _*)
   }
 
   def total: BigDecimal = {
