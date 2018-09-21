@@ -42,8 +42,7 @@ sdil.identify.help.header=I do not know my business`s UTR
 sdil.identify.help.hint=Enter the last 10 digits only. For example, 12345 67890
 sdil.identify.help.p1=Your business’s UTR will be your:
 sdil.identify.help.li1=company UTR for a limited company
-sdil.identify.help.li2=Self Assessment UTR for a partnership
-sdil.identify.help.li3=individual Self Assessment UTR for a sole trader
+sdil.identify.help.li2=individual Self Assessment UTR for a sole trader
 sdil.identify.help.p2=The UTR will be on tax returns and other letters about Corporation Tax or Self Assessment. \
   It may be called 'reference', 'UTR' or 'official use'.
 

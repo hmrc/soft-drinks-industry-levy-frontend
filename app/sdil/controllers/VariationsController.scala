@@ -178,9 +178,14 @@ class VariationsController(
 
   private def program(
     subscription: RetrievedSubscription,
-    sdilRef: String
+    sdilRef: String,
+    skipPage: Option[Boolean] = None
   )(implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    changeType <- askOneOf("changeType", ChangeType.values.toList)
+    changeType <- if (skipPage.getOrElse(false)) {
+      askOneOf("changeType", ChangeType.values.toList)
+    } else {
+      ChangeType.Sites.pure[WebMonad]
+    }
     base = VariationData(subscription)
     variation  <- changeType match {
       case ChangeType.Sites => contactUpdate(base)
@@ -240,7 +245,7 @@ class VariationsController(
     val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
-        runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
+        runInner(request)(program(s, sdilRef, (id == "contactChangeTypeFromHome").some))(id)(persistence.dataGet,persistence.dataPut)
       case None => NotFound("").pure[Future]
     }
   }
