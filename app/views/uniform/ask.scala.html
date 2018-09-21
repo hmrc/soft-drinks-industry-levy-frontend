@@ -43,7 +43,7 @@
         @CSRF.formField
         <div class = "form-group">
             @if(messages.isDefinedAt(s"$key.hint")) {
-                <span class="form-hint">@Messages(s"$key.hint")</span>
+                <span class="form-hint">@Messages.extraMessage(s"$key.hint")</span>
                 }
 
                 @htmlForm

@@ -1127,6 +1127,10 @@ check-your-variation-answers.change.claim-credits-for-exports=volume exported
 check-your-variation-answers.change.claim-credits-for-lost-damaged=volume lost, damaged or destroyed
 check-your-variation-answers.continue=Continue
 check-your-variation-answers.submit-subheading=Submit your return
+check-your-variation-answers.total.original=Original return total
+check-your-variation-answers.total.new=New return total
+check-your-variation-answers.net.adjusted.positive=Net adjusted amount excluding interest
+check-your-variation-answers.net.adjusted.negative=Net adjusted amount
 
 heading.check-return-differences=Check your answers before sending your correction
 check-return-differences.ownBrand=Own brands packaged at your own site
@@ -1136,7 +1140,7 @@ check-return-differences.importSmall=Brought into the UK from small producers
 check-return-differences.export=Exported
 check-return-differences.wastage=Lost or destroyed
 
-#check-return-differences.exemptions-for-small-producers=Contract packed for registered small producers
+check-return-differences.packSmall=Contract packed for registered small producers
 
 check-return-differences.correction.title=Correction
 check-return-differences.band.title=Band
@@ -1146,3 +1150,17 @@ check-return-differences.correction.label.original=Original amount
 check-return-differences.correction.label.revised=New amount
 check-return-differences.band.label.low=Low
 check-return-differences.band.label.high=High
+
+heading.return-variation-reason=Why do you need to correct this return?
+return-variation-reason.lead=Make sure you provide as much detail as you can about why you had to correct your return. We may get in touch with your contact person to discuss your correction.
+error.return-variation-reason.empty=Enter a reason for correcting your return
+sdil.check-return-differences.reason.return-variation-reason.subheading=Correction details
+return-variation-reason.label=Reason for correction
+returnVariationDone.title=Correction sent
+returnVariationDone.subheading=We will review the details you updated and get back to you 
+returnVariationDone.your.updates=
+
+return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you.</p>\
+  <p>We may get in touch with your contact person to discuss your changes.</p>\
+  <p>Once we have approved your correction, your account balance will be updated.</p>\
+  <p>Do not make any payments until we have confirmed how much you need to pay, as you will be charged interest on your adjusted amount.</p>

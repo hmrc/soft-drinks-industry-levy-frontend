@@ -275,7 +275,7 @@ trait SdilWMController extends WebMonadController
     default: Option[String] = None,
     constraints: List[(String, String => Boolean)] = Nil,
     errorOnEmpty: String = "error.required"
-  ): WebMonad[String] = {
+  )(implicit extraMessages: ExtraMessages) = {
 
     def constraintMap[T](
       constraints: List[(String, T => Boolean)]
@@ -290,7 +290,7 @@ trait SdilWMController extends WebMonadController
 
     formPage(id)(mapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      val fragment = uniform.fragments.bigtext(id, b)
+      val fragment = uniform.fragments.bigtext(id, b)(implicitly, extraMessages)
       uniform.ask(id,  b, fragment, path)
     }
   }

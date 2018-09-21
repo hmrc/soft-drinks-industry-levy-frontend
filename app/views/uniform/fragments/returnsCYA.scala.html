@@ -76,14 +76,59 @@
             @*<td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(broughtForward)</h4></td>*@
             @*<td></td>*@
         @*</tr>*@
-        <tr>
-            <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.total")</h4></th>
-            <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(total)</h4></td>
-            <td></td>
-        </tr>
+        @if(originalReturn.nonEmpty) {
+            @originalReturn.map { r =>
+                <tr>
+                    <td scope="row" colspan="3">@Messages(s"$key.total.original")</td>
+                    <td class="numeric">@formatMoney(r.total)</td>
+                    <td></td>
+                </tr>
+                @if(r.total != total) {
+                    <tr>
+                        <td scope="row" colspan="3">@Messages(s"$key.total.new")</td>
+                        <td class="numeric">@formatMoney(total)</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        @if((total - r.total) < 0) {
+                            <td scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.net.adjusted.negative")</h4></td>
+                        } else {
+                            <td scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.net.adjusted.positive")</h4></td>
+
+                        }
+                        <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(total - r.total)</h4></td>
+                        <td></td>
+                    </tr>
+                }
+            }
+
+        } else {
+            <tr>
+                <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.total")</h4></th>
+                <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(total)</h4></td>
+                <td></td>
+            </tr>
+        }
     </tbody>
 </table>
 
+
+@originalReturn.map { r =>
+    @if((total - r.total) > 0) {
+        <br/>
+        <div class="panel panel-border-wide form-group">
+            <p>
+                You may be charged interest on your net adjusted amount after correcting an error. We will let you know
+                if interest is due and how much you need to pay. Find out what happens
+                <a href="https://www.gov.uk/guidance/submit-a-return-and-pay-the-soft-drinks-industry-levy-notice-2" target="_blank">
+                    if you owe more levy (opens in a new window or tab).</a>
+
+            </p>
+        </div>
+    } else {
+        <br/><br/>
+    }
+}
 
     @variation.map { variation =>
 
@@ -208,9 +253,11 @@
             <p>@Html(Messages("check-your-answers.variations.import-without-packSites"))</p>
         }
     }
-<h3 class="heading-medium">@Messages(s"$key.submit-subheading")</h3>
-<p>@Messages(s"$key.submit-paragraph")</p>
 
+@if(originalReturn.isEmpty) {
+    <h3 class="heading-medium">@Messages(s"$key.submit-subheading")</h3>
+    <p>@Messages(s"$key.submit-paragraph")</p>
+}
 
 <p>
     <a href="javascript:window.print()" class="print-link" onclick="ga('send', 'event', 'print', 'click', 'Print')">

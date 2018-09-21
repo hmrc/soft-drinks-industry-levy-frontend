@@ -29,11 +29,13 @@ import sdil.models.{Address, ContactDetails, Litreage, Producer, ReturnPeriod, S
 sealed trait VariationData
 
 case class ReturnVariationData(
-                                original: SdilReturn,
-                                revised: SdilReturn,
-                                period: ReturnPeriod,
-                                orgName: String,
-                                address: UkAddress) extends VariationData {
+  original: SdilReturn,
+  revised: SdilReturn,
+  period: ReturnPeriod,
+  orgName: String,
+  address: UkAddress,
+  reason: String
+) extends VariationData {
 
   def changedLitreages: Map[String, ((Long, Long),(Long,Long))] = original.compare(revised)
   def removedSmallProducers: List[SmallProducer] = original.packSmall.filterNot(revised.packSmall.toSet)
@@ -41,23 +43,24 @@ case class ReturnVariationData(
 
 }
 
-case class RegistrationVariationData(original: RetrievedSubscription,
-                                     updatedBusinessAddress: Address,
-                                     producer: Producer,
-                                     usesCopacker: Option[Boolean],
-                                     packageOwn: Option[Boolean],
-                                     packageOwnVol: Option[Litreage],
-                                     copackForOthers: Boolean,
-                                     copackForOthersVol: Option[Litreage],
-                                     imports: Boolean,
-                                     importsVol: Option[Litreage],
-                                     updatedProductionSites: Seq[Site],
-                                     updatedWarehouseSites: Seq[Site],
-                                     updatedContactDetails: ContactDetails,
-                                     previousPages: Seq[Call],
-                                     reason: Option[String] = None,
-                                     deregDate: Option[LocalDate] = None
-                        ) extends VariationData { // TODO consider splitting i.e. DeregVaryData, Contact, Activity etc.
+case class RegistrationVariationData(
+  original: RetrievedSubscription,
+  updatedBusinessAddress: Address,
+  producer: Producer,
+  usesCopacker: Option[Boolean],
+  packageOwn: Option[Boolean],
+  packageOwnVol: Option[Litreage],
+  copackForOthers: Boolean,
+  copackForOthersVol: Option[Litreage],
+  imports: Boolean,
+  importsVol: Option[Litreage],
+  updatedProductionSites: Seq[Site],
+  updatedWarehouseSites: Seq[Site],
+  updatedContactDetails: ContactDetails,
+  previousPages: Seq[Call],
+  reason: Option[String] = None,
+  deregDate: Option[LocalDate] = None
+) extends VariationData { // TODO consider splitting i.e. DeregVaryData, Contact, Activity etc.
 
   def isLiablePacker: Boolean = {
     producer.isLarge.getOrElse(false) || copackForOthers

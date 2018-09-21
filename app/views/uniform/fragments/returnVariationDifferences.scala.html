@@ -19,6 +19,7 @@
 @import sdil.models.SdilReturn
 @import sdil.models.backend.Subscription
 @import sdil.controllers.returnLiterageMap
+@import views.html.softdrinksindustrylevy.helpers._
 
 @(key: String, variation: ReturnVariationData)(implicit m: Messages)
 
@@ -95,39 +96,15 @@
     }
 }
 
+@declaration_table(s"$key.reason", Messages("return-variation-reason.subheading")) {
+        <tr>
+            <td>@Messages("return-variation-reason.label")</td>
+            <td>@variation.reason</td>
+            <td class="change-answer" ><a href="return-variation-reason">@Messages(s"sdil.declaration.change-link")</a></td>
+        </tr>
+}
 
-@*
-    @for(change <- variation.changedLitreages) {
-        @table_helper(change._1) {
-            @table_row_helper("return-litres-low", s"${change._2._1}")
-            @table_row_helper("return-litres-high", s"${change._2._2}")
-
-            @if(change._1 == "wastage" || change._1 == "exported") {
-                @table_row_helper("return-cost-low", s"-&pound;${(change._2._1 * SdilReturn.costLower).formatted("%,1.2f")}")
-                @table_row_helper("return-cost-high", s"-&pound;${(change._2._2 * SdilReturn.costHigher).formatted("%,1.2f")}")
-                @table_row_helper("return-cost-total", s"-&pound;${((change._2._1 * SdilReturn.costLower) + (change._2._2 * SdilReturn.costHigher)).formatted("%,1.2f")}")
-            } else {
-                @if(change._1 == "importSmall") {
-                    @table_row_helper("return-cost-low", s"&pound;${0.formatted("%,1.2f")}")
-                    @table_row_helper("return-cost-high", s"&pound;${0.formatted("%,1.2f")}")
-                    @table_row_helper("return-cost-total", s"&pound;${0.formatted("%,1.2f")}")
-                } else {
-                    @table_row_helper("return-cost-low", s"&pound;${(change._2._1 * SdilReturn.costLower).formatted("%,1.2f")}")
-                    @table_row_helper("return-cost-high", s"&pound;${(change._2._2 * SdilReturn.costHigher).formatted("%,1.2f")}")
-                    @table_row_helper("return-cost-total", s"&pound;${((change._2._1 * SdilReturn.costLower) + (change._2._2 * SdilReturn.costHigher)).formatted("%,1.2f")}")
-                }
-            }
-        }
-    }
-
-    @table_helper("return-small-producers") {
-        @for(producer <- variation.addedSmallProducers) {
-            @table_row_helper("return-small-prod-ref", producer.sdilRef)
-            @table_row_helper("return-small-prod-packaged-low", producer.litreage._1.toString)
-            @table_row_helper("return-small-prod-packaged-high", producer.litreage._2.toString)
-        }
-    }
-*@
+<br/>
 
 <p>
     <a href="javascript:window.print()" class="print-link" onclick="ga('send', 'event', 'print', 'click', 'Print')">
