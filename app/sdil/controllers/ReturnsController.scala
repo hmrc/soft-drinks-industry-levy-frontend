@@ -95,8 +95,10 @@ class ReturnsController (
           x.isEmpty ||
             (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
             isCheckCorrect(x, 1) &&
-//            Await.result(isSmallProducer(x), 20.seconds)) &&
           x != origSdilRef)
+        })
+      .verifying("error.sdilref.notSmall", x => {
+          Await.result(isSmallProducer(x), 20.seconds)
         }),
     "lower"   -> litreage,
     "higher"  -> litreage
@@ -204,9 +206,9 @@ class ReturnsController (
     contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
     askSmallProd   <- ask(bool, "exemptions-for-small-producers")
     firstSmallProd <- ask(smallProducer(sdilRef), "first-small-producer-details") when askSmallProd
-    smallProdCheck    = Await.result(isSmallProducer(sdilRef), 20.seconds)
+//    smallProdCheck    = Await.result(isSmallProducer(sdilRef), 20.seconds)
 //    inner           = uniform.fragments.update_business_addresses(subscription, subscription)
-    notSmallProd   <- tell("not-small-producer", None) when !smallProdCheck
+//    notSmallProd   <- tell("not-small-producer", None) when !smallProdCheck
     smallProds     <- manyT("small-producer-details",
                             {ask(smallProducer(sdilRef), _)},
                             min = 1,
@@ -305,7 +307,7 @@ class ReturnsController (
     } yield r
   }
 
-  def isSmallProducer(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] = 
+  def isSmallProducer(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] =
     sdilConnector.retrieveSubscription(sdilRef).flatMap {
       case Some(x) => x.activity.smallProducer
       case None    => false
