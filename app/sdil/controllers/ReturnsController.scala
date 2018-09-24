@@ -95,8 +95,10 @@ class ReturnsController (
           x.isEmpty ||
             (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
             isCheckCorrect(x, 1) &&
-            Await.result(isSmallProducer(x), 20.seconds)) &&
-          x != origSdilRef
+          x != origSdilRef)
+        })
+      .verifying("error.sdilref.notSmall", x => {
+          Await.result(isSmallProducer(x), 20.seconds)
         }),
     "lower"   -> litreage,
     "higher"  -> litreage
@@ -302,7 +304,7 @@ class ReturnsController (
     } yield r
   }
 
-  def isSmallProducer(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] = 
+  def isSmallProducer(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] =
     sdilConnector.retrieveSubscription(sdilRef).flatMap {
       case Some(x) => x.activity.smallProducer
       case None    => false

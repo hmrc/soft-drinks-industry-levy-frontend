@@ -21,6 +21,8 @@ sdil.common.error=Error
 sdil.common.cancel=Cancel
 
 error.sdilref.invalid=Invalid SDIL Number
+error.sdilref.notSmall=Small producer reference number does not match a business that is currently registered as a \
+  small producer. Check and try again.
 
 #Address lines
 sdil.address.line1=Address line 1
@@ -979,7 +981,7 @@ small-producer-details.name=Name: {0}
 small-producer-details.refNumber=Reference number: {0}
 small-producer-details.lowBand=Low band: {0} litres
 small-producer-details.highBand=High band: {0} litres
-sdil.alias=Customer name (optional)
+sdil.alias=Small producer name (optional)
 sdil.sdilRef=Soft Drinks Industry Levy reference number
 sdil.litreage.highRate.smallProducer=Litres in the high band for this quarter
 sdil.litreage.lowRate.smallProducer=Litres in the low band for this quarter
