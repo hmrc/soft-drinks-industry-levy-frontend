@@ -19,7 +19,7 @@
 @import views.html.uniform.helpers._
 @import helper.{inputRadioGroup => _, _}
 
-@(key: String, form: Form[String], breadcrumbs: List[String], mainContent: Html)(implicit messages: Messages, request: Request[_], appConfig: AppConfig)
+@(key: String, form: Form[String], breadcrumbs: List[String], mainContent: Html)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages)
 
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
@@ -27,8 +27,8 @@
 
     @error_summary(form)
 
-    <h1 class="heading-large">@Messages(s"heading.$key")</h1>
-    <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
+    <h1 class="heading-large">@Messages.extraMessage(s"heading.$key")</h1>
+    <legend class="visuallyhidden">@Messages.extraMessage(s"heading.$key")</legend>
 
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField

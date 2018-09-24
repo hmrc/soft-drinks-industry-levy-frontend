@@ -83,7 +83,7 @@ trait SdilWMController extends WebMonadController
     key: String,
     mainContent: Html,
     editRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty
-  ): WebMonad[Unit] = {
+  )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
 
     def getMapping(path: List[String]) = {
       text.verifying("error.radio-form.choose-option", a => ("DONE" :: path).contains(a))
@@ -102,7 +102,7 @@ trait SdilWMController extends WebMonadController
     } yield { r }
   }
 
-  def checkYourReturnAnswers2( // TODO - notice this doesn't have the original
+  def checkYourReturnAnswers(
     key: String,
     sdilReturn: SdilReturn,
     broughtForward: BigDecimal,
@@ -137,7 +137,8 @@ trait SdilWMController extends WebMonadController
         })
   }
 
-  def checkYourReturnAnswers(
+  // TODO check the ReturnsController journey which still uses this
+  def checkYourReturnAnswersOld(
     key: String,
     sdilReturn: SdilReturn,
     broughtForward: BigDecimal,
@@ -166,10 +167,14 @@ trait SdilWMController extends WebMonadController
   }
 
   def checkReturnChanges(key: String, variation: ReturnVariationData) = {
-    val routes = List("own-brands-packaged-at-own-sites", "packaged-as-a-contract-packer", "brought-into-uk-from-small-producers","brought-into-uk","claim-credits-for-exports","claim-credits-for-lost-damaged")
-
     val inner = uniform.fragments.returnVariationDifferences(key, variation)
-    tell(key, inner)
+    cya(key, inner,
+      {
+        case "exemptions-for-small-producers" =>
+          write[Boolean]("_editSmallProducers", true) >>
+            clear(key) >>
+            resultToWebMonad[Unit](Redirect("exemptions-for-small-producers"))
+      })
   }
 
   protected def askEnum[E <: EnumEntry](

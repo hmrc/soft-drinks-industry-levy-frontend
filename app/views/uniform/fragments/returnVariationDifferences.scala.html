@@ -53,7 +53,9 @@
                     </h2>
                 </th>
                 <th class="change-answer" colspan="3">
-                    <a style="font-weight: 200" href="@changeLink">@Messages(s"sdil.declaration.change-link")</a>
+                    <button name="@key" value="@changeLink" id="continue-button" class="link-button">
+                        @Messages("sdil.declaration.change-link") <span class="visuallyhidden">@Messages(s"$key.change.$title")</span>
+                    </button>
                 </th>
             </tr>
         </thead>
