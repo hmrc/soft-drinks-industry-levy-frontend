@@ -19,7 +19,7 @@ package sdil.models
 import java.time.{LocalDate, LocalDateTime}
 
 import cats.implicits._
-import sdil.controllers.returnLiterageMap
+import sdil.controllers.returnLiterageList
 
 import scala.collection.immutable.ListMap
 
@@ -38,7 +38,7 @@ case class SdilReturn(
   def totalImported: (Long, Long) = importLarge |+| importSmall
 
   private def toLongs: List[(Long,Long)] = List(ownBrand, packLarge, importLarge, importSmall, packSmall.total, export, wastage)
-  private val keys = returnLiterageMap.keys.toList
+  private val keys = returnLiterageList
   private def sumLitres(l: List[(Long, Long)]) = l.map(x => LitreOps(x).dueLevy).sum
 
   /*
@@ -48,7 +48,7 @@ case class SdilReturn(
   def compare(other: SdilReturn): ListMap[String, ((Long, Long),(Long, Long))] = {
     val y = this.toLongs
     ListMap(other.toLongs.zipWithIndex.filter { x => x._1 != y(x._2) }.map {x =>
-      keys(x._2) -> (x._1, y(x._2))
+      keys(x._2) -> ((x._1, y(x._2)))
     } : _*)
   }
 
@@ -66,9 +66,6 @@ case class SdilReturn(
   }
 
 }
-
-
-
 
 case class ReturnPeriod(year: Int, quarter: Int) {
   require(quarter <= 3 && quarter >= 0)

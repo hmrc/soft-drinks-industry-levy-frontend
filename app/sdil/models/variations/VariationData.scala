@@ -24,10 +24,6 @@ import sdil.models.backend.{Site, UkAddress}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ContactDetails, Litreage, Producer, ReturnPeriod, SdilReturn, SmallProducer}
 
-
-
-sealed trait VariationData
-
 case class ReturnVariationData(
   original: SdilReturn,
   revised: SdilReturn,
@@ -35,7 +31,7 @@ case class ReturnVariationData(
   orgName: String,
   address: UkAddress,
   reason: String
-) extends VariationData {
+) {
 
   def changedLitreages: Map[String, ((Long, Long),(Long,Long))] = original.compare(revised)
   def removedSmallProducers: List[SmallProducer] = original.packSmall.filterNot(revised.packSmall.toSet)
@@ -60,7 +56,7 @@ case class RegistrationVariationData(
   previousPages: Seq[Call],
   reason: Option[String] = None,
   deregDate: Option[LocalDate] = None
-) extends VariationData { // TODO consider splitting i.e. DeregVaryData, Contact, Activity etc.
+) { // TODO consider splitting i.e. DeregVaryData, Contact, Activity etc.
 
   def isLiablePacker: Boolean = {
     producer.isLarge.getOrElse(false) || copackForOthers

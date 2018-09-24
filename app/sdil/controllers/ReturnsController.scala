@@ -149,7 +149,7 @@ class ReturnsController (
       email = subscription.contact.email,
       taxEstimation = taxEstimation(sdilReturn)
     )
-    broughtForward <- BigDecimal("0").pure[WebMonad] // TODO - check if this should be hardcoded going fwd
+    broughtForward <- BigDecimal("0").pure[WebMonad] // TODO will need setting up properly before 10/2018
     _              <- checkYourReturnAnswersOld("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)

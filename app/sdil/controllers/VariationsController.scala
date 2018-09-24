@@ -67,7 +67,7 @@ class VariationsController(
 
   private def contactUpdate(
     data: RegistrationVariationData
-  ): WebMonad[VariationData] = {
+  ): WebMonad[RegistrationVariationData] = {
 
     sealed trait ContactChangeType extends EnumEntry
     object ContactChangeType extends Enum[ContactChangeType] {
@@ -116,7 +116,7 @@ class VariationsController(
 
   private def activityUpdate(
     data: RegistrationVariationData
-  ): WebMonad[VariationData] = {
+  ): WebMonad[RegistrationVariationData] = {
 
 
     val litres = litreagePair.nonEmpty("error.litreage.zero")
@@ -171,7 +171,7 @@ class VariationsController(
 
   private def deregisterUpdate(
     data: RegistrationVariationData
-  ): WebMonad[VariationData] = for {
+  ): WebMonad[RegistrationVariationData] = for {
     reason    <- askBigText("reason", constraints = List(("error.deregReason.tooLong", _.length <= 255)), errorOnEmpty = "error.reason.empty")
     deregDate <- ask(startDate
       .verifying("error.deregDate.nopast",  _ >= LocalDate.now)
@@ -185,7 +185,7 @@ class VariationsController(
                     base: RegistrationVariationData,
                     returnPeriods: List[ReturnPeriod],
                     sdilRef: String,
-                    connector: SoftDrinksIndustryLevyConnector)(implicit headerCarrier: HeaderCarrier): WebMonad[VariationData]  = {
+                    connector: SoftDrinksIndustryLevyConnector)(implicit headerCarrier: HeaderCarrier): WebMonad[ReturnVariationData]  = {
     implicit val extraMessages: ExtraMessages = ExtraMessages(messages = returnPeriods.map { x =>
       s"returnYear.option.${x.year}${x.quarter}" -> s"${Messages(s"returnYear.option.${x.quarter}")} ${x.year}"
     }.toMap)
@@ -209,53 +209,55 @@ class VariationsController(
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
       changeType <- askOneOf("changeType", changeTypes)
       variation <- changeType match {
-        case ChangeType.Returns => returnUpdate(base, variableReturns, sdilRef, sdilConnector)
+        case ChangeType.Returns =>
+          resultToWebMonad[RegistrationVariationData](Redirect(routes.VariationsController.adjustments("")))
         case ChangeType.Sites => contactUpdate(base)
         case ChangeType.Activity => activityUpdate(base)
         case ChangeType.Deregister => deregisterUpdate(base)
       }
 
       path <- getPath
-      exit <- variation match {
-        case v: RegistrationVariationData =>
-          for {
-            _ <- checkYourRegAnswers("checkyouranswers", v, path)
-            submission = Convert(v)
-            _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
-            _ <- clear
-            exit <- if(v.volToMan) {
-              journeyEnd("volToMan")
-            } else if(v.manToVol) {
-              journeyEnd("manToVol")
-            } else journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
-          } yield exit
-        case v: ReturnVariationData =>
-          val broughtForward = BigDecimal("0") // TODO will need setting up properly
-          // TODO create bespoke page
-          implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map(
-            "heading.check-your-variation-answers" -> s"${Messages(s"returnYear.option.${v.period.quarter}")} ${v.period.year} return details"
-          ))
-          // TODO - originalReturnValue is v diff - values used for current return value depend on smallProducer status so we need to get this for the period
-          for {
-            _ <- checkYourReturnAnswers("check-your-variation-answers", v.revised, broughtForward, base.original, originalReturn = v.original.some)
-            extraMessages = ExtraMessages(
-              messages = Map(
-                "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnYear.option.${v.period.quarter}")} return")
-            )
-            reason <- askBigText(
-              "return-variation-reason",
-              constraints = List(("error.return-variation-reason.tooLong",
-              _.length <= 255)),
-              errorOnEmpty = "error.return-variation-reason.empty")(extraMessages) //when v.revised.total != v.original.total
-            _ <- checkReturnChanges("check-return-differences", v.copy(reason = reason))
-            _ <- execute(sdilConnector.returns.vary(sdilRef, v.copy(reason = reason)))
-            _ <- clear
-            exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)
-          } yield exit
-        }
-    } yield {
-      exit
-    }
+      _ <- checkYourRegAnswers("checkyouranswers", variation, path)
+      submission = Convert(variation)
+      _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+      _ <- clear
+      exit <- if(variation.volToMan) {
+        journeyEnd("volToMan")
+      } else if(variation.manToVol) {
+        journeyEnd("manToVol")
+      } else journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+    } yield exit
+  }
+
+  private def program2(
+    subscription: RetrievedSubscription,
+    sdilRef: String
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val base = RegistrationVariationData(subscription)
+    for {
+      variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
+      variation <- returnUpdate(base, variableReturns, sdilRef, sdilConnector)
+      path <- getPath
+
+      broughtForward = BigDecimal("0") // TODO will need setting up properly before 10/2018
+      extraMessages = ExtraMessages(
+            messages = Map(
+              "heading.check-your-variation-answers" -> s"${Messages(s"returnYear.option.${variation.period.quarter}")} ${variation.period.year} return details",
+              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnYear.option.${variation.period.quarter}")} return"
+            ))
+
+      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, originalReturn = variation.original.some)(extraMessages)
+
+      reason <- askBigText(
+        "return-variation-reason",
+        constraints = List(("error.return-variation-reason.tooLong",
+          _.length <= 255)),
+        errorOnEmpty = "error.return-variation-reason.empty")(extraMessages)
+      _ <- checkReturnChanges("check-return-differences", variation.copy(reason = reason))
+      _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason)))
+      _ <- clear
+      exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)
+    } yield exit
   }
 
   def checkYourRegAnswers(
@@ -304,9 +306,21 @@ class VariationsController(
     val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
-        runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(LeapAhead))
+        runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
       case None => NotFound("").pure[Future]
     }
   }
+
+  def adjustments(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(s) =>
+        runInner(request)(program2(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(LeapAhead))
+      case None => NotFound("").pure[Future]
+    }
+  }
+
+
 
 }

@@ -29,6 +29,12 @@ GET         /ufvariations/:id                                    sdil.controller
 POST        /ufvariations/                                        sdil.controllers.VariationsController.index(id = "")
 POST        /ufvariations/:id                                    sdil.controllers.VariationsController.index(id: String)
 
+GET         /ufadjustments/                                       sdil.controllers.VariationsController.adjustments(id = "")
+GET         /ufadjustments/:id                                    sdil.controllers.VariationsController.adjustments(id: String)
+POST        /ufadjustments/                                       sdil.controllers.VariationsController.adjustments(id = "")
+POST        /ufadjustments/:id                                    sdil.controllers.VariationsController.adjustments(id: String)
+
+
 GET         /uregistrations/                                        sdil.controllers.RegistrationController.index(id = "")
 GET         /uregistrations/:id                                    sdil.controllers.RegistrationController.index(id: String)
 POST        /uregistrations/                                        sdil.controllers.RegistrationController.index(id = "")

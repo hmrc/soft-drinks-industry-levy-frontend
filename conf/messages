@@ -1141,14 +1141,21 @@ check-your-variation-answers.net.adjusted.positive=Net adjusted amount excluding
 check-your-variation-answers.net.adjusted.negative=Net adjusted amount
 
 heading.check-return-differences=Check your answers before sending your correction
+
 check-return-differences.ownBrand=Own brands packaged at your own site
 check-return-differences.packLarge=Contract packed at your own site
 check-return-differences.importLarge=Brought into the UK
 check-return-differences.importSmall=Brought into the UK from small producers
 check-return-differences.export=Exported
 check-return-differences.wastage=Lost or destroyed
-
 check-return-differences.packSmall=Contract packed for registered small producers
+
+check-return-differences.own-brands-packaged-at-own-sites=Own brands packaged at your own site
+check-return-differences.packaged-as-a-contract-packer=Contract packed at your own site
+check-return-differences.brought-into-uk=Brought into the UK
+check-return-differences.brought-into-uk-from-small-producers=Brought into the UK from small producers
+check-return-differences.claim-credits-for-exports=Exported
+check-return-differences.claim-credits-for-lost-damaged=Lost or destroyed
 
 check-return-differences.correction.title=Correction
 check-return-differences.band.title=Band

@@ -27,13 +27,13 @@ import scala.language.implicitConversions
 package object controllers {
   implicit def future[A](a: A): Future[A] = Future.successful(a)
 
-  val returnLiterageMap = ListMap(
-    "ownBrand" -> "own-brands-packaged-at-own-sites",
-    "packLarge" -> "packaged-as-a-contract-packer",
-    "importSmall" -> "brought-into-uk-from-small-producers",
-    "importLarge" -> "brought-into-uk",
-    "packSmall" -> "exemptions-for-small-producers",
-    "export" -> "claim-credits-for-exports",
-    "wastage" -> "claim-credits-for-lost-damaged"
+  val returnLiterageList = List(
+    "own-brands-packaged-at-own-sites",
+    "packaged-as-a-contract-packer",
+    "brought-into-uk-from-small-producers",
+    "brought-into-uk",
+    "exemptions-for-small-producers",
+    "claim-credits-for-exports",
+    "claim-credits-for-lost-damaged"
   )
 }

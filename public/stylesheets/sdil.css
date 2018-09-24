@@ -124,8 +124,7 @@ html .font-xsmall {
   -webkit-box-shadow: none;
   outline: 0;
   position: relative;
-  padding-left: 0;
-  padding-right: 0;
+  padding:0;
   margin-right: 0;
 }
 

@@ -18,7 +18,7 @@
 @import sdil.models.ReturnsVariation
 @import sdil.models.SdilReturn
 @import sdil.models.backend.Subscription
-@import sdil.controllers.returnLiterageMap
+@import sdil.controllers.returnLiterageList
 @import views.html.softdrinksindustrylevy.helpers._
 
 @(key: String, variation: ReturnVariationData)(implicit m: Messages)
@@ -34,8 +34,8 @@
 @cost(key: String, value: BigDecimal) = {
     @defining(
         key match {
-            case a if a == "ownBrand" || a == "packLarge" || a == "importLarge" => 1
-            case b if b == "export" || b == "wastage" => -1
+            case a if a == "own-brands-packaged-at-own-sites" || a == "packaged-as-a-contract-packer" || a == "brought-into-uk" => 1
+            case b if b == "claim-credits-for-exports" || b == "claim-credits-for-lost-damaged" => -1
             case _ => 0
         }
     ) { multiplier =>
@@ -66,7 +66,7 @@
 }
 
 @for(change <- variation.changedLitreages) {
-    @table_head(change._1, returnLiterageMap(change._1)) {
+    @table_head(change._1, change._1) {
         <tr>
             <th>@Messages(s"$key.correction.title")</th>
             <th>@Messages(s"$key.band.title")</th>
