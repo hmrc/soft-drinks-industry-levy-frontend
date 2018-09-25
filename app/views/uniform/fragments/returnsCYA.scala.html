@@ -18,19 +18,14 @@
 @import sdil.models.SdilReturn
 @import sdil.models.backend.Subscription
 @import sdil.models.retrieved.RetrievedSubscription
+@import views.html.softdrinksindustrylevy.helpers.format_money
+
 
 @(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription, originalReturn: Option[SdilReturn])(implicit m: Messages)
 
-@formatMoney(value: BigDecimal) = {
-    @if(value < 0) {
-        @{f"-£${value.abs}%,.2f"}
-    } else {
-        @{f"£$value%,.2f"}
-    }
-}
 
 <table class="check-your-answers">
-    <caption class="heading-medium">@Messages(s"$key.balance.due", formatMoney(total))</caption>
+    <caption class="heading-medium">@Messages(s"$key.balance.due", format_money(total))</caption>
     <thead>
         <tr>
             <th>@Messages(s"$key.activity")</th>
@@ -47,7 +42,7 @@
                 <td rowspan="2">@Messages(s"$key.$lineKey")</td>
                 <td>@Messages(s"$key.low")</td>
                 <td>@{f"${litres._1}%,d"}</td>
-                <td class="no-minus-wrapping">@formatMoney(costLower * litres._1 * multiplier)</td>
+                <td class="no-minus-wrapping">@format_money(costLower * litres._1 * multiplier)</td>
                 <td>
                     <button name="@key" value="@lineKey" id="continue-button" class="link-button">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
@@ -57,7 +52,7 @@
             <tr>
                 <td>@Messages(s"$key.high")</td>
                 <td>@{f"${litres._2}%,d"}</td>
-                <td class="no-minus-wrapping"> @formatMoney(costHigher * litres._2 * multiplier)</td>
+                <td class="no-minus-wrapping"> @format_money(costHigher * litres._2 * multiplier)</td>
                 <td>
                     <button name="@key" value="@lineKey" id="continue-button" class="link-button">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
@@ -80,12 +75,12 @@
             @originalReturn.map { r =>
                 <tr>
                     <td scope="row" colspan="3">@Messages(s"$key.total.original")</td>
-                    <td class="numeric">@formatMoney(r.total)</td>
+                    <td class="numeric">formatMoney(r.total)</td>
                     <td></td>
                 </tr>
                 <tr>
                     <td scope="row" colspan="3">@Messages(s"$key.total.new")</td>
-                    <td class="numeric">@formatMoney(total)</td>
+                    <td class="numeric">formatMoney(total)</td>
                     <td></td>
                 </tr>
                 <tr>
@@ -95,7 +90,7 @@
                         <td scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.net.adjusted.positive")</h4></td>
 
                     }
-                    <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(total - r.total)</h4></td>
+                    <td class="numeric"><h4 class="heading-small no-minus-wrapping">formatMoney(total - r.total)</h4></td>
                     <td></td>
                 </tr>
             }
@@ -103,7 +98,7 @@
         } else {
             <tr>
                 <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.total")</h4></th>
-                <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(total)</h4></td>
+                <td class="numeric"><h4 class="heading-small no-minus-wrapping">formatMoney(total)</h4></td>
                 <td></td>
             </tr>
         }

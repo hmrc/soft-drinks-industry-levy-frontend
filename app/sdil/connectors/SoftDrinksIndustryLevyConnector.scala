@@ -87,9 +87,9 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
     }
 
     def vary(
-              sdilRef: String,
-              data: ReturnVariationData
-            )(implicit hc: HeaderCarrier): Future[Unit] = {
+      sdilRef: String,
+      data: ReturnVariationData
+    )(implicit hc: HeaderCarrier): Future[Unit] = {
       val uri = s"$sdilUrl/returns/vary/$sdilRef"
       http.POST[ReturnVariationData, HttpResponse](uri, data) map { _ => () }
     }
