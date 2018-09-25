@@ -16,8 +16,11 @@
 
 @import sdil.models.ReturnPeriod
 @import sdil.models.ReturnsVariation
+@import views.html.softdrinksindustrylevy.helpers.format_money
 
-@(paymentDate: ReturnPeriod, sdilRef: String, total: BigDecimal, formattedTotal: String, variation: ReturnsVariation)(implicit messages: Messages)
+
+@import sdil.models.SdilReturn
+@(paymentDate: ReturnPeriod, sdilRef: String, total: BigDecimal, formattedTotal: String, variation: ReturnsVariation, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal)(implicit messages: Messages)
 
 @if(total > 0) {
     <p>@Html(Messages("return-sent.paymentsBlurb.payby", formattedTotal, paymentDate.deadline.format("dd MMMM yyyy")))</p>
@@ -51,3 +54,37 @@
     </ul>
 
 <p>@Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))</p>
+
+<table class="check-your-answers">
+    <caption class="heading-medium">@Messages("return-sent.cya-table.header")</caption>
+    <thead>
+        <tr>
+            <th>@Messages(s"check-your-answers.activity")</th>
+            <th>@Messages(s"check-your-answers.band")</th>
+            <th>@Messages(s"check-your-answers.litres")</th>
+            <th>@Messages(s"check-your-answers.cost")</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @for((lineKey, litres, multiplier) <- lineItems) {
+            <tr>
+                <td rowspan="2">@Messages(s"check-your-answers.$lineKey")</td>
+                <td>@Messages(s"check-your-answers.low")</td>
+                <td>@{f"${litres._1}%,d"}</td>
+                <td class="no-minus-wrapping">@format_money(costLower * litres._1 * multiplier)</td>
+            </tr>
+            <tr>
+                <td>@Messages(s"check-your-answers.high")</td>
+                <td>@{f"${litres._2}%,d"}</td>
+                <td class="no-minus-wrapping">@format_money(costHigher * litres._2 * multiplier)</td>
+            </tr>
+        }
+        <tr>
+            <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"check-your-answers.total")</h4></th>
+            <td class="numeric"><h4 class="heading-small no-minus-wrapping">@format_money(total)</h4></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
