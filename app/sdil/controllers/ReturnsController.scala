@@ -195,7 +195,10 @@ class ReturnsController (
       sdilRef,
       total,
       formatMoney(total),
-      variation)(messages).some
+      variation,
+      data,
+      costLower,
+      costHigher)(messages).some
 
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
