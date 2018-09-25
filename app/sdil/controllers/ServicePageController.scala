@@ -29,6 +29,7 @@ import cats.implicits._
 import cats.data.OptionT
 import scala.concurrent._
 import java.time.LocalDate
+import views.html.uniform.fragments.update_business_addresses
 
 class ServicePageController(
   val messagesApi: MessagesApi,
@@ -54,6 +55,17 @@ class ServicePageController(
     }
     ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
 
+  }
+
+  def varyBusinessAddresses: Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    sdilConnector.retrieveSubscription(sdilRef).flatMap {
+      case Some(subscription) =>
+        val addr = Address.fromUkAddress(subscription.address)
+        Ok(update_business_addresses(subscription, addr))
+      case None =>
+        NotFound(errorHandler.notFoundTemplate)
+    }
   }
 
   def balanceHistory: Action[AnyContent] = registeredAction.async { implicit request =>

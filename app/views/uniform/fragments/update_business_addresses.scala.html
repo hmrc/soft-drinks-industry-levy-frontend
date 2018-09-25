@@ -1,0 +1,91 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import sdil.models.backend.Subscription
+@import sdil.models.Address
+@import sdil.models.retrieved.RetrievedSubscription
+@import views.html.softdrinksindustrylevy.helpers._
+
+@import sdil.config.AppConfig
+@(subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@main_template(Messages("sdil.updateBusinessAddresses.heading"), noArticle = true) {
+    <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1>@Messages("sdil.updateBusinessAddresses.heading")</h1>
+                @declaration_table("service-page", "business-details.title") {
+                    @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
+                    <tr>
+                        <td scope="row">@Messages("sdil.verify.address")</td>
+                        <td>
+                            @address.nonEmptyLines.init.map { l =>
+                                @l,<br/>
+                            }
+                            @address.postcode
+                        </td>
+                    </tr>
+                }
+
+            <br/>
+            <p>
+                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeType")'>
+                @Messages("sdil.updateBusinessAddresses.link.1")
+                </a>
+            </p>
+
+            @declaration_table("service-page", "contact-details.title") {
+                @subscription.contact.name.map { name =>
+                    @declaration_details_table_row("service-page", "name", None, name)
+                }
+                @subscription.contact.positionInCompany.map { position =>
+                    @declaration_details_table_row("service-page", "job-title", None, position)
+                }
+                @declaration_details_table_row("service-page", "telephone", None, s"${subscription.contact.phoneNumber}")
+                @declaration_details_table_row("service-page", "email", None, s"${subscription.contact.email}")
+            }
+
+            <br/>
+            <p>
+                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeType")'>
+                @Messages("sdil.updateBusinessAddresses.link.2")
+                </a>
+            </p>
+
+            @if(subscription.productionSites.nonEmpty) {
+                <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.warehouses.title")</h2>
+                @service_sites(subscription.productionSites, "packaging")
+            <br/>
+            <p>
+                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeType")'>
+                        @Messages("sdil.updateBusinessAddresses.link.3")
+                </a>
+            </p>
+            }
+
+            @if(subscription.warehouseSites.nonEmpty) {
+                <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.packaging.title")</h2>
+                @service_sites(subscription.warehouseSites, "warehouse")
+            <br/>
+            <p>
+                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeType")'>
+                        @Messages("sdil.updateBusinessAddresses.link.4")
+                </a>
+            </p>
+            }
+        </div>
+    </div>
+}

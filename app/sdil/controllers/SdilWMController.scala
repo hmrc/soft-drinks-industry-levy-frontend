@@ -496,6 +496,7 @@ trait SdilWMController extends WebMonadController
   // TODO: At present this uses an Await.result to check the small producer status, thus
   // blocking a thread. At a later date uniform should be updated to include the capability
   // for a subsequent stage to invalidate a prior one.
+  // TODO - also needs small producer status check scoping to the return period
   implicit def smallProducer(origSdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
     "alias" -> optional(text),
     "sdilRef" -> nonEmptyText
@@ -504,9 +505,11 @@ trait SdilWMController extends WebMonadController
           x.isEmpty ||
             (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
               isCheckCorrect(x, 1) &&
-              Await.result(isSmallProducer(x, sdilConnector: SoftDrinksIndustryLevyConnector), 20.seconds)) &&
-              x != origSdilRef
-        }),
+              x != origSdilRef)
+        })
+      .verifying("error.sdilref.notSmall", x => {
+        Await.result(isSmallProducer(x, sdilConnector: SoftDrinksIndustryLevyConnector), 20.seconds)
+      }),
     "lower"   -> litreage,
     "higher"  -> litreage
   ){
@@ -514,6 +517,7 @@ trait SdilWMController extends WebMonadController
   }{
     case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
   }
+
 
   def isSmallProducer(sdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): Future[Boolean] =
     sdilConnector.retrieveSubscription(sdilRef).flatMap {
