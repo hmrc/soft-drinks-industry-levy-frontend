@@ -1144,15 +1144,15 @@ how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs pa
     Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
 
 changeType.option.returns=Correct an error in a previous return
-heading.returnYear=Which return do you need to correct?
-returnYear.help.header=I can’t find the return I’m looking for
-returnYear.help=If you did not file a return then it won't be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.
-returnYear.continue=Continue
+heading.returnPeriod=Which return do you need to correct?
+returnPeriod.help.header=I can’t find the return I’m looking for
+returnPeriod.help=If you did not file a return then it won't be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.
+returnPeriod.continue=Continue
 
-returnYear.option.0=January to March
-returnYear.option.1=April to June
-returnYear.option.2=July to September
-returnYear.option.3=October to December
+returnPeriod.option.0=January to March
+returnPeriod.option.1=April to June
+returnPeriod.option.2=July to September
+returnPeriod.option.3=October to December
 
 check-your-variation-answers.balance.due=
 check-your-variation-answers.heading={0}

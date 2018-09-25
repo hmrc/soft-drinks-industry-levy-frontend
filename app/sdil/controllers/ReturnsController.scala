@@ -153,7 +153,7 @@ class ReturnsController (
       taxEstimation = taxEstimation(sdilReturn)
     )
     broughtForward <- BigDecimal("0").pure[WebMonad] // TODO will need setting up properly before 10/2018
-    _              <- checkYourReturnAnswersOld("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))
+    _              <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
     _              <- if (isNewImporter || isNewPacker) {
@@ -176,8 +176,7 @@ class ReturnsController (
   def index(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     val period = ReturnPeriod(year, quarter)
-    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
-
+    val persistence = SaveForLaterPersistence(s"returns-$year$quarter", sdilRef, cache)
     for {
       subscription <- sdilConnector.retrieveSubscription(sdilRef).map{_.get}
       pendingReturns <- sdilConnector.returns.pending(subscription.utr)

@@ -23,7 +23,7 @@
 
 @(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages)
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
-  <breadcrumbs></breadcrumbs>
+  @backlink(breadcrumbs)
 
   <h1 class="heading-large">
         @Messages.extraMessages(Seq(s"heading.$key", "sdil.declaration.heading"))

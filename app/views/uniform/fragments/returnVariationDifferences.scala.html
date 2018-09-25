@@ -94,24 +94,21 @@
 
 
     <tr>
-        <td scope="row" colspan="3">@Messages(s"$key.total.original")</td>
+        <td scope="row">@Messages(s"$key.total.original")</td>
         <td class="numeric">@format_money(variation.original.total)</td>
-        <td></td>
     </tr>
     <tr>
-        <td scope="row" colspan="3">@Messages(s"$key.total.new")</td>
+        <td scope="row">@Messages(s"$key.total.new")</td>
         <td class="numeric">@format_money(variation.revised.total)</td>
-        <td></td>
     </tr>
     <tr>
         @if((variation.revised.total - variation.original.total) < 0) {
-            <td scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.net.adjusted.negative")</h4></td>
+            <td scope="row"><h4 class="heading-small">@Messages(s"$key.net.adjusted.negative")</h4></td>
         } else {
-            <td scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.net.adjusted.positive")</h4></td>
+            <td scope="row"><h4 class="heading-small">@Messages(s"$key.net.adjusted.positive")</h4></td>
 
         }
         <td class="numeric"><h4 class="heading-small no-minus-wrapping">@format_money(variation.revised.total - variation.original.total)</h4></td>
-        <td></td>
     </tr>
 }
 

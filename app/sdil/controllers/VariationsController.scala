@@ -181,23 +181,23 @@ class VariationsController(
     deregDate = deregDate.some
   )
 
-  def returnUpdate(
-                    base: RegistrationVariationData,
-                    returnPeriods: List[ReturnPeriod],
-                    sdilRef: String,
-                    connector: SoftDrinksIndustryLevyConnector)(implicit headerCarrier: HeaderCarrier): WebMonad[ReturnVariationData]  = {
-    implicit val extraMessages: ExtraMessages = ExtraMessages(messages = returnPeriods.map { x =>
-      s"returnYear.option.${x.year}${x.quarter}" -> s"${Messages(s"returnYear.option.${x.quarter}")} ${x.year}"
-    }.toMap)
-    for {
-      returnPeriod <- askOneOf("returnYear", returnPeriods.map(x => s"${x.year}${x.quarter}"))
-        .map(y => returnPeriods.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
-      origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
-        .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
-
-      newReturn <- askReturn(base.original, sdilRef, sdilConnector, origReturn.some)
-    } yield ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
-  }
+//  def returnUpdate(
+//                    base: RegistrationVariationData,
+//                    returnPeriods: List[ReturnPeriod],
+//                    sdilRef: String,
+//                    connector: SoftDrinksIndustryLevyConnector)(implicit headerCarrier: HeaderCarrier): WebMonad[ReturnVariationData]  = {
+//    implicit val extraMessages: ExtraMessages = ExtraMessages(messages = returnPeriods.map { x =>
+//      s"returnPeriod.option.${x.year}${x.quarter}" -> s"${Messages(s"returnPeriod.option.${x.quarter}")} ${x.year}"
+//    }.toMap)
+//    for {
+//      returnPeriod <- askOneOf("returnPeriod", returnPeriods.map(x => s"${x.year}${x.quarter}"))
+//        .map(y => returnPeriods.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
+//      origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
+//        .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
+//
+//      newReturn <- askReturn(base.original, sdilRef, sdilConnector, origReturn.some)
+//    } yield ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
+//  }
 
   private def program(
     subscription: RetrievedSubscription,
@@ -229,21 +229,71 @@ class VariationsController(
     } yield exit
   }
 
-  private def program2(
+  private def chooseReturn(
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
-      variation <- returnUpdate(base, variableReturns, sdilRef, sdilConnector)
+      extraMessages = ExtraMessages(messages = variableReturns.map { x =>
+        s"returnPeriod.option.${x.year}${x.quarter}" -> s"${Messages(s"returnPeriod.option.${x.quarter}")} ${x.year}"
+      }.toMap)
+      returnPeriod <- askOneOf("returnPeriod", variableReturns.map(x => s"${x.year}${x.quarter}"))(extraMessages)
+        .map(y => variableReturns.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
+
+
+
+
+      //      redirect <- resultToWebMonad[Unit](Redirect(routes.VariationsController.adjustment(year = returnPeriod.year, quarter = returnPeriod.quarter, id = "")))
+//      variation <- returnUpdate(base, variableReturns, sdilRef, sdilConnector)
+//      path <- getPath
+//
+//      broughtForward = BigDecimal("0") // TODO will need setting up properly before 10/2018
+//      extraMessages = ExtraMessages(
+//            messages = Map(
+//              "heading.check-your-variation-answers" -> s"${Messages(s"returnYear.option.${variation.period.quarter}")} ${variation.period.year} return details",
+//              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnYear.option.${variation.period.quarter}")} return"
+//            ))
+//
+//      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, originalReturn = variation.original.some)(extraMessages)
+//
+//      reason <- askBigText(
+//        "return-variation-reason",
+//        constraints = List(("error.return-variation-reason.tooLong",
+//          _.length <= 255)),
+//        errorOnEmpty = "error.return-variation-reason.empty")(extraMessages)
+//      _ <- checkReturnChanges("check-return-differences", variation.copy(reason = reason))
+//      _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason)))
+//      _ <- clear
+//      exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)
+    } yield Redirect(routes.VariationsController.adjustment(year = returnPeriod.year, quarter = returnPeriod.quarter, id = "check-your-variation-answers"))
+  }
+
+  private def adjust(
+    subscription: RetrievedSubscription,
+    sdilRef: String,
+    connector: SoftDrinksIndustryLevyConnector,
+    returnPeriod: ReturnPeriod
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val base = RegistrationVariationData(subscription)
+
+
+    for {
+
+      origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
+        .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
+
+      newReturn <- askReturn(base.original, sdilRef, sdilConnector, origReturn.some)
+
+      variation = ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
       path <- getPath
 
       broughtForward = BigDecimal("0") // TODO will need setting up properly before 10/2018
       extraMessages = ExtraMessages(
             messages = Map(
-              "heading.check-your-variation-answers" -> s"${Messages(s"returnYear.option.${variation.period.quarter}")} ${variation.period.year} return details",
-              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnYear.option.${variation.period.quarter}")} return"
+              "heading.check-your-variation-answers" -> s"${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return details",
+              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} return"
             ))
 
       _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, originalReturn = variation.original.some)(extraMessages)
@@ -257,8 +307,16 @@ class VariationsController(
       _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason)))
       _ <- clear
       exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)
+
     } yield exit
   }
+
+//  {
+//    val base = RegistrationVariationData(subscription)
+//    for {
+//      _ <- (()).pure[Unit]
+//    } yield _
+//  )
 
   def checkYourRegAnswers(
                               key: String,
@@ -313,14 +371,21 @@ class VariationsController(
 
   def adjustments(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
-    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
+    val persistence = SaveForLaterPersistence("adjustments", sdilRef, cache)
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
-        runInner(request)(program2(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(LeapAhead))
+        runInner(request)(chooseReturn(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(LeapAhead))
       case None => NotFound("").pure[Future]
     }
   }
 
-
-
+  def adjustment(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    val persistence = SaveForLaterPersistence(s"adjustments-$year$quarter", sdilRef, cache)
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(s) =>
+        runInner(request)(adjust(s, sdilRef, sdilConnector, ReturnPeriod(year, quarter)))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(LeapAhead))
+      case None => NotFound("").pure[Future]
+    }
+  }
 }

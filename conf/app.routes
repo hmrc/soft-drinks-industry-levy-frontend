@@ -35,6 +35,10 @@ GET         /ufadjustments/:id                                    sdil.controlle
 POST        /ufadjustments/                                       sdil.controllers.VariationsController.adjustments(id = "")
 POST        /ufadjustments/:id                                    sdil.controllers.VariationsController.adjustments(id: String)
 
+GET         /ufadjustment/year/:year/quarter/:quarter/            sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id = "")
+GET         /ufadjustment/year/:year/quarter/:quarter/:id         sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id: String)
+POST        /ufadjustment/year/:year/quarter/:quarter/            sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id = "")
+POST        /ufadjustment/year/:year/quarter/:quarter/:id         sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id: String)
 
 GET         /uregistrations/                                        sdil.controllers.RegistrationController.index(id = "")
 GET         /uregistrations/:id                                    sdil.controllers.RegistrationController.index(id: String)
