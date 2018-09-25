@@ -75,12 +75,12 @@
             @originalReturn.map { r =>
                 <tr>
                     <td scope="row" colspan="3">@Messages(s"$key.total.original")</td>
-                    <td class="numeric">formatMoney(r.total)</td>
+                    <td class="numeric">@format_money(r.total)</td>
                     <td></td>
                 </tr>
                 <tr>
                     <td scope="row" colspan="3">@Messages(s"$key.total.new")</td>
-                    <td class="numeric">formatMoney(total)</td>
+                    <td class="numeric">@format_money(total)</td>
                     <td></td>
                 </tr>
                 <tr>
@@ -90,7 +90,7 @@
                         <td scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.net.adjusted.positive")</h4></td>
 
                     }
-                    <td class="numeric"><h4 class="heading-small no-minus-wrapping">formatMoney(total - r.total)</h4></td>
+                    <td class="numeric"><h4 class="heading-small no-minus-wrapping">@format_money(total - r.total)</h4></td>
                     <td></td>
                 </tr>
             }
@@ -98,7 +98,7 @@
         } else {
             <tr>
                 <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.total")</h4></th>
-                <td class="numeric"><h4 class="heading-small no-minus-wrapping">formatMoney(total)</h4></td>
+                <td class="numeric"><h4 class="heading-small no-minus-wrapping">@format_money(total)</h4></td>
                 <td></td>
             </tr>
         }

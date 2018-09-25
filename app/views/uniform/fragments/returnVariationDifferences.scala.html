@@ -23,14 +23,6 @@
 
 @(key: String, variation: ReturnVariationData)(implicit m: Messages)
 
-@formatMoney(value: BigDecimal) = {
-    @if(value < 0) {
-        @{f"-£${value.abs}%,.2f"}
-    } else {
-        @{f"£$value%,.2f"}
-    }
-}
-
 @cost(key: String, value: BigDecimal) = {
     @defining(
         key match {
@@ -39,7 +31,7 @@
             case _ => 0
         }
     ) { multiplier =>
-      @formatMoney(value * multiplier)
+      @format_money(value * multiplier)
     }
 }
 
@@ -103,12 +95,12 @@
 
     <tr>
         <td scope="row" colspan="3">@Messages(s"$key.total.original")</td>
-        <td class="numeric">@formatMoney(variation.original.total)</td>
+        <td class="numeric">@format_money(variation.original.total)</td>
         <td></td>
     </tr>
     <tr>
         <td scope="row" colspan="3">@Messages(s"$key.total.new")</td>
-        <td class="numeric">@formatMoney(variation.revised.total)</td>
+        <td class="numeric">@format_money(variation.revised.total)</td>
         <td></td>
     </tr>
     <tr>
@@ -118,7 +110,7 @@
             <td scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.net.adjusted.positive")</h4></td>
 
         }
-        <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(variation.revised.total - variation.original.total)</h4></td>
+        <td class="numeric"><h4 class="heading-small no-minus-wrapping">@format_money(variation.revised.total - variation.original.total)</h4></td>
         <td></td>
     </tr>
 }
