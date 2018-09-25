@@ -17,18 +17,12 @@
 @import sdil.models.ReturnsVariation
 @import sdil.models.backend.Subscription
 @import sdil.models.retrieved.RetrievedSubscription
+@import views.html.softdrinksindustrylevy.helpers.format_money
+
 @(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: ReturnsVariation, subscription: RetrievedSubscription)(implicit m: Messages)
 
-@formatMoney(value: BigDecimal) = {
-    @if(value < 0) {
-        @{f"-£${value.abs}%,.2f"}
-    } else {
-        @{f"£$value%,.2f"}
-    }
-}
-
 <table class="check-your-answers">
-    <caption class="heading-medium">@Messages(s"$key.balance.due", formatMoney(total))</caption>
+    <caption class="heading-medium">@Messages(s"$key.balance.due", format_money(total))</caption>
     <thead>
         <tr>
             <th>@Messages(s"$key.activity")</th>
@@ -45,7 +39,7 @@
                 <td rowspan="2">@Messages(s"$key.$lineKey")</td>
                 <td>@Messages(s"$key.low")</td>
                 <td>@{f"${litres._1}%,d"}</td>
-                <td class="no-minus-wrapping">@formatMoney(costLower * litres._1 * multiplier)</td>
+                <td class="no-minus-wrapping">@format_money(costLower * litres._1 * multiplier)</td>
                 <td>
                     <a href="@lineKey" class="returns-change-link">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
@@ -55,7 +49,7 @@
             <tr>
                 <td>@Messages(s"$key.high")</td>
                 <td>@{f"${litres._2}%,d"}</td>
-                <td class="no-minus-wrapping"> @formatMoney(costHigher * litres._2 * multiplier)</td>
+                <td class="no-minus-wrapping"> @format_money(costHigher * litres._2 * multiplier)</td>
                 <td>
                     <a href="@lineKey" class="returns-change-link">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
@@ -76,7 +70,7 @@
         @*</tr>*@
         <tr>
             <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.total")</h4></th>
-            <td class="numeric"><h4 class="heading-small no-minus-wrapping">@formatMoney(total)</h4></td>
+            <td class="numeric"><h4 class="heading-small no-minus-wrapping">@format_money(total)</h4></td>
             <td></td>
         </tr>
     </tbody>
