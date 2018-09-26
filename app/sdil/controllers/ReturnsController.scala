@@ -51,7 +51,7 @@ class ReturnsController (
   val config: AppConfig,
   val ec: ExecutionContext
 ) extends SdilWMController with FrontendController with Modulus23Check with ReturnJourney {
-
+  
   def confirmationPage(
     key: String,
     period: ReturnPeriod,

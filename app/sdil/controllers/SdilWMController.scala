@@ -480,7 +480,11 @@ trait SdilWMController extends WebMonadController
         })
       .verifying("error.sdilref.notSmall", x => {
         Await.result(isSmallProducer(x, sdilConnector: SoftDrinksIndustryLevyConnector), 20.seconds)
+      })
+      .verifying("error.sdilref.same", x => {
+        x != origSdilRef
       }),
+
     "lower"   -> litreage,
     "higher"  -> litreage
   ){

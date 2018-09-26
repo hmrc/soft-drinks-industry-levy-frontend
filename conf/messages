@@ -23,6 +23,7 @@ sdil.common.cancel=Cancel
 error.sdilref.invalid=Invalid SDIL Number
 error.sdilref.notSmall=Small producer reference number does not match a business that is currently registered as a \
   small producer. Check and try again.
+error.sdilref.same=​Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
 
 #Address lines
 sdil.address.line1=Address line 1
@@ -952,7 +953,19 @@ own-brands-packaged-at-own-sites.inner-heading=How many litres do you need to re
 heading.packaged-as-a-contract-packer=Are you reporting liable drink you’ve packaged as a third party or contract packer at UK sites you operate?
 packaged-as-a-contract-packer.inner-heading=How many litres do you need to report?
 packaged-as-a-contract-packer.paragraph=Do not include liable drinks you’ve packaged for registered small producers.
+packaged-as-a-contract-packer.help.header=What is a small producer?
+packaged-as-a-contract-packer.help=A business is a small producer if it:\
+  <ul class="list list-bullet">\
+  <li>has had less than 1 million litres of its own brands of liable drink packaged globally in the past 12 months</li>\
+  <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
+  </ul>
 heading.exemptions-for-small-producers=Do you need to claim an exemption for any of the liable drink you’ve packaged for registered small producers?
+exemptions-for-small-producers.help.header=What is a small producer?
+exemptions-for-small-producers.help=A business is a small producer if it:\
+  <ul class="list list-bullet">\
+  <li>has had less than 1 million litres of its own brands of liable drink packaged globally in the past 12 months</li>\
+  <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
+  </ul>
 heading.small-producer-details=Your small producer exemptions
 heading.multi.small-producer-details=You have added {0} small producer{1}
 small-producer-details.list-control.heading=Do you want to add another small producer?
@@ -1134,7 +1147,10 @@ organisation-type.option.limitedcompany=Limited company
 
 heading.do-not-register=You don’t need to register
 
-how-to-pay.title=How to pay
+how-to-pay.title=Make sure you include your Soft Drinks Industry Levy reference <strong style="font-weight: bold">{0}</strong> when making payments. Find out\
+  <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">\
+  how to pay the levy (opens in a new window or tab).\
+  </a>
 how-to-pay.pay-by=You can pay by Bacs or CHAPS using:
 how-to-pay.sort-code=sort code: 20-05-17
 how-to-pay.acct-no=account number: 40204374
