@@ -42,17 +42,20 @@ trait ReturnJourney extends SdilWMController {
     def smallProdsJ: WebMonad[List[SmallProducer]] = for {
       editMode        <- read[Boolean]("_editSmallProducers").map{_.getOrElse(false)}
       opt             <- ask(bool, "exemptions-for-small-producers", default.map{_.packSmall.nonEmpty})
+
       smallProds      <- manyT("small-producer-details",
                                {ask(smallProducer(sdilRef, sdilConnector), _)},
                                min = 1,
                                default = default.fold(List.empty[SmallProducer]){_.packSmall},
                                editSingleForm = Some((smallProducer(sdilRef, sdilConnector), smallProducerForm)),
-                               configOverride = _.copy(mode = if(editMode) SingleStep else (LeapAhead))
+                               configOverride = _.copy(mode = if(editMode) SingleStep else LeapAhead)
                               ) emptyUnless opt
       _               <- write[Boolean]("_editSmallProducers", false)
     } yield { smallProds }
 
     for {
+      // this update sets the value of the add another small producer question to no
+      _ <- update[String]("small-producer-details")(_.getOrElse("Done").some)
       ownBrands      <- askEmptyOption(
         litreagePair, "own-brands-packaged-at-own-sites", default.map{_.ownBrand}
       ) emptyUnless !subscription.activity.smallProducer
