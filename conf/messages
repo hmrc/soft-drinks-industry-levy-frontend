@@ -952,7 +952,19 @@ own-brands-packaged-at-own-sites.inner-heading=How many litres do you need to re
 heading.packaged-as-a-contract-packer=Are you reporting liable drink you’ve packaged as a third party or contract packer at UK sites you operate?
 packaged-as-a-contract-packer.inner-heading=How many litres do you need to report?
 packaged-as-a-contract-packer.paragraph=Do not include liable drinks you’ve packaged for registered small producers.
+packaged-as-a-contract-packer.help.header=What is a small producer?
+packaged-as-a-contract-packer.help=A business is a small producer if it:\
+  <ul class="list list-bullet">\
+  <li>has had less than 1 million litres of its own brands of liable drink packaged globally in the past 12 months</li>\
+  <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
+  </ul>
 heading.exemptions-for-small-producers=Do you need to claim an exemption for any of the liable drink you’ve packaged for registered small producers?
+exemptions-for-small-producers.help.header=What is a small producer?
+exemptions-for-small-producers.help=A business is a small producer if it:\
+  <ul class="list list-bullet">\
+  <li>has had less than 1 million litres of its own brands of liable drink packaged globally in the past 12 months</li>\
+  <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
+  </ul>
 heading.small-producer-details=Your small producer exemptions
 heading.multi.small-producer-details=You have added {0} small producer{1}
 small-producer-details.list-control.heading=Do you want to add another small producer?
