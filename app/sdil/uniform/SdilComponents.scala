@@ -173,7 +173,7 @@ object SdilComponents extends FormHelpers {
 
   def numeric(key: String): Mapping[Int] = text
     .verifying(s"error.$key.required", _.nonEmpty)
-    .verifying("error.number.", v => v.isEmpty || Try(v.toInt).isSuccess)
+    .verifying(s"error.$key.number", v => v.isEmpty || Try(v.toInt).isSuccess)
     .transform[Int](_.toInt, _.toString)
 
   sealed trait OrganisationType extends EnumEntry
