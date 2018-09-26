@@ -48,7 +48,7 @@ trait ReturnJourney extends SdilWMController {
                                min = 1,
                                default = default.fold(List.empty[SmallProducer]){_.packSmall},
                                editSingleForm = Some((smallProducer(sdilRef, sdilConnector), smallProducerForm)),
-                               configOverride = _.copy(mode = if(editMode) SingleStep else LeapAhead)
+                               configOverride = _.copy(mode = if(editMode) SingleStep else (LeapAhead))
                               ) emptyUnless opt
       _               <- write[Boolean]("_editSmallProducers", false)
     } yield { smallProds }

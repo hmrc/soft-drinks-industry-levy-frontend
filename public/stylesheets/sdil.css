@@ -60,6 +60,10 @@
         font-weight: 400;
         vertical-align: text-top;
     }
+
+    table th .bold {
+        font-weight: bold;
+    }
 }
 
 @media (max-width: 640px) {

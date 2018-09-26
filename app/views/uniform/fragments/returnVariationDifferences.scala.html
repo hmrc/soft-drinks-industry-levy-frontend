@@ -60,10 +60,10 @@
 @for(change <- variation.changedLitreages) {
     @table_head(change._1, change._1) {
         <tr>
-            <th>@Messages(s"$key.correction.title")</th>
-            <th>@Messages(s"$key.band.title")</th>
-            <th>@Messages(s"$key.litres.title")</th>
-            <th>@Messages(s"$key.cost.title")</th>
+            <th class="bold">@Messages(s"$key.correction.title")</th>
+            <th class="bold">@Messages(s"$key.band.title")</th>
+            <th class="bold">@Messages(s"$key.litres.title")</th>
+            <th class="bold">@Messages(s"$key.cost.title")</th>
         </tr>
         <tr>
             <td rowspan="2">@Messages(s"$key.correction.label.original")</td>
@@ -108,7 +108,7 @@
             <td scope="row"><h4 class="heading-small">@Messages(s"$key.net.adjusted.positive")</h4></td>
 
         }
-        <td class="numeric"><h4 class="heading-small no-minus-wrapping">@format_money(variation.revised.total - variation.original.total)</h4></td>
+        <td class="numeric"><h4 class="heading-small">@format_money(variation.revised.total - variation.original.total)</h4></td>
     </tr>
 }
 
