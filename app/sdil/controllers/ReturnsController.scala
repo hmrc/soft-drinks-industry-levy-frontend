@@ -22,10 +22,7 @@ import java.time.format._
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
-import play.api.data.Forms._
-import play.api.data.{Form, Mapping}
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json._
 import play.api.mvc.{AnyContent, _}
 import play.twirl.api.Html
 import sdil.actions.RegisteredAction
@@ -39,13 +36,11 @@ import uk.gov.hmrc.domain.Modulus23Check
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.uniform._
 import uk.gov.hmrc.uniform.playutil._
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
 
 import scala.concurrent._
-import scala.concurrent.duration._
 
 class ReturnsController (
   val messagesApi: MessagesApi,
@@ -55,104 +50,8 @@ class ReturnsController (
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController with Modulus23Check {
-
-  //TODO extract to config
-  val costLower = BigDecimal("0.18")
-  val costHigher = BigDecimal("0.24")
-
-  implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
-
-  implicit val litreageForm = new FormHtml[(Long,Long)] {
-    def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {
-      uniform.fragments.litreage(key, form, false)(messages)
-    }
-  }
-
-  implicit val smallProducerHtml: HtmlShow[SmallProducer] =
-      HtmlShow.instance { producer =>
-        Html(producer.alias.map { x =>
-          "<h3>" ++ Messages("small-producer-details.name", x) ++"<br/>"
-        }.getOrElse(
-          "<h3>"
-        ) 
-          ++ Messages("small-producer-details.refNumber", producer.sdilRef) ++ "</h3>"
-          ++ "<br/>"
-          ++ Messages("small-producer-details.lowBand", f"${producer.litreage._1}%,d")
-          ++ "<br/>"
-          ++ Messages("small-producer-details.highBand", f"${producer.litreage._2}%,d")
-        )
-      }
-
-  // TODO: At present this uses an Await.result to check the small producer status, thus
-  // blocking a thread. At a later date uniform should be updated to include the capability
-  // for a subsequent stage to invalidate a prior one.
-  implicit def smallProducer(origSdilRef: String)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
-    "alias" -> optional(text),
-    "sdilRef" -> nonEmptyText
-      .verifying(
-        "error.sdilref.invalid", x => {
-          x.isEmpty ||
-            (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
-            isCheckCorrect(x, 1))
-        })
-      .verifying("error.sdilref.notSmall", x => {
-          Await.result(isSmallProducer(x), 20.seconds)
-        })
-      .verifying("error.sdilref.same", x => {
-        x != origSdilRef
-      }),
-    "lower"   -> litreage,
-    "higher"  -> litreage
-  ){
-    (alias, ref,l,h) => SmallProducer(alias, ref, (l,h))
-  }{
-    case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
-  }
-
-  def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
-    val ra = List(
-      ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
-      ("exemptions-for-small-producers", sdilReturn.packSmall.map{_.litreage}.combineAll, 0),
-      ("brought-into-uk", sdilReturn.importLarge, 1),
-      ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
-      ("claim-credits-for-exports", sdilReturn.export, -1),
-      ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
-    )
-    if(!isSmallProducer)
-      ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
-    else
-      ra
-  }
-
-  private def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal = {
-    d.map{case (_, (l,h), m) => costLower * l * m + costHigher * h * m}.sum
-  }
-
-  def checkYourAnswers(
-    key: String,
-    sdilReturn: SdilReturn,
-    broughtForward: BigDecimal,
-    variation: ReturnsVariation,
-    subscription: Subscription): WebMonad[Unit] = {
-
-    val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
-    val subtotal = calculateSubtotal(data)
-    val total: BigDecimal = subtotal + broughtForward
-
-    val inner = uniform.fragments.returnsCYA(
-      key,
-      data,
-      costLower,
-      costHigher,
-      subtotal,
-      broughtForward,
-      total,
-      variation,
-      subscription)
-    tell(key, inner)
-  }
-
+) extends SdilWMController with FrontendController with Modulus23Check with ReturnJourney {
+  
   def confirmationPage(
     key: String,
     period: ReturnPeriod,
@@ -205,26 +104,6 @@ class ReturnsController (
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
 
-
-  private def askReturn(subscription: Subscription, sdilRef: String)(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = for {
-    ownBrands      <- askEmptyOption(litreagePair, "own-brands-packaged-at-own-sites") emptyUnless !subscription.activity.smallProducer
-    contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer")
-    askSmallProd   <- ask(bool, "exemptions-for-small-producers")
-    firstSmallProd <- ask(smallProducer(sdilRef), "first-small-producer-details") when askSmallProd
-    smallProds     <- manyT("small-producer-details",
-                            {ask(smallProducer(sdilRef), _)},
-                            min = 1,
-                            default = firstSmallProd.fold(List.empty[SmallProducer])(x => List(x)),
-                            editSingleForm = Some((smallProducer(sdilRef), smallProducerForm))
-                           ) when askSmallProd
-    imports        <- askEmptyOption(litreagePair, "brought-into-uk")
-    importsSmall   <- askEmptyOption(litreagePair, "brought-into-uk-from-small-producers")
-    exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports")
-    wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged")
-    sdilReturn     =  SdilReturn(ownBrands,contractPacked,smallProds.getOrElse(Nil),imports,importsSmall,exportCredits,wastage)
-  } yield sdilReturn
-
-
   private def askNewWarehouses()(implicit hc: HeaderCarrier): WebMonad[List[Site]] = for {
     addWarehouses  <- ask(bool, "ask-secondary-warehouses-in-return")(implicitly, implicitly, extraMessages)
     firstWarehouse <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages()) when
@@ -253,7 +132,7 @@ class ReturnsController (
 
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    sdilReturn     <- askReturn(subscription, sdilRef)
+    sdilReturn     <- askReturn(subscription, sdilRef, sdilConnector)
     // check if they need to vary
     isNewImporter   = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
     isNewPacker     = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
@@ -273,8 +152,8 @@ class ReturnsController (
       email = subscription.contact.email,
       taxEstimation = taxEstimation(sdilReturn)
     )
-    broughtForward <- BigDecimal("0").pure[WebMonad]
-    _              <- checkYourAnswers("check-your-answers", sdilReturn, broughtForward, variation, subscription)
+    broughtForward <- BigDecimal("0").pure[WebMonad] // TODO will need setting up properly before 10/2018
+    _              <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
     _              <- if (isNewImporter || isNewPacker) {
@@ -297,8 +176,7 @@ class ReturnsController (
   def index(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     val period = ReturnPeriod(year, quarter)
-    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
-
+    val persistence = SaveForLaterPersistence(s"returns-$year$quarter", sdilRef, cache)
     for {
       subscription <- sdilConnector.retrieveSubscription(sdilRef).map{_.get}
       pendingReturns <- sdilConnector.returns.pending(subscription.utr)

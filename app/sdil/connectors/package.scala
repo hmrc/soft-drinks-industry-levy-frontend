@@ -16,24 +16,16 @@
 
 package sdil
 
-import play.api.libs.json._
-import sdil.models.retrieved.RetrievedSubscription
+import play.api.libs.json.{Json, OFormat}
+import sdil.models.{ReturnPeriod, SdilReturn, SmallProducer}
+import ltbs.play.scaffold.SdilComponents.longTupleFormatter
+import sdil.models.variations.ReturnVariationData
 
-import scala.collection.immutable
-import scala.collection.immutable.ListMap
-import scala.concurrent.Future
-import scala.language.implicitConversions
+package object connectors {
 
-package object controllers {
-  implicit def future[A](a: A): Future[A] = Future.successful(a)
+  implicit val returnPeriodJson: OFormat[ReturnPeriod] = Json.format[ReturnPeriod]
+  implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
+  implicit val returnJson: OFormat[SdilReturn] = Json.format[SdilReturn]
+  implicit val returnVariationDataFormat: OFormat[ReturnVariationData] = Json.format[ReturnVariationData]
 
-  val returnLiterageList = List(
-    "own-brands-packaged-at-own-sites",
-    "packaged-as-a-contract-packer",
-    "exemptions-for-small-producers",
-    "brought-into-uk",
-    "brought-into-uk-from-small-producers",
-    "claim-credits-for-exports",
-    "claim-credits-for-lost-damaged"
-  )
 }

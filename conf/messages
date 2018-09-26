@@ -1159,3 +1159,96 @@ how-to-pay.payment-ref=payment reference: {0}
 how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
     Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
 
+changeType.option.returns=Correct an error in a previous return
+heading.returnPeriod=Which return do you need to correct?
+returnPeriod.help.header=I can’t find the return I’m looking for
+returnPeriod.help=If you did not file a return then it won't be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.
+returnPeriod.continue=Continue
+
+returnPeriod.option.0=January to March
+returnPeriod.option.1=April to June
+returnPeriod.option.2=July to September
+returnPeriod.option.3=October to December
+
+check-your-variation-answers.balance.due=
+check-your-variation-answers.heading={0}
+check-your-variation-answers.cost=Cost
+check-your-variation-answers.litres=Litres
+check-your-variation-answers.band=Band
+check-your-variation-answers.activity=Activity
+check-your-variation-answers.exemptions-for-small-producers=Contract packed for registered small producers
+check-your-variation-answers.own-brands-packaged-at-own-sites=Own brands packaged at your own site
+check-your-variation-answers.packaged-as-a-contract-packer=Contract packed at your own site
+check-your-variation-answers.brought-into-uk=Brought into the UK
+check-your-variation-answers.brought-into-uk-from-small-producers=Brought into the UK from small producers
+check-your-variation-answers.claim-credits-for-exports=Exported
+check-your-variation-answers.claim-credits-for-lost-damaged=Lost or destroyed
+check-your-variation-answers.subtotal=Subtotal
+check-your-variation-answers.balance.brought.forward=Balance brought forward
+check-your-variation-answers.total=Total
+check-your-variation-answers.low=Low
+check-your-variation-answers.high=High
+check-your-variation-answers.change=Change
+check-your-variation-answers.change.own-brands-packaged-at-own-sites=volume of own brand
+check-your-variation-answers.change.exemptions-for-small-producers=volume contract packed for registered small producers
+check-your-variation-answers.change.packaged-as-a-contract-packer=volume contract packed at your own site
+check-your-variation-answers.change.brought-into-uk-from-small-producers=volume brought into the UK from small producers
+check-your-variation-answers.change.brought-into-uk=volume brought into the UK
+check-your-variation-answers.change.claim-credits-for-exports=volume exported
+check-your-variation-answers.change.claim-credits-for-lost-damaged=volume lost, damaged or destroyed
+check-your-variation-answers.continue=Continue
+check-your-variation-answers.submit-subheading=Submit your return
+check-your-variation-answers.total.original=Original return total
+check-your-variation-answers.total.new=New return total
+check-your-variation-answers.net.adjusted.positive=Net adjusted amount excluding interest
+check-your-variation-answers.net.adjusted.negative=Net adjusted amount
+
+heading.check-return-differences=Check your answers before sending your correction
+
+check-return-differences.ownBrand=Own brands packaged at your own site
+check-return-differences.packLarge=Contract packed at your own site
+check-return-differences.importLarge=Brought into the UK
+check-return-differences.importSmall=Brought into the UK from small producers
+check-return-differences.export=Exported
+check-return-differences.wastage=Lost or destroyed
+check-return-differences.packSmall=Contract packed for registered small producers
+
+check-return-differences.own-brands-packaged-at-own-sites=Own brands packaged at your own site
+check-return-differences.packaged-as-a-contract-packer=Contract packed at your own site
+check-return-differences.brought-into-uk=Brought into the UK
+check-return-differences.brought-into-uk-from-small-producers=Brought into the UK from small producers
+check-return-differences.claim-credits-for-exports=Exported
+check-return-differences.claim-credits-for-lost-damaged=Lost or destroyed
+check-return-differences.exemptions-for-small-producers =Contract packed for registered small producers
+
+sdil.check-return-differences.balance.return-variation-reason.subheading=Balance
+check-return-differences.total.original=Original return total
+check-return-differences.total.new=New return total
+check-return-differences.net.adjusted.positive=Net adjusted amount excluding interest
+check-return-differences.net.adjusted.negative=Net adjusted amount
+
+check-return-differences.submit.heading=Submit your correction
+check-return-differences.submit.p=By submitting this correction you are confirming that, to the best of your knowledge, the details you are providing are correct. 
+
+check-return-differences.correction.title=Correction
+check-return-differences.band.title=Band
+check-return-differences.litres.title=Litres
+check-return-differences.cost.title=Cost
+check-return-differences.correction.label.original=Original amount
+check-return-differences.correction.label.revised=New amount
+check-return-differences.band.label.low=Low
+check-return-differences.band.label.high=High
+
+heading.return-variation-reason=Why do you need to correct this return?
+return-variation-reason.lead=Make sure you provide as much detail as you can about why you had to correct your return. We may get in touch with your contact person to discuss your correction.
+error.return-variation-reason.empty=Enter a reason for correcting your return
+sdil.check-return-differences.reason.return-variation-reason.subheading=Correction details
+return-variation-reason.label=Reason for correction
+returnVariationDone.title=Correction sent
+returnVariationDone.subheading=We will review the details you updated and get back to you 
+returnVariationDone.your.updates=
+
+return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you.</p>\
+  <p>We may get in touch with your contact person to discuss your changes.</p>\
+  <p>Once we have approved your correction, your account balance will be updated.</p>\
+  <p>Do not make any payments until we have confirmed how much you need to pay, as you will be charged interest on your adjusted amount.</p>

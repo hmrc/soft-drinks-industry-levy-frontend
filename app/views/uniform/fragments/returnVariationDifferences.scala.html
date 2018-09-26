@@ -1,0 +1,137 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import sdil.models.variations.ReturnVariationData
+@import sdil.models.ReturnsVariation
+@import sdil.models.SdilReturn
+@import sdil.models.backend.Subscription
+@import sdil.controllers.returnLiterageList
+@import views.html.softdrinksindustrylevy.helpers._
+
+@(key: String, variation: ReturnVariationData)(implicit m: Messages)
+
+@cost(key: String, value: BigDecimal) = {
+    @defining(
+        key match {
+            case a if a == "own-brands-packaged-at-own-sites" || a == "packaged-as-a-contract-packer" || a == "brought-into-uk" => 1
+            case b if b == "claim-credits-for-exports" || b == "claim-credits-for-lost-damaged" => -1
+            case _ => 0
+        }
+    ) { multiplier =>
+      @format_money(value * multiplier)
+    }
+}
+
+@table_head(title: String, changeLink: String)(rowContent: Html) = {
+    <table class="check-your-answers">
+        <thead>
+            <tr>
+                <th colspan="3">
+                    <h2 class="heading-medium">
+                    @Messages(s"$key.$title")
+                    </h2>
+                </th>
+                <th class="change-answer" colspan="3">
+                    <button name="@key" value="@changeLink" id="continue-button" class="link-button">
+                        @Messages("sdil.declaration.change-link") <span class="visuallyhidden">@Messages(s"$key.change.$title")</span>
+                    </button>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        @rowContent
+        </tbody>
+    </table>
+}
+
+@for(change <- variation.changedLitreages) {
+    @table_head(change._1, change._1) {
+        <tr>
+            <th class="bold">@Messages(s"$key.correction.title")</th>
+            <th class="bold">@Messages(s"$key.band.title")</th>
+            <th class="bold">@Messages(s"$key.litres.title")</th>
+            <th class="bold">@Messages(s"$key.cost.title")</th>
+        </tr>
+        <tr>
+            <td rowspan="2">@Messages(s"$key.correction.label.original")</td>
+            <td>@Messages(s"$key.band.label.low")</td>
+            <td>@change._2._2._1</td>
+            <td>@cost(change._1, change._2._2._1 * BigDecimal(0.18))</td>
+        </tr>
+        <tr>
+            <td>@Messages(s"$key.band.label.high")</td>
+            <td>@change._2._2._2</td>
+            <td>@cost(change._1, change._2._2._2 * BigDecimal(0.24))</td>
+        </tr>
+        <tr>
+            <td rowspan="2">@Messages(s"$key.correction.label.revised")</td>
+            <td>@Messages(s"$key.band.label.low")</td>
+            <td>@change._2._1._1</td>
+            <td>@cost(change._1, change._2._1._1 * BigDecimal(0.18))</td>
+        </tr>
+        <tr>
+            <td>@Messages(s"$key.band.label.high")</td>
+            <td>@change._2._1._2</td>
+            <td>@cost(change._1, change._2._1._2 * BigDecimal(0.24))</td>
+        </tr>
+    }
+}
+
+@declaration_table(s"$key.balance", Messages("return-variation-reason.subheading")) {
+
+
+    <tr>
+        <td scope="row">@Messages(s"$key.total.original")</td>
+        <td class="numeric">@format_money(variation.original.total)</td>
+    </tr>
+    <tr>
+        <td scope="row">@Messages(s"$key.total.new")</td>
+        <td class="numeric">@format_money(variation.revised.total)</td>
+    </tr>
+    <tr>
+        @if((variation.revised.total - variation.original.total) < 0) {
+            <td scope="row"><h4 class="heading-small">@Messages(s"$key.net.adjusted.negative")</h4></td>
+        } else {
+            <td scope="row"><h4 class="heading-small">@Messages(s"$key.net.adjusted.positive")</h4></td>
+
+        }
+        <td class="numeric"><h4 class="heading-small">@format_money(variation.revised.total - variation.original.total)</h4></td>
+    </tr>
+}
+
+@declaration_table(s"$key.reason", Messages("return-variation-reason.subheading")) {
+    <tr>
+        <td>@Messages("return-variation-reason.label")</td>
+        <td>@variation.reason</td>
+        <td class="change-answer" ><a href="return-variation-reason">@Messages(s"sdil.declaration.change-link")</a></td>
+    </tr>
+}
+
+<br/>
+
+<h2 class="heading-medium">
+    @Messages("check-return-differences.submit.heading")
+</h2>
+    
+<p>
+    @Messages("check-return-differences.submit.p")
+</p>
+
+<p>
+    <a href="javascript:window.print()" class="print-link" onclick="ga('send', 'event', 'print', 'click', 'Print')">
+    @Messages("sdil.common.print")
+    </a>
+</p>
