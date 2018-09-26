@@ -55,7 +55,6 @@ trait SdilWMController extends WebMonadController
 
   implicit def config: AppConfig
 
-  //TODO extract to config
   val costLower = BigDecimal("0.18")
   val costHigher = BigDecimal("0.24")
 
@@ -297,7 +296,7 @@ trait SdilWMController extends WebMonadController
     ask(mapping, key, default.some)
 
   // Because I decided earlier on to make everything based off of JSON
-  // I have to write silly things like this. TODO
+  // I have to write silly things like this.
   implicit val formatUnit: Format[Unit] = new Format[Unit] {
     def writes(u: Unit) = JsNull
     def reads(v: JsValue) = JsSuccess(())

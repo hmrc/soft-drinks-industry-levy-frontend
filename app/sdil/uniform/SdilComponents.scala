@@ -179,7 +179,6 @@ object SdilComponents extends FormHelpers {
   sealed trait OrganisationType extends EnumEntry
   object OrganisationType extends Enum[OrganisationType] {
     val values = findValues
-    // TODO can uppercase these when we refactor
     case object limitedCompany extends OrganisationType
     case object limitedLiabilityPartnership extends OrganisationType
     case object partnership extends OrganisationType
