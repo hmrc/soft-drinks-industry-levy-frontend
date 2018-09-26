@@ -94,12 +94,14 @@ class ReturnsController (
         "error.sdilref.invalid", x => {
           x.isEmpty ||
             (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
-            isCheckCorrect(x, 1) &&
-          x != origSdilRef)
+            isCheckCorrect(x, 1))
         })
       .verifying("error.sdilref.notSmall", x => {
           Await.result(isSmallProducer(x), 20.seconds)
-        }),
+        })
+      .verifying("error.sdilref.same", x => {
+        x != origSdilRef
+      }),
     "lower"   -> litreage,
     "higher"  -> litreage
   ){

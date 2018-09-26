@@ -23,6 +23,7 @@ sdil.common.cancel=Cancel
 error.sdilref.invalid=Invalid SDIL Number
 error.sdilref.notSmall=Small producer reference number does not match a business that is currently registered as a \
   small producer. Check and try again.
+error.sdilref.same=​Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
 
 #Address lines
 sdil.address.line1=Address line 1
