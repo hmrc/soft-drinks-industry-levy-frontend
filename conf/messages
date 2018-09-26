@@ -1134,7 +1134,10 @@ organisation-type.option.limitedcompany=Limited company
 
 heading.do-not-register=You don’t need to register
 
-how-to-pay.title=How to pay
+how-to-pay.title=Make sure you include your Soft Drinks Industry Levy reference <strong style="font-weight: bold">{0}</strong> when making payments. Find out\
+  <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">\
+  how to pay the levy (opens in a new window or tab).\
+  </a>
 how-to-pay.pay-by=You can pay by Bacs or CHAPS using:
 how-to-pay.sort-code=sort code: 20-05-17
 how-to-pay.acct-no=account number: 40204374

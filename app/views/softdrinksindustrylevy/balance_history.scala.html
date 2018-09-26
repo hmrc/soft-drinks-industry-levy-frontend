@@ -31,7 +31,9 @@
             <h2 class="heading-medium">
                 @printbalance("account.balance.amount", balance)
             </h2>
-            @helpers.howToPay(sdilRef)
+            <div class="panel panel-border-wide">
+                @Html(Messages("how-to-pay.title", sdilRef))
+            </div>
         </legend>
         @if(lineItems.nonEmpty) {
         <div class="form-group">
