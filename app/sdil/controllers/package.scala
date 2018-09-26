@@ -30,8 +30,8 @@ package object controllers {
   val returnLiterageList = List(
     "own-brands-packaged-at-own-sites",
     "packaged-as-a-contract-packer",
-    "brought-into-uk-from-small-producers",
     "brought-into-uk",
+    "brought-into-uk-from-small-producers",
     "exemptions-for-small-producers",
     "claim-credits-for-exports",
     "claim-credits-for-lost-damaged"
