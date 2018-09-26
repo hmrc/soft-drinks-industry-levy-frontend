@@ -37,7 +37,7 @@ case class SdilReturn(
   def totalPacked: (Long, Long) = packLarge |+| packSmall.total
   def totalImported: (Long, Long) = importLarge |+| importSmall
 
-  private def toLongs: List[(Long,Long)] = List(ownBrand, packLarge, importLarge, importSmall, packSmall.total, export, wastage)
+  private def toLongs: List[(Long,Long)] = List(ownBrand, packLarge, packSmall.total, importLarge, importSmall, export, wastage)
   private val keys = returnLiterageList
   private def sumLitres(l: List[(Long, Long)]) = l.map(x => LitreOps(x).dueLevy).sum
 
@@ -64,7 +64,6 @@ case class SdilReturn(
     lazy val highLevy: BigDecimal = litreBands._2 * BigDecimal("0.24")
     lazy val dueLevy: BigDecimal = lowLevy + highLevy
   }
-
 }
 
 case class ReturnPeriod(year: Int, quarter: Int) {
