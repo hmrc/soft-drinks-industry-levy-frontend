@@ -22,7 +22,7 @@
 @import views.html.uniform.helpers._
 
 
-@(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String], helpText: Option[Html] = None)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages)
+@(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String], helpText: Option[Html] = None)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: Boolean)
 
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 

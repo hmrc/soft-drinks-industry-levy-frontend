@@ -14,10 +14,12 @@
  * limitations under the License.
  *@
 
-@(breadcrumbs: List[String])(implicit messages: Messages)
+@(breadcrumbs: List[String])(implicit messages: Messages, showBackLink: Boolean = true)
 
-@breadcrumbs.headOption.fold {
+@if(showBackLink) {
+ @breadcrumbs.headOption.fold {
   <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
-} { x =>
+ } { x =>
   <a class="link-back" href="./@x">@Messages("sdil.common.back")</a>
+ }
 }

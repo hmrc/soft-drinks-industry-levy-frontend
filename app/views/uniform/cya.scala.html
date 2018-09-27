@@ -19,7 +19,7 @@
 @import views.html.uniform.helpers._
 @import helper.{inputRadioGroup => _, _}
 
-@(key: String, form: Form[String], breadcrumbs: List[String], mainContent: Html)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages)
+@(key: String, form: Form[String], breadcrumbs: List[String], mainContent: Html)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: Boolean = true)
 
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 

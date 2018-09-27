@@ -73,7 +73,7 @@ class RegistrationController(
     val organisationTypes = OrganisationType.values.toList
       .filterNot(_== soleTrader && hasCTEnrolment)
       .sortBy(x => Messages("organisation-type.option." + x.toString.toLowerCase))
-
+    implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map("pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}"))
     for {
       orgType        <- askOneOf("organisation-type", organisationTypes)
       noPartners     =  uniform.fragments.partnerships()
@@ -98,19 +98,18 @@ class RegistrationController(
       isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
       regDate        <- askRegDate(packLarge, copacks, imports) when (!isVoluntary)
       askPackingSites = (packLarge.contains(true) && packageOwn.flatten.nonEmpty) || !copacks.isEmpty
-      extraMessages   = ExtraMessages(messages = Map("pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}"))
-      useBusinessAddress <- ask(bool, "pack-at-business-address")(implicitly, implicitly, extraMessages) when askPackingSites
+      useBusinessAddress <- ask(bool, "pack-at-business-address") when askPackingSites
         packingSites   = if (useBusinessAddress.getOrElse(false)) {
                           List(Site.fromAddress(fd.rosmData.address))
                          } else {
                           List.empty[Site]
                          }
-      firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when packingSites.isEmpty && askPackingSites
+      firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages(), implicitly) when packingSites.isEmpty && askPackingSites
       packSites       <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless askPackingSites
-      addWarehouses   <- ask(bool, "ask-secondary-warehouses")(implicitly, implicitly, extraMessages) when !isVoluntary
-      firstWarehouse  <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages()) when addWarehouses.getOrElse(false)
+      addWarehouses   <- ask(bool, "ask-secondary-warehouses") when !isVoluntary
+      firstWarehouse  <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages(), implicitly) when addWarehouses.getOrElse(false)
       warehouses      <- askWarehouses(List.empty[Site] ++ firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless addWarehouses.getOrElse(false)
-      contactDetails  <- ask(contactDetailsMapping, "contact-details")(implicitly, implicitly, ExtraMessages())
+      contactDetails  <- ask(contactDetailsMapping, "contact-details")
       activity        =  Activity(
                            longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
                            longTupToLitreage(imports.getOrElse((0,0))),
