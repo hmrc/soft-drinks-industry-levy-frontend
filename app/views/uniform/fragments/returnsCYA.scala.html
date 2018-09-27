@@ -39,12 +39,12 @@
     <tbody>
         @for((lineKey, litres, multiplier) <- lineItems) {
             <tr>
-                <td rowspan="2">@Messages(s"$key.$lineKey")</td>
+                <th rowspan="2">@Messages(s"$key.$lineKey")</th>
                 <td>@Messages(s"$key.low")</td>
                 <td>@{f"${litres._1}%,d"}</td>
                 <td class="no-minus-wrapping">@format_money(costLower * litres._1 * multiplier)</td>
                 <td>
-                    <button name="@key" value="@lineKey" id="continue-button" class="link-button">
+                    <button name="@key" value="@lineKey" id="@key" class="link-button">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
                     </button>
                 </td>
@@ -54,7 +54,7 @@
                 <td>@{f"${litres._2}%,d"}</td>
                 <td class="no-minus-wrapping"> @format_money(costHigher * litres._2 * multiplier)</td>
                 <td>
-                    <button name="@key" value="@lineKey" id="continue-button" class="link-button">
+                    <button name="@key" value="@lineKey" id="@key" class="link-button">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
                     </button>
                 </td>
@@ -74,23 +74,23 @@
         @if(originalReturn.nonEmpty) {
             @originalReturn.map { r =>
                 <tr>
-                    <td scope="row" colspan="3">@Messages(s"$key.total.original")</td>
+                    <th scope="row" colspan="3">@Messages(s"$key.total.original")</th>
                     <td class="numeric">@format_money(r.total)</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td scope="row" colspan="3">@Messages(s"$key.total.new")</td>
+                    <th scope="row" colspan="3">@Messages(s"$key.total.new")</th>
                     <td class="numeric">@format_money(total)</td>
                     <td></td>
                 </tr>
                 <tr>
                     @if((total - r.total) < 0) {
-                        <td scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.net.adjusted.negative")</h4></td>
+                        <th scope="row" colspan="3"><span class="heading-small">@Messages(s"$key.net.adjusted.negative")</span></th>
                     } else {
-                        <td scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.net.adjusted.positive")</h4></td>
+                        <th scope="row" colspan="3"><span class="heading-small">@Messages(s"$key.net.adjusted.positive")</span></th>
 
                     }
-                    <td class="numeric"><h4 class="heading-small no-minus-wrapping">@format_money(total - r.total)</h4></td>
+                    <td class="numeric"><span class="heading-small no-minus-wrapping">@format_money(total - r.total)</span></td>
                     <td></td>
                 </tr>
             }
@@ -111,11 +111,7 @@
         <br/>
         <div class="panel panel-border-wide form-group">
             <p>
-                You may be charged interest on your net adjusted amount after correcting an error. We will let you know
-                if interest is due and how much you need to pay. Find out what happens
-                <a href="https://www.gov.uk/guidance/submit-a-return-and-pay-the-soft-drinks-industry-levy-notice-2" target="_blank">
-                    if you owe more levy (opens in a new window or tab).</a>
-
+                @Html(Messages(s"$key.interest.help"))
             </p>
         </div>
     } else {

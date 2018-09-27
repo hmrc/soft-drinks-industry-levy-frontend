@@ -1205,6 +1205,11 @@ check-your-variation-answers.total.original=Original return total
 check-your-variation-answers.total.new=New return total
 check-your-variation-answers.net.adjusted.positive=Net adjusted amount excluding interest
 check-your-variation-answers.net.adjusted.negative=Net adjusted amount
+check-your-variation-answers.interest.help=You may be charged interest on your net adjusted amount after \
+  correcting an error. We will let you know if interest is due and how much you need to pay. Find out what happens \
+<a href="https://www.gov.uk/guidance/submit-a-return-and-pay-the-soft-drinks-industry-levy-notice-2" target="_blank">\
+if you owe more levy (opens in a new window or tab).\
+  </a>
 
 heading.check-return-differences=Check your answers before sending your correction
 
@@ -1249,7 +1254,7 @@ sdil.check-return-differences.reason.return-variation-reason.subheading=Correcti
 return-variation-reason.label=Reason for correction
 returnVariationDone.title=Correction sent
 returnVariationDone.subheading=We will review the details you updated and get back to you 
-returnVariationDone.your.updates=
+returnVariationDone.your.updates=Your updates were sent on {0} at {1}.
 
 return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you.</p>\
   <p>We may get in touch with your contact person to discuss your changes.</p>\
