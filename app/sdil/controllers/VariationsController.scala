@@ -89,12 +89,12 @@ class VariationsController(
       change          <- askContactChangeType
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly), default = data
+        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly, implicitly), default = data
           .updatedProductionSites.toList, min = 1, editSingleForm = Some((packagingSiteMapping, packagingSiteForm))) emptyUnless (data.producer.isLarge.contains(true) || data.copackForOthers)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
-        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly), default = data
+        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly, implicitly), default = data
           .updatedWarehouseSites.toList, editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
       } else data.updatedWarehouseSites.pure[WebMonad]
 
@@ -140,13 +140,13 @@ class VariationsController(
                                             "pack-at-business-address.lead" -> s"Registered address: ${Address.fromUkAddress(data.original.address).nonEmptyLines.mkString(", ")}")
                                         )
                                         for {
-                                          usePPOBAddress <- ask(bool, "pack-at-business-address")(implicitly, implicitly, extraMessages) when packer && data.original.productionSites.isEmpty
+                                          usePPOBAddress <- ask(bool, "pack-at-business-address")(implicitly, implicitly, extraMessages, implicitly) when packer && data.original.productionSites.isEmpty
                                           pSites = if (usePPOBAddress.getOrElse(false)) {
                                             List(Site.fromAddress(Address.fromUkAddress(data.original.address)))
                                           } else {
                                             data.updatedProductionSites.toList
                                           }
-                                          firstPackingSite <- ask(packagingSiteMapping, "first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when
+                                          firstPackingSite <- ask(packagingSiteMapping, "first-production-site")(packagingSiteForm, implicitly, ExtraMessages(), implicitly) when
                                             pSites.isEmpty && packer
                                           packSites <- askPackSites(pSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless packer
 
@@ -233,6 +233,7 @@ class VariationsController(
     returnPeriod: ReturnPeriod
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
+    implicit val showBackLink: Boolean = false
     for {
 
       origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
@@ -250,7 +251,7 @@ class VariationsController(
               "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} return"
             ))
 
-      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, originalReturn = variation.original.some)(extraMessages)
+      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, originalReturn = variation.original.some)(extraMessages, false)
 
       reason <- askBigText(
         "return-variation-reason",

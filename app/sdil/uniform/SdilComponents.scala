@@ -75,6 +75,7 @@ object SdilComponents extends FormHelpers {
   }
 
   implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map.empty[String, String])
+  implicit val showBackLink: Boolean = true
 
   implicit val siteProgressiveRevealHtml: HtmlShow[Site] = {
 

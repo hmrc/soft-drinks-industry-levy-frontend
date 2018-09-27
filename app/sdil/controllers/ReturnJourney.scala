@@ -37,7 +37,7 @@ trait ReturnJourney extends SdilWMController {
     sdilRef: String,
     sdilConnector: SoftDrinksIndustryLevyConnector,
     default: Option[SdilReturn] = None
-  )(implicit hc: HeaderCarrier): WebMonad[SdilReturn] = {
+  )(implicit hc: HeaderCarrier, showBackLink: Boolean = true): WebMonad[SdilReturn] = {
 
     def smallProdsJ: WebMonad[List[SmallProducer]] = for {
       editMode        <- read[Boolean]("_editSmallProducers").map{_.getOrElse(false)}
