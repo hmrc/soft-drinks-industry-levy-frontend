@@ -68,23 +68,23 @@
         <tr>
             <th rowspan="2">@Messages(s"$key.correction.label.original")</th>
             <td>@Messages(s"$key.band.label.low")</td>
-            <td>@change._2._2._1</td>
+            <td>@{f"${change._2._2._1}%,d"}</td>
             <td>@cost(change._1, change._2._2._1 * BigDecimal(0.18))</td>
         </tr>
         <tr>
             <td>@Messages(s"$key.band.label.high")</td>
-            <td>@change._2._2._2</td>
+            <td>@{f"${change._2._2._2}%,d"}</td>
             <td>@cost(change._1, change._2._2._2 * BigDecimal(0.24))</td>
         </tr>
         <tr>
             <th rowspan="2">@Messages(s"$key.correction.label.revised")</th>
             <td>@Messages(s"$key.band.label.low")</td>
-            <td>@change._2._1._1</td>
+            <td>@{f"${change._2._1._1}%,d"}</td>
             <td>@cost(change._1, change._2._1._1 * BigDecimal(0.18))</td>
         </tr>
         <tr>
             <td>@Messages(s"$key.band.label.high")</td>
-            <td>@change._2._1._2</td>
+            <td>@{f"${change._2._1._2}%,d"}</td>
             <td>@cost(change._1, change._2._1._2 * BigDecimal(0.24))</td>
         </tr>
     }
