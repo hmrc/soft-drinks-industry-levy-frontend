@@ -257,8 +257,9 @@ class VariationsController(
         constraints = List(("error.return-variation-reason.tooLong",
           _.length <= 255)),
         errorOnEmpty = "error.return-variation-reason.empty")(extraMessages)
-      _ <- checkReturnChanges("check-return-differences", variation.copy(reason = reason))
-      _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason)))
+      repayment <- askOneOf("repayment", List("credit", "bankPayment"))(ltbs.play.scaffold.SdilComponents.extraMessages) when variation.revised.total - variation.original.total < 0
+      _ <- checkReturnChanges("check-return-differences", variation.copy(reason = reason, repaymentMethod = repayment))
+      _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
       _ <- clear
       exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)
 

@@ -118,6 +118,13 @@
         <td>@variation.reason</td>
         <td class="change-answer" ><a href="return-variation-reason">@Messages(s"sdil.declaration.change-link")</a></td>
     </tr>
+    @variation.repaymentMethod.map { x =>
+        <tr>
+            <td>@Messages("return-variation-repayments.label")</td>
+            <td>@Messages(s"$x.short")</td>
+            <td class="change-answer" ><a href="repayment">@Messages(s"sdil.declaration.change-link")</a></td>
+        </tr>
+    }
 }
 
 <br/>

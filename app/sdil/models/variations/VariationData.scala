@@ -30,7 +30,8 @@ case class ReturnVariationData(
   period: ReturnPeriod,
   orgName: String,
   address: UkAddress,
-  reason: String
+  reason: String,
+  repaymentMethod: Option[String] = None
 ) {
 
   def changedLitreages: Map[String, ((Long, Long),(Long,Long))] = original.compare(revised)
