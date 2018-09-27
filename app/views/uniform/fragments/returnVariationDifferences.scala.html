@@ -45,7 +45,7 @@
                     </h2>
                 </th>
                 <th class="change-answer" colspan="3">
-                    <button name="@key" value="@changeLink" id="continue-button" class="link-button">
+                    <button name="@key" value="@changeLink" id="@key" class="link-button">
                         @Messages("sdil.declaration.change-link") <span class="visuallyhidden">@Messages(s"$key.change.$title")</span>
                     </button>
                 </th>
@@ -66,7 +66,7 @@
             <th class="bold">@Messages(s"$key.cost.title")</th>
         </tr>
         <tr>
-            <td rowspan="2">@Messages(s"$key.correction.label.original")</td>
+            <th rowspan="2">@Messages(s"$key.correction.label.original")</th>
             <td>@Messages(s"$key.band.label.low")</td>
             <td>@change._2._2._1</td>
             <td>@cost(change._1, change._2._2._1 * BigDecimal(0.18))</td>
@@ -77,7 +77,7 @@
             <td>@cost(change._1, change._2._2._2 * BigDecimal(0.24))</td>
         </tr>
         <tr>
-            <td rowspan="2">@Messages(s"$key.correction.label.revised")</td>
+            <th rowspan="2">@Messages(s"$key.correction.label.revised")</th>
             <td>@Messages(s"$key.band.label.low")</td>
             <td>@change._2._1._1</td>
             <td>@cost(change._1, change._2._1._1 * BigDecimal(0.18))</td>
@@ -94,29 +94,29 @@
 
 
     <tr>
-        <td scope="row">@Messages(s"$key.total.original")</td>
+        <th scope="row">@Messages(s"$key.total.original")</th>
         <td class="numeric">@format_money(variation.original.total)</td>
     </tr>
     <tr>
-        <td scope="row">@Messages(s"$key.total.new")</td>
+        <th scope="row">@Messages(s"$key.total.new")</th>
         <td class="numeric">@format_money(variation.revised.total)</td>
     </tr>
     <tr>
         @if((variation.revised.total - variation.original.total) < 0) {
-            <td scope="row"><h4 class="heading-small">@Messages(s"$key.net.adjusted.negative")</h4></td>
+            <th scope="row"><span class="heading-small">@Messages(s"$key.net.adjusted.negative")</span></th>
         } else {
-            <td scope="row"><h4 class="heading-small">@Messages(s"$key.net.adjusted.positive")</h4></td>
+            <th scope="row"><span class="heading-small">@Messages(s"$key.net.adjusted.positive")</span></th>
 
         }
-        <td class="numeric"><h4 class="heading-small">@format_money(variation.revised.total - variation.original.total)</h4></td>
+        <td class="numeric"><span class="heading-small">@format_money(variation.revised.total - variation.original.total)</span></td>
     </tr>
 }
 
 @declaration_table(s"$key.reason", Messages("return-variation-reason.subheading")) {
     <tr>
-        <td>@Messages("return-variation-reason.label")</td>
+        <th>@Messages("return-variation-reason.label")</th>
         <td>@variation.reason</td>
-        <td class="change-answer" ><a href="return-variation-reason">@Messages(s"sdil.declaration.change-link")</a></td>
+        <td class="change-answer"><a href="return-variation-reason">@Messages(s"sdil.declaration.change-link")</a></td>
     </tr>
 }
 
