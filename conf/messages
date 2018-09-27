@@ -1252,3 +1252,11 @@ return.variationDone.what-happens-next=<p>We will review the details that you up
   <p>We may get in touch with your contact person to discuss your changes.</p>\
   <p>Once we have approved your correction, your account balance will be updated.</p>\
   <p>Do not make any payments until we have confirmed how much you need to pay, as you will be charged interest on your adjusted amount.</p>
+
+heading.repayment=How do you want the credit to be repaid?
+repayment.lead=Repayment is not guaranteed. We may wish to discuss the claim with you before deciding whether to make a repayment.
+credit=Credited to my Soft Drinks Industry Levy account
+credit.short=Credited to Soft Drinks Industry Levy account
+bankPayment=Paid into my bank account. We will contact you to arrange payment.
+bankPayment.short=Paid into bank
+return-variation-repayments.label=Repayment method
