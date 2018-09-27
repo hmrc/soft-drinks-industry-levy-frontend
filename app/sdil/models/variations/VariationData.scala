@@ -56,7 +56,7 @@ case class RegistrationVariationData(
   previousPages: Seq[Call],
   reason: Option[String] = None,
   deregDate: Option[LocalDate] = None
-) { // TODO consider splitting i.e. DeregVaryData, Contact, Activity etc.
+) {
 
   def isLiablePacker: Boolean = {
     producer.isLarge.getOrElse(false) || copackForOthers

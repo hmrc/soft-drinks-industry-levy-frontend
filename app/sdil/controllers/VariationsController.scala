@@ -221,7 +221,7 @@ class VariationsController(
       extraMessages = ExtraMessages(messages = variableReturns.map { x =>
         s"returnPeriod.option.${x.year}${x.quarter}" -> s"${Messages(s"returnPeriod.option.${x.quarter}")} ${x.year}"
       }.toMap)
-      returnPeriod <- askOneOf("returnPeriod", variableReturns.map(x => s"${x.year}${x.quarter}"))(extraMessages)
+      returnPeriod <- askOneOf("returnPeriod", variableReturns.sortWith(_>_).map(x => s"${x.year}${x.quarter}"))(extraMessages)
         .map(y => variableReturns.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
     } yield Redirect(routes.VariationsController.adjustment(year = returnPeriod.year, quarter = returnPeriod.quarter, id = "check-your-variation-answers"))
   }

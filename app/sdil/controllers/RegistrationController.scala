@@ -58,7 +58,6 @@ class RegistrationController(
                             )
   extends SdilWMController with FrontendController {
 
-  // TODO - when the old registration code is removed we can replace fd and create a Registration data structure
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)
     cache.get(request.internalId) flatMap {
@@ -131,7 +130,6 @@ class RegistrationController(
                            orgType.toString,
                            UkAddress.fromAddress(fd.rosmData.address),
                            activity,
-                           //TODO in refactor make start date non-optional & default to now.
                            regDate.getOrElse(LocalDate.now),
                            packSites,
                            warehouses,
