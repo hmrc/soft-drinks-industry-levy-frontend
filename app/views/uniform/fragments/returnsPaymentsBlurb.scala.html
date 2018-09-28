@@ -88,7 +88,7 @@
         </tr>
         <tr>
             <th scope="row" colspan="3"><span class="heading-small">@Messages(s"check-your-answers.balance.brought.forward")</span></th>
-            <td class="numeric"><span class="heading-small no-minus-wrapping">@format_money(broughtForward, Some(true))</span></td>
+            <td class="numeric"><span class="heading-small no-minus-wrapping">@format_money(-broughtForward, "+")</span></td>
             <td></td>
         </tr>
         <tr>
