@@ -1090,7 +1090,8 @@ return-sent.paymentsBlurb.payDetails.1=check your account balance
 return-sent.paymentsBlurb.payDetails.2=correct an error in your return
 return-sent.paymentsBlurb.payDetails.3=update warehouses or packaging sites
 return-sent.paymentsBlurb.payDetails.4=send your next return
-return-sent.paymentsBlurb.noReturn=You do not owe anything, so this return is complete.
+return-sent.paymentsBlurb.noReturn.p1=You do not need to do anything else.
+return-sent.paymentsBlurb.credit.p1= We will take the payment from your Soft Drinks Industry Levy account shortly.
 return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must submit it and make any \
   payments due by {2}.
 return-sent.paymentsBlurb.variation=We will send you a letter to confirm that you have changed your registration \
