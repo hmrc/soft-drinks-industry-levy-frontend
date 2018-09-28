@@ -132,7 +132,7 @@ class ReturnsController (
     } yield packingSites
   }
 
-  private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String, broughtForward: BigDecimal)
+  private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = for {
     sdilReturn     <- askReturn(subscription, sdilRef, sdilConnector)
     // check if they need to vary
@@ -142,6 +142,7 @@ class ReturnsController (
     _               <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
     newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
     newWarehouses   <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
+    broughtForward <- execute(sdilConnector.balance(sdilRef))
 
     variation     = ReturnsVariation(
       orgName = subscription.orgName,
@@ -181,9 +182,8 @@ class ReturnsController (
     for {
       subscription <- sdilConnector.retrieveSubscription(sdilRef).map{_.get}
       pendingReturns <- sdilConnector.returns.pending(subscription.utr)
-      broughtForward <- sdilConnector.balance(sdilRef)
       r   <- if (pendingReturns.contains(period))
-               runInner(request)(program(period, subscription, sdilRef, broughtForward))(id)(persistence.dataGet,persistence.dataPut)
+               runInner(request)(program(period, subscription, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
              else
                Redirect(routes.ServicePageController.show()).pure[Future]
     } yield r
