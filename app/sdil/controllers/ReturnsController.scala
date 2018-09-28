@@ -76,7 +76,7 @@ class ReturnsController (
       }
 
     val getTotal =
-      if (total == 0)
+      if (total <= 0 )
         messages("return-sent.subheading.nil-return")
       else
         messages("return-sent.subheading", formatMoney(total), period.deadline.format("dd MMMM yyyy"))

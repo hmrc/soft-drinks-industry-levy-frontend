@@ -29,7 +29,12 @@
 }
 
 @if(total == 0) {
-    <p>@Messages("return-sent.paymentsBlurb.noReturn")</p>
+    <p>@Messages("return-sent.paymentsBlurb.noReturn.p1")</p>
+}
+
+@if(total < 0) {
+    <p>@Messages("return-sent.paymentsBlurb.noReturn.p1")</p>
+    <p>@Messages("return-sent.paymentsBlurb.credit")</p>
 }
 
 <p>
