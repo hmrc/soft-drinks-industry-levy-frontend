@@ -20,9 +20,10 @@
 @import uk.gov.hmrc.uniform.playutil._
 @import views.html.softdrinksindustrylevy.helpers._
 @import views.html.uniform.helpers._
+@import sdil.controllers.ShowBackLink
 
 
-@(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String], helpText: Option[Html] = None)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: Boolean)
+@(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String], helpText: Option[Html] = None)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: ShowBackLink)
 
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 

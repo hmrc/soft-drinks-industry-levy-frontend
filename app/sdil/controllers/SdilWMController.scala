@@ -82,7 +82,7 @@ trait SdilWMController extends WebMonadController
     key: String,
     mainContent: Html,
     editRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty
-  )(implicit extraMessages: ExtraMessages, showBackLink: Boolean = true): WebMonad[Unit] = {
+  )(implicit extraMessages: ExtraMessages, showBackLink: ShowBackLink): WebMonad[Unit] = {
 
     def getMapping(path: List[String]) = {
       text.verifying("error.radio-form.choose-option", a => ("DONE" :: path).contains(a))
@@ -109,7 +109,7 @@ trait SdilWMController extends WebMonadController
     variation: Option[ReturnsVariation] = None,
     alternativeRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty,
     originalReturn: Option[SdilReturn] = None
-  )(implicit extraMessages: ExtraMessages, showBackLink: Boolean = true): WebMonad[Unit] = {
+  )(implicit extraMessages: ExtraMessages, showBackLink: ShowBackLink): WebMonad[Unit] = {
 
     val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
     val subtotal = calculateSubtotal(data)
@@ -210,7 +210,7 @@ trait SdilWMController extends WebMonadController
     }
 
 
-  def askOption[T](innerMapping: Mapping[T], key: String, default: Option[Option[T]] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T], showBackLink: Boolean = true): WebMonad[Option[T]] = {
+  def askOption[T](innerMapping: Mapping[T], key: String, default: Option[Option[T]] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T], showBackLink: ShowBackLink): WebMonad[Option[T]] = {
     import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
     val outerMapping: Mapping[Option[T]] = mapping(
@@ -255,7 +255,7 @@ trait SdilWMController extends WebMonadController
   )(implicit htmlForm: FormHtml[T],
     fmt: Format[T],
     mon: Monoid[T],
-    showBackLink: Boolean = true
+    showBackLink: ShowBackLink
   ): WebMonad[T] = {
     val monDefault: Option[Option[T]] = default.map{_.some.filter{_ != mon.empty}}
     askOption[T](innerMapping, key, monDefault)
@@ -277,7 +277,7 @@ trait SdilWMController extends WebMonadController
     mapping: Mapping[T],
     key: String,
     default: Option[T] = None
-  )(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages, showBackLink: Boolean = true): WebMonad[T] =
+  )(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages, showBackLink: ShowBackLink): WebMonad[T] =
     formPage(key)(mapping, default) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
       uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path)
@@ -286,14 +286,14 @@ trait SdilWMController extends WebMonadController
   def ask[T](
     mapping: Mapping[T],
     key: String
-  )(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages, showBackLink: Boolean): WebMonad[T] =
+  )(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages, showBackLink: ShowBackLink): WebMonad[T] =
     ask(mapping, key, None)
 
   def ask[T](
     mapping: Mapping[T],
     key: String,
     default: T
-  )(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages, showBacklinks: Boolean): WebMonad[T] =
+  )(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages, showBacklinks: ShowBackLink): WebMonad[T] =
     ask(mapping, key, default.some)(implicitly, implicitly, implicitly, showBacklinks)
 
   // Because I decided earlier on to make everything based off of JSON
@@ -387,7 +387,7 @@ trait SdilWMController extends WebMonadController
     default: List[A] = List.empty[A],
     editSingleForm: Option[(Mapping[A], FormHtml[A])] = None,
     configOverride: JourneyConfig => JourneyConfig = identity
-  )(implicit hs: HtmlShow[A], format: Format[A], showBackLink: Boolean = true): WebMonad[List[A]] = {
+  )(implicit hs: HtmlShow[A], format: Format[A], showBackLink: ShowBackLink): WebMonad[List[A]] = {
     def outf(x: Option[String]): Control = x match {
       case Some("Add") => Add
       case Some("Done") => Done

@@ -233,7 +233,7 @@ class VariationsController(
     returnPeriod: ReturnPeriod
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
-    implicit val showBackLink: Boolean = false
+    implicit val showBackLink: ShowBackLink = ShowBackLink(false)
     for {
 
       origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
@@ -251,7 +251,7 @@ class VariationsController(
               "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} return"
             ))
 
-      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, originalReturn = variation.original.some)(extraMessages, false)
+      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, originalReturn = variation.original.some)(extraMessages, implicitly)
 
       reason <- askBigText(
         "return-variation-reason",

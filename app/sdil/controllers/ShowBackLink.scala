@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import sdil.controllers.ShowBackLink
+package sdil.controllers
 
-@(breadcrumbs: List[String])(implicit messages: Messages, showBackLink: ShowBackLink = ShowBackLink(true))
-
-@if(showBackLink.show) {
- @breadcrumbs.headOption.fold {
-  <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
- } { x =>
-  <a class="link-back" href="./@x">@Messages("sdil.common.back")</a>
- }
-}
+case class ShowBackLink(show: Boolean = true)
