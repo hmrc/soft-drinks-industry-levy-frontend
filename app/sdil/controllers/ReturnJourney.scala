@@ -44,12 +44,12 @@ trait ReturnJourney extends SdilWMController {
       opt             <- ask(bool, "exemptions-for-small-producers", default.map{_.packSmall.nonEmpty})
 
       smallProds      <- manyT("small-producer-details",
-                               {ask(smallProducer(sdilRef, sdilConnector), _)},
+                               {ask(smallProducer(sdilRef, sdilConnector), _)(implicitly,implicitly,implicitly,true)},
                                min = 1,
                                default = default.fold(List.empty[SmallProducer]){_.packSmall},
                                editSingleForm = Some((smallProducer(sdilRef, sdilConnector), smallProducerForm)),
                                configOverride = _.copy(mode = if(editMode) SingleStep else (LeapAhead))
-                              ) emptyUnless opt
+                              )(implicitly, implicitly, true) emptyUnless opt
       _               <- write[Boolean]("_editSmallProducers", false)
     } yield { smallProds }
 
