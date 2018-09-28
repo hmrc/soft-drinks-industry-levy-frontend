@@ -113,7 +113,7 @@ trait SdilWMController extends WebMonadController
 
     val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
     val subtotal = calculateSubtotal(data)
-    val total: BigDecimal = subtotal + broughtForward
+    val total: BigDecimal = subtotal - broughtForward
 
     val inner = uniform.fragments.returnsCYA(
       key,
@@ -470,21 +470,19 @@ trait SdilWMController extends WebMonadController
   // TODO - also needs small producer status check scoping to the return period
   implicit def smallProducer(origSdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
     "alias" -> optional(text),
-    "sdilRef" -> nonEmptyText
+    "sdilRef" -> text
       .verifying(
         "error.sdilref.invalid", x => {
-          x.isEmpty ||
-            (x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
-              isCheckCorrect(x, 1) &&
-              x != origSdilRef)
+          x.nonEmpty ||
+            x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
+              isCheckCorrect(x, 1)
         })
       .verifying("error.sdilref.notSmall", x => {
-        Await.result(isSmallProducer(x, sdilConnector: SoftDrinksIndustryLevyConnector), 20.seconds)
-      })
+          Await.result(isSmallProducer(x, sdilConnector: SoftDrinksIndustryLevyConnector), 20.seconds)
+        })
       .verifying("error.sdilref.same", x => {
         x != origSdilRef
       }),
-
     "lower"   -> litreage,
     "higher"  -> litreage
   ){

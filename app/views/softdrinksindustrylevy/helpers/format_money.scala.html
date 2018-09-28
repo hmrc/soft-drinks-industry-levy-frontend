@@ -14,10 +14,10 @@
  * limitations under the License.
  *@
 
-@(value: BigDecimal)
-
+@(value: BigDecimal, prefix: String = "")
     @if(value < 0) {
         @{f"-£${value.abs}%,.2f"}
     } else {
-        @{f"£$value%,.2f"}
-}
+        @{f"${prefix}£${value.abs}%,.2f"}
+    }
+

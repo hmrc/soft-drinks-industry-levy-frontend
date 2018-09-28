@@ -66,7 +66,7 @@ class ReturnsController (
     val data = returnAmount(sdilReturn, isSmallProducer)
     val subtotal = calculateSubtotal(data)
 
-    val total = subtotal + broughtForward
+    val total = subtotal - broughtForward
 
     def formatMoney (total: BigDecimal) = {
       if(total < 0)
@@ -99,7 +99,9 @@ class ReturnsController (
       variation,
       data,
       costLower,
-      costHigher)(messages).some
+      costHigher,
+      subtotal,
+      broughtForward)(messages).some
 
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
@@ -140,6 +142,7 @@ class ReturnsController (
     _               <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
     newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
     newWarehouses   <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
+    broughtForward <- execute(sdilConnector.balance(sdilRef))
 
     variation     = ReturnsVariation(
       orgName = subscription.orgName,
@@ -152,7 +155,6 @@ class ReturnsController (
       email = subscription.contact.email,
       taxEstimation = taxEstimation(sdilReturn)
     )
-    broughtForward <- BigDecimal("0").pure[WebMonad] // TODO will need setting up properly before 10/2018
     _              <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)

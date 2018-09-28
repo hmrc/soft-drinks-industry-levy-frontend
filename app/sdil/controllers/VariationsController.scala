@@ -244,7 +244,7 @@ class VariationsController(
       variation = ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
       path <- getPath
 
-      broughtForward = BigDecimal("0") // TODO will need setting up properly before 10/2018
+      broughtForward = BigDecimal("0")
       extraMessages = ExtraMessages(
             messages = Map(
               "heading.check-your-variation-answers" -> s"${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return details",
