@@ -27,6 +27,7 @@ import play.api.i18n.Messages
 import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json._
 import play.twirl.api.Html
+import sdil.controllers.ShowBackLink
 import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend.{Site, UkAddress}
@@ -75,7 +76,7 @@ object SdilComponents extends FormHelpers {
   }
 
   implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map.empty[String, String])
-  implicit val showBackLink: Boolean = true
+  implicit val showBackLink: ShowBackLink = ShowBackLink(true)
 
   implicit val siteProgressiveRevealHtml: HtmlShow[Site] = {
 

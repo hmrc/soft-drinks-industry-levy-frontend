@@ -37,19 +37,19 @@ trait ReturnJourney extends SdilWMController {
     sdilRef: String,
     sdilConnector: SoftDrinksIndustryLevyConnector,
     default: Option[SdilReturn] = None
-  )(implicit hc: HeaderCarrier, showBackLink: Boolean = true): WebMonad[SdilReturn] = {
+  )(implicit hc: HeaderCarrier, showBackLink: ShowBackLink): WebMonad[SdilReturn] = {
 
     def smallProdsJ: WebMonad[List[SmallProducer]] = for {
       editMode        <- read[Boolean]("_editSmallProducers").map{_.getOrElse(false)}
       opt             <- ask(bool, "exemptions-for-small-producers", default.map{_.packSmall.nonEmpty})
 
       smallProds      <- manyT("small-producer-details",
-                               {ask(smallProducer(sdilRef, sdilConnector), _)(implicitly,implicitly,implicitly,true)},
+                               {ask(smallProducer(sdilRef, sdilConnector), _)(implicitly,implicitly,implicitly,ShowBackLink(true))},
                                min = 1,
                                default = default.fold(List.empty[SmallProducer]){_.packSmall},
                                editSingleForm = Some((smallProducer(sdilRef, sdilConnector), smallProducerForm)),
                                configOverride = _.copy(mode = if(editMode) SingleStep else (LeapAhead))
-                              )(implicitly, implicitly, true) emptyUnless opt
+                              )(implicitly, implicitly, ShowBackLink(true)) emptyUnless opt
       _               <- write[Boolean]("_editSmallProducers", false)
     } yield { smallProds }
 
