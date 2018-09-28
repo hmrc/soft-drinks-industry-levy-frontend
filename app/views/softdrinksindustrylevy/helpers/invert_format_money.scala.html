@@ -16,8 +16,8 @@
 
 @(value: BigDecimal)
 
-@if(value < 0) {
-    @{f"-£${value.abs}%,.2f"}
+@if(value > 0) {
+    @{f"-£${value}%,.2f"}
 } else {
-    @{f"£$value%,.2f"}
+    @{f"+£${value.abs}%,.2f"}
 }

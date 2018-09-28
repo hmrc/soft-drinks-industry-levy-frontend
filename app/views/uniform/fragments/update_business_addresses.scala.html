@@ -66,7 +66,7 @@
             </p>
 
             @if(subscription.productionSites.nonEmpty) {
-                <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.warehouses.title")</h2>
+                <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.packaging.title")</h2>
                 @service_sites(subscription.productionSites, "packaging")
             <br/>
             <p>
@@ -77,7 +77,7 @@
             }
 
             @if(subscription.warehouseSites.nonEmpty) {
-                <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.packaging.title")</h2>
+                <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.warehouses.title")</h2>
                 @service_sites(subscription.warehouseSites, "warehouse")
             <br/>
             <p>

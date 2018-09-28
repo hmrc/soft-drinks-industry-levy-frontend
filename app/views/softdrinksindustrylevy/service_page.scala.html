@@ -146,7 +146,7 @@
             <h2 class="heading-medium">@Messages("account.balance")</h2>
             <p>
                 @printbalance("account.balance.amount", balance)
-                @if(balance > 0) {
+                @if(balance < 0) {
                     @Messages("account.balance.amount.pay")
                 }
             </p>

@@ -16,11 +16,11 @@
 
 @import sdil.models.ReturnPeriod
 @import sdil.models.ReturnsVariation
-@import views.html.softdrinksindustrylevy.helpers.format_money
+@import views.html.softdrinksindustrylevy.helpers._
 
 
 @import sdil.models.SdilReturn
-@(paymentDate: ReturnPeriod, sdilRef: String, total: BigDecimal, formattedTotal: String, variation: ReturnsVariation, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal)(implicit messages: Messages)
+@(paymentDate: ReturnPeriod, sdilRef: String, total: BigDecimal, formattedTotal: String, variation: ReturnsVariation, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal)(implicit messages: Messages)
 
 @if(total > 0) {
     <p>@Html(Messages("return-sent.paymentsBlurb.payby", formattedTotal, paymentDate.deadline.format("dd MMMM yyyy")))</p>
@@ -82,8 +82,18 @@
             </tr>
         }
         <tr>
-            <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"check-your-answers.total")</h4></th>
-            <td class="numeric"><h4 class="heading-small no-minus-wrapping">@format_money(total)</h4></td>
+            <th scope="row" colspan="3"><span class="heading-small">@Messages("check-your-answers.subtotal")</span></th>
+            <td class="numeric"><span class="heading-small no-minus-wrapping">@format_money(subtotal)</span></td>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row" colspan="3"><span class="heading-small">@Messages(s"check-your-answers.balance.brought.forward")</span></th>
+            <td class="numeric"><span class="heading-small no-minus-wrapping">@invert_format_money(broughtForward)</span></td>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row" colspan="3"><span class="heading-small">@Messages(s"check-your-answers.total")</span></th>
+            <td class="numeric"><span class="heading-small no-minus-wrapping">@format_money(total)</span></td>
             <td></td>
         </tr>
     </tbody>
