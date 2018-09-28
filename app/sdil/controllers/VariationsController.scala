@@ -192,7 +192,7 @@ class VariationsController(
       changeType <- askOneOf("changeType", changeTypes)
       variation <- changeType match {
         case ChangeType.Returns =>
-          resultToWebMonad[RegistrationVariationData](Redirect(routes.VariationsController.adjustments("")))
+          chooseReturn(subscription, sdilRef)
         case ChangeType.Sites => contactUpdate(base)
         case ChangeType.Activity => activityUpdate(base)
         case ChangeType.Deregister => deregisterUpdate(base)
@@ -211,10 +211,10 @@ class VariationsController(
     } yield exit
   }
 
-  private def chooseReturn(
+  private def chooseReturn[A](
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+  )(implicit hc: HeaderCarrier): WebMonad[A] = {
     val base = RegistrationVariationData(subscription)
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
@@ -223,7 +223,9 @@ class VariationsController(
       }.toMap)
       returnPeriod <- askOneOf("returnPeriod", variableReturns.sortWith(_>_).map(x => s"${x.year}${x.quarter}"))(extraMessages)
         .map(y => variableReturns.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
-    } yield Redirect(routes.VariationsController.adjustment(year = returnPeriod.year, quarter = returnPeriod.quarter, id = "check-your-variation-answers"))
+      _ <- clear
+      _ <- resultToWebMonad[A](Redirect(routes.VariationsController.adjustment(year = returnPeriod.year, quarter = returnPeriod.quarter, id = "check-your-variation-answers")))
+    } yield throw new IllegalStateException("we shouldn't be here")
   }
 
   private def adjust(
@@ -314,16 +316,6 @@ class VariationsController(
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
         runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
-      case None => NotFound("").pure[Future]
-    }
-  }
-
-  def adjustments(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    val sdilRef = request.sdilEnrolment.value
-    val persistence = SaveForLaterPersistence("adjustments", sdilRef, cache)
-    sdilConnector.retrieveSubscription(sdilRef) flatMap {
-      case Some(s) =>
-        runInner(request)(chooseReturn(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(LeapAhead))
       case None => NotFound("").pure[Future]
     }
   }
