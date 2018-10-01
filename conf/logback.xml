@@ -51,7 +51,7 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="uniform2" level="INFO">
+    <logger name="uniform2" level="WARN">
         <appender-ref ref="STDOUT"/>
     </logger>
 
