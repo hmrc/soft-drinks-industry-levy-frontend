@@ -20,7 +20,6 @@
 @import helper.{inputRadioGroup => _, _}
 @import sdil.controllers.ShowBackLink
 
-@import sdil.models.ReturnPeriod
 @(key: String, form: Form[String], breadcrumbs: List[String], mainContent: Html)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: ShowBackLink)
 
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
