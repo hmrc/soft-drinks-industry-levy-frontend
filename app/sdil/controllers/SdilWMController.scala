@@ -81,7 +81,8 @@ trait SdilWMController extends WebMonadController
   def cya(
     key: String,
     mainContent: Html,
-    editRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty
+    editRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty,
+    period: Option[ReturnPeriod] = None
   )(implicit extraMessages: ExtraMessages, showBackLink: ShowBackLink): WebMonad[Unit] = {
 
     def getMapping(path: List[String]) = {
@@ -92,7 +93,7 @@ trait SdilWMController extends WebMonadController
       path    <- getPath
       r  <- formPage(key)(getMapping(path), None) { (path, form, r) =>
         implicit val request: Request[AnyContent] = r
-        uniform.cya(key, form, path, mainContent)
+        uniform.cya(key, form, path, mainContent, period)
       }.flatMap {
         case "DONE" => ().pure[WebMonad]
         case x if editRoutes.isDefinedAt(x) => clear(key) >> editRoutes.apply(x)
@@ -107,6 +108,7 @@ trait SdilWMController extends WebMonadController
     broughtForward: BigDecimal,
     subscription: RetrievedSubscription,
     variation: Option[ReturnsVariation] = None,
+    period: Option[ReturnPeriod] = None,
     alternativeRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty,
     originalReturn: Option[SdilReturn] = None
   )(implicit extraMessages: ExtraMessages, showBackLink: ShowBackLink): WebMonad[Unit] = {
@@ -127,13 +129,17 @@ trait SdilWMController extends WebMonadController
       subscription,
       originalReturn)
 
-    cya(key, inner,
-        {
-          case "exemptions-for-small-producers" =>
-            write[Boolean]("_editSmallProducers", true) >>
-              clear(key) >>
-              resultToWebMonad[Unit](Redirect("exemptions-for-small-producers"))
-        })
+    cya(
+      key,
+      inner,
+      {
+        case "exemptions-for-small-producers" =>
+          write[Boolean]("_editSmallProducers", true) >>
+            clear(key) >>
+            resultToWebMonad[Unit](Redirect("exemptions-for-small-producers"))
+      }, 
+      period
+    )
   }
 
   def checkReturnChanges(key: String, variation: ReturnVariationData) = {

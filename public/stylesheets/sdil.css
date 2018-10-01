@@ -175,3 +175,15 @@ details .address.progressive-reveal {
         display: none;
     }
 }
+
+.govuk-caption-xl {
+    font-family: "nta",Arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 20px;
+    display: block;
+    margin-bottom: 5px;
+    color: #6f777b;
+}

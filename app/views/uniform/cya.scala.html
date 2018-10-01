@@ -20,15 +20,21 @@
 @import helper.{inputRadioGroup => _, _}
 @import sdil.controllers.ShowBackLink
 
-@(key: String, form: Form[String], breadcrumbs: List[String], mainContent: Html)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: ShowBackLink)
+@import sdil.models.ReturnPeriod
+@(key: String, form: Form[String], breadcrumbs: List[String], mainContent: Html, period: Option[ReturnPeriod])(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: ShowBackLink)
 
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
     @error_summary(form)
+    <h1 class="heading-large">
+        @period.map { x =>
+            <span class="govuk-caption-xl">@Messages(s"period.$key", x.start.format("MMMM"), x.end.format("MMMM yyyy"))</span>
+        }
 
-    <h1 class="heading-large">@Messages.extraMessage(s"heading.$key")</h1>
+        @Messages.extraMessage(s"heading.$key")
+    </h1>
     <legend class="visuallyhidden">@Messages.extraMessage(s"heading.$key")</legend>
 
     @helper.form(action = play.api.mvc.Call("post", key)) {

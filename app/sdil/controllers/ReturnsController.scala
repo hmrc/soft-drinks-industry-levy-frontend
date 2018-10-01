@@ -155,7 +155,7 @@ class ReturnsController (
       email = subscription.contact.email,
       taxEstimation = taxEstimation(sdilReturn)
     )
-    _              <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))
+    _              <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation), Some(period))
     _              <- cachedFuture(s"return-${period.count}")(
                         sdilConnector.returns(subscription.utr, period) = sdilReturn)
     _              <- if (isNewImporter || isNewPacker) {
