@@ -133,48 +133,55 @@ class ReturnsController (
   }
 
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
-                     (implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    sdilReturn     <- askReturn(subscription, sdilRef, sdilConnector)
-    // check if they need to vary
-    isNewImporter   = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
-    isNewPacker     = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
-    inner           = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
-    _               <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
-    newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
-    newWarehouses   <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
-    broughtForward <- execute(sdilConnector.balance(sdilRef))
-
-    variation     = ReturnsVariation(
-      orgName = subscription.orgName,
-      ppobAddress = subscription.address,
-      importer = (isNewImporter, (sdilReturn.totalImported).combineN(4)),
-      packer = (isNewPacker, (sdilReturn.totalPacked).combineN(4)),
-      warehouses = newWarehouses.getOrElse(List.empty[Site]),
-      packingSites = newPackingSites.getOrElse(List.empty[Site]),
-      phoneNumber = subscription.contact.phoneNumber,
-      email = subscription.contact.email,
-      taxEstimation = taxEstimation(sdilReturn)
+                     (implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val em = ExtraMessages(Map(
+      "heading.check-your-answers" ->
+        s"<span class='govuk-caption-xl'>${Messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))}</span>${Messages("heading.check-your-answers")}"
+      )
     )
-    _              <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))
-    _              <- cachedFuture(s"return-${period.count}")(
-                        sdilConnector.returns(subscription.utr, period) = sdilReturn)
-    _              <- if (isNewImporter || isNewPacker) {
-                        execute(sdilConnector.returns.variation(variation, sdilRef))
-                      } else {
-                        (()).pure[WebMonad]
-                      }
-    end <- clear >> confirmationPage(
-      "return-sent",
-      period,
-      subscription,
-      sdilReturn,
-      broughtForward,
-      sdilRef,
-      subscription.activity.smallProducer,
-      variation
-    )
-  } yield end
 
+    for {
+      sdilReturn <- askReturn(subscription, sdilRef, sdilConnector)
+      // check if they need to vary
+      isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
+      isNewPacker = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
+      inner = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
+      _ <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
+      newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
+      newWarehouses <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
+      broughtForward <- execute(sdilConnector.balance(sdilRef))
+
+      variation = ReturnsVariation(
+        orgName = subscription.orgName,
+        ppobAddress = subscription.address,
+        importer = (isNewImporter, (sdilReturn.totalImported).combineN(4)),
+        packer = (isNewPacker, (sdilReturn.totalPacked).combineN(4)),
+        warehouses = newWarehouses.getOrElse(List.empty[Site]),
+        packingSites = newPackingSites.getOrElse(List.empty[Site]),
+        phoneNumber = subscription.contact.phoneNumber,
+        email = subscription.contact.email,
+        taxEstimation = taxEstimation(sdilReturn)
+      )
+      _ <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))(em, implicitly)
+      _ <- cachedFuture(s"return-${period.count}")(
+        sdilConnector.returns(subscription.utr, period) = sdilReturn)
+      _ <- if (isNewImporter || isNewPacker) {
+        execute(sdilConnector.returns.variation(variation, sdilRef))
+      } else {
+        (()).pure[WebMonad]
+      }
+      end <- clear >> confirmationPage(
+        "return-sent",
+        period,
+        subscription,
+        sdilReturn,
+        broughtForward,
+        sdilRef,
+        subscription.activity.smallProducer,
+        variation
+      )
+    } yield end
+  }
   def index(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     val period = ReturnPeriod(year, quarter)

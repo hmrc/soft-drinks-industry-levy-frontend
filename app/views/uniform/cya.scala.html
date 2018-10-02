@@ -27,8 +27,9 @@
     @backlink(breadcrumbs)
 
     @error_summary(form)
-
-    <h1 class="heading-large">@Messages.extraMessage(s"heading.$key")</h1>
+    <h1 class="heading-large">
+        @Html(Messages.extraMessage(s"heading.$key"))
+    </h1>
     <legend class="visuallyhidden">@Messages.extraMessage(s"heading.$key")</legend>
 
     @helper.form(action = play.api.mvc.Call("post", key)) {
