@@ -24,6 +24,7 @@ import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, _}
 import uk.gov.hmrc.uniform.webmonad._
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.json.{Format, Json, Writes}
 import play.api.mvc.{Action, AnyContent, Result}
 import play.twirl.api.HtmlFormat
 import sdil.actions.RegisteredAction
@@ -58,6 +59,7 @@ class VariationsController(
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
+    implicit val format: Format[ChangeType] = Json.format[ChangeType]
     val values = findValues
     case object Returns extends ChangeType
     case object Sites extends ChangeType
@@ -181,11 +183,23 @@ class VariationsController(
     deregDate = deregDate.some
   )
 
-  private def program(
+  private def foo(
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
+       write[ChangeType]("changeType", ChangeType.Sites) >>
+         contactUpdate(base)
+  }
+
+
+  private def program(
+    subscription: RetrievedSubscription,
+    sdilRef: String
+//    variationJourney: String
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val base = RegistrationVariationData(subscription)
+    val variationJourney = "changeSites"
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
@@ -316,6 +330,16 @@ class VariationsController(
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
         runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
+      case None => NotFound("").pure[Future]
+    }
+  }
+
+  def indexFoo(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(s) =>
+        runInner(request)(foo(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
       case None => NotFound("").pure[Future]
     }
   }
