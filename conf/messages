@@ -1248,6 +1248,7 @@ check-return-differences.correction.label.original=Original amount
 check-return-differences.correction.label.revised=New amount
 check-return-differences.band.label.low=Low
 check-return-differences.band.label.high=High
+check-return-differences.continue=Confirm details and send correction
 
 heading.return-variation-reason=Why do you need to correct this return?
 return-variation-reason.lead=Make sure you provide as much detail as you can about why you had to correct your return. We may get in touch with your contact person to discuss your correction.
