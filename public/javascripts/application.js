@@ -62,7 +62,7 @@ window.onload = function () {
     $('form[action="check-your-answers"] button').wrap("<span id='cya-click-wrapper'></span>");
     $('form[action="check-your-answers"] #cya-click-wrapper').attr('onclick',"ga('send', 'event', 'checkYourAnswers', 'click', 'Submit');");
 
-    if (document.getElementsByTagName('h1').length > 0 && document.getElementsByTagName('h1')[0].innerText == 'Return submitted') {
+    if (document.getElementsByTagName('h1').length > 0 && document.getElementsByTagName('h1')[0].innerText == 'Return sent') {
         ga('send', 'event', 'visited', 'load', 'Return submitted');
     }
 
