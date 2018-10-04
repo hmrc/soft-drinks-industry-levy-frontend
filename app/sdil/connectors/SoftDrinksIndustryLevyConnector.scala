@@ -53,13 +53,13 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
     }
   }
 
-  def retrieveSubscription(sdilNumber: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
-    shortLiveCache.fetchAndGetEntry[RetrievedSubscription]("sdil-foo", s"$sdilNumber") flatMap {
+  def retrieveSubscription(sdilNumber: String, identifierType: String = "sdil")(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
+    shortLiveCache.fetchAndGetEntry[RetrievedSubscription](s"sdil-$identifierType", s"$sdilNumber") flatMap {
       case Some(s) => Future.successful(Some(s))
       case _ =>
-        http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/sdil/$sdilNumber").flatMap {
+        http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/$identifierType/$sdilNumber").flatMap {
           case Some(a) =>
-            shortLiveCache.cache("sdil-foo", s"$sdilNumber", a).map {
+            shortLiveCache.cache(s"sdil-$identifierType", s"$sdilNumber", a).map {
               _ => Some(a)
             }
           case _ => Future.successful(None)
