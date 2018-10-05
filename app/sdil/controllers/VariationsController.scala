@@ -209,11 +209,11 @@ class VariationsController(
 //                     askOneOf("changeType", changeTypes)
       changeType <- askOneOf("changeType", changeTypes) when !skipPage
       variation <- changeType match {
-        case ChangeType.Returns.some =>
+        case Some(ChangeType.Returns) =>
           chooseReturn(subscription, sdilRef)
-        case ChangeType.Sites.some => contactUpdate(base)
-        case ChangeType.Activity.some => activityUpdate(base)
-        case ChangeType.Deregister.some => deregisterUpdate(base)
+        case Some(ChangeType.Sites) => contactUpdate(base)
+        case Some(ChangeType.Activity) => activityUpdate(base)
+        case Some(ChangeType.Deregister) => deregisterUpdate(base)
       }
 
       path <- getPath
