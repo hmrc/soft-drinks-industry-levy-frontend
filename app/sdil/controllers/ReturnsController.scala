@@ -141,6 +141,7 @@ class ReturnsController (
     )
 
     for {
+      _ <- write[Boolean]("_editSmallProducers", true)
       sdilReturn <- askReturn(subscription, sdilRef, sdilConnector)
       // check if they need to vary
       isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
@@ -190,7 +191,7 @@ class ReturnsController (
       subscription <- sdilConnector.retrieveSubscription(sdilRef).map{_.get}
       pendingReturns <- sdilConnector.returns.pending(subscription.utr)
       r   <- if (pendingReturns.contains(period))
-               runInner(request)(program(period, subscription, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
+               runInner(request)(program(period, subscription, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
              else
                Redirect(routes.ServicePageController.show()).pure[Future]
     } yield r
