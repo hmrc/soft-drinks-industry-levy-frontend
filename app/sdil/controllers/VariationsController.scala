@@ -203,16 +203,17 @@ class VariationsController(
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
-      changeType <- if(skipPage)
-                     ChangeType.Sites.pure[WebMonad]
-                    else
-                     askOneOf("changeType", changeTypes)
+//      changeType <- if(skipPage)
+//                     ChangeType.Sites.pure[WebMonad]
+//                    else
+//                     askOneOf("changeType", changeTypes)
+      changeType <- askOneOf("changeType", changeTypes) when !skipPage
       variation <- changeType match {
-        case ChangeType.Returns =>
+        case ChangeType.Returns.some =>
           chooseReturn(subscription, sdilRef)
-        case ChangeType.Sites => contactUpdate(base)
-        case ChangeType.Activity => activityUpdate(base)
-        case ChangeType.Deregister => deregisterUpdate(base)
+        case ChangeType.Sites.some => contactUpdate(base)
+        case ChangeType.Activity.some => activityUpdate(base)
+        case ChangeType.Deregister.some => deregisterUpdate(base)
       }
 
       path <- getPath
