@@ -37,6 +37,7 @@ object RetrievedActivity {
 }
 
 case class RetrievedSubscription(utr: String,
+                                 sdilRef: String,
                                  orgName: String,
                                  address: UkAddress,
                                  activity: RetrievedActivity,
