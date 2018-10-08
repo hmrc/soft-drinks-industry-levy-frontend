@@ -18,12 +18,19 @@
 @import sdil.models.Address
 @import sdil.models.retrieved.RetrievedSubscription
 @import views.html.softdrinksindustrylevy.helpers._
+@import views.html.uniform.helpers._
+@import helper.{inputRadioGroup => _, _}
 
 @import sdil.config.AppConfig
-@(subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(key: String, form: Form[Unit], breadcrumbs: List[String], subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.updateBusinessAddresses.heading"), noArticle = true) {
-    <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
+    @backlink(breadcrumbs)
+
+    @helper.form(action = play.api.mvc.Call("post", key)) {
+        @CSRF.formField
+
+
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1>@Messages("sdil.updateBusinessAddresses.heading")</h1>
@@ -42,9 +49,9 @@
 
             <br/>
             <p>
-                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeTypeDirect")'>
-                @Messages("sdil.updateBusinessAddresses.link.1")
-                </a>
+                <button name="@key" value="@key" id="@key" class="link-button">
+                    @Messages("sdil.updateBusinessAddresses.link.1")<span class="visuallyhidden">@Messages("sdil.updateBusinessAddresses.link.1")</span>
+                </button>
             </p>
 
             @declaration_table("service-page", "contact-details.title") {
@@ -60,9 +67,9 @@
 
             <br/>
             <p>
-                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeTypeDirect")'>
-                @Messages("sdil.updateBusinessAddresses.link.2")
-                </a>
+                <button name="@key" value="@key" id="@key" class="link-button">
+                    @Messages("sdil.updateBusinessAddresses.link.2")<span class="visuallyhidden">@Messages("sdil.updateBusinessAddresses.link.2")</span>
+                </button>
             </p>
 
             @if(subscription.productionSites.nonEmpty) {
@@ -70,9 +77,9 @@
                 @service_sites(subscription.productionSites, "packaging")
             <br/>
             <p>
-                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeTypeDirect")'>
-                        @Messages("sdil.updateBusinessAddresses.link.4")
-                </a>
+                <button name="@key" value="@key" id="@key" class="link-button">
+                    @Messages("sdil.updateBusinessAddresses.link.3")<span class="visuallyhidden">@Messages("sdil.updateBusinessAddresses.link.3")</span>
+                </button>
             </p>
             }
 
@@ -81,11 +88,13 @@
                 @service_sites(subscription.warehouseSites, "warehouse")
             <br/>
             <p>
-                <a href='@sdil.controllers.routes.VariationsController.index("contactChangeTypeDirect")'>
-                        @Messages("sdil.updateBusinessAddresses.link.3")
-                </a>
+                <button name="@key" value="@key" id="@key" class="link-button">
+                    @Messages("sdil.updateBusinessAddresses.link.4")<span class="visuallyhidden">@Messages("sdil.updateBusinessAddresses.link.4")</span>
+                </button>
             </p>
             }
         </div>
     </div>
+
+    }
 }

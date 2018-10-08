@@ -22,10 +22,12 @@ import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, _}
+import play.api.data.format.Formatter
+import play.api.data.{FormError, Forms, Mapping}
 import uk.gov.hmrc.uniform.webmonad._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{Format, Json, Writes}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, Request, Result}
 import play.twirl.api.HtmlFormat
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
@@ -40,6 +42,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.uniform.HtmlShow
 import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import views.html.uniform
 
@@ -183,37 +186,25 @@ class VariationsController(
     deregDate = deregDate.some
   )
 
-//  private def foo(
-//    subscription: RetrievedSubscription,
-//    sdilRef: String
-//  )(implicit hc: HeaderCarrier): WebMonad[RegistrationVariationData] = {
-//    val base = RegistrationVariationData(subscription)
-//       write[ChangeType]("changeType", ChangeType.Sites) >>
-//         contactUpdate(base)
-//  }
-
-
   private def program(
     subscription: RetrievedSubscription,
-    sdilRef: String,
-    skipPage: Boolean
+    sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
     val variationJourney = "changeSites"
+
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
-//      changeType <- if(skipPage)
-//                     ChangeType.Sites.pure[WebMonad]
-//                    else
-//                     askOneOf("changeType", changeTypes)
-      changeType <- askOneOf("changeType", changeTypes) when !skipPage
-      variation <- changeType match {
-        case Some(ChangeType.Returns) =>
+
+      changeType <- askOneOf("changeType", changeTypes)
+
+        variation <- changeType match {
+        case ChangeType.Returns =>
           chooseReturn(subscription, sdilRef)
-        case Some(ChangeType.Sites) => contactUpdate(base)
-        case Some(ChangeType.Activity) => activityUpdate(base)
-        case Some(ChangeType.Deregister) => deregisterUpdate(base)
+        case ChangeType.Sites => contactUpdate(base)
+        case ChangeType.Activity => activityUpdate(base)
+        case ChangeType.Deregister => deregisterUpdate(base)
       }
 
       path <- getPath
@@ -333,20 +324,65 @@ class VariationsController(
     val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
-        runInner(request)(program(s, sdilRef, (id == "contactChangeTypeDirect")))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
+        runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
       case None => NotFound("").pure[Future]
     }
   }
 
-//  def indexFoo(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-//    val sdilRef = request.sdilEnrolment.value
-//    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
-//    sdilConnector.retrieveSubscription(sdilRef) flatMap {
-//      case Some(s) =>
-//        runInner(request)(foo(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
-//      case None => NotFound("").pure[Future]
-//    }
-//  }
+
+
+  protected def changeBusinessAddress(
+    id: String,
+    subscription: RetrievedSubscription
+  )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
+
+    val unitMapping: Mapping[Unit] = Forms.of[Unit](new Formatter[Unit] {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Unit] = Right(())
+
+      override def unbind(key: String, value: Unit): Map[String, String] = Map.empty
+    })
+
+    formPage(id)(unitMapping, none[Unit]){  (path, form, r) =>
+      implicit val request: Request[AnyContent] = r
+
+    uniform.fragments.update_business_addresses(
+      id,
+      form,
+      path,
+      subscription,
+      Address.fromUkAddress(subscription.address))
+    }
+  }
+
+  def changeBusinessAddress(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(s) =>
+        runInner(request)(changeBusinessAddress(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
+      case None => NotFound("").pure[Future]
+    }
+  }
+
+  private def changeBusinessAddress (
+    subscription: RetrievedSubscription,
+    sdilRef: String
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val base = RegistrationVariationData(subscription)
+
+    for {
+      _ <- changeBusinessAddress("changeBusinessAddress", subscription )
+      variation <- contactUpdate(base)
+      path <- getPath
+      _ <- checkYourRegAnswers("checkyouranswers", variation, path)
+      submission = Convert(variation)
+      _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+      _ <- clear
+      exit <- journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+    } yield exit
+  }
+
+
 
   def adjustment(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
