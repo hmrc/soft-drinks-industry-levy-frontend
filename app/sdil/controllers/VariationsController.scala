@@ -62,7 +62,6 @@ class VariationsController(
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
-//    implicit val format: Format[ChangeType] = Json.format[ChangeType]
     val values = findValues
     case object Returns extends ChangeType
     case object Sites extends ChangeType
@@ -191,15 +190,12 @@ class VariationsController(
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
-    val variationJourney = "changeSites"
 
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
-
       changeType <- askOneOf("changeType", changeTypes)
-
-        variation <- changeType match {
+      variation <- changeType match {
         case ChangeType.Returns =>
           chooseReturn(subscription, sdilRef)
         case ChangeType.Sites => contactUpdate(base)
@@ -329,9 +325,7 @@ class VariationsController(
     }
   }
 
-
-
-  protected def changeBusinessAddress(
+  private def changeBusinessAddressTemplate(
     id: String,
     subscription: RetrievedSubscription
   )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
@@ -359,19 +353,19 @@ class VariationsController(
     val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
-        runInner(request)(changeBusinessAddress(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
+        runInner(request)(changeBusinessAddressJourney(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
       case None => NotFound("").pure[Future]
     }
   }
 
-  private def changeBusinessAddress (
+  private def changeBusinessAddressJourney (
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
 
     for {
-      _ <- changeBusinessAddress("changeBusinessAddress", subscription )
+      _ <- changeBusinessAddressTemplate("changeBusinessAddress", subscription )
       variation <- contactUpdate(base)
       path <- getPath
       _ <- checkYourRegAnswers("checkyouranswers", variation, path)
@@ -381,8 +375,6 @@ class VariationsController(
       exit <- journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
     } yield exit
   }
-
-
 
   def adjustment(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
