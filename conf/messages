@@ -475,8 +475,8 @@ sdil.updateBusinessAddresses.heading=Soft Drinks Industry Levy addresses
 heading.updateBusinessAddresses=Soft Drinks Industry Levy addresses
 sdil.updateBusinessAddresses.link.1=Change business address
 sdil.updateBusinessAddresses.link.2=Change contact details
-sdil.updateBusinessAddresses.link.3=Change warehouses
-sdil.updateBusinessAddresses.link.4=Change packaging sites
+sdil.updateBusinessAddresses.link.3=Change packaging sites
+sdil.updateBusinessAddresses.link.4=Change warehouses
 sdil.updateBusinessAddresses.warehouses.title=Warehouses
 sdil.updateBusinessAddresses.packaging.title=Packaging Sites
 
