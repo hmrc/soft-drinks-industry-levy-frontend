@@ -15,6 +15,8 @@ import net.ground5hark.sbt.concat.Import._
 import com.typesafe.sbt.uglify.Import._
 import com.typesafe.sbt.web.SbtWeb
 import play.twirl.sbt.Import.TwirlKeys
+import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
+import uk.gov.hmrc.SbtArtifactory
 
 object FrontendBuild extends Build {
 
@@ -44,7 +46,7 @@ object FrontendBuild extends Build {
   }
 
   lazy val microservice = Project("soft-drinks-industry-levy-frontend", file("."))
-    .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+    .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
     .settings(scalaSettings: _*)
     .settings(TwirlKeys.templateImports ++= Seq("uk.gov.hmrc.uniform.playutil._", "sdil.utility._"))
     .settings(publishingSettings: _*)
@@ -53,6 +55,7 @@ object FrontendBuild extends Build {
     .settings(
       scalaVersion := "2.11.12",
       scoverageSettings,
+      majorVersion := 0,
       libraryDependencies ++= Seq(
         ws,
         "uk.gov.hmrc" %% "bootstrap-play-25" % "1.7.0",
