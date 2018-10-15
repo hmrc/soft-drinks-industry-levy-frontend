@@ -54,6 +54,13 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
       val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
 
       (maybeUtr, maybeSdil) match {
+        case (Some(utr), None) =>
+          sdilConnector.retrieveSubscription(utr, "utr").flatMap {
+            case Some(subscription) =>
+              Future.successful(Left(Redirect(routes.ServicePageController.show())))
+            case None =>
+              alreadyRegistered(utr).map(Left.apply)
+        }
         case (Some(utr), Some(_)) =>
           alreadyRegistered(utr).map(Left.apply)
         case (None, Some(_)) =>
