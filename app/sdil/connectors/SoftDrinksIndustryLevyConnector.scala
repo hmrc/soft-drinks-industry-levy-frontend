@@ -17,23 +17,26 @@
 package sdil.connectors
 
 import play.api.{Configuration, Environment}
+import sdil.config.SDILSessionCache
 import sdil.models._
-import sdil.models.backend.{Site, Subscription}
+import sdil.models.backend.Subscription
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{ReturnVariationData, VariationsSubmission}
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
-import play.api.libs.json._
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 
 import scala.concurrent.Future
 
-class SoftDrinksIndustryLevyConnector(http: HttpClient,
-                                      environment: Environment,
-                                      val runModeConfiguration: Configuration,
-                                      val shortLiveCache: ShortLivedHttpCaching) extends ServicesConfig {
+class SoftDrinksIndustryLevyConnector(
+  http: HttpClient,
+  environment: Environment,
+  val runModeConfiguration: Configuration,
+  val shortLiveCache: ShortLivedHttpCaching,
+  val sessionCache: SDILSessionCache
+) extends ServicesConfig {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
 
@@ -54,12 +57,12 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
   }
 
   def retrieveSubscription(sdilNumber: String, identifierType: String = "sdil")(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
-    shortLiveCache.fetchAndGetEntry[RetrievedSubscription](s"sdil-$identifierType", s"$sdilNumber") flatMap {
+    sessionCache.fetchAndGetEntry[RetrievedSubscription](s"sdil-$sdilNumber") flatMap {
       case Some(s) => Future.successful(Some(s))
       case _ =>
         http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/$identifierType/$sdilNumber").flatMap {
           case Some(a) =>
-            shortLiveCache.cache(s"sdil-$identifierType", s"$sdilNumber", a).map {
+            sessionCache.cache(s"$sdilNumber", a).map {
               _ => Some(a)
             }
           case _ => Future.successful(None)
@@ -71,8 +74,7 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
     http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map { _ => () }
   }
 
-  object returns { 
-    import ltbs.play.scaffold.SdilComponents.longTupleFormatter
+  object returns {
 
     def pending(
       utr: String
