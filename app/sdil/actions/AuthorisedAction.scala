@@ -55,11 +55,11 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
 
       (maybeUtr, maybeSdil) match {
         case (Some(utr), None) =>
-          sdilConnector.retrieveSubscription(utr, "utr").flatMap {
-            case Some(subscription) =>
-              Future.successful(Left(Redirect(routes.ServicePageController.show())))
+          sdilConnector.retrieveSubscription(utr, "utr") map {
+            case Some(_) =>
+              Left(Redirect(routes.ServicePageController.show()))
             case None =>
-              alreadyRegistered(utr).map(Left.apply)
+              Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
         }
         case (Some(utr), Some(_)) =>
           alreadyRegistered(utr).map(Left.apply)
