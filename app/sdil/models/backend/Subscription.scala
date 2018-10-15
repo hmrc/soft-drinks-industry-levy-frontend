@@ -19,6 +19,7 @@ package sdil.models.backend
 import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
+import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Litreage, RegistrationFormData}
 
 case class Subscription(utr: String,

@@ -14,14 +14,10 @@
  * limitations under the License.
  *@
 
-@import sdil.controllers.ShowBackLink
+@(value: BigDecimal, prefix: String = "")
+    @if(value < 0) {
+        @{f"-£${value.abs}%,.2f"}
+    } else {
+        @{f"${prefix}£${value.abs}%,.2f"}
+    }
 
-@(breadcrumbs: List[String])(implicit messages: Messages, showBackLink: ShowBackLink = ShowBackLink(true))
-
-@if(showBackLink.show) {
- @breadcrumbs.headOption.fold {
-  <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
- } { x =>
-  <a class="link-back" href="./@x">@Messages("sdil.common.back")</a>
- }
-}

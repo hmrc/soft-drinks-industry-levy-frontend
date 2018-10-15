@@ -19,17 +19,27 @@ GET         /sign-out-no-feedback                              sdil.controllers.
 
 GET         /time-out                                          sdil.controllers.AuthenticationController.timeOut()
 
-GET         /submit-return/year/:year/quarter/:quarter         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id = "")
+GET         /submit-return/year/:year/quarter/:quarter/        sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id = "")
 GET         /submit-return/year/:year/quarter/:quarter/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id: String)
-POST        /submit-return/year/:year/quarter/:quarter         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id = "")
+POST        /submit-return/year/:year/quarter/:quarter/        sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id = "")
 POST        /submit-return/year/:year/quarter/:quarter/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, id: String)
 
-GET         /ufvariations                                        sdil.controllers.VariationsController.index(id = "")
-GET         /ufvariations/:id                                    sdil.controllers.VariationsController.index(id: String)
-POST        /ufvariations                                        sdil.controllers.VariationsController.index(id = "")
-POST        /ufvariations/:id                                    sdil.controllers.VariationsController.index(id: String)
+GET         /ufvariations/                                     sdil.controllers.VariationsController.index(id = "")
+GET         /ufvariations/:id                                  sdil.controllers.VariationsController.index(id: String)
+POST        /ufvariations/                                     sdil.controllers.VariationsController.index(id = "")
+POST        /ufvariations/:id                                  sdil.controllers.VariationsController.index(id: String)
 
-GET         /uregistrations                                        sdil.controllers.RegistrationController.index(id = "")
-GET         /uregistrations/:id                                    sdil.controllers.RegistrationController.index(id: String)
-POST        /uregistrations                                        sdil.controllers.RegistrationController.index(id = "")
-POST        /uregistrations/:id                                    sdil.controllers.RegistrationController.index(id: String)
+GET         /ufadjustment/year/:year/quarter/:quarter/         sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id = "")
+GET         /ufadjustment/year/:year/quarter/:quarter/:id      sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id: String)
+POST        /ufadjustment/year/:year/quarter/:quarter/         sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id = "")
+POST        /ufadjustment/year/:year/quarter/:quarter/:id      sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id: String)
+
+GET         /contactChangeTypeDirect/                          sdil.controllers.VariationsController.changeBusinessAddress(id = "")
+GET         /contactChangeTypeDirect/:id                       sdil.controllers.VariationsController.changeBusinessAddress(id: String)
+POST        /contactChangeTypeDirect/                          sdil.controllers.VariationsController.changeBusinessAddress(id = "")
+POST        /contactChangeTypeDirect/:id                       sdil.controllers.VariationsController.changeBusinessAddress(id: String)
+
+GET         /uregistrations/                                   sdil.controllers.RegistrationController.index(id = "")
+GET         /uregistrations/:id                                sdil.controllers.RegistrationController.index(id: String)
+POST        /uregistrations/                                   sdil.controllers.RegistrationController.index(id = "")
+POST        /uregistrations/:id                                sdil.controllers.RegistrationController.index(id: String)

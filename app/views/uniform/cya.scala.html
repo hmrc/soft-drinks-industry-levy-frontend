@@ -14,27 +14,30 @@
  * limitations under the License.
  *@
 
-@import helper.{inputRadioGroup => _, _}
-@import play.api.Configuration
-@import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
-@import views.html.helper.options
+@import views.html.softdrinksindustrylevy.helpers._
 @import views.html.uniform.helpers._
+@import helper.{inputRadioGroup => _, _}
+@import sdil.controllers.ShowBackLink
 
-@(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages)
+@(key: String, form: Form[String], breadcrumbs: List[String], mainContent: Html)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: ShowBackLink)
+
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
-  @backlink(breadcrumbs)
 
-  <h1 class="heading-large">
-        @Messages.extraMessages(Seq(s"heading.$key", "sdil.declaration.heading"))
-  </h1>
+    @backlink(breadcrumbs)
+
+    @error_summary(form)
+    <h1 class="heading-large">
+        @Html(Messages.extraMessage(s"heading.$key"))
+    </h1>
+    <legend class="visuallyhidden">@Messages.extraMessage(s"heading.$key")</legend>
+
     @helper.form(action = play.api.mvc.Call("post", key)) {
-        <div class="form-group">
         @CSRF.formField
-        @tell
-        </div>
-        <button class="button" type="submit" name="@key" id="@key" value="Next" formmethod="post">
-            @Messages(Seq(s"$key.continue", "sdil.declaration.continue"))
+        @mainContent
+        <button name="@key" value="DONE" id="continue-button" class="button">
+            @Messages(Seq(s"$key.continue","sdil.common.save-continue"))
         </button>
     }
+
 }

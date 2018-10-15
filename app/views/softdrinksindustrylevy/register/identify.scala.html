@@ -27,7 +27,16 @@
 
     @form(sdil.controllers.routes.IdentifyController.submit()) {
 
-        @inputText(identifyForm("utr"), Messages("sdil.identify.utr"))
+        @inputText(identifyForm("utr"), Messages("sdil.identify.utr"), ('_hint, Messages("sdil.identify.help.hint")))
+
+        @details("sdil.identify.help.header"){
+            <p>@Messages("sdil.identify.help.p1")</p>
+            <ul class="list list-bullet">
+                <li>@Messages("sdil.identify.help.li1")</li>
+                <li>@Messages("sdil.identify.help.li2")</li>
+            </ul>
+            <p>@Messages("sdil.identify.help.p2")</p>
+        }
 
         @inputText(identifyForm("postcode"), Messages("sdil.identify.postcode"), '_inputClass -> "input--cleared caps")
 

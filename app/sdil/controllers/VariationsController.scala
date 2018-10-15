@@ -22,9 +22,13 @@ import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, _}
+import play.api.data.format.Formatter
+import play.api.data.{FormError, Forms, Mapping}
 import uk.gov.hmrc.uniform.webmonad._
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.json.{Format, Json, Writes}
+import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.twirl.api.HtmlFormat
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -34,35 +38,40 @@ import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistence
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.uniform.HtmlShow
 import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import views.html.uniform
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
+
 class VariationsController(
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
-  cache: ShortLivedHttpCaching
+  cache: ShortLivedHttpCaching,
+  errorHandler: FrontendErrorHandler
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController with FormHelpers {
+) extends SdilWMController with FrontendController with FormHelpers with ReturnJourney {
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
     val values = findValues
+    case object Returns extends ChangeType
     case object Sites extends ChangeType
     case object Activity extends ChangeType
     case object Deregister extends ChangeType
   }
 
   private def contactUpdate(
-    data: VariationData
-  ): WebMonad[VariationData] = {
+    data: RegistrationVariationData
+  ): WebMonad[RegistrationVariationData] = {
 
     sealed trait ContactChangeType extends EnumEntry
     object ContactChangeType extends Enum[ContactChangeType] {
@@ -84,12 +93,12 @@ class VariationsController(
       change          <- askContactChangeType
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly), default = data
+        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly, implicitly), default = data
           .updatedProductionSites.toList, min = 1, editSingleForm = Some((packagingSiteMapping, packagingSiteForm))) emptyUnless (data.producer.isLarge.contains(true) || data.copackForOthers)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
-        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly), default = data
+        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly, implicitly), default = data
           .updatedWarehouseSites.toList, editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
       } else data.updatedWarehouseSites.pure[WebMonad]
 
@@ -110,8 +119,8 @@ class VariationsController(
   }
 
   private def activityUpdate(
-    data: VariationData
-  ): WebMonad[VariationData] = {
+    data: RegistrationVariationData
+  ): WebMonad[RegistrationVariationData] = {
 
 
     val litres = litreagePair.nonEmpty("error.litreage.zero")
@@ -135,13 +144,13 @@ class VariationsController(
                                             "pack-at-business-address.lead" -> s"Registered address: ${Address.fromUkAddress(data.original.address).nonEmptyLines.mkString(", ")}")
                                         )
                                         for {
-                                          usePPOBAddress <- ask(bool, "pack-at-business-address")(implicitly, implicitly, extraMessages) when packer && data.original.productionSites.isEmpty
+                                          usePPOBAddress <- ask(bool, "pack-at-business-address")(implicitly, implicitly, extraMessages, implicitly) when packer && data.original.productionSites.isEmpty
                                           pSites = if (usePPOBAddress.getOrElse(false)) {
                                             List(Site.fromAddress(Address.fromUkAddress(data.original.address)))
                                           } else {
                                             data.updatedProductionSites.toList
                                           }
-                                          firstPackingSite <- ask(packagingSiteMapping, "first-production-site")(packagingSiteForm, implicitly, ExtraMessages()) when
+                                          firstPackingSite <- ask(packagingSiteMapping, "first-production-site")(packagingSiteForm, implicitly, ExtraMessages(), implicitly) when
                                             pSites.isEmpty && packer
                                           packSites <- askPackSites(pSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless packer
 
@@ -165,8 +174,8 @@ class VariationsController(
   }
 
   private def deregisterUpdate(
-    data: VariationData
-  ): WebMonad[VariationData] = for {
+    data: RegistrationVariationData
+  ): WebMonad[RegistrationVariationData] = for {
     reason    <- askBigText("reason", constraints = List(("error.deregReason.tooLong", _.length <= 255)), errorOnEmpty = "error.reason.empty")
     deregDate <- ask(startDate
       .verifying("error.deregDate.nopast",  _ >= LocalDate.now)
@@ -179,51 +188,122 @@ class VariationsController(
   private def program(
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier): WebMonad[Result] = for {
-    changeType <- askOneOf("changeType", ChangeType.values.toList)
-    base = VariationData(subscription)
-    variation  <- changeType match {
-      case ChangeType.Sites => contactUpdate(base)
-      case ChangeType.Activity   => activityUpdate(base)
-      case ChangeType.Deregister => deregisterUpdate(base)
-    }
-    path <- getPath
-    cya = uniform.fragments.variationsCYA(
-      variation,
-      newPackagingSites(variation),
-      closedPackagingSites(variation),
-      newWarehouseSites(variation),
-      closedWarehouseSites(variation),
-      path
-    )
-    _ <- tell("checkyouranswers", cya)
-    submission = Convert(variation)
-    _    <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
-    _    <- clear
-    exit <- variation match {
-      case a if a.volToMan => journeyEnd("volToMan")
-      case b if b.manToVol => journeyEnd("manToVol")
-      case _ => {
-        journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val base = RegistrationVariationData(subscription)
+
+    for {
+      variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
+      changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
+      changeType <- askOneOf("changeType", changeTypes)
+      variation <- changeType match {
+        case ChangeType.Returns =>
+          chooseReturn(subscription, sdilRef)
+        case ChangeType.Sites => contactUpdate(base)
+        case ChangeType.Activity => activityUpdate(base)
+        case ChangeType.Deregister => deregisterUpdate(base)
       }
-    }
-  } yield {
-    exit
+
+      path <- getPath
+      _ <- checkYourRegAnswers("checkyouranswers", variation, path)
+      submission = Convert(variation)
+      _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+      _ <- clear
+      exit <- if(variation.volToMan) {
+        journeyEnd("volToMan")
+      } else if(variation.manToVol) {
+        journeyEnd("manToVol")
+      } else journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+    } yield exit
   }
 
-  def closedWarehouseSites(variation: VariationData): List[Site] = {
+  private def chooseReturn[A](
+    subscription: RetrievedSubscription,
+    sdilRef: String
+  )(implicit hc: HeaderCarrier): WebMonad[A] = {
+    val base = RegistrationVariationData(subscription)
+    for {
+      variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
+      extraMessages = ExtraMessages(messages = variableReturns.map { x =>
+        s"returnPeriod.option.${x.year}${x.quarter}" -> s"${Messages(s"returnPeriod.option.${x.quarter}")} ${x.year}"
+      }.toMap)
+      returnPeriod <- askOneOf("returnPeriod", variableReturns.sortWith(_>_).map(x => s"${x.year}${x.quarter}"))(extraMessages)
+        .map(y => variableReturns.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
+      _ <- clear
+      _ <- resultToWebMonad[A](Redirect(routes.VariationsController.adjustment(year = returnPeriod.year, quarter = returnPeriod.quarter, id = "check-your-variation-answers")))
+    } yield throw new IllegalStateException("we shouldn't be here")
+  }
+
+  private def adjust(
+    subscription: RetrievedSubscription,
+    sdilRef: String,
+    connector: SoftDrinksIndustryLevyConnector,
+    returnPeriod: ReturnPeriod
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val base = RegistrationVariationData(subscription)
+    implicit val showBackLink: ShowBackLink = ShowBackLink(false)
+    for {
+
+      origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
+        .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
+
+      newReturn <- askReturn(base.original, sdilRef, sdilConnector, origReturn.some)
+
+      variation = ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
+      path <- getPath
+
+      broughtForward = BigDecimal("0")
+      extraMessages = ExtraMessages(
+            messages = Map(
+              "heading.check-your-variation-answers" -> s"${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return details",
+              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} return"
+            ))
+
+      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, originalReturn = variation.original.some)(extraMessages, implicitly)
+
+      reason <- askBigText(
+        "return-variation-reason",
+        constraints = List(("error.return-variation-reason.tooLong",
+          _.length <= 255)),
+        errorOnEmpty = "error.return-variation-reason.empty")(extraMessages)
+      repayment <- askOneOf("repayment", List("credit", "bankPayment"))(ltbs.play.scaffold.SdilComponents.extraMessages) when variation.revised.total - variation.original.total < 0
+      _ <- checkReturnChanges("check-return-differences", variation.copy(reason = reason, repaymentMethod = repayment))
+      _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
+      _ <- clear
+      exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)
+
+    } yield exit
+  }
+
+  def checkYourRegAnswers(
+                              key: String,
+                              v: RegistrationVariationData,
+                              path: List[String]): WebMonad[Unit] = {
+
+    val inner = uniform.fragments.variationsCYA(
+      v,
+      newPackagingSites(v),
+      closedPackagingSites(v),
+      newWarehouseSites(v),
+      closedWarehouseSites(v),
+      path
+
+    )
+    tell(key, inner)
+  }
+
+  def closedWarehouseSites(variation: RegistrationVariationData): List[Site] = {
     closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
   }
 
-  def closedPackagingSites(variation: VariationData): List[Site] = {
+  def closedPackagingSites(variation: RegistrationVariationData): List[Site] = {
     closedSites(variation.original.productionSites, Convert(variation).closeSites.map(x => x.siteReference))
   }
 
-  def newPackagingSites(variation: VariationData): List[Site] = {
+  def newPackagingSites(variation: RegistrationVariationData): List[Site] = {
     variation.updatedProductionSites.diff(variation.original.productionSites).toList
   }
 
-  def newWarehouseSites(variation: VariationData): List[Site] = {
+  def newWarehouseSites(variation: RegistrationVariationData): List[Site] = {
     variation.updatedWarehouseSites.diff(variation.original.warehouseSites).toList
   }
 
@@ -240,9 +320,69 @@ class VariationsController(
     val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(s) =>
-        runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut)
+        runInner(request)(program(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
       case None => NotFound("").pure[Future]
     }
   }
 
+  private def changeBusinessAddressTemplate(
+    id: String,
+    subscription: RetrievedSubscription
+  )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
+
+    val unitMapping: Mapping[Unit] = Forms.of[Unit](new Formatter[Unit] {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Unit] = Right(())
+
+      override def unbind(key: String, value: Unit): Map[String, String] = Map.empty
+    })
+
+    formPage(id)(unitMapping, none[Unit]){  (path, form, r) =>
+      implicit val request: Request[AnyContent] = r
+
+    uniform.fragments.update_business_addresses(
+      id,
+      form,
+      path,
+      subscription,
+      Address.fromUkAddress(subscription.address))
+    }
+  }
+
+  def changeBusinessAddress(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(s) =>
+        runInner(request)(changeBusinessAddressJourney(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
+      case None => NotFound("").pure[Future]
+    }
+  }
+
+  private def changeBusinessAddressJourney (
+    subscription: RetrievedSubscription,
+    sdilRef: String
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val base = RegistrationVariationData(subscription)
+
+    for {
+      _ <- changeBusinessAddressTemplate("changeBusinessAddress", subscription )
+      variation <- contactUpdate(base)
+      path <- getPath
+      _ <- checkYourRegAnswers("checkyouranswers", variation, path)
+      submission = Convert(variation)
+      _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+      _ <- clear
+      exit <- journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+    } yield exit
+  }
+
+  def adjustment(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    val persistence = SaveForLaterPersistence(s"adjustments-$year$quarter", sdilRef, cache)
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(s) =>
+        runInner(request)(adjust(s, sdilRef, sdilConnector, ReturnPeriod(year, quarter)))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(LeapAhead))
+      case None => NotFound("").pure[Future]
+    }
+  }
 }

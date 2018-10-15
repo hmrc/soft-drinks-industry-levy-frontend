@@ -37,16 +37,25 @@ class RegisteredAction(val authConnector: AuthConnector, sdilConnector: SoftDrin
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
-      Future.successful {
-        getSdilEnrolment(enrolments) match {
-          case Some(e) => Right(RegisteredRequest(e, request))
-          case None => Left(Redirect(sdil.controllers.routes.IdentifyController.start()))
+
+      (getSdilEnrolment(enrolments), getUtr(enrolments)) match {
+        case (Some(e),_) => Future.successful{Right(RegisteredRequest(e, request))}
+        case (None,Some(utr)) => sdilConnector.retrieveSubscription(utr, "utr").map {
+          case Some(subscription) =>
+            Right(RegisteredRequest(EnrolmentIdentifier("sdil", subscription.sdilRef), request))
+          case None =>
+            Left(Redirect(sdil.controllers.routes.IdentifyController.start()))
         }
+        case _ => Future.successful(Left(Redirect(sdil.controllers.routes.IdentifyController.start())))
       }
+
     } recover {
       case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
     }
   }
 }
 
-case class RegisteredRequest[A](sdilEnrolment: EnrolmentIdentifier, request: Request[A]) extends WrappedRequest(request)
+case class RegisteredRequest[A](
+  sdilEnrolment: EnrolmentIdentifier,
+  request: Request[A]
+) extends WrappedRequest(request)

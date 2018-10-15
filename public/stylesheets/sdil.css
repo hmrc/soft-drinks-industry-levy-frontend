@@ -60,6 +60,10 @@
         font-weight: 400;
         vertical-align: text-top;
     }
+
+    table th .bold {
+        font-weight: bold;
+    }
 }
 
 @media (max-width: 640px) {
@@ -124,8 +128,7 @@ html .font-xsmall {
   -webkit-box-shadow: none;
   outline: 0;
   position: relative;
-  padding-left: 0;
-  padding-right: 0;
+  padding:0;
   margin-right: 0;
 }
 
@@ -147,6 +150,10 @@ button[name="checkyouranswers"] {
 
 .align-right {
     text-align: right;
+}
+
+.align-left {
+    text-align: left;
 }
 
 .align-centre {
@@ -171,4 +178,16 @@ details .address.progressive-reveal {
     .print-link {
         display: none;
     }
+}
+
+.govuk-caption-xl {
+    font-family: "nta",Arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 20px;
+    display: block;
+    margin-bottom: 5px;
+    color: #6f777b;
 }

@@ -27,6 +27,7 @@ import play.api.i18n.Messages
 import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json._
 import play.twirl.api.Html
+import sdil.controllers.ShowBackLink
 import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend.{Site, UkAddress}
@@ -75,6 +76,7 @@ object SdilComponents extends FormHelpers {
   }
 
   implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map.empty[String, String])
+  implicit val showBackLink: ShowBackLink = ShowBackLink(true)
 
   implicit val siteProgressiveRevealHtml: HtmlShow[Site] = {
 
@@ -173,13 +175,12 @@ object SdilComponents extends FormHelpers {
 
   def numeric(key: String): Mapping[Int] = text
     .verifying(s"error.$key.required", _.nonEmpty)
-    .verifying("error.number", v => v.isEmpty || Try(v.toInt).isSuccess)
+    .verifying(s"error.$key.number", v => v.isEmpty || Try(v.toInt).isSuccess)
     .transform[Int](_.toInt, _.toString)
 
   sealed trait OrganisationType extends EnumEntry
   object OrganisationType extends Enum[OrganisationType] {
     val values = findValues
-    // TODO can uppercase these when we refactor
     case object limitedCompany extends OrganisationType
     case object limitedLiabilityPartnership extends OrganisationType
     case object partnership extends OrganisationType

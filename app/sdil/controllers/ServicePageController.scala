@@ -29,6 +29,7 @@ import cats.implicits._
 import cats.data.OptionT
 import scala.concurrent._
 import java.time.LocalDate
+import views.html.uniform.fragments.update_business_addresses
 
 class ServicePageController(
   val messagesApi: MessagesApi,

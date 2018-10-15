@@ -37,7 +37,7 @@ object Convert {
     def ifNonEmpty: Option[A] = if (a.nonEmpty) Some(a) else None
   }
 
-  def apply(vd: VariationData, todaysDate: LocalDate = LocalDate.now()): VariationsSubmission = {
+  def apply(vd: RegistrationVariationData, todaysDate: LocalDate = LocalDate.now()): VariationsSubmission = {
     val orig = vd.original
 
     val newBusinessContact = {

@@ -21,8 +21,9 @@
 @import views.html.helper.options
 @import views.html.uniform.helpers._
 @import uk.gov.hmrc.uniform.webmonad._
+@import sdil.controllers.ShowBackLink
 
-@(key: String, form: Form[Option[String]], items: List[Html], breadcrumbs: List[String], min: Int, showEdit: Boolean = false)(implicit messages: Messages, request: Request[_], config: AppConfig)
+@(key: String, form: Form[Option[String]], items: List[Html], breadcrumbs: List[String], min: Int, showEdit: Boolean = false)(implicit messages: Messages, request: Request[_], config: AppConfig, showBacklink: ShowBackLink)
 @singular(items: List[Html]) = {@if(items.nonEmpty && items.length > 1) {s}}
 
 @multiTitle(items: List[Html]) = {

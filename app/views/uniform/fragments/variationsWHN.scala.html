@@ -15,8 +15,14 @@
  *@
 
  
-@()(implicit messages: Messages)
+@(key: Option[String] = None)(implicit messages: Messages)
 
-<p>@Messages("variationDone.what-happens-next")</p>
+@if(key.nonEmpty) {
+  @key.map { x =>
+   <p>@Html(Messages(s"$x.variationDone.what-happens-next"))</p>
+  }
+} else {
+  <p>@Messages("variationDone.what-happens-next")</p>
+}
 
 <p>@Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))</p>

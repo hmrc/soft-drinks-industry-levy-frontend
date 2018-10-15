@@ -20,7 +20,7 @@ import play.api.{Configuration, Environment}
 import sdil.models._
 import sdil.models.backend.{Site, Subscription}
 import sdil.models.retrieved.RetrievedSubscription
-import sdil.models.variations.VariationsSubmission
+import sdil.models.variations.{ReturnVariationData, VariationsSubmission}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -53,13 +53,13 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
     }
   }
 
-  def retrieveSubscription(sdilNumber: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
-    shortLiveCache.fetchAndGetEntry[RetrievedSubscription]("sdil-foo", s"$sdilNumber") flatMap {
+  def retrieveSubscription(sdilNumber: String, identifierType: String = "sdil")(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
+    shortLiveCache.fetchAndGetEntry[RetrievedSubscription](s"sdil-$identifierType", s"$sdilNumber") flatMap {
       case Some(s) => Future.successful(Some(s))
       case _ =>
-        http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/sdil/$sdilNumber").flatMap {
+        http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/$identifierType/$sdilNumber").flatMap {
           case Some(a) =>
-            shortLiveCache.cache("sdil-foo", s"$sdilNumber", a).map {
+            shortLiveCache.cache(s"sdil-$identifierType", s"$sdilNumber", a).map {
               _ => Some(a)
             }
           case _ => Future.successful(None)
@@ -72,15 +72,26 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
   }
 
   object returns { 
-    implicit val returnPeriodJson = Json.format[ReturnPeriod]
     import ltbs.play.scaffold.SdilComponents.longTupleFormatter
-    implicit val smallProducerJson = Json.format[SmallProducer]    
-    implicit val returnJson = Json.format[SdilReturn]
 
     def pending(
       utr: String
     )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
       http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
+    }
+
+    def variable(
+      utr: String
+    )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
+      http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable")
+    }
+
+    def vary(
+      sdilRef: String,
+      data: ReturnVariationData
+    )(implicit hc: HeaderCarrier): Future[Unit] = {
+      val uri = s"$sdilUrl/returns/vary/$sdilRef"
+      http.POST[ReturnVariationData, HttpResponse](uri, data) map { _ => () }
     }
 
     def update(

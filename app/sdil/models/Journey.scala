@@ -24,7 +24,7 @@ object Journey {
     IdentifyPage,
     VerifyPage
   )
-//TODO Lose this file
+
   private val reversed: List[Page] = pages.reverse
 
   def expectedPage(page: Page)(implicit request: RegistrationFormRequest[_]): Page = {

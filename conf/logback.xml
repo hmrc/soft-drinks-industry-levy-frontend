@@ -47,7 +47,11 @@
 
     <logger name="application" level="WARN"/>
 
-    <logger name="connector" level="TRACE">
+    <logger name="connector" level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="uniform2" level="WARN">
         <appender-ref ref="STDOUT"/>
     </logger>
 
