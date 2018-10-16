@@ -150,7 +150,7 @@ class ReturnsController (
       _ <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
       newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
       newWarehouses <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
-      broughtForward <- execute(sdilConnector.balance(sdilRef))
+      broughtForward <- execute(sdilConnector.balance(sdilRef, withoutAssessment = true))
 
       variation = ReturnsVariation(
         orgName = subscription.orgName,

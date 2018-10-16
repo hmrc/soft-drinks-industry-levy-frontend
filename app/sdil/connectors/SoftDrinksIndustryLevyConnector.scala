@@ -118,9 +118,10 @@ class SoftDrinksIndustryLevyConnector(http: HttpClient,
   }
 
   def balance(
-    sdil: String
+    sdil: String,
+    withoutAssessment: Boolean
   )(implicit hc: HeaderCarrier): Future[BigDecimal] = {
-    http.GET[BigDecimal](s"$sdilUrl/balance/$sdil")
+    http.GET[BigDecimal](s"$sdilUrl/balance/$sdil/$withoutAssessment")
   }
 
   def balanceHistory(
