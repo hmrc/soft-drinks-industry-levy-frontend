@@ -48,7 +48,7 @@ class ServicePageController(
       subscription  <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
       returnPeriods <- OptionT(sdilConnector.returns.pending(subscription.utr).map(_.some))
       lastReturn    <- OptionT(sdilConnector.returns.get(subscription.utr, ReturnPeriod(LocalDate.now).previous).map(_.some))
-      balance       <- OptionT(sdilConnector.balance(sdilRef).map(_.some))
+      balance       <- OptionT(sdilConnector.balance(sdilRef, withoutAssessment = false).map(_.some))
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
       Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance))
