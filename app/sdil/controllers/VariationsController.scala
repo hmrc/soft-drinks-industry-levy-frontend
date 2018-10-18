@@ -18,6 +18,7 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import cats.data.OptionT
 import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
@@ -185,6 +186,11 @@ class VariationsController(
     deregDate = deregDate.some
   )
 
+  private def fileReturnsBeforeDereg(returnPeriod: List[ReturnPeriod]) =
+    for {
+
+    }
+
   private def program(
     subscription: RetrievedSubscription,
     sdilRef: String
@@ -193,6 +199,7 @@ class VariationsController(
 
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
+      returnPeriods <- OptionT(sdilConnector.returns.pending(subscription.utr).map(_.some))
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
       changeType <- askOneOf("changeType", changeTypes)
       variation <- changeType match {
@@ -200,7 +207,8 @@ class VariationsController(
           chooseReturn(subscription, sdilRef)
         case ChangeType.Sites => contactUpdate(base)
         case ChangeType.Activity => activityUpdate(base)
-        case ChangeType.Deregister => deregisterUpdate(base)
+        case ChangeType.Deregister if returnPeriods.isEmpty => deregisterUpdate(base)
+        case ChangeType.Deregister if returnPeriods.nonEmpty => fileReturnsBeforeDereg(returnPeriods)
       }
 
       path <- getPath

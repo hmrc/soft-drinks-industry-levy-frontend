@@ -34,6 +34,7 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
+            <h1 class="heading-large">@subscription.deregDate.getOrElse(false)</h1>
 
             @*TODO Content for when the user is now vol but used to be man. To reliably determine this changes need to be made to MDTP mongo.
             @periodsDue.takeRight(1).map { pd =>
