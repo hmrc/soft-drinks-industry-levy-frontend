@@ -139,7 +139,6 @@ class ReturnsController (
         s"<span class='govuk-caption-xl'>${Messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))}</span>${Messages("heading.check-your-answers")}"
       )
     )
-
     for {
       _ <- write[Boolean]("_editSmallProducers", true)
       sdilReturn <- askReturn(subscription, sdilRef, sdilConnector)
@@ -150,7 +149,12 @@ class ReturnsController (
       _ <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
       newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
       newWarehouses <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
-      broughtForward <- execute(sdilConnector.balance(sdilRef, withoutAssessment = true))
+      broughtForward <- if(config.balanceAllEnabled)
+        execute(sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+          extractTotal(listItemsWithTotal(x))
+        })
+      else
+        execute(sdilConnector.balance(sdilRef, withAssessment = true))
 
       variation = ReturnsVariation(
         orgName = subscription.orgName,
