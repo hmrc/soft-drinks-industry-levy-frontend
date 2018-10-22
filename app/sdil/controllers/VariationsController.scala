@@ -186,10 +186,26 @@ class VariationsController(
     deregDate = deregDate.some
   )
 
-  private def fileReturnsBeforeDereg(returnPeriod: List[ReturnPeriod]) =
+  private def fileReturnsBeforeDereg(subscription: RetrievedSubscription, sdilRef: String, returnPeriods: List[ReturnPeriod]) =
     for {
-
-    }
+      sendToReturns <- tell("return-before-dereg", uniform.fragments.return_before_dereg())
+      returns <- askReturn(subscription, sdilRef, sdilConnector)
+      broughtForward <- execute(sdilConnector.balance(sdilRef, withoutAssessment = true))
+      path <- getPath
+      _ <- checkYourReturnAnswers("check-your-variation-answers", returns, broughtForward, subscription)
+      _ <- cachedFuture(s"return-${period.count}")(
+        sdilConnector.returns(subscription.utr, period) = sdilReturn)
+      end <- clear >> confirmationPage(
+        "return-sent",
+        period,
+        subscription,
+        sdilReturn,
+        broughtForward,
+        sdilRef,
+        subscription.activity.smallProducer,
+        variation
+      )
+    } yield end
 
   private def program(
     subscription: RetrievedSubscription,
@@ -208,7 +224,7 @@ class VariationsController(
         case ChangeType.Sites => contactUpdate(base)
         case ChangeType.Activity => activityUpdate(base)
         case ChangeType.Deregister if returnPeriods.isEmpty => deregisterUpdate(base)
-        case ChangeType.Deregister if returnPeriods.nonEmpty => fileReturnsBeforeDereg(returnPeriods)
+        case ChangeType.Deregister if returnPeriods.nonEmpty => fileReturnsBeforeDereg(subscription, sdilRef, returnPeriods)
       }
 
       path <- getPath
