@@ -16,6 +16,8 @@
 
 package sdil.connectors
 
+import java.time.LocalDate
+
 import play.api.{Configuration, Environment}
 import sdil.config.SDILSessionCache
 import sdil.models._
@@ -62,7 +64,28 @@ class SoftDrinksIndustryLevyConnector(
       case _ =>
         http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/$identifierType/$sdilNumber").flatMap {
           case Some(a) =>
-            sessionCache.cache(s"$sdilNumber", a).map {
+            sessionCache.cache(s"$sdilNumber", a).map { // TODO bet this is why caching has stopped working
+              _ => Some(a)
+            }
+          case _ => Future.successful(None)
+        }
+    }
+  }
+
+  def retrievePointInTimeSubscriptions(
+    sdilRef: String,
+    period: ReturnPeriod
+//  )(implicit hc: HeaderCarrier): Future[Option[List[RetrievedSubscription]]] = {
+  )(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
+
+    sessionCache.fetchAndGetEntry[Boolean](s"sdil-$sdilRef-${period.year}-${period.quarter}") flatMap {
+//    sessionCache.fetchAndGetEntry[List[RetrievedSubscription]](s"sdil-$sdilRef-${period.year}-${period.quarter}") flatMap {
+      case Some(s) => Future.successful(Some(s))
+      case _ =>
+//        http.GET[Option[List[RetrievedSubscription]]](s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}").flatMap {
+        http.GET[Option[Boolean]](s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}").flatMap {
+          case Some(a) =>
+            sessionCache.cache(s"sdil-$sdilRef-${period.year}-${period.quarter}", a).map {
               _ => Some(a)
             }
           case _ => Future.successful(None)

@@ -142,7 +142,7 @@ class ReturnsController (
 
     for {
       _ <- write[Boolean]("_editSmallProducers", true)
-      sdilReturn <- askReturn(subscription, sdilRef, sdilConnector)
+      sdilReturn <- askReturn(subscription, sdilRef, sdilConnector, period)
       // check if they need to vary
       isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
       isNewPacker = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker

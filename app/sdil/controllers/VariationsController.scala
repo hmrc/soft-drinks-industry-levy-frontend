@@ -246,7 +246,7 @@ class VariationsController(
       origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
         .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
 
-      newReturn <- askReturn(base.original, sdilRef, sdilConnector, origReturn.some)
+      newReturn <- askReturn(base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
 
       variation = ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
       path <- getPath
