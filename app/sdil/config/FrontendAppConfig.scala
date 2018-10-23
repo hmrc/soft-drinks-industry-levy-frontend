@@ -32,6 +32,7 @@ trait AppConfig {
   val signoutUrlNoFeedback: String
   val sdilHomePage: String
   val appName: String
+  val balanceAllEnabled: Boolean
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, environment: Environment) extends AppConfig with ServicesConfig {
@@ -60,4 +61,6 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   lazy val signoutReturnsUrl: String = s"$signOutSdilUrl?origin=SDILRETURN"
   lazy val signoutUrlNoFeedback: String = s"$companyAuthFrontend$companyAuthSignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
+
+  override val balanceAllEnabled: Boolean = getBoolean("balanceAll.enabled")
 }

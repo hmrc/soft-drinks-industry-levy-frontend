@@ -30,4 +30,5 @@ class TestConfig extends AppConfig {
   override val signoutRegVarUrl: String = "http://localhost:9025/gg/sign-out"
   override val signoutReturnsUrl: String = "http://localhost:9025/gg/sign-out"
   override val signoutUrlNoFeedback: String = "http://localhost:9025/gg/sign-out"
+  override val balanceAllEnabled: Boolean = true
 }
