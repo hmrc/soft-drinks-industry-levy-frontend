@@ -154,7 +154,7 @@ class ReturnsController (
           extractTotal(listItemsWithTotal(x))
         })
       else
-        execute(sdilConnector.balance(sdilRef, withAssessment = true))
+        execute(sdilConnector.balance(sdilRef, withAssessment = false))
 
       variation = ReturnsVariation(
         orgName = subscription.orgName,
