@@ -27,8 +27,11 @@ import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.softdrinksindustrylevy._
 import cats.implicits._
 import cats.data.OptionT
+
 import scala.concurrent._
 import java.time.LocalDate
+
+import uk.gov.hmrc.uniform.webmonad.WebMonad
 import views.html.uniform.fragments.update_business_addresses
 
 class ServicePageController(
@@ -48,6 +51,8 @@ class ServicePageController(
       subscription  <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
       returnPeriods <- OptionT(sdilConnector.returns.pending(subscription.utr).map(_.some))
       lastReturn    <- OptionT(sdilConnector.returns.get(subscription.utr, ReturnPeriod(LocalDate.now).previous).map(_.some))
+      deregCheck    = subscription.deregDate.getOrElse(LocalDate.now.plusYears(100))
+      pendingDereg    <- OptionT(sdilConnector.returns.get(subscription.utr, ReturnPeriod(deregCheck)).map(_.some))
       balance       <- if(config.balanceAllEnabled)
                         OptionT(sdilConnector.balanceHistory(sdilRef, withAssessment = true).map { x =>
                           extractTotal(listItemsWithTotal(x)).some
@@ -56,7 +61,7 @@ class ServicePageController(
                         OptionT(sdilConnector.balance(sdilRef, withAssessment = true).map(_.some))
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
-      Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance))
+      Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance, pendingDereg))
     }
     ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
 

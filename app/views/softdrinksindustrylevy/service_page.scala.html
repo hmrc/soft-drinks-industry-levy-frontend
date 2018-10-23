@@ -27,7 +27,7 @@
 @import java.time.LocalDate
 @import java.time.ZoneId
 
-@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, pendingDereg: Option[SdilReturn])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 
 @main_template(Messages("sdil.registered.title"), noArticle = true) {
@@ -35,6 +35,20 @@
         <div class="column-two-thirds">
             <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
             <h1 class="heading-large">@subscription.deregDate.getOrElse(false)</h1>
+
+            @if(subscription.deregDate.nonEmpty && pendingDereg.isEmpty) {
+
+                @subscription.deregDate.map { x =>
+                    <div class="form-group">
+                        <div class="alert alert--info margin-bottom-30">
+                            <h2 class="heading-medium no-margin">@Messages("sdil.service-page.deregistered.pending.title")</h2>
+                            <p>@Messages("sdil.service-page.deregistered.pending.p1", ReturnPeriod(x).start.format("MMMM yyyy"), ReturnPeriod(x).end.format("MMMM yyyy"), ReturnPeriod(x).next.start.format("d MMMM"), ReturnPeriod(x).deadline.format("d MMMM yyyy"))</p>
+                            <p>@Messages("sdil.service-page.deregistered.pending.p2")</p>
+                            <p>@Messages("sdil.service-page.deregistered.pending.p3")</p>
+                        </div>
+                    </div>
+                }
+            }
 
             @*TODO Content for when the user is now vol but used to be man. To reliably determine this changes need to be made to MDTP mongo.
             @periodsDue.takeRight(1).map { pd =>

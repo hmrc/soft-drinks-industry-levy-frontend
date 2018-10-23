@@ -469,6 +469,13 @@ sdil.service-page.variations.li.4=cancel your registration for the Soft Drinks I
 sdil.service-page.variations.change=Tell HMRC about a change
 sdil.service-page.variations.p4=Changes can take up to 15 working days to process.
 
+#service page when deregistered
+sdil.service-page.deregistered.pending.title=Your request to cancel your registration is on hold
+sdil.service-page.deregistered.pending.p1=Before we can cancel your registration, you must send a final return for the \
+  current period, {0} to {1} and make any outstanding payments. You will be able to send the final return from {2} until {3}.
+sdil.service-page.deregistered.pending.p2=You will be able to access your account for 7 years from when you send your final return.
+sdil.service-page.deregistered.pending.p3=If you do not want to cancel your registration, call the Soft Drinks Industry Levy helpline on 0300 200 3700.
+
 #Update business addresses from service page
 sdil.updateBusinessAddresses.heading=Soft Drinks Industry Levy addresses
 heading.updateBusinessAddresses=Soft Drinks Industry Levy addresses
@@ -1255,7 +1262,7 @@ error.return-variation-reason.empty=Enter a reason for correcting your return
 sdil.check-return-differences.reason.return-variation-reason.subheading=Correction details
 return-variation-reason.label=Reason for correction
 returnVariationDone.title=Correction sent
-returnVariationDone.subheading=We will review the details you updated and get back to you 
+returnVariationDone.subheading=We will review the details you updated and get back to you
 returnVariationDone.your.updates=Your updates were sent on {0} at {1}.
 
 return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you.</p>\
@@ -1270,3 +1277,9 @@ credit.short=Credited to Soft Drinks Industry Levy account
 bankPayment=Paid into my bank account. We will contact you to arrange payment.
 bankPayment.short=Paid into bank
 return-variation-repayments.label=Repayment method
+
+heading.file-return-before-deregistration=You cannot cancel your registration while you have returns to send
+file-return-before-deregistration.one-return=Before you can cancel your registration, you must send a return for {0} to {1} and make any payments due.
+file-return-before-deregistration.many-returns=Before you can cancel your registration, you must send {0} returns and make any payments due.
+file-return-before-deregistration.continue=Go to your account
+

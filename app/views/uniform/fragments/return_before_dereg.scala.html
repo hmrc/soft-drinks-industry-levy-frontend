@@ -14,4 +14,21 @@
  * limitations under the License.
  *@
 
-@()
+@import sdil.models.ReturnPeriod
+
+@(key: String, returnPeriods: List[ReturnPeriod])(implicit messages: Messages)
+
+@if(returnPeriods.length == 1) {
+    @returnPeriods.map { x =>
+        <p>
+            @Messages(
+                s"$key.one-return",
+                x.start.format("MMMM"),
+                x.end.format("MMMM yyyy")
+            )
+        </p>
+    }
+} else {
+    <p>@Messages(s"$key.many-returns", returnPeriods.size.toString)</p>
+}
+

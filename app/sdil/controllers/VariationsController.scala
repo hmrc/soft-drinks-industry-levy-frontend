@@ -186,26 +186,11 @@ class VariationsController(
     deregDate = deregDate.some
   )
 
-  private def fileReturnsBeforeDereg(subscription: RetrievedSubscription, sdilRef: String, returnPeriods: List[ReturnPeriod]) =
+  private def fileReturnsBeforeDereg[A](subscription: RetrievedSubscription, sdilRef: String, returnPeriods: List[ReturnPeriod], data: RegistrationVariationData) =
     for {
-      sendToReturns <- tell("return-before-dereg", uniform.fragments.return_before_dereg())
-      returns <- askReturn(subscription, sdilRef, sdilConnector)
-      broughtForward <- execute(sdilConnector.balance(sdilRef, withoutAssessment = true))
-      path <- getPath
-      _ <- checkYourReturnAnswers("check-your-variation-answers", returns, broughtForward, subscription)
-      _ <- cachedFuture(s"return-${period.count}")(
-        sdilConnector.returns(subscription.utr, period) = sdilReturn)
-      end <- clear >> confirmationPage(
-        "return-sent",
-        period,
-        subscription,
-        sdilReturn,
-        broughtForward,
-        sdilRef,
-        subscription.activity.smallProducer,
-        variation
-      )
-    } yield end
+      sendToReturns <- tell("file-return-before-deregistration", uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods))
+      _ <- resultToWebMonad[A](Redirect(routes.ServicePageController.show()))
+    } yield data
 
   private def program(
     subscription: RetrievedSubscription,
@@ -215,7 +200,7 @@ class VariationsController(
 
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
-      returnPeriods <- OptionT(sdilConnector.returns.pending(subscription.utr).map(_.some))
+      returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
       changeType <- askOneOf("changeType", changeTypes)
       variation <- changeType match {
@@ -224,7 +209,7 @@ class VariationsController(
         case ChangeType.Sites => contactUpdate(base)
         case ChangeType.Activity => activityUpdate(base)
         case ChangeType.Deregister if returnPeriods.isEmpty => deregisterUpdate(base)
-        case ChangeType.Deregister if returnPeriods.nonEmpty => fileReturnsBeforeDereg(subscription, sdilRef, returnPeriods)
+        case ChangeType.Deregister if returnPeriods.nonEmpty => fileReturnsBeforeDereg(subscription, sdilRef, returnPeriods, base)
       }
 
       path <- getPath
