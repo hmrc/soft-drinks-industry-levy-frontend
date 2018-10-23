@@ -503,6 +503,5 @@ trait SdilWMController extends WebMonadController
       uniform.fragments.litreage(key, form, false)(messages)
     }
   }
-
 }
 
