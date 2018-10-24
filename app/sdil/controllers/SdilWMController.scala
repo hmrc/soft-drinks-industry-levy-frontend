@@ -494,7 +494,7 @@ trait SdilWMController extends WebMonadController
   }
 
   def isSmallProducer(sdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Boolean] =
-    sdilConnector.retrievePointInTimeSubscriptions(sdilRef, period).flatMap {
+    sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
       case Some(x) => x // the given sdilRef matches a customer that was a small producer at some point in the quarter
       case None    => false
     }(mdcExecutionContext)
