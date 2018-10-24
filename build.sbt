@@ -1,23 +1,3 @@
-import play.core.PlayVersion
-import play.routes.compiler.StaticRoutesGenerator
-import play.sbt.PlayImport._
-import play.sbt.routes.RoutesKeys.routesGenerator
-import sbt.Keys._
-import sbt._
-import scoverage.ScoverageKeys
-import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.SbtAutoBuildPlugin
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
-import uk.gov.hmrc.versioning.SbtGitVersioning
-import com.typesafe.sbt.web.Import._
-import net.ground5hark.sbt.concat.Import._
-import com.typesafe.sbt.uglify.Import._
-import com.typesafe.sbt.web.SbtWeb
-import play.twirl.sbt.Import.TwirlKeys
-import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
-import uk.gov.hmrc.SbtArtifactory
-
 // ================================================================================
 // Plugins
 // ================================================================================
@@ -51,32 +31,35 @@ pipelineStages in Assets := Seq(concat)
 // ================================================================================
 // Testing
 // ================================================================================
-ScoverageKeys.coverageExcludedPackages := Seq(
-  "app.*",
-  "views.*",
-  "uk.gov.hmrc.*",
-  "prod.*",
-  "sdil.config.*",
-  "sdil.connectors.*",
-  "sdil.models.*",
-  "sdil.controllers.Routes",
-  "sdil.controllers.RoutesPrefix",
-  "testOnlyDoNotUseInAppConf.*",
-  "sdil.controllers.test.*",
-  "sdil.connectors.TestConnector",
-  "variations.Routes"
-).mkString(";")
+{
+  import scoverage.ScoverageKeys._
+  coverageExcludedPackages := Seq(
+    "app.*",
+    "views.*",
+    "uk.gov.hmrc.*",
+    "prod.*",
+    "sdil.config.*",
+    "sdil.connectors.*",
+    "sdil.models.*",
+    "sdil.controllers.Routes",
+    "sdil.controllers.RoutesPrefix",
+    "testOnlyDoNotUseInAppConf.*",
+    "sdil.controllers.test.*",
+    "sdil.connectors.TestConnector",
+    "variations.Routes"
+  ).mkString(";")
 
-ScoverageKeys.coverageMinimum := 80
-ScoverageKeys.coverageFailOnMinimum := false
-ScoverageKeys.coverageHighlighting := true
+  coverageMinimum := 80
+  coverageFailOnMinimum := false
+  coverageHighlighting := true
+}
 
 libraryDependencies ++= Seq(
   "uk.gov.hmrc"            %% "hmrctest"           % "3.0.0",
   "org.scalatest"          %% "scalatest"          % "3.0.5",
   "org.pegdown"            % "pegdown"             % "1.6.0",
   "org.jsoup"              % "jsoup"               % "1.11.3",
-  "com.typesafe.play"      %% "play-test"          % PlayVersion.current,
+  "com.typesafe.play"      %% "play-test"          % play.core.PlayVersion.current,
   "org.mockito"            % "mockito-core"        % "2.13.0",
   "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1",
   "org.scalacheck"         %% "scalacheck"         % "1.14.0"
