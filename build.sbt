@@ -91,7 +91,6 @@ libraryDependencies ++= Seq(
   "uk.gov.hmrc"               %% "uniform"                        % "0.1.9"
 )
 
-retrieveManaged := true
 resolvers ++= Seq(
   Resolver.bintrayRepo("hmrc", "releases"),
   Resolver.jcenterRepo
@@ -144,3 +143,5 @@ scalacOptions ++= Seq(
 initialCommands in console := "import cats.implicits._"
 
 majorVersion := 0
+
+uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
