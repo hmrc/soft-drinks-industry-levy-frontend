@@ -258,7 +258,9 @@ class VariationsController(
               "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} return"
             ))
 
-      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, originalReturn = variation.original.some)(extraMessages, implicitly)
+      siSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, returnPeriod))
+
+      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, siSmallProd, originalReturn = variation.original.some)(extraMessages, implicitly)
 
       reason <- askBigText(
         "return-variation-reason",

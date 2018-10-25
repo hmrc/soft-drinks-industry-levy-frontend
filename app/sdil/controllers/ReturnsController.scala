@@ -152,6 +152,8 @@ class ReturnsController (
       newWarehouses <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
       broughtForward <- execute(sdilConnector.balance(sdilRef))
 
+      siSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, period))
+
       variation = ReturnsVariation(
         orgName = subscription.orgName,
         ppobAddress = subscription.address,
@@ -163,7 +165,7 @@ class ReturnsController (
         email = subscription.contact.email,
         taxEstimation = taxEstimation(sdilReturn)
       )
-      _ <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))(em, implicitly)
+      _ <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, siSmallProd, Some(variation))(em, implicitly)
       _ <- cachedFuture(s"return-${period.count}")(
         sdilConnector.returns(subscription.utr, period) = sdilReturn)
       _ <- if (isNewImporter || isNewPacker) {
@@ -178,7 +180,7 @@ class ReturnsController (
         sdilReturn,
         broughtForward,
         sdilRef,
-        subscription.activity.smallProducer,
+        siSmallProd, //subscription.activity.smallProducer,
         variation
       )
     } yield end

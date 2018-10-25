@@ -33,7 +33,7 @@ import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend.Site
+import sdil.models.backend.{Site, Subscription}
 import sdil.models.retrieved.RetrievedSubscription
 import uk.gov.hmrc.domain.Modulus23Check
 import uk.gov.hmrc.http.HeaderCarrier
@@ -68,7 +68,7 @@ trait SdilWMController extends WebMonadController
       ("claim-credits-for-exports", sdilReturn.export, -1),
       ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
     )
-    if(!isSmallProducer) // TODO - we need to find a way of ensuring this is correct for the period of the return and not just the latest state
+    if(!isSmallProducer)
       ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
     else
       ra
@@ -106,12 +106,13 @@ trait SdilWMController extends WebMonadController
     sdilReturn: SdilReturn,
     broughtForward: BigDecimal,
     subscription: RetrievedSubscription,
+    isSmallProducer: Boolean,
     variation: Option[ReturnsVariation] = None,
     alternativeRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty,
     originalReturn: Option[SdilReturn] = None
   )(implicit extraMessages: ExtraMessages, showBackLink: ShowBackLink): WebMonad[Unit] = {
 
-    val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
+    val data = returnAmount(sdilReturn, isSmallProducer)
     val subtotal = calculateSubtotal(data)
     val total: BigDecimal = subtotal - broughtForward
 
