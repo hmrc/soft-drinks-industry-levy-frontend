@@ -28,4 +28,14 @@ package object models {
   implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
     def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
   }
+
+  def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] = {
+    items.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) {
+      (acc, n) => (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
+    }
+  }
+
+  def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal = {
+    l.headOption.fold(BigDecimal(0))(_._2)
+  }
 }

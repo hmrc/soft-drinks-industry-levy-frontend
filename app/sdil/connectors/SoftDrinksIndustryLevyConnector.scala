@@ -140,16 +140,18 @@ class SoftDrinksIndustryLevyConnector(
   }
 
   def balance(
-    sdil: String
+   sdil: String,
+   withAssessment: Boolean
   )(implicit hc: HeaderCarrier): Future[BigDecimal] = {
-    http.GET[BigDecimal](s"$sdilUrl/balance/$sdil")
+    http.GET[BigDecimal](s"$sdilUrl/balance/$sdil/$withAssessment")
   }
 
   def balanceHistory(
-    sdil: String
+    sdil: String,
+    withAssessment: Boolean
   )(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
     import FinancialLineItem.formatter
-    http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdil/history")
+    http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdil/history/all/$withAssessment")
   }
 
 }

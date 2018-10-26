@@ -48,7 +48,12 @@ class ServicePageController(
       subscription  <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
       returnPeriods <- OptionT(sdilConnector.returns.pending(subscription.utr).map(_.some))
       lastReturn    <- OptionT(sdilConnector.returns.get(subscription.utr, ReturnPeriod(LocalDate.now).previous).map(_.some))
-      balance       <- OptionT(sdilConnector.balance(sdilRef).map(_.some))
+      balance       <- if(config.balanceAllEnabled)
+                        OptionT(sdilConnector.balanceHistory(sdilRef, withAssessment = true).map { x =>
+                          extractTotal(listItemsWithTotal(x)).some
+                        })
+                      else
+                        OptionT(sdilConnector.balance(sdilRef, withAssessment = true).map(_.some))
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
       Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance))
@@ -61,13 +66,10 @@ class ServicePageController(
 
     val sdilRef = request.sdilEnrolment.value
 
-    sdilConnector.balanceHistory(request.sdilEnrolment.value) >>= { items =>
+    sdilConnector.balanceHistory(sdilRef, withAssessment = true) >>= { items =>
+      val itemsWithRunningTotal = listItemsWithTotal(items)
+      val total = extractTotal(itemsWithRunningTotal)
 
-      val itemsWithRunningTotal =
-        items.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) {
-          (acc, n) => (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
-        }
-      val total = itemsWithRunningTotal.headOption.fold(BigDecimal(0))(_._2)
       Ok(balance_history(itemsWithRunningTotal, total, request.sdilEnrolment.value))
     }
   }
