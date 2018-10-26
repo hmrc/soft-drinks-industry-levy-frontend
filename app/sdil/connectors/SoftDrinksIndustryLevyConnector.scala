@@ -64,7 +64,7 @@ class SoftDrinksIndustryLevyConnector(
       case _ =>
         http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/$identifierType/$sdilNumber").flatMap {
           case Some(a) =>
-            sessionCache.cache(s"$sdilNumber", a).map { // TODO maybe this is why caching has stopped working
+            sessionCache.cache(s"$sdilNumber", a).map {
               _ =>
                 Some(a)
             }
