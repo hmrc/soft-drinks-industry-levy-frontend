@@ -95,6 +95,7 @@ class SoftDrinksIndustryLevyConnector(
   }
 
   object returns {
+    import ltbs.play.scaffold.SdilComponents.longTupleFormatter
 
     def pending(
       utr: String
