@@ -84,4 +84,5 @@ object ReturnPeriod {
   }
   def apply(date: LocalDate): ReturnPeriod = ReturnPeriod(date.getYear, quarter(date))
   def quarter(date: LocalDate): Int = { date.getMonthValue - 1 } / 3
+
 }

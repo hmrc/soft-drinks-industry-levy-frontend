@@ -255,7 +255,7 @@ class VariationsController(
       origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
         .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
 
-      newReturn <- askReturn(base.original, sdilRef, sdilConnector, origReturn.some)
+      newReturn <- askReturn(base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
 
       variation = ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
       path <- getPath
@@ -267,7 +267,9 @@ class VariationsController(
               "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} return"
             ))
 
-      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, originalReturn = variation.original.some)(extraMessages, implicitly)
+      isSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, returnPeriod))
+
+      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, isSmallProd, originalReturn = variation.original.some)(extraMessages, implicitly)
 
       reason <- askBigText(
         "return-variation-reason",

@@ -141,7 +141,7 @@ class ReturnsController (
     )
     for {
       _ <- write[Boolean]("_editSmallProducers", true)
-      sdilReturn <- askReturn(subscription, sdilRef, sdilConnector)
+      sdilReturn <- askReturn(subscription, sdilRef, sdilConnector, period)
       // check if they need to vary
       isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
       isNewPacker = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
@@ -156,6 +156,8 @@ class ReturnsController (
       else
         execute(sdilConnector.balance(sdilRef, withAssessment = false))
 
+      isSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, period))
+
       variation = ReturnsVariation(
         orgName = subscription.orgName,
         ppobAddress = subscription.address,
@@ -167,7 +169,7 @@ class ReturnsController (
         email = subscription.contact.email,
         taxEstimation = taxEstimation(sdilReturn)
       )
-      _ <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, Some(variation))(em, implicitly)
+      _ <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, isSmallProd, Some(variation))(em, implicitly)
       _ <- cachedFuture(s"return-${period.count}")(
         sdilConnector.returns(subscription.utr, period) = sdilReturn)
       _ <- if (isNewImporter || isNewPacker) {
@@ -182,7 +184,7 @@ class ReturnsController (
         sdilReturn,
         broughtForward,
         sdilRef,
-        subscription.activity.smallProducer,
+        isSmallProd,
         variation
       )
     } yield end
