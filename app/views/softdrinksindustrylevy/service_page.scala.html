@@ -35,32 +35,59 @@
         <div class="column-two-thirds">
             <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
 
-            @if(subscription.deregDate.nonEmpty && pendingDereg.isEmpty) {
-                @subscription.deregDate.map { x =>
-                        <div class="alert alert--info margin-bottom-30">
-                            <h2 class="heading-medium no-margin">@Messages("sdil.service-page.deregistered.pending.title")</h2>
-                            <p>@Messages("sdil.service-page.deregistered.pending.p1", ReturnPeriod(x).start.format("MMMM yyyy"), ReturnPeriod(x).end.format("MMMM yyyy"), ReturnPeriod(x).next.start.format("d MMMM"), ReturnPeriod(x).deadline.format("d MMMM yyyy"))</p>
-                            <p>@Messages("sdil.service-page.deregistered.pending.p2")</p>
-                            <p>@Messages("sdil.service-page.deregistered.pending.p3")</p>
-                        </div>
-                }
-                @lastReturn.map { lr =>
-                    <div class="panel-border-narrow panel">
+            @if(subscription.deregDate.nonEmpty && pendingDereg.isEmpty && balance < 0) {
+                @subscription.deregDate.map { deregDate =>
+                    <div class="alert alert--info margin-bottom-30">
+                        <h2 class="heading-medium no-margin">@Messages("sdil.service-page.deregistered.pending.title")</h2>
+                        <p>@Messages("sdil.service-page.deregistered.pending.p1", ReturnPeriod(deregDate).start.format("MMMM yyyy"), ReturnPeriod(deregDate).end.format("MMMM yyyy"), ReturnPeriod(deregDate).next.start.format("d MMMM"), ReturnPeriod(deregDate).deadline.format("d MMMM yyyy"))</p>
+                        <p>@Messages("sdil.service-page.deregistered.pending.p2")</p>
+                        <p>@Messages("sdil.service-page.deregistered.pending.p3")</p>
+                    </div>
+                @for(period <- periodsDue.take(1)) {
+                    @if(period.end.isAfter(deregDate)) {
+                        <h2 class="heading-medium no-margin">@Messages("returnsHome.dereg.final-return-title")</h2>
                         <p>
                             @Messages(
-                                "sdil.service-page.completed-return",
-                                ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
-                                ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
-                                lr.submittedOn.getOrElse(LocalDateTime.now).atZone(ZoneId.of("Europe/London")).format(ofPattern("h:mma")).toLowerCase,
-                                lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")),
-                                ReturnPeriod(LocalDate.now).start.format("MMMM"),
-                                ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
-                                ReturnPeriod(LocalDate.now).deadline.format("d MMMM yyyy")
+                                "returnsHome.dereg.final-return-p1",
+                                period.start.format("MMMM yyyy"),
+                                period.end.format("MMMM yyyy")
                             )
                         </p>
-                    </div>
+                        <div>
+                            @details("returnsHome.help.title") {
+                                <p>@messages("returnsHome.help.p1")</p>
+                                <ul class="list list-bullet">
+                                    <li>@Messages("returnsHome.help.li1")</li>
+                                    <li>@Messages("returnsHome.help.li2")</li>
+                                    <li>@Messages("returnsHome.help.li3")</li>
+                                    <li>@Messages("returnsHome.help.li4")</li>
+                                </ul>
+                                <p>@Messages("returnsHome.help.p2")</p>
+                                <p>@Messages("returnsHome.help.p3")</p>
+                                <ul class="list list-bullet">
+                                    <li>@Messages("returnsHome.help.li5")</li>
+                                    <li>@Messages("returnsHome.help.li6")</li>
+                                </ul>
+                                <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
+                            }
+                        </div>
+                        <div>
+                            <a href='@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, "own-brands-packaged-at-own-sites")' class="button">
+                            @Messages("return.file")
+                            </a>
+                        </div>
+                        }
+                    }
                 }
             } else {
+                @if(subscription.deregDate.nonEmpty && pendingDereg.nonEmpty && balance >= 0) {
+                    @subscription.deregDate.map { x =>
+                        <div class="alert alert--info margin-bottom-30">
+                            <h2 class="heading-medium no-margin">@Messages("returnsHome.dereg.title", x.format("dd MMMM yyyy"))</h2>
+                            <p>@Messages("returnsHome.dereg.p1", x.plusYears(7).format("dd MMMM yyyy"))</p>
+                        </div>
+                        }
+                    }
 
             @*TODO Content for when the user is now vol but used to be man. To reliably determine this changes need to be made to MDTP mongo.
             @periodsDue.takeRight(1).map { pd =>
@@ -84,22 +111,22 @@
                     <p>@Messages("sdil.service-page.p3.voluntary-only")</p>
                 </div>
             } else {
-                @lastReturn.map { lr =>
-                    <div class="panel-border-narrow panel">
-                        <p>
-                            @Messages(
-                                "sdil.service-page.completed-return",
-                                ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
-                                ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
-                                lr.submittedOn.getOrElse(LocalDateTime.now).atZone(ZoneId.of("Europe/London")).format(ofPattern("h:mma")).toLowerCase,
-                                lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")),
-                                ReturnPeriod(LocalDate.now).start.format("MMMM"),
-                                ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
-                                ReturnPeriod(LocalDate.now).deadline.format("d MMMM yyyy")
-                            )
-                        </p>
-                    </div>
-                }
+                    @lastReturn.map { lr =>
+                        <div class="panel-border-narrow panel">
+                            <p>
+                                @Messages(
+                                    "sdil.service-page.completed-return",
+                                    ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
+                                    ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
+                                    lr.submittedOn.getOrElse(LocalDateTime.now).atZone(ZoneId.of("Europe/London")).format(ofPattern("h:mma")).toLowerCase,
+                                    lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")),
+                                    ReturnPeriod(LocalDate.now).start.format("MMMM"),
+                                    ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
+                                    ReturnPeriod(LocalDate.now).deadline.format("d MMMM yyyy")
+                                )
+                            </p>
+                        </div>
+                    }
 
                 @for(period <- periodsDue.take(1)) {
                     <div class="notice">

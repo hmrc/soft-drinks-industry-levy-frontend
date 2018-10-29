@@ -1123,6 +1123,10 @@ returnsHome.help.li5=exported, or are expected to be exported
 returnsHome.help.li6=lost or destroyed
 returnsHome.help.guidance=You must get and keep <a href="{0}">certain types of evidence</a> to be able to claim a credit.
 returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-levy-credit-for-exported-lost-or-destroyed-drinks-notice-4
+returnsHome.dereg.final-return-title=Send final return
+returnsHome.dereg.final-return-p1=You must send a return for {0} to {1} before we can cancel your registration.
+returnsHome.dereg.title=This account was deregistered from the Soft Drinks Industry Levy on {0}
+returnsHome.dereg.p1=You will be able to access this account until {0}.
 
 return.file=Send a return
 
@@ -1282,4 +1286,3 @@ heading.file-return-before-deregistration=You cannot cancel your registration wh
 file-return-before-deregistration.one-return=Before you can cancel your registration, you must send a return for {0} to {1} and make any payments due.
 file-return-before-deregistration.many-returns=Before you can cancel your registration, you must send {0} returns and make any payments due.
 file-return-before-deregistration.continue=Go to your account
-

@@ -18,7 +18,6 @@ package sdil.controllers
 
 import java.time.LocalDate
 
-import cats.data.OptionT
 import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
