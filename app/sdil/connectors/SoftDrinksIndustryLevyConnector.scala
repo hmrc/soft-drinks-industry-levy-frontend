@@ -64,7 +64,7 @@ class SoftDrinksIndustryLevyConnector(
       case _ =>
         http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/$identifierType/$sdilNumber").flatMap {
           case Some(a) =>
-            sessionCache.cache(s"$sdilNumber", a).map {
+            sessionCache.cache(s"sdil-$sdilNumber", a).map {
               _ =>
                 Some(a)
             }
