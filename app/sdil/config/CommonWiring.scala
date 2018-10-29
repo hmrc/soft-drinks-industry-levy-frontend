@@ -34,5 +34,5 @@ trait CommonWiring {
   implicit val appConfig: AppConfig
   implicit val materializer: Materializer
   lazy val shortLivedCaching: ShortLivedHttpCaching = wire[SDILShortLivedCaching]
-
+  lazy val keystore: SDILSessionCache = wire[SDILSessionCache]
 }

@@ -33,7 +33,7 @@ import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend.Site
+import sdil.models.backend.{Site, Subscription}
 import sdil.models.retrieved.RetrievedSubscription
 import uk.gov.hmrc.domain.Modulus23Check
 import uk.gov.hmrc.http.HeaderCarrier
@@ -68,7 +68,7 @@ trait SdilWMController extends WebMonadController
       ("claim-credits-for-exports", sdilReturn.export, -1),
       ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
     )
-    if(!isSmallProducer) // TODO - we need to find a way of ensuring this is correct for the period of the return and not just the latest state
+    if(!isSmallProducer)
       ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
     else
       ra
@@ -106,12 +106,13 @@ trait SdilWMController extends WebMonadController
     sdilReturn: SdilReturn,
     broughtForward: BigDecimal,
     subscription: RetrievedSubscription,
+    isSmallProducer: Boolean,
     variation: Option[ReturnsVariation] = None,
     alternativeRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty,
     originalReturn: Option[SdilReturn] = None
   )(implicit extraMessages: ExtraMessages, showBackLink: ShowBackLink): WebMonad[Unit] = {
 
-    val data = returnAmount(sdilReturn, subscription.activity.smallProducer)
+    val data = returnAmount(sdilReturn, isSmallProducer)
     val subtotal = calculateSubtotal(data)
     val total: BigDecimal = subtotal - broughtForward
 
@@ -467,8 +468,10 @@ trait SdilWMController extends WebMonadController
   // TODO: At present this uses an Await.result to check the small producer status, thus
   // blocking a thread. At a later date uniform should be updated to include the capability
   // for a subsequent stage to invalidate a prior one.
-  // TODO - also needs small producer status check scoping to the return period
-  implicit def smallProducer(origSdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
+  implicit def smallProducer(
+    origSdilRef: String,
+    sdilConnector: SoftDrinksIndustryLevyConnector,
+    period: ReturnPeriod)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
     "alias" -> optional(text),
     "sdilRef" -> text
       .verifying(
@@ -478,7 +481,7 @@ trait SdilWMController extends WebMonadController
               isCheckCorrect(x, 1)
         })
       .verifying("error.sdilref.notSmall", x => {
-          Await.result(isSmallProducer(x, sdilConnector: SoftDrinksIndustryLevyConnector), 20.seconds)
+          Await.result(isSmallProducer(x, sdilConnector: SoftDrinksIndustryLevyConnector, period), 20.seconds)
         })
       .verifying("error.sdilref.same", x => {
         x != origSdilRef
@@ -491,10 +494,9 @@ trait SdilWMController extends WebMonadController
     case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
   }
 
-
-  def isSmallProducer(sdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector)(implicit hc: HeaderCarrier): Future[Boolean] =
-    sdilConnector.retrieveSubscription(sdilRef).flatMap {
-      case Some(x) => x.activity.smallProducer
+  def isSmallProducer(sdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Boolean] =
+    sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
+      case Some(x) => x // the given sdilRef matches a customer that was a small producer at some point in the quarter
       case None    => false
     }(mdcExecutionContext)
 
