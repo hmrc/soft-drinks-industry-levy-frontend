@@ -160,7 +160,6 @@ button[name="checkyouranswers"] {
     text-align: center;
 }
 
-
 .no-minus-wrapping {
     white-space: nowrap;
     text-align: left;
@@ -190,4 +189,12 @@ details .address.progressive-reveal {
     display: block;
     margin-bottom: 5px;
     color: #6f777b;
+}
+
+.no-margin {
+    margin-top: 0.3125em;
+}
+
+.margin-bottom-30 {
+    margin-bottom: 30px
 }

@@ -35,7 +35,7 @@
         <div class="column-two-thirds">
             <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
 
-            @if(subscription.deregDate.nonEmpty && pendingDereg.isEmpty && balance < 0) {
+            @if(subscription.deregDate.nonEmpty && pendingDereg.isEmpty) {
                 @subscription.deregDate.map { deregDate =>
                     <div class="alert alert--info margin-bottom-30">
                         <h2 class="heading-medium no-margin">@Messages("sdil.service-page.deregistered.pending.title")</h2>
@@ -55,7 +55,7 @@
                         </p>
                         <div>
                             @details("returnsHome.help.title") {
-                                <p>@messages("returnsHome.help.p1")</p>
+                                <p>@Messages("returnsHome.help.p1")</p>
                                 <ul class="list list-bullet">
                                     <li>@Messages("returnsHome.help.li1")</li>
                                     <li>@Messages("returnsHome.help.li2")</li>
@@ -83,8 +83,8 @@
                 @if(subscription.deregDate.nonEmpty && pendingDereg.nonEmpty && balance >= 0) {
                     @subscription.deregDate.map { x =>
                         <div class="alert alert--info margin-bottom-30">
-                            <h2 class="heading-medium no-margin">@Messages("returnsHome.dereg.title", x.format("dd MMMM yyyy"))</h2>
-                            <p>@Messages("returnsHome.dereg.p1", x.plusYears(7).format("dd MMMM yyyy"))</p>
+                            <h2 class="heading-medium no-margin">@Messages("returnsHome.dereg.title")</h2>
+                            <p>@Messages("returnsHome.dereg.p1", x.format("dd MMMM yyyy"), x.plusYears(7).format("dd MMMM yyyy"))</p>
                         </div>
                         }
                     }
@@ -200,11 +200,15 @@
         <div>
             <h2 class="heading-medium">@Messages("account.balance")</h2>
             <p>
-                @printbalance("account.balance.amount", balance)
-                @if(balance < 0) {
-                    @Messages("account.balance.amount.pay")
+                @if(subscription.deregDate.nonEmpty && pendingDereg.nonEmpty && balance > 0) {
+                    @printbalance("account.balance.amount.dereg-in-credit", balance)
+                } else {
+                    @printbalance("account.balance.amount", balance)
+                    @if(balance < 0) {
+                        @Messages("account.balance.amount.pay")
+                    }
                 }
-            </p>
+                </p>
             <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
         </div>
         <hr class="govuk-section-break--visible">

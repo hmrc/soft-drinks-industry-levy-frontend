@@ -1125,8 +1125,8 @@ returnsHome.help.guidance=You must get and keep <a href="{0}">certain types of e
 returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-levy-credit-for-exported-lost-or-destroyed-drinks-notice-4
 returnsHome.dereg.final-return-title=Send final return
 returnsHome.dereg.final-return-p1=You must send a return for {0} to {1} before we can cancel your registration.
-returnsHome.dereg.title=This account was deregistered from the Soft Drinks Industry Levy on {0}
-returnsHome.dereg.p1=You will be able to access this account until {0}.
+returnsHome.dereg.title=This account is no longer registered with the Soft Drinks Industry Levy.
+returnsHome.dereg.p1=The registration was cancelled on {0}. You will be able to access this account until {1}.
 
 return.file=Send a return
 
@@ -1140,6 +1140,7 @@ heading.partnerships=You cannot register online as a partnership
 account.balance=Account Balance
 account.balance.amount=Your balance is {0}.
 account.balance.amount.pay=You need to pay.
+account.balance.amount.dereg-in-credit=Your balance is {0} in credit. Call the Soft Drinks Industry Levy helpline to arrange repayment.
 account.balance.pay.zero=You have nothing to pay.
 account.balance.pay.negative=[You need to make a payment].
 account.balance.pay.positive=[You are in credit].
