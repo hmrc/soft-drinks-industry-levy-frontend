@@ -20,7 +20,7 @@ sdil.hint.optional=Optional
 sdil.common.error=Error
 sdil.common.cancel=Cancel
 
-error.sdilref.invalid=Invalid SDIL Number
+error.sdilref.invalid=Small producer reference number must be 6 letters and 9 numbers
 error.sdilref.notSmall=Small producer reference number does not match a business that is currently registered as a \
   small producer. Check and try again.
 error.sdilref.same=​Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
@@ -1287,3 +1287,5 @@ heading.file-return-before-deregistration=You cannot cancel your registration wh
 file-return-before-deregistration.one-return=Before you can cancel your registration, you must send a return for {0} to {1} and make any payments due.
 file-return-before-deregistration.many-returns=Before you can cancel your registration, you must send {0} returns and make any payments due.
 file-return-before-deregistration.continue=Go to your account
+
+error.sdilref.empty=Enter the small producer's reference number
