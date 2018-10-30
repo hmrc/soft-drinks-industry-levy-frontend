@@ -471,27 +471,30 @@ trait SdilWMController extends WebMonadController
   implicit def smallProducer(
     origSdilRef: String,
     sdilConnector: SoftDrinksIndustryLevyConnector,
-    period: ReturnPeriod)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = mapping(
-    "alias" -> optional(text),
-    "sdilRef" -> text
-      .verifying(
-        "error.sdilref.invalid", x => {
-          x.nonEmpty ||
-            x.matches("^X[A-Z]SDIL000[0-9]{6}$") &&
-              isCheckCorrect(x, 1)
-        })
-      .verifying("error.sdilref.notSmall", x => {
-          Await.result(isSmallProducer(x, sdilConnector: SoftDrinksIndustryLevyConnector, period), 20.seconds)
-        })
-      .verifying("error.sdilref.same", x => {
-        x != origSdilRef
+    period: ReturnPeriod)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = {
+    mapping(
+      "alias" -> optional(text),
+      "sdilRef" -> text.verifying(Constraint { x: String =>
+        val y = x match {
+          case a if a.isEmpty => Invalid("error.sdilref.empty")
+          case b if b == origSdilRef => Invalid("error.sdilref.same")
+          case c if !isCheckCorrect(c, 1) => Invalid("error.sdilref.invalid")
+          case d if !d.matches("^X[A-Z]SDIL000[0-9]{6}$") => Invalid("error.sdilref.invalid")
+          case _ => Valid
+        }
+        y match {
+          case a: Invalid => a
+          case _ if !Await.result(isSmallProducer(x, sdilConnector, period), 20.seconds) => Invalid("error.sdilref.notSmall")
+          case _ => Valid
+        }
       }),
-    "lower"   -> litreage,
-    "higher"  -> litreage
-  ){
-    (alias, ref,l,h) => SmallProducer(alias, ref, (l,h))
-  }{
-    case SmallProducer(alias, ref, (l,h)) => (alias, ref,l,h).some
+      "lower" -> litreage,
+      "higher" -> litreage
+    ) {
+      (alias, ref, l, h) => SmallProducer(alias, ref, (l, h))
+    } {
+      case SmallProducer(alias, ref, (l, h)) => (alias, ref, l, h).some
+    }
   }
 
   def isSmallProducer(sdilRef: String, sdilConnector: SoftDrinksIndustryLevyConnector, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Boolean] =
