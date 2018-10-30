@@ -475,18 +475,20 @@ trait SdilWMController extends WebMonadController
     mapping(
       "alias" -> optional(text),
       "sdilRef" -> text.verifying(Constraint { x: String =>
-        val y = x match {
+        x match {
           case a if a.isEmpty => Invalid("error.sdilref.empty")
           case b if b == origSdilRef => Invalid("error.sdilref.same")
           case c if !isCheckCorrect(c, 1) => Invalid("error.sdilref.invalid")
           case d if !d.matches("^X[A-Z]SDIL000[0-9]{6}$") => Invalid("error.sdilref.invalid")
-          case _ => Valid
-        }
-        y match {
-          case a: Invalid => a
           case _ if !Await.result(isSmallProducer(x, sdilConnector, period), 20.seconds) => Invalid("error.sdilref.notSmall")
           case _ => Valid
         }
+//        y match {
+//          case a: Invalid => a
+//          case _ if !Await.result(isSmallProducer(x, sdilConnector, period), 20.seconds) => Invalid("error.sdilref.notSmall")
+//          case _ => Valid
+//        }
+//        y
       }),
       "lower" -> litreage,
       "higher" -> litreage
