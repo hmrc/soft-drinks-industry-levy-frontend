@@ -20,7 +20,7 @@ sdil.hint.optional=Optional
 sdil.common.error=Error
 sdil.common.cancel=Cancel
 
-error.sdilref.invalid=Invalid SDIL Number
+error.sdilref.invalid=Small producer reference number must be 6 letters and 9 numbers
 error.sdilref.notSmall=Small producer reference number does not match a business that is currently registered as a \
   small producer. Check and try again.
 error.sdilref.same=​Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
@@ -1270,3 +1270,5 @@ credit.short=Credited to Soft Drinks Industry Levy account
 bankPayment=Paid into my bank account. We will contact you to arrange payment.
 bankPayment.short=Paid into bank
 return-variation-repayments.label=Repayment method
+
+error.sdilref.empty=Enter the small producer's reference number
