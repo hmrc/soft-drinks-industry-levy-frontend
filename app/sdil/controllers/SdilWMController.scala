@@ -483,12 +483,6 @@ trait SdilWMController extends WebMonadController
           case _ if !Await.result(isSmallProducer(x, sdilConnector, period), 20.seconds) => Invalid("error.sdilref.notSmall")
           case _ => Valid
         }
-//        y match {
-//          case a: Invalid => a
-//          case _ if !Await.result(isSmallProducer(x, sdilConnector, period), 20.seconds) => Invalid("error.sdilref.notSmall")
-//          case _ => Valid
-//        }
-//        y
       }),
       "lower" -> litreage,
       "higher" -> litreage
