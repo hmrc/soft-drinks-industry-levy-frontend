@@ -478,8 +478,8 @@ trait SdilWMController extends WebMonadController
         x match {
           case a if a.isEmpty => Invalid("error.sdilref.empty")
           case b if b == origSdilRef => Invalid("error.sdilref.same")
-          case c if !isCheckCorrect(c, 1) => Invalid("error.sdilref.invalid")
-          case d if !d.matches("^X[A-Z]SDIL000[0-9]{6}$") => Invalid("error.sdilref.invalid")
+          case c if !c.matches("^X[A-Z]SDIL000[0-9]{6}$") => Invalid("error.sdilref.invalid")
+          case d if !isCheckCorrect(d, 1) => Invalid("error.sdilref.invalid")
           case _ if !Await.result(isSmallProducer(x, sdilConnector, period), 20.seconds) => Invalid("error.sdilref.notSmall")
           case _ => Valid
         }
