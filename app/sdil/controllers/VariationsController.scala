@@ -185,7 +185,7 @@ class VariationsController(
     deregDate = deregDate.some
   )
 
-  private def fileReturnsBeforeDereg[A](subscription: RetrievedSubscription, sdilRef: String, returnPeriods: List[ReturnPeriod], data: RegistrationVariationData) =
+  private def fileReturnsBeforeDereg[A](returnPeriods: List[ReturnPeriod], data: RegistrationVariationData) =
     for {
       sendToReturns <- tell("file-return-before-deregistration", uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods))
       _ <- resultToWebMonad[A](Redirect(routes.ServicePageController.show()))
@@ -208,7 +208,7 @@ class VariationsController(
         case ChangeType.Sites => contactUpdate(base)
         case ChangeType.Activity => activityUpdate(base)
         case ChangeType.Deregister if returnPeriods.isEmpty => deregisterUpdate(base)
-        case ChangeType.Deregister if returnPeriods.nonEmpty => fileReturnsBeforeDereg(subscription, sdilRef, returnPeriods, base)
+        case ChangeType.Deregister if returnPeriods.nonEmpty => fileReturnsBeforeDereg(returnPeriods, base)
       }
 
       path <- getPath
