@@ -412,7 +412,7 @@ sdil.complete.what-happens.p3=Returns will be due for fixed quarters ending June
 #Service page
 sdil.service-page.title=Soft Drinks Industry Levy details
 sdil.service-page.p1=Your Soft Drinks Industry Levy reference is:
-sdil.service-page.business-details.title=Registered business details
+sdil.service-page.business-details.title=Business details
 sdil.service-page.contact-details.title=Contact person's details
 sdil.service-page.p2.voluntary-only=You are registered as a small producer, so you do not have to send returns. \
   Make sure you give your reference number to your third-party packagers so they will not \
@@ -456,18 +456,25 @@ sdil.service-page.support.p6=0300 200 3700
 sdil.service-page.variations.title=Manage your account
 sdil.service-page.variations.subtitle.1=Manage small producer details
 sdil.service-page.variations.subtitle.2=Update registered addresses
-sdil.service-page.variations.subtitle.3=Make a change
+sdil.service-page.variations.subtitle.3=Make a correction
 sdil.service-page.variations.subtitle.4=Manage notifications
 sdil.service-page.variations.p1=Add or remove a small producer, and keep their details up-to-date.
 sdil.service-page.variations.p2=Update your contact details, warehouses or packaging sites.
 sdil.service-page.variations.p3=Tell HMRC when you:
 sdil.service-page.variations.p4=Opt in to or stop receiving notifications about the Soft Drinks Industry Levy.
+sdil.service-page.variations.vary-returns-dereg=Correct an error in a previous return
 sdil.service-page.variations.li.1=correct an error in a previous return
 sdil.service-page.variations.li.2=change your registered business activities
 sdil.service-page.variations.li.3=start or stop using a warehouse or packaging site
 sdil.service-page.variations.li.4=cancel your registration for the Soft Drinks Industry Levy
 sdil.service-page.variations.change=Tell HMRC about a change
 sdil.service-page.variations.p4=Changes can take up to 15 working days to process.
+
+sdil.service-page.reregister.title=Register again for the Soft Drinks Industry Levy
+sdil.service-page.reregister.p1=If you become liable for the levy again, you will need to <a href="{0}">register.</a>
+sdil.service-page.reregister.p2=Check the guidance to \
+  <a href="https://www.gov.uk/guidance/check-if-you-need-to-register-for-the-soft-drinks-industry-levy"> \
+  find out if you need to register.</a>
 
 #service page when deregistered
 sdil.service-page.deregistered.pending.title=Your request to cancel your registration is on hold
@@ -1140,7 +1147,7 @@ heading.partnerships=You cannot register online as a partnership
 account.balance=Account Balance
 account.balance.amount=Your balance is {0}.
 account.balance.amount.pay=You need to pay.
-account.balance.amount.dereg-in-credit=Your balance is {0} in credit. Call the Soft Drinks Industry Levy helpline to arrange repayment.
+account.balance.amount.dereg-in-credit=Your balance is {0} in credit. <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/soft-drinks-industry-levy">Call the Soft Drinks Industry Levy helpline</a> to arrange repayment.
 account.balance.pay.zero=You have nothing to pay.
 account.balance.pay.negative=[You need to make a payment].
 account.balance.pay.positive=[You are in credit].

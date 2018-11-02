@@ -80,7 +80,7 @@
                     }
                 }
             } else {
-                @if(subscription.deregDate.nonEmpty && pendingDereg.nonEmpty && balance >= 0) {
+                @if(subscription.deregDate.nonEmpty && pendingDereg.nonEmpty ) {
                     @subscription.deregDate.map { x =>
                         <div class="alert alert--info margin-bottom-30">
                             <h2 class="heading-medium no-margin">@Messages("returnsHome.dereg.title")</h2>
@@ -201,7 +201,7 @@
             <h2 class="heading-medium">@Messages("account.balance")</h2>
             <p>
                 @if(subscription.deregDate.nonEmpty && pendingDereg.nonEmpty && balance > 0) {
-                    @printbalance("account.balance.amount.dereg-in-credit", balance)
+                    @Html(Messages("account.balance.amount.dereg-in-credit", balance.pounds))
                 } else {
                     @printbalance("account.balance.amount", balance)
                     @if(balance < 0) {
@@ -212,9 +212,9 @@
             <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
         </div>
         <hr class="govuk-section-break--visible">
-
             @defining(
                 subscription match {
+                    case s if s.deregDate.nonEmpty => None
                     case s if s.activity.isLiable => Some("man")
                     case s if s.activity.isVoluntaryMandatory => Some("volMan")
                     case _ => None
@@ -222,8 +222,10 @@
             )   { subKey =>
 
                 @declaration_table("service-page", "business-details.title", subKey) {
-                    @declaration_details_table_row("service-page", "sdil-ref", None, s"$sdilReference")
-                    @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
+                    @if(subscription.deregDate.isEmpty) {
+                        @declaration_details_table_row("service-page", "sdil-ref", None, s"$sdilReference")
+                        @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
+                    }
                     @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
 
                         <tr>
@@ -257,13 +259,24 @@
                     </a>
                 </h3>
                 <div class="form-group">
-                    <p>@Messages("sdil.service-page.variations.p3")</p>
-                    <ul class="list-bullet">
-                        <li>@Messages("sdil.service-page.variations.li.1")</li>
-                        <li>@Messages("sdil.service-page.variations.li.2")</li>
-                        <li>@Messages("sdil.service-page.variations.li.3")</li>
-                        <li>@Messages("sdil.service-page.variations.li.4")</li>
-                    </ul>
+                    @if(subscription.deregDate.nonEmpty) {
+                        <p>@Messages("sdil.service-page.variations.vary-returns-dereg")</p>
+                </div>
+            </div>
+        </div>
+            @*<div class="form-group">*@
+                @*<h2 class="heading-medium">@Messages("sdil.service-page.reregister.title")</h2>*@
+                @*<p>@Html(Messages("sdil.service-page.reregister.p1", sdil.controllers.routes.IdentifyController.show()))</p>*@
+                @*<p>@Html(Messages("sdil.service-page.reregister.p2"))</p>*@
+            @*</div>*@
+                    } else {
+                        <p>@Messages("sdil.service-page.variations.p3")</p>
+                        <ul class="list-bullet">
+                            <li>@Messages("sdil.service-page.variations.li.1")</li>
+                            <li>@Messages("sdil.service-page.variations.li.2")</li>
+                            <li>@Messages("sdil.service-page.variations.li.3")</li>
+                            <li>@Messages("sdil.service-page.variations.li.4")</li>
+                        </ul>
                 </div>
             </div>
             <div class="column-one-half">
@@ -275,7 +288,7 @@
                 <p>@Messages("sdil.service-page.variations.p2")</p>
             </div>
         </div>
-
+}
         @*<div class="column-one-half">*@
                 @*<h3 class="heading-small">*@
                     @*<a href="/sdil-prototype/home/notifications">*@

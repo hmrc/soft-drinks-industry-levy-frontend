@@ -200,15 +200,16 @@ class VariationsController(
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
       returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
+      onlyReturns = subscription.deregDate.nonEmpty
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
-      changeType <- askOneOf("changeType", changeTypes)
+      changeType <- askOneOf("changeType", changeTypes) when !onlyReturns
       variation <- changeType match {
-        case ChangeType.Returns =>
+        case None | Some(ChangeType.Returns) =>
           chooseReturn(subscription, sdilRef)
-        case ChangeType.Sites => contactUpdate(base)
-        case ChangeType.Activity => activityUpdate(base)
-        case ChangeType.Deregister if returnPeriods.isEmpty => deregisterUpdate(base)
-        case ChangeType.Deregister if returnPeriods.nonEmpty => fileReturnsBeforeDereg(returnPeriods, base)
+        case Some(ChangeType.Sites) => contactUpdate(base)
+        case Some(ChangeType.Activity) => activityUpdate(base)
+        case Some(ChangeType.Deregister) if returnPeriods.isEmpty => deregisterUpdate(base)
+        case Some(ChangeType.Deregister) if returnPeriods.nonEmpty => fileReturnsBeforeDereg(returnPeriods, base)
       }
 
       path <- getPath
