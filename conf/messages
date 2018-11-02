@@ -412,7 +412,7 @@ sdil.complete.what-happens.p3=Returns will be due for fixed quarters ending June
 #Service page
 sdil.service-page.title=Soft Drinks Industry Levy details
 sdil.service-page.p1=Your Soft Drinks Industry Levy reference is:
-sdil.service-page.business-details.title=Registered business details
+sdil.service-page.business-details.title=Business details
 sdil.service-page.contact-details.title=Contact person's details
 sdil.service-page.p2.voluntary-only=You are registered as a small producer, so you do not have to send returns. \
   Make sure you give your reference number to your third-party packagers so they will not \
@@ -456,18 +456,32 @@ sdil.service-page.support.p6=0300 200 3700
 sdil.service-page.variations.title=Manage your account
 sdil.service-page.variations.subtitle.1=Manage small producer details
 sdil.service-page.variations.subtitle.2=Update registered addresses
-sdil.service-page.variations.subtitle.3=Make a change
+sdil.service-page.variations.subtitle.3=Make a correction
 sdil.service-page.variations.subtitle.4=Manage notifications
 sdil.service-page.variations.p1=Add or remove a small producer, and keep their details up-to-date.
 sdil.service-page.variations.p2=Update your contact details, warehouses or packaging sites.
 sdil.service-page.variations.p3=Tell HMRC when you:
 sdil.service-page.variations.p4=Opt in to or stop receiving notifications about the Soft Drinks Industry Levy.
+sdil.service-page.variations.vary-returns-dereg=Correct an error in a previous return
 sdil.service-page.variations.li.1=correct an error in a previous return
 sdil.service-page.variations.li.2=change your registered business activities
 sdil.service-page.variations.li.3=start or stop using a warehouse or packaging site
 sdil.service-page.variations.li.4=cancel your registration for the Soft Drinks Industry Levy
 sdil.service-page.variations.change=Tell HMRC about a change
 sdil.service-page.variations.p4=Changes can take up to 15 working days to process.
+
+sdil.service-page.reregister.title=Register again for the Soft Drinks Industry Levy
+sdil.service-page.reregister.p1=If you become liable for the levy again, you will need to <a href="{0}">register.</a>
+sdil.service-page.reregister.p2=Check the guidance to \
+  <a href="https://www.gov.uk/guidance/check-if-you-need-to-register-for-the-soft-drinks-industry-levy"> \
+  find out if you need to register.</a>
+
+#service page when deregistered
+sdil.service-page.deregistered.pending.title=Your request to cancel your registration is on hold
+sdil.service-page.deregistered.pending.p1=Before we can cancel your registration, you must send a final return for the \
+  current period, {0} to {1} and make any outstanding payments. You will be able to send the final return from {2} until {3}.
+sdil.service-page.deregistered.pending.p2=You will be able to access your account for 7 years from when you send your final return.
+sdil.service-page.deregistered.pending.p3=If you do not want to cancel your registration, call the Soft Drinks Industry Levy helpline on 0300 200 3700.
 
 #Update business addresses from service page
 sdil.updateBusinessAddresses.heading=Soft Drinks Industry Levy addresses
@@ -1116,6 +1130,10 @@ returnsHome.help.li5=exported, or are expected to be exported
 returnsHome.help.li6=lost or destroyed
 returnsHome.help.guidance=You must get and keep <a href="{0}">certain types of evidence</a> to be able to claim a credit.
 returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-levy-credit-for-exported-lost-or-destroyed-drinks-notice-4
+returnsHome.dereg.final-return-title=Send final return
+returnsHome.dereg.final-return-p1=You must send a return for {0} to {1} before we can cancel your registration.
+returnsHome.dereg.title=This account is no longer registered with the Soft Drinks Industry Levy.
+returnsHome.dereg.p1=The registration was cancelled on {0}. You will be able to access this account until {1}.
 
 return.file=Send a return
 
@@ -1129,6 +1147,7 @@ heading.partnerships=You cannot register online as a partnership
 account.balance=Account Balance
 account.balance.amount=Your balance is {0}.
 account.balance.amount.pay=You need to pay.
+account.balance.amount.dereg-in-credit=Your balance is {0} in credit. <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/soft-drinks-industry-levy">Call the Soft Drinks Industry Levy helpline</a> to arrange repayment.
 account.balance.pay.zero=You have nothing to pay.
 account.balance.pay.negative=[You need to make a payment].
 account.balance.pay.positive=[You are in credit].
@@ -1255,7 +1274,7 @@ error.return-variation-reason.empty=Enter a reason for correcting your return
 sdil.check-return-differences.reason.return-variation-reason.subheading=Correction details
 return-variation-reason.label=Reason for correction
 returnVariationDone.title=Correction sent
-returnVariationDone.subheading=We will review the details you updated and get back to you 
+returnVariationDone.subheading=We will review the details you updated and get back to you
 returnVariationDone.your.updates=Your updates were sent on {0} at {1}.
 
 return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you.</p>\
@@ -1270,5 +1289,10 @@ credit.short=Credited to Soft Drinks Industry Levy account
 bankPayment=Paid into my bank account. We will contact you to arrange payment.
 bankPayment.short=Paid into bank
 return-variation-repayments.label=Repayment method
+
+heading.file-return-before-deregistration=You cannot cancel your registration while you have returns to send
+file-return-before-deregistration.one-return=Before you can cancel your registration, you must send a return for {0} to {1} and make any payments due.
+file-return-before-deregistration.many-returns=Before you can cancel your registration, you must send {0} returns and make any payments due.
+file-return-before-deregistration.continue=Go to your account
 
 error.sdilref.empty=Enter the small producer's reference number

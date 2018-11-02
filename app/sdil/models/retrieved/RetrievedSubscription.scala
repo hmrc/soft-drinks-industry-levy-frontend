@@ -44,7 +44,8 @@ case class RetrievedSubscription(utr: String,
                                  liabilityDate: LocalDate,
                                  productionSites: List[Site],
                                  warehouseSites: List[Site],
-                                 contact: Contact)
+                                 contact: Contact,
+                                 deregDate: Option[LocalDate] = None)
 
 object RetrievedSubscription {
   implicit val format = Json.format[RetrievedSubscription]
