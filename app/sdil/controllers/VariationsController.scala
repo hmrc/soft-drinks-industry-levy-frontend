@@ -376,7 +376,7 @@ class VariationsController(
     val base = RegistrationVariationData(subscription)
 
     for {
-      _ <- changeBusinessAddressTemplate("changeBusinessAddress", subscription )
+      _ <- changeBusinessAddressTemplate("change-registered-account-details", subscription )
       variation <- contactUpdate(base)
       path <- getPath
       _ <- checkYourRegAnswers("checkyouranswers", variation, path)

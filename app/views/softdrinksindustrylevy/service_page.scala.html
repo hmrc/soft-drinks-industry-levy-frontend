@@ -103,11 +103,10 @@
             </div>
             }
             }*@
-
             @if(subscription.activity.voluntaryRegistration) {
                 <div class="panel panel-border-wide">
                     <p>@Messages("sdil.service-page.p2.voluntary-only")</p>
-                    <p>@Html(Messages("sdil.service-page.p3.voluntary-only"), sdil.controllers.routes.VariationsController.changeActorStatus(""))</p>
+                    <p>@Html(Messages("sdil.service-page.p3.voluntary-only", sdil.controllers.routes.VariationsController.changeActorStatus("")))</p>
                 </div>
             } else {
                     @lastReturn.map { lr =>
