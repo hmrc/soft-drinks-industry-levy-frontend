@@ -34,10 +34,15 @@ GET         /ufadjustment/year/:year/quarter/:quarter/:id      sdil.controllers.
 POST        /ufadjustment/year/:year/quarter/:quarter/         sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id = "")
 POST        /ufadjustment/year/:year/quarter/:quarter/:id      sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id: String)
 
-GET         /contactChangeTypeDirect/                          sdil.controllers.VariationsController.changeBusinessAddress(id = "")
-GET         /contactChangeTypeDirect/:id                       sdil.controllers.VariationsController.changeBusinessAddress(id: String)
-POST        /contactChangeTypeDirect/                          sdil.controllers.VariationsController.changeBusinessAddress(id = "")
-POST        /contactChangeTypeDirect/:id                       sdil.controllers.VariationsController.changeBusinessAddress(id: String)
+GET         /variations/                                       sdil.controllers.VariationsController.changeBusinessAddress(id = "")
+GET         /variations/:id                                    sdil.controllers.VariationsController.changeBusinessAddress(id: String)
+POST        /variations/                                       sdil.controllers.VariationsController.changeBusinessAddress(id = "")
+POST        /variations/:id                                    sdil.controllers.VariationsController.changeBusinessAddress(id: String)
+
+GET         /change-registered-account-status/                sdil.controllers.VariationsController.changeActorStatus(id = "")
+GET         /change-registered-account-status/:id             sdil.controllers.VariationsController.changeActorStatus(id: String)
+POST        /change-registered-account-status/                sdil.controllers.VariationsController.changeActorStatus(id = "")
+POST        /change-registered-account-status/:id             sdil.controllers.VariationsController.changeActorStatus(id: String)
 
 GET         /uregistrations/                                   sdil.controllers.RegistrationController.index(id = "")
 GET         /uregistrations/:id                                sdil.controllers.RegistrationController.index(id: String)
