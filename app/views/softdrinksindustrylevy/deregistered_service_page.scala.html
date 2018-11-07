@@ -25,7 +25,7 @@
 @import java.time.ZoneId
 @import java.time.format.DateTimeFormatter._
 
-@(address: Address, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, pendingDereg: Option[SdilReturn], variableReturns: List[ReturnPeriod])(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(address: Address, subscription: RetrievedSubscription, lastReturn: Option[SdilReturn], balance: BigDecimal, pendingDereg: Option[SdilReturn], variableReturns: List[ReturnPeriod])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.registered.title"), noArticle = true) {
     <div class="grid-row">

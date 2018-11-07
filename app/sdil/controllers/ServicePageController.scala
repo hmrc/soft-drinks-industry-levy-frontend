@@ -63,7 +63,7 @@ class ServicePageController(
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
       if(subscription.deregDate.nonEmpty){
-        Ok(deregistered_service_page(addr, subscription, returnPeriods, lastReturn, balance, pendingDereg, variableReturns))
+        Ok(deregistered_service_page(addr, subscription, lastReturn, balance, pendingDereg, variableReturns))
       } else {
         Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance))
       }
