@@ -62,10 +62,10 @@ class ServicePageController(
                         OptionT(sdilConnector.balance(sdilRef, withAssessment = true).map(_.some))
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
-      if(pendingDereg.nonEmpty){
-        Ok(deregistered_service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance, pendingDereg, variableReturns))
+      if(subscription.deregDate.nonEmpty){
+        Ok(deregistered_service_page(addr, subscription, returnPeriods, lastReturn, balance, pendingDereg, variableReturns))
       } else {
-        Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance, pendingDereg, variableReturns))
+        Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance))
       }
     }
     ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
