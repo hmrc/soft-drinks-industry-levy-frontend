@@ -40,7 +40,7 @@
                         <p>@Messages("sdil.service-page.deregistered.pending.p2")</p>
                         <p>@Messages("sdil.service-page.deregistered.pending.p3")</p>
                     </div>
-                        @if(LocalDate.now.isAfter(ReturnPeriod(deregDate).end)) {
+                        @if(LocalDate.now.isAfter(ReturnPeriod(LocalDate.of(2018,1,1)).end)) {
                             <h2 class="heading-medium no-margin">@Messages("returnsHome.dereg.final-return-title")</h2>
                             <p>
                             @Messages(
@@ -137,7 +137,7 @@
                     <div class="column-one-half">
                         <h3 class="heading-small">
                             <a href='@sdil.controllers.routes.VariationsController.index("changeType")'>
-                            @Messages("sdil.service-page.variations.subtitle.3")
+                            @Messages("sdil.service-page.deregistered.variations.subtitle.3")
                             </a>
                         </h3>
                         <div class="form-group">
