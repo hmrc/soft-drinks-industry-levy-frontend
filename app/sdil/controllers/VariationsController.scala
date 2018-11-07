@@ -376,7 +376,7 @@ class VariationsController(
     val base = RegistrationVariationData(subscription)
 
     for {
-      _ <- changeBusinessAddressTemplate("changeBusinessAddress", subscription )
+      _ <- changeBusinessAddressTemplate("change-registered-account-details", subscription )
       variation <- contactUpdate(base)
       path <- getPath
       _ <- checkYourRegAnswers("checkyouranswers", variation, path)
@@ -384,6 +384,39 @@ class VariationsController(
       _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
       _ <- clear
       exit <- journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+    } yield exit
+  }
+
+  def changeActorStatus(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    val persistence = SaveForLaterPersistence("variations", sdilRef, cache)
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(s) =>
+        runInner(request)(changeActorStatusJourney(s, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
+      case None => NotFound("").pure[Future]
+    }
+  }
+
+
+  private def changeActorStatusJourney(
+    subscription: RetrievedSubscription,
+    sdilRef: String
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val base = RegistrationVariationData(subscription)
+
+    for {
+      variation <- activityUpdate(base)
+
+      path <- getPath
+      _ <- checkYourRegAnswers("checkyouranswers", variation, path)
+      submission = Convert(variation)
+      _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
+      _ <- clear
+      exit <- if (variation.volToMan) {
+        journeyEnd("volToMan")
+      } else if (variation.manToVol) {
+        journeyEnd("manToVol")
+      } else journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
     } yield exit
   }
 
