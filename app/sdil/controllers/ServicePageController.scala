@@ -53,6 +53,7 @@ class ServicePageController(
       lastReturn    <- OptionT(sdilConnector.returns.get(subscription.utr, ReturnPeriod(LocalDate.now).previous).map(_.some))
       deregCheck    = subscription.deregDate.getOrElse(LocalDate.now.plusYears(100))
       pendingDereg    <- OptionT(sdilConnector.returns.get(subscription.utr, ReturnPeriod(deregCheck)).map(_.some))
+      variableReturns <- OptionT(sdilConnector.returns.variable(subscription.utr).map(_.some))
       balance       <- if(config.balanceAllEnabled)
                         OptionT(sdilConnector.balanceHistory(sdilRef, withAssessment = true).map { x =>
                           extractTotal(listItemsWithTotal(x)).some
@@ -61,7 +62,11 @@ class ServicePageController(
                         OptionT(sdilConnector.balance(sdilRef, withAssessment = true).map(_.some))
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
-      Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance, pendingDereg))
+      if(subscription.deregDate.nonEmpty){
+        Ok(deregistered_service_page(addr, subscription, lastReturn, balance, pendingDereg, variableReturns))
+      } else {
+        Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance))
+      }
     }
     ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
 
