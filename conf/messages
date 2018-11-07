@@ -417,8 +417,8 @@ sdil.service-page.contact-details.title=Contact person's details
 sdil.service-page.p2.voluntary-only=You are registered as a small producer, so you do not have to send returns. \
   Make sure you give your reference number to your third-party packagers so they will not \
   have to pay the levy for your drinks.
-sdil.service-page.p3.voluntary-only=If you stop being a small producer, you must update your \
-  registered details and send a return on time. After changing your details, allow 15 days for your \
+sdil.service-page.p3.voluntary-only=If you stop being a small producer, you must <a href="{0}">update your \
+  registered details</a> and send a return on time. After changing your details, allow 15 days for your \
   Soft Drinks Industry Levy account to be updated. You will also receive a new reference number.
 sdil.service-page.p4.voluntary-used-to-be-man=Although you are now registered as a small producer, \
   you were liable during July to September 2018. You must send a final return for this period and \
