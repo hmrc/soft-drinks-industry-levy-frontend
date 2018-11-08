@@ -112,8 +112,8 @@ object GdsComponents {
       d => (d.getDayOfMonth, d.getMonthValue, d.getYear)
     )
 
-  val litreage: Mapping[Long] = text
-    .verifying("error.litreage.required", _.nonEmpty)
+  def litreage(key: String): Mapping[Long] = text
+    .verifying(s"error.litreage.required.$key", _.nonEmpty)
     .transform[String](_.replaceAll(",", ""), _.toString)
     .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
     .transform[BigDecimal](BigDecimal.apply, _.toString)
@@ -122,7 +122,7 @@ object GdsComponents {
     .verifying("error.litreage.min", _ >= 0)
     .transform[Long](_.toLong, BigDecimal.apply)
 
-  val litreagePair: Mapping[(Long,Long)] =
-    tuple("lower" -> litreage, "higher" -> litreage)
+  def litreagePair: Mapping[(Long,Long)] =
+    tuple("lower" -> litreage("lower"), "higher" -> litreage("higher"))
 
 }

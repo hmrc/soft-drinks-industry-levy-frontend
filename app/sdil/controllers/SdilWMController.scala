@@ -484,8 +484,8 @@ trait SdilWMController extends WebMonadController
           case _ => Valid
         }
       }),
-      "lower" -> litreage,
-      "higher" -> litreage
+      "lower" -> litreage("lower"),
+      "higher" -> litreage("higer")
     ) {
       (alias, ref, l, h) => SmallProducer(alias, ref, (l, h))
     } {
