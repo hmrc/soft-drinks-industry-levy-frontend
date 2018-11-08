@@ -18,8 +18,9 @@
 @import sdil.models._
 @import sdil.config.AppConfig
 @import java.time.format.DateTimeFormatter
+@import java.time.LocalDate
 
-@(lineItems: List[(FinancialLineItem, BigDecimal)], balance: BigDecimal, sdilRef: String)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(lineItems: List[(FinancialLineItem, BigDecimal)], balance: BigDecimal, sdilRef: String, deregDate: Option[LocalDate] = None, pendingDereg: Option[SdilReturn] = None)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("balance.history")) {
 
@@ -31,11 +32,13 @@
             <h2 class="heading-medium">
                 @printbalance("account.balance.amount", balance)
             </h2>
-            <div class="panel panel-border-wide">
-                <p>
-                @Html(Messages("how-to-pay.title", sdilRef))
-                </p>
-            </div>
+            @if(deregDate.isEmpty && pendingDereg.isEmpty && balance != 0) {
+                <div class="panel panel-border-wide">
+                    <p>
+                    @Html(Messages("how-to-pay.title", sdilRef))
+                    </p>
+                </div>
+            }
         </legend>
         @if(lineItems.nonEmpty) {
         <div class="form-group">

@@ -69,7 +69,7 @@
                             </div>
                             <div>
                                 <a href='@sdil.controllers.routes.ReturnsController.index(ReturnPeriod(deregDate).year, ReturnPeriod(deregDate).quarter, "own-brands-packaged-at-own-sites")' class="button">
-                                @Messages("return.file")
+                                @Messages("return.file.final")
                                 </a>
                             </div>
                         }
@@ -109,6 +109,8 @@
                     @printbalance("account.balance.amount", balance)
                     @if(balance < 0) {
                         @Messages("account.balance.amount.pay")
+                    } else {
+                        @Messages("account.balance.amount.closed")
                     }
                 }
                 </p>
