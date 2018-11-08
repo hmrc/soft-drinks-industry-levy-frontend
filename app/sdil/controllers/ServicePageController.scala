@@ -80,7 +80,14 @@ class ServicePageController(
       val itemsWithRunningTotal = listItemsWithTotal(items)
       val total = extractTotal(itemsWithRunningTotal)
 
-      Ok(balance_history(itemsWithRunningTotal, total, request.sdilEnrolment.value))
+      val ret = for {
+        subscription <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
+        deregCheck = subscription.deregDate.getOrElse(LocalDate.now.plusYears(100))
+        pendingDereg <- OptionT(sdilConnector.returns.get(subscription.utr, ReturnPeriod(deregCheck)).map(_.some))
+      } yield {
+        Ok(balance_history(itemsWithRunningTotal, total, request.sdilEnrolment.value, subscription.deregDate, pendingDereg))
+      }
+      ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
     }
   }
 }
