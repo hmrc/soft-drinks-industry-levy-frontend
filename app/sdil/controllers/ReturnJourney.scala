@@ -42,7 +42,7 @@ trait ReturnJourney extends SdilWMController {
 
     def smallProdsJ: WebMonad[List[SmallProducer]] = for {
       editMode        <- read[Boolean]("_editSmallProducers").map{_.getOrElse(false)}
-      opt             <- ask(bool, "exemptions-for-small-producers", default.map{_.packSmall.nonEmpty})
+      opt             <- ask(bool(), "exemptions-for-small-producers", default.map{_.packSmall.nonEmpty})
 
       smallProds      <- manyT("small-producer-details",
                                {ask(smallProducer(sdilRef, sdilConnector, period), _)(implicitly,implicitly,implicitly,ShowBackLink(true))},

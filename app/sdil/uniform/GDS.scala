@@ -34,13 +34,13 @@ import scala.util.Try
 
 object GdsComponents {
 
-  val bool: Mapping[Boolean] = optional(boolean)
-    .verifying("error.radio-form.choose-option", _.isDefined)
+  def bool(key: String = ""): Mapping[Boolean] = optional(boolean)
+    .verifying(s"error.radio-form.choose-option.$key", _.isDefined)
     .transform(_.getOrElse(false),{x: Boolean => x.some})
 
   def innerOptEmpty[A](key: String, innerMap: Mapping[A])(implicit mon: Monoid[A]): Mapping[A] =
     mapping(
-      "outer" -> bool,
+      "outer" -> bool(key),
       "inner" -> mandatoryIfTrue(s"${key}.outer", innerMap)
     ){(_,_) match {
         case (true, inner) => inner.get

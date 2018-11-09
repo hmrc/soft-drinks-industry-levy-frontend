@@ -126,12 +126,12 @@ class VariationsController(
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
     for {
-      packLarge                   <- askOption(bool, "packLarge")
-      useCopacker                 <- ask(bool,"useCopacker", data.usesCopacker) when packLarge.contains(false)
-      packageOwn                  <- ask(bool, "packOpt", data.updatedProductionSites.nonEmpty) when packLarge.isDefined
+      packLarge                   <- askOption(bool(), "packLarge")
+      useCopacker                 <- ask(bool(),"useCopacker", data.usesCopacker) when packLarge.contains(false)
+      packageOwn                  <- ask(bool(), "packOpt", data.updatedProductionSites.nonEmpty) when packLarge.isDefined
       packQty                     <- ask(litres, "packQty") emptyUnless packageOwn.contains(true)
-      copacks                     <- ask(litres, "copackQty") emptyUnless ask(bool, "copacker", data.copackForOthers)
-      imports                     <- ask(litres, "importQty") emptyUnless ask(bool, "importer", data.imports)
+      copacks                     <- ask(litres, "copackQty") emptyUnless ask(bool(), "copacker", data.copackForOthers)
+      imports                     <- ask(litres, "importQty") emptyUnless ask(bool(), "importer", data.imports)
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
@@ -144,7 +144,7 @@ class VariationsController(
                                             "pack-at-business-address.lead" -> s"Registered address: ${Address.fromUkAddress(data.original.address).nonEmptyLines.mkString(", ")}")
                                         )
                                         for {
-                                          usePPOBAddress <- ask(bool, "pack-at-business-address")(implicitly, implicitly, extraMessages, implicitly) when packer && data.original.productionSites.isEmpty
+                                          usePPOBAddress <- ask(bool(), "pack-at-business-address")(implicitly, implicitly, extraMessages, implicitly) when packer && data.original.productionSites.isEmpty
                                           pSites = if (usePPOBAddress.getOrElse(false)) {
                                             List(Site.fromAddress(Address.fromUkAddress(data.original.address)))
                                           } else {

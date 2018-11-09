@@ -546,8 +546,8 @@ error.fullName.invalid=Full name must only include letters a to z, hyphens and s
 error.position.invalid=Job title must only include letters a to z, apostrophes, dashes, hyphens and spaces
 error.phone-number.invalid=Enter a valid telephone number
 error.email=Enter a real email address, like name@example.com
-error.radio-form.choose-option=Choose an option
-error.radio-form.choose-one-option=Choose at least one option
+error.radio-form.choose-option.=Choose an option
+error.radio-form.choose-one-option=Select at least one option to continue
 error.no-such-element=Sorry, we are experiencing technical difficulties
 
 # Beta registration
@@ -844,10 +844,10 @@ sdil.variation.anotherChangeLink=go back and start again
 
 heading.deregister.reason=Why are you deregistering from the Soft Drinks Industry Levy?
 deregister.reason.label=Reason for deregistering
-heading.deregDate=What date do you need to deregister from?
+heading.deregDate=What date are you cancelling your registration from?
 error.deregDate.nopast=Deregistration date cannot be in the past
 error.deregDate.nofuture=Deregistration date cannot be more than 14 days in the future
-error.reason.empty=Enter a reason for deregistration
+error.reason.empty=Enter why you need to cancel your registration
 
 variations.cya.packLarge=Amount of own brand liable drink produced in the past 12 months
 variations.cya.packLarge.large=1 million litres or more
@@ -936,7 +936,7 @@ variations.cya.dereg=Deregistration
 variations.cya.reason=Reason
 variations.cya.deregDate=Date
 
-heading.reason=Why are you deregistering from the Soft Drinks Industry Levy?
+heading.reason=Why do you need to cancel your registration?
 reason.label=Reason for deregistering
 reason.hint=Enter a maximum of 255 characters
 

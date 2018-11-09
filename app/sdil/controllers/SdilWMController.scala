@@ -215,7 +215,7 @@ trait SdilWMController extends WebMonadController
     import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
     val outerMapping: Mapping[Option[T]] = mapping(
-      "outer" -> bool,
+      "outer" -> bool(),
       "inner" -> mandatoryIfTrue(s"${key}.outer", innerMapping)
     ){(_,_) match { case (outer, inner) => inner }
     }( a => (a.isDefined, a).some )
