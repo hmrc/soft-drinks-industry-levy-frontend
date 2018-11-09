@@ -163,7 +163,16 @@ trait SdilWMController extends WebMonadController
     val valueMap: Map[String,A] =
       possValues.map{a => (a.toString, a)}.toMap
     formPage(id)(
-      oneOf(possValues.map{_.toString}, "error.radio-form.choose-option"),
+      oneOf(possValues.map{_.toString},
+        id match {
+          case a if a == "returnPeriod" => "error.radio-form.choose-option.returnPeriod"
+          case b if b == "repayment" => "error.radio-form.choose-option.repayment"
+          case c if c == "organisation-type" => "error.radio-form.choose-option.organisation-type"
+          case d if d == "producer" => "error.radio-form.choose-option.producer"
+          case e if e == "copacked" => "error.radio-form.choose-option.copacked"
+          case f if f == "package-own-uk" => "error.radio-form.choose-option.package-own-uk"
+
+          case _ => "error.radio-form.choose-option"}),
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
@@ -215,7 +224,7 @@ trait SdilWMController extends WebMonadController
     import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
     val outerMapping: Mapping[Option[T]] = mapping(
-      "outer" -> bool(),
+      "outer" -> bool(key),
       "inner" -> mandatoryIfTrue(s"${key}.outer", innerMapping)
     ){(_,_) match { case (outer, inner) => inner }
     }( a => (a.isDefined, a).some )
@@ -409,7 +418,13 @@ trait SdilWMController extends WebMonadController
     many[A](id, min, max, default, confirmation, Some(edit)){ case (iid, minA, maxA, items) =>
 
       val mapping = optional(text) // N.b. ideally this would just be 'text' but sadly text triggers the default play "required" message for 'text'
-        .verifying("error.radio-form.choose-option", a => a.nonEmpty)
+        .verifying(
+        id match {
+          case a if a == "production-sites" || a == "packSites" => "error.radio-form.choose-option.production-sites"
+          case b if b == "secondary-warehouses" => "error.radio-form.choose-option.secondary-warehouses"
+          case c if c == "small-producer-details" => "error.radio-form.choose-option.small-producer-details"
+          case _ => "error.radio-form.choose-option"},
+        a => a.nonEmpty)
         .verifying(s"$id.error.items.tooFew", a => !a.contains("Done")  || items.size >= min)
         .verifying(s"$id.error.items.tooMany", a => !a.contains("Add") || items.size < max)
 

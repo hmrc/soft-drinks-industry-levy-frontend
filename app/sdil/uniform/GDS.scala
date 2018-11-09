@@ -40,7 +40,7 @@ object GdsComponents {
 
   def innerOptEmpty[A](key: String, innerMap: Mapping[A])(implicit mon: Monoid[A]): Mapping[A] =
     mapping(
-      "outer" -> bool(key),
+      "outer" -> bool(),
       "inner" -> mandatoryIfTrue(s"${key}.outer", innerMap)
     ){(_,_) match {
         case (true, inner) => inner.get

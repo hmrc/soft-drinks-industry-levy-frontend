@@ -198,12 +198,12 @@
         <div>
             <h2 class="heading-medium">@Messages("account.balance")</h2>
             <p>
-                @if(subscription.deregDate.nonEmpty && pendingDereg.nonEmpty && balance > 0) {
-                    @Html(Messages("account.balance.amount.dereg-in-credit", balance.pounds))
+                @printbalance("account.balance.amount", balance)
+                @if(balance < 0) {
+                    @Messages("account.balance.amount.pay")
                 } else {
-                    @printbalance("account.balance.amount", balance)
-                    @if(balance < 0) {
-                        @Messages("account.balance.amount.pay")
+                    @if(balance > 0) {
+                        @Messages("account.balance.amount.credit")
                     }
                 }
                 </p>
