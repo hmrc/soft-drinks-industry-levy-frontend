@@ -548,7 +548,8 @@ error.phone-number.invalid=Enter a valid telephone number
 error.email=Enter a real email address, like name@example.com
 error.radio-form.choose-option=Choose an option
 error.radio-form.choose-option.=Choose an option
-error.radio-form.choose-option.continue= Select an option to continue
+error.radio-form.choose-option.continue=Select an option to continue
+error.radio-form.choose-option.changeType=Select what you need to do
 error.radio-form.choose-option.returnPeriod=Select which return you need to correct
 error.radio-form.choose-option.repayment=Select how you want the credit to be repaid
 error.radio-form.choose-option.organisation-type=Select the option that best describes your business
@@ -720,7 +721,7 @@ complete.subheading=We have received your application to register for the Soft D
 complete.your.updates=Your application to register for the Soft Drinks Industry Levy was submitted on {0} at {1}.
 
 # Uniform variation process
-heading.changeType=Which change do you need to make?
+heading.changeType=What do you need to do?
 changeType.option.sites=Update contact, packaging site or warehouse details
 changeType.option.activity=Change our business activity
 changeType.option.deregister=Deregister from the Soft Drinks Industry Levy

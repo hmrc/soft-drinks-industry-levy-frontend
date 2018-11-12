@@ -165,14 +165,16 @@ trait SdilWMController extends WebMonadController
     formPage(id)(
       oneOf(possValues.map{_.toString},
         id match {
-          case a if a == "returnPeriod" => "error.radio-form.choose-option.returnPeriod"
-          case b if b == "repayment" => "error.radio-form.choose-option.repayment"
-          case c if c == "organisation-type" => "error.radio-form.choose-option.organisation-type"
-          case d if d == "producer" => "error.radio-form.choose-option.producer"
-          case e if e == "copacked" => "error.radio-form.choose-option.copacked"
-          case f if f == "package-own-uk" => "error.radio-form.choose-option.package-own-uk"
-
-          case _ => "error.radio-form.choose-option"}),
+          case "returnPeriod" => "error.radio-form.choose-option.returnPeriod"
+          case "repayment" => "error.radio-form.choose-option.repayment"
+          case "organisation-type" => "error.radio-form.choose-option.organisation-type"
+          case "producer" => "error.radio-form.choose-option.producer"
+          case "copacked" => "error.radio-form.choose-option.copacked"
+          case "package-own-uk" => "error.radio-form.choose-option.package-own-uk"
+          case "changeType" => "error.radio-form.choose-option.changeType"
+          case _ => "error.radio-form.choose-option"
+        }
+      ),
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
@@ -420,9 +422,9 @@ trait SdilWMController extends WebMonadController
       val mapping = optional(text) // N.b. ideally this would just be 'text' but sadly text triggers the default play "required" message for 'text'
         .verifying(
         id match {
-          case a if a == "production-sites" || a == "packSites" => "error.radio-form.choose-option.production-sites"
-          case b if b == "secondary-warehouses" => "error.radio-form.choose-option.secondary-warehouses"
-          case c if c == "small-producer-details" => "error.radio-form.choose-option.small-producer-details"
+          case "production-sites" | "packSites" => "error.radio-form.choose-option.production-sites"
+          case "secondary-warehouses" => "error.radio-form.choose-option.secondary-warehouses"
+          case "small-producer-details" => "error.radio-form.choose-option.small-producer-details"
           case _ => "error.radio-form.choose-option"},
         a => a.nonEmpty)
         .verifying(s"$id.error.items.tooFew", a => !a.contains("Done")  || items.size >= min)
