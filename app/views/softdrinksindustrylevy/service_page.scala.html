@@ -27,67 +27,13 @@
 @import java.time.LocalDate
 @import java.time.ZoneId
 
-@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, pendingDereg: Option[SdilReturn])(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 
 @main_template(Messages("sdil.registered.title"), noArticle = true) {
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
-
-            @if(subscription.deregDate.nonEmpty && pendingDereg.isEmpty) {
-                @subscription.deregDate.map { deregDate =>
-                    <div class="alert alert--info margin-bottom-30">
-                        <h2 class="heading-medium no-margin">@Messages("sdil.service-page.deregistered.pending.title")</h2>
-                        <p>@Messages("sdil.service-page.deregistered.pending.p1", ReturnPeriod(deregDate).start.format("MMMM yyyy"), ReturnPeriod(deregDate).end.format("MMMM yyyy"), ReturnPeriod(deregDate).next.start.format("d MMMM"), ReturnPeriod(deregDate).deadline.format("d MMMM yyyy"))</p>
-                        <p>@Messages("sdil.service-page.deregistered.pending.p2")</p>
-                        <p>@Messages("sdil.service-page.deregistered.pending.p3")</p>
-                    </div>
-                @for(period <- periodsDue.take(1)) {
-                    @if(period.end.isAfter(deregDate)) {
-                        <h2 class="heading-medium no-margin">@Messages("returnsHome.dereg.final-return-title")</h2>
-                        <p>
-                            @Messages(
-                                "returnsHome.dereg.final-return-p1",
-                                period.start.format("MMMM yyyy"),
-                                period.end.format("MMMM yyyy")
-                            )
-                        </p>
-                        <div>
-                            @details("returnsHome.help.title") {
-                                <p>@Messages("returnsHome.help.p1")</p>
-                                <ul class="list list-bullet">
-                                    <li>@Messages("returnsHome.help.li1")</li>
-                                    <li>@Messages("returnsHome.help.li2")</li>
-                                    <li>@Messages("returnsHome.help.li3")</li>
-                                    <li>@Messages("returnsHome.help.li4")</li>
-                                </ul>
-                                <p>@Messages("returnsHome.help.p2")</p>
-                                <p>@Messages("returnsHome.help.p3")</p>
-                                <ul class="list list-bullet">
-                                    <li>@Messages("returnsHome.help.li5")</li>
-                                    <li>@Messages("returnsHome.help.li6")</li>
-                                </ul>
-                                <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
-                            }
-                        </div>
-                        <div>
-                            <a href='@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, "own-brands-packaged-at-own-sites")' class="button">
-                            @Messages("return.file")
-                            </a>
-                        </div>
-                        }
-                    }
-                }
-            } else {
-                @if(subscription.deregDate.nonEmpty && pendingDereg.nonEmpty ) {
-                    @subscription.deregDate.map { x =>
-                        <div class="alert alert--info margin-bottom-30">
-                            <h2 class="heading-medium no-margin">@Messages("returnsHome.dereg.title")</h2>
-                            <p>@Messages("returnsHome.dereg.p1", x.format("dd MMMM yyyy"), x.plusYears(7).format("dd MMMM yyyy"))</p>
-                        </div>
-                        }
-                    }
 
             @*TODO Content for when the user is now vol but used to be man. To reliably determine this changes need to be made to MDTP mongo.
             @periodsDue.takeRight(1).map { pd =>
@@ -103,28 +49,29 @@
             </div>
             }
             }*@
+
             @if(subscription.activity.voluntaryRegistration) {
                 <div class="panel panel-border-wide">
                     <p>@Messages("sdil.service-page.p2.voluntary-only")</p>
                     <p>@Html(Messages("sdil.service-page.p3.voluntary-only", sdil.controllers.routes.VariationsController.changeActorStatus("")))</p>
                 </div>
             } else {
-                    @lastReturn.map { lr =>
-                        <div class="panel-border-narrow panel">
-                            <p>
-                                @Messages(
-                                    "sdil.service-page.completed-return",
-                                    ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
-                                    ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
-                                    lr.submittedOn.getOrElse(LocalDateTime.now).atZone(ZoneId.of("Europe/London")).format(ofPattern("h:mma")).toLowerCase,
-                                    lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")),
-                                    ReturnPeriod(LocalDate.now).start.format("MMMM"),
-                                    ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
-                                    ReturnPeriod(LocalDate.now).deadline.format("d MMMM yyyy")
-                                )
-                            </p>
-                        </div>
-                    }
+                @lastReturn.map { lr =>
+                    <div class="panel-border-narrow panel">
+                        <p>
+                            @Messages(
+                                "sdil.service-page.completed-return",
+                                ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
+                                ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
+                                lr.submittedOn.getOrElse(LocalDateTime.now).atZone(ZoneId.of("Europe/London")).format(ofPattern("h:mma")).toLowerCase,
+                                lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")),
+                                ReturnPeriod(LocalDate.now).start.format("MMMM"),
+                                ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
+                                ReturnPeriod(LocalDate.now).deadline.format("d MMMM yyyy")
+                            )
+                        </p>
+                    </div>
+                }
 
                 @for(period <- periodsDue.take(1)) {
                     <div class="notice">
@@ -133,64 +80,63 @@
                         </i>
                         <p>
                             <strong class="bold-small">
-                    @if(periodsDue.length == 1) {
-                        @Messages(
-                            "returnsHome.returnsDue",
-                            subscription.orgName,
-                            period.start.format("MMMM"),
-                            period.end.format("MMMM yyyy"),
-                            period.deadline.format("d MMMM yyyy")
-                        )
-                            </strong>
-                        </p>
-                    </div>
-                    } else {
-                        @Messages("returnsHome.returnsDueMulti", periodsDue.length)
-                            </strong>
-                        </p>
-                    </div>
-
-                    <p>@Messages("returnsHome.returnsDueList.p1", periodsDue.length)</p>
-
-                        @for(periodList <- periodsDue) {
-                            <ul>
-                                <li>
-                                @Messages("returnsHome.returnsDueList.li",
-                                    periodsDue.indexOf(periodList) + 1,
-                                    periodList.start.format("MMMM"),
-                                    periodList.end.format("MMMM yyyy")
+                            @if(periodsDue.length == 1) {
+                                @Messages(
+                                    "returnsHome.returnsDue",
+                                    subscription.orgName,
+                                    period.start.format("MMMM"),
+                                    period.end.format("MMMM yyyy"),
+                                    period.deadline.format("d MMMM yyyy")
                                 )
-                                </li>
-                            </ul>
-                        }
-                    <br/>
-                    }
+                            </strong>
+                        </p>
+                    </div>
+                } else {
+                    @Messages("returnsHome.returnsDueMulti", periodsDue.length)
+                        </strong>
+                        </p>
+                    </div>
+
+        <p>@Messages("returnsHome.returnsDueList.p1", periodsDue.length)</p>
+
+        @for(periodList <- periodsDue) {
+            <ul>
+                <li>
+                @Messages("returnsHome.returnsDueList.li",
+                    periodsDue.indexOf(periodList) + 1,
+                    periodList.start.format("MMMM"),
+                    periodList.end.format("MMMM yyyy")
+                )
+                </li>
+            </ul>
+        }
+        <br/>
+        }
 
         <div>
-                    @details("returnsHome.help.title") {
-                        <p>@messages("returnsHome.help.p1")</p>
-                        <ul class="list list-bullet">
-                            <li>@Messages("returnsHome.help.li1")</li>
-                            <li>@Messages("returnsHome.help.li2")</li>
-                            <li>@Messages("returnsHome.help.li3")</li>
-                            <li>@Messages("returnsHome.help.li4")</li>
-                        </ul>
-                        <p>@Messages("returnsHome.help.p2")</p>
-                        <p>@Messages("returnsHome.help.p3")</p>
-                        <ul class="list list-bullet">
-                            <li>@Messages("returnsHome.help.li5")</li>
-                            <li>@Messages("returnsHome.help.li6")</li>
-                        </ul>
-                        <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
-                    }
+        @details("returnsHome.help.title") {
+            <p>@messages("returnsHome.help.p1")</p>
+            <ul class="list list-bullet">
+                <li>@Messages("returnsHome.help.li1")</li>
+                <li>@Messages("returnsHome.help.li2")</li>
+                <li>@Messages("returnsHome.help.li3")</li>
+                <li>@Messages("returnsHome.help.li4")</li>
+            </ul>
+            <p>@Messages("returnsHome.help.p2")</p>
+            <p>@Messages("returnsHome.help.p3")</p>
+            <ul class="list list-bullet">
+                <li>@Messages("returnsHome.help.li5")</li>
+                <li>@Messages("returnsHome.help.li6")</li>
+            </ul>
+            <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
+        }
         </div>
         <div>
             <a href='@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, "own-brands-packaged-at-own-sites")' class="button">
-                @Messages("return.file")
+            @Messages("return.file")
             </a>
         </div>
-                }
-            }
+        }
         }
 
         <hr class="govuk-section-break--visible">
@@ -206,48 +152,45 @@
                         @Messages("account.balance.amount.credit")
                     }
                 }
-                </p>
+            </p>
             <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
         </div>
         <hr class="govuk-section-break--visible">
-            @defining(
-                subscription match {
-                    case s if s.deregDate.nonEmpty => None
-                    case s if s.activity.isLiable => Some("man")
-                    case s if s.activity.isVoluntaryMandatory => Some("volMan")
-                    case _ => None
-                }
-            )   { subKey =>
+        @defining(
+            subscription match {
+                case s if s.activity.isLiable => Some("man")
+                case s if s.activity.isVoluntaryMandatory => Some("volMan")
+                case _ => None
+            }
+        ) { subKey =>
 
-                @declaration_table("service-page", "business-details.title", subKey) {
-                    @if(subscription.deregDate.isEmpty) {
-                        @declaration_details_table_row("service-page", "sdil-ref", None, s"$sdilReference")
-                        @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
-                    }
-                    @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
+            @declaration_table("service-page", "business-details.title", subKey) {
+                @declaration_details_table_row("service-page", "sdil-ref", None, s"$sdilReference")
+                @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
+                @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
 
-                        <tr>
-                            <td scope="row">@Messages("sdil.verify.address")</td>
-                            <td>
-                                @address.nonEmptyLines.init.map { l =>
-                                    @l,<br/>
-                                }
-                                @address.postcode
-                            </td>
-                        </tr>
-                    }
-                }
+                <tr>
+                    <td scope="row">@Messages("sdil.verify.address")</td>
+                    <td>
+                        @address.nonEmptyLines.init.map { l =>
+                            @l,<br/>
+                        }
+                        @address.postcode
+                    </td>
+                </tr>
+            }
+        }
 
-      <h2 class="heading-medium">@Messages("sdil.service-page.variations.title")</h2>
+        <h2 class="heading-medium">@Messages("sdil.service-page.variations.title")</h2>
         @*<div class="grid-row">*@
-            @*<div class="column-one-half">*@
-                @*<h3 class="heading-small">*@
-                    @*<a href="@sdil.controllers.routes.AmendFromServicePageController.index("exemptions-for-small-producers")">*@
-                        @*@Messages("sdil.service-page.variations.subtitle.1")*@
-                    @*</a>*@
-                @*</h3>*@
-                @*<p>@Messages("sdil.service-page.variations.p1")</p>*@
-            @*</div>*@
+        @*<div class="column-one-half">*@
+        @*<h3 class="heading-small">*@
+        @*<a href="@sdil.controllers.routes.AmendFromServicePageController.index("exemptions-for-small-producers")">*@
+        @*@Messages("sdil.service-page.variations.subtitle.1")*@
+        @*</a>*@
+        @*</h3>*@
+        @*<p>@Messages("sdil.service-page.variations.p1")</p>*@
+        @*</div>*@
 
         <div class="grid-row">
             <div class="column-one-half">
@@ -257,49 +200,41 @@
                     </a>
                 </h3>
                 <div class="form-group">
-                    @if(subscription.deregDate.nonEmpty) {
-                        <p>@Messages("sdil.service-page.variations.vary-returns-dereg")</p>
-                </div>
-            </div>
-        </div>
-            @*<div class="form-group">*@
-                @*<h2 class="heading-medium">@Messages("sdil.service-page.reregister.title")</h2>*@
-                @*<p>@Html(Messages("sdil.service-page.reregister.p1", sdil.controllers.routes.IdentifyController.show()))</p>*@
-                @*<p>@Html(Messages("sdil.service-page.reregister.p2"))</p>*@
-            @*</div>*@
-                    } else {
-                        <p>@Messages("sdil.service-page.variations.p3")</p>
-                        <ul class="list-bullet">
-                            <li>@Messages("sdil.service-page.variations.li.1")</li>
-                            <li>@Messages("sdil.service-page.variations.li.2")</li>
-                            <li>@Messages("sdil.service-page.variations.li.3")</li>
-                            <li>@Messages("sdil.service-page.variations.li.4")</li>
-                        </ul>
+                    @*<div class="form-group">*@
+                    @*<h2 class="heading-medium">@Messages("sdil.service-page.reregister.title")</h2>*@
+                    @*<p>@Html(Messages("sdil.service-page.reregister.p1", sdil.controllers.routes.IdentifyController.show()))</p>*@
+                    @*<p>@Html(Messages("sdil.service-page.reregister.p2"))</p>*@
+                    @*</div>*@
+                    <p>@Messages("sdil.service-page.variations.p3")</p>
+                    <ul class="list-bullet">
+                        <li>@Messages("sdil.service-page.variations.li.1")</li>
+                        <li>@Messages("sdil.service-page.variations.li.2")</li>
+                        <li>@Messages("sdil.service-page.variations.li.3")</li>
+                        <li>@Messages("sdil.service-page.variations.li.4")</li>
+                    </ul>
                 </div>
             </div>
             <div class="column-one-half">
                 <h3 class="heading-small">
                     <a href="@sdil.controllers.routes.VariationsController.changeBusinessAddress("")">
-                        @Messages("sdil.service-page.variations.subtitle.2")
+                    @Messages("sdil.service-page.variations.subtitle.2")
                     </a>
                 </h3>
                 <p>@Messages("sdil.service-page.variations.p2")</p>
             </div>
         </div>
-}
+
         @*<div class="column-one-half">*@
-                @*<h3 class="heading-small">*@
-                    @*<a href="/sdil-prototype/home/notifications">*@
-                        @*@Messages("sdil.service-page.variations.subtitle.4")*@
-                    @*</a>*@
-                @*</h3>*@
-                @*<p>@Messages("sdil.service-page.variations.p4")</p>*@
-            @*</div>*@
-        </div>
-
+        @*<h3 class="heading-small">*@
+        @*<a href="/sdil-prototype/home/notifications">*@
+        @*@Messages("sdil.service-page.variations.subtitle.4")*@
+        @*</a>*@
+        @*</h3>*@
+        @*<p>@Messages("sdil.service-page.variations.p4")</p>*@
+        @*</div>*@
         <br/>
         <br/>
-
+    </div>
     <div class="column-one-third">
         <div class="section--blue-top"> </div>
         <h2 class="heading-small">
@@ -325,6 +260,5 @@
             @Messages("sdil.service-page.support.p6")
             </li>
         </ul>
-    </div>
     </div>
 }
