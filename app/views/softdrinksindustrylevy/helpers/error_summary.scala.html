@@ -32,7 +32,7 @@
                     <a href="#@error.key"
                     id="@{error.key}-error-summary"
                     data-focuses="@error.key">
-                    @Messages(error.message, error.args: _*)
+                    @Messages(error.message.split("[|]"), error.args: _*)
                     </a>
                 </li>
             }

@@ -232,9 +232,12 @@ class VariationsController(
     val base = RegistrationVariationData(subscription)
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
-      extraMessages = ExtraMessages(messages = variableReturns.map { x =>
+      messages = variableReturns.map { x =>
         s"returnPeriod.option.${x.year}${x.quarter}" -> s"${Messages(s"returnPeriod.option.${x.quarter}")} ${x.year}"
-      }.toMap)
+      }.toMap ++ Map("error.radio-form.choose-option" -> "error.radio-form.choose-option.returnPeriod")
+
+      extraMessages = ExtraMessages(messages)
+
       returnPeriod <- askOneOf("returnPeriod", variableReturns.sortWith(_>_).map(x => s"${x.year}${x.quarter}"))(extraMessages)
         .map(y => variableReturns.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
       _ <- clear
