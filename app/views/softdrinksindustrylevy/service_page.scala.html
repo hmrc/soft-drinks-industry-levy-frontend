@@ -147,6 +147,10 @@
                 @printbalance("account.balance.amount", balance)
                 @if(balance < 0) {
                     @Messages("account.balance.amount.pay")
+                } else {
+                    @if(balance > 0) {
+                        @Messages("account.balance.amount.credit")
+                    }
                 }
             </p>
             <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>

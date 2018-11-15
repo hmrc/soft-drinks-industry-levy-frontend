@@ -34,13 +34,13 @@ import scala.util.Try
 
 object GdsComponents {
 
-  val bool: Mapping[Boolean] = optional(boolean)
-    .verifying("error.radio-form.choose-option", _.isDefined)
+  def bool(key: String = ""): Mapping[Boolean] = optional(boolean)
+    .verifying(s"error.radio-form.choose-option.$key", _.isDefined)
     .transform(_.getOrElse(false),{x: Boolean => x.some})
 
   def innerOptEmpty[A](key: String, innerMap: Mapping[A])(implicit mon: Monoid[A]): Mapping[A] =
     mapping(
-      "outer" -> bool,
+      "outer" -> bool(),
       "inner" -> mandatoryIfTrue(s"${key}.outer", innerMap)
     ){(_,_) match {
         case (true, inner) => inner.get
@@ -112,8 +112,8 @@ object GdsComponents {
       d => (d.getDayOfMonth, d.getMonthValue, d.getYear)
     )
 
-  val litreage: Mapping[Long] = text
-    .verifying("error.litreage.required", _.nonEmpty)
+  def litreage(key: String): Mapping[Long] = text
+    .verifying(s"error.litreage.required.$key", _.nonEmpty)
     .transform[String](_.replaceAll(",", ""), _.toString)
     .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
     .transform[BigDecimal](BigDecimal.apply, _.toString)
@@ -122,7 +122,7 @@ object GdsComponents {
     .verifying("error.litreage.min", _ >= 0)
     .transform[Long](_.toLong, BigDecimal.apply)
 
-  val litreagePair: Mapping[(Long,Long)] =
-    tuple("lower" -> litreage, "higher" -> litreage)
+  def litreagePair: Mapping[(Long,Long)] =
+    tuple("lower" -> litreage("lower"), "higher" -> litreage("higher"))
 
 }

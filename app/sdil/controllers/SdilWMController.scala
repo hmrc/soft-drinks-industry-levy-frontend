@@ -163,7 +163,9 @@ trait SdilWMController extends WebMonadController
     val valueMap: Map[String,A] =
       possValues.map{a => (a.toString, a)}.toMap
     formPage(id)(
-      oneOf(possValues.map{_.toString}, "error.radio-form.choose-option"),
+      oneOf(possValues.map{_.toString},
+        s"error.radio-form.choose-option.${id}|error.radio-form.choose-option"
+      ),
       default.map{_.toString}
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
@@ -215,7 +217,7 @@ trait SdilWMController extends WebMonadController
     import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
     val outerMapping: Mapping[Option[T]] = mapping(
-      "outer" -> bool,
+      "outer" -> bool(key),
       "inner" -> mandatoryIfTrue(s"${key}.outer", innerMapping)
     ){(_,_) match { case (outer, inner) => inner }
     }( a => (a.isDefined, a).some )
@@ -409,7 +411,9 @@ trait SdilWMController extends WebMonadController
     many[A](id, min, max, default, confirmation, Some(edit)){ case (iid, minA, maxA, items) =>
 
       val mapping = optional(text) // N.b. ideally this would just be 'text' but sadly text triggers the default play "required" message for 'text'
-        .verifying("error.radio-form.choose-option", a => a.nonEmpty)
+        .verifying(
+        s"error.radio-form.choose-option.$id|error.radio-form.choose-option",
+        a => a.nonEmpty)
         .verifying(s"$id.error.items.tooFew", a => !a.contains("Done")  || items.size >= min)
         .verifying(s"$id.error.items.tooMany", a => !a.contains("Add") || items.size < max)
 
@@ -484,8 +488,8 @@ trait SdilWMController extends WebMonadController
           case _ => Valid
         }
       }),
-      "lower" -> litreage,
-      "higher" -> litreage
+      "lower" -> litreage("lower"),
+      "higher" -> litreage("higer")
     ) {
       (alias, ref, l, h) => SmallProducer(alias, ref, (l, h))
     } {

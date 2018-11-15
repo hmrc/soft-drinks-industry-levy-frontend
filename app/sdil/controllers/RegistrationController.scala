@@ -85,7 +85,7 @@ class RegistrationController(
                           case Small => Some(false)
                           case _ => None
                         }
-      useCopacker    <- ask(bool,"copacked") when packLarge.contains(false)
+      useCopacker    <- ask(bool("copacked"),"copacked") when packLarge.contains(false)
       packageOwn     <- askOption(litreagePair.nonEmpty, "package-own-uk") when packLarge.nonEmpty
       copacks        <- askOption(litreagePair.nonEmpty, "package-copack")
       imports        <- askOption(litreagePair.nonEmpty, "import")
@@ -98,7 +98,7 @@ class RegistrationController(
       isVoluntary     =  packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
       regDate        <- askRegDate(packLarge, copacks, imports) when (!isVoluntary)
       askPackingSites = (packLarge.contains(true) && packageOwn.flatten.nonEmpty) || !copacks.isEmpty
-      useBusinessAddress <- ask(bool, "pack-at-business-address") when askPackingSites
+      useBusinessAddress <- ask(bool("pack-at-business-address"), "pack-at-business-address") when askPackingSites
         packingSites   = if (useBusinessAddress.getOrElse(false)) {
                           List(Site.fromAddress(fd.rosmData.address))
                          } else {
@@ -106,7 +106,7 @@ class RegistrationController(
                          }
       firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages(), implicitly) when packingSites.isEmpty && askPackingSites
       packSites       <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless askPackingSites
-      addWarehouses   <- ask(bool, "ask-secondary-warehouses") when !isVoluntary
+      addWarehouses   <- ask(bool("ask-secondary-warehouses"), "ask-secondary-warehouses") when !isVoluntary
       firstWarehouse  <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages(), implicitly) when addWarehouses.getOrElse(false)
       warehouses      <- askWarehouses(List.empty[Site] ++ firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless addWarehouses.getOrElse(false)
       contactDetails  <- ask(contactDetailsMapping, "contact-details")

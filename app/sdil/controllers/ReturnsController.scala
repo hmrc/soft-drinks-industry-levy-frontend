@@ -107,7 +107,7 @@ class ReturnsController (
   }
 
   private def askNewWarehouses()(implicit hc: HeaderCarrier): WebMonad[List[Site]] = for {
-    addWarehouses  <- ask(bool, "ask-secondary-warehouses-in-return")
+    addWarehouses  <- ask(bool(), "ask-secondary-warehouses-in-return")
     firstWarehouse <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, extraMessages, implicitly) when
       addWarehouses
     warehouses     <- askWarehouses(firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless
@@ -120,7 +120,7 @@ class ReturnsController (
         "pack-at-business-address-in-return.lead" -> s"${Address.fromUkAddress(subscription.address).nonEmptyLines.mkString("<br/>")}")
     )
     for {
-      usePPOBAddress   <- ask(bool, "pack-at-business-address-in-return")
+      usePPOBAddress   <- ask(bool(), "pack-at-business-address-in-return")
       packingSites     = if (usePPOBAddress) {
         List(Site.fromAddress(Address.fromUkAddress(subscription.address)))
       } else {

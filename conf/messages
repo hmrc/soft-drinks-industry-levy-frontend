@@ -47,7 +47,7 @@ sdil.identify.help.p1=Your business’s UTR will be your:
 sdil.identify.help.li1=company UTR for a limited company
 sdil.identify.help.li2=individual Self Assessment UTR for a sole trader
 sdil.identify.help.p2=The UTR will be on tax returns and other letters about Corporation Tax or Self Assessment. \
-  It may be called 'reference', 'UTR' or 'official use'.
+  It may be called `reference`, `UTR` or `official use`.
 
 #Verify
 sdil.verify.heading=Is this the business you want to register?
@@ -150,7 +150,8 @@ sdil.litreage.rates.content.p2=The high band applies where the liable drink cont
 sdil.litreage.volumes.help=I do not know these volumes
 sdil.litreage.volumes.content.p1=If you do not have the exact volumes you can enter an estimate.
 
-error.litreage.required=Number of litres must be 0 or more
+error.litreage.required.lower=Enter the number of litres in the low band
+error.litreage.required.higher=Enter the number of litres in the high band
 error.litreage.numeric=Number of litres must be a whole number
 error.litreage.max=Number of litres must be less than 14 digits
 error.litreage.min=Number of litres must be 0 or more
@@ -182,7 +183,7 @@ sdil.warehouse-site.add.legend=A warehouse site address
 sdil.warehouse-site.add=Add address to list
 error.tradingName.required=Enter a trading name
 error.tradingName.length=Trading name must be 160 characters or less
-error.tradingName.invalid=Trading name must not contain special characters
+error.tradingName.invalid=Trading name must only include letters a to z, numbers, spaces, apostrophes, ampersands and full stops
 
 #Package Copack Small
 sdil.packageCopackSmall.heading=Do you expect to claim a small producer exemption for any of your customers?
@@ -234,35 +235,30 @@ sdil.start-date.help-li4=knew you were going to package liable drinks for someon
 sdil.start-date.help-li5=brought liable drinks into the UK
 sdil.start-date.help-li6=knew you were going to bring liable drinks into the UK
 
-error.day.required=Enter a day
-error.month.required=Enter a month
-error.year.required=Enter a year
+error.day.required=Enter a real day
+error.month.required=Enter a real month
+error.year.required=Enter a real year
 error.day.number=Day must only include numbers
 error.month.number=Month must only include numbers
 error.year.number=Year must only include numbers
 error.start-day.invalid=Enter a valid day
 error.start-month.invalid=Enter a valid month
 error.start-year.invalid=Enter a valid year
-error.start-date.before-tax-start=Date cannot be before 06 04 2018
+error.start-date.before-tax-start=Date must be after 05DONE 04 2018
 error.start-date.in-future=Date cannot be in the future
 error.date.invalid=Enter a valid date
 
 #Contact details
-sdil.contact-details.heading=Contact person's details
-sdil.contact-details.full-name=Name
-sdil.contact-details.position=Job title
-sdil.contact-details.phone-number=Telephone number
-sdil.contact-details.email=Email address
 
-error.fullName.required=Enter a name
+error.fullName.required=Enter your contact person`s full name
 error.fullName.over=Name must be 40 characters or less
-error.position.required=Enter a job title
+error.position.required=Enter your contact person`s job title
 error.position.over=Job title must be 155 characters or less
-error.phoneNumber.required=Enter a telephone number
+error.phoneNumber.required=Enter your contact person`s telephone number
 error.phoneNumber.over=Telephone number must be 24 characters or less
-error.email.required=Enter an email address
+error.email.required=Enter your contact person`s email address
 error.email.over=Email address must be 132 characters
-error.phoneNumber.invalid=Telephone number must not contain special characters
+error.phoneNumber.invalid=Enter a telephone number, like 01632 960999 or 07700 900999
 
 # Declaration
 sdil.declaration.heading=Check your answers
@@ -300,7 +296,7 @@ sdil.declaration.registered-sites=Registered UK sites
 sdil.declaration.production-sites=Packaging sites
 sdil.declaration.warehouses=Warehouses
 
-sdil.declaration.contact-details=Contact person's details
+sdil.declaration.contact-details=Contact person`s details
 sdil.declaration.name=Name
 sdil.declaration.position=Job title
 sdil.declaration.phone-number=Telephone number
@@ -341,15 +337,13 @@ sdil.registerDeclaration.date=Date liable from
 sdil.registerDeclaration.registered-sites=Registered UK sites
 sdil.registerDeclaration.production-sites=Packaging sites
 sdil.registerDeclaration.warehouses=Warehouses
-sdil.registerDeclaration.contact-details=Contact person's details
+sdil.registerDeclaration.contact-details=Contact person`s details
 sdil.registerDeclaration.name=Name
 sdil.registerDeclaration.position=Job title
 sdil.registerDeclaration.phone-number=Telephone number
 sdil.registerDeclaration.email=Email address
 sdil.registerDeclaration.confirmation=By continuing you are confirming that the details provided are true and complete.
 sdil.registerDeclaration.continue=Confirm and send
-
-
 
 #visually hidden change links
 sdil.hidden.declaration.producer=Change your own brand packaged in the past 12 months
@@ -413,7 +407,7 @@ sdil.complete.what-happens.p3=Returns will be due for fixed quarters ending June
 sdil.service-page.title=Soft Drinks Industry Levy details
 sdil.service-page.p1=Your Soft Drinks Industry Levy reference is:
 sdil.service-page.business-details.title=Business details
-sdil.service-page.contact-details.title=Contact person's details
+sdil.service-page.contact-details.title=Contact person`s details
 sdil.service-page.p2.voluntary-only=You are registered as a small producer, so you do not have to send returns. \
   Make sure you give your reference number to your third-party packagers so they will not \
   have to pay the levy for your drinks.
@@ -534,10 +528,10 @@ financiallineitem.paymentonaccount=Payment on Account {0}
 #Common errors
 error.line1.required=Enter address line 1
 error.line2.required=Enter address line 2
-error.line1.invalid=Address line 1 must not contain special characters
-error.line2.invalid=Address line 2 must not contain special characters
-error.line3.invalid=Address line 3 must not contain special characters
-error.line4.invalid=Address line 4 must not contain special characters
+error.line1.invalid=Address line 1 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
+error.line2.invalid=Address line 2 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
+error.line3.invalid=Address line 3 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
+error.line4.invalid=Address line 4 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
 error.line1.over=Address line 1 must be 35 characters or less
 error.line2.over=Address line 2 must be 35 characters or less
 error.line3.over=Address line 3 must be 35 characters or less
@@ -545,16 +539,54 @@ error.line4.over=Address line 4 must be 35 characters or less
 error.address-line.length=This must be no more than 35 characters
 error.postcode.required=Enter a postcode
 error.postcode.empty=Enter a postcode
-error.postcode.invalid=Enter a valid postcode, like AA1 1AA
-error.postcode.special=Postcode must only include letters a to z, numbers and spaces, like AA1 1AA
+error.postcode.invalid=Enter a real postcode
+error.postcode.special=Enter a real postcode
 error.number.negative=Must be greater than or equal to 0
 error.full-name.invalid=Enter a name
-error.fullName.invalid=Name must not contain special characters
-error.position.invalid=Job title must not contain special characters
+error.fullName.invalid=Full name must only include letters a to z, hyphens and spaces
+error.position.invalid=Job title must only include letters a to z, apostrophes, dashes, hyphens and spaces
 error.phone-number.invalid=Enter a valid telephone number
-error.email=Enter a valid email address
+error.email=Enter a real email address, like name@example.com
 error.radio-form.choose-option=Choose an option
-error.radio-form.choose-one-option=Choose at least one option
+error.radio-form.choose-option.=Choose an option
+error.radio-form.choose-option.continue=Select an option to continue
+error.radio-form.choose-option.changeType=Select what you need to do
+error.radio-form.choose-option.returnPeriod=Select which return you need to correct
+error.radio-form.choose-option.repayment=Select how you want the credit to be repaid
+error.radio-form.choose-option.organisation-type=Select the option that best describes your business
+error.radio-form.choose-option.producer=Select how many litres of your own brands of liable drinks have been \
+  packaged globally in the past 12 months
+error.radio-form.choose-option.copacked=Select yes if you use any third parties in the UK to package liable drinks on \
+  your behalf
+error.radio-form.choose-option.package-own-uk=Select yes if you operate any packaging sites in the UK to package \
+  liable drinks for brands you own
+error.radio-form.choose-option.package-copack=Select yes if you operate any packaging sites in the UK to package \
+  liable drinks as a third party or contract packer
+error.radio-form.choose-option.import=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
+error.radio-form.choose-option.pack-at-business-address=Select yes if your registered business address is a UK\
+   packaging site that you operate to produce liable drinks
+error.radio-form.choose-option.production-sites=Select yes if you need to add another packaging site
+error.radio-form.choose-option.ask-secondary-warehouses=Select yes if you want to register any of the UK warehouses \
+  you use to store liable drinks
+error.radio-form.choose-option.secondary-warehouses=Select yes if you want to register another warehouse
+error.radio-form.choose-option.own-brands-packaged-at-own-sites=Select yes if you are reporting your own brands of \
+  liable drink you have packaged at UK sites you operate
+error.radio-form.choose-option.packaged-as-a-contract-packer=Select yes if you are reporting liable drink you have \
+  packaged as a third party or contract packer at UK sites you operate
+error.radio-form.choose-option.exemptions-for-small-producers=Select yes if you to claim an exemption for any of the \
+  liable drink you have packaged for registered small producers
+error.radio-form.choose-option.small-producer-details=Select yes if you need to add another small producer
+error.radio-form.choose-option.brought-into-uk=Select yes if you are reporting liable drink you have brought \
+  into the UK from anywhere outside of the UK
+error.radio-form.choose-option.brought-into-uk-from-small-producers=Select yes if you are reporting any \
+  liable drink you have brought into the UK from small producers
+error.radio-form.choose-option.claim-credits-for-exports=Do you want to claim a credit for liable drink that has \
+  been exported?
+error.radio-form.choose-option.claim-credits-for-lost-damaged=Select yes if you want to claim a credit for any \
+  liable drink that has been lost or destroyed
+
+
+error.radio-form.choose-one-option=Select at least one option to continue
 error.no-such-element=Sorry, we are experiencing technical difficulties
 
 # Beta registration
@@ -677,7 +709,7 @@ start-date.help.copacker.li2=of the date you know you will bring liable drinks i
 start-date.help.importer.li1=of the end of the month in which you packaged liable drinks for someone else
 start-date.help.importer.li2=of the date you know you will package liable drinks for someone else
 
-heading.contact-details=Contact person's details
+heading.contact-details=Contact person`s details
 contact-details.fullName=Full name
 contact-details.position=Job title
 contact-details.phoneNumber=Telephone number
@@ -690,7 +722,7 @@ complete.subheading=We have received your application to register for the Soft D
 complete.your.updates=Your application to register for the Soft Drinks Industry Levy was submitted on {0} at {1}.
 
 # Uniform variation process
-heading.changeType=Which change do you need to make?
+heading.changeType=What do you need to do?
 changeType.option.sites=Update contact, packaging site or warehouse details
 changeType.option.activity=Change our business activity
 changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
@@ -798,7 +830,7 @@ warehouses.list-control.heading=Do you want to add another warehouse?
 warehouses.option.add=Yes
 warehouses.option.done=No
 
-heading.contact=Update your contact person's details
+heading.contact=Update your contact person`s details
 contact.fullName=Full name
 contact.position=Job title
 contact.phoneNumber=Telephone number
@@ -851,10 +883,10 @@ sdil.variation.anotherChangeLink=go back and start again
 
 heading.deregister.reason=Why are you deregistering from the Soft Drinks Industry Levy?
 deregister.reason.label=Reason for deregistering
-heading.deregDate=What date do you need to deregister from?
+heading.deregDate=What date are you cancelling your registration from?
 error.deregDate.nopast=Deregistration date cannot be in the past
 error.deregDate.nofuture=Deregistration date cannot be more than 14 days in the future
-error.reason.empty=Enter a reason for deregistration
+error.reason.empty=Enter why you need to cancel your registration
 
 variations.cya.packLarge=Amount of own brand liable drink produced in the past 12 months
 variations.cya.packLarge.large=1 million litres or more
@@ -943,7 +975,7 @@ variations.cya.dereg=Deregistration
 variations.cya.reason=Reason
 variations.cya.deregDate=Date
 
-heading.reason=Why are you deregistering from the Soft Drinks Industry Levy?
+heading.reason=Why do you need to cancel your registration?
 reason.label=Reason for deregistering
 reason.hint=Enter a maximum of 255 characters
 
@@ -1149,11 +1181,10 @@ heading.partnerships=You cannot register online as a partnership
 account.balance=Account Balance
 account.balance.amount=Your balance is {0}.
 account.balance.amount.pay=You need to pay.
+account.balance.amount.credit=You are in credit.
 account.balance.amount.closed=This account is closed.
 account.balance.amount.dereg-in-credit=Your balance is {0} in credit. <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/soft-drinks-industry-levy">Call the Soft Drinks Industry Levy helpline</a> to arrange repayment.
 account.balance.pay.zero=You have nothing to pay.
-account.balance.pay.negative=[You need to make a payment].
-account.balance.pay.positive=[You are in credit].
 view.balance.history=View your balance history
 balance.history=Balance History
 
@@ -1188,7 +1219,7 @@ how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs pa
 changeType.option.returns=Correct an error in a previous return
 heading.returnPeriod=Which return do you need to correct?
 returnPeriod.help.header=I can’t find the return I’m looking for
-returnPeriod.help=If you did not file a return then it won't be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.
+returnPeriod.help=If you did not file a return then it won`t be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.
 returnPeriod.continue=Continue
 
 returnPeriod.option.0=January to March
@@ -1298,4 +1329,4 @@ file-return-before-deregistration.one-return=Before you can cancel your registra
 file-return-before-deregistration.many-returns=Before you can cancel your registration, you must send {0} returns and make any payments due.
 file-return-before-deregistration.continue=Go to your account
 
-error.sdilref.empty=Enter the small producer's reference number
+error.sdilref.empty=Enter the small producer`s reference number
