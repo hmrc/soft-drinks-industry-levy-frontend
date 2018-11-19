@@ -32,7 +32,7 @@
     @error_summary(form)
     <h1 class="heading-large">@Messages(s"heading.$key")</h1>
     <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
-    @for(msg <- Messages.many(s"${key}.paragraph")) {
+    @for(msg <- Messages.many(s"$key.paragraph")) {
         <div class="lede">
             <p>@msg</p>
         </div>

@@ -28,31 +28,33 @@
 
 @multiTitle(items: List[Html]) = {
     @if(items.isEmpty){
-        @Messages(s"heading.$key")
+        @Messages(s"$key.lead")
     } else {
-        @Messages(s"heading.multi.$key", items.length, singular(items).toString)
+        @Messages(s"$key.multi.lead", items.length, singular(items).toString)
     }
 }
 
 
 
-@views.html.main_template(
-      if(items.isEmpty) {
-        Messages(Seq(s"heading.$key", "sdil.variations.title"))
-    } else {
-        Messages(s"heading.multi.$key", items.length, singular(items).toString)
-    },
-     form = Some(form)) {
+@views.html.main_template(Messages(s"heading.$key") ,form = Some(form)) {
 
     @backlink(breadcrumbs)
 
     @error_summary(form)
 
-    <h1 class="heading-large">@multiTitle(items)</h1>
-    <legend class="visuallyhidden">@multiTitle(items)</legend>
+    <h1 class="heading-large">@Messages(s"heading.$key")</h1>
+    <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
+
+    @if(messages.isDefinedAt(s"$key.lead")) {
+        <p class="lede">@multiTitle(items)</p>
+    }
 
     @if(messages.isDefinedAt(s"$key.paragraph")) {
         <p>@Messages(s"$key.paragraph")</p>
+    }
+
+    @if(messages.isDefinedAt(s"$key.paragraph.lead")) {
+        <p class="lede">@Messages(s"$key.paragraph.lead")</p>
     }
 
     @if(messages.isDefinedAt(s"$key.paragraph.nonEmpty") && items.nonEmpty) {
@@ -62,7 +64,7 @@
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
         <div class="form-group">
-            <table>
+            <table class="margin-bottom-50">
                 @for((item, id) <- items.zipWithIndex) {
                     <tr>
                         <td>
@@ -87,8 +89,7 @@
                     }
             </table>
             @if(messages.isDefinedAt(s"$key.list-control.heading") && items.nonEmpty) {
-            </br>
-                <span class="bold-small">@Messages(s"$key.list-control.heading")</span>
+                <h4 class="heading-small add-to-list">@Messages(s"$key.list-control.heading")</h4>
             }
             @if(messages.isDefinedAt(s"$key.list-control.lead")) {
                 <span class="form-hint">@Messages(s"$key.list-control.lead")</span>

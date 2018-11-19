@@ -53,7 +53,7 @@ object SdilComponents extends FormHelpers {
 
   implicit val litreageForm = new FormHtml[(Long,Long)] {
     def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {
-      uniform.fragments.litreage(key, form, true)
+      uniform.fragments.litreage(key, form, approximate = true)
     }
   }
 
