@@ -74,7 +74,9 @@ class RegistrationController(
     val organisationTypes = OrganisationType.values.toList
       .filterNot(_== soleTrader && hasCTEnrolment)
       .sortBy(x => Messages("organisation-type.option." + x.toString.toLowerCase))
-    implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map("pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}"))
+    implicit val extraMessages: ExtraMessages =
+      ExtraMessages(messages =
+        Map("pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}"))
     for {
       orgType        <- askOneOf("organisation-type", organisationTypes)
       noPartners     =  uniform.fragments.partnerships()
@@ -152,7 +154,9 @@ class RegistrationController(
       _               <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
       _               <- execute(cache.clear(request.internalId))
       complete        =  uniform.fragments.registrationComplete(contact.email)
-      end             <- clear >> journeyEnd("complete", whatHappensNext = complete.some)
+      subheading      =  Html(Messages("complete.subheading", subscription.orgName))
+      extraEndMessages   =  ExtraMessages(Map("complete.extraParagraph" -> s"We have sent a confirmation email to ${contact.email}"))
+      end             <- clear >> journeyEnd("complete", whatHappensNext = complete.some, getTotal = subheading.some)(extraEndMessages)
     } yield end
   }
   private def askRegDate(packLarge: Option[Boolean], copacks: Option[(Long, Long)], imports: Option[(Long, Long)]): WebMonad[LocalDate] = {

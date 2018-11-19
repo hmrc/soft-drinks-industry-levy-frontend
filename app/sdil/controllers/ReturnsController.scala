@@ -103,7 +103,7 @@ class ReturnsController (
       subtotal,
       broughtForward)(messages).some
 
-    journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
+    journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)(implicitly)
   }
 
   private def askNewWarehouses()(implicit hc: HeaderCarrier): WebMonad[List[Site]] = for {

@@ -284,7 +284,7 @@ class VariationsController(
       _ <- checkReturnChanges("check-return-differences", variation.copy(reason = reason, repaymentMethod = repayment))
       _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
       _ <- clear
-      exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)
+      exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)(extraMessages)
 
     } yield exit
   }

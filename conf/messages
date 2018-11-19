@@ -393,15 +393,15 @@ sdil.hidden.registerDeclaration.position=Change job title
 sdil.hidden.registerDeclaration.phone-number=Change telephone number
 sdil.hidden.registerDeclaration.email=Change email address
 
-
 #Complete
-sdil.complete.title=Application complete
-sdil.complete.subheading=We have received your application to register your business for the Soft Drinks Industry Levy
-sdil.complete.p1=Your application to register for the Soft Drinks Industry Levy was sent on {0} at {1}.
-sdil.complete.what-happens.title=What happens next
-sdil.complete.what-happens.p1=You do not need to do anything else. We will send your Soft Drinks Industry Levy reference number to {0} within 24 hours.
-sdil.complete.what-happens.p2=If you do not get your reference number or you need to make a change to your registration, you need to call the Soft Drinks Industry Levy Helpline on 0300 200 3700.
-sdil.complete.what-happens.p3=Returns will be due for fixed quarters ending June, September, December and March.
+sdil.complete.what-happens.p1=You do not need to do anything else at this time.
+sdil.complete.what-happens.p2=We will send your Soft Drinks Industry Levy reference number to {0} within 24 hours.
+sdil.complete.what-happens.help.title=Help using this service
+sdil.complete.what-happens.help.p1=Call the Soft Drinks Industry Helpline on 0300 200 3700 if you:
+sdil.complete.what-happens.help.ul1=do not receive your reference number
+sdil.complete.what-happens.help.ul2=need to make a change to your application
+sdil.complete.what-happens.help.link=What do you think of this service?
+sdil.complete.what-happens.help.p2=(takes 30 seconds)
 
 #Service page
 sdil.service-page.title=Soft Drinks Industry Levy details
@@ -719,8 +719,8 @@ contact-details.email=Email address
 sdil.declaration.package-own-uk=Litres in next 12 months
 
 complete.title=Application complete
-complete.subheading=We have received your application to register for the Soft Drinks Industry Levy
-complete.your.updates=Your application to register for the Soft Drinks Industry Levy was submitted on {0} at {1}.
+complete.subheading=We have received your application to register {0} for the Soft Drinks Industry Levy
+complete.your.updates=Your application to register for the Soft Drinks Industry Levy was sent on {0} at {1}.
 
 # Uniform variation process
 heading.changeType=What do you need to do?
