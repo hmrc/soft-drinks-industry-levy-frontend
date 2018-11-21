@@ -23,7 +23,7 @@ import sdil.models.backend.Site
 
 case class RegistrationFormData(rosmData: RosmRegistration,
                                 utr: String,
-                                verify: Option[Boolean] = None,
+                                verify: Option[DetailsCorrect] = None,
                                 organisationType: Option[String] = None,
                                 producer: Option[Producer] = None,
                                 isPackagingForSelf: Option[Boolean] = None,
@@ -57,15 +57,13 @@ case class RegistrationFormData(rosmData: RosmRegistration,
       isImporter.contains(false) &&
       packagesForOthers.contains(false)
   }
-
-//TODO: Implement with confirm address page
-
-//  lazy val primaryAddress: Address = {
-//    verify match {
-//      case Some(DetailsCorrect.DifferentAddress(a)) => a
-//      case _ => rosmData.address
-//    }
-//  }
+  
+  lazy val primaryAddress: Address = {
+    verify match {
+      case Some(DetailsCorrect.DifferentAddress(a)) => a
+      case _ => rosmData.address
+    }
+  }
 
   lazy val hasPackagingSites: Boolean =
     Seq(producer.flatMap(_.isLarge), isPackagingForSelf).forall(_.contains(true)) ||

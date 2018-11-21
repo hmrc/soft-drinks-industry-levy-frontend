@@ -23,7 +23,7 @@ import sdil.actions.FormAction
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
-import sdil.models.{DetailsCorrect, Journey, RegistrationFormData, Verification, VerifyPage}
+import sdil.models.{DetailsCorrect, Journey, VerifyPage}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 import views.html.softdrinksindustrylevy.{errors, register}
@@ -64,8 +64,9 @@ class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormData
     form.bindFromRequest().fold(
       errors => BadRequest(register.verify(errors, request.formData.utr, request.formData.rosmData.organisationName, request.formData.rosmData.address)),
       {
-        case Verification(true) =>
-          val updated = request.formData.copy(verify = Some(true))
+        case DetailsCorrect.No => Redirect(routes.AuthenticationController.signOutNoFeedback())
+        case detailsCorrect =>
+          val updated = request.formData.copy(verify = Some(detailsCorrect))
           cache.cache(request.internalId, updated) map { _ =>
             Redirect(routes.RegistrationController.index("organisation-type")
           )
@@ -76,21 +77,12 @@ class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormData
   }
 }
 
-//
-//object VerifyController extends FormHelpers {
-//  val form: Form[DetailsCorrect] = Form(
-//    mapping(
-//      "detailsCorrect" -> oneOf(DetailsCorrect.options, "error.radio-form.choose-option.continue"),
-//      "alternativeAddress" -> mandatoryIf(isEqual("detailsCorrect", "differentAddress"), addressMapping)
-//    )(DetailsCorrect.apply)(DetailsCorrect.unapply)
-//  )
-//
-//}
-
 object VerifyController extends FormHelpers {
-  val form = Form(
+  val form: Form[DetailsCorrect] = Form(
     mapping(
-      "detailsCorrect" -> boolean
-    )(Verification.apply)(Verification.unapply)
+      "detailsCorrect" -> oneOf(DetailsCorrect.options, "error.radio-form.choose-option.continue"),
+      "alternativeAddress" -> mandatoryIf(isEqual("detailsCorrect", "differentAddress"), addressMapping)
+    )(DetailsCorrect.apply)(DetailsCorrect.unapply)
   )
+
 }
