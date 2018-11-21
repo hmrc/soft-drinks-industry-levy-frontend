@@ -68,5 +68,4 @@ trait ReturnJourney extends SdilWMController {
       wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged", default.map{_.wastage})
     } yield SdilReturn(ownBrands,contractPacked,smallProds,imports,importsSmall,exportCredits,wastage)
   }
-
 }

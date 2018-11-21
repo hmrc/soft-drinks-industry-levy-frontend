@@ -41,7 +41,7 @@ sdil.identify.heading=Enter your business details
 sdil.identify.utr=Unique Taxpayer Reference number (UTR)
 sdil.identify.postcode=Postcode
 error.utr.no-record=This Unique Taxpayer Reference (UTR) and postcode do not match our records
-sdil.identify.help.header=I do not know my business`s UTR
+sdil.identify.help.header=I do not know my business’s UTR
 sdil.identify.help.hint=Enter the last 10 digits only. For example, 12345 67890
 sdil.identify.help.p1=Your business’s UTR will be your:
 sdil.identify.help.li1=company UTR for a limited company
@@ -394,6 +394,7 @@ sdil.hidden.registerDeclaration.phone-number=Change telephone number
 sdil.hidden.registerDeclaration.email=Change email address
 
 #Complete
+sdil.complete.what-happens.title=What happens next?
 sdil.complete.what-happens.p1=You do not need to do anything else at this time.
 sdil.complete.what-happens.p2=We will send your Soft Drinks Industry Levy reference number to {0} within 24 hours.
 sdil.complete.what-happens.help.title=Help using this service
@@ -401,7 +402,7 @@ sdil.complete.what-happens.help.p1=Call the Soft Drinks Industry Helpline on 030
 sdil.complete.what-happens.help.ul1=do not receive your reference number
 sdil.complete.what-happens.help.ul2=need to make a change to your application
 sdil.complete.what-happens.help.link=What do you think of this service?
-sdil.complete.what-happens.help.p2=(takes 30 seconds)
+sdil.complete.what-happens.help.p2= (takes 30 seconds)
 
 #Service page
 sdil.service-page.title=Soft Drinks Industry Levy details
@@ -428,10 +429,11 @@ sdil.service-page.job-title=Job title
 sdil.service-page.telephone=Telephone number
 sdil.service-page.email=Email address
 sdil.service-page.registered-address.title=Registered address
-sdil.service-page.business-details.title.man=You need to send a return to HMRC every quarter, even if you have nothing to report for a period.
-sdil.service-page.business-details.title.volMan=You need to send a return to HMRC every quarter, even if you have \
-  nothing to report for a period. Make sure you give your reference number to your third-party packagers so they \
-  will not have to pay the levy for your drinks.
+sdil.service-page.business-details.title.man=Your registered business activity means that you need to send a return \
+  to HMRC every quarter, even if you have nothing to report for a period.
+sdil.service-page.business-details.title.volMan=Your registered business activity means that you need to send a return\
+  to HMRC every quarter, even if you have nothing to report for a period. Make sure you give your reference number to \
+  your third-party packagers so they will not have to pay the levy for your drinks.
 sdil.service-page.registered-address.p1=You need to keep these up to date.
 sdil.service-page.packaging-address.subtitle=Your registered packaging sites
 sdil.service-page.warehouse-address.subtitle=Your registered warehouses
@@ -1173,6 +1175,7 @@ returnsHome.dereg.p1=The registration was cancelled on {0}. You will be able to 
 
 return.file=Send a return
 return.file.final=Send a final return
+return.file.nil=I have nothing to report for this quarter
 
 heading.return-change-registration=Your registration details have changed
 return-change-registration.continue=Update registration
@@ -1188,7 +1191,7 @@ account.balance.amount.credit=You are in credit.
 account.balance.amount.closed=This account is closed.
 account.balance.amount.dereg-in-credit=Your balance is {0} in credit. <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/soft-drinks-industry-levy">Call the Soft Drinks Industry Levy helpline</a> to arrange repayment.
 account.balance.pay.zero=You have nothing to pay.
-view.balance.history=View your balance history
+view.balance.history=View your transaction history
 balance.history=Balance History
 
 date.time=Date

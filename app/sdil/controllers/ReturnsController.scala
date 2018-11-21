@@ -37,6 +37,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.uniform.playutil._
+import uk.gov.hmrc.uniform.webmonad
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
 
@@ -132,7 +133,7 @@ class ReturnsController (
     } yield packingSites
   }
 
-  private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String)
+  private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String, nilReturn: Boolean, id: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = {
     val em = ExtraMessages(Map(
       "heading.check-your-answers" ->
@@ -141,7 +142,9 @@ class ReturnsController (
     )
     for {
       _ <- write[Boolean]("_editSmallProducers", true)
-      sdilReturn <- askReturn(subscription, sdilRef, sdilConnector, period)
+      emptyReturn = SdilReturn((0,0), (0,0), List.empty, (0,0), (0,0), (0,0), (0,0))
+      sdilReturn <-  askReturn(subscription, sdilRef, sdilConnector, period, if(id == "nil-return") emptyReturn.some else None)
+
       // check if they need to vary
       isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
       isNewPacker = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
@@ -189,7 +192,7 @@ class ReturnsController (
       )
     } yield end
   }
-  def index(year: Int, quarter: Int, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+  def index(year: Int, quarter: Int, nilReturn: Boolean, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     val period = ReturnPeriod(year, quarter)
     val persistence = SaveForLaterPersistence(s"returns-$year$quarter", sdilRef, cache)
@@ -197,7 +200,7 @@ class ReturnsController (
       subscription <- sdilConnector.retrieveSubscription(sdilRef).map{_.get}
       pendingReturns <- sdilConnector.returns.pending(subscription.utr)
       r   <- if (pendingReturns.contains(period))
-               runInner(request)(program(period, subscription, sdilRef))(id)(persistence.dataGet,persistence.dataPut, JourneyConfig(SingleStep))
+               runInner(request)(program(period, subscription, sdilRef, nilReturn, id))(id)(persistence.dataGet,persistence.dataPut, if (nilReturn) JourneyConfig(LeapAhead) else JourneyConfig(SingleStep))
              else
                Redirect(routes.ServicePageController.show()).pure[Future]
     } yield r

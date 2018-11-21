@@ -126,7 +126,8 @@ trait SdilWMController extends WebMonadController
       total,
       variation,
       subscription,
-      originalReturn)
+      originalReturn
+    )
 
     cya(key, inner,
         {

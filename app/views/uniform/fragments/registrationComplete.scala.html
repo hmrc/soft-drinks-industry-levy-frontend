@@ -16,10 +16,12 @@
 
 @(email: String)(implicit messages: Messages)
 
-<p>@Messages("sdil.complete.what-happens.p1", email)</p>
-<p>@Messages("sdil.complete.what-happens.p2")</p>
+<p>@Messages("sdil.complete.what-happens.p1")</p>
+<p>@Messages("sdil.complete.what-happens.p2", email)</p>
 
 <h2 class="heading-medium">@Messages("sdil.complete.what-happens.help.title")</h2>
+
+<p>@Messages("sdil.complete.what-happens.help.p1")</p>
 
 <ul class="list list-bullet">
     <li>@Messages("sdil.complete.what-happens.help.ul1")</li>
@@ -27,7 +29,7 @@
 </ul>
 
 <p>
-    <a>
+    <a href="@sdil.controllers.routes.AuthenticationController.signOut()">
         @Messages("sdil.complete.what-happens.help.link")
     </a>
     @Messages("sdil.complete.what-happens.help.p2")

@@ -263,7 +263,7 @@ class VariationsController(
 
       variation = ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
       path <- getPath
-
+//TODO Brought forward should not be 0
       broughtForward = BigDecimal("0")
       extraMessages = ExtraMessages(
             messages = Map(

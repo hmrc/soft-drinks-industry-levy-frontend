@@ -114,10 +114,6 @@ html .font-xsmall {
     padding-bottom: 10px;
 }
 
-.margin-bottom-25 {
-    margin-bottom: 25px;
-}
-
 .link-button, .link-button:hover, .link-button:focus, .link-button:active {
   display: inline;
   background: none;
@@ -195,6 +191,10 @@ details .address.progressive-reveal {
     margin-top: 0.3125em;
 }
 
+.margin-bottom-25 {
+    margin-bottom: 25px;
+}
+
 .margin-bottom-30 {
     margin-bottom: 30px
 }
@@ -205,4 +205,8 @@ details .address.progressive-reveal {
 
 .add-to-list {
     margin-bottom: 0.4em
+}
+
+.return-button-padding {
+    padding-top: 4%
 }
