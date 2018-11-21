@@ -25,20 +25,27 @@
 
     <h1 class="heading-large">@Messages("sdil.identify.heading")</h1>
 
+    <p class="lede">@Messages("sdil.identify.p1")</p>
+
     @form(sdil.controllers.routes.IdentifyController.submit()) {
 
-        @inputText(identifyForm("utr"), Messages("sdil.identify.utr"), ('_hint, Messages("sdil.identify.help.hint")))
+        @inputText(
+            identifyForm("utr"),
+            Messages("sdil.identify.utr"),
+            ('_hint, Messages("sdil.identify.help.hint")),
+            '_inputClass -> "form-control-1-4"
+        )
 
         @details("sdil.identify.help.header"){
             <p>@Messages("sdil.identify.help.p1")</p>
-            <ul class="list list-bullet">
-                <li>@Messages("sdil.identify.help.li1")</li>
-                <li>@Messages("sdil.identify.help.li2")</li>
-            </ul>
-            <p>@Messages("sdil.identify.help.p2")</p>
         }
 
-        @inputText(identifyForm("postcode"), Messages("sdil.identify.postcode"), '_inputClass -> "input--cleared caps")
+        @inputText(
+            identifyForm("postcode"),
+            Messages("sdil.identify.postcode"),
+            ('_hint, Messages("sdil.identify.postcode.hint")),
+            '_inputClass -> "input--cleared caps"
+        )
 
         <input class="button" value="@Messages("sdil.common.continue")" type="submit">
     }

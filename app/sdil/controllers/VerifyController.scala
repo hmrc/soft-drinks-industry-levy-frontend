@@ -71,11 +71,11 @@ class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormData
             Redirect(routes.RegistrationController.index("organisation-type")
           )
         }
+        case _ => Redirect(routes.AuthenticationController.signOutNoFeedback())
       }
     )
   }
 }
-
 
 object VerifyController extends FormHelpers {
   val form: Form[DetailsCorrect] = Form(

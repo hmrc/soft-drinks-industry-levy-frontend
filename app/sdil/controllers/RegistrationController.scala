@@ -75,9 +75,13 @@ class RegistrationController(
       .filterNot(_== soleTrader && hasCTEnrolment)
       .sortBy(x => Messages("organisation-type.option." + x.toString.toLowerCase))
     implicit val extraMessages: ExtraMessages =
-      ExtraMessages(messages =
-        Map("pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}"))
+      ExtraMessages(
+        messages =
+          Map("pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}") ++
+          Map("confirm-address.paragraph" -> s"${fd.rosmData.address.nonEmptyLines.mkString(", ")}"))
+
     for {
+//      confirmAddress <- ask(bool("confirm-address"), "confirm-address")
       orgType        <- askOneOf("organisation-type", organisationTypes)
       noPartners     =  uniform.fragments.partnerships()
       _              <- if (orgType == partnership) {

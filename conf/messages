@@ -38,16 +38,15 @@ error.utr.invalid=Unique Taxpayer Reference (UTR) must be 10 numbers
 
 #Identify
 sdil.identify.heading=Enter your business details
-sdil.identify.utr=Unique Taxpayer Reference number (UTR)
-sdil.identify.postcode=Postcode
+sdil.identify.p1=This will help us match your details against information we currently hold.
+sdil.identify.utr=Corporation Tax or company Unique Taxpayer Reference number (UTR)
+sdil.identify.postcode=Registered company postcode
+sdil.identify.postcode.hint=This is the postcode of your registered business address
 error.utr.no-record=This Unique Taxpayer Reference (UTR) and postcode do not match our records
-sdil.identify.help.header=I do not know my business’s UTR
-sdil.identify.help.hint=Enter the last 10 digits only. For example, 12345 67890
-sdil.identify.help.p1=Your business’s UTR will be your:
-sdil.identify.help.li1=company UTR for a limited company
-sdil.identify.help.li2=individual Self Assessment UTR for a sole trader
-sdil.identify.help.p2=The UTR will be on tax returns and other letters about Corporation Tax or Self Assessment. \
-  It may be called `reference`, `UTR` or `official use`.
+sdil.identify.help.header=What is a UTR?
+sdil.identify.help.hint=For example, 12345 67890
+sdil.identify.help.p1=A UTR is 10 numbers like 12345 67890. It will be on tax returns and other letters about \
+  Corporation Tax. It may be called `reference`, `UTR` or `official use`.
 
 #Verify
 sdil.verify.heading=Is this the business you want to register?
@@ -55,7 +54,9 @@ sdil.verify.table.caption=Your business record in HMRC
 sdil.verify.utr=Unique Taxpayer Reference (UTR)
 sdil.verify.organisation=Business name
 sdil.verify.address=Business address
-sdil.verify.detailsCorrect.yes=Yes, this is the business and the address I want to register
+sdil.verify.p1=These are the details we hold for Unique Taxpayer Reference (UTR). You will be able to add a \
+  new contact address for the Soft Drinks Industry Levy in a moment.
+sdil.verify.detailsCorrect.yes=Yes, this is the business I want to register
 sdil.verify.detailsCorrect.differentAddress=Yes, but I want to add a new contact address for the Soft Drinks Industry Levy
 sdil.verify.detailsCorrect.no=No, I need to sign in using a different Government Gateway user ID
 sdil.verify.address.heading=Enter a primary address for the Soft Drinks Industry Levy
@@ -70,6 +71,10 @@ sdil.verify.postcode=Postcode
 sdil.registration-pending.title=You have already sent an application
 sdil.registration-pending.p1=If you have not got your registration number within 24 hours you need to call the Soft Drinks Industry Levy Helpline on 0300 200 3700.
 sdil.registration-pending.p2=We will contact you using the information you gave in your application if there is a problem.
+
+#Confirm Address
+heading.confirm-address=Is this the contact address you want to use for the Soft Drinks Industry Levy?
+confirm-address.paragraph=
 
 #Organisation Type
 sdil.organisation-type.heading=Which of these best describes your business?
