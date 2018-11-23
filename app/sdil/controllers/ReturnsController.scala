@@ -69,6 +69,8 @@ class ReturnsController (
 
     val total = subtotal - broughtForward
 
+    val prettyPeriod = messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))
+
     def formatMoney (total: BigDecimal) = {
       if(total < 0)
         f"-£${total.abs}%,.2f"
@@ -79,8 +81,14 @@ class ReturnsController (
     val getTotal =
       if (total <= 0 )
         messages("return-sent.subheading.nil-return")
-      else
-        messages("return-sent.subheading", formatMoney(total), period.deadline.format("dd MMMM yyyy"))
+      else {
+        messages(
+          "return-sent.subheading",
+          prettyPeriod,
+          subscription.orgName
+        )
+      }
+
 
     val returnDate = messages(
       "return-sent.returnsDoneMessage",
