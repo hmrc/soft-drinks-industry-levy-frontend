@@ -20,7 +20,8 @@
 @import java.time.format.DateTimeFormatter
 @import java.time.LocalDate
 
-@(lineItems: List[(FinancialLineItem, BigDecimal)], balance: BigDecimal, sdilRef: String, deregDate: Option[LocalDate] = None, pendingDereg: Option[SdilReturn] = None)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@import sdil.models.backend.Subscription
+@(orgName: String, lineItems: List[(FinancialLineItem, BigDecimal)], balance: BigDecimal, sdilRef: String, deregDate: Option[LocalDate] = None, pendingDereg: Option[SdilReturn] = None)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("balance.history")) {
 
@@ -28,20 +29,29 @@
 
     <fieldset class="">
         <legend>
-            <h1 class="heading-large">@Messages("balance.history")</h1>
+            <h1 class="heading-large">
+                <span class="govuk-caption-xl">
+                    @orgName
+                </span>
+                @if(balance)
+                @printbalance("account.balance.amount", balance)
+            </h1>
             <h2 class="heading-medium">
                 @printbalance("account.balance.amount", balance)
             </h2>
             @if(deregDate.isEmpty && pendingDereg.isEmpty && balance != 0) {
                 <div class="panel panel-border-wide">
                     <p>
-                    @Html(Messages("how-to-pay.title", sdilRef))
+                        @Html(Messages("how-to-pay.title", sdilRef))
                     </p>
                 </div>
             }
         </legend>
         @if(lineItems.nonEmpty) {
         <div class="form-group">
+            <h2 class="heading-medium">@Messages("balance.table.title")</h2>
+            <p>@Messages("balance.table.p1")</p>
+
             <table>
                 <thead>
                     <tr>
@@ -57,7 +67,7 @@
                     @for((item,runningTotal) <- lineItems) {
                     <tr>
                         <td>@{item.date.format(DateTimeFormatter.ofPattern("dd MMM YYYY"))}</td>
-                        <td>@{item.description}</td>
+                        <td>@Html(Messages("item.description", item.description))</td>
                         <td>@if(item.amount >= 0) {@{f"${item.amount}%,.2f"}}</td>
                         <td>@if(item.amount <= 0) {@{f"${item.amount}%,.2f"}}</td>
                         <td>@{f"${runningTotal}%,.2f"}</td>

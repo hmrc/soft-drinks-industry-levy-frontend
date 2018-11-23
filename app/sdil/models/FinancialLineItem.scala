@@ -16,9 +16,12 @@
 
 package sdil.models
 
+import java.time.format.DateTimeFormatter
 import java.time.{LocalDate => Date}
+
 import play.api.i18n.Messages
 import play.api.libs.json._
+import uk.gov.hmrc.uniform.playutil._
 
 sealed trait FinancialLineItem {
   def date: Date
@@ -28,42 +31,49 @@ sealed trait FinancialLineItem {
 
 case class ReturnCharge(period: ReturnPeriod, amount: BigDecimal) extends FinancialLineItem {
 
-  val formatter = java.time.format.DateTimeFormatter.ofPattern("MMMM")
+  val formatter: DateTimeFormatter = java.time.format.DateTimeFormatter.ofPattern("MMMM")
 
-  override def description(implicit messages: Messages): String =
+  override def description(implicit messages: Messages) =
     Messages(
       "financiallineitem.returncharge",
       formatter.format(period.start),
-      period.end.format(formatter)
+      period.end.format("MMMM yyyy")
     )
   def date = period.deadline
 }
 
 case class ReturnChargeInterest(date: Date, amount: BigDecimal) extends FinancialLineItem {
+  val formatter: DateTimeFormatter = java.time.format.DateTimeFormatter.ofPattern("dd MMMM yyyy")
+
   override def description(implicit messages: Messages): String =
-    Messages("financiallineitem.returnchargeinterest")
+    Messages("financiallineitem.returnchargeinterest", date.format(formatter))
 }
 
 case class CentralAssessment(date: Date, amount: BigDecimal) extends FinancialLineItem {
   override def description(implicit messages: Messages): String =
     Messages("financiallineitem.centralassessment")
 }
+
 case class CentralAsstInterest(date: Date, amount: BigDecimal) extends FinancialLineItem {
   override def description(implicit messages: Messages): String =
     Messages("financiallineitem.centralasstinterest")
 }
+
 case class OfficerAssessment(date: Date, amount: BigDecimal) extends FinancialLineItem {
   override def description(implicit messages: Messages): String =
     Messages("financiallineitem.officerassessment")
 }
+
 case class OfficerAsstInterest(date: Date, amount: BigDecimal) extends FinancialLineItem {
   override def description(implicit messages: Messages): String =
     Messages("financiallineitem.officerasstinterest")
 }
+
 case class PaymentOnAccount(date: Date, reference: String, amount: BigDecimal) extends FinancialLineItem {
   override def description(implicit messages: Messages): String =
     Messages("financiallineitem.paymentonaccount", reference)
 }
+
 case class Unknown(date: Date, title: String, amount: BigDecimal) extends FinancialLineItem {
   override def description(implicit messages: Messages): String = title
 }
