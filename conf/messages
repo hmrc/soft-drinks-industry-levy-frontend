@@ -522,14 +522,14 @@ sdil.not-whitelisted.title=Service temporarily unavailable
 sdil.not-whitelisted.p1=We are sorry, but the Soft Drinks Industry Levy service is currently unavailable.
 sdil.not-whitelisted.p2=Please try again later.
 
-
-financiallineitem.returncharge=Return for {0} to {1}
-financiallineitem.returnchargeinterest=Interest on Return Charge
+item.description={0}
+financiallineitem.returncharge=Return <br/><span class="form-hint">for {0} to {1}</span>
+financiallineitem.returnchargeinterest=Interest Charged<br/><span class="form-hint">for {0} to today</span>
 financiallineitem.centralassessment=Central Assessment
 financiallineitem.centralasstinterest=Interest on Central Assessment
 financiallineitem.officerassessment=Officers Assessment
 financiallineitem.officerasstinterest=Interest on Officers Assessment
-financiallineitem.paymentonaccount=Payment on Account {0}
+financiallineitem.paymentonaccount=Payment on Account
 
 #Common errors
 error.line1.required=Enter address line 1
@@ -1196,6 +1196,9 @@ returns.variation.new-packer-and-importer-explanation=You have declared in this 
 heading.partnerships=You cannot register online as a partnership
 account.balance=Account Balance
 account.balance.amount=Your balance is {0}.
+account.balance.amount.zero=You don't need to pay anything.
+account.balance.amount.in-credit=Your are {0} in credit.
+account.balance.amount.need-to-pay=You need to pay {0}
 account.balance.amount.pay=You need to pay.
 account.balance.amount.credit=You are in credit.
 account.balance.amount.closed=This account is closed.
@@ -1203,6 +1206,8 @@ account.balance.amount.dereg-in-credit=Your balance is {0} in credit. <a href="h
 account.balance.pay.zero=You have nothing to pay.
 view.balance.history=View your transaction history
 balance.history=Balance History
+balance.table.title=Transaction history
+balance.table.p1=Your account balance may not reflect payments made in the last 3 days.
 
 date.time=Date
 transaction=Transaction
