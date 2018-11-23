@@ -93,13 +93,7 @@ object SdilComponents extends FormHelpers {
 
     HtmlShow.instance { site =>
       Html(
-        s"""<details role="group">
-        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-          <span class="summary">${visibleText(site)}</span>
-        </summary>""" +
-          lines(site) +
-          s"""<div class="address postal-code progressive-reveal">${site.address.postCode}</div>
-        </details>"""
+          s"""${lines(site)}<div class="address postal-code progressive-reveal">${site.address.postCode}</div>"""
       )
     }
   }

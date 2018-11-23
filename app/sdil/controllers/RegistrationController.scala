@@ -81,7 +81,6 @@ class RegistrationController(
           Map("confirm-address.paragraph" -> s"${fd.rosmData.address.nonEmptyLines.mkString(", ")}"))
 
     for {
-//      confirmAddress <- ask(bool("confirm-address"), "confirm-address")
       orgType        <- askOneOf("organisation-type", organisationTypes)
       noPartners     =  uniform.fragments.partnerships()
       _              <- if (orgType == partnership) {

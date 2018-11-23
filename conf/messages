@@ -54,8 +54,7 @@ sdil.verify.table.caption=Your business record in HMRC
 sdil.verify.utr=Unique Taxpayer Reference (UTR)
 sdil.verify.organisation=Business name
 sdil.verify.address=Business address
-sdil.verify.p1=These are the details we hold for Unique Taxpayer Reference (UTR). You will be able to add a \
-  new contact address for the Soft Drinks Industry Levy in a moment.
+sdil.verify.p1=These are the details we hold for Unique Taxpayer Reference (UTR).
 sdil.verify.detailsCorrect.yes=Yes, this is the business I want to register
 sdil.verify.detailsCorrect.differentAddress=Yes, but I want to add a new contact address for the Soft Drinks Industry Levy
 sdil.verify.detailsCorrect.no=No, I need to sign in using a different Government Gateway user ID
@@ -249,7 +248,7 @@ error.year.number=Year must only include numbers
 error.start-day.invalid=Enter a valid day
 error.start-month.invalid=Enter a valid month
 error.start-year.invalid=Enter a valid year
-error.start-date.before-tax-start=Date must be after 05DONE 04 2018
+error.start-date.before-tax-start=Date must be after 5 April 2018
 error.start-date.in-future=Date cannot be in the future
 error.date.invalid=Enter a valid date
 
