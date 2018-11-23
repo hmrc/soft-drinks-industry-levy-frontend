@@ -19,10 +19,10 @@ GET         /sign-out-no-feedback                              sdil.controllers.
 
 GET         /time-out                                          sdil.controllers.AuthenticationController.timeOut()
 
-GET         /submit-return/year/:year/quarter/:quarter/nilReturn/:nilReturn/        sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
-GET         /submit-return/year/:year/quarter/:quarter/nilReturn/:nilReturn/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
-POST        /submit-return/year/:year/quarter/:quarter/nilReturn/:nilReturn/        sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
-POST        /submit-return/year/:year/quarter/:quarter/nilReturn/:nilReturn/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
+GET         /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/        sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
+GET         /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
+POST        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/        sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
+POST        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
 
 GET         /ufvariations/                                     sdil.controllers.VariationsController.index(id = "")
 GET         /ufvariations/:id                                  sdil.controllers.VariationsController.index(id: String)
