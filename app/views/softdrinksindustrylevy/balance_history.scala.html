@@ -33,12 +33,16 @@
                 <span class="govuk-caption-xl">
                     @orgName
                 </span>
-                @if(balance)
-                @printbalance("account.balance.amount", balance)
+                @if(balance == 0) {
+                    @Messages("account.balance.amount.zero")
+                } else {
+                    @if(balance > 0) {
+                        @printbalance("account.balance.amount.in-credit", balance)
+                    } else {
+                        @printbalance("account.balance.amount.need-to-pay", balance)
+                    }
+                }
             </h1>
-            <h2 class="heading-medium">
-                @printbalance("account.balance.amount", balance)
-            </h2>
             @if(deregDate.isEmpty && pendingDereg.isEmpty && balance != 0) {
                 <div class="panel panel-border-wide">
                     <p>
@@ -57,9 +61,9 @@
                     <tr>
                         <th>@Messages("date.time")</th>
                         <th>@Messages("transaction")</th>
-                        <th>@Messages("pound.credits")</th>
-                        <th>@Messages("pound.debits")</th>
-                        <th>@Messages("pound.balance")</th>
+                        <th class="numeric">@Messages("pound.credits")</th>
+                        <th class="numeric">@Messages("pound.debits")</th>
+                        <th class="numeric">@Messages("pound.balance")</th>
                     </tr>
                 </thead>
 
@@ -68,9 +72,9 @@
                     <tr>
                         <td>@{item.date.format(DateTimeFormatter.ofPattern("dd MMM YYYY"))}</td>
                         <td>@Html(Messages("item.description", item.description))</td>
-                        <td>@if(item.amount >= 0) {@{f"${item.amount}%,.2f"}}</td>
-                        <td>@if(item.amount <= 0) {@{f"${item.amount}%,.2f"}}</td>
-                        <td>@{f"${runningTotal}%,.2f"}</td>
+                        <td class="numeric">@if(item.amount >= 0) {@{f"${item.amount}%,.2f"}}</td>
+                        <td class="numeric">@if(item.amount <= 0) {@{f"${item.amount}%,.2f"}}</td>
+                        <td class="numeric">@{f"${runningTotal}%,.2f"}</td>
                     </tr>
                     }
                 </tbody>
