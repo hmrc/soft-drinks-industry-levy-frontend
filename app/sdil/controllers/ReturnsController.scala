@@ -66,9 +66,7 @@ class ReturnsController (
     val now = LocalDate.now
     val data = returnAmount(sdilReturn, isSmallProducer)
     val subtotal = calculateSubtotal(data)
-
     val total = subtotal - broughtForward
-
     val prettyPeriod = messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))
 
     def formatMoney (total: BigDecimal) = {
