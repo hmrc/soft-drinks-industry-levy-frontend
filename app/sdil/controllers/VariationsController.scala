@@ -29,7 +29,7 @@ import uk.gov.hmrc.uniform.webmonad._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{Format, Json, Writes}
 import play.api.mvc.{Action, AnyContent, Request, Result}
-import play.twirl.api.HtmlFormat
+import play.twirl.api.{Html, HtmlFormat}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -203,7 +203,7 @@ class VariationsController(
       returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
       onlyReturns = subscription.deregDate.nonEmpty
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
-      changeType <- askOneOf("changeType", changeTypes) when !onlyReturns
+      changeType <- askOneOf("changeType", changeTypes, helpText = Html(Messages("change.latency")).some) when !onlyReturns
       variation <- changeType match {
         case None | Some(ChangeType.Returns) =>
           chooseReturn(subscription, sdilRef)
