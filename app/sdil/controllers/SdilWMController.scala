@@ -504,7 +504,7 @@ trait SdilWMController extends WebMonadController
         }
       }),
       "lower" -> litreage("lower"),
-      "higher" -> litreage("higer")
+      "higher" -> litreage("higher")
     ) {
       (alias, ref, l, h) => SmallProducer(alias, ref, (l, h))
     } {

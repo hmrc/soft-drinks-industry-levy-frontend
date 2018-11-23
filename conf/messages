@@ -46,7 +46,7 @@ error.utr.no-record=This Unique Taxpayer Reference (UTR) and postcode do not mat
 sdil.identify.help.header=What is a UTR?
 sdil.identify.help.hint=For example, 12345 67890
 sdil.identify.help.p1=A UTR is 10 numbers like 12345 67890. It will be on tax returns and other letters about \
-  Corporation Tax. It may be called `reference`, `UTR` or `official use`.
+  Corporation Tax. It may be called ‘reference’, ‘UTR’ or ‘official use’.
 
 #Verify
 sdil.verify.heading=Is this the business you want to register?
@@ -239,28 +239,28 @@ sdil.start-date.help-li4=knew you were going to package liable drinks for someon
 sdil.start-date.help-li5=brought liable drinks into the UK
 sdil.start-date.help-li6=knew you were going to bring liable drinks into the UK
 
-error.day.required=Enter a real day
-error.month.required=Enter a real month
-error.year.required=Enter a real year
+error.day.required=Enter a day
+error.month.required=Enter a month
+error.year.required=Enter a year
 error.day.number=Day must only include numbers
 error.month.number=Month must only include numbers
 error.year.number=Year must only include numbers
-error.start-day.invalid=Enter a valid day
-error.start-month.invalid=Enter a valid month
-error.start-year.invalid=Enter a valid year
+error.start-day.invalid=Enter a real day
+error.start-month.invalid=Enter a real month
+error.start-year.invalid=Enter a real year
 error.start-date.before-tax-start=Date must be after 5 April 2018
 error.start-date.in-future=Date cannot be in the future
 error.date.invalid=Enter a valid date
 
 #Contact details
 
-error.fullName.required=Enter your contact person`s full name
+error.fullName.required=Enter your contact person’s full name
 error.fullName.over=Name must be 40 characters or less
-error.position.required=Enter your contact person`s job title
+error.position.required=Enter your contact person’s job title
 error.position.over=Job title must be 155 characters or less
-error.phoneNumber.required=Enter your contact person`s telephone number
+error.phoneNumber.required=Enter your contact person’s telephone number
 error.phoneNumber.over=Telephone number must be 24 characters or less
-error.email.required=Enter your contact person`s email address
+error.email.required=Enter your contact person’s email address
 error.email.over=Email address must be 132 characters
 error.phoneNumber.invalid=Enter a telephone number, like 01632 960999 or 07700 900999
 
@@ -300,7 +300,7 @@ sdil.declaration.registered-sites=Registered UK sites
 sdil.declaration.production-sites=Packaging sites
 sdil.declaration.warehouses=Warehouses
 
-sdil.declaration.contact-details=Contact person`s details
+sdil.declaration.contact-details=Contact person’s details
 sdil.declaration.name=Name
 sdil.declaration.position=Job title
 sdil.declaration.phone-number=Telephone number
@@ -341,7 +341,7 @@ sdil.registerDeclaration.date=Date liable from
 sdil.registerDeclaration.registered-sites=Registered UK sites
 sdil.registerDeclaration.production-sites=Packaging sites
 sdil.registerDeclaration.warehouses=Warehouses
-sdil.registerDeclaration.contact-details=Contact person`s details
+sdil.registerDeclaration.contact-details=Contact person’s details
 sdil.registerDeclaration.name=Name
 sdil.registerDeclaration.position=Job title
 sdil.registerDeclaration.phone-number=Telephone number
@@ -412,7 +412,7 @@ sdil.complete.what-happens.help.p2= (takes 30 seconds)
 sdil.service-page.title=Soft Drinks Industry Levy details
 sdil.service-page.p1=Your Soft Drinks Industry Levy reference is:
 sdil.service-page.business-details.title=Business details
-sdil.service-page.contact-details.title=Contact person`s details
+sdil.service-page.contact-details.title=Contact person’s details
 sdil.service-page.p2.voluntary-only=You are registered as a small producer, so you do not have to send returns. \
   Make sure you give your reference number to your third-party packagers so they will not \
   have to pay the levy for your drinks.
@@ -586,8 +586,8 @@ error.radio-form.choose-option.brought-into-uk=Select yes if you are reporting l
   into the UK from anywhere outside of the UK
 error.radio-form.choose-option.brought-into-uk-from-small-producers=Select yes if you are reporting any \
   liable drink you have brought into the UK from small producers
-error.radio-form.choose-option.claim-credits-for-exports=Do you want to claim a credit for liable drink that has \
-  been exported?
+error.radio-form.choose-option.claim-credits-for-exports=Select yes if you want to claim a credit for liable drink \
+  that has been exported
 error.radio-form.choose-option.claim-credits-for-lost-damaged=Select yes if you want to claim a credit for any \
   liable drink that has been lost or destroyed
 
@@ -708,7 +708,7 @@ import.inner-heading=How many litres will you bring into the UK in the next 12 m
 heading.start-date=What date did you become liable to register for the Soft Drinks Industry Levy?
 start-date.help.header.1=What is my liability start date?
 start-date.help.p1=You become liable to register within 30 days of the:
-start-date.help.large-producer.li1=end of the month in which you`ve produced over 1 million litres of liable drink in the past 12 months
+start-date.help.large-producer.li1=end of the month in which you have produced over 1 million litres of liable drink in the past 12 months
 start-date.help.large-producer.li2=date you know you will produce over 1 million litres of liable drinks in the next 30 days
 start-date.help.copacker.li1=end of the month in which you brought liable drinks into the UK
 start-date.help.copacker.li2=date you know you will bring liable drinks into the UK
@@ -839,7 +839,7 @@ warehouses.list-control.heading=Do you want to add another warehouse?
 warehouses.option.add=Yes
 warehouses.option.done=No
 
-heading.contact=Update your contact person`s details
+heading.contact=Update your contact person’s details
 contact.fullName=Full name
 contact.position=Job title
 contact.phoneNumber=Telephone number
@@ -1229,7 +1229,7 @@ how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs pa
 changeType.option.returns=Correct an error in a previous return
 heading.returnPeriod=Which return do you need to correct?
 returnPeriod.help.header=I can’t find the return I’m looking for
-returnPeriod.help=If you did not file a return then it won`t be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.
+returnPeriod.help=If you did not file a return then it will not be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.
 returnPeriod.continue=Continue
 
 returnPeriod.option.0=January to March
@@ -1339,4 +1339,4 @@ file-return-before-deregistration.one-return=Before you can cancel your registra
 file-return-before-deregistration.many-returns=Before you can cancel your registration, you must send {0} returns and make any payments due.
 file-return-before-deregistration.continue=Go to your account
 
-error.sdilref.empty=Enter the small producer`s reference number
+error.sdilref.empty=Enter the small producer’s reference number
