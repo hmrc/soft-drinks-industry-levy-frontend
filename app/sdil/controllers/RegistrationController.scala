@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents
 import ltbs.play.scaffold.SdilComponents.OrganisationType.{partnership, soleTrader}
 import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
 import ltbs.play.scaffold.SdilComponents._
@@ -73,7 +74,15 @@ class RegistrationController(
     val organisationTypes = OrganisationType.values.toList
       .filterNot(_== soleTrader && hasCTEnrolment)
       .sortBy(x => Messages("organisation-type.option." + x.toString.toLowerCase))
-    implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map("pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}"))
+    implicit val extraMessages: ExtraMessages =
+      ExtraMessages(
+        messages =
+          Map(
+            "pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}",
+            "confirm-address.paragraph" -> s"${fd.rosmData.address.nonEmptyLines.mkString(", ")}"
+          )
+      )
+
     for {
       orgType        <- askOneOf("organisation-type", organisationTypes)
       noPartners     =  uniform.fragments.partnerships()
@@ -105,53 +114,55 @@ class RegistrationController(
                           List.empty[Site]
                          }
       firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, ExtraMessages(), implicitly) when packingSites.isEmpty && askPackingSites
-      packSites       <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless askPackingSites
-      addWarehouses   <- ask(bool("ask-secondary-warehouses"), "ask-secondary-warehouses") when !isVoluntary
-      firstWarehouse  <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages(), implicitly) when addWarehouses.getOrElse(false)
-      warehouses      <- askWarehouses(List.empty[Site] ++ firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless addWarehouses.getOrElse(false)
-      contactDetails  <- ask(contactDetailsMapping, "contact-details")
-      activity        =  Activity(
-                           longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
-                           longTupToLitreage(imports.getOrElse((0,0))),
-                           longTupToLitreage(copacks.getOrElse((0,0))),
-                           useCopacker.collect { case true => Litreage(1, 1) },
-                           packLarge.getOrElse(false)
-                         )
-      contact         =  Contact(
-                           name = Some(contactDetails.fullName),
-                           positionInCompany = Some(contactDetails.position),
-                           phoneNumber = contactDetails.phoneNumber,
-                           email = contactDetails.email
-                         )
-      subscription    =  Subscription(
-                           fd.utr,
-                           fd.rosmData.organisationName,
-                           orgType.toString,
-                           UkAddress.fromAddress(fd.rosmData.address),
-                           activity,
-                           regDate.getOrElse(LocalDate.now),
-                           packSites,
-                           warehouses,
-                           contact
-                         )
-      declaration     =  uniform.fragments.registerDeclaration(
-                           fd,
-                           packLarge,
-                           useCopacker,
-                           activity.ProducedOwnBrand,
-                           activity.CopackerAll,
-                           activity.Imported,
-                           isVoluntary,
-                           regDate,
-                           warehouses,
-                           packSites,
-                           contactDetails
-                         )(request, implicitly, implicitly)
-      _               <- tell("declaration", declaration)(implicitly, ltbs.play.scaffold.SdilComponents.extraMessages)
-      _               <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
-      _               <- execute(cache.clear(request.internalId))
-      complete        =  uniform.fragments.registrationComplete(contact.email)
-      end             <- clear >> journeyEnd("complete", whatHappensNext = complete.some)
+      packSites        <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless askPackingSites
+      addWarehouses    <- ask(bool("ask-secondary-warehouses"), "ask-secondary-warehouses") when !isVoluntary
+      firstWarehouse   <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, ExtraMessages(), implicitly) when addWarehouses.getOrElse(false)
+      warehouses       <- askWarehouses(List.empty[Site] ++ firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless addWarehouses.getOrElse(false)
+      contactDetails   <- ask(contactDetailsMapping, "contact-details")
+      activity         =  Activity(
+                            longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
+                            longTupToLitreage(imports.getOrElse((0,0))),
+                            longTupToLitreage(copacks.getOrElse((0,0))),
+                            useCopacker.collect { case true => Litreage(1, 1) },
+                            packLarge.getOrElse(false)
+                          )
+      contact          =  Contact(
+                            name = Some(contactDetails.fullName),
+                            positionInCompany = Some(contactDetails.position),
+                            phoneNumber = contactDetails.phoneNumber,
+                            email = contactDetails.email
+                          )
+      subscription     =  Subscription(
+                            fd.utr,
+                            fd.rosmData.organisationName,
+                            orgType.toString,
+                            UkAddress.fromAddress(fd.rosmData.address),
+                            activity,
+                            regDate.getOrElse(LocalDate.now),
+                            packSites,
+                            warehouses,
+                            contact
+                          )
+      declaration      =  uniform.fragments.registerDeclaration(
+                            fd,
+                            packLarge,
+                            useCopacker,
+                            activity.ProducedOwnBrand,
+                            activity.CopackerAll,
+                            activity.Imported,
+                            isVoluntary,
+                            regDate,
+                            warehouses,
+                            packSites,
+                            contactDetails
+                          )(request, implicitly, implicitly)
+      _                <- tell("declaration", declaration)(implicitly, ltbs.play.scaffold.SdilComponents.extraMessages)
+      _                <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
+      _                <- execute(cache.clear(request.internalId))
+      complete         =  uniform.fragments.registrationComplete(contact.email)
+      subheading       =  Html(Messages("complete.subheading", subscription.orgName))
+      extraEndMessages =  ExtraMessages(Map("complete.extraParagraph" -> s"We have sent a confirmation email to ${contact.email}."))
+      end              <- clear >> journeyEnd("complete", whatHappensNext = complete.some, getTotal = subheading.some)(extraEndMessages)
     } yield end
   }
   private def askRegDate(packLarge: Option[Boolean], copacks: Option[(Long, Long)], imports: Option[(Long, Long)]): WebMonad[LocalDate] = {

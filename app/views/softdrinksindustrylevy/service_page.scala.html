@@ -33,7 +33,12 @@
 @main_template(Messages("sdil.registered.title"), noArticle = true) {
     <div class="grid-row">
         <div class="column-two-thirds">
-            <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
+            <h1 class="heading-large">
+                <span class="govuk-caption-xl">
+                    @subscription.orgName
+                </span>
+                @Messages("sdil.service-page.title")
+            </h1>
 
             @*TODO Content for when the user is now vol but used to be man. To reliably determine this changes need to be made to MDTP mongo.
             @periodsDue.takeRight(1).map { pd =>
@@ -131,9 +136,14 @@
             <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
         }
         </div>
+        <div class="margin-bottom-25 return-button-padding">
+            <a href='@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, false, "own-brands-packaged-at-own-sites")' class="button">
+                @Messages("return.file")
+            </a>
+        </div>
         <div>
-            <a href='@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, "own-brands-packaged-at-own-sites")' class="button">
-            @Messages("return.file")
+            <a href='@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, true, "nil-return")'>
+                @Messages("return.file.nil")
             </a>
         </div>
         }
@@ -240,18 +250,20 @@
         <h2 class="heading-small">
         @Messages("sdil.service-page.support.title2")
         </h2>
-        <p>
-            <a href='@Messages("sdil.service-page.support.link1")'
-            onclick="ga('send', 'event', 'moreLinks', 'click', 'guidance')">
-            @Messages("sdil.service-page.support.p3")
-            </a>
-        </p>
-        <p>
-            <a href='@Messages("sdil.service-page.support.link2")'
-            onclick="ga('send', 'event', 'moreLinks', 'click', 'legislation')">
-            @Messages("sdil.service-page.support.p4")
-            </a>
-        </p>
+        <ul class="list">
+            <li>
+                <a href='@Messages("sdil.service-page.support.link1")'
+                onclick="ga('send', 'event', 'moreLinks', 'click', 'guidance')">
+                @Messages("sdil.service-page.support.p3")
+                </a>
+            </li>
+            <li>
+                <a href='@Messages("sdil.service-page.support.link2")'
+                onclick="ga('send', 'event', 'moreLinks', 'click', 'legislation')">
+                @Messages("sdil.service-page.support.p4")
+                </a>
+            </li>
+        </ul>
         <ul class="list">
             <li>
             @Messages("sdil.service-page.support.p5")

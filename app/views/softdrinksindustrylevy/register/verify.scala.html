@@ -37,9 +37,19 @@
     @verifyTitle
     </h1>
 
-    @businessDetails(utr, organisation, address)
+    <dl class="margin-bottom-30">
+        <dt class="heading-medium no-margin">@organisation</dt>
+        <dd>
+            <p>@address.line1<br/>
+                @if(address.line2.nonEmpty) { @address.line2<br/> }
+                @if(address.line3.nonEmpty) { @address.line3<br/> }
+                @if(address.line4.nonEmpty) { @address.line4<br/> }
+                @address.postcode</p>
+        </dd>
+    </dl>
 
     @if(!alreadyRegistered) {
+        <p>@Messages("sdil.verify.p1")</p>
         @form(sdil.controllers.routes.VerifyController.submit()) {
             @radioButtonWithConditionalContent(
                 field = verifyForm("detailsCorrect"),

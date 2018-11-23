@@ -76,7 +76,6 @@ class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormData
   }
 }
 
-
 object VerifyController extends FormHelpers {
   val form: Form[DetailsCorrect] = Form(
     mapping(

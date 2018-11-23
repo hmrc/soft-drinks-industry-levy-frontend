@@ -126,7 +126,8 @@ trait SdilWMController extends WebMonadController
       total,
       variation,
       subscription,
-      originalReturn)
+      originalReturn
+    )
 
     cya(key, inner,
         {
@@ -364,12 +365,26 @@ trait SdilWMController extends WebMonadController
     subheading: Option[Html] = None,
     whatHappensNext: Option[Html] = None,
     getTotal: Option[Html] = None
-  ): WebMonad[Result] =
+  )(implicit extraMessages: ExtraMessages): WebMonad[Result] =
     webMonad{ (rid, request, path, db) =>
       implicit val r = request
 
       Future.successful {
-        (id.some, path, db, Ok(uniform.journeyEnd(id, path, now, subheading, whatHappensNext, getTotal)).asLeft[Result])
+        (
+          id.some,
+          path,
+          db,
+          Ok(
+            uniform.journeyEnd(
+              id,
+              path,
+              now,
+              subheading,
+              whatHappensNext,
+              getTotal
+            )(implicitly, implicitly, implicitly, extraMessages)
+          ).asLeft[Result]
+        )
       }
     }
 

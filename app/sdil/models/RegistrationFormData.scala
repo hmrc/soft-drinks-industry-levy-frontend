@@ -57,7 +57,7 @@ case class RegistrationFormData(rosmData: RosmRegistration,
       isImporter.contains(false) &&
       packagesForOthers.contains(false)
   }
-
+  
   lazy val primaryAddress: Address = {
     verify match {
       case Some(DetailsCorrect.DifferentAddress(a)) => a

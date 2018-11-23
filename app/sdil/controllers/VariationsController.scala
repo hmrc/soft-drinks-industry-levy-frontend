@@ -21,6 +21,7 @@ import java.time.LocalDate
 import cats.implicits._
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
+import ltbs.play.scaffold.SdilComponents
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, _}
 import play.api.data.format.Formatter
 import play.api.data.{FormError, Forms, Mapping}
@@ -262,7 +263,7 @@ class VariationsController(
 
       variation = ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
       path <- getPath
-
+//TODO Brought forward should not be 0
       broughtForward = BigDecimal("0")
       extraMessages = ExtraMessages(
             messages = Map(
@@ -283,7 +284,7 @@ class VariationsController(
       _ <- checkReturnChanges("check-return-differences", variation.copy(reason = reason, repaymentMethod = repayment))
       _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
       _ <- clear
-      exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)
+      exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)(extraMessages)
 
     } yield exit
   }

@@ -19,7 +19,7 @@
 @import java.time.format.DateTimeFormatter
 
 @(id: String, breadcrumbs: List[String], now: LocalDate = LocalDate.now, updateTimeMessage: Option[Html] = None,
-        whatHappensNext: Option[Html] = None, getTotal: Option[Html] = None)(implicit messages: Messages, request: Request[_], config: AppConfig)
+        whatHappensNext: Option[Html] = None, getTotal: Option[Html] = None)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages)
 
 @views.html.main_template(title = Messages(s"$id.title")) {
 
@@ -35,6 +35,10 @@
     @{updateTimeMessage.getOrElse(Messages(s"$id.your.updates", now.format("d MMMM yyyy"), LocalTime.now
         (ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase))}
     </p>
+
+    @if(id == "complete") {
+        <p>@Messages.extraMessage(s"$id.extraParagraph")</p>
+    }
     <h2 class="heading-medium">@Messages(Seq(s"$id.what-happens-next-heading", "sdil.complete.what-happens.title"))</h2>
 
     <p>@{whatHappensNext.getOrElse{Html(Messages(s"$id.what-happens-next"))}}</p>

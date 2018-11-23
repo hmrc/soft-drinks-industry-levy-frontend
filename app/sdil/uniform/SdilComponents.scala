@@ -53,7 +53,7 @@ object SdilComponents extends FormHelpers {
 
   implicit val litreageForm = new FormHtml[(Long,Long)] {
     def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {
-      uniform.fragments.litreage(key, form, true)
+      uniform.fragments.litreage(key, form, approximate = true)
     }
   }
 
@@ -93,13 +93,7 @@ object SdilComponents extends FormHelpers {
 
     HtmlShow.instance { site =>
       Html(
-        s"""<details role="group">
-        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-          <span class="summary">${visibleText(site)}</span>
-        </summary>""" +
-          lines(site) +
-          s"""<div class="address postal-code progressive-reveal">${site.address.postCode}</div>
-        </details>"""
+          s"""${lines(site)}<div class="address postal-code progressive-reveal">${site.address.postCode}</div>"""
       )
     }
   }
