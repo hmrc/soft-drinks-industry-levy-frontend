@@ -158,7 +158,6 @@ button[name="checkyouranswers"] {
 
 .no-minus-wrapping {
     white-space: nowrap;
-    text-align: left;
 }
 
 details .address.progressive-reveal {
@@ -209,4 +208,8 @@ details .address.progressive-reveal {
 
 .return-button-padding {
     padding-top: 4%
+}
+
+.no-padding-right {
+    padding-right: 0;
 }
