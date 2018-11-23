@@ -99,6 +99,7 @@ class ReturnsController (
     )
 
     val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(
+      subscription,
       period,
       sdilRef,
       total,
