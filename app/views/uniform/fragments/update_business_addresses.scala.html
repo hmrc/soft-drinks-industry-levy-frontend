@@ -33,7 +33,10 @@
 
     <div class="grid-row">
         <div class="column-two-thirds">
-            <h1>@Messages("sdil.updateBusinessAddresses.heading")</h1>
+            <h1>
+                <span class='govuk-caption-xl'>@subscription.orgName</span>
+                @Messages("sdil.updateBusinessAddresses.heading")
+            </h1>
                 @declaration_table("service-page", "business-details.title") {
                     @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
                     <tr>
