@@ -77,8 +77,11 @@ class RegistrationController(
     implicit val extraMessages: ExtraMessages =
       ExtraMessages(
         messages =
-          Map("pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}") ++
-          Map("confirm-address.paragraph" -> s"${fd.rosmData.address.nonEmptyLines.mkString(", ")}"))
+          Map(
+            "pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}",
+            "confirm-address.paragraph" -> s"${fd.rosmData.address.nonEmptyLines.mkString(", ")}"
+          )
+      )
 
     for {
       orgType        <- askOneOf("organisation-type", organisationTypes)
@@ -92,9 +95,9 @@ class RegistrationController(
                           case _ => None
                         }
       useCopacker    <- ask(bool("copacked"),"copacked") when packLarge.contains(false)
-      packageOwn     <- askOption(litreagePair.nonEmpty, "package-own-uk")(SdilComponents.litreageForm, implicitly, implicitly) when packLarge.nonEmpty
-      copacks        <- askOption(litreagePair.nonEmpty, "package-copack")(SdilComponents.litreageForm, implicitly, implicitly)
-      imports        <- askOption(litreagePair.nonEmpty, "import")(SdilComponents.litreageForm, implicitly, implicitly)
+      packageOwn     <- askOption(litreagePair.nonEmpty, "package-own-uk") when packLarge.nonEmpty
+      copacks        <- askOption(litreagePair.nonEmpty, "package-copack")
+      imports        <- askOption(litreagePair.nonEmpty, "import")
       noUkActivity   =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       noReg          =  uniform.fragments.registration_not_required()(request, implicitly, implicitly)
