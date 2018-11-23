@@ -1243,6 +1243,7 @@ returnPeriod.option.3=October to December
 check-your-variation-answers.balance.due=
 check-your-variation-answers.heading={0}
 check-your-variation-answers.cost=Cost
+check-your-variation-answers.levy=Levy
 check-your-variation-answers.litres=Litres
 check-your-variation-answers.band=Band
 check-your-variation-answers.activity=Activity
