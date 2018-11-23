@@ -143,7 +143,7 @@ class ReturnsController (
     for {
       _ <- write[Boolean]("_editSmallProducers", true)
       emptyReturn = SdilReturn((0,0), (0,0), List.empty, (0,0), (0,0), (0,0), (0,0))
-      sdilReturn <- askReturn(subscription, sdilRef, sdilConnector, period, if(id == "nil-return") emptyReturn.some else None)
+      sdilReturn <- askReturn(subscription, sdilRef, sdilConnector, period, if(nilReturn) emptyReturn.some else None)
 
       // check if they need to vary
       isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
