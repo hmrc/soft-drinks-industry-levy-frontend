@@ -136,7 +136,7 @@ class ReturnsController (
                      (implicit hc: HeaderCarrier): WebMonad[Result] = {
     val em = ExtraMessages(Map(
       "heading.check-your-answers" ->
-        s"<span class='govuk-caption-xl'>${Messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))}</span>${Messages("heading.check-your-answers")}"
+        s"<span class='govuk-caption-xl'>${subscription.orgName} - ${Messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))}</span>${Messages("heading.check-your-answers")}"
       )
     )
     for {

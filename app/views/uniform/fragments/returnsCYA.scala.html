@@ -24,14 +24,24 @@
 @(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription, originalReturn: Option[SdilReturn])(implicit m: Messages)
 
 
+
 <table class="check-your-answers">
-    <caption class="heading-medium">@Messages(s"$key.balance.due", format_money(total))</caption>
+
+    @if(total == 0) {
+        <caption class="heading-medium">@Messages(s"$key.balance.nil", format_money(total))</caption>
+    } else {
+        @if(total > 0) {
+            <caption class="heading-medium">@Messages(s"$key.balance.due", format_money(total))</caption>
+        } else {
+            <caption class="heading-medium">@Messages(s"$key.balance.credit", format_money(total.abs))</caption>
+        }
+    }
     <thead>
         <tr>
             <th>@Messages(s"$key.activity")</th>
             <th>@Messages(s"$key.band")</th>
-            <th>@Messages(s"$key.litres")</th>
-            <th>@Messages(s"$key.cost")</th>
+            <th class="numeric">@Messages(s"$key.litres")</th>
+            <th class="numeric">@Messages(s"$key.levy")</th>
             <th></th>
         </tr>
     </thead>
@@ -41,8 +51,8 @@
             <tr>
                 <th rowspan="2">@Messages(s"$key.$lineKey")</th>
                 <td>@Messages(s"$key.low")</td>
-                <td>@{f"${litres._1}%,d"}</td>
-                <td class="no-minus-wrapping">@format_money(costLower * litres._1 * multiplier)</td>
+                <td class="numeric">@{f"${litres._1}%,d"}</td>
+                <td class="no-minus-wrapping numeric">@format_money(costLower * litres._1 * multiplier)</td>
                 <td>
                     <button name="@key" value="@lineKey" id="@key" class="link-button">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
@@ -51,8 +61,8 @@
             </tr>
             <tr>
                 <td>@Messages(s"$key.high")</td>
-                <td>@{f"${litres._2}%,d"}</td>
-                <td class="no-minus-wrapping"> @format_money(costHigher * litres._2 * multiplier)</td>
+                <td class="numeric">@{f"${litres._2}%,d"}</td>
+                <td class="no-minus-wrapping numeric"> @format_money(costHigher * litres._2 * multiplier)</td>
                 <td>
                     <button name="@key" value="@lineKey" id="@key" class="link-button">
                         @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
@@ -63,12 +73,12 @@
         @if(originalReturn.isEmpty) {
         <tr>
             <th scope="row" colspan="3"><span class="heading-small">@Messages(s"$key.subtotal")</span></th>
-            <td class="numeric"><span class="heading-small no-minus-wrapping">@format_money(subtotal)</span></td>
+            <td class="numeric"><span class="heading-small no-minus-wrapping numeric">@format_money(subtotal)</span></td>
             <td></td>
         </tr>
         <tr>
             <th scope="row" colspan="3"><span class="heading-small">@Messages(s"$key.balance.brought.forward")</span></th>
-            <td class="numeric"><span class="heading-small no-minus-wrapping">@format_money(-broughtForward, "+")</span></td>
+            <td class="numeric"><span class="heading-small no-minus-wrapping numeric">@format_money(-broughtForward, "+")</span></td>
             <td></td>
         </tr>
         }
@@ -77,12 +87,12 @@
 
                 <tr>
                     <th scope="row" colspan="3">@Messages(s"$key.total.original")</th>
-                    <td class="align-left">@format_money(r.total)</td>
+                    <td class="numeric">@format_money(r.total)</td>
                     <td></td>
                 </tr>
                 <tr>
                     <th scope="row" colspan="3">@Messages(s"$key.total.new")</th>
-                    <td class="align-left">@format_money(total)</td>
+                    <td class="numeric">@format_money(total)</td>
                     <td></td>
                 </tr>
                 <tr>
@@ -100,7 +110,7 @@
         } else {
             <tr>
                 <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.total")</h4></th>
-                <td class="numeric"><h4 class="heading-small no-minus-wrapping">@format_money(total)</h4></td>
+                <td class="numeric"><h4 class="heading-small no-minus-wrapping numeric">@format_money(total)</h4></td>
                 <td></td>
             </tr>
         }
