@@ -1240,7 +1240,10 @@ returnPeriod.option.1=April to June
 returnPeriod.option.2=July to September
 returnPeriod.option.3=October to December
 
-check-your-variation-answers.balance.due=
+check-your-variation-answers.balance.due=You need to pay {0}
+check-your-variation-answers.balance.nil=You don’t need to pay anything
+check-your-variation-answers.balance.credit=Your Soft Drinks Industry Levy account will be credited {0}
+
 check-your-variation-answers.heading={0}
 check-your-variation-answers.cost=Cost
 check-your-variation-answers.levy=Levy
