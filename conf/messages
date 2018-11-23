@@ -733,12 +733,14 @@ heading.changeType=What do you need to do?
 changeType.option.sites=Update contact, packaging site or warehouse details
 changeType.option.activity=Change our business activity
 changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
+changeType.continue=Continue
 
 heading.contactChangeType=What do you need to change?
 contactChangeType.hint=Select all that apply
 contactChangeType.option.Sites=Add or remove packaging sites or warehouse addresses
 contactChangeType.option.ContactPerson=Update our contact person
 contactChangeType.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
+
 
 heading.ask-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
 heading.ask-secondary-warehouses-in-return=Do you want to register any UK warehouses you use to store liable drinks?
@@ -1348,3 +1350,4 @@ file-return-before-deregistration.many-returns=Before you can cancel your regist
 file-return-before-deregistration.continue=Go to your account
 
 error.sdilref.empty=Enter the small producer’s reference number
+change.latency=Changes can take up to 15 days to process

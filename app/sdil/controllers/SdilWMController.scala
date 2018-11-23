@@ -159,7 +159,8 @@ trait SdilWMController extends WebMonadController
     id: String,
     possValues: List[A],
     default: Option[A] = None,
-    configOverride: JourneyConfig => JourneyConfig = identity
+    configOverride: JourneyConfig => JourneyConfig = identity,
+    helpText: Option[Html] = None
   )(implicit extraMessages: ExtraMessages): WebMonad[A] = {
     val valueMap: Map[String,A] =
       possValues.map{a => (a.toString, a)}.toMap
@@ -171,7 +172,7 @@ trait SdilWMController extends WebMonadController
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
       val inner = uniform.fragments.radiolist(id, b, possValues.map(_.toString))
-      uniform.ask(id, b, inner, path)
+      uniform.ask(id, b, inner, path, helpText)
     }.imap(valueMap(_))(_.toString)
   }
 
