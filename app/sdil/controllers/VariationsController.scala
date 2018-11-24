@@ -281,7 +281,8 @@ class VariationsController(
       extraMessages = ExtraMessages(
             messages = Map(
               "heading.check-your-variation-answers" -> s"${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return details",
-              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} return"
+              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} return",
+              "heading.checkyouranswers.orgName" -> s"${subscription.orgName}"
             ))
 
       isSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, returnPeriod))
@@ -303,9 +304,11 @@ class VariationsController(
   }
 
   def checkYourRegAnswers(
-                              key: String,
-                              v: RegistrationVariationData,
-                              path: List[String]): WebMonad[Unit] = {
+    key: String,
+    v: RegistrationVariationData,
+    path: List[String]): WebMonad[Unit] = {
+
+    val extraMessages: ExtraMessages = ExtraMessages(Map("heading.checkyouranswers.orgName" -> s"${v.original.orgName}"))
 
     val inner = uniform.fragments.variationsCYA(
       v,
@@ -316,7 +319,7 @@ class VariationsController(
       path
 
     )
-    tell(key, inner)
+    tell(key, inner)(implicitly, extraMessages)
   }
 
   def closedWarehouseSites(variation: RegistrationVariationData): List[Site] = {
