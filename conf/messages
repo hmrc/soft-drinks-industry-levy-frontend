@@ -1005,6 +1005,7 @@ heading.businessAddress=Update your registered business address for the Soft Dri
 
 heading.checkyouranswers=Check the updates you have made
 heading.checkyouranswers.orgName=
+checkyouranswers.continue=Confirm updates and send
 
 # Returns
 error.empty=Number of litres must be 1 or more
