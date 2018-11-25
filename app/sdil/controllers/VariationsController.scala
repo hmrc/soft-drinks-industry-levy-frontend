@@ -233,7 +233,8 @@ class VariationsController(
         if(variation.deregDate.nonEmpty) {
           Map(
             "heading.checkyouranswers" -> "Check your answers before sending your update",
-            "heading.checkyouranswers.orgName" -> s"${subscription.orgName}")
+            "heading.checkyouranswers.orgName" -> s"${subscription.orgName}"
+          )
         } else {
           Map("heading.checkyouranswers.orgName" -> s"${subscription.orgName}")
         }
