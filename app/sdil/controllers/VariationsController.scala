@@ -16,10 +16,13 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalTime, ZoneId}
 
 import cats.implicits._
 import enumeratum._
+import java.time.format.DateTimeFormatter._
+
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, _}
@@ -30,6 +33,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{Format, Json, Writes}
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import play.twirl.api.{Html, HtmlFormat}
+import uk.gov.hmrc.uniform.playutil
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -218,11 +222,24 @@ class VariationsController(
       submission = Convert(variation)
       _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
       _ <- clear
+      subheading = Html(
+        Messages(
+          "returnVariationDone.your.updates",
+          subscription.orgName,
+          LocalDate.now.format(ofPattern("d MMMM yyyy")),
+          LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)).some
+      whnChangeLiability = Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show())
+      whnVolToMan = Html(Messages("volToMan.what-happens-next") ++ whnChangeLiability)
+      whnManToVol = Html(Messages("manToVol.what-happens-next") ++ whnChangeLiability)
       exit <- if(variation.volToMan) {
-        journeyEnd("volToMan")
+        journeyEnd("volToMan", LocalDate.now, subheading, whnVolToMan.some)
       } else if(variation.manToVol) {
-        journeyEnd("manToVol")
-      } else journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+        journeyEnd("manToVol", LocalDate.now, subheading, whnManToVol.some)
+      } else journeyEnd(
+        "variationDone",
+        LocalDate.now,
+        subheading,
+        whatHappensNext = uniform.fragments.variationsWHN().some)
     } yield exit
   }
 
