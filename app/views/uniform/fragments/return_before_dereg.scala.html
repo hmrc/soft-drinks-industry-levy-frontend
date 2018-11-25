@@ -27,7 +27,14 @@
                 x.end.format("MMMM yyyy")
             )
         </p>
-    }
+
+        <p>
+            <a href='@sdil.controllers.routes.ReturnsController.index(x.year, x.quarter, true, "nil-return")'>
+                @Messages("return.file.nil")
+            </a>
+        </p>
+
+}
 } else {
     <p>@Messages(s"$key.many-returns", returnPeriods.size.toString)</p>
 }
