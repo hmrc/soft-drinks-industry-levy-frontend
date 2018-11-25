@@ -1336,9 +1336,9 @@ returnVariationDone.title=Correction sent
 returnVariationDone.subheading=We will review the details you updated and get back to you
 returnVariationDone.your.updates=Your updates were sent on {0} at {1}.
 
-return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you.</p>\
-  <p>We may get in touch with your contact person to discuss your changes.</p>\
-  <p>Once we have approved your correction, your account balance will be updated.</p>\
+return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you. \
+  We may get in touch with your contact person to discuss your changes. \
+  Once we have approved your correction, your account balance will be updated.</p>\
   <p>Do not make any payments until we have confirmed how much you need to pay, as you will be charged interest on your adjusted amount.</p>
 
 heading.repayment=How do you want the credit to be repaid?
