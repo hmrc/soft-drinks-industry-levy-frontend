@@ -23,7 +23,7 @@ import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents
 import ltbs.play.scaffold.SdilComponents.OrganisationType.{partnership, soleTrader}
 import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
-import ltbs.play.scaffold.SdilComponents._
+import ltbs.play.scaffold.SdilComponents.{litreageForm => approxLitreageForm, _}
 import ltbs.play.scaffold.SdilComponents.extraMessages
 import play.api.data.Mapping
 import uk.gov.hmrc.uniform.webmonad._
@@ -95,9 +95,9 @@ class RegistrationController(
                           case _ => None
                         }
       useCopacker    <- ask(bool("copacked"),"copacked") when packLarge.contains(false)
-      packageOwn     <- askOption(litreagePair.nonEmpty, "package-own-uk") when packLarge.nonEmpty
-      copacks        <- askOption(litreagePair.nonEmpty, "package-copack")
-      imports        <- askOption(litreagePair.nonEmpty, "import")
+      packageOwn     <- askOption(litreagePair.nonEmpty, "package-own-uk")(approxLitreageForm, implicitly, implicitly) when packLarge.nonEmpty
+      copacks        <- askOption(litreagePair.nonEmpty, "package-copack")(approxLitreageForm, implicitly, implicitly)
+      imports        <- askOption(litreagePair.nonEmpty, "import")(approxLitreageForm, implicitly, implicitly)
       noUkActivity   =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       noReg          =  uniform.fragments.registration_not_required()(request, implicitly, implicitly)

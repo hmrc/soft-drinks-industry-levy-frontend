@@ -25,7 +25,7 @@ import java.time.format.DateTimeFormatter._
 
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents
-import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, _}
+import ltbs.play.scaffold.SdilComponents.{litreageForm => approxLitreageForm, packagingSiteMapping, _}
 import play.api.data.format.Formatter
 import play.api.data.{FormError, Forms, Mapping}
 import uk.gov.hmrc.uniform.webmonad._
@@ -147,9 +147,9 @@ class VariationsController(
       packLarge                   <- askOption(bool(), "packLarge")
       useCopacker                 <- ask(bool(),"useCopacker", data.usesCopacker) when packLarge.contains(false)
       packageOwn                  <- ask(bool(), "packOpt", data.updatedProductionSites.nonEmpty) when packLarge.isDefined
-      packQty                     <- ask(litres, "packQty") emptyUnless packageOwn.contains(true)
-      copacks                     <- ask(litres, "copackQty") emptyUnless ask(bool(), "copacker", data.copackForOthers)
-      imports                     <- ask(litres, "importQty") emptyUnless ask(bool(), "importer", data.imports)
+      packQty                     <- ask(litres, "packQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless packageOwn.contains(true)
+      copacks                     <- ask(litres, "copackQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless ask(bool(), "copacker", data.copackForOthers)
+      imports                     <- ask(litres, "importQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless ask(bool(), "importer", data.imports)
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
