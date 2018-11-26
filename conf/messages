@@ -738,8 +738,8 @@ changeType.continue=Continue
 heading.contact-change-type=What do you need to change?
 contact-change-type.hint=Select all that apply
 contact-change-type.option.Sites=Add or remove packaging sites or warehouse addresses
-contact-change-type.option.ContactPerson=Update our contact person
-contact-change-type.option.ContactAddress=Change our contact address for the Soft Drinks Industry Levy
+contact-change-type.option.ContactPerson=Update your Soft Drinks Industry Levy contact person
+contact-change-type.option.ContactAddress=Update your registered business address for the Soft Drinks Industry Levy
 contact-change-type.continue=Continue
 
 heading.ask-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
