@@ -180,16 +180,30 @@ class VariationsController(
 
   private def deregisterUpdate(
     data: RegistrationVariationData
-  ): WebMonad[RegistrationVariationData] = for {
-    reason    <- askBigText("reason", constraints = List(("error.deregReason.tooLong", _.length <= 255)), errorOnEmpty = "error.reason.empty")
-    deregDate <- ask(startDate
-      .verifying("error.deregDate.nopast",  _ >= LocalDate.now)
-      .verifying("error.deregDate.nofuture",_ <  LocalDate.now.plusDays(15)), "deregDate")
-  } yield data.copy(
-    reason = reason.some,
-    deregDate = deregDate.some
-  )
+  ): WebMonad[RegistrationVariationData] = {
+    val extraMessages = ExtraMessages(
+      messages =
+        Map("heading.reason.orgName" -> s"${data.original.orgName}",
+            "heading.deregDate.orgName" -> s"${data.original.orgName}"))
 
+    for {
+      reason <- askBigText(
+        "reason",
+        constraints = List(("error.deregReason.tooLong", _.length <= 255)),
+        errorOnEmpty = "error.reason.empty")(extraMessages)
+      deregDate <- ask(startDate
+        .verifying(
+          "error.deregDate.nopast",
+          _ >= LocalDate.now)
+        .verifying(
+          "error.deregDate.nofuture",
+          _ < LocalDate.now.plusDays(15)),
+        "deregDate")(implicitly, implicitly, extraMessages, implicitly)
+    } yield data.copy(
+      reason = reason.some,
+      deregDate = deregDate.some
+    )
+  }
   private def fileReturnsBeforeDereg[A](returnPeriods: List[ReturnPeriod], data: RegistrationVariationData) =
     for {
       sendToReturns <- tell("file-return-before-deregistration", uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods))
@@ -218,7 +232,18 @@ class VariationsController(
       }
 
       path <- getPath
-      _ <- checkYourRegAnswers("checkyouranswers", variation, path)
+      extraMessages = ExtraMessages(
+        messages =
+        if(variation.deregDate.nonEmpty) {
+          Map(
+            "heading.checkyouranswers" -> "Check your answers before sending your update",
+            "heading.checkyouranswers.orgName" -> s"${subscription.orgName}"
+          )
+        } else {
+          Map("heading.checkyouranswers.orgName" -> s"${subscription.orgName}")
+        }
+      )
+      _ <- checkYourRegAnswers("checkyouranswers", variation, path)(extraMessages)
       submission = Convert(variation)
       _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
       _ <- clear
@@ -232,14 +257,14 @@ class VariationsController(
       whnVolToMan = Html(Messages("volToMan.what-happens-next") ++ whnChangeLiability)
       whnManToVol = Html(Messages("manToVol.what-happens-next") ++ whnChangeLiability)
       exit <- if(variation.volToMan) {
-        journeyEnd("volToMan", LocalDate.now, subheading, whnVolToMan.some)
+        journeyEnd("volToMan", LocalDate.now, subheading, whnVolToMan.some)(extraMessages)
       } else if(variation.manToVol) {
-        journeyEnd("manToVol", LocalDate.now, subheading, whnManToVol.some)
+        journeyEnd("manToVol", LocalDate.now, subheading, whnManToVol.some)(extraMessages)
       } else journeyEnd(
         "variationDone",
         LocalDate.now,
         subheading,
-        whatHappensNext = uniform.fragments.variationsWHN().some)
+        whatHappensNext = uniform.fragments.variationsWHN().some)(extraMessages)
     } yield exit
   }
 
@@ -309,7 +334,7 @@ class VariationsController(
   def checkYourRegAnswers(
                               key: String,
                               v: RegistrationVariationData,
-                              path: List[String]): WebMonad[Unit] = {
+                              path: List[String])(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
 
     val inner = uniform.fragments.variationsCYA(
       v,
@@ -318,7 +343,6 @@ class VariationsController(
       newWarehouseSites(v),
       closedWarehouseSites(v),
       path
-
     )
     tell(key, inner)
   }

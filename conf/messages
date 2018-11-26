@@ -893,8 +893,10 @@ sdil.variation.anotherChange=If you need to make another change,
 sdil.variation.anotherChangeLink=go back and start again
 
 heading.deregister.reason=Why are you deregistering from the Soft Drinks Industry Levy?
+heading.reason.orgName=
 deregister.reason.label=Reason for deregistering
 heading.deregDate=What date are you cancelling your registration from?
+heading.deregDate.orgName=
 error.deregDate.nopast=Deregistration date cannot be in the past
 error.deregDate.nofuture=Deregistration date cannot be more than 14 days in the future
 error.reason.empty=Enter why you need to cancel your registration
@@ -937,7 +939,7 @@ variations.cya.contact.change.email=Change<span class="visually-hidden"> email</
 variations.cya.contact.address=Contact address
 variations.cya.contact.address.sub=Address
 variations.cya.contact.change.address=Change<span class="visually-hidden"> home address</span>
-variations.cya.deregistration=Deregistration
+variations.cya.deregistration=Details of your request to cancel your Soft Drinks Industry levy registraion
 variations.cya.deregistration.reason=Reason
 variations.cya.deregistration.change.reason=Change<span class="visually-hidden"> deregistration reason</span>
 variations.cya.deregistration.date=Date
@@ -1004,6 +1006,7 @@ removePackSites.continue=[Remove all packing sites]
 heading.businessAddress=Change your contact address for the Soft Drinks Industry Levy
 
 heading.checkyouranswers=Check your answers
+heading.checkyouranswers.orgName=
 
 # Returns
 error.empty=Number of litres must be 1 or more
@@ -1185,7 +1188,7 @@ returnsHome.dereg.p1=The registration was cancelled on {0}. You will be able to 
 
 return.file=Send a return
 return.file.final=Send a final return
-return.file.nil=I have nothing to report for this quarter
+return.file.nil=I have no activity to report for this quarter
 
 heading.return-change-registration=Your registration details have changed
 return-change-registration.continue=Update registration
@@ -1328,7 +1331,7 @@ check-return-differences.band.label.high=High
 check-return-differences.continue=Confirm details and send correction
 
 heading.return-variation-reason=Why do you need to correct this return?
-return-variation-reason.lead=Make sure you provide as much detail as you can about why you had to correct your return. We may get in touch with your contact person to discuss your correction.
+return-variation-reason.lead=Make sure you provide as much detail as you can. We may get in touch with your contact person to discuss this.
 error.return-variation-reason.empty=Enter a reason for correcting your return
 sdil.check-return-differences.reason.return-variation-reason.subheading=Correction details
 return-variation-reason.label=Reason for correction
@@ -1336,16 +1339,16 @@ returnVariationDone.title=Correction sent
 returnVariationDone.subheading=We will review the details you updated and get back to you
 returnVariationDone.your.updates=Your updates for {0} were sent on {1} at {2}.
 
-return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you.</p>\
-  <p>We may get in touch with your contact person to discuss your changes.</p>\
-  <p>Once we have approved your correction, your account balance will be updated.</p>\
+return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you. \
+  We may get in touch with your contact person to discuss your changes. \
+  Once we have approved your correction, your account balance will be updated.</p>\
   <p>Do not make any payments until we have confirmed how much you need to pay, as you will be charged interest on your adjusted amount.</p>
 
 heading.repayment=How do you want the credit to be repaid?
 repayment.lead=Repayment is not guaranteed. We may wish to discuss the claim with you before deciding whether to make a repayment.
-credit=Credited to my Soft Drinks Industry Levy account
-credit.short=Credited to Soft Drinks Industry Levy account
-bankPayment=Paid into my bank account. We will contact you to arrange payment.
+credit=Credited to our Soft Drinks Industry Levy account
+credit.short=Credited to our Soft Drinks Industry Levy account
+bankPayment=Paid into the bank account for this business
 bankPayment.short=Paid into bank
 return-variation-repayments.label=Repayment method
 

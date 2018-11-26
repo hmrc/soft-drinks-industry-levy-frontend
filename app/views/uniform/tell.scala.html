@@ -26,6 +26,11 @@
   @backlink(breadcrumbs)
 
   <h1 class="heading-large">
+      @if(messages.isDefinedAt(s"heading.$key.orgName")) {
+          <span class="govuk-caption-xl">
+            @Messages.extraMessage(s"heading.$key.orgName")
+          </span>
+      }
         @Messages.extraMessages(Seq(s"heading.$key", "sdil.declaration.heading"))
   </h1>
     @helper.form(action = play.api.mvc.Call("post", key)) {
