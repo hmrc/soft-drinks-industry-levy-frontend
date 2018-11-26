@@ -1188,7 +1188,7 @@ returnsHome.dereg.p1=The registration was cancelled on {0}. You will be able to 
 
 return.file=Send a return
 return.file.final=Send a final return
-return.file.nil=I have nothing to report for this quarter
+return.file.nil=I have no activity to report for this quarter
 
 heading.return-change-registration=Your registration details have changed
 return-change-registration.continue=Update registration
