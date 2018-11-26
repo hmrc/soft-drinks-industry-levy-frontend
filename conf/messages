@@ -938,13 +938,8 @@ variations.cya.contact.email=Email address
 variations.cya.contact.change.email=Change <span class="visually-hidden">email</span>
 variations.cya.contact.address=Registered business address
 variations.cya.contact.address.sub=Address
-<<<<<<< HEAD
-variations.cya.contact.change.address=Change <span class="visually-hidden">home address</span>
-variations.cya.deregistration=Deregistration
-=======
 variations.cya.contact.change.address=Change<span class="visually-hidden"> home address</span>
 variations.cya.deregistration=Details of your request to cancel your Soft Drinks Industry levy registraion
->>>>>>> master
 variations.cya.deregistration.reason=Reason
 variations.cya.deregistration.change.reason=Change <span class="visually-hidden">deregistration reason</span>
 variations.cya.deregistration.date=Date
