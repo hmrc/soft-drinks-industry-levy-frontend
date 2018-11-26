@@ -249,10 +249,10 @@ class VariationsController(
         messages =
         if(variation.deregDate.nonEmpty) {
           Map(
-            "heading.checkyouranswers" -> "Check your answers before sending your update",
+            "heading.checkyouranswers" -> Messages("heading.checkyouranswers.dereg"),
             "heading.checkyouranswers.orgName" -> s"${subscription.orgName},",
-            "variationDone.title" -> "Cancellation request sent",
-            "variationDone.subheading" -> "We have received your request to cancel your Soft Drinks Industry Levy registration"
+            "variationDone.title" -> Messages("deregDone.title"),
+            "variationDone.subheading" -> Messages("deregDone.subtitle")
           )
         } else {
           Map("heading.checkyouranswers.orgName" -> s"${subscription.orgName}")
