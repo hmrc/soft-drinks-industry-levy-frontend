@@ -249,8 +249,10 @@ class VariationsController(
         messages =
         if(variation.deregDate.nonEmpty) {
           Map(
-            "heading.checkyouranswers" -> "Check your answers before sending your update",
-            "heading.checkyouranswers.orgName" -> s"${subscription.orgName}"
+            "heading.checkyouranswers" -> Messages("heading.checkyouranswers.dereg"),
+            "heading.checkyouranswers.orgName" -> s"${subscription.orgName},",
+            "variationDone.title" -> Messages("deregDone.title"),
+            "variationDone.subheading" -> Messages("deregDone.subtitle")
           )
         } else {
           Map("heading.checkyouranswers.orgName" -> s"${subscription.orgName}")
@@ -262,7 +264,11 @@ class VariationsController(
       _ <- clear
       subheading = Html(
         Messages(
-          "returnVariationDone.your.updates",
+          if(variation.deregDate.nonEmpty) {
+            "variationDone.your.request"
+          } else {
+            "returnVariationDone.your.updates"
+          },
           subscription.orgName,
           LocalDate.now.format(ofPattern("d MMMM yyyy")),
           LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)).some
@@ -277,7 +283,7 @@ class VariationsController(
         "variationDone",
         LocalDate.now,
         subheading,
-        whatHappensNext = uniform.fragments.variationsWHN().some)(extraMessages)
+        whatHappensNext = uniform.fragments.variationsWHN(variation.deregDate).some)(extraMessages)
     } yield exit
   }
 

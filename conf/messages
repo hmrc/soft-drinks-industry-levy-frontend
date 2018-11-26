@@ -857,6 +857,14 @@ variationDone.subheading=We have received the updates to your Soft Drinks Indust
 variationDone.what-happens.title=What happens next
 variationDone.what-happens-next=You do not need to do anything else. We will update your details with the information \
 you provided. We will send you confirmation that the changes have been made.
+deregDone.title=Cancellation request sent
+deregDone.subtitle=We have received your request to cancel your Soft Drinks Industry Levy registration
+heading.checkyouranswers.dereg=Check your answers before sending your update
+
+dereg.what-happens-next.p1=You need to send a final return for the period {0} to {1}, and make any outstanding payments.
+dereg.what-happens-next.p2=You will be able to send the final return from {0} until {1}.
+dereg.what-happens-next.p3=Once you have sent this return and made any outstanding payments then we will process your \
+  request to cancel your registration.
 
 variationDone.your.updates=The updates for {0} were sent on {1} at {2}.
 variationDone.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
@@ -1339,6 +1347,7 @@ return-variation-reason.label=Reason for correction
 returnVariationDone.title=Correction sent
 returnVariationDone.subheading=We will review the details you updated and get back to you
 returnVariationDone.your.updates=Your updates for {0} were sent on {1} at {2}.
+variationDone.your.request=Your request to cancel {0}’s registration was sent on {1} at {2}.
 
 return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you. \
   We may get in touch with your contact person to discuss your changes. \

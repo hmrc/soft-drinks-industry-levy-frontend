@@ -15,14 +15,41 @@
  *@
 
  
-@(key: Option[String] = None)(implicit messages: Messages)
+@import sdil.models.variations.RegistrationVariationData
+@import sdil.models.ReturnPeriod
+@import java.time.LocalDate
 
-@if(key.nonEmpty) {
-  @key.map { x =>
-   <p>@Html(Messages(s"$x.variationDone.what-happens-next"))</p>
-  }
+@(deregDate: Option[LocalDate] = None, key: Option[String] = None)(implicit messages: Messages)
+
+
+@if(deregDate.nonEmpty) {
+    @deregDate.map { deregDate =>
+        <p>
+        @Messages(
+            "dereg.what-happens-next.p1",
+            ReturnPeriod(deregDate).start.format("MMMM yyyy"),
+            ReturnPeriod(deregDate).end.format("MMMM yyyy")
+        )
+        </p>
+        <div class="panel panel-border-wide">
+            <p>
+            @Messages(
+                "dereg.what-happens-next.p2",
+                ReturnPeriod(deregDate).deadline.withDayOfMonth(1).format("d MMMM"),
+                ReturnPeriod(deregDate).deadline.format("d MMMM yyyy")
+            )
+            </p>
+        </div>
+        <p>@Messages("dereg.what-happens-next.p3")</p>
+    }
 } else {
-  <p>@Messages("variationDone.what-happens-next")</p>
+    @if(key.nonEmpty) {
+        @key.map { x =>
+            <p>@Html(Messages(s"$x.variationDone.what-happens-next"))</p>
+        }
+    } else {
+        <p>@Messages("variationDone.what-happens-next")</p>
+    }
 }
 
 @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
