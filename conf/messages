@@ -1328,7 +1328,7 @@ check-return-differences.band.label.high=High
 check-return-differences.continue=Confirm details and send correction
 
 heading.return-variation-reason=Why do you need to correct this return?
-return-variation-reason.lead=Make sure you provide as much detail as you can about why you had to correct your return. We may get in touch with your contact person to discuss your correction.
+return-variation-reason.lead=Make sure you provide as much detail as you can. We may get in touch with your contact person to discuss this.
 error.return-variation-reason.empty=Enter a reason for correcting your return
 sdil.check-return-differences.reason.return-variation-reason.subheading=Correction details
 return-variation-reason.label=Reason for correction
