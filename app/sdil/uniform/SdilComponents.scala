@@ -83,7 +83,7 @@ object SdilComponents extends FormHelpers {
     def lines(s: Site): String = {
       val lines = s.tradingName.fold(s.address.lines.tail)(_ => s.address.lines)
       lines.map { line =>
-        s"""<div aria-hidden="true" class="address progressive-reveal">$line</div>"""
+        s"""<div class="address progressive-reveal">$line</div>"""
       }
     }.mkString
 
@@ -93,7 +93,7 @@ object SdilComponents extends FormHelpers {
 
     HtmlShow.instance { site =>
       Html(
-          s"""${lines(site)}<div class="address postal-code progressive-reveal">${site.address.postCode}</div>"""
+          s"""${visibleText(site)}${lines(site)}<div class="address postal-code progressive-reveal">${site.address.postCode}</div>"""
       )
     }
   }

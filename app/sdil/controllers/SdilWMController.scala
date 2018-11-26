@@ -177,11 +177,11 @@ trait SdilWMController extends WebMonadController
   }
 
   protected def askSet[E](
-                                  id: String,
-                                  possibleValues: Set[E],
-                                  minSize: Int = 0,
-                                  default: Option[Set[E]] = None
-                                          ): WebMonad[Set[E]] = {
+    id: String,
+    possibleValues: Set[E],
+    minSize: Int = 0,
+    default: Option[Set[E]] = None,
+    helpText: Option[Html] = None): WebMonad[Set[E]] = {
     val valueMap: Map[String,E] =
       possibleValues.map{a => (a.toString, a)}.toMap
     formPage(id)(
@@ -192,7 +192,7 @@ trait SdilWMController extends WebMonadController
     ) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
       val innerHtml = uniform.fragments.checkboxes(id, form, valueMap.keys.toList)
-      uniform.ask(id, form, innerHtml, path)
+      uniform.ask(id, form, innerHtml, path, helpText)
     }.imap(_.map {valueMap(_)}.toSet)(_.map(_.toString).toList)
   }
 

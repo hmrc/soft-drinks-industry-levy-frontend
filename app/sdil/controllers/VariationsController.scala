@@ -82,10 +82,23 @@ class VariationsController(
       case object ContactAddress extends ContactChangeType
     }
 
-    def askContactChangeType: WebMonad[Set[ContactChangeType]] = if (data.isVoluntary) {
-      askSet("contactChangeType", Set(ContactChangeType.ContactPerson, ContactChangeType.ContactAddress), minSize = 1)
-    } else {
-      askSet("contactChangeType", ContactChangeType.values.toSet, minSize = 1)
+    def askContactChangeType: WebMonad[Set[ContactChangeType]] =
+      if (data.isVoluntary) {
+        askSet(
+          "contact-change-type",
+          Set(ContactChangeType.ContactPerson, ContactChangeType.ContactAddress),
+          minSize = 1,
+          None,
+          Html(Messages("change.latency")).some
+        )
+      } else {
+        askSet(
+          "contact-change-type",
+          ContactChangeType.values.toSet,
+          minSize = 1,
+          None,
+          Html(Messages("change.latency")).some
+        )
     }
 
     import ContactChangeType._
@@ -293,7 +306,8 @@ class VariationsController(
       extraMessages = ExtraMessages(
             messages = Map(
               "heading.check-your-variation-answers" -> s"${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return details",
-              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} return"
+              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} return",
+              "heading.checkyouranswers.orgName" -> s"${subscription.orgName}"
             ))
 
       isSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, returnPeriod))
@@ -315,10 +329,10 @@ class VariationsController(
   }
 
   def checkYourRegAnswers(
-                              key: String,
-                              v: RegistrationVariationData,
-                              path: List[String])(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
-
+    key: String,
+    v: RegistrationVariationData,
+    path: List[String])(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
+    
     val inner = uniform.fragments.variationsCYA(
       v,
       newPackagingSites(v),
@@ -327,7 +341,7 @@ class VariationsController(
       closedWarehouseSites(v),
       path
     )
-    tell(key, inner)
+    tell(key, inner)(implicitly, extraMessages)
   }
 
   def closedWarehouseSites(variation: RegistrationVariationData): List[Site] = {
