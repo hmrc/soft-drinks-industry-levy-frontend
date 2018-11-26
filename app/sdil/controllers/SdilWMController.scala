@@ -356,7 +356,7 @@ trait SdilWMController extends WebMonadController
     formPage(id)(mapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
       val fragment = uniform.fragments.bigtext(id, b)(implicitly, extraMessages)
-      uniform.ask(id,  b, fragment, path)
+      uniform.ask(id, b, fragment, path)
     }
   }
 
