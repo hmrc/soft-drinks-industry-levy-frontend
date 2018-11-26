@@ -79,13 +79,16 @@ class ServicePageController(
     sdilConnector.balanceHistory(sdilRef, withAssessment = true) >>= { items =>
       val itemsWithRunningTotal = listItemsWithTotal(items)
       val total = extractTotal(itemsWithRunningTotal)
+      val interest: BigDecimal = items.collect {
+        case a: Interest => a.amount
+      }.sum
 
       val ret = for {
         subscription <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
         deregCheck = subscription.deregDate.getOrElse(LocalDate.now.plusYears(100))
         pendingDereg <- OptionT(sdilConnector.returns.get(subscription.utr, ReturnPeriod(deregCheck)).map(_.some))
       } yield {
-        Ok(balance_history(subscription.orgName, itemsWithRunningTotal, total, request.sdilEnrolment.value, subscription.deregDate, pendingDereg))
+        Ok(balance_history(subscription.orgName, itemsWithRunningTotal, total, request.sdilEnrolment.value, subscription.deregDate, pendingDereg, interest))
       }
       ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
     }

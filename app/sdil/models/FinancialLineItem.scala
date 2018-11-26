@@ -29,6 +29,8 @@ sealed trait FinancialLineItem {
   def description(implicit messages: Messages): String = getClass.toString
 }
 
+sealed trait Interest
+
 case class ReturnCharge(period: ReturnPeriod, amount: BigDecimal) extends FinancialLineItem {
 
   val formatter: DateTimeFormatter = java.time.format.DateTimeFormatter.ofPattern("MMMM")
@@ -42,7 +44,7 @@ case class ReturnCharge(period: ReturnPeriod, amount: BigDecimal) extends Financ
   def date = period.deadline
 }
 
-case class ReturnChargeInterest(date: Date, amount: BigDecimal) extends FinancialLineItem {
+case class ReturnChargeInterest(date: Date, amount: BigDecimal) extends FinancialLineItem with Interest {
   val formatter: DateTimeFormatter = java.time.format.DateTimeFormatter.ofPattern("dd MMMM yyyy")
 
   override def description(implicit messages: Messages): String =
@@ -54,7 +56,7 @@ case class CentralAssessment(date: Date, amount: BigDecimal) extends FinancialLi
     Messages("financiallineitem.centralassessment")
 }
 
-case class CentralAsstInterest(date: Date, amount: BigDecimal) extends FinancialLineItem {
+case class CentralAsstInterest(date: Date, amount: BigDecimal) extends FinancialLineItem with Interest {
   override def description(implicit messages: Messages): String =
     Messages("financiallineitem.centralasstinterest")
 }
@@ -64,7 +66,7 @@ case class OfficerAssessment(date: Date, amount: BigDecimal) extends FinancialLi
     Messages("financiallineitem.officerassessment")
 }
 
-case class OfficerAsstInterest(date: Date, amount: BigDecimal) extends FinancialLineItem {
+case class OfficerAsstInterest(date: Date, amount: BigDecimal) extends FinancialLineItem with Interest {
   override def description(implicit messages: Messages): String =
     Messages("financiallineitem.officerasstinterest")
 }

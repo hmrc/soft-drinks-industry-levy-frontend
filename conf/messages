@@ -1199,10 +1199,11 @@ returns.variation.new-packer-and-importer-explanation=You have declared in this 
 
 heading.partnerships=You cannot register online as a partnership
 account.balance=Account Balance
-account.balance.amount=Your balance is {0}.
-account.balance.amount.zero=You don't need to pay anything.
-account.balance.amount.in-credit=Your are {0} in credit.
+account.balance.amount=Your balance is {0}
+account.balance.amount.zero=Your balance is £0
+account.balance.amount.in-credit=You are {0} in credit
 account.balance.amount.need-to-pay=You need to pay {0}
+account.balance.amount.need-to-pay.interest=including {0} of interest
 account.balance.amount.pay=You need to pay.
 account.balance.amount.credit=You are in credit.
 account.balance.amount.closed=This account is closed.
