@@ -852,29 +852,29 @@ updatedBusinessDetails_orgName.fieldlabel=Organisation Name
 
 heading.updatedBusinessDetails_address=What address should we send correspondence to?
 
-variationDone.title=Updates have been sent
+variationDone.title=Update sent
 variationDone.subheading=We have received the updates to your Soft Drinks Industry Levy details
 variationDone.what-happens.title=What happens next
 variationDone.what-happens-next=You do not need to do anything else. We will update your details with the information \
 you provided. We will send you confirmation that the changes have been made.
 
-variationDone.your.updates=Your updates were sent on {0} at {1}.
+variationDone.your.updates=The updates for {0} were sent on {1} at {2}.
 variationDone.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
 volToMan.title=Updates have been sent
 volToMan.subheading=We have received the updates to your Soft Drinks Industry Levy details
-volToMan.what-happens.title=Your registration has been changed
-volToMan.what-happens-next=You will now need to file quarterly returns. You will get a new reference number in the post, \
-  which may take 15 working days. You need to keep this number.
+volToMan.what-happens.next.heading=Your registration has been changed
+volToMan.what-happens-next=<p>You will now need to file quarterly returns. You will get a new reference number in the post, \
+  which may take 15 working days. You need to keep this number.</p>
 volToMan.your.updates=Your updates were sent on {0} at {1}.
 volToMan.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
 manToVol.title=Updates have been sent
 manToVol.subheading=We have received the updates to your Soft Drinks Industry Levy details
 manToVol.what-happens.title=Your registration has been changed
-manToVol.what-happens-next=You are now registered as a small producer who only uses a third party to package their \
+manToVol.what-happens-next=<p>You are now registered as a small producer who only uses a third party to package their \
   liable drinks, which means you do not have to file returns. You will get a new reference number in the post, which \
-  you will need to give to your contract packer so they can claim an exemption for the drinks they package on your behalf.
+  you will need to give to your contract packer so they can claim an exemption for the drinks they package on your behalf.</p>
 manToVol.your.updates=Your updates were sent on {0} at {1}.
 manToVol.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
@@ -1150,7 +1150,7 @@ return-sent.subheading=We received your Soft Drinks Industry Levy return for {0}
 return-sent.subheading.nil-return=You do not owe anything
 return-sent.what-happens-next-heading=What you need to do next
 return-sent.returnsDoneMessage=Your Soft Drinks Industry Levy return for {0} to {1} {2} for {3} was sent at {4} on {5}.
-return-sent.servicePage=<a href="{0}">Go back to your Soft Drinks Industry Levy details</a>
+return-sent.servicePage=<p><a href="{0}">Go back to your Soft Drinks Industry Levy details</a></p>
 return-sent.paymentsBlurb.payby=You need to pay {0} by {1}.\
   <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">See how to pay the levy.</a>
 return-sent.paymentsBlurb.payusing=Make sure you include your Soft Drinks Industry Levy reference <strong style="font-weight: bold">{0}</strong> \
@@ -1343,7 +1343,7 @@ sdil.check-return-differences.reason.return-variation-reason.subheading=Correcti
 return-variation-reason.label=Reason for correction
 returnVariationDone.title=Correction sent
 returnVariationDone.subheading=We will review the details you updated and get back to you
-returnVariationDone.your.updates=Your updates were sent on {0} at {1}.
+returnVariationDone.your.updates=Your updates for {0} were sent on {1} at {2}.
 
 return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you. \
   We may get in touch with your contact person to discuss your changes. \
