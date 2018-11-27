@@ -40,13 +40,14 @@ error.utr.invalid=Unique Taxpayer Reference (UTR) must be 10 numbers
 sdil.identify.heading=Enter your business details
 sdil.identify.p1=This will help us match your details against information we currently hold.
 sdil.identify.utr=Corporation Tax or company Unique Taxpayer Reference number (UTR)
-sdil.identify.postcode=Registered company postcode
+sdil.identify.postcode=Registered business postcode
 sdil.identify.postcode.hint=This is the postcode of your registered business address
 error.utr.no-record=This Unique Taxpayer Reference (UTR) and postcode do not match our records
 sdil.identify.help.header=What is a UTR?
 sdil.identify.help.hint=For example, 12345 67890
-sdil.identify.help.p1=A UTR is 10 numbers like 12345 67890. It will be on tax returns and other letters about \
-  Corporation Tax. It may be called ‘reference’, ‘UTR’ or ‘official use’.
+sdil.identify.help.p1=This is 10 numbers, for example 12345 67890. It will be on tax returns and other letters about \
+  Corporation Tax. It may be called ‘reference’, ‘UTR’ or ‘official use’. \
+  You can <a href="https://www.gov.uk/find-lost-utr-number">find a lost UTR number.</a>
 
 #Verify
 sdil.verify.heading=Is this the business you want to register?

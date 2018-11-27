@@ -27,7 +27,7 @@
         }
     </label>
     @args.collectFirst { case ('_hint, msg) =>
-        <span class="form-hint">@msg</span>
+        <span class="form-hint">@Html(msg)</span>
     }
     <input class="form-control
         @args.toMap.get('_inputClass) @if(field.hasErrors) {form-control-error}"

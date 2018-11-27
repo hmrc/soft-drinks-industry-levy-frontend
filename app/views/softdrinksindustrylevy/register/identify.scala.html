@@ -32,13 +32,9 @@
         @inputText(
             identifyForm("utr"),
             Messages("sdil.identify.utr"),
-            ('_hint, Messages("sdil.identify.help.hint")),
+            ('_hint, Messages("sdil.identify.help.p1")),
             '_inputClass -> "form-control-1-4"
         )
-
-        @details("sdil.identify.help.header"){
-            <p>@Messages("sdil.identify.help.p1")</p>
-        }
 
         @inputText(
             identifyForm("postcode"),
