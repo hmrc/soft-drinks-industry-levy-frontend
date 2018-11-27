@@ -280,9 +280,8 @@ class VariationsController(
       } else if(variation.manToVol) {
         journeyEnd("manToVol", LocalDate.now, subheading, whnManToVol.some)(extraMessages)
       } else journeyEnd(
-        "variationDone",
-        LocalDate.now,
-        subheading,
+        id = "variationDone",
+        subheading = subheading,
         whatHappensNext = uniform.fragments.variationsWHN(variation.deregDate).some)(extraMessages)
     } yield exit
   }
@@ -354,9 +353,8 @@ class VariationsController(
           LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)).some
 
       exit <- journeyEnd(
-        "returnVariationDone",
-        LocalDate.now,
-        subheading,
+        id = "returnVariationDone",
+        subheading = subheading,
         whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)(extraMessages)
 
     } yield exit
