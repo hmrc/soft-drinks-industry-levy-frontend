@@ -204,6 +204,7 @@ class VariationsController(
         "reason",
         constraints = List(("error.deregReason.tooLong", _.length <= 255)),
         errorOnEmpty = "error.reason.empty")(extraMessages)
+
       deregDate <- ask(startDate
         .verifying(
           "error.deregDate.nopast",
@@ -328,7 +329,7 @@ class VariationsController(
       extraMessages = ExtraMessages(
             messages = Map(
               "heading.check-your-variation-answers" -> s"${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return details",
-              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} return",
+              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return",
               "heading.checkyouranswers.orgName" -> s"${subscription.orgName}"
             ))
 
