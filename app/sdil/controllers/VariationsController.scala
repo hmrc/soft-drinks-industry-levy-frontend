@@ -346,7 +346,18 @@ class VariationsController(
       _ <- checkReturnChanges("check-return-differences", variation.copy(reason = reason, repaymentMethod = repayment))
       _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
       _ <- clear
-      exit <- journeyEnd("returnVariationDone", whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)(extraMessages)
+      subheading = Html(
+        Messages(
+          "returnVariationDone.your.updates",
+          subscription.orgName,
+          LocalDate.now.format(ofPattern("d MMMM yyyy")),
+          LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)).some
+
+      exit <- journeyEnd(
+        "returnVariationDone",
+        LocalDate.now,
+        subheading,
+        whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)(extraMessages)
 
     } yield exit
   }
