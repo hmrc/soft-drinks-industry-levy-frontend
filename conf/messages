@@ -1331,13 +1331,13 @@ check-return-differences.total.new=New return total
 check-return-differences.net.adjusted.positive=Net adjusted amount excluding interest
 check-return-differences.net.adjusted.negative=Net adjusted amount
 
-check-return-differences.submit.heading=Submit your correction
-check-return-differences.submit.p=By submitting this correction you are confirming that, to the best of your knowledge, the details you are providing are correct. 
+check-return-differences.submit.heading=Send your correction
+check-return-differences.submit.p=By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct. 
 
 check-return-differences.correction.title=Correction
 check-return-differences.band.title=Band
 check-return-differences.litres.title=Litres
-check-return-differences.cost.title=Cost
+check-return-differences.cost.title=Levy
 check-return-differences.correction.label.original=Original amount
 check-return-differences.correction.label.revised=New amount
 check-return-differences.band.label.low=Low
@@ -1364,7 +1364,7 @@ repayment.lead=Repayment is not guaranteed. We may wish to discuss the claim wit
 credit=Credited to our Soft Drinks Industry Levy account
 credit.short=Credited to our Soft Drinks Industry Levy account
 bankPayment=Paid into the bank account for this business
-bankPayment.short=Paid into bank
+bankPayment.short=Paid into the bank account for this business
 return-variation-repayments.label=Repayment method
 
 heading.file-return-before-deregistration=You cannot cancel your registration while you have returns to send
