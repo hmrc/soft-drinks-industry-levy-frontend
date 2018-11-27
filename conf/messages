@@ -778,9 +778,11 @@ production-sites.option.done=No
 secondary-warehouses.option.add=Yes
 secondary-warehouses.option.done=No
 
-production-sites.edit=Change
+production-sites.edit=Edit
 ask-secondary-warehouses.edit=Change
-secondary-warehouses.edit=Change
+secondary-warehouses.edit=Edit
+packSites.edit=Edit
+warehouses.edit=Edit
 small-producer-details.edit=Change
 production-sites.delete=Remove
 heading.pack-at-business-address=Is your registered business address a UK packaging site that you operate to produce liable drinks?
@@ -810,7 +812,7 @@ importQty.higher=Litres in the high band
 
 heading.useCopacker=Do you use any third parties in the UK to package liable drinks on your behalf?
 
-heading.packSites=Change your packaging site details
+heading.packSites=Change your UK packaging site details
 heading.production-sites=Your packaging sites
 heading.multi.production-sites=You have added {0} packaging site{1}
 production-sites.lead=Tell us about the packaging sites you operate in the UK to package liable drinks
@@ -822,8 +824,9 @@ packSites.paragraph=Only add the addresses of UK packaging sites you operate. \
   You must have at least one registered packaging site.
 heading.edit-production-sites=Enter your UK packaging site details
 edit-production-sites.paragraph=Only add the addresses of UK packaging sites you operate.
-heading.multi.packSites=Change your packaging site details
+heading.multi.packSites=Change your UK packaging site details
 packSites.list-control.heading=Do you want to add another packaging site?
+packSites.list-control.lead=You must tell us about all your packaging sites
 packSites.option.add=Yes
 packSites.option.done=No
 heading.edit-packSites=Enter your UK packaging site details
@@ -837,7 +840,7 @@ warehouses.help=You can delay the point you will have to report liable drinks in
   if you register the warehouses you use to store them.
 heading.edit-secondary-warehouses=Enter your UK warehouse details
 heading.multi.warehouses=Change your UK warehouse details
-heading.warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+heading.warehouses=Change your UK warehouse details
 warehouses.list-control.heading=Do you want to add another warehouse?
 warehouses.option.add=Yes
 warehouses.option.done=No

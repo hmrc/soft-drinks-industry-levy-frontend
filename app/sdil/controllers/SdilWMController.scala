@@ -465,7 +465,8 @@ trait SdilWMController extends WebMonadController
     manyT("secondary-warehouses",
       ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly, implicitly),
       default = sites,
-      editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
+      editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm))
+    )
   }
 
   implicit val address: Format[SmallProducer] = Json.format[SmallProducer]
