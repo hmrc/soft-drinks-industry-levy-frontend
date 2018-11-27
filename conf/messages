@@ -739,7 +739,7 @@ changeType.continue=Continue
 heading.contact-change-type=What do you need to change?
 contact-change-type.hint=Select all that apply
 contact-change-type.option.Sites=Add or remove packaging sites or warehouse addresses
-contact-change-type.option.ContactPerson=Update your Soft Drinks Industry Levy contact person
+contact-change-type.option.ContactPerson=Update your contact person for the Soft Drinks Industry Levy
 contact-change-type.option.ContactAddress=Update your registered business address for the Soft Drinks Industry Levy
 contact-change-type.continue=Continue
 
@@ -1373,4 +1373,4 @@ file-return-before-deregistration.many-returns=Before you can cancel your regist
 file-return-before-deregistration.continue=Go to your account
 
 error.sdilref.empty=Enter the small producer’s reference number
-change.latency=Changes can take up to 15 days to process
+change.latency=Changes can take up to 15 working days to process.
