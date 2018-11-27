@@ -525,7 +525,7 @@ sdil.not-whitelisted.p2=Please try again later.
 
 item.description={0}
 financiallineitem.returncharge=Return <br/><span class="form-hint">for {0} to {1}</span>
-financiallineitem.returnchargeinterest=Interest Charged<br/><span class="form-hint">for {0} to today</span>
+financiallineitem.returnchargeinterest=Interest Charged<br/><span class="form-hint">up to {0}</span>
 financiallineitem.centralassessment=Central Assessment
 financiallineitem.centralasstinterest=Interest on Central Assessment
 financiallineitem.officerassessment=Officers Assessment
