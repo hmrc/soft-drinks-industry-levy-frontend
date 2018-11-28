@@ -769,9 +769,39 @@ heading.remove-packSites=Are you sure you want to remove this packaging site?
 heading.remove-production-sites=Are you sure you want to remove this packaging site?
 remove-packSites.continue=Remove
 remove-production-sites.continue=Remove
-packLarge.inner-heading=How many litres worldwide?
-option.packLarge.inner.false=Less than 1 million litres
-option.packLarge.inner.true=1 million litres or more
+
+heading.packLarge=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
+packLarge.lead=This includes brands you own or have the rights to manufacture.
+packLarge.option.large=1 million litres or more
+packLarge.option.small=Less than 1 million litres
+packLarge.option.not=None
+packLarge.help.header.1=What does ‘packaged’ mean?
+packLarge.help.1=A liable drink is packaged if it is bottled, canned or otherwise packaged so it is ready to either drink or dilute.
+packLarge.help.header.2=What is a liable drink?
+packLarge.help.2=<h2>Liable drinks</h2>\
+<p>A drink is liable if it meets all the following conditions:</p>\
+<ul class="list list-bullet">\
+<li>it has a content of 1.2% alcohol by volume or less</li>\
+<li>it is either ready to drink, or to be drunk it must be diluted with water, mixed with \
+  crushed ice or processed to make crushed ice, mixed with carbon dioxide or a combination of these</li>\
+<li>it is packaged ready for sale</li>\
+<li>it has had sugar added during production, including pure cane sugars like sucrose and\
+   glucose as well as substances (other than fruit juice, vegetable juice and milk) that contain sugar, such as honey</li>\
+<li>it contains at least 5 grams (g) of sugar per 100 millilitres (ml) in its ready to\
+   drink or diluted form</li></ul>\
+<h2>Exempt drinks</h2>\
+<p>A drink is exempt if it meets one of the following conditions:</p>\
+<ul class="list list-bullet">\
+<li>it contains at least 75% milk</li>\
+<li>it is a milk-substitute which contains at least 120 milligrams of calcium per 100ml,\
+   for example soya or almond milk</li>\
+<li>it is an alcohol replacement drink, for example de-alcoholised beer or wine</li>\
+<li>it is infant formula, follow-on formula, baby foods, formulated food intended as a\
+   total diet replacement or dietary food used for special medical purposes</li></ul>
+#
+#packLarge.inner-heading=How many litres worldwide?
+#option.packLarge.inner.false=Less than 1 million litres
+#option.packLarge.inner.true=1 million litres or more
 
 production-sites.option.add=Yes
 production-sites.option.done=No
@@ -790,13 +820,18 @@ heading.pack-at-business-address-in-return=Is this address a UK packaging site y
 pack-at-business-address-in-return.help.header=Why we need these details
 pack-at-business-address-in-return.help=Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate
 
-heading.packLarge=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink \
-  for brands you own or have the rights to manufacture, worldwide?
-heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have \
-the rights to manufacture?
+heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
+packOpt.inner-heading=How many litres will you package in the next 12 months?
 
-heading.packQty=In the next 12 months, how many litres of liable drink do you expect to package for brands you own or \
-have the rights to manufacture at UK packaging sites you operate?
+#heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have \
+#the rights to manufacture?
+
+heading.packQty=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
+packQty.inner-heading=How many litres will you package in the next 12 months?
+
+
+#heading.packQty=In the next 12 months, how many litres of liable drink do you expect to package for brands you own or \
+#have the rights to manufacture at UK packaging sites you operate?
 packQty.lower=Litres in the low band
 packQty.higher=Litres in the high band
 

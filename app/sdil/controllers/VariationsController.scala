@@ -25,7 +25,8 @@ import java.time.format.DateTimeFormatter._
 
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents
-import ltbs.play.scaffold.SdilComponents.{litreageForm => approxLitreageForm, packagingSiteMapping, _}
+import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
+import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, litreageForm => approxLitreageForm, _}
 import play.api.data.format.Formatter
 import play.api.data.{FormError, Forms, Mapping}
 import uk.gov.hmrc.uniform.webmonad._
@@ -144,11 +145,18 @@ class VariationsController(
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
     for {
-      packLarge                   <- askOption(bool(), "packLarge")
+//      packLarge                   <- askOption(bool(), "packLarge")
+      packLarge                   <- askOneOf("packLarge", ProducerType.values.toList) map {
+                                        case Large => Some(true)
+                                        case Small => Some(false)
+                                        case _ => None
+                                      }
       useCopacker                 <- ask(bool(),"useCopacker", data.usesCopacker) when packLarge.contains(false)
-      packageOwn                  <- ask(bool(), "packOpt", data.updatedProductionSites.nonEmpty) when packLarge.isDefined
-      packQty                     <- ask(litres, "packQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless packageOwn.contains(true)
-      copacks                     <- ask(litres, "copackQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless ask(bool(), "copacker", data.copackForOthers)
+//      packageOwn                  <- ask(bool(), "packOpt", data.updatedProductionSites.nonEmpty) when packLarge.isDefined
+      packageOwn                  <- askOption(litreagePair.nonEmpty, "packOpt")(approxLitreageForm, implicitly, implicitly) when packLarge.nonEmpty
+//      packQty                     <- ask(litres, "packQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless packageOwn.contains(true)
+//      copacks                     <- ask(litres, "copackQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless ask(bool(), "copacker", data.copackForOthers)
+      copacks                     <- askOption(litreagePair.nonEmpty, "package-copack")(approxLitreageForm, implicitly, implicitly)
       imports                     <- ask(litres, "importQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless ask(bool(), "importer", data.imports)
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
@@ -178,8 +186,8 @@ class VariationsController(
                                         } yield data.copy(
                                           producer = Producer(packLarge.isDefined, packLarge),
                                           usesCopacker = useCopacker.some.flatten,
-                                          packageOwn = Some(!packQty.isEmpty),
-                                          packageOwnVol = longTupToLitreage(packQty),
+                                          packageOwn = Some(!packageOwn.isEmpty),
+                                          packageOwnVol = longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
                                           copackForOthers = !copacks.isEmpty,
                                           copackForOthersVol = longTupToLitreage(copacks),
                                           imports = !imports.isEmpty,

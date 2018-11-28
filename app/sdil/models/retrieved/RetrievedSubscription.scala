@@ -21,7 +21,13 @@ import java.time.LocalDate
 import play.api.libs.json.Json
 import sdil.models.backend._
 
-case class RetrievedActivity(smallProducer: Boolean, largeProducer: Boolean, contractPacker: Boolean, importer: Boolean, voluntaryRegistration: Boolean) {
+case class RetrievedActivity(
+  smallProducer: Boolean,
+  largeProducer: Boolean,
+  contractPacker: Boolean,
+  importer: Boolean,
+  voluntaryRegistration: Boolean
+) {
 
 
   def isLiable: Boolean = {
