@@ -563,13 +563,22 @@ error.radio-form.choose-option.repayment=Select how you want the credit to be re
 error.radio-form.choose-option.organisation-type=Select the option that best describes your business
 error.radio-form.choose-option.producer=Select how many litres of your own brands of liable drinks have been \
   packaged globally in the past 12 months
+error.radio-form.choose-option.packLarge=Select how many litres of your own brands of liable drinks have been \
+  packaged globally in the past 12 months
 error.radio-form.choose-option.copacked=Select yes if you use any third parties in the UK to package liable drinks on \
+  your behalf
+error.radio-form.choose-option.useCopacker=Select yes if you use any third parties in the UK to package liable drinks on \
   your behalf
 error.radio-form.choose-option.package-own-uk=Select yes if you operate any packaging sites in the UK to package \
   liable drinks for brands you own
+error.radio-form.choose-option.packOpt=Select yes if you operate any packaging sites in the UK to package \
+  liable drinks for brands you own
 error.radio-form.choose-option.package-copack=Select yes if you operate any packaging sites in the UK to package \
   liable drinks as a third party or contract packer
+error.radio-form.choose-option.copacker=Select yes if you operate any packaging sites in the UK to package \
+  liable drinks as a third party or contract packer
 error.radio-form.choose-option.import=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
+error.radio-form.choose-option.importer=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
 error.radio-form.choose-option.pack-at-business-address=Select yes if your registered business address is a UK\
    packaging site that you operate to produce liable drinks
 error.radio-form.choose-option.production-sites=Select yes if you need to add another packaging site
@@ -798,10 +807,6 @@ packLarge.help.2=<h2>Liable drinks</h2>\
 <li>it is an alcohol replacement drink, for example de-alcoholised beer or wine</li>\
 <li>it is infant formula, follow-on formula, baby foods, formulated food intended as a\
    total diet replacement or dietary food used for special medical purposes</li></ul>
-#
-#packLarge.inner-heading=How many litres worldwide?
-#option.packLarge.inner.false=Less than 1 million litres
-#option.packLarge.inner.true=1 million litres or more
 
 production-sites.option.add=Yes
 production-sites.option.done=No
@@ -823,27 +828,17 @@ pack-at-business-address-in-return.help=Because you changed your business activi
 heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
 packOpt.inner-heading=How many litres will you package in the next 12 months?
 
-#heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own or have \
-#the rights to manufacture?
-
 heading.packQty=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
 packQty.inner-heading=How many litres will you package in the next 12 months?
 
-
-#heading.packQty=In the next 12 months, how many litres of liable drink do you expect to package for brands you own or \
-#have the rights to manufacture at UK packaging sites you operate?
 packQty.lower=Litres in the low band
 packQty.higher=Litres in the high band
 
-heading.copacker=Do you operate any packaging sites in the UK to package liable drinks for your customers as a third party?
-
-heading.copackQty=In the next 12 months, how many litres of liable drink do you expect to package for your customers at UK packaging sites you operate?
+heading.copacker=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
+copacker.inner-heading=How many litres will you package in the next 12 months?
 
 heading.importer=Do you bring liable drinks into the UK from anywhere outside of the UK?
-
-heading.importQty=In the next 12 months, how many litres of liable drink do you expect to bring into the UK?
-importQty.lower=Litres in the low band
-importQty.higher=Litres in the high band
+importer.inner-heading=How many litres will you bring into the UK in the next 12 months?
 
 heading.useCopacker=Do you use any third parties in the UK to package liable drinks on your behalf?
 

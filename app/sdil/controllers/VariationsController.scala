@@ -145,19 +145,15 @@ class VariationsController(
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
     for {
-//      packLarge                   <- askOption(bool(), "packLarge")
       packLarge                   <- askOneOf("packLarge", ProducerType.values.toList) map {
                                         case Large => Some(true)
                                         case Small => Some(false)
                                         case _ => None
                                       }
-      useCopacker                 <- ask(bool(),"useCopacker", data.usesCopacker) when packLarge.contains(false)
-//      packageOwn                  <- ask(bool(), "packOpt", data.updatedProductionSites.nonEmpty) when packLarge.isDefined
+      useCopacker                 <- ask(bool("useCopacker"),"useCopacker", data.usesCopacker) when packLarge.contains(false)
       packageOwn                  <- askOption(litreagePair.nonEmpty, "packOpt")(approxLitreageForm, implicitly, implicitly) when packLarge.nonEmpty
-//      packQty                     <- ask(litres, "packQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless packageOwn.contains(true)
-//      copacks                     <- ask(litres, "copackQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless ask(bool(), "copacker", data.copackForOthers)
-      copacks                     <- askOption(litreagePair.nonEmpty, "package-copack")(approxLitreageForm, implicitly, implicitly)
-      imports                     <- ask(litres, "importQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless ask(bool(), "importer", data.imports)
+      copacks                     <- askOption(litreagePair.nonEmpty, "copacker")(approxLitreageForm, implicitly, implicitly)
+      imports                     <- askOption(litreagePair.nonEmpty, "importer")(approxLitreageForm, implicitly, implicitly)
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
@@ -188,10 +184,10 @@ class VariationsController(
                                           usesCopacker = useCopacker.some.flatten,
                                           packageOwn = Some(!packageOwn.isEmpty),
                                           packageOwnVol = longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
-                                          copackForOthers = !copacks.isEmpty,
-                                          copackForOthersVol = longTupToLitreage(copacks),
+                                          copackForOthers = copacks.isDefined,
+                                          copackForOthersVol = longTupToLitreage(copacks.getOrElse((0,0))),
                                           imports = !imports.isEmpty,
-                                          importsVol = longTupToLitreage(imports),
+                                          importsVol = longTupToLitreage(imports.getOrElse((0,0))),
                                           updatedProductionSites = packSites,
                                           updatedWarehouseSites = warehouses
                                         )
