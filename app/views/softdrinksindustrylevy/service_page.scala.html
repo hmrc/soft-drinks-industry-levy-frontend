@@ -27,7 +27,7 @@
 @import java.time.LocalDate
 @import java.time.ZoneId
 
-@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, interest: BigDecimal = 0)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 
 @main_template(Messages("sdil.registered.title"), noArticle = true) {
@@ -153,16 +153,25 @@
 
         <div>
             <h2 class="heading-medium">@Messages("account.balance")</h2>
+
             <p>
-                @printbalance("account.balance.amount", balance)
-                @if(balance < 0) {
-                    @Messages("account.balance.amount.pay")
+            @if(balance == 0) {
+                @Html(Messages("account.balance.amount.zero.fullstop"))
+            } else {
+                @if(balance > 0) {
+                    @printbalance("account.balance.amount.in-credit.fullstop", balance)
                 } else {
-                    @if(balance > 0) {
-                        @Messages("account.balance.amount.credit")
+                    @if(interest < 0) {
+                        @printbalance("account.balance.amount.need-to-pay", balance.abs)
+                        @Messages("account.balance.amount.need-to-pay.interest.fullstop", format_money(interest.abs))
+                    } else {
+                        @printbalance("account.balance.amount.need-to-pay.fullstop", balance.abs)
                     }
                 }
+            }
             </p>
+
+
             <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
         </div>
         <hr class="govuk-section-break--visible">

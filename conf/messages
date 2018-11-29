@@ -1217,11 +1217,14 @@ account.balance.amount.zero=Your balance is £0
 account.balance.amount.in-credit=You are {0} in credit
 account.balance.amount.need-to-pay=You need to pay {0}
 account.balance.amount.need-to-pay.interest=including {0} of interest
+account.balance.amount.zero.fullstop=Your balance is £0.
+account.balance.amount.in-credit.fullstop=You are {0} in credit.
+account.balance.amount.need-to-pay.fullstop=You need to pay {0}.
+account.balance.amount.need-to-pay.interest.fullstop=including {0} of interest.
 account.balance.amount.pay=You need to pay.
 account.balance.amount.credit=You are in credit.
 account.balance.amount.closed=This account is closed.
 account.balance.amount.dereg-in-credit=Your balance is {0} in credit. <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/soft-drinks-industry-levy">Call the Soft Drinks Industry Levy helpline</a> to arrange repayment.
-account.balance.pay.zero=You have nothing to pay.
 view.balance.history=View your transaction history
 balance.history=Balance History
 balance.table.title=Transaction history
