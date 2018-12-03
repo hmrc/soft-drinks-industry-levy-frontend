@@ -28,7 +28,7 @@
         <h2 id="error-summary-heading" class="heading-medium error-summary-heading">@Messages("sdil.common.errorSummary")</h2>
         <ul class="error-summary-list">
             @form.errors.map { error =>
-                <li role="tooltip">
+                <li>
                     <a href="#@error.key"
                     id="@{error.key}-error-summary"
                     data-focuses="@error.key">
