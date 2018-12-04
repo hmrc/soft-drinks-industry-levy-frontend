@@ -557,7 +557,7 @@ error.email=Enter a real email address, like name@example.com
 error.radio-form.choose-option=Choose an option
 error.radio-form.choose-option.=Choose an option
 error.radio-form.choose-option.continue=Select an option to continue
-error.radio-form.choose-option.changeType=Select what you need to do
+error.radio-form.choose-option.select-change=Select what you need to do
 error.radio-form.choose-option.returnPeriod=Select which return you need to correct
 error.radio-form.choose-option.repayment=Select how you want the credit to be repaid
 error.radio-form.choose-option.organisation-type=Select the option that best describes your business
@@ -739,11 +739,11 @@ complete.subheading=We have received your application to register {0} for the So
 complete.your.updates=Your application to register for the Soft Drinks Industry Levy was sent on {0} at {1}.
 
 # Uniform variation process
-heading.changeType=What do you need to do?
-changeType.option.sites=Update contact, packaging site or warehouse details
-changeType.option.activity=Change our business activity
-changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
-changeType.continue=Continue
+heading.select-change=What do you need to do?
+select-change.option.sites=Update contact, packaging site or warehouse details
+select-change.option.activity=Change our business activity
+select-change.option.deregister=Deregister from the Soft Drinks Industry Levy
+select-change.continue=Continue
 
 heading.contact-change-type=What do you need to change?
 contact-change-type.hint=Select all that apply
@@ -894,7 +894,7 @@ variationDone.what-happens-next=You do not need to do anything else. We will upd
 you provided. We will send you confirmation that the changes have been made.
 deregDone.title=Cancellation request sent
 deregDone.subtitle=We have received your request to cancel your Soft Drinks Industry Levy registration
-heading.checkyouranswers.dereg=Check your answers before sending your update
+heading.check-answers.dereg=Check your answers before sending your update
 
 dereg.what-happens-next.p1=You need to send a final return for the period {0} to {1}, and make any outstanding payments.
 dereg.what-happens-next.p2=You will be able to send the final return from {0} until {1}.
@@ -935,14 +935,15 @@ sdil.time-out.p1=We have saved your answers
 sdil.variation.anotherChange=If you need to make another change,
 sdil.variation.anotherChangeLink=go back and start again
 
-heading.deregister.reason=Why are you deregistering from the Soft Drinks Industry Levy?
-heading.reason.orgName=
-deregister.reason.label=Reason for deregistering
-heading.deregDate=What date are you cancelling your registration from?
-heading.deregDate.orgName=
-error.deregDate.nopast=Deregistration date cannot be in the past
-error.deregDate.nofuture=Deregistration date cannot be more than 14 days in the future
-error.reason.empty=Enter why you need to cancel your registration
+#dereg
+heading.deregister.cancel-registration-reason=Why are you deregistering from the Soft Drinks Industry Levy?
+heading.cancel-registration-reason.orgName=
+deregister.cancel-registration-reason.label=Reason for deregistering
+error.cancel-registration-reason.empty=Enter why you need to cancel your registration
+heading.cancel-registration-date=What date are you cancelling your registration from?
+heading.cancel-registration-date.orgName=
+error.cancel-registration-date.nopast=Deregistration date cannot be in the past
+error.cancel-registration-date.nofuture=Deregistration date cannot be more than 14 days in the future
 
 variations.cya.packLarge=Amount of own brand liable drink produced in the past 12 months
 variations.cya.packLarge.large=1 million litres or more
@@ -1031,9 +1032,9 @@ variations.cya.dereg=Deregistration
 variations.cya.reason=Reason
 variations.cya.deregDate=Date
 
-heading.reason=Why do you need to cancel your registration?
-reason.label=Reason for deregistering
-reason.hint=Enter a maximum of 255 characters
+heading.cancel-registration-reason=Why do you need to cancel your registration?
+cancel-registration-reason.label=Reason for deregistering
+cancel-registration-reason.hint=Enter a maximum of 255 characters
 
 heading.suggestDereg=You need to deregister
 suggestDereg.body=Based on your answers, you are a small producer who does not use a third party to package liable drinks. This means you can deregister from the Soft Drinks Industry Levy.
@@ -1048,9 +1049,9 @@ removePackSites.continue=[Remove all packing sites]
 
 heading.businessAddress=Update your registered business address for the Soft Drinks Industry Levy
 
-heading.checkyouranswers=Check the updates you have made
-heading.checkyouranswers.orgName=
-checkyouranswers.continue=Confirm updates and send
+heading.check-answers=Check the updates you have made
+heading.check-answers.orgName=
+check-answers.continue=Confirm updates and send
 
 # Returns
 error.empty=Number of litres must be 1 or more
@@ -1288,7 +1289,7 @@ how-to-pay.payment-ref=payment reference: {0}
 how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
     Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
 
-changeType.option.returns=Correct an error in a previous return
+select-change.option.returns=Correct an error in a previous return
 heading.returnPeriod=Which return do you need to correct?
 returnPeriod.help.header=I can’t find the return I’m looking for
 returnPeriod.help=If you did not file a return then it will not be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.

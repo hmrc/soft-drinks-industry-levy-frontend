@@ -200,23 +200,23 @@ class VariationsController(
   ): WebMonad[RegistrationVariationData] = {
     val extraMessages = ExtraMessages(
       messages =
-        Map("heading.reason.orgName" -> s"${data.original.orgName}",
-            "heading.deregDate.orgName" -> s"${data.original.orgName}"))
+        Map("heading.cancel-registration-reason.orgName" -> s"${data.original.orgName}",
+            "heading.cancel-registration-date.orgName" -> s"${data.original.orgName}"))
 
     for {
       reason <- askBigText(
-        "reason",
+        "cancel-registration-reason",
         constraints = List(("error.deregReason.tooLong", _.length <= 255)),
-        errorOnEmpty = "error.reason.empty")(extraMessages)
+        errorOnEmpty = "error.cancel-registration-reason.empty")(extraMessages)
 
       deregDate <- ask(startDate
         .verifying(
-          "error.deregDate.nopast",
+          "error.cancel-registration-date.nopast",
           _ >= LocalDate.now)
         .verifying(
-          "error.deregDate.nofuture",
+          "error.cancel-registration-date.nofuture",
           _ < LocalDate.now.plusDays(15)),
-        "deregDate")(implicitly, implicitly, extraMessages, implicitly)
+        "cancel-registration-date")(implicitly, implicitly, extraMessages, implicitly)
     } yield data.copy(
       reason = reason.some,
       deregDate = deregDate.some
@@ -239,8 +239,9 @@ class VariationsController(
       returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
       onlyReturns = subscription.deregDate.nonEmpty
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
-      changeType <- askOneOf("changeType", changeTypes, helpText = Html(Messages("change.latency")).some) when !onlyReturns
+      changeType <- askOneOf("select-change", changeTypes, helpText = Html(Messages("change.latency")).some) when !onlyReturns
       variation <- changeType match {
+          //TODO Ask Matt why this None is here
         case None | Some(ChangeType.Returns) =>
           chooseReturn(subscription, sdilRef)
         case Some(ChangeType.Sites) => contactUpdate(base)
@@ -254,16 +255,16 @@ class VariationsController(
         messages =
         if(variation.deregDate.nonEmpty) {
           Map(
-            "heading.checkyouranswers" -> Messages("heading.checkyouranswers.dereg"),
-            "heading.checkyouranswers.orgName" -> s"${subscription.orgName},",
+            "heading.check-answers" -> Messages("heading.check-answers.dereg"),
+            "heading.check-answers.orgName" -> s"${subscription.orgName},",
             "variationDone.title" -> Messages("deregDone.title"),
             "variationDone.subheading" -> Messages("deregDone.subtitle")
           )
         } else {
-          Map("heading.checkyouranswers.orgName" -> s"${subscription.orgName}")
+          Map("heading.check-answers.orgName" -> s"${subscription.orgName}")
         }
       )
-      _ <- checkYourRegAnswers("checkyouranswers", variation, path)(extraMessages)
+      _ <- checkYourRegAnswers("check-answers", variation, path)(extraMessages)
       submission = Convert(variation)
       _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
       _ <- clear
@@ -334,7 +335,7 @@ class VariationsController(
             messages = Map(
               "heading.check-your-variation-answers" -> s"${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return details",
               "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return",
-              "heading.checkyouranswers.orgName" -> s"${subscription.orgName}"
+              "heading.check-answers.orgName" -> s"${subscription.orgName}"
             ))
 
       isSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, returnPeriod))
