@@ -182,11 +182,11 @@ class VariationsController(
                                         } yield data.copy(
                                           producer = Producer(packLarge.isDefined, packLarge),
                                           usesCopacker = useCopacker.some.flatten,
-                                          packageOwn = Some(!packageOwn.isEmpty),
+                                          packageOwn = Some(packageOwn.isDefined),
                                           packageOwnVol = longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
                                           copackForOthers = copacks.isDefined,
                                           copackForOthersVol = longTupToLitreage(copacks.getOrElse((0,0))),
-                                          imports = !imports.isEmpty,
+                                          imports = imports.isDefined,
                                           importsVol = longTupToLitreage(imports.getOrElse((0,0))),
                                           updatedProductionSites = packSites,
                                           updatedWarehouseSites = warehouses
