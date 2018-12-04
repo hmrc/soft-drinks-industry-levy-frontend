@@ -75,7 +75,7 @@
                 <tbody>
                     @for((item,runningTotal) <- lineItems) {
                     <tr>
-                        <td>@{item.date.format(DateTimeFormatter.ofPattern("dd MMM YYYY"))}</td>
+                        <td>@{item.date.format(DateTimeFormatter.ofPattern("d MMM YYYY"))}</td>
                         <td>@Html(Messages("item.description", item.description))</td>
                         <td class="numeric">@if(item.amount >= 0) {@{f"${item.amount}%,.2f"}}</td>
                         <td class="numeric">@if(item.amount <= 0) {@{f"${item.amount}%,.2f"}}</td>
