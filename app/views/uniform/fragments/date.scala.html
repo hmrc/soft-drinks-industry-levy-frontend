@@ -37,12 +37,6 @@
                        id="@{key}.@{field}"
                        name="@{key}.@{field}"
                        value="@{form(s"$key.$field").value}"
-                       @{field match {
-                           case "year" =>
-                               "maxlength=4"
-                           case _ =>
-                               "maxlength=2"
-                       }}
                 >
               </div>
             }
