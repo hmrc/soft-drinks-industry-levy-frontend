@@ -27,7 +27,7 @@
     <label for="@key">
         <span class="form-label">@Messages.extraMessage(s"${key}.label")</span>
         @form.errors.map { error =>
-            <span class="error-message" role="tooltip" data-journey="search-page:error:@key">
+            <span class="error-message" data-journey="search-page:error:@key">
             @Messages(error.message, error.args: _*)
             </span>
         }

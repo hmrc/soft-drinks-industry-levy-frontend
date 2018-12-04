@@ -21,7 +21,7 @@
     <label for="@field.name">
         <span class="form-label">@label</span>
         @field.errors.map { error =>
-            <span class="error-message" role="tooltip" data-journey="search-page:error:@field.name">
+            <span class="error-message" data-journey="search-page:error:@field.name">
             @Messages(error.message, error.args: _*)
             </span>
         }
