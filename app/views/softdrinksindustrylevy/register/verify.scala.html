@@ -49,7 +49,7 @@
     </dl>
 
     @if(!alreadyRegistered) {
-        <p>@Messages("sdil.verify.p1")</p>
+        <p>@Html(Messages("sdil.verify.p1", utr))</p>
         @form(sdil.controllers.routes.VerifyController.submit()) {
             @radioButtonWithConditionalContent(
                 field = verifyForm("detailsCorrect"),
