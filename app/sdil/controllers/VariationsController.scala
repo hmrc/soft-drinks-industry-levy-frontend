@@ -25,7 +25,8 @@ import java.time.format.DateTimeFormatter._
 
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents
-import ltbs.play.scaffold.SdilComponents.{litreageForm => approxLitreageForm, packagingSiteMapping, _}
+import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
+import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, litreageForm => approxLitreageForm, _}
 import play.api.data.format.Formatter
 import play.api.data.{FormError, Forms, Mapping}
 import uk.gov.hmrc.uniform.webmonad._
@@ -144,12 +145,15 @@ class VariationsController(
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
     for {
-      packLarge                   <- askOption(bool(), "packLarge")
-      useCopacker                 <- ask(bool(),"useCopacker", data.usesCopacker) when packLarge.contains(false)
-      packageOwn                  <- ask(bool(), "packOpt", data.updatedProductionSites.nonEmpty) when packLarge.isDefined
-      packQty                     <- ask(litres, "packQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless packageOwn.contains(true)
-      copacks                     <- ask(litres, "copackQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless ask(bool(), "copacker", data.copackForOthers)
-      imports                     <- ask(litres, "importQty")(approxLitreageForm, implicitly, implicitly, implicitly) emptyUnless ask(bool(), "importer", data.imports)
+      packLarge                   <- askOneOf("packLarge", ProducerType.values.toList) map {
+                                        case Large => Some(true)
+                                        case Small => Some(false)
+                                        case _ => None
+                                      }
+      useCopacker                 <- ask(bool("useCopacker"),"useCopacker", data.usesCopacker) when packLarge.contains(false)
+      packageOwn                  <- askOption(litreagePair.nonEmpty, "packOpt")(approxLitreageForm, implicitly, implicitly) when packLarge.nonEmpty
+      copacks                     <- askOption(litreagePair.nonEmpty, "copacker")(approxLitreageForm, implicitly, implicitly)
+      imports                     <- askOption(litreagePair.nonEmpty, "importer")(approxLitreageForm, implicitly, implicitly)
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
@@ -178,12 +182,12 @@ class VariationsController(
                                         } yield data.copy(
                                           producer = Producer(packLarge.isDefined, packLarge),
                                           usesCopacker = useCopacker.some.flatten,
-                                          packageOwn = Some(!packQty.isEmpty),
-                                          packageOwnVol = longTupToLitreage(packQty),
-                                          copackForOthers = !copacks.isEmpty,
-                                          copackForOthersVol = longTupToLitreage(copacks),
-                                          imports = !imports.isEmpty,
-                                          importsVol = longTupToLitreage(imports),
+                                          packageOwn = Some(packageOwn.isDefined),
+                                          packageOwnVol = longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
+                                          copackForOthers = copacks.isDefined,
+                                          copackForOthersVol = longTupToLitreage(copacks.getOrElse((0,0))),
+                                          imports = imports.isDefined,
+                                          importsVol = longTupToLitreage(imports.getOrElse((0,0))),
                                           updatedProductionSites = packSites,
                                           updatedWarehouseSites = warehouses
                                         )
