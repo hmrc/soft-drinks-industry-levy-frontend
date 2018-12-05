@@ -151,21 +151,21 @@ class VariationsController(
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
     for {
-      packLarge                   <- askOneOf("packLarge", ProducerType.values.toList) map {
+      packLarge                   <- askOneOf("amount-produced", ProducerType.values.toList) map {
                                         case Large => Some(true)
                                         case Small => Some(false)
                                         case _ => None
                                       }
-      useCopacker                 <- ask(bool("useCopacker"),"useCopacker", data.usesCopacker) when packLarge.contains(false)
-      packageOwn                  <- askOption(litreagePair.nonEmpty, "packOpt")(approxLitreageForm, implicitly, implicitly) when packLarge.nonEmpty
-      copacks                     <- askOption(litreagePair.nonEmpty, "copacker")(approxLitreageForm, implicitly, implicitly)
-      imports                     <- askOption(litreagePair.nonEmpty, "importer")(approxLitreageForm, implicitly, implicitly)
+      useCopacker                 <- ask(bool("third-party-packagers"),"third-party-packagers", data.usesCopacker) when packLarge.contains(false)
+      packageOwn                  <- askOption(litreagePair.nonEmpty, "packaging-site")(approxLitreageForm, implicitly, implicitly) when packLarge.nonEmpty
+      copacks                     <- askOption(litreagePair.nonEmpty, "contract-packing")(approxLitreageForm, implicitly, implicitly)
+      imports                     <- askOption(litreagePair.nonEmpty, "imports")(approxLitreageForm, implicitly, implicitly)
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
       packer                      =  (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
       variation                   <- if (shouldDereg)
-                                       tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
+                                       tell("suggest-deregistration", uniform.confirmOrGoBackTo("suggest-deregistration", "amount-produced")) >> deregisterUpdate(data)
                                      else {
                                         val extraMessages = ExtraMessages(
                                           messages = Map(

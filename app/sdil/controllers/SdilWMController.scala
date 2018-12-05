@@ -416,7 +416,10 @@ trait SdilWMController extends WebMonadController
     def inf(x: Control): Option[String] = Some(x.toString)
 
     def stripId(id: String) = id match {
-      case "change-packaging-sites" | "change-warehouses" => id.drop(7).dropRight(1)
+      case "change-packaging-sites" |
+           "change-warehouses" |
+           "change-production-sites" |
+           "change-secondary-warehouses" => id.drop(7).dropRight(1)
       case _ => id
     }
 
@@ -446,7 +449,7 @@ trait SdilWMController extends WebMonadController
       }
 
   def askPackSites(existingSites: List[Site]): WebMonad[List[Site]] =
-    manyT("production-sites",
+    manyT("change-production-sites",
       ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly, implicitly),
       default = existingSites,
       min = 1,
@@ -467,7 +470,7 @@ trait SdilWMController extends WebMonadController
   }
 
   def askWarehouses(sites: List[Site]): WebMonad[List[Site]] = {
-    manyT("secondary-warehouses",
+    manyT("change-secondary-warehouses",
       ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly, implicitly),
       default = sites,
       editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm))
