@@ -77,7 +77,7 @@ class VariationsController(
 
   private def contactUpdate(
     data: RegistrationVariationData
-  ): WebMonad[RegistrationVariationData] = {
+  )(implicit extraMessages: ExtraMessages): WebMonad[RegistrationVariationData] = {
 
     sealed trait ContactChangeType extends EnumEntry
     object ContactChangeType extends Enum[ContactChangeType] {
@@ -90,7 +90,7 @@ class VariationsController(
     def askContactChangeType: WebMonad[Set[ContactChangeType]] =
       if (data.isVoluntary) {
         askSet(
-          "contact-change-type",
+          "change-registered-details",
           Set(ContactChangeType.ContactPerson, ContactChangeType.ContactAddress),
           minSize = 1,
           None,
@@ -98,7 +98,7 @@ class VariationsController(
         )
       } else {
         askSet(
-          "contact-change-type",
+          "change-registered-details",
           ContactChangeType.values.toSet,
           minSize = 1,
           None,
@@ -107,26 +107,32 @@ class VariationsController(
     }
 
     import ContactChangeType._
+
+    val extraMessages = ExtraMessages(
+      messages =
+        Map("heading.contact-details" -> Messages("heading.contact"))
+    )
+
     for {
 
       change          <- askContactChangeType
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly, implicitly), default = data
+        manyT("change-packaging-sites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, extraMessages, implicitly), default = data
           .updatedProductionSites.toList, min = 1, editSingleForm = Some((packagingSiteMapping, packagingSiteForm))) emptyUnless (data.producer.isLarge.contains(true) || data.copackForOthers)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
-        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly, implicitly), default = data
+        manyT("change-warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, extraMessages, implicitly), default = data
           .updatedWarehouseSites.toList, editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
       } else data.updatedWarehouseSites.pure[WebMonad]
 
       contact         <- if (change.contains(ContactPerson)) {
-        ask(contactDetailsMapping, "contact", data.updatedContactDetails)
+        ask(contactDetailsMapping, "contact-details", data.updatedContactDetails)(implicitly, implicitly, extraMessages, implicitly)
       } else data.updatedContactDetails.pure[WebMonad]
 
       businessAddress <- if (change.contains(ContactAddress)) {
-        ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
+        ask(addressMapping, "business-address", default = data.updatedBusinessAddress)(implicitly, implicitly, extraMessages, implicitly)
       } else data.updatedBusinessAddress.pure[WebMonad]
 
     } yield data.copy (

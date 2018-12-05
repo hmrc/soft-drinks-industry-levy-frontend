@@ -745,12 +745,12 @@ select-change.option.activity=Change our business activity
 select-change.option.deregister=Deregister from the Soft Drinks Industry Levy
 select-change.continue=Continue
 
-heading.contact-change-type=What do you need to change?
-contact-change-type.hint=Select all that apply
-contact-change-type.option.Sites=Add or remove packaging sites or warehouse addresses
-contact-change-type.option.ContactPerson=Update your contact person for the Soft Drinks Industry Levy
-contact-change-type.option.ContactAddress=Update your registered business address for the Soft Drinks Industry Levy
-contact-change-type.continue=Continue
+heading.change-registered-details=What do you need to change?
+change-registered-details.hint=Select all that apply
+change-registered-details.option.Sites=Add or remove packaging sites or warehouse addresses
+change-registered-details.option.ContactPerson=Update your contact person for the Soft Drinks Industry Levy
+change-registered-details.option.ContactAddress=Update your registered business address for the Soft Drinks Industry Levy
+change-registered-details.continue=Continue
 
 heading.ask-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
 heading.ask-secondary-warehouses-in-return=Do you want to register any UK warehouses you use to store liable drinks?
@@ -762,21 +762,21 @@ heading.first-warehouse=Enter the UK warehouse details
 ask-secondary-warehouses.help.header=Why should I register a warehouse?
 ask-secondary-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
   the warehouses you use to store them.
-heading.add-warehouses=Enter your warehouse details
+heading.add-change-warehouses=Enter your warehouse details
 heading.add-secondary-warehouses=Enter your UK warehouse details
-heading.remove-warehouses=Are you sure you want to remove this warehouse?
+heading.remove-warehouse=Are you sure you want to remove this warehouse?
 heading.remove-secondary-warehouses=Are you sure you want to remove this warehouse?
-remove-warehouses.continue=Remove
+remove-warehouse.continue=Remove
 remove-secondary-warehouses.continue=Remove
-heading.add-packSites=Enter your packaging site details
+heading.add-change-packaging-sites=Enter your packaging site details
 heading.add-production-sites=Enter your UK packaging site details
 heading.first-production-site=Enter your UK packaging site details
 first-production-site.paragraph=Only add the addresses of the packaging sites you operate
-add-packSites.paragraph=Only add the addresses of the packaging sites you operate
+add-packaging-site.paragraph=Only add the addresses of the packaging sites you operate
 add-production-sites.paragraph=Only add the addresses of the packaging sites you operate
-heading.remove-packSites=Are you sure you want to remove this packaging site?
+heading.remove-packaging-site=Are you sure you want to remove this packaging site?
 heading.remove-production-sites=Are you sure you want to remove this packaging site?
-remove-packSites.continue=Remove
+remove-packaging-site.continue=Remove
 remove-production-sites.continue=Remove
 
 heading.packLarge=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
@@ -842,8 +842,8 @@ importer.inner-heading=How many litres will you bring into the UK in the next 12
 
 heading.useCopacker=Do you use any third parties in the UK to package liable drinks on your behalf?
 
-heading.packSites=Change your UK packaging site details
-heading.multi.packSites=Change your UK packaging site details
+heading.change-packaging-sites=Change your UK packaging site details
+heading.multi.change-packaging-sites=Change your UK packaging site details
 heading.production-sites=Your packaging sites
 heading.multi.production-sites=Your packaging sites
 production-sites.lead=Tell us about the packaging sites you operate in the UK to package liable drinks
@@ -851,36 +851,36 @@ production-sites.multi.lead=You have added {0} packaging site{1}
 production-sites.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
   drinks. You must have at least one registered packaging site.
 production-sites.list-control.heading=Do you need to add another packaging site?
-packSites.paragraph=Only add the addresses of UK packaging sites you operate. \
+change-packaging-sites.paragraph=Only add the addresses of UK packaging sites you operate. \
   You must have at least one registered packaging site.
 heading.edit-production-sites=Enter your UK packaging site details
 edit-production-sites.paragraph=Only add the addresses of UK packaging sites you operate.
-packSites.list-control.heading=Do you want to add another packaging site?
-packSites.list-control.lead=You must tell us about all your packaging sites
-packSites.option.add=Yes
-packSites.option.done=No
-heading.edit-packSites=Enter your UK packaging site details
+change-packaging-sites.list-control.heading=Do you want to add another packaging site?
+change-packaging-sites.list-control.lead=You must tell us about all your packaging sites
+change-packaging-sites.option.add=Yes
+change-packaging-sites.option.done=No
+heading.edit-packaging-site=Enter your UK packaging site details
 
 heading.secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks? 
 heading.multi.secondary-warehouses=Your registered UK warehouses
 secondary-warehouses.lead=
 secondary-warehouses.multi.lead=You have added {0} warehouse{1}
 secondary-warehouses.list-control.heading=Do you want to add another warehouse?
-warehouses.help.header=Why should I register a warehouse?
-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
+change-warehouses.help.header=Why should I register a warehouse?
+change-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
   if you register the warehouses you use to store them.
 heading.edit-secondary-warehouses=Enter your UK warehouse details
-heading.multi.warehouses=Change your UK warehouse details
-heading.warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
-warehouses.list-control.heading=Do you want to add another warehouse?
-warehouses.option.add=Yes
-warehouses.option.done=No
+heading.multi.change-warehouses=Change your UK warehouse details
+heading.change-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+change-warehouses.list-control.heading=Do you want to add another warehouse?
+change-warehouses.option.add=Yes
+change-warehouses.option.done=No
 
 heading.contact=Update your contact person for the Soft Drinks Industry Levy
-contact.fullName=Full name
-contact.position=Job title
-contact.phoneNumber=Telephone number
-contact.email=Email address
+#contact-details.fullName=Full name
+#contact-details.position=Job title
+#contact-details.phoneNumber=Telephone number
+#contact-details.email=Email address
 
 heading.updatedBusinessDetails_orgName=Organisation Name
 updatedBusinessDetails_orgName.fieldlabel=Organisation Name
@@ -1023,10 +1023,10 @@ variations.cya.false=No
 variations.cya.noChange=The answers you gave are the same as the information you already have registered. If your \
   answers are accurate you do not need to do anything and can <a href="{0}"> view your registered details</a>. Otherwise, you need to change your answers.
 variations.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
-packSites.error.items.tooMany=[Too many sites]
-packSites.error.items.tooFew=[You must have at least one packaging site]
+change-packaging-sites.error.items.tooMany=[Too many sites]
+change-packaging-sites.error.items.tooFew=[You must have at least one packaging site]
 
-heading.edit-warehouses=Enter your UK warehouse details
+heading.edit-warehouse=Enter your UK warehouse details
 
 variations.cya.dereg=Deregistration
 variations.cya.reason=Reason
@@ -1047,7 +1047,7 @@ heading.removePackSites=[Remove your packing sites?]
 removePackSites.body=[Based on your answers, you are no longer packing any soft drinks and therefore will not be operating any packing sites. In continuing all packing sites will be removed.]
 removePackSites.continue=[Remove all packing sites]
 
-heading.businessAddress=Update your registered business address for the Soft Drinks Industry Levy
+heading.business-address=Update your registered business address for the Soft Drinks Industry Levy
 
 heading.check-answers=Check the updates you have made
 heading.check-answers.orgName=
