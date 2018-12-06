@@ -989,6 +989,7 @@ variations.cya.deregistration.date=Effective date
 variations.cya.deregistration.change.date=Change <span class="visually-hidden">effective date</span>
 
 error.deregReason.tooLong=Deregistration reason must be 255 characters or less
+error.return-variation-reason.tooLong=Reason for correcting the return must be 255 characters or less
 day=Day
 month=Month
 year=Year
