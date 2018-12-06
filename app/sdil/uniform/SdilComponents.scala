@@ -160,9 +160,15 @@ object SdilComponents extends FormHelpers {
         case _ => Valid
       }
     }),
-    "email" -> text
-      .verifying("error.email.over", _.length <= 132)
-      .verifying(combine(required("email"), Constraints.emailAddress))
+    "email" -> text.verifying(combine(Constraint { x: String =>
+      x match {
+        case "" => Invalid("error.email.required")
+        case e if e.length >= 132 => Invalid("error.email.over")
+        case _ => Valid
+      }
+    },
+      Constraints.emailAddress)
+    )
   )(ContactDetails.apply)(ContactDetails.unapply)
 
   lazy val startDate: Mapping[LocalDate] = tuple(
