@@ -77,7 +77,7 @@ class IdentifyController(val messagesApi: MessagesApi,
           cache.cache(request.internalId, RegistrationFormData(reg, identification.utr)) map { _ =>
             Redirect(routes.VerifyController.show())
           }
-        case _ => BadRequest(register.identify(form.withError("utr", "error.utr.no-record")))
+        case _ => BadRequest(register.identify(form.fill(identification).withError("utr", "error.utr.no-record")))
       }
     )
   }
