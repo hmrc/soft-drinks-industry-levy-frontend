@@ -1407,4 +1407,4 @@ file-return-before-deregistration.many-returns=Before you can cancel your regist
 file-return-before-deregistration.continue=Go to your account
 
 error.sdilref.empty=Enter the small producer’s reference number
-change.latency=Changes can take up to 15 working days to process.
+change.latency=<p>Changes can take up to 15 working days to process.</p>
