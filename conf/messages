@@ -262,7 +262,7 @@ error.position.over=Job title must be 155 characters or less
 error.phoneNumber.required=Enter your contact person’s telephone number
 error.phoneNumber.over=Telephone number must be 24 characters or less
 error.email.required=Enter your contact person’s email address
-error.email.over=Email address must be 132 characters
+error.email.over=Email address must be 132 characters or less
 error.phoneNumber.invalid=Enter a telephone number, like 01632 960999 or 07700 900999
 
 # Declaration
@@ -1407,4 +1407,4 @@ file-return-before-deregistration.many-returns=Before you can cancel your regist
 file-return-before-deregistration.continue=Go to your account
 
 error.sdilref.empty=Enter the small producer’s reference number
-change.latency=Changes can take up to 15 working days to process.
+change.latency=<p>Changes can take up to 15 working days to process.</p>

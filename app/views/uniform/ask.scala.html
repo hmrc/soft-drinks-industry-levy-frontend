@@ -38,7 +38,6 @@
         }
         @Messages(s"heading.$key")
     </h1>
-    <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
     @for(msg <- Messages.many(s"$key.paragraph")) {
         <div class="lede">
             <p>@Html(msg)</p>
@@ -65,7 +64,7 @@
             }
         }
 
-        <p>@helpText</p>
+        @helpText
 
         <button class="button" type="submit" id="continue-button">
         @Messages(Seq(s"$key.continue","sdil.common.save-continue"))
