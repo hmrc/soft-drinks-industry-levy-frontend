@@ -29,7 +29,7 @@
     java.text.NumberFormat.getNumberInstance.format(value)
 }
 
-@if(path.contains("packLarge") && !path.contains("deregDate")) {
+@if(path.contains("amount-produced") && !path.contains("deregDate")) {
     <h2 class="heading-medium">
     @Messages("variations.cya.activity-change")
     </h2>
@@ -295,7 +295,7 @@
     </table>
 }
 
-@if(path.contains("packSites") && newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
+@if(path.contains("change-packaging-sites") && newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
     <table class="check-your-answers">
         <caption class="heading-medium">@Messages("variations.cya.packsites.same")</caption>
         <tbody>
@@ -424,7 +424,7 @@
     </table>
 }
 
-@if(path.contains("warehouses") && newWarehouseSites.isEmpty && closedWarehouses.isEmpty && v.deregDate.isEmpty) {
+@if(path.contains("change-warehouses") && newWarehouseSites.isEmpty && closedWarehouses.isEmpty && v.deregDate.isEmpty) {
 
 
     <table class="check-your-answers">
@@ -449,7 +449,7 @@
     </table>
 }
 
-@if(path.contains("contact")) {
+@if(path.contains("contact-details")) {
 
     <table class="check-your-answers">
         <caption class="heading-medium">
@@ -519,7 +519,7 @@
     </table>
 }
 
-@if(path.contains("businessAddress")) {
+@if(path.contains("business-address")) {
 
     <table class="check-your-answers">
         <caption class="heading-medium">
@@ -549,7 +549,7 @@
 
 }
 
-@if(path.contains("deregDate") || path.contains("reason")) {
+@if(path.contains("cancel-registration-date") || path.contains("cancel-registration-reason")) {
 
     <h2 class="heading-medium">
         @Messages("variations.cya.deregistration")

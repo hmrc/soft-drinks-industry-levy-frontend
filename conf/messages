@@ -557,34 +557,34 @@ error.email=Enter a real email address, like name@example.com
 error.radio-form.choose-option=Choose an option
 error.radio-form.choose-option.=Choose an option
 error.radio-form.choose-option.continue=Select an option to continue
-error.radio-form.choose-option.changeType=Select what you need to do
+error.radio-form.choose-option.select-change=Select what you need to do
 error.radio-form.choose-option.returnPeriod=Select which return you need to correct
 error.radio-form.choose-option.repayment=Select how you want the credit to be repaid
 error.radio-form.choose-option.organisation-type=Select the option that best describes your business
 error.radio-form.choose-option.producer=Select how many litres of your own brands of liable drinks have been \
   packaged globally in the past 12 months
-error.radio-form.choose-option.packLarge=Select how many litres of your own brands of liable drinks have been \
+error.radio-form.choose-option.amount-produced=Select how many litres of your own brands of liable drinks have been \
   packaged globally in the past 12 months
 error.radio-form.choose-option.copacked=Select yes if you use any third parties in the UK to package liable drinks on \
   your behalf
-error.radio-form.choose-option.useCopacker=Select yes if you use any third parties in the UK to package liable drinks on \
+error.radio-form.choose-option.third-party-packagers=Select yes if you use any third parties in the UK to package liable drinks on \
   your behalf
 error.radio-form.choose-option.package-own-uk=Select yes if you operate any packaging sites in the UK to package \
   liable drinks for brands you own
-error.radio-form.choose-option.packOpt=Select yes if you operate any packaging sites in the UK to package \
+error.radio-form.choose-option.packaging-site=Select yes if you operate any packaging sites in the UK to package \
   liable drinks for brands you own
 error.radio-form.choose-option.package-copack=Select yes if you operate any packaging sites in the UK to package \
   liable drinks as a third party or contract packer
-error.radio-form.choose-option.copacker=Select yes if you operate any packaging sites in the UK to package \
+error.radio-form.choose-option.contract-packing=Select yes if you operate any packaging sites in the UK to package \
   liable drinks as a third party or contract packer
 error.radio-form.choose-option.import=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
-error.radio-form.choose-option.importer=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
+error.radio-form.choose-option.imports=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
 error.radio-form.choose-option.pack-at-business-address=Select yes if your registered business address is a UK\
    packaging site that you operate to produce liable drinks
-error.radio-form.choose-option.production-sites=Select yes if you need to add another packaging site
+error.radio-form.choose-option.change-production-sites=Select yes if you need to add another packaging site
 error.radio-form.choose-option.ask-secondary-warehouses=Select yes if you want to register any of the UK warehouses \
   you use to store liable drinks
-error.radio-form.choose-option.secondary-warehouses=Select yes if you want to register another warehouse
+error.radio-form.choose-option.change-secondary-warehouses=Select yes if you want to register another warehouse
 error.radio-form.choose-option.own-brands-packaged-at-own-sites=Select yes if you are reporting your own brands of \
   liable drink you have packaged at UK sites you operate
 error.radio-form.choose-option.packaged-as-a-contract-packer=Select yes if you are reporting liable drink you have \
@@ -739,18 +739,18 @@ complete.subheading=We have received your application to register {0} for the So
 complete.your.updates=Your application to register for the Soft Drinks Industry Levy was sent on {0} at {1}.
 
 # Uniform variation process
-heading.changeType=What do you need to do?
-changeType.option.sites=Update contact, packaging site or warehouse details
-changeType.option.activity=Change our business activity
-changeType.option.deregister=Deregister from the Soft Drinks Industry Levy
-changeType.continue=Continue
+heading.select-change=What do you need to do?
+select-change.option.sites=Update contact, packaging site or warehouse details
+select-change.option.activity=Change our business activity
+select-change.option.deregister=Deregister from the Soft Drinks Industry Levy
+select-change.continue=Continue
 
-heading.contact-change-type=What do you need to change?
-contact-change-type.hint=Select all that apply
-contact-change-type.option.Sites=Add or remove packaging sites or warehouse addresses
-contact-change-type.option.ContactPerson=Update your contact person for the Soft Drinks Industry Levy
-contact-change-type.option.ContactAddress=Update your registered business address for the Soft Drinks Industry Levy
-contact-change-type.continue=Continue
+heading.change-registered-details=What do you need to change?
+change-registered-details.hint=Select all that apply
+change-registered-details.option.Sites=Add or remove packaging sites or warehouse addresses
+change-registered-details.option.ContactPerson=Update your contact person for the Soft Drinks Industry Levy
+change-registered-details.option.ContactAddress=Update your registered business address for the Soft Drinks Industry Levy
+change-registered-details.continue=Continue
 
 heading.ask-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
 heading.ask-secondary-warehouses-in-return=Do you want to register any UK warehouses you use to store liable drinks?
@@ -762,32 +762,32 @@ heading.first-warehouse=Enter the UK warehouse details
 ask-secondary-warehouses.help.header=Why should I register a warehouse?
 ask-secondary-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
   the warehouses you use to store them.
-heading.add-warehouses=Enter your warehouse details
-heading.add-secondary-warehouses=Enter your UK warehouse details
-heading.remove-warehouses=Are you sure you want to remove this warehouse?
-heading.remove-secondary-warehouses=Are you sure you want to remove this warehouse?
-remove-warehouses.continue=Remove
-remove-secondary-warehouses.continue=Remove
-heading.add-packSites=Enter your packaging site details
-heading.add-production-sites=Enter your UK packaging site details
+heading.add-change-warehouses=Enter your warehouse details
+heading.add-change-secondary-warehouses=Enter your UK warehouse details
+heading.remove-warehouse=Are you sure you want to remove this warehouse?
+heading.remove-secondary-warehouse=Are you sure you want to remove this warehouse?
+remove-warehouse.continue=Remove
+remove-secondary-warehouse.continue=Remove
+heading.add-change-packaging-sites=Enter your packaging site details
+heading.add-change-production-sites=Enter your UK packaging site details
 heading.first-production-site=Enter your UK packaging site details
 first-production-site.paragraph=Only add the addresses of the packaging sites you operate
-add-packSites.paragraph=Only add the addresses of the packaging sites you operate
-add-production-sites.paragraph=Only add the addresses of the packaging sites you operate
-heading.remove-packSites=Are you sure you want to remove this packaging site?
-heading.remove-production-sites=Are you sure you want to remove this packaging site?
-remove-packSites.continue=Remove
-remove-production-sites.continue=Remove
+add-packaging-site.paragraph=Only add the addresses of the packaging sites you operate
+add-change-production-sites.paragraph=Only add the addresses of the packaging sites you operate
+heading.remove-packaging-site=Are you sure you want to remove this packaging site?
+heading.remove-production-site=Are you sure you want to remove this packaging site?
+remove-packaging-site.continue=Remove
+remove-production-site.continue=Remove
 
-heading.packLarge=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
-packLarge.lead=This includes brands you own or have the rights to manufacture.
-packLarge.option.large=1 million litres or more
-packLarge.option.small=Less than 1 million litres
-packLarge.option.not=None
-packLarge.help.header.1=What does ‘packaged’ mean?
-packLarge.help.1=A liable drink is packaged if it is bottled, canned or otherwise packaged so it is ready to either drink or dilute.
-packLarge.help.header.2=What is a liable drink?
-packLarge.help.2=<h2>Liable drinks</h2>\
+heading.amount-produced=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
+amount-produced.lead=This includes brands you own or have the rights to manufacture.
+amount-produced.option.large=1 million litres or more
+amount-produced.option.small=Less than 1 million litres
+amount-produced.option.not=None
+amount-produced.help.header.1=What does ‘packaged’ mean?
+amount-produced.help.1=A liable drink is packaged if it is bottled, canned or otherwise packaged so it is ready to either drink or dilute.
+amount-produced.help.header.2=What is a liable drink?
+amount-produced.help.2=<h2>Liable drinks</h2>\
 <p>A drink is liable if it meets all the following conditions:</p>\
 <ul class="list list-bullet">\
 <li>it has a content of 1.2% alcohol by volume or less</li>\
@@ -808,25 +808,25 @@ packLarge.help.2=<h2>Liable drinks</h2>\
 <li>it is infant formula, follow-on formula, baby foods, formulated food intended as a\
    total diet replacement or dietary food used for special medical purposes</li></ul>
 
-production-sites.option.add=Yes
-production-sites.option.done=No
-secondary-warehouses.option.add=Yes
-secondary-warehouses.option.done=No
+change-production-sites.option.add=Yes
+change-production-sites.option.done=No
+change-secondary-warehouses.option.add=Yes
+change-secondary-warehouses.option.done=No
 
-production-sites.edit=Edit
+change-production-sites.edit=Edit
 ask-secondary-warehouses.edit=Change
-secondary-warehouses.edit=Edit
+change-secondary-warehouses.edit=Edit
 packSites.edit=Edit
 warehouses.edit=Edit
 small-producer-details.edit=Change
-production-sites.delete=Remove
+change-production-sites.delete=Remove
 heading.pack-at-business-address=Is your registered business address a UK packaging site that you operate to produce liable drinks?
 heading.pack-at-business-address-in-return=Is this address a UK packaging site you operate to produce liable drinks?
 pack-at-business-address-in-return.help.header=Why we need these details
 pack-at-business-address-in-return.help=Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate
 
-heading.packOpt=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
-packOpt.inner-heading=How many litres will you package in the next 12 months?
+heading.packaging-site=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
+packaging-site.inner-heading=How many litres will you package in the next 12 months?
 
 heading.packQty=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
 packQty.inner-heading=How many litres will you package in the next 12 months?
@@ -834,53 +834,53 @@ packQty.inner-heading=How many litres will you package in the next 12 months?
 packQty.lower=Litres in the low band
 packQty.higher=Litres in the high band
 
-heading.copacker=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
-copacker.inner-heading=How many litres will you package in the next 12 months?
+heading.contract-packing=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
+contract-packing.inner-heading=How many litres will you package in the next 12 months?
 
-heading.importer=Do you bring liable drinks into the UK from anywhere outside of the UK?
-importer.inner-heading=How many litres will you bring into the UK in the next 12 months?
+heading.imports=Do you bring liable drinks into the UK from anywhere outside of the UK?
+imports.inner-heading=How many litres will you bring into the UK in the next 12 months?
 
-heading.useCopacker=Do you use any third parties in the UK to package liable drinks on your behalf?
+heading.third-party-packagers=Do you use any third parties in the UK to package liable drinks on your behalf?
 
-heading.packSites=Change your UK packaging site details
-heading.multi.packSites=Change your UK packaging site details
-heading.production-sites=Your packaging sites
-heading.multi.production-sites=Your packaging sites
-production-sites.lead=Tell us about the packaging sites you operate in the UK to package liable drinks
-production-sites.multi.lead=You have added {0} packaging site{1}
-production-sites.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
+heading.change-packaging-sites=Change your UK packaging site details
+heading.multi.change-packaging-sites=Change your UK packaging site details
+heading.change-production-sites=Your packaging sites
+heading.multi.change-production-sites=Your packaging sites
+change-production-sites.lead=Tell us about the packaging sites you operate in the UK to package liable drinks
+change-production-sites.multi.lead=You have added {0} packaging site{1}
+change-production-sites.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
   drinks. You must have at least one registered packaging site.
-production-sites.list-control.heading=Do you need to add another packaging site?
-packSites.paragraph=Only add the addresses of UK packaging sites you operate. \
+change-production-sites.list-control.heading=Do you need to add another packaging site?
+change-packaging-sites.paragraph=Only add the addresses of UK packaging sites you operate. \
   You must have at least one registered packaging site.
-heading.edit-production-sites=Enter your UK packaging site details
-edit-production-sites.paragraph=Only add the addresses of UK packaging sites you operate.
-packSites.list-control.heading=Do you want to add another packaging site?
-packSites.list-control.lead=You must tell us about all your packaging sites
-packSites.option.add=Yes
-packSites.option.done=No
-heading.edit-packSites=Enter your UK packaging site details
+heading.edit-production-site=Enter your UK packaging site details
+edit-production-site.paragraph=Only add the addresses of UK packaging sites you operate.
+change-packaging-sites.list-control.heading=Do you want to add another packaging site?
+change-packaging-sites.list-control.lead=You must tell us about all your packaging sites
+change-packaging-sites.option.add=Yes
+change-packaging-sites.option.done=No
+heading.edit-packaging-site=Enter your UK packaging site details
 
-heading.secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks? 
-heading.multi.secondary-warehouses=Your registered UK warehouses
-secondary-warehouses.lead=
-secondary-warehouses.multi.lead=You have added {0} warehouse{1}
-secondary-warehouses.list-control.heading=Do you want to add another warehouse?
-warehouses.help.header=Why should I register a warehouse?
-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
+heading.change-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks? 
+heading.multi.change-secondary-warehouses=Your registered UK warehouses
+change-secondary-warehouses.lead=
+change-secondary-warehouses.multi.lead=You have added {0} warehouse{1}
+change-secondary-warehouses.list-control.heading=Do you want to add another warehouse?
+change-warehouses.help.header=Why should I register a warehouse?
+change-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
   if you register the warehouses you use to store them.
-heading.edit-secondary-warehouses=Enter your UK warehouse details
-heading.multi.warehouses=Change your UK warehouse details
-heading.warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
-warehouses.list-control.heading=Do you want to add another warehouse?
-warehouses.option.add=Yes
-warehouses.option.done=No
+heading.edit-secondary-warehouse=Enter your UK warehouse details
+heading.multi.change-warehouses=Change your UK warehouse details
+heading.change-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+change-warehouses.list-control.heading=Do you want to add another warehouse?
+change-warehouses.option.add=Yes
+change-warehouses.option.done=No
 
 heading.contact=Update your contact person for the Soft Drinks Industry Levy
-contact.fullName=Full name
-contact.position=Job title
-contact.phoneNumber=Telephone number
-contact.email=Email address
+#contact-details.fullName=Full name
+#contact-details.position=Job title
+#contact-details.phoneNumber=Telephone number
+#contact-details.email=Email address
 
 heading.updatedBusinessDetails_orgName=Organisation Name
 updatedBusinessDetails_orgName.fieldlabel=Organisation Name
@@ -894,7 +894,7 @@ variationDone.what-happens-next=You do not need to do anything else. We will upd
 you provided. We will send you confirmation that the changes have been made.
 deregDone.title=Cancellation request sent
 deregDone.subtitle=We have received your request to cancel your Soft Drinks Industry Levy registration
-heading.checkyouranswers.dereg=Check your answers before sending your update
+heading.check-answers.dereg=Check your answers before sending your update
 
 dereg.what-happens-next.p1=You need to send a final return for the period {0} to {1}, and make any outstanding payments.
 dereg.what-happens-next.p2=You will be able to send the final return from {0} until {1}.
@@ -935,14 +935,15 @@ sdil.time-out.p1=We have saved your answers
 sdil.variation.anotherChange=If you need to make another change,
 sdil.variation.anotherChangeLink=go back and start again
 
-heading.deregister.reason=Why are you deregistering from the Soft Drinks Industry Levy?
-heading.reason.orgName=
-deregister.reason.label=Reason for deregistering
-heading.deregDate=What date are you cancelling your registration from?
-heading.deregDate.orgName=
-error.deregDate.nopast=Deregistration date cannot be in the past
-error.deregDate.nofuture=Deregistration date cannot be more than 14 days in the future
-error.reason.empty=Enter why you need to cancel your registration
+#dereg
+heading.deregister.cancel-registration-reason=Why are you deregistering from the Soft Drinks Industry Levy?
+heading.cancel-registration-reason.orgName=
+deregister.cancel-registration-reason.label=Reason for deregistering
+error.cancel-registration-reason.empty=Enter why you need to cancel your registration
+heading.cancel-registration-date=What date are you cancelling your registration from?
+heading.cancel-registration-date.orgName=
+error.cancel-registration-date.nopast=Deregistration date cannot be in the past
+error.cancel-registration-date.nofuture=Deregistration date cannot be more than 14 days in the future
 
 variations.cya.packLarge=Amount of own brand liable drink produced in the past 12 months
 variations.cya.packLarge.large=1 million litres or more
@@ -1022,22 +1023,22 @@ variations.cya.false=No
 variations.cya.noChange=The answers you gave are the same as the information you already have registered. If your \
   answers are accurate you do not need to do anything and can <a href="{0}"> view your registered details</a>. Otherwise, you need to change your answers.
 variations.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
-packSites.error.items.tooMany=[Too many sites]
-packSites.error.items.tooFew=[You must have at least one packaging site]
+change-packaging-sites.error.items.tooMany=[Too many sites]
+change-packaging-sites.error.items.tooFew=[You must have at least one packaging site]
 
-heading.edit-warehouses=Enter your UK warehouse details
+heading.edit-warehouse=Enter your UK warehouse details
 
 variations.cya.dereg=Deregistration
 variations.cya.reason=Reason
 variations.cya.deregDate=Date
 
-heading.reason=Why do you need to cancel your registration?
-reason.label=Reason for deregistering
-reason.hint=Enter a maximum of 255 characters
+heading.cancel-registration-reason=Why do you need to cancel your registration?
+cancel-registration-reason.label=Reason for deregistering
+cancel-registration-reason.hint=Enter a maximum of 255 characters
 
-heading.suggestDereg=You need to deregister
-suggestDereg.body=Based on your answers, you are a small producer who does not use a third party to package liable drinks. This means you can deregister from the Soft Drinks Industry Levy.
-suggestDereg.continue=Deregister
+heading.suggest-deregistration=You need to deregister
+suggest-deregistration.body=Based on your answers, you are a small producer who does not use a third party to package liable drinks. This means you can deregister from the Soft Drinks Industry Levy.
+suggest-deregistration.continue=Deregister
 
 doubt1=If you do not think this is right you need to
 doubt2=go back and change your answers
@@ -1046,11 +1047,11 @@ heading.removePackSites=[Remove your packing sites?]
 removePackSites.body=[Based on your answers, you are no longer packing any soft drinks and therefore will not be operating any packing sites. In continuing all packing sites will be removed.]
 removePackSites.continue=[Remove all packing sites]
 
-heading.businessAddress=Update your registered business address for the Soft Drinks Industry Levy
+heading.business-address=Update your registered business address for the Soft Drinks Industry Levy
 
-heading.checkyouranswers=Check the updates you have made
-heading.checkyouranswers.orgName=
-checkyouranswers.continue=Confirm updates and send
+heading.check-answers=Check the updates you have made
+heading.check-answers.orgName=
+check-answers.continue=Confirm updates and send
 
 # Returns
 error.empty=Number of litres must be 1 or more
@@ -1288,7 +1289,7 @@ how-to-pay.payment-ref=payment reference: {0}
 how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs payments usually take 3 working days. \
     Make sure your payment will reach HM Revenue and Customs’ (HMRC) bank account by the deadline.
 
-changeType.option.returns=Correct an error in a previous return
+select-change.option.returns=Correct an error in a previous return
 heading.returnPeriod=Which return do you need to correct?
 returnPeriod.help.header=I can’t find the return I’m looking for
 returnPeriod.help=If you did not file a return then it will not be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.

@@ -77,7 +77,7 @@ class VariationsController(
 
   private def contactUpdate(
     data: RegistrationVariationData
-  ): WebMonad[RegistrationVariationData] = {
+  )(implicit extraMessages: ExtraMessages): WebMonad[RegistrationVariationData] = {
 
     sealed trait ContactChangeType extends EnumEntry
     object ContactChangeType extends Enum[ContactChangeType] {
@@ -90,7 +90,7 @@ class VariationsController(
     def askContactChangeType: WebMonad[Set[ContactChangeType]] =
       if (data.isVoluntary) {
         askSet(
-          "contact-change-type",
+          "change-registered-details",
           Set(ContactChangeType.ContactPerson, ContactChangeType.ContactAddress),
           minSize = 1,
           None,
@@ -98,7 +98,7 @@ class VariationsController(
         )
       } else {
         askSet(
-          "contact-change-type",
+          "change-registered-details",
           ContactChangeType.values.toSet,
           minSize = 1,
           None,
@@ -107,26 +107,32 @@ class VariationsController(
     }
 
     import ContactChangeType._
+
+    val extraMessages = ExtraMessages(
+      messages =
+        Map("heading.contact-details" -> Messages("heading.contact"))
+    )
+
     for {
 
       change          <- askContactChangeType
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("packSites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly, implicitly), default = data
+        manyT("change-packaging-sites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, extraMessages, implicitly), default = data
           .updatedProductionSites.toList, min = 1, editSingleForm = Some((packagingSiteMapping, packagingSiteForm))) emptyUnless (data.producer.isLarge.contains(true) || data.copackForOthers)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
-        manyT("warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly, implicitly), default = data
+        manyT("change-warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, extraMessages, implicitly), default = data
           .updatedWarehouseSites.toList, editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
       } else data.updatedWarehouseSites.pure[WebMonad]
 
       contact         <- if (change.contains(ContactPerson)) {
-        ask(contactDetailsMapping, "contact", data.updatedContactDetails)
+        ask(contactDetailsMapping, "contact-details", data.updatedContactDetails)(implicitly, implicitly, extraMessages, implicitly)
       } else data.updatedContactDetails.pure[WebMonad]
 
       businessAddress <- if (change.contains(ContactAddress)) {
-        ask(addressMapping, "businessAddress", default = data.updatedBusinessAddress)
+        ask(addressMapping, "business-address", default = data.updatedBusinessAddress)(implicitly, implicitly, extraMessages, implicitly)
       } else data.updatedBusinessAddress.pure[WebMonad]
 
     } yield data.copy (
@@ -145,21 +151,21 @@ class VariationsController(
     val litres = litreagePair.nonEmpty("error.litreage.zero")
 
     for {
-      packLarge                   <- askOneOf("packLarge", ProducerType.values.toList) map {
+      packLarge                   <- askOneOf("amount-produced", ProducerType.values.toList) map {
                                         case Large => Some(true)
                                         case Small => Some(false)
                                         case _ => None
                                       }
-      useCopacker                 <- ask(bool("useCopacker"),"useCopacker", data.usesCopacker) when packLarge.contains(false)
-      packageOwn                  <- askOption(litreagePair.nonEmpty, "packOpt")(approxLitreageForm, implicitly, implicitly) when packLarge.nonEmpty
-      copacks                     <- askOption(litreagePair.nonEmpty, "copacker")(approxLitreageForm, implicitly, implicitly)
-      imports                     <- askOption(litreagePair.nonEmpty, "importer")(approxLitreageForm, implicitly, implicitly)
+      useCopacker                 <- ask(bool("third-party-packagers"),"third-party-packagers", data.usesCopacker) when packLarge.contains(false)
+      packageOwn                  <- askOption(litreagePair.nonEmpty, "packaging-site")(approxLitreageForm, implicitly, implicitly) when packLarge.nonEmpty
+      copacks                     <- askOption(litreagePair.nonEmpty, "contract-packing")(approxLitreageForm, implicitly, implicitly)
+      imports                     <- askOption(litreagePair.nonEmpty, "imports")(approxLitreageForm, implicitly, implicitly)
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
       packer                      =  (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
       variation                   <- if (shouldDereg)
-                                       tell("suggestDereg", uniform.confirmOrGoBackTo("suggestDereg", "packLarge")) >> deregisterUpdate(data)
+                                       tell("suggest-deregistration", uniform.confirmOrGoBackTo("suggest-deregistration", "amount-produced")) >> deregisterUpdate(data)
                                      else {
                                         val extraMessages = ExtraMessages(
                                           messages = Map(
@@ -200,23 +206,23 @@ class VariationsController(
   ): WebMonad[RegistrationVariationData] = {
     val extraMessages = ExtraMessages(
       messages =
-        Map("heading.reason.orgName" -> s"${data.original.orgName}",
-            "heading.deregDate.orgName" -> s"${data.original.orgName}"))
+        Map("heading.cancel-registration-reason.orgName" -> s"${data.original.orgName}",
+            "heading.cancel-registration-date.orgName" -> s"${data.original.orgName}"))
 
     for {
       reason <- askBigText(
-        "reason",
+        "cancel-registration-reason",
         constraints = List(("error.deregReason.tooLong", _.length <= 255)),
-        errorOnEmpty = "error.reason.empty")(extraMessages)
+        errorOnEmpty = "error.cancel-registration-reason.empty")(extraMessages)
 
       deregDate <- ask(startDate
         .verifying(
-          "error.deregDate.nopast",
+          "error.cancel-registration-date.nopast",
           _ >= LocalDate.now)
         .verifying(
-          "error.deregDate.nofuture",
+          "error.cancel-registration-date.nofuture",
           _ < LocalDate.now.plusDays(15)),
-        "deregDate")(implicitly, implicitly, extraMessages, implicitly)
+        "cancel-registration-date")(implicitly, implicitly, extraMessages, implicitly)
     } yield data.copy(
       reason = reason.some,
       deregDate = deregDate.some
@@ -239,8 +245,9 @@ class VariationsController(
       returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
       onlyReturns = subscription.deregDate.nonEmpty
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
-      changeType <- askOneOf("changeType", changeTypes, helpText = Html(Messages("change.latency")).some) when !onlyReturns
+      changeType <- askOneOf("select-change", changeTypes, helpText = Html(Messages("change.latency")).some) when !onlyReturns
       variation <- changeType match {
+          //TODO Ask Matt why this None is here
         case None | Some(ChangeType.Returns) =>
           chooseReturn(subscription, sdilRef)
         case Some(ChangeType.Sites) => contactUpdate(base)
@@ -254,16 +261,16 @@ class VariationsController(
         messages =
         if(variation.deregDate.nonEmpty) {
           Map(
-            "heading.checkyouranswers" -> Messages("heading.checkyouranswers.dereg"),
-            "heading.checkyouranswers.orgName" -> s"${subscription.orgName},",
+            "heading.check-answers" -> Messages("heading.check-answers.dereg"),
+            "heading.check-answers.orgName" -> s"${subscription.orgName},",
             "variationDone.title" -> Messages("deregDone.title"),
             "variationDone.subheading" -> Messages("deregDone.subtitle")
           )
         } else {
-          Map("heading.checkyouranswers.orgName" -> s"${subscription.orgName}")
+          Map("heading.check-answers.orgName" -> s"${subscription.orgName}")
         }
       )
-      _ <- checkYourRegAnswers("checkyouranswers", variation, path)(extraMessages)
+      _ <- checkYourRegAnswers("check-answers", variation, path)(extraMessages)
       submission = Convert(variation)
       _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
       _ <- clear
@@ -334,7 +341,7 @@ class VariationsController(
             messages = Map(
               "heading.check-your-variation-answers" -> s"${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return details",
               "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return",
-              "heading.checkyouranswers.orgName" -> s"${subscription.orgName}"
+              "heading.check-answers.orgName" -> s"${subscription.orgName}"
             ))
 
       isSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, returnPeriod))
