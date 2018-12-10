@@ -1075,7 +1075,7 @@ exemptions-for-small-producers.help=A business is a small producer if it:\
   <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
   </ul>
 heading.small-producer-details=Your small producer exemptions
-error.alias.tooLong=The small producer name must be 160 characters or less
+error.alias.tooLong=Small producer name must be 160 characters or less
 heading.multi.small-producer-details=You have added {0} small producer{1}
 small-producer-details.list-control.heading=Do you want to add another small producer?
 heading.edit-small-producer-details=Enter the registered small producer’s details
