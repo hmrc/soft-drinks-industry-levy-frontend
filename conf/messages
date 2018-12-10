@@ -990,6 +990,7 @@ variations.cya.deregistration.date=Effective date
 variations.cya.deregistration.change.date=Change <span class="visually-hidden">effective date</span>
 
 error.deregReason.tooLong=Deregistration reason must be 255 characters or less
+error.return-variation-reason.tooLong=Reason for correcting the return must be 255 characters or less
 day=Day
 month=Month
 year=Year
@@ -1075,6 +1076,7 @@ exemptions-for-small-producers.help=A business is a small producer if it:\
   <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
   </ul>
 heading.small-producer-details=Your small producer exemptions
+error.alias.tooLong=Small producer name must be 160 characters or less
 heading.multi.small-producer-details=You have added {0} small producer{1}
 small-producer-details.list-control.heading=Do you want to add another small producer?
 heading.edit-small-producer-details=Enter the registered small producer’s details
