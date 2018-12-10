@@ -494,7 +494,7 @@ trait SdilWMController extends WebMonadController
     sdilConnector: SoftDrinksIndustryLevyConnector,
     period: ReturnPeriod)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = {
     mapping(
-      "alias" -> optional(text),
+      "alias" -> optional(text).verifying("error.alias.tooLong", _.getOrElse("").length >= 160),
       "sdilRef" -> text.verifying(Constraint { x: String =>
         x match {
           case a if a.isEmpty => Invalid("error.sdilref.empty")
