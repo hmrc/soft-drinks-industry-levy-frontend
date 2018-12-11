@@ -50,10 +50,12 @@
                     </tr>
                 }
 
-            <br/>
             <p>
-                <button name="@key" value="@key" id="@key" class="link-button">
-                    @Messages("sdil.updateBusinessAddresses.link.1")<span class="visuallyhidden">@Messages("sdil.updateBusinessAddresses.link.1")</span>
+                <button name="@key" value="@key" class="link-button margin-top-5-percent">
+                    @Messages("sdil.updateBusinessAddresses.link.1")
+                        <span class="visuallyhidden">
+                            @Messages("sdil.updateBusinessAddresses.link.1")
+                        </span>
                 </button>
             </p>
 
@@ -68,33 +70,39 @@
                 @declaration_details_table_row("service-page", "email", None, s"${subscription.contact.email}")
             }
 
-            <br/>
             <p>
-                <button name="@key" value="@key" id="@key" class="link-button">
-                    @Messages("sdil.updateBusinessAddresses.link.2")<span class="visuallyhidden">@Messages("sdil.updateBusinessAddresses.link.2")</span>
+                <button name="@key" value="@key" class="link-button margin-top-5-percent">
+                    @Messages("sdil.updateBusinessAddresses.link.2")
+                    <span class="visuallyhidden">
+                        @Messages("sdil.updateBusinessAddresses.link.2")
+                    </span>
                 </button>
             </p>
 
             @if(subscription.productionSites.nonEmpty) {
-                <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.packaging.title")</h2>
+                <h2 class="heading-medium return-button-padding">@Messages("sdil.updateBusinessAddresses.packaging.title")</h2>
                 @service_sites(subscription.productionSites, "packaging")
-            <br/>
-            <p>
-                <button name="@key" value="@key" id="@key" class="link-button">
-                    @Messages("sdil.updateBusinessAddresses.link.3")<span class="visuallyhidden">@Messages("sdil.updateBusinessAddresses.link.3")</span>
-                </button>
-            </p>
+                <p>
+                    <button name="@key" value="@key" class="link-button margin-top-5-percent">
+                        @Messages("sdil.updateBusinessAddresses.link.3")
+                        <span class="visuallyhidden">
+                            @Messages("sdil.updateBusinessAddresses.link.3")
+                        </span>
+                    </button>
+                </p>
             }
 
             @if(subscription.warehouseSites.nonEmpty) {
-                <h2 class="heading-medium">@Messages("sdil.updateBusinessAddresses.warehouses.title")</h2>
+                <h2 class="heading-medium return-button-padding">@Messages("sdil.updateBusinessAddresses.warehouses.title")</h2>
                 @service_sites(subscription.warehouseSites, "warehouse")
-            <br/>
-            <p>
-                <button name="@key" value="@key" id="@key" class="link-button">
-                    @Messages("sdil.updateBusinessAddresses.link.4")<span class="visuallyhidden">@Messages("sdil.updateBusinessAddresses.link.4")</span>
-                </button>
-            </p>
+                <p>
+                    <button name="@key" value="@key" class="link-button margin-top-5-percent">
+                        @Messages("sdil.updateBusinessAddresses.link.4")
+                        <span class="visuallyhidden">
+                            @Messages("sdil.updateBusinessAddresses.link.4")
+                        </span>
+                    </button>
+                </p>
             }
         </div>
     </div>

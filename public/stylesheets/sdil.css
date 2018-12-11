@@ -210,6 +210,10 @@ details .address.progressive-reveal {
     padding-top: 4%
 }
 
+.margin-top-5-percent {
+    margin-top: 4%;
+}
+
 .no-padding-right {
     padding-right: 0;
 }

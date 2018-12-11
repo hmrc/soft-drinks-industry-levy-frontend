@@ -189,7 +189,7 @@
                 @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
 
                 <tr>
-                    <td scope="row">@Messages("sdil.verify.address")</td>
+                    <td>@Messages("sdil.verify.address")</td>
                     <td>
                         @address.nonEmptyLines.init.map { l =>
                             @l,<br/>
