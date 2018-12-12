@@ -58,9 +58,7 @@
 
         @for((help,title) <- Messages.many(s"$key.help") zip Messages.many(s"$key.help.header")) {
             @details(title) {
-                <p>
-                    <span>@Html(help)</span>
-                </p>
+                <span>@Html(help)</span>
             }
         }
 
