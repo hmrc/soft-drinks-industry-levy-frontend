@@ -247,13 +247,12 @@ class VariationsController(
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
       changeType <- askOneOf("select-change", changeTypes, helpText = Html(Messages("change.latency")).some) when !onlyReturns
       variation <- changeType match {
-          //TODO Ask Matt why this None is here
         case None | Some(ChangeType.Returns) =>
           chooseReturn(subscription, sdilRef)
         case Some(ChangeType.Sites) => contactUpdate(base)
         case Some(ChangeType.Activity) => activityUpdate(base)
-        case Some(ChangeType.Deregister) if returnPeriods.isEmpty => deregisterUpdate(base)
-        case Some(ChangeType.Deregister) if returnPeriods.nonEmpty => fileReturnsBeforeDereg(returnPeriods, base)
+        case Some(ChangeType.Deregister) if returnPeriods.isEmpty || subscription.activity.voluntaryRegistration => deregisterUpdate(base)
+        case Some(ChangeType.Deregister) if returnPeriods.nonEmpty || !subscription.activity.voluntaryRegistration => fileReturnsBeforeDereg(returnPeriods, base)
       }
 
       path <- getPath
