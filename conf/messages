@@ -742,6 +742,9 @@ ask-secondary-warehouses.help=You can delay the point you will have to report li
   the warehouses you use to store them.
 heading.add-change-warehouses=Enter your warehouse details
 heading.add-change-secondary-warehouses=Enter your UK warehouse details
+change-secondary-warehouses.help.header=Why should I register a warehouse?
+change-secondary-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
+  the warehouses you use to store them.
 heading.remove-warehouse=Are you sure you want to remove this warehouse?
 heading.remove-secondary-warehouse=Are you sure you want to remove this warehouse?
 remove-warehouse.continue=Remove

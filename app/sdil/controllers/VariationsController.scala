@@ -163,7 +163,7 @@ class VariationsController(
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
-      packer                      =  (packLarge.contains(true) && packageOwn.contains(true)) || !copacks.isEmpty
+      packer                      =  (packLarge.contains(true) && packageOwn.nonEmpty) || !copacks.isEmpty
       variation                   <- if (shouldDereg)
                                        tell("suggest-deregistration", uniform.confirmOrGoBackTo("suggest-deregistration", "amount-produced")) >> deregisterUpdate(data)
                                      else {
