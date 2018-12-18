@@ -251,8 +251,12 @@ class VariationsController(
           chooseReturn(subscription, sdilRef)
         case Some(ChangeType.Sites) => contactUpdate(base)
         case Some(ChangeType.Activity) => activityUpdate(base)
-        case Some(ChangeType.Deregister) if returnPeriods.isEmpty || subscription.activity.voluntaryRegistration => deregisterUpdate(base)
-        case Some(ChangeType.Deregister) if returnPeriods.nonEmpty || !subscription.activity.voluntaryRegistration => fileReturnsBeforeDereg(returnPeriods, base)
+        case Some(ChangeType.Deregister) if
+          returnPeriods.isEmpty || (returnPeriods.isEmpty && subscription.activity.voluntaryRegistration) =>
+            deregisterUpdate(base)
+        case Some(ChangeType.Deregister) if
+          returnPeriods.nonEmpty || (returnPeriods.nonEmpty && !subscription.activity.voluntaryRegistration) =>
+            fileReturnsBeforeDereg(returnPeriods, base)
       }
 
       path <- getPath
