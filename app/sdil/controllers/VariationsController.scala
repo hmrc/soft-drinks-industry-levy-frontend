@@ -245,15 +245,17 @@ class VariationsController(
       returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
       onlyReturns = subscription.deregDate.nonEmpty
       changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
+      isVoluntary = subscription.activity.voluntaryRegistration
       changeType <- askOneOf("select-change", changeTypes, helpText = Html(Messages("change.latency")).some) when !onlyReturns
       variation <- changeType match {
-          //TODO Ask Matt why this None is here
         case None | Some(ChangeType.Returns) =>
           chooseReturn(subscription, sdilRef)
         case Some(ChangeType.Sites) => contactUpdate(base)
         case Some(ChangeType.Activity) => activityUpdate(base)
-        case Some(ChangeType.Deregister) if returnPeriods.isEmpty => deregisterUpdate(base)
-        case Some(ChangeType.Deregister) if returnPeriods.nonEmpty => fileReturnsBeforeDereg(returnPeriods, base)
+        case Some(ChangeType.Deregister) if returnPeriods.isEmpty || isVoluntary =>
+          deregisterUpdate(base)
+        case Some(ChangeType.Deregister) if returnPeriods.nonEmpty || !isVoluntary =>
+          fileReturnsBeforeDereg(returnPeriods, base)
       }
 
       path <- getPath
