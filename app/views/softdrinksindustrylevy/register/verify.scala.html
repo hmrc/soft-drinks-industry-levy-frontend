@@ -33,7 +33,7 @@
     
     @error_summary(verifyForm)
 
-    <h1 class="heading-large">
+    <h1 class="heading-large" aria-hidden="true">
     @verifyTitle
     </h1>
 
@@ -76,7 +76,9 @@
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
                 '_groupClass -> "form-field-group",
-                '_dataTargetTrue -> "something"
+                '_dataTargetTrue -> "something",
+                '_legend -> verifyTitle,
+                '_legendClass -> "visually-hidden"
             )
 
             <input class="button" value="@Messages("sdil.common.continue")" type="submit">

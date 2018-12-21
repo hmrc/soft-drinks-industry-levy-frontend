@@ -25,8 +25,9 @@
 @inputRadioGroup(
     form(key),
     possibleValues.map{v => (v, Messages.extraMessages(Seq(key + ".option." + v.toLowerCase, v)))},
-//    possibleValues.map{v => (v, Messages.extraMessage(key + ".option." + v.toLowerCase))},
     '_labelClass -> "block-label less-padding",
     '_labelAfter -> true,
-    '_groupClass -> "form-field-group"
+    '_groupClass -> "form-field-group",
+    '_legend -> Messages(s"heading.$key"),
+    '_legendClass -> "visually-hidden"
 )

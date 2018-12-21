@@ -25,9 +25,8 @@
 @(key: String, form: Form[LocalDate])(implicit messages: Messages)
 <div class="form-group @if(form.hasErrors) {form-group-error}">
     <fieldset>
-        <legend>
-            <span class="form-hint">@Messages("sdil.start-date.example")</span>
-        </legend>
+        <legend class="visually-hidden">@Messages(s"heading.$key")</legend>
+        <span class="form-hint">@Messages("sdil.start-date.example")</span>
         <div class="form-date">
             @form.errors.map { err => <span class="error-message">@Messages(err.message)</span> }
             @for(field <- List("day", "month", "year")) {

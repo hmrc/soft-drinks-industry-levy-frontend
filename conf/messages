@@ -1392,3 +1392,6 @@ file-return-before-deregistration.continue=Go to your account
 
 error.sdilref.empty=Enter the small producer’s reference number
 change.latency=<p>Changes can take up to 15 working days to process.</p>
+heading.package-own-uk.inner=How many litres will you package in the next 12 months?
+heading.package-copack.inner=How many litres will you package in the next 12 months?
+heading.import.inner=How many litres will you bring into the UK in the next 12 months?

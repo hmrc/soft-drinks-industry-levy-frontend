@@ -17,7 +17,6 @@
 @(form: Form[_], fieldName: String, labelPrefix: String, showHint: Boolean = true)(implicit request: Request[_], messages: Messages)
 
 <div id="@fieldName-fields">
-    <h2 class="heading-small">@Messages(s"$labelPrefix.heading")</h2>
 
     @if(showHint) {
         <span class="form-hint">@Messages(s"$labelPrefix.hint")</span>
@@ -25,7 +24,11 @@
 
     <fieldset>
 
-        <legend class="visuallyhidden">@Messages(s"$labelPrefix.legend")</legend>
+        <legend>
+            <h2 class="heading-small">
+                @Messages(s"$labelPrefix.heading")
+            </h2>
+        </legend>
 
         @inputText(
             form(s"$fieldName.line1"),

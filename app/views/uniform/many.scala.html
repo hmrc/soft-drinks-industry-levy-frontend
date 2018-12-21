@@ -99,7 +99,7 @@
                     }
             </table>
             @if(messages.isDefinedAt(s"$key.list-control.heading") && items.nonEmpty) {
-                <h4 class="heading-small add-to-list">@Messages(s"$key.list-control.heading")</h4>
+                <h2 class="heading-small add-to-list" aria-hidden="true">@Messages(s"$key.list-control.heading")</h2>
             }
             @if(messages.isDefinedAt(s"$key.list-control.lead")) {
                 <span class="form-hint">@Messages(s"$key.list-control.lead")</span>
@@ -110,7 +110,7 @@
                 '_labelClass -> "block-label",
                 '_labelAfter -> true,
                 '_groupClass -> "inline",
-                '_legend -> messages.messages(s"heading.$key"),
+                '_legend -> Messages(s"$key.list-control.heading"),
                 '_legendClass -> "visuallyhidden"
             )
         </div>

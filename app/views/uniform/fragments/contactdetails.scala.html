@@ -24,20 +24,24 @@
 
 @(key: String, form: Form[ContactDetails])(implicit messages: Messages)
 
-@inputText(
-    form(s"$key.fullName"),
-    Messages(s"$key.fullName")
-)
+<fieldset class="form-field-group">
+    <legend class="visually-hidden">@Messages(s"heading.$key")</legend>
 
-@inputText(
-    form(s"$key.position"),
-    Messages(s"$key.position")
-)
-@inputText(
-    form(s"$key.phoneNumber"),
-    Messages(s"$key.phoneNumber")
-)
-@inputText(
-    form(s"$key.email"),
-    Messages(s"$key.email")
-)
+    @inputText(
+        form(s"$key.fullName"),
+        Messages(s"$key.fullName")
+    )
+
+    @inputText(
+        form(s"$key.position"),
+        Messages(s"$key.position")
+    )
+    @inputText(
+        form(s"$key.phoneNumber"),
+        Messages(s"$key.phoneNumber")
+    )
+    @inputText(
+        form(s"$key.email"),
+        Messages(s"$key.email")
+    )
+</fieldset>
