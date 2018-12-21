@@ -1395,3 +1395,14 @@ change.latency=<p>Changes can take up to 15 working days to process.</p>
 heading.package-own-uk.inner=How many litres will you package in the next 12 months?
 heading.package-copack.inner=How many litres will you package in the next 12 months?
 heading.import.inner=How many litres will you bring into the UK in the next 12 months?
+heading.packaging-site.inner=How many litres will you package in the next 12 months?
+heading.contract-packing.inner=How many litres will you package in the next 12 months?
+heading.imports.inner=How many litres will you bring into the UK in the next 12 months?
+heading.own-brands-packaged-at-own-sites.inner=How many litres do you need to report?
+heading.packaged-as-a-contract-packer.inner=How many litres do you need to report?
+heading.brought-into-uk.inner=How many litres do you need to report?
+heading.brought-into-uk-from-small-producers.inner=How many litres?
+heading.claim-credits-for-exports.inner=How many litres are you claiming a credit for?
+heading.claim-credits-for-lost-damaged.inner=How many litres are you claiming a credit for?
+
+

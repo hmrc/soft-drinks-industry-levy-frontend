@@ -23,20 +23,23 @@
 
 @(key: String, formIn: Form[List[String]], possibleValues: List[String])(implicit messages: Messages)
 
-<div class="form-group @if(formIn.hasErrors) {form-group-error}">
-    @formIn.errors.map { err => <span class="error-message">@Messages(err.message)</span> }
+<fieldset class="form-field-group">
+    <legend class="visually-hidden">@Messages(s"heading.$key")</legend>
+    <div class="@if(formIn.hasErrors) {form-group-error}">
+        @formIn.errors.map { err => <span class="error-message">@Messages(err.message)</span> }
 
-@for(option <- possibleValues) {
-        <div class="multiple-choice">
-            <input id="@{key}_@{option}"
-                   name="@{key}[]"
-                   value="@option"
-                   type="checkbox"
-                   @formIn.value.getOrElse(Nil).filter( _ == option ).map{_ => checked="checked"} />
+    @for(option <- possibleValues) {
+            <div class="multiple-choice">
+                <input id="@{key}_@{option}"
+                       name="@{key}[]"
+                       value="@option"
+                       type="checkbox"
+                       @formIn.value.getOrElse(Nil).filter( _ == option ).map{_ => checked="checked"} />
 
-            <label for="@{key}_@{option}">
-                @Messages(s"$key.option.$option")
-            </label>
-        </div>
-}
-</div>
+                <label for="@{key}_@{option}">
+                    @Messages(s"$key.option.$option")
+                </label>
+            </div>
+    }
+    </div>
+</fieldset>

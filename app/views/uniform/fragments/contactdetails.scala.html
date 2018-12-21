@@ -22,16 +22,14 @@
 @import views.html.uniform.helpers._
 @import sdil.models._
 
-@(key: String, form: Form[ContactDetails])(implicit messages: Messages)
+@(key: String, form: Form[ContactDetails])(implicit messages: Messages, extraMessages: ExtraMessages)
 
 <fieldset class="form-field-group">
     <legend class="visually-hidden">@Messages(s"heading.$key")</legend>
-
     @inputText(
         form(s"$key.fullName"),
         Messages(s"$key.fullName")
     )
-
     @inputText(
         form(s"$key.position"),
         Messages(s"$key.position")

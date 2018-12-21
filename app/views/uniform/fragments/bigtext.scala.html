@@ -23,20 +23,22 @@
 
 @(key: String, form: Form[String])(implicit messages: Messages, extraMessages: ExtraMessages)
 
-<div class="form-group @if(form.hasErrors) {form-group-error}">
-    <label for="@key">
-        <span class="form-label">@Messages.extraMessage(s"${key}.label")</span>
-        @form.errors.map { error =>
-            <span class="error-message" data-journey="search-page:error:@key">
-            @Messages(error.message, error.args: _*)
-            </span>
-        }
-    </label>
-    
-    <textarea class="form-control form-control-3-4 @if(form.hasErrors) {form-control-error}"
-              id="@key"
-              name="@key"
-              value="@key"
-              rows="5">@{form(key).value.getOrElse("")}</textarea>
-</div>
+<fieldset class="form-field-group">
+    <legend class="visually-hidden">@Messages(s"heading.$key")</legend>
+    <div class="form-group @if(form.hasErrors) {form-group-error}">
+        <label for="@key">
+            <span class="form-label">@Messages.extraMessage(s"${key}.label")</span>
+            @form.errors.map { error =>
+                <span class="error-message" data-journey="search-page:error:@key">
+                @Messages(error.message, error.args: _*)
+                </span>
+            }
+        </label>
+        <textarea class="form-control form-control-3-4 @if(form.hasErrors) {form-control-error}"
+                  id="@key"
+                  name="@key"
+                  value="@key"
+                  rows="5">@{form(key).value.getOrElse("")}</textarea>
+    </div>
+</fieldset>
 
