@@ -30,7 +30,7 @@
     @backlink(breadcrumbs)
 
     @error_summary(form)
-    <h1 class="heading-large">
+    <h1 class="heading-large" aria-hidden="true">
         @if(messages.isDefinedAt(s"heading.$key.orgName")) {
             <span class="govuk-caption-xl">
                 @Messages.extraMessage(s"heading.$key.orgName")
@@ -58,7 +58,7 @@
 
         @for((help,title) <- Messages.many(s"$key.help") zip Messages.many(s"$key.help.header")) {
             @details(title) {
-                <span>@Html(help)</span>
+                <div>@Html(help)</div>
             }
         }
 

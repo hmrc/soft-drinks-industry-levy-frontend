@@ -21,33 +21,37 @@
 @import sdil.config.AppConfig
 @import views.html.uniform.helpers._
 
-@(key: String, form: Form[(Long,Long)], approximate: Boolean)(implicit messages: Messages)
+@(key: String, form: Form[(Long, Long)], approximate: Boolean)(implicit messages: Messages)
 
- <div class="form-group form-litres-3-4">
-     @inputText(
-         form(s"$key.lower"),
-         Messages("sdil.litreage.lowRate"),
-         '_inputType -> "text",
-         '_inputClass -> "input--no-spinner volume"
-     )
- </div>
+<fieldset class="form-field-group">
+    <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
 
- <div class="form-group form-litres-3-4">
-     @inputText(
-         form(s"$key.higher"),
-         Messages("sdil.litreage.highRate"),
-         '_inputType -> "text",
-         '_inputClass -> "input--no-spinner volume"
-     )
- </div>
+    <div class="form-group form-litres-3-4">
+    @inputText(
+        form(s"$key.lower"),
+        Messages("sdil.litreage.lowRate"),
+        '_inputType -> "text",
+        '_inputClass -> "input--no-spinner volume"
+    )
+    </div>
 
- @details("sdil.litreage.rates.help") {
-         <p>@Messages("sdil.litreage.rates.content.p1")</p>
-         <p>@Messages("sdil.litreage.rates.content.p2")</p>
-}
+    <div class="form-group form-litres-3-4">
+    @inputText(
+        form(s"$key.higher"),
+        Messages("sdil.litreage.highRate"),
+        '_inputType -> "text",
+        '_inputClass -> "input--no-spinner volume"
+    )
+    </div>
 
-@if(approximate) {
- @details("sdil.litreage.volumes.help") {
-     <p>@Messages("sdil.litreage.volumes.content.p1")</p>
- }
-}
+    @details("sdil.litreage.rates.help") {
+        <p>@Messages("sdil.litreage.rates.content.p1")</p>
+        <p>@Messages("sdil.litreage.rates.content.p2")</p>
+    }
+
+    @if(approximate) {
+        @details("sdil.litreage.volumes.help") {
+            <p>@Messages("sdil.litreage.volumes.content.p1")</p>
+        }
+    }
+</fieldset>

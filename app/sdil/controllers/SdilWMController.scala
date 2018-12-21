@@ -244,7 +244,8 @@ trait SdilWMController extends WebMonadController
           '_labelClass -> "block-label",
           '_labelAfter -> true,
           '_groupClass -> "form-field-group inline",
-          '_dataTargetTrue -> s"anything",
+          '_dataTargetTrue -> "target",
+          '_legend -> Messages(s"heading.$key"),
           '_legendClass -> "visuallyhidden"
         )
       }
