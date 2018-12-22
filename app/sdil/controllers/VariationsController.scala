@@ -118,12 +118,12 @@ class VariationsController(
       change          <- askContactChangeType
 
       packSites       <- if (change.contains(Sites)) {
-        manyT("change-packaging-sites", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, extraMessages, implicitly), default = data
+        manyT("packaging-site-details", ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, extraMessages, implicitly), default = data
           .updatedProductionSites.toList, min = 1, editSingleForm = Some((packagingSiteMapping, packagingSiteForm))) emptyUnless (data.producer.isLarge.contains(true) || data.copackForOthers)
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
-        manyT("change-warehouses", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, extraMessages, implicitly), default = data
+        manyT("warehouse-detials", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, extraMessages, implicitly), default = data
           .updatedWarehouseSites.toList, editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
       } else data.updatedWarehouseSites.pure[WebMonad]
 
