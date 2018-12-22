@@ -415,15 +415,7 @@ trait SdilWMController extends WebMonadController
       case Some(b) if b.startsWith("Edit") => Edit(b.split("\\.").last.toInt)
     }
     def inf(x: Control): Option[String] = Some(x.toString)
-
-//    def stripId(id: String) = id match {
-//      case "change-packaging-sites" |
-//           "change-warehouses" |
-//           "change-production-sites" |
-//           "change-secondary-warehouses" => id.drop(7).dropRight(1)
-//      case _ => id
-//    }
-
+    
     def confirmation(q: A): WebMonad[Boolean] =
       tell(s"remove-$id", q).map{_ => true}
 
