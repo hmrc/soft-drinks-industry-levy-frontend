@@ -123,7 +123,7 @@ class VariationsController(
       } else data.updatedProductionSites.pure[WebMonad]
 
       warehouses      <- if (change.contains(Sites)) {
-        manyT("warehouse-detials", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, extraMessages, implicitly), default = data
+        manyT("warehouse-details", ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, extraMessages, implicitly), default = data
           .updatedWarehouseSites.toList, editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm)))
       } else data.updatedWarehouseSites.pure[WebMonad]
 

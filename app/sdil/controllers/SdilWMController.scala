@@ -429,7 +429,7 @@ trait SdilWMController extends WebMonadController
 
           val mapping = optional(text) // N.b. ideally this would just be 'text' but sadly text triggers the default play "required" message for 'text'
             .verifying(
-            s"error.radio-form.choose-option.$id}|error.radio-form.choose-option",
+            s"error.radio-form.choose-option.$id|error.radio-form.choose-option",
             a => a.nonEmpty)
             .verifying(s"$id.error.items.tooFew", a => !a.contains("Done")  || items.size >= min)
             .verifying(s"$id.error.items.tooMany", a => !a.contains("Add") || items.size < max)
