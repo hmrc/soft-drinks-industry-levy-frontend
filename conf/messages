@@ -868,6 +868,7 @@ updatedBusinessDetails_orgName.fieldlabel=Organisation Name
 
 heading.updatedBusinessDetails_address=What address should we send correspondence to?
 
+#variation confirmation
 variationDone.title=Update sent
 variationDone.subheading=We have received the updates to your Soft Drinks Industry Levy details
 variationDone.what-happens.title=What happens next
@@ -902,13 +903,7 @@ manToVol.what-happens-next=<p>You are now registered as a small producer who onl
 manToVol.your.updates=Your updates were sent on {0} at {1}.
 manToVol.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
-#variation confirmation
-sdil.variations.complete.title=Updates have been sent
-sdil.variation.complete.subheading=We have received the updates to your Soft Drinks Industry Levy details
-sdil.variation.what-happens.p1=You do not need to do anything else. We will update your details with the information you provided. We will send you a letter confirming that the changes have been made, which may take 15 working days.
-sdil.link.back.home=Back to home
-sdil.variation.complete.p1=Your updates for the Soft Drinks Industry Levy were submitted on {0} at {1}.
-sdil.service-page.variations.submit.change=Make another change
+summary.variation.title=Summary of filed variation
 
 #time out
 sdil.time-out.title=For your security, we signed you out

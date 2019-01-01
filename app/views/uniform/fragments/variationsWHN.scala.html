@@ -1,5 +1,5 @@
 @*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,26 @@
  * limitations under the License.
  *@
 
- 
 @import sdil.models.variations.RegistrationVariationData
 @import sdil.models.ReturnPeriod
 @import java.time.LocalDate
+@import views.html.softdrinksindustrylevy.helpers._
 
-@(deregDate: Option[LocalDate] = None, key: Option[String] = None)(implicit messages: Messages)
+@(v: Option[RegistrationVariationData] = None, key: Option[String] = None)(implicit messages: Messages)
 
 
-@if(deregDate.nonEmpty) {
-    @deregDate.map { deregDate =>
+@formatLitres(value: BigDecimal) = @{
+    java.text.NumberFormat.getNumberInstance.format(value)
+}
+
+@v.map { v =>
+    @v.deregDate.map { deregDate =>
         <p>
-        @Messages(
-            "dereg.what-happens-next.p1",
-            ReturnPeriod(deregDate).start.format("MMMM yyyy"),
-            ReturnPeriod(deregDate).end.format("MMMM yyyy")
-        )
+            @Messages(
+                "dereg.what-happens-next.p1",
+                ReturnPeriod(deregDate).start.format("MMMM yyyy"),
+                ReturnPeriod(deregDate).end.format("MMMM yyyy")
+            )
         </p>
         <div class="panel panel-border-wide">
             <p>
@@ -42,14 +46,138 @@
         </div>
         <p>@Messages("dereg.what-happens-next.p3")</p>
     }
-} else {
-    @if(key.nonEmpty) {
-        @key.map { x =>
-            <p>@Html(Messages(s"$x.variationDone.what-happens-next"))</p>
-        }
-    } else {
-        <p>@Messages("variationDone.what-happens-next")</p>
+
+@if(key.nonEmpty) {
+    @key.map { x =>
+        <p>@Html(Messages(s"$x.variationDone.what-happens-next"))</p>
     }
+} else {
+    <p>@Messages("variationDone.what-happens-next")</p>
 }
 
 @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
+
+
+
+@details(Messages("summary.variation.title")) {
+        <h2 class="heading-medium">
+        @Messages("variations.cya.activity-change")
+        </h2>
+        <table class="check-your-answers">
+            <tbody>
+
+                <tr>
+                    <td class="cya-question">
+                    @Messages("variations.cya.activity-change.producer")
+                    </td>
+                    <td>
+                        @Messages(s"variations.cya.${v.producer.isProducer}")
+                        @if(v.producer.isProducer) {
+                            @v.producer.isLarge.map {
+                                case true => {
+                                    : @Messages("sdil.declaration.largeProducer")
+                                }
+                                case _ => {
+                                    : @Messages("sdil.declaration.smallProducer")
+                    }
+                    }
+                    }
+                    </td>
+                </tr>
+
+                @if(v.usesCopacker.isDefined) {
+                    <tr>
+                        <td class="cya-question">
+                        @Messages("variations.cya.activity-change.use-copacker")
+                        </td>
+                        <td>
+                        @v.usesCopacker.map { x =>
+                            @Messages(s"variations.cya.$x")
+                        }
+                        </td>
+                    </tr>
+                }
+
+                <tr>
+                    <td class="cya-question">
+                    @Messages("variations.cya.activity-change.package-own")
+                    </td>
+                    <td>
+                    @v.packageOwn.map { x =>
+                        @Messages(s"variations.cya.$x")
+                    }
+                    </td>
+                </tr>
+
+                @if(v.packageOwn.getOrElse(false)) {
+                    <tr>
+                        <td class="cya-question">
+                        @Messages("variations.cya.activity-change.litres-own")
+                        </td>
+
+                        @v.packageOwnVol.map { x =>
+                        <td>
+                            @Messages("variations.cya.activity-change.low-band")
+                            @formatLitres(x.atLowRate) <br/>
+                        @Messages("variations.cya.activity-change.high-band")
+                        @formatLitres(x.atHighRate)
+                        </td>
+                        }
+                    </tr>
+                }
+
+                <tr>
+                    <td class="cya-question">
+                    @Messages("variations.cya.activity-change.package-others")
+                    </td>
+                    <td>
+                    @Messages(s"variations.cya.${v.copackForOthers}")
+                    </td>
+                </tr>
+
+                @if(v.copackForOthers) {
+                    <tr>
+                        <td class="cya-question">
+                        @Messages("variations.cya.activity-change.litres-others")
+                        </td>
+                        @v.copackForOthersVol.map { x =>
+                        <td>
+                            @Messages("variations.cya.activity-change.low-band")
+                            @formatLitres(x.atLowRate) <br/>
+                        @Messages("variations.cya.activity-change.high-band")
+                        @formatLitres(x.atHighRate)
+                        </td>
+                        }
+                    </tr>
+                }
+
+                <tr>
+                    <td class="cya-question">
+                    @Messages("variations.cya.activity-change.import")
+                    </td>
+                    <td>
+                    @Messages(s"variations.cya.${v.imports}")
+                    <td/>
+                </tr>
+
+                @if(v.imports) {
+                    <tr>
+                        <td class="cya-question">
+                        @Messages("variations.cya.activity-change.litres-import")
+                        </td>
+                        <td>
+                        @v.importsVol.map { x =>
+                            @Messages("variations.cya.activity-change.low-band")
+                            @formatLitres(x.atLowRate) <br/>
+                        @Messages("variations.cya.activity-change.high-band")
+                        @formatLitres(x.atHighRate)
+                        }
+                        <td/>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+    }
+}

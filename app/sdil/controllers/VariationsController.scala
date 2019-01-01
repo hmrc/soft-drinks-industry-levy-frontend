@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -188,7 +188,7 @@ class VariationsController(
                                         } yield data.copy(
                                           producer = Producer(packLarge.isDefined, packLarge),
                                           usesCopacker = useCopacker.some.flatten,
-                                          packageOwn = Some(packageOwn.isDefined),
+                                          packageOwn = packageOwn.map {x => x.isDefined},
                                           packageOwnVol = longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
                                           copackForOthers = copacks.isDefined,
                                           copackForOthersVol = longTupToLitreage(copacks.getOrElse((0,0))),
@@ -289,6 +289,7 @@ class VariationsController(
       whnChangeLiability = Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show())
       whnVolToMan = Html(Messages("volToMan.what-happens-next") ++ whnChangeLiability)
       whnManToVol = Html(Messages("manToVol.what-happens-next") ++ whnChangeLiability)
+      summaryOfVariation = uniform.fragments.summary_of_variation(variation).some
       exit <- if(variation.volToMan) {
         journeyEnd("volToMan", LocalDate.now, subheading, whnVolToMan.some)(extraMessages)
       } else if(variation.manToVol) {
@@ -296,7 +297,7 @@ class VariationsController(
       } else journeyEnd(
         id = "variationDone",
         subheading = subheading,
-        whatHappensNext = uniform.fragments.variationsWHN(variation.deregDate).some)(extraMessages)
+        whatHappensNext = uniform.fragments.variationsWHN(variation.some).some)(extraMessages)
     } yield exit
   }
 
