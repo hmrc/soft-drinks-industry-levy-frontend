@@ -19,7 +19,7 @@
 @import java.time.LocalDate
 @import views.html.softdrinksindustrylevy.helpers._
 
-@(v: Option[RegistrationVariationData] = None, key: Option[String] = None)(implicit messages: Messages)
+@(path: List[String] = List.empty , v: Option[RegistrationVariationData] = None, key: Option[String] = None)(implicit messages: Messages)
 
 
 @formatLitres(value: BigDecimal) = @{

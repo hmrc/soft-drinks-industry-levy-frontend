@@ -297,7 +297,7 @@ class VariationsController(
       } else journeyEnd(
         id = "variationDone",
         subheading = subheading,
-        whatHappensNext = uniform.fragments.variationsWHN(variation.some).some)(extraMessages)
+        whatHappensNext = uniform.fragments.variationsWHN(path, variation.some).some)(extraMessages)
     } yield exit
   }
 
