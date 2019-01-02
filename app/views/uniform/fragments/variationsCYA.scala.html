@@ -16,6 +16,7 @@
 
 @import sdil.models.backend.Site
 @import java.time.format.DateTimeFormatter
+@import views.html.uniform.helpers._
 @(
         v: sdil.models.variations.RegistrationVariationData,
         newPackingSites: List[Site],
@@ -25,171 +26,9 @@
         path: List[String])(implicit m: Messages
 )
 
-@formatLitres(value: BigDecimal) = @{
-    java.text.NumberFormat.getNumberInstance.format(value)
+@if(path.contains("amount-produced") && !path.contains("cancel-registration-date")) {
+    @activty_variations_cya(showChangeLinks = true, v)
 }
-
-@if(path.contains("amount-produced") && !path.contains("deregDate")) {
-    <h2 class="heading-medium">
-    @Messages("variations.cya.activity-change")
-    </h2>
-    <table class="check-your-answers">
-        <tbody>
-
-            <tr>
-                <td class="cya-question">
-                @Messages("variations.cya.activity-change.producer")
-                </td>
-                <td>
-                    @Messages(s"variations.cya.${v.producer.isProducer}")
-                    @if(v.producer.isProducer) {
-                        @v.producer.isLarge.map {
-                            case true => {
-                                : @Messages("sdil.declaration.largeProducer")
-                            }
-                            case _ => {
-                                : @Messages("sdil.declaration.smallProducer")
-                            }
-                        }
-                    }
-                <td/>
-                <td class="cya-change">
-                    <a href="amount-produced">
-                    @Html(Messages("variations.cya.activity-change.package-own.change"))
-                    </a>
-                </td>
-            </tr>
-
-            @if(v.usesCopacker.isDefined) {
-                <tr>
-                    <td class="cya-question">
-                    @Messages("variations.cya.activity-change.use-copacker")
-                    </td>
-                    <td>
-                    @v.usesCopacker.map { x =>
-                        @Messages(s"variations.cya.$x")
-                    }
-                    <td/>
-                    <td class="cya-change">
-                        <a href="third-party-packagers">
-                        @Html(Messages("variations.cya.activity-change.use-copacker.change"))
-                        </a>
-                    </td>
-                </tr>
-            }
-
-            <tr>
-                <td class="cya-question">
-                @Messages("variations.cya.activity-change.package-own")
-                </td>
-                <td>
-                @v.packageOwn.map { x =>
-                    @Messages(s"variations.cya.$x")
-                }
-                <td/>
-                <td class="cya-change">
-                    <a href="packaging-site">
-                    @Html(Messages("variations.cya.activity-change.package-own.change"))
-                    </a>
-                </td>
-            </tr>
-
-            @if(v.packageOwn.getOrElse(false)) {
-                <tr>
-                    <td class="cya-question">
-                    @Messages("variations.cya.activity-change.litres-own")
-                    </td>
-                    <td>
-                    @v.packageOwnVol.map { x =>
-                        @Messages("variations.cya.activity-change.low-band")
-                        @formatLitres(x.atLowRate) <br/>
-                    @Messages("variations.cya.activity-change.high-band")
-                    @formatLitres(x.atHighRate)
-                    }
-                    <td/>
-                    <td class="cya-change">
-                        <a href="packaging-site">
-                        @Html(Messages("variations.cya.activity-change.litres-own.change"))
-                        </a>
-                    </td>
-                </tr>
-            }
-
-            <tr>
-                <td class="cya-question">
-                @Messages("variations.cya.activity-change.package-others")
-                </td>
-                <td>
-                @Messages(s"variations.cya.${v.copackForOthers}")
-                <td/>
-                <td class="cya-change">
-                    <a href="contract-packing">
-                    @Html(Messages("variations.cya.activity-change.package-others.change"))
-                    </a>
-                </td>
-            </tr>
-
-            @if(v.copackForOthers) {
-                <tr>
-                    <td class="cya-question">
-                    @Messages("variations.cya.activity-change.litres-others")
-                    </td>
-                    <td>
-                    @v.copackForOthersVol.map { x =>
-                        @Messages("variations.cya.activity-change.low-band")
-                        @formatLitres(x.atLowRate) <br/>
-                    @Messages("variations.cya.activity-change.high-band")
-                    @formatLitres(x.atHighRate)
-                    }
-                    <td/>
-                    <td class="cya-change">
-                        <a href="contract-packing">
-                        @Html(Messages("variations.cya.activity-change.litres-others.change"))
-                        </a>
-                    </td>
-                </tr>
-            }
-
-            <tr>
-                <td class="cya-question">
-                @Messages("variations.cya.activity-change.import")
-                </td>
-                <td>
-                @Messages(s"variations.cya.${v.imports}")
-                <td/>
-                <td class="cya-change">
-                    <a href="imports">
-                    @Html(Messages("variations.cya.activity-change.import.change"))
-                    </a>
-                </td>
-            </tr>
-
-            @if(v.imports) {
-                <tr>
-                    <td class="cya-question">
-                    @Messages("variations.cya.activity-change.litres-import")
-                    </td>
-                    <td>
-                    @v.importsVol.map { x =>
-                        @Messages("variations.cya.activity-change.low-band")
-                        @formatLitres(x.atLowRate) <br/>
-                    @Messages("variations.cya.activity-change.high-band")
-                    @formatLitres(x.atHighRate)
-                    }
-                    <td/>
-                    <td class="cya-change">
-                        <a href="imports">
-                        @Html(Messages("variations.cya.activity-change.litres-import.change"))
-                        </a>
-                    </td>
-                </tr>
-            }
-
-        </tbody>
-    </table>
-
-}
-
 
 @if(newPackingSites.nonEmpty) {
 
@@ -550,48 +389,7 @@
 }
 
 @if(path.contains("cancel-registration-date") || path.contains("cancel-registration-reason")) {
-
-    <h2 class="heading-medium">
-        @Messages("variations.cya.deregistration")
-    </h2>
-
-
-    <table class="check-your-answers">
-        <tbody>
-        @v.reason.map{ reason =>
-            <tr>
-                <td class="cya-question table-header-bold">
-                    @Messages("variations.cya.deregistration.reason")
-                </td>
-                <td>
-                    @reason
-                <td/>
-                <td class="cya-change">
-                    <a href="reason">
-                    @Html(Messages("variations.cya.deregistration.change.reason"))
-                    </a>
-                </td>
-            </tr>
-        }
-
-        @v.deregDate.map{ date =>
-            <tr>
-                <td class="cya-question table-header-bold">
-                    @Messages("variations.cya.deregistration.date")
-                </td>
-                <td>
-                    @{date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}
-                <td/>
-                <td class="cya-change">
-                    <a href="deregDate">
-                    @Html(Messages("variations.cya.deregistration.change.date"))
-                    </a>
-                </td>
-            </tr>
-        }
-
-        </tbody>
-    </table>
+    @dereg_variations_cya(showChangeLinks = true, v)
 }
 <br/>
 
