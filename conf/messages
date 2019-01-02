@@ -740,8 +740,8 @@ heading.first-warehouse=Enter the UK warehouse details
 ask-secondary-warehouses.help.header=Why should I register a warehouse?
 ask-secondary-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
   the warehouses you use to store them.
-heading.add-change-warehouses=Enter your warehouse details
-heading.add-change-secondary-warehouses=Enter your UK warehouse details
+heading.add-change-warehouses=Enter the warehouse details
+heading.add-change-secondary-warehouses=Enter the UK warehouse details
 change-secondary-warehouses.help.header=Why should I register a warehouse?
 change-secondary-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
   the warehouses you use to store them.
@@ -842,7 +842,7 @@ change-packaging-sites.option.add=Yes
 change-packaging-sites.option.done=No
 heading.edit-packaging-site=Enter your UK packaging site details
 
-heading.change-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks? 
+heading.change-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
 heading.multi.change-secondary-warehouses=Your registered UK warehouses
 change-secondary-warehouses.lead=
 change-secondary-warehouses.multi.lead=You have added {0} warehouse{1}

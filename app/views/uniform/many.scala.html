@@ -74,13 +74,14 @@
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
         <div class="form-group">
-            <table class="margin-bottom-50">
+            @if(items.nonEmpty) {
+                <table class="margin-bottom-50">
                 @for((item, id) <- items.zipWithIndex) {
                     <tr>
                         <td>
-                            @item
+                        @item
                         </td>
-                        @if( items.length > min) {
+                        @if(items.length > min) {
                             <td class="@if(showEdit) {align-centre} else {align-right}">
                                 <button name="@key" value="Delete.@id" class="link-button no-shadow">@Messages(Seq(s"$key.delete", "delete"))</button>
                             </td>
@@ -96,8 +97,9 @@
                         }
 
                     </tr>
-                    }
-            </table>
+                }
+                </table>
+            }
             @if(messages.isDefinedAt(s"$key.list-control.heading") && items.nonEmpty) {
                 <h2 class="heading-small add-to-list" aria-hidden="true">@Messages(s"$key.list-control.heading")</h2>
             }
