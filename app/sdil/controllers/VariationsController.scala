@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -146,10 +146,7 @@ class VariationsController(
   private def activityUpdate(
     data: RegistrationVariationData
   ): WebMonad[RegistrationVariationData] = {
-
-
-    val litres = litreagePair.nonEmpty("error.litreage.zero")
-
+    
     for {
       packLarge                   <- askOneOf("amount-produced", ProducerType.values.toList) map {
                                         case Large => Some(true)

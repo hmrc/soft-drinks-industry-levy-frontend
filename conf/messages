@@ -836,6 +836,7 @@ production-site-details.paragraph=You must tell us about all of the UK packaging
 production-site-details.list-control.heading=Do you need to add another packaging site?
 packaging-site-details.paragraph=Only add the addresses of UK packaging sites you operate. \
   You must have at least one registered packaging site.
+<<<<<<< HEAD
 heading.edit-production-site-details=Enter your UK packaging site details
 edit-production-site-details.paragraph=Only add the addresses of UK packaging sites you operate.
 packaging-site-details.list-control.heading=Do you want to add another packaging site?
@@ -851,6 +852,23 @@ secondary-warehouse-details.multi.lead=You have added {0} warehouse{1}
 secondary-warehouse-details.list-control.heading=Do you want to add another warehouse?
 warehouse-details.help.header=Why should I register a warehouse?
 warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
+=======
+heading.edit-production-site=Enter your UK packaging site details
+edit-production-site.paragraph=Only add the addresses of UK packaging sites you operate.
+change-packaging-sites.list-control.heading=Do you want to add another packaging site?
+change-packaging-sites.list-control.lead=You must tell us about all your packaging sites
+change-packaging-sites.option.add=Yes
+change-packaging-sites.option.done=No
+heading.edit-packaging-site=Enter your UK packaging site details
+
+heading.change-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+heading.multi.change-secondary-warehouses=Your registered UK warehouses
+change-secondary-warehouses.lead=
+change-secondary-warehouses.multi.lead=You have added {0} warehouse{1}
+change-secondary-warehouses.list-control.heading=Do you want to add another warehouse?
+change-warehouses.help.header=Why should I register a warehouse?
+change-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
+>>>>>>> master
   if you register the warehouses you use to store them.
 heading.edit-secondary-warehouse-details=Enter your UK warehouse details
 heading.multi.warehouse-details=Change your UK warehouse details
