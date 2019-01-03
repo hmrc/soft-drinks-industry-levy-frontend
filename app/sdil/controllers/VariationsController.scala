@@ -370,7 +370,7 @@ class VariationsController(
       exit <- journeyEnd(
         id = "returnVariationDone",
         subheading = subheading,
-        whatHappensNext = uniform.fragments.variationsWHN(a = variation.copy(reason = reason, repaymentMethod = repayment).some, key = Some("return")).some)(extraMessages)
+        whatHappensNext = uniform.fragments.variationsWHN(a = variation.copy(reason = reason, repaymentMethod = repayment)some, key = Some("return")).some)(extraMessages)
 
     } yield exit
   }

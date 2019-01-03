@@ -39,7 +39,7 @@
     <table class="check-your-answers">
         <thead>
             <tr>
-                <th colspan="4">
+                <th @if(showChangeLinks) {colspan="3"} else {colspan="4"}>
                     <h2 class="heading-medium">
                     @Messages(s"$key.$title")
                     </h2>
