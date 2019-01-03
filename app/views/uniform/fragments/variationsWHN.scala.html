@@ -14,22 +14,39 @@
  * limitations under the License.
  *@
 
- 
 @import sdil.models.variations.RegistrationVariationData
 @import sdil.models.ReturnPeriod
+@import sdil.models.backend.Site
 @import java.time.LocalDate
+@import views.html.softdrinksindustrylevy.helpers._
+@import views.html.uniform.helpers._
+@import views.html.uniform.fragments._
 
-@(deregDate: Option[LocalDate] = None, key: Option[String] = None)(implicit messages: Messages)
+@import sdil.models.variations.ReturnVariationData
+@(
+        path: List[String] = List.empty,
+        newPackingSites: List[Site] = List.empty,
+        closedPackagingSites: List[Site] = List.empty,
+        newWarehouseSites: List[Site] = List.empty,
+        closedWarehouses: List[Site] = List.empty,
+        v: Option[RegistrationVariationData] = None,
+        a: Option[ReturnVariationData] = None,
+        key: Option[String] = None)(implicit messages: Messages
+)
 
 
-@if(deregDate.nonEmpty) {
-    @deregDate.map { deregDate =>
+@formatLitres(value: BigDecimal) = @{
+    java.text.NumberFormat.getNumberInstance.format(value)
+}
+
+@v.map { v =>
+    @v.deregDate.map { deregDate =>
         <p>
-        @Messages(
-            "dereg.what-happens-next.p1",
-            ReturnPeriod(deregDate).start.format("MMMM yyyy"),
-            ReturnPeriod(deregDate).end.format("MMMM yyyy")
-        )
+            @Messages(
+                "dereg.what-happens-next.p1",
+                ReturnPeriod(deregDate).start.format("MMMM yyyy"),
+                ReturnPeriod(deregDate).end.format("MMMM yyyy")
+            )
         </p>
         <div class="panel panel-border-wide">
             <p>
@@ -42,7 +59,7 @@
         </div>
         <p>@Messages("dereg.what-happens-next.p3")</p>
     }
-} else {
+
     @if(key.nonEmpty) {
         @key.map { x =>
             <p>@Html(Messages(s"$x.variationDone.what-happens-next"))</p>
@@ -50,6 +67,38 @@
     } else {
         <p>@Messages("variationDone.what-happens-next")</p>
     }
+
+    @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
+
+    @if(path.contains("cancel-registration-date") || path.contains("cancel-registration-reason")) {
+        @dereg_variations_cya(showChangeLinks = false, v)
+    }
+
+    @if(path.contains("amount-produced") && !path.contains("cancel-registration-date")) {
+        @activty_variations_cya(showChangeLinks = false, v)
+    }
+
+    @sites_variations_cya(
+        showChangeLinks = false,
+        v,
+        newPackingSites,
+        closedPackagingSites,
+        newWarehouseSites,
+        closedWarehouses,
+        path
+    )
+
+    @if(path.contains("contact-details")) {
+        @contact_details_variations_cya(showChangeLinks = false, v)
+    }
+
+    @if(path.contains("business-address")) {
+        @bus_addr_variations_cya(showChangeLinks = false, v)
+    }
 }
 
-@Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
+@a.map { a =>
+    <p>@Messages("return.check-return-differences.what-happens-next")</p>
+    @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
+    @returnVariationDifferences("check-return-differences", a, showChangeLinks = false)
+}

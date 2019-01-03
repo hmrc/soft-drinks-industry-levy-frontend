@@ -377,7 +377,7 @@ sdil.hidden.registerDeclaration.phone-number=Change telephone number
 sdil.hidden.registerDeclaration.email=Change email address
 
 #Complete
-sdil.complete.what-happens.title=What happens next?
+sdil.complete.what-happens.title=What happens next
 sdil.complete.what-happens.p1=You do not need to do anything else at this time.
 sdil.complete.what-happens.p2=We will send your Soft Drinks Industry Levy reference number to {0} within 24 hours.
 sdil.complete.what-happens.help.title=Help using this service
@@ -743,7 +743,7 @@ ask-secondary-warehouses.help.header=Why should I register a warehouse?
 ask-secondary-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
   the warehouses you use to store them.
 heading.add-warehouse-details=Enter your warehouse details
-heading.add-secondary-warehouse-details=Enter your UK warehouse details
+heading.add-secondary-warehouse-details=Enter the UK warehouse details
 secondary-warehouse-details.help.header=Why should I register a warehouse?
 secondary-warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
   the warehouses you use to store them.
@@ -852,7 +852,7 @@ secondary-warehouse-details.list-control.heading=Do you want to add another ware
 warehouse-details.help.header=Why should I register a warehouse?
 warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
   if you register the warehouses you use to store them.
-heading.edit-secondary-warehouse-details=Enter your UK warehouse details
+heading.edit-secondary-warehouse-details=Enter the UK warehouse details
 heading.multi.warehouse-details=Change your UK warehouse details
 heading.warehouse-details=Do you want to register any of the UK warehouses you use to store liable drinks?
 warehouse-details.list-control.heading=Do you want to add another warehouse?
@@ -870,6 +870,7 @@ updatedBusinessDetails_orgName.fieldlabel=Organisation Name
 
 heading.updatedBusinessDetails_address=What address should we send correspondence to?
 
+#variation confirmation
 variationDone.title=Update sent
 variationDone.subheading=We have received the updates to your Soft Drinks Industry Levy details
 variationDone.what-happens.title=What happens next
@@ -904,13 +905,9 @@ manToVol.what-happens-next=<p>You are now registered as a small producer who onl
 manToVol.your.updates=Your updates were sent on {0} at {1}.
 manToVol.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
-#variation confirmation
-sdil.variations.complete.title=Updates have been sent
-sdil.variation.complete.subheading=We have received the updates to your Soft Drinks Industry Levy details
-sdil.variation.what-happens.p1=You do not need to do anything else. We will update your details with the information you provided. We will send you a letter confirming that the changes have been made, which may take 15 working days.
-sdil.link.back.home=Back to home
-sdil.variation.complete.p1=Your updates for the Soft Drinks Industry Levy were submitted on {0} at {1}.
-sdil.service-page.variations.submit.change=Make another change
+summary.variation.title=Summary of filed variation
+
+dereg-summary-heading=Details of your request to cancel your Soft Drinks Industry Levy registration
 
 #time out
 sdil.time-out.title=For your security, we signed you out
@@ -967,9 +964,9 @@ variations.cya.contact.address=Registered business address
 variations.cya.contact.address.sub=Address
 variations.cya.contact.change.address=Change<span class="visually-hidden"> home address</span>
 variations.cya.deregistration=Details of your request to cancel your Soft Drinks Industry levy registration
-variations.cya.deregistration.reason=Reason
+variations.cya.deregistration.reason=Reason for cancelling
 variations.cya.deregistration.change.reason=Change <span class="visually-hidden">reason</span>
-variations.cya.deregistration.date=Effective date
+variations.cya.deregistration.date=Date of cancellation
 variations.cya.deregistration.change.date=Change <span class="visually-hidden">effective date</span>
 
 error.deregReason.tooLong=Deregistration reason must be 255 characters or less
@@ -1010,7 +1007,7 @@ variations.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 packaging-site-details.error.items.tooMany=[Too many sites]
 packaging-site-details.error.items.tooFew=[You must have at least one packaging site]
 
-heading.edit-warehouse-details=Enter your UK warehouse details
+heading.edit-warehouse-details=Enter the UK warehouse details
 
 variations.cya.dereg=Deregistration
 variations.cya.reason=Reason
@@ -1372,12 +1369,19 @@ return-variation-reason.label=Reason for correction
 returnVariationDone.title=Correction sent
 returnVariationDone.subheading=We will review the details you updated and get back to you
 returnVariationDone.your.updates=Your updates for {0} were sent on {1} at {2}.
+returnVariationDone.corrected.return=The corrected {0} to {1} return for {2} was sent on {3} at {4}.
+returnVariationDone.payments.notice=Do not make any payments until we have confirmed how much you need to pay, \
+  as you will be charged interest on your adjusted amount.
 variationDone.your.request=Your request to cancel {0}’s registration was sent on {1} at {2}.
 
 return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you. \
   We may get in touch with your contact person to discuss your changes. \
   Once we have approved your correction, your account balance will be updated.</p>\
   <p>Do not make any payments until we have confirmed how much you need to pay, as you will be charged interest on your adjusted amount.</p>
+
+return.check-return-differences.what-happens-next=We will review the details that you updated and get back to you. \
+  We may get in touch with your contact person to discuss your changes. \
+  Once we have approved your correction, your account balance will be updated.
 
 heading.repayment=How do you want the credit to be repaid?
 repayment.lead=Repayment is not guaranteed. We may wish to discuss the claim with you before deciding whether to make a repayment.

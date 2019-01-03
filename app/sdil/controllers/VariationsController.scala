@@ -185,7 +185,7 @@ class VariationsController(
                                         } yield data.copy(
                                           producer = Producer(packLarge.isDefined, packLarge),
                                           usesCopacker = useCopacker.some.flatten,
-                                          packageOwn = Some(packageOwn.isDefined),
+                                          packageOwn = packageOwn.map {x => x.isDefined},
                                           packageOwnVol = longTupToLitreage(packageOwn.flatten.getOrElse((0,0))),
                                           copackForOthers = copacks.isDefined,
                                           copackForOthersVol = longTupToLitreage(copacks.getOrElse((0,0))),
@@ -293,7 +293,13 @@ class VariationsController(
       } else journeyEnd(
         id = "variationDone",
         subheading = subheading,
-        whatHappensNext = uniform.fragments.variationsWHN(variation.deregDate).some)(extraMessages)
+        whatHappensNext = uniform.fragments.variationsWHN(
+          path,
+          newPackagingSites(variation),
+          closedPackagingSites(variation),
+          newWarehouseSites(variation),
+          closedWarehouseSites(variation),
+          variation.some).some)(extraMessages)
     } yield exit
   }
 
@@ -356,17 +362,12 @@ class VariationsController(
       _ <- checkReturnChanges("check-return-differences", variation.copy(reason = reason, repaymentMethod = repayment))
       _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
       _ <- clear
-      subheading = Html(
-        Messages(
-          "returnVariationDone.your.updates",
-          subscription.orgName,
-          LocalDate.now.format(ofPattern("d MMMM yyyy")),
-          LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)).some
+      subheading = uniform.fragments.return_variation_done_subheading(subscription, returnPeriod).some
 
       exit <- journeyEnd(
         id = "returnVariationDone",
         subheading = subheading,
-        whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)(extraMessages)
+        whatHappensNext = uniform.fragments.variationsWHN(a = variation.copy(reason = reason, repaymentMethod = repayment)some, key = Some("return")).some)(extraMessages)
 
     } yield exit
   }
@@ -468,7 +469,26 @@ class VariationsController(
       submission = Convert(variation)
       _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
       _ <- clear
-      exit <- journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+      subheading = Html(
+        Messages(
+          if(variation.deregDate.nonEmpty) {
+            "variationDone.your.request"
+          } else {
+            "returnVariationDone.your.updates"
+          },
+          subscription.orgName,
+          LocalDate.now.format(ofPattern("d MMMM yyyy")),
+          LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)).some
+      exit <- journeyEnd(
+        id = "variationDone",
+        subheading = subheading,
+        whatHappensNext = uniform.fragments.variationsWHN(
+          path,
+          newPackagingSites(variation),
+          closedPackagingSites(variation),
+          newWarehouseSites(variation),
+          closedWarehouseSites(variation),
+          variation.some).some)(extraMessages)
     } yield exit
   }
 

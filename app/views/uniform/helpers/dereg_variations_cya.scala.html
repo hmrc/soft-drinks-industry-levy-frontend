@@ -1,0 +1,64 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import java.time.format.DateTimeFormatter
+
+@(showChangeLinks : Boolean, v: sdil.models.variations.RegistrationVariationData)(implicit messages: Messages)
+
+<h2 class="heading-medium">
+    @Messages("variations.cya.deregistration")
+</h2>
+
+<table class="check-your-answers">
+    <tbody>
+        @v.reason.map{ reason =>
+            <tr>
+                <td class="cya-question table-header-bold">
+                    @Messages("variations.cya.deregistration.reason")
+                </td>
+                <td>
+                @reason
+                </td>
+                @if(showChangeLinks) {
+                    <td class="cya-change">
+                        <a href="reason">
+                        @Html(Messages("variations.cya.deregistration.change.reason"))
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
+
+        @v.deregDate.map{ date =>
+            <tr>
+                <td class="cya-question table-header-bold">
+                    @Messages("variations.cya.deregistration.date")
+                </td>
+                <td>
+                @{date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}
+                </td>
+                @if(showChangeLinks) {
+                    <td class="cya-change">
+                        <a href="deregDate">
+                        @Html(Messages("variations.cya.deregistration.change.date"))
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
+
+    </tbody>
+</table>

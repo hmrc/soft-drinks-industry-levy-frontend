@@ -1,0 +1,296 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import sdil.models.backend.Site
+@(
+        showChangeLinks: Boolean,
+        v: sdil.models.variations.RegistrationVariationData,
+        newPackingSites: List[Site],
+        closedPackagingSites: List[Site],
+        newWarehouseSites: List[Site],
+        closedWarehouses: List[Site],
+        path: List[String])(implicit messages: Messages
+)
+
+@if(newPackingSites.nonEmpty) {
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.packsites.add")</caption>
+
+        <thead>
+            <tr>
+                <th class="cya-width">
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.packsites.address")
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.postcode")
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(site <- newPackingSites) {
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                            <span class="summary">@site.address.lines.head</span>
+                        </summary>
+                        @for(line <- site.address.lines.tail) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                @if(showChangeLinks) {
+                    <td class="change-answer">
+                        <a href="@if(path.contains("change-production-sites")) {
+                            change-production-sites
+                        } else {
+                            change-packaging-sites
+                        }">
+                        @Html(Messages("variations.cya.packsites.change"))
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if(closedPackagingSites.nonEmpty) {
+
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.packsites.remove")</caption>
+        <thead>
+            <tr>
+                <th class="cya-width">
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.packsites.address")
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.postcode")
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(site <- closedPackagingSites) {
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                            <span class="summary">@site.address.lines.head</span>
+                        </summary>
+                        @for(line <- site.address.lines.tail) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                @if(showChangeLinks) {
+                    <td class="change-answer">
+                        <a href="@if(path.contains("change-production-sites")) {
+                            change-production-sites
+                        } else {
+                            change-packaging-sites
+                        }">
+                        @Html(Messages("variations.cya.packsites.change"))
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if(path.contains("change-packaging-sites") && newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.packsites.same")</caption>
+        <tbody>
+            <tr>
+                <th class="table-header-bold">
+                @Messages("variations.cya.packsites.addOrRemove")
+                </th>
+                <th>
+                @Messages("variations.cya.false")
+                </th>
+                @if(showChangeLinks) {
+                <th>
+                    <td class="change-answer">
+                        <a href="change-packaging-sites">
+                        @Html(Messages("variations.cya.packsites.change"))
+                        </a>
+                    </td>
+                </th>
+                }
+            </tr>
+        </tbody>
+    </table>
+}
+
+@if(newWarehouseSites.nonEmpty) {
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.warehouses.add")</caption>
+
+        <thead>
+            <tr>
+                <th class="cya-width">
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.warehouses")
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.postcode")
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(site <- newWarehouseSites) {
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                            <span class="summary">
+                            @site.getLines.head
+                            </span>
+                        </summary>
+                        @for(line <- site.getLines.tail.dropRight(1)) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                @if(showChangeLinks) {
+                    <td class="change-answer">
+                        <a href="@if(path.contains("change-secondary-warehouses")) {
+                            change-secondary-warehouses
+                        } else {
+                            change-warehouses
+                        }">
+                        @Html(Messages("variations.cya.warehouses.change"))
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if(closedWarehouses.nonEmpty) {
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.warehouses.remove")</caption>
+        <thead>
+            <tr>
+                <th class="cya-width">
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.warehouses")
+                    </h2>
+                </th>
+                <th>
+                    <h2 class="heading-small">
+                    @Messages("variations.cya.postcode")
+                    </h2>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(site <- closedWarehouses) {
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                            <span class="summary">
+                            @site.getLines.head
+                            </span>
+                        </summary>
+                        @for(line <- site.getLines.tail.dropRight(1)) {
+                            <div aria-hidden="true">@line</div>
+                        }
+                        <div class="postal-code">@site.address.postCode</div>
+                    </details>
+                </td>
+                <td>@site.address.postCode</td>
+                @if(showChangeLinks) {
+                    <td class="change-answer">
+                        <a href="@if(path.contains("change-secondary-warehouses")) {
+                            change-secondary-warehouses
+                        } else {
+                            change-warehouses
+                        }">
+                        @Html(Messages("variations.cya.warehouses.change"))
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if(path.contains("change-warehouses") && newWarehouseSites.isEmpty && closedWarehouses.isEmpty && v.deregDate.isEmpty) {
+
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">@Messages("variations.cya.warehouses.same")</caption>
+        <tbody>
+            <tr>
+                <th class="table-header-bold">
+                @Messages("variations.cya.warehouses.addOrRemove")
+                </th>
+                <td>
+                @Messages("variations.cya.false")
+                </td>
+                @if(showChangeLinks) {
+                    <th>
+                        <td class="change-answer">
+                            <a href="change-warehouses">
+                            @Html(Messages("variations.cya.warehouses.change"))
+                            </a>
+                        </td>
+                    </th>
+                }
+            </tr>
+        </tbody>
+    </table>
+}
+

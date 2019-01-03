@@ -1,0 +1,94 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import sdil.models.variations.RegistrationVariationData
+
+@(showChangeLinks: Boolean, v: RegistrationVariationData)(implicit messages: Messages)
+
+    <table class="check-your-answers">
+        <caption class="heading-medium">
+        @Messages("variations.cya.contact")
+        </caption>
+        <tbody>
+
+            <tr>
+                <td class="cya-question table-header-bold">
+                @Messages("variations.cya.contact.fullName")
+                </td>
+                <td>
+                @v.updatedContactDetails.fullName
+                <td/>
+                @if(showChangeLinks) {
+                    <td class="cya-change">
+                        <a href="contact">
+                        @Html(Messages("variations.cya.contact.change.fullName"))
+                        </a>
+                    </td>
+                }
+            </tr>
+
+
+            <tr>
+                <td class="cya-question table-header-bold">
+                @Messages("variations.cya.contact.jobTitle")
+                </td>
+                <td>
+                @v.updatedContactDetails.position
+                <td/>
+                @if(showChangeLinks) {
+                    <td class="cya-change">
+                        <a href="contact">
+                        @Html(Messages("variations.cya.contact.change.jobTitle"))
+                        </a>
+                    </td>
+                }
+            </tr>
+
+            <tr>
+                <td class="cya-question table-header-bold">
+                @Messages("variations.cya.contact.telephone")
+                </td>
+                <td>
+                @v.updatedContactDetails.phoneNumber
+                <td/>
+                @if(showChangeLinks) {
+                    <td class="cya-change">
+                        <a href="contact">
+                        @Html(Messages("variations.cya.contact.change.telephone"))
+                        </a>
+                    </td>
+                }
+            </tr>
+
+
+            <tr>
+                <td class="cya-question table-header-bold">
+                @Messages("variations.cya.contact.email")
+                </td>
+                <td>
+                @v.updatedContactDetails.email
+                <td/>
+                @if(showChangeLinks) {
+                    <td class="cya-change">
+                        <a href="contact">
+                        @Html(Messages("variations.cya.contact.change.email"))
+                        </a>
+                    </td>
+                }
+            </tr>
+
+        </tbody>
+    </table>
