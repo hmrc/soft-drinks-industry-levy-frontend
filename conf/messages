@@ -377,7 +377,7 @@ sdil.hidden.registerDeclaration.phone-number=Change telephone number
 sdil.hidden.registerDeclaration.email=Change email address
 
 #Complete
-sdil.complete.what-happens.title=What happens next?
+sdil.complete.what-happens.title=What happens next
 sdil.complete.what-happens.p1=You do not need to do anything else at this time.
 sdil.complete.what-happens.p2=We will send your Soft Drinks Industry Levy reference number to {0} within 24 hours.
 sdil.complete.what-happens.help.title=Help using this service
@@ -1367,12 +1367,19 @@ return-variation-reason.label=Reason for correction
 returnVariationDone.title=Correction sent
 returnVariationDone.subheading=We will review the details you updated and get back to you
 returnVariationDone.your.updates=Your updates for {0} were sent on {1} at {2}.
+returnVariationDone.corrected.return=The corrected {0} to {1} return for {2} was sent on {3} at {4}.
+returnVariationDone.payments.notice=Do not make any payments until we have confirmed how much you need to pay, \
+  as you will be charged interest on your adjusted amount.
 variationDone.your.request=Your request to cancel {0}’s registration was sent on {1} at {2}.
 
 return.variationDone.what-happens-next=<p>We will review the details that you updated and get back to you. \
   We may get in touch with your contact person to discuss your changes. \
   Once we have approved your correction, your account balance will be updated.</p>\
   <p>Do not make any payments until we have confirmed how much you need to pay, as you will be charged interest on your adjusted amount.</p>
+
+return.check-return-differences.what-happens-next=We will review the details that you updated and get back to you. \
+  We may get in touch with your contact person to discuss your changes. \
+  Once we have approved your correction, your account balance will be updated.
 
 heading.repayment=How do you want the credit to be repaid?
 repayment.lead=Repayment is not guaranteed. We may wish to discuss the claim with you before deciding whether to make a repayment.

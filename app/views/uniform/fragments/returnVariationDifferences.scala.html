@@ -21,7 +21,7 @@
 @import sdil.controllers.returnLiterageList
 @import views.html.softdrinksindustrylevy.helpers._
 
-@(key: String, variation: ReturnVariationData)(implicit m: Messages)
+@(key: String, variation: ReturnVariationData, showChangeLinks: Boolean = true)(implicit m: Messages)
 
 @cost(key: String, value: BigDecimal) = {
     @defining(
@@ -39,16 +39,18 @@
     <table class="check-your-answers">
         <thead>
             <tr>
-                <th colspan="3">
+                <th colspan="4">
                     <h2 class="heading-medium">
                     @Messages(s"$key.$title")
                     </h2>
                 </th>
-                <th class="change-answer" colspan="3">
-                    <button name="@key" value="@changeLink" id="@key" class="link-button">
-                        @Messages("sdil.declaration.change-link") <span class="visuallyhidden">@Messages(s"$key.change.$title")</span>
-                    </button>
-                </th>
+                @if(showChangeLinks) {
+                    <th class="change-answer" colspan="3">
+                        <button name="@key" value="@changeLink" id="@key" class="link-button">
+                            @Messages("sdil.declaration.change-link") <span class="visuallyhidden">@Messages(s"$key.change.$title")</span>
+                        </button>
+                    </th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -92,7 +94,6 @@
 
 @declaration_table(s"$key.balance", Messages("return-variation-reason.subheading")) {
 
-
     <tr>
         <th scope="row">@Messages(s"$key.total.original")</th>
         <td class="numeric">@format_money(variation.original.total)</td>
@@ -116,29 +117,38 @@
     <tr>
         <th>@Messages("return-variation-reason.label")</th>
         <td>@variation.reason</td>
-        <td class="change-answer"><a href="return-variation-reason">@Messages(s"sdil.declaration.change-link")</a></td>
+        @if(showChangeLinks) {
+            <td class="change-answer">
+                <a href="return-variation-reason">@Messages(s"sdil.declaration.change-link")</a>
+            </td>
+        }
     </tr>
     @variation.repaymentMethod.map { x =>
         <tr>
             <th>@Messages("return-variation-repayments.label")</th>
             <td>@Messages(s"$x.short")</td>
-            <td class="change-answer" ><a href="repayment">@Messages(s"sdil.declaration.change-link")</a></td>
+            @if(showChangeLinks) {
+                <td class="change-answer" >
+                    <a href="repayment">@Messages(s"sdil.declaration.change-link")</a>
+                </td>
+            }
         </tr>
     }
 }
 
+@if(showChangeLinks) {
 <br/>
-
-<h2 class="heading-medium">
+    <h2 class="heading-medium">
     @Messages("check-return-differences.submit.heading")
-</h2>
-    
-<p>
-    @Messages("check-return-differences.submit.p")
-</p>
+    </h2>
 
-<p>
-    <a href="javascript:window.print()" class="print-link" onclick="ga('send', 'event', 'print', 'click', 'Print')">
-    @Messages("sdil.common.print")
-    </a>
-</p>
+    <p>
+    @Messages("check-return-differences.submit.p")
+    </p>
+
+    <p>
+        <a href="javascript:window.print()" class="print-link" onclick="ga('send', 'event', 'print', 'click', 'Print')">
+        @Messages("sdil.common.print")
+        </a>
+    </p>
+}

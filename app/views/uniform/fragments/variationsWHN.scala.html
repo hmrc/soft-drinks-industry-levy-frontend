@@ -20,7 +20,9 @@
 @import java.time.LocalDate
 @import views.html.softdrinksindustrylevy.helpers._
 @import views.html.uniform.helpers._
+@import views.html.uniform.fragments._
 
+@import sdil.models.variations.ReturnVariationData
 @(
         path: List[String] = List.empty,
         newPackingSites: List[Site] = List.empty,
@@ -28,6 +30,7 @@
         newWarehouseSites: List[Site] = List.empty,
         closedWarehouses: List[Site] = List.empty,
         v: Option[RegistrationVariationData] = None,
+        a: Option[ReturnVariationData] = None,
         key: Option[String] = None)(implicit messages: Messages
 )
 
@@ -71,216 +74,31 @@
         @dereg_variations_cya(showChangeLinks = false, v)
     }
 
-    @details(Messages("summary.variation.title")) {
-        @if(path.contains("amount-produced") && !path.contains("cancel-registration-date")) {
-            @activty_variations_cya(showChangeLinks = false, v)
-        }
-
-        @if(newPackingSites.nonEmpty) {
-
-            <h2 class="heading-medium">@Messages("variations.cya.packsites.add")</h2>
-            <table class="check-your-answers">
-
-                <thead>
-                    <tr>
-                        <th class="cya-width">
-                            <h2 class="heading-small">
-                            @Messages("variations.cya.packsites.address")
-                            </h2>
-                        </th>
-                        <th>
-                            <h2 class="heading-small">
-                            @Messages("variations.cya.postcode")
-                            </h2>
-                        </th>
-                        <th>
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                @for(site <- newPackingSites) {
-                    <tr>
-                        <td>
-                            <details role="group">
-                                <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-                                    <span class="summary">@site.address.lines.head</span>
-                                </summary>
-                                @for(line <- site.address.lines.tail) {
-                                    <div aria-hidden="true">@line</div>
-                                }
-                                <div class="postal-code">@site.address.postCode</div>
-                            </details>
-                        </td>
-                        <td>@site.address.postCode</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        }
-
-        @if(closedPackagingSites.nonEmpty) {
-
-
-            <table class="check-your-answers">
-                <caption class="heading-medium">@Messages("variations.cya.packsites.remove")</caption>
-                <thead>
-                    <tr>
-                        <th class="cya-width">
-                            <h2 class="heading-small">
-                            @Messages("variations.cya.packsites.address")
-                            </h2>
-                        </th>
-                        <th>
-                            <h2 class="heading-small">
-                            @Messages("variations.cya.postcode")
-                            </h2>
-                        </th>
-                        <th>
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                @for(site <- closedPackagingSites) {
-                    <tr>
-                        <td>
-                            <details role="group">
-                                <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-                                    <span class="summary">@site.address.lines.head</span>
-                                </summary>
-                                @for(line <- site.address.lines.tail) {
-                                    <div aria-hidden="true">@line</div>
-                                }
-                                <div class="postal-code">@site.address.postCode</div>
-                            </details>
-                        </td>
-                        <td>@site.address.postCode</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        }
-
-        @if(path.contains("change-packaging-sites") && newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
-            <table class="check-your-answers">
-                <caption class="heading-medium">@Messages("variations.cya.packsites.same")</caption>
-                <tbody>
-                    <tr>
-                        <th class="table-header-bold">
-                        @Messages("variations.cya.packsites.addOrRemove")
-                        </th>
-                        <th>
-                        @Messages("variations.cya.false")
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
-        }
-
-        @if(newWarehouseSites.nonEmpty) {
-            <table class="check-your-answers">
-                <caption class="heading-medium">@Messages("variations.cya.warehouses.add")</caption>
-
-                <thead>
-                    <tr>
-                        <th class="cya-width">
-                            <h2 class="heading-small">
-                            @Messages("variations.cya.warehouses")
-                            </h2>
-                        </th>
-                        <th>
-                            <h2 class="heading-small">
-                            @Messages("variations.cya.postcode")
-                            </h2>
-                        </th>
-                        <th>
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                @for(site <- newWarehouseSites) {
-                    <tr>
-                        <td>
-                            <details role="group">
-                                <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-                                    <span class="summary">
-                                    @site.getLines.head
-                                    </span>
-                                </summary>
-                                @for(line <- site.getLines.tail.dropRight(1)) {
-                                    <div aria-hidden="true">@line</div>
-                                }
-                                <div class="postal-code">@site.address.postCode</div>
-                            </details>
-                        </td>
-                        <td>@site.address.postCode</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        }
-
-        @if(closedWarehouses.nonEmpty) {
-            <table class="check-your-answers">
-                <caption class="heading-medium">@Messages("variations.cya.warehouses.remove")</caption>
-                <thead>
-                    <tr>
-                        <th class="cya-width">
-                            <h2 class="heading-small">
-                            @Messages("variations.cya.warehouses")
-                            </h2>
-                        </th>
-                        <th>
-                            <h2 class="heading-small">
-                            @Messages("variations.cya.postcode")
-                            </h2>
-                        </th>
-                        <th>
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                @for(site <- closedWarehouses) {
-                    <tr>
-                        <td>
-                            <details role="group">
-                                <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-                                    <span class="summary">
-                                    @site.getLines.head
-                                    </span>
-                                </summary>
-                                @for(line <- site.getLines.tail.dropRight(1)) {
-                                    <div aria-hidden="true">@line</div>
-                                }
-                                <div class="postal-code">@site.address.postCode</div>
-                            </details>
-                        </td>
-                        <td>@site.address.postCode</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        }
-
-        @if(path.contains("change-warehouses") && newWarehouseSites.isEmpty && closedWarehouses.isEmpty && v.deregDate.isEmpty) {
-
-
-            <table class="check-your-answers">
-                <caption class="heading-medium">@Messages("variations.cya.warehouses.same")</caption>
-                <tbody>
-                    <tr>
-                        <th class="table-header-bold">
-                        @Messages("variations.cya.warehouses.addOrRemove")
-                        </th>
-                        <td>
-                        @Messages("variations.cya.false")
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        }
+    @if(path.contains("amount-produced") && !path.contains("cancel-registration-date")) {
+        @activty_variations_cya(showChangeLinks = false, v)
     }
+
+    @sites_variations_cya(
+        showChangeLinks = false,
+        v,
+        newPackingSites,
+        closedPackagingSites,
+        newWarehouseSites,
+        closedWarehouses,
+        path
+    )
+
+    @if(path.contains("contact-details")) {
+        @contact_details_variations_cya(showChangeLinks = false, v)
+    }
+
+    @if(path.contains("business-address")) {
+        @bus_addr_variations_cya(showChangeLinks = false, v)
+    }
+}
+
+@a.map { a =>
+    <p>@Messages("return.check-return-differences.what-happens-next")</p>
+    @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
+    @returnVariationDifferences("check-return-differences", a, showChangeLinks = false)
 }

@@ -289,7 +289,6 @@ class VariationsController(
       whnChangeLiability = Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show())
       whnVolToMan = Html(Messages("volToMan.what-happens-next") ++ whnChangeLiability)
       whnManToVol = Html(Messages("manToVol.what-happens-next") ++ whnChangeLiability)
-      summaryOfVariation = uniform.fragments.summary_of_variation(variation).some
       exit <- if(variation.volToMan) {
         journeyEnd("volToMan", LocalDate.now, subheading, whnVolToMan.some)(extraMessages)
       } else if(variation.manToVol) {
@@ -366,17 +365,12 @@ class VariationsController(
       _ <- checkReturnChanges("check-return-differences", variation.copy(reason = reason, repaymentMethod = repayment))
       _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
       _ <- clear
-      subheading = Html(
-        Messages(
-          "returnVariationDone.your.updates",
-          subscription.orgName,
-          LocalDate.now.format(ofPattern("d MMMM yyyy")),
-          LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)).some
+      subheading = uniform.fragments.return_variation_done_subheading(subscription, returnPeriod).some
 
       exit <- journeyEnd(
         id = "returnVariationDone",
         subheading = subheading,
-        whatHappensNext = uniform.fragments.variationsWHN(key = Some("return")).some)(extraMessages)
+        whatHappensNext = uniform.fragments.variationsWHN(a = variation.copy(reason = reason, repaymentMethod = repayment).some, key = Some("return")).some)(extraMessages)
 
     } yield exit
   }
@@ -478,7 +472,26 @@ class VariationsController(
       submission = Convert(variation)
       _ <- execute(sdilConnector.submitVariation(submission, sdilRef)) when submission.nonEmpty
       _ <- clear
-      exit <- journeyEnd("variationDone", whatHappensNext = uniform.fragments.variationsWHN().some)
+      subheading = Html(
+        Messages(
+          if(variation.deregDate.nonEmpty) {
+            "variationDone.your.request"
+          } else {
+            "returnVariationDone.your.updates"
+          },
+          subscription.orgName,
+          LocalDate.now.format(ofPattern("d MMMM yyyy")),
+          LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)).some
+      exit <- journeyEnd(
+        id = "variationDone",
+        subheading = subheading,
+        whatHappensNext = uniform.fragments.variationsWHN(
+          path,
+          newPackagingSites(variation),
+          closedPackagingSites(variation),
+          newWarehouseSites(variation),
+          closedWarehouseSites(variation),
+          variation.some).some)(extraMessages)
     } yield exit
   }
 
