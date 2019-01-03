@@ -29,20 +29,23 @@
 
     @form(sdil.controllers.routes.IdentifyController.submit()) {
 
-        @inputText(
-            identifyForm("utr"),
-            Messages("sdil.identify.utr"),
-            ('_hint, Messages("sdil.identify.help.p1")),
-            '_inputClass -> "form-control-1-4"
-        )
+    <fieldset class="form-field-group">
+        <legend class="visually-hidden">@Messages("sdil.identify.heading")</legend>
+            @inputText(
+                identifyForm("utr"),
+                Messages("sdil.identify.utr"),
+                ('_hint, Messages("sdil.identify.help.p1")),
+                '_inputClass -> "form-control-1-4"
+            )
 
-        @inputText(
-            identifyForm("postcode"),
-            Messages("sdil.identify.postcode"),
-            ('_hint, Messages("sdil.identify.postcode.hint")),
-            '_inputClass -> "input--cleared caps"
-        )
+            @inputText(
+                identifyForm("postcode"),
+                Messages("sdil.identify.postcode"),
+                ('_hint, Messages("sdil.identify.postcode.hint")),
+                '_inputClass -> "input--cleared caps"
+            )
+    </fieldset>
 
-        <input class="button" value="@Messages("sdil.common.continue")" type="submit">
+    <button class="button" type="submit"> @Messages("sdil.common.continue")</button>
     }
 }

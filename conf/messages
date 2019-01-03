@@ -743,7 +743,7 @@ ask-secondary-warehouses.help.header=Why should I register a warehouse?
 ask-secondary-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
   the warehouses you use to store them.
 heading.add-warehouse-details=Enter your warehouse details
-heading.add-secondary-warehouse-details=Enter your UK warehouse details
+heading.add-secondary-warehouse-details=Enter the UK warehouse details
 secondary-warehouse-details.help.header=Why should I register a warehouse?
 secondary-warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
   the warehouses you use to store them.
@@ -852,7 +852,7 @@ secondary-warehouse-details.list-control.heading=Do you want to add another ware
 warehouse-details.help.header=Why should I register a warehouse?
 warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
   if you register the warehouses you use to store them.
-heading.edit-secondary-warehouse-details=Enter your UK warehouse details
+heading.edit-secondary-warehouse-details=Enter the UK warehouse details
 heading.multi.warehouse-details=Change your UK warehouse details
 heading.warehouse-details=Do you want to register any of the UK warehouses you use to store liable drinks?
 warehouse-details.list-control.heading=Do you want to add another warehouse?
@@ -1007,7 +1007,7 @@ variations.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 packaging-site-details.error.items.tooMany=[Too many sites]
 packaging-site-details.error.items.tooFew=[You must have at least one packaging site]
 
-heading.edit-warehouse-details=Enter your UK warehouse details
+heading.edit-warehouse-details=Enter the UK warehouse details
 
 variations.cya.dereg=Deregistration
 variations.cya.reason=Reason
