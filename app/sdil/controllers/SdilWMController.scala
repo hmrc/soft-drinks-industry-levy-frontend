@@ -415,21 +415,13 @@ trait SdilWMController extends WebMonadController
       case Some(b) if b.startsWith("Edit") => Edit(b.split("\\.").last.toInt)
     }
     def inf(x: Control): Option[String] = Some(x.toString)
-
-    def stripId(id: String) = id match {
-      case "change-packaging-sites" |
-           "change-warehouses" |
-           "change-production-sites" |
-           "change-secondary-warehouses" => id.drop(7).dropRight(1)
-      case _ => id
-    }
-
+    
     def confirmation(q: A): WebMonad[Boolean] =
-      tell(s"remove-${stripId(id)}", q).map{_ => true}
+      tell(s"remove-$id", q).map{_ => true}
 
         def edit(q: A): WebMonad[A] = {
           editSingleForm.fold(NotFound: WebMonad[A]) { x =>
-            ask(x._1, s"edit-${stripId(id)}", q)(x._2, implicitly, implicitly, implicitly)
+            ask(x._1, s"edit-$id", q)(x._2, implicitly, implicitly, implicitly)
           }
         }
 
@@ -437,10 +429,10 @@ trait SdilWMController extends WebMonadController
 
           val mapping = optional(text) // N.b. ideally this would just be 'text' but sadly text triggers the default play "required" message for 'text'
             .verifying(
-            s"error.radio-form.choose-option.${stripId(id)}|error.radio-form.choose-option",
+            s"error.radio-form.choose-option.$id|error.radio-form.choose-option",
             a => a.nonEmpty)
-            .verifying(s"${stripId(id)}.error.items.tooFew", a => !a.contains("Done")  || items.size >= min)
-            .verifying(s"${stripId(id)}.error.items.tooMany", a => !a.contains("Add") || items.size < max)
+            .verifying(s"$id.error.items.tooFew", a => !a.contains("Done")  || items.size >= min)
+            .verifying(s"$id.error.items.tooMany", a => !a.contains("Add") || items.size < max)
 
           formPage(id)(mapping, None, configOverride) { (path, b, r) =>
             implicit val request: Request[AnyContent] = r
@@ -450,7 +442,7 @@ trait SdilWMController extends WebMonadController
       }
 
   def askPackSites(existingSites: List[Site]): WebMonad[List[Site]] =
-    manyT("change-production-sites",
+    manyT("production-site-details",
       ask(packagingSiteMapping,_)(packagingSiteForm, implicitly, implicitly, implicitly),
       default = existingSites,
       min = 1,
@@ -471,7 +463,7 @@ trait SdilWMController extends WebMonadController
   }
 
   def askWarehouses(sites: List[Site]): WebMonad[List[Site]] = {
-    manyT("change-secondary-warehouses",
+    manyT("secondary-warehouse-details",
       ask(warehouseSiteMapping,_)(warehouseSiteForm, implicitly, implicitly, implicitly),
       default = sites,
       editSingleForm = Some((warehouseSiteMapping, warehouseSiteForm))
