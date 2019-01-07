@@ -329,30 +329,6 @@ sdil.registerDeclaration.confirmation=By continuing you are confirming that the 
 sdil.registerDeclaration.continue=Confirm and send
 
 #visually hidden change links
-sdil.hidden.declaration.producer=Change your own brand packaged in the past 12 months
-sdil.hidden.declaration.isLargeProducer=Change amount of litres of your own brand packaged worldwide
-sdil.hidden.declaration.packaging=Change whether you package for your own brand at your own sites
-sdil.hidden.declaration.customers=Change whether you package as a contract packer at your own sites
-sdil.hidden.declaration.low-band.package-own=Change litres in the low band packaged for your own brand at your own sites
-sdil.hidden.declaration.high-band.package-own=Change litres in the high band packaged for your own brand at your own sites
-sdil.hidden.declaration.low-band.customerVol=Change litres in the low band packaged as a contract packer at your own sites
-sdil.hidden.declaration.high-band.customerVol=Change litres in the high band packaged as a contract packer at your own sites
-sdil.hidden.declaration.third-party=Change whether you use third parties or contract packers
-sdil.hidden.declaration.import=Change whether you bring liable drinks into the UK
-sdil.hidden.declaration.import-volume=Litres in next 12 months
-sdil.hidden.declaration.low-band.import-volume=Change litres in the low band brought into the UK
-sdil.hidden.declaration.high-band.import-volume=Change litres in the high band brought into the UK
-
-sdil.hidden.declaration.date=Change Soft Drinks Levy Liability date
-sdil.hidden.declaration.production-sites=Change packaging site details
-sdil.hidden.declaration.warehouses=Change warehouse details
-
-sdil.hidden.declaration.name=Change contact name
-sdil.hidden.declaration.position=Change job title
-sdil.hidden.declaration.phone-number=Change telephone number
-sdil.hidden.declaration.email=Change email address
-
-
 sdil.hidden.registerDeclaration.producer=Change your own brand packaged in the past 12 months
 sdil.hidden.registerDeclaration.isLargeProducer=Change amount of litres of your own brand packaged worldwide
 sdil.hidden.registerDeclaration.packaging=Change whether you package for your own brand at your own sites
@@ -948,7 +924,11 @@ variations.cya.warehouses.addOrRemove=Add or remove warehouses
 variations.cya.warehouses.same=Registered warehouse details
 variations.cya.packsites.address=Address
 variations.cya.packsites.change=Change <span class="visuallyhidden">packaging sites</span>
+variations.cya.packsites.change.add=Change <span class="visuallyhidden">packaging sites that you are adding</span>
+variations.cya.packsites.change.remove=Change <span class="visuallyhidden">packaging sites that you are removing</span>
 variations.cya.warehouses.change=Change <span class="visuallyhidden">warehouses</span>
+variations.cya.warehouses.change.add=Change <span class="visuallyhidden">warehouses that you are adding</span>
+variations.cya.warehouses.change.remove=Change <span class="visuallyhidden">warehouses that you are removing</span>
 variations.cya.postcode=Postcode
 variations.cya.warehouses=Address
 variations.cya.contact=Soft Drinks Industry Levy contact
@@ -959,15 +939,15 @@ variations.cya.contact.change.jobTitle=Change <span class="visually-hidden">job 
 variations.cya.contact.telephone=Telephone number
 variations.cya.contact.change.telephone=Change <span class="visually-hidden">telephone number</span>
 variations.cya.contact.email=Email address
-variations.cya.contact.change.email=Change <span class="visually-hidden">email</span>
+variations.cya.contact.change.email=Change <span class="visually-hidden">email address</span>
 variations.cya.contact.address=Registered business address
 variations.cya.contact.address.sub=Address
-variations.cya.contact.change.address=Change<span class="visually-hidden"> home address</span>
+variations.cya.contact.change.address=Change<span class="visually-hidden"> business address</span>
 variations.cya.deregistration=Details of your request to cancel your Soft Drinks Industry levy registration
 variations.cya.deregistration.reason=Reason for cancelling
-variations.cya.deregistration.change.reason=Change <span class="visually-hidden">reason</span>
+variations.cya.deregistration.change.reason=Change <span class="visually-hidden">reason for cancelling registration</span>
 variations.cya.deregistration.date=Date of cancellation
-variations.cya.deregistration.change.date=Change <span class="visually-hidden">effective date</span>
+variations.cya.deregistration.change.date=Change <span class="visually-hidden">effective date of cancellation</span>
 
 error.deregReason.tooLong=Deregistration reason must be 255 characters or less
 error.return-variation-reason.tooLong=Reason for correcting the return must be 255 characters or less
@@ -1145,13 +1125,22 @@ check-your-answers.total=Total
 check-your-answers.low=Low
 check-your-answers.high=High
 check-your-answers.change=Change
-check-your-answers.change.own-brands-packaged-at-own-sites=volume of own brand
-check-your-answers.change.exemptions-for-small-producers=volume contract packed for registered small producers
-check-your-answers.change.packaged-as-a-contract-packer=volume contract packed at your own site
-check-your-answers.change.brought-into-uk-from-small-producers=volume brought into the UK from small producers
-check-your-answers.change.brought-into-uk=volume brought into the UK
-check-your-answers.change.claim-credits-for-exports=volume exported
-check-your-answers.change.claim-credits-for-lost-damaged=volume lost, damaged or destroyed
+check-your-answers.change.own-brands-packaged-at-own-sites=Change volume of own brand
+check-your-answers.change.exemptions-for-small-producers=Change volume contract packed for registered small producers
+check-your-answers.change.packaged-as-a-contract-packer=Change volume contract packed at your own site
+check-your-answers.change.brought-into-uk-from-small-producers=Change volume brought into the UK from small producers
+check-your-answers.change.brought-into-uk=Change volume brought into the UK
+check-your-answers.change.claim-credits-for-exports=Change volume exported
+check-your-answers.change.claim-credits-for-lost-damaged=Change volume lost, damaged or destroyed
+check-return-differences.change.own-brands-packaged-at-own-sites=volume of own brand
+check-return-differences.change.exemptions-for-small-producers=volume contract packed for registered small producers
+check-return-differences.change.packaged-as-a-contract-packer=volume contract packed at your own site
+check-return-differences.change.brought-into-uk-from-small-producers=volume brought into the UK from small producers
+check-return-differences.change.brought-into-uk=volume brought into the UK
+check-return-differences.change.claim-credits-for-exports=volume exported
+check-return-differences.change.claim-credits-for-lost-damaged=volume lost, damaged or destroyed
+check-return-differences.change.reason=reason for correction of return
+check-return-differences.change.repayment=method of repayment
 check-your-answers.continue=Confirm details and send return
 check-your-answers.submit-subheading=Send your return
 check-your-answers.submit-paragraph=By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.

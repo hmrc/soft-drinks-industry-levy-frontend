@@ -42,7 +42,6 @@
             <th>@Messages(s"$key.band")</th>
             <th class="numeric">@Messages(s"$key.litres")</th>
             <th class="numeric">@Messages(s"$key.levy")</th>
-            <th></th>
         </tr>
     </thead>
 
@@ -55,7 +54,8 @@
                 <td class="no-minus-wrapping numeric">@format_money(costLower * litres._1 * multiplier)</td>
                 <td>
                     <button name="@key" value="@lineKey" id="@key" class="link-button">
-                        @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
+                        <span aria-hidden="true">@Messages(s"$key.change")</span>
+                        <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
                     </button>
                 </td>
             </tr>
@@ -65,7 +65,8 @@
                 <td class="no-minus-wrapping numeric"> @format_money(costHigher * litres._2 * multiplier)</td>
                 <td>
                     <button name="@key" value="@lineKey" id="@key" class="link-button">
-                        @Messages(s"$key.change") <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
+                        <span aria-hidden="true">@Messages(s"$key.change")</span>
+                        <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
                     </button>
                 </td>
             </tr>
@@ -74,12 +75,10 @@
         <tr>
             <th scope="row" colspan="3"><span class="heading-small">@Messages(s"$key.subtotal")</span></th>
             <td class="numeric"><span class="heading-small no-minus-wrapping numeric">@format_money(subtotal)</span></td>
-            <td></td>
         </tr>
         <tr>
             <th scope="row" colspan="3"><span class="heading-small">@Messages(s"$key.balance.brought.forward")</span></th>
             <td class="numeric"><span class="heading-small no-minus-wrapping numeric">@format_money(-broughtForward, "+")</span></td>
-            <td></td>
         </tr>
         }
         @if(originalReturn.nonEmpty) {
@@ -88,12 +87,10 @@
                 <tr>
                     <th scope="row" colspan="3">@Messages(s"$key.total.original")</th>
                     <td class="numeric">@format_money(r.total)</td>
-                    <td></td>
                 </tr>
                 <tr>
                     <th scope="row" colspan="3">@Messages(s"$key.total.new")</th>
                     <td class="numeric">@format_money(total)</td>
-                    <td></td>
                 </tr>
                 <tr>
                     @if((total - r.total) < 0) {
@@ -103,15 +100,13 @@
 
                     }
                     <td class="numeric"><span class="heading-small no-minus-wrapping">@format_money(total - r.total)</span></td>
-                    <td></td>
                 </tr>
             }
 
         } else {
             <tr>
-                <th scope="row" colspan="3"><h4 class="heading-small">@Messages(s"$key.total")</h4></th>
-                <td class="numeric"><h4 class="heading-small no-minus-wrapping numeric">@format_money(total)</h4></td>
-                <td></td>
+                <th scope="row" colspan="3"><span class="heading-small">@Messages(s"$key.total")</span></th>
+                <td class="numeric"><span class="heading-small no-minus-wrapping numeric">@format_money(total)</span></td>
             </tr>
         }
     </tbody>
@@ -141,16 +136,10 @@
                 <thead>
                     <tr>
                         <th class="cya-width">
-                            <h2 class="heading-small">
                             @Messages("variations.cya.packsites.address")
-                            </h2>
                         </th>
-                        <th>
-                            <h2 class="heading-small">
+                        <th colspan="2">
                             @Messages("variations.cya.postcode")
-                            </h2>
-                        </th>
-                        <th>
                         </th>
                     </tr>
                 </thead>
@@ -188,16 +177,10 @@
                 <thead>
                     <tr>
                         <th class="cya-width">
-                            <h2 class="heading-small">
                             @Messages("variations.cya.warehouses")
-                            </h2>
                         </th>
-                        <th>
-                            <h2 class="heading-small">
+                        <th colspan="2">
                             @Messages("variations.cya.postcode")
-                            </h2>
-                        </th>
-                        <th>
                         </th>
                     </tr>
                 </thead>

@@ -104,8 +104,9 @@
 
         <p>@Messages("returnsHome.returnsDueList.p1", periodsDue.length)</p>
 
-        @for(periodList <- periodsDue) {
-            <ul>
+        @if(periodsDue.nonEmpty) {
+            <ul class="no-break-margin">
+            @for(periodList <- periodsDue) {
                 <li>
                 @Messages("returnsHome.returnsDueList.li",
                     periodsDue.indexOf(periodList) + 1,
@@ -113,9 +114,9 @@
                     periodList.end.format("MMMM yyyy")
                 )
                 </li>
+            }
             </ul>
         }
-        <br/>
         }
 
         <div>

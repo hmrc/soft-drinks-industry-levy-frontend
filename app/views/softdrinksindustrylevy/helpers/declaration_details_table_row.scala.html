@@ -28,8 +28,8 @@
     @changeRoute.map { route =>
         <td class="change-answer">
             <a href="@route" onclick="ga('send', 'event', 'registerDeclaration', 'clickChange', '@changeRoute')">
-                @Messages("sdil.declaration.change-link")
-                <span class="visuallyhidden">@Messages(s"sdil.hidden.$pageRef.$questionKey")</span>
+                <span aria-hidden="true">@Messages("sdil.declaration.change-link")</span>
+                <span class="visually-hidden">@Messages(s"sdil.hidden.$pageRef.$questionKey")</span>
             </a>
         </td>
     }
