@@ -120,6 +120,7 @@
         @if(showChangeLinks) {
             <td class="change-answer">
                 <a href="return-variation-reason">@Messages(s"sdil.declaration.change-link")</a>
+                <span class="visuallyhidden">@Messages(s"$key.change.reason")</span>
             </td>
         }
     </tr>
@@ -130,6 +131,7 @@
             @if(showChangeLinks) {
                 <td class="change-answer" >
                     <a href="repayment">@Messages(s"sdil.declaration.change-link")</a>
+                    <span class="visuallyhidden">@Messages(s"$key.change.repayment")</span>
                 </td>
             }
         </tr>
@@ -137,7 +139,6 @@
 }
 
 @if(showChangeLinks) {
-<br/>
     <h2 class="heading-medium">
     @Messages("check-return-differences.submit.heading")
     </h2>
