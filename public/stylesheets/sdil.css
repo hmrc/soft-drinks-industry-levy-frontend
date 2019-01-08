@@ -33,6 +33,10 @@
         width: 62%;
     }
 
+    .form-postcode .form-control {
+        width: 110px;
+    }
+
     .check-your-answers td {
         font-size: 19px;
         line-height: 1.31579;
@@ -53,6 +57,10 @@
 
     .form-control-1-4 {
         width: 25%;
+    }
+
+    .form-control-35 {
+        width: 35%;
     }
 
     table th, table td {
@@ -76,6 +84,10 @@
         width: 100%;
     }
 
+    .form-postcode .form-control {
+        width: 100%;
+    }
+
     table th, table td {
         font-size: 16px;
         font-weight: 400;
@@ -91,9 +103,7 @@ details summary:not([tabindex]) {
     display: list-item;
 }
 
-.form-postcode .form-control {
-    width: 100px;
-}
+
 
 html .font-xsmall {
     font-size: 16px;
