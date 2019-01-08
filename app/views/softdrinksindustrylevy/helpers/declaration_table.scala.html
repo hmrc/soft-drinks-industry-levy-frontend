@@ -17,17 +17,15 @@
 @(pageRef: String, tableHeading: String, tableContent: Option[String] = None, changeLink: Option[Call] = None)(rowContent: Html)(implicit messages: Messages)
 
 <table class="check-your-answers">
+    <caption class="heading-medium">
+        @Messages(s"sdil.$pageRef.$tableHeading")
+    </caption>
     <thead>
         <tr>
             <th colspan="2">
-                <h2 class="heading-medium">
-                    @Messages(s"sdil.$pageRef.$tableHeading")
-                </h2>
                 @tableContent.map { x =>
-                <p>
-                    <h6>
-                        @Messages(s"sdil.$pageRef.$tableHeading.$x")
-                    </h6>
+                <p class="business-details-help">
+                    @Messages(s"sdil.$pageRef.$tableHeading.$x")
                 </p>
                 }
             </th>

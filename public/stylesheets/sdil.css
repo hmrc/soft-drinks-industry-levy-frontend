@@ -220,8 +220,20 @@ details .address.progressive-reveal {
     padding-top: 4%
 }
 
+.print-link-padding {
+    padding-top: 3%
+}
+
 .change-address-button {
     margin-top: 4%;
+}
+
+.service-page-comp-name {
+    margin-top: 6%;
+}
+
+.service-page-header {
+    margin-top: 0%;
 }
 
 .no-padding-right {
@@ -230,6 +242,14 @@ details .address.progressive-reveal {
 
 .table-header-bold {
     font-weight: 700;
+}
+
+.business-details-help {
+    font-size: 19px;
+}
+
+.no-break-margin {
+    margin-bottom: 5%;
 }
 
 .govuk-fieldset__legend--xl {
