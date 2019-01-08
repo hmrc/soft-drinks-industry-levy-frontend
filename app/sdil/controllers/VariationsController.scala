@@ -283,23 +283,24 @@ class VariationsController(
           subscription.orgName,
           LocalDate.now.format(ofPattern("d MMMM yyyy")),
           LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)).some
-      whnChangeLiability = Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show())
-      whnVolToMan = Html(Messages("volToMan.what-happens-next") ++ whnChangeLiability)
-      whnManToVol = Html(Messages("manToVol.what-happens-next") ++ whnChangeLiability)
-      exit <- if(variation.volToMan) {
-        journeyEnd("volToMan", LocalDate.now, subheading, whnVolToMan.some)(extraMessages)
-      } else if(variation.manToVol) {
-        journeyEnd("manToVol", LocalDate.now, subheading, whnManToVol.some)(extraMessages)
-      } else journeyEnd(
+      whnKey = variation match {
+        case a if a.manToVol => "manToVol"
+        case a if a.volToMan => "volToMan"
+        case _ => ""
+      }
+      whn = uniform.fragments.variationsWHN(
+        path,
+        newPackagingSites(variation),
+        closedPackagingSites(variation),
+        newWarehouseSites(variation),
+        closedWarehouseSites(variation),
+        variation.some,
+        None,
+        whnKey.some)
+      exit <- journeyEnd(
         id = "variationDone",
         subheading = subheading,
-        whatHappensNext = uniform.fragments.variationsWHN(
-          path,
-          newPackagingSites(variation),
-          closedPackagingSites(variation),
-          newWarehouseSites(variation),
-          closedWarehouseSites(variation),
-          variation.some).some)(extraMessages)
+        whatHappensNext = whn.some)(extraMessages)
     } yield exit
   }
 

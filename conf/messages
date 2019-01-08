@@ -867,17 +867,17 @@ variationDone.cya.noChangeEnd=<a href="{0}">Return to your registered details</a
 volToMan.title=Updates have been sent
 volToMan.subheading=We have received the updates to your Soft Drinks Industry Levy details
 volToMan.what-happens.next.heading=Your registration has been changed
-volToMan.what-happens-next=<p>You will now need to file quarterly returns. You will get a new reference number in the post, \
-  which may take 15 working days. You need to keep this number.</p>
+volToMan.variationDone.what-happens-next=You will now need to file quarterly returns. You will get a new reference number in the post, \
+  which may take 15 working days. You need to keep this number.
 volToMan.your.updates=Your updates were sent on {0} at {1}.
 volToMan.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
 manToVol.title=Updates have been sent
 manToVol.subheading=We have received the updates to your Soft Drinks Industry Levy details
 manToVol.what-happens.title=Your registration has been changed
-manToVol.what-happens-next=<p>You are now registered as a small producer who only uses a third party to package their \
+manToVol.variationDone.what-happens-next=You are now registered as a small producer who only uses a third party to package their \
   liable drinks, which means you do not have to file returns. You will get a new reference number in the post, which \
-  you will need to give to your contract packer so they can claim an exemption for the drinks they package on your behalf.</p>
+  you will need to give to your contract packer so they can claim an exemption for the drinks they package on your behalf.
 manToVol.your.updates=Your updates were sent on {0} at {1}.
 manToVol.cya.noChangeEnd=<a href="{0}">Return to your registered details</a>
 
