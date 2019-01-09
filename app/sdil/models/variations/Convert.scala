@@ -21,6 +21,7 @@ import scala.util.Try
 
 import sdil.models.backend.{Activity, Site}
 import sdil.models.{Address, Litreage}
+import scala.language.reflectiveCalls
 
 object Convert {
 

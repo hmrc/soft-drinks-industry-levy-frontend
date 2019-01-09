@@ -1079,6 +1079,7 @@ brought-into-uk.help=A business is a small producer if it:\
   <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
   </ul>
 heading.brought-into-uk-from-small-producers=Are you reporting any liable drink you have brought into the UK from small producers?
+brought-into-uk-from-small-producers.lead.volMan=Include your own brands of liable drink produced outside of the UK.
 brought-into-uk-from-small-producers.inner-heading=How many litres?
 brought-into-uk-from-small-producers.help.header=Liable drink from small producers
 brought-into-uk-from-small-producers.help=<p>If you are a registered small producer and you bring your own brand of \
@@ -1097,6 +1098,8 @@ claim-credits-for-exports.help=You can claim a credit for liable drinks that hav
 claim-credits-for-exports.inner-heading=How many litres are you claiming a credit for?
 heading.claim-credits-for-lost-damaged=Do you want to claim a credit for any liable drink which have been lost or destroyed?
 claim-credits-for-lost-damaged.inner-heading=How many litres are you claiming a credit for?
+claim-credits-for-exports.lead.volMan=You can only claim a levy credit for drinks that you have paid the levy on \
+  or will pay the levy on. Do not include drinks produced for small producers or imported from them.
 claim-credits-for-lost-damaged.help.header=What can I claim credit for?
 claim-credits-for-lost-damaged.help=You can claim a credit for liable drinks that have been:<ul class="list list-bullet"><li>lost</li><li>destroyed</li>\
   <li>disposed of as waste</li><li>reprocessed</li><li>spilled and cannot be used</li></ul>\

@@ -215,7 +215,7 @@ trait SdilWMController extends WebMonadController
     }
 
 
-  def askOption[T](innerMapping: Mapping[T], key: String, default: Option[Option[T]] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T], showBackLink: ShowBackLink): WebMonad[Option[T]] = {
+  def askOption[T](innerMapping: Mapping[T], key: String, default: Option[Option[T]] = None)(implicit htmlForm: FormHtml[T], fmt: Format[T], showBackLink: ShowBackLink, extraMessages: ExtraMessages): WebMonad[Option[T]] = {
     import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
     val outerMapping: Mapping[Option[T]] = mapping(
@@ -261,7 +261,8 @@ trait SdilWMController extends WebMonadController
   )(implicit htmlForm: FormHtml[T],
     fmt: Format[T],
     mon: Monoid[T],
-    showBackLink: ShowBackLink
+    showBackLink: ShowBackLink,
+    extraMessages: ExtraMessages
   ): WebMonad[T] = {
     val monDefault: Option[Option[T]] = default.map{_.some.filter{_ != mon.empty}}
     askOption[T](innerMapping, key, monDefault)

@@ -26,26 +26,6 @@ trait FormHelpers {
 
   lazy val siteJsonMapping: Mapping[Site] = text.transform[Site](s => Json.parse(s).as[Site], s => Json.toJson(s).toString)
 
-  private def mandatoryAddressLine(key: String): Mapping[String] = {
-    text.transform[String](_.trim, s => s).verifying(combine(required(key), optionalAddressLineConstraint(key)))
-  }
-
-  private def optionalAddressLine(key: String): Mapping[String] = {
-    text.transform[String](_.trim, s => s).verifying(optionalAddressLineConstraint(key))
-  }
-
-  private def optionalAddressLineConstraint(key: String): Constraint[String] = Constraint {
-    case a if !a.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") => Invalid(s"error.$key.invalid")
-    case b if b.length > 35 => Invalid(s"error.$key.over")
-    case _ => Valid
-  }
-
-  private def optionalTradingNameConstraint: Constraint[String] = Constraint {
-    case s if s.length > 160 => Invalid("error.tradingName.length")
-    case s if !s.matches("""^[a-zA-Z0-9 '.&\\/]{1,160}$""") => Invalid("error.tradingName.invalid")
-    case _ => Valid
-  }
-
   def required(key: String): Constraint[String] = Constraint {
     case "" => Invalid(s"error.$key.required")
     case _ => Valid
