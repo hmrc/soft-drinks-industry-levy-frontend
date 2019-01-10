@@ -284,9 +284,9 @@ class VariationsController(
           LocalDate.now.format(ofPattern("d MMMM yyyy")),
           LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)).some
       whnKey = variation match {
-        case a if a.manToVol => "manToVol"
-        case a if a.volToMan => "volToMan"
-        case _ => ""
+        case a if a.manToVol => "manToVol".some
+        case a if a.volToMan => "volToMan".some
+        case _ => None
       }
       whn = uniform.fragments.variationsWHN(
         path,
@@ -296,7 +296,7 @@ class VariationsController(
         closedWarehouseSites(variation),
         variation.some,
         None,
-        whnKey.some)
+        whnKey)
       exit <- journeyEnd(
         id = "variationDone",
         subheading = subheading,
