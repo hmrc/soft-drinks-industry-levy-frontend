@@ -154,9 +154,9 @@ class VariationsController(
                                         case _ => None
                                       }
       useCopacker                 <- ask(bool("third-party-packagers"),"third-party-packagers", data.usesCopacker) when packLarge.contains(false)
-      packageOwn                  <- askOption(litreagePair.nonEmpty, "packaging-site")(approxLitreageForm, implicitly, implicitly) when packLarge.nonEmpty
-      copacks                     <- askOption(litreagePair.nonEmpty, "contract-packing")(approxLitreageForm, implicitly, implicitly)
-      imports                     <- askOption(litreagePair.nonEmpty, "imports")(approxLitreageForm, implicitly, implicitly)
+      packageOwn                  <- askOption(litreagePair.nonEmpty, "packaging-site")(approxLitreageForm, implicitly, implicitly, implicitly) when packLarge.nonEmpty
+      copacks                     <- askOption(litreagePair.nonEmpty, "contract-packing")(approxLitreageForm, implicitly, implicitly, implicitly)
+      imports                     <- askOption(litreagePair.nonEmpty, "imports")(approxLitreageForm, implicitly, implicitly, implicitly)
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
@@ -368,7 +368,10 @@ class VariationsController(
       exit <- journeyEnd(
         id = "returnVariationDone",
         subheading = subheading,
-        whatHappensNext = uniform.fragments.variationsWHN(a = variation.copy(reason = reason, repaymentMethod = repayment)some, key = Some("return")).some)(extraMessages)
+        whatHappensNext = uniform.fragments.variationsWHN(
+          a = variation.copy(reason = reason, repaymentMethod = repayment).some,
+          key = Some("return")).some
+      )(extraMessages)
 
     } yield exit
   }
