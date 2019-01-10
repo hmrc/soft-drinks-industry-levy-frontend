@@ -29,6 +29,14 @@ $(document).ready(function () {
         $(document).scrollTop(errorSummary.offset().top);
         $(errorSummary).focus();
     }
+
+    //The focus setting behaviour defined in Assests is having troubles with different browsers. So we need to override the behaviour to make it work across all browsers
+    $('.error-summary a').on('click', function (e) {
+        e.preventDefault()
+        var $this = $(this);
+        var focusId = $this.attr('data-focuses');
+        $('[id="'+focusId +'"]').trigger('focus'); //This is needed as we have '.' inside the focusId value
+    })
 });
 
 window.onload = function () {
