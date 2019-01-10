@@ -341,8 +341,13 @@ class VariationsController(
 
       variation = ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
       path <- getPath
-//TODO Brought forward should not be 0
-      broughtForward = BigDecimal("0")
+      broughtForward <- if(config.balanceAllEnabled)
+        execute(sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+          extractTotal(listItemsWithTotal(x))
+        })
+      else
+        execute(sdilConnector.balance(sdilRef, withAssessment = false))
+
       extraMessages = ExtraMessages(
             messages = Map(
               "heading.check-your-variation-answers" -> s"${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return details",
