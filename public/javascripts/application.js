@@ -29,6 +29,21 @@ $(document).ready(function () {
         $(document).scrollTop(errorSummary.offset().top);
         $(errorSummary).focus();
     }
+
+    //The focus setting behaviour defined in Assests is having troubles with different browsers. So we need to override the behaviour to make it work across all browsers
+    $('.error-summary a').on('click', function (e) {
+        e.preventDefault()
+        var $this = $(this);
+        var focusId = $this.attr('data-focuses');
+        var fieldTypeVal = $('[id="'+focusId +'"]').prop('type');
+
+        if(fieldTypeVal == 'fieldset') {
+            $('[id="'+focusId + '-true'   + '"]').trigger('focus'); //This is to deal with fieldset properties
+        }
+        else {
+            $('[id="'+ focusId + '"]').trigger('focus'); //This is to deal with remaining types of elements
+        }
+    })
 });
 
 window.onload = function () {
