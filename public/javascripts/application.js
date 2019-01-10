@@ -35,7 +35,14 @@ $(document).ready(function () {
         e.preventDefault()
         var $this = $(this);
         var focusId = $this.attr('data-focuses');
-        $('[id="'+focusId +'"]').trigger('focus'); //This is needed as we have '.' inside the focusId value
+        var fieldTypeVal = $('[id="'+focusId +'"]').prop('type');
+
+        if(fieldTypeVal == 'fieldset') {
+            $('[id="'+focusId + '-true'   + '"]').trigger('focus'); //This is to deal with fieldset properties
+        }
+        else {
+            $('[id="'+ focusId + '"]').trigger('focus'); //This is to deal with remaining types of elements
+        }
     })
 });
 
