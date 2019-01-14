@@ -28,22 +28,33 @@ $(document).ready(function () {
     if(errorSummary.length) {
         $(document).scrollTop(errorSummary.offset().top);
         $(errorSummary).focus();
+        $("input[id^=" + "start-date" + "]").each(function(index) {
+            $(this).addClass('form-control-error')
+        })
     }
 
     //The focus setting behaviour defined in Assests is having troubles with different browsers. So we need to override the behaviour to make it work across all browsers
     $('.error-summary a').on('click', function (e) {
         e.preventDefault()
-        var $this = $(this);
-        var focusId = $this.attr('data-focuses');
-        var fieldTypeVal = $('[id="'+focusId +'"]').prop('type');
-
-        if(fieldTypeVal == 'fieldset') {
-            $('[id="'+focusId + '-true'   + '"]').trigger('focus'); //This is to deal with fieldset properties
-        }
-        else {
-            $('[id="'+ focusId + '"]').trigger('focus'); //This is to deal with remaining types of elements
-        }
-    })
+            var $this = $(this);
+            var focusId = $this.attr('data-focuses');
+            var fieldTypeVal = $('[id="'+focusId +'"]').prop('type');
+            if(fieldTypeVal == 'fieldset') {
+                $('[id="'+focusId + '-true'   + '"]').trigger('focus'); //This is to deal with fieldset properties
+            }
+            else {
+                $('[id="'+ focusId + '"]').trigger('focus'); //This is to deal with remaining types of elements
+            }
+            var indexSetToFocus = 0;
+            //Treat Start dates as special entities
+            $("input[id^=" + "start-date" + "]").each(function(index) {
+                if($.trim($(this).val()) == "") {
+                    indexSetToFocus = index;
+                    return false;
+                }
+            })
+            $("input[id^=" + "start-date" + "]:eq(" + indexSetToFocus + ")").trigger('focus');
+        })
 });
 
 window.onload = function () {

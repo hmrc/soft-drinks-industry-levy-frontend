@@ -172,13 +172,44 @@ object SdilComponents extends FormHelpers {
   )(ContactDetails.apply)(ContactDetails.unapply)
 
   lazy val startDate: Mapping[LocalDate] = tuple(
-    "day" -> numeric("day").verifying("error.start-day.invalid", d => d > 0 && d <= 31),
-    "month" -> numeric("month").verifying("error.start-month.invalid", d => d > 0 && d <= 12),
-    "year" -> numeric("year").verifying("error.start-year.invalid", d => d >= 1900 && d < 2100)
-  ).verifying("error.date.invalid", x => x match {
-    case (d, m, y) => Try(LocalDate.of(y, m, d)).isSuccess
+    "day" ->  text,
+    "month" -> text,
+    "year" -> text
+  ) .verifying("error.date.emptyfields", x => x match {
+    case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) == "" && trim(y) == "")  => false
+    case _ => true
   })
-    .transform({ case (d, m, y) => LocalDate.of(y, m, d) }, d => (d.getDayOfMonth, d.getMonthValue, d.getYear))
+    .verifying("error.start-date.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) != "" && trim(y) != "") => false
+      case _ => true
+    })
+    .verifying("error.start-month.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) == "" && trim(y) != "") => false
+      case _ => true
+    })
+    .verifying("error.start-year.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) != "" && trim(y) == "") => false
+      case _ => true
+    })
+    .verifying("error.start-day-and-month.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) == "" && trim(y) != "") => false
+      case _ => true
+    })
+    .verifying("error.start-month-and-year.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) == "" && trim(y) == "") => false
+      case _ => true
+    })
+    .verifying("error.start-day-and-year.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) != "" && trim(y) == "") => false
+      case _ => true
+    })
+    .verifying("error.date.invalid", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) != "" && trim(y) != "") => Try(LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt)).isSuccess
+      case _ => true
+    })
+    .transform({ case (d, m, y) => LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt) }, duy => (duy.getDayOfMonth.toString, duy.getMonthValue.toString, duy.getYear.toString))
+
+  def trim(inputStr : String) = inputStr.trim()
 
   def numeric(key: String): Mapping[Int] = text
     .verifying(s"error.$key.required", _.nonEmpty)
