@@ -22,18 +22,25 @@
 @import views.html.helper._
 
 @elements = @{new FieldElements(field.id, field, null, args.toMap, messages) }
-@groupDivClass = {@elements.args.get('_groupDivClass)@if(elements.hasErrors){ form-group-error }}
+@errorClass = {@if(elements.hasErrors) {form-group-error}}
+@groupDivClass = {@if(elements.args.get('_groupDivClass).isDefined) {@elements.args.get('_groupDivClass)}}
 @fieldsetClass = {@elements.args.get('_groupClass)}
 @labelAfter = @{ elements.args.get('_labelAfter).getOrElse(false).asInstanceOf[Boolean] }
 
-<div class="@groupDivClass">
+@if(elements.args.get('_div).isDefined) {
+<div class="@groupDivClass @errorClass">
+}
+    @if(elements.args.get('_fieldset).isDefined) {
     <fieldset id="@field.id" class="@fieldsetClass"
         @if(elements.args.get('_fieldsetAttributes).isDefined) {@elements.args.get('_fieldsetAttributes)}>
+    }
+
     @if(elements.args.get('_legend).isDefined) {
         <legend @if(elements.args.get('_legendClass).isDefined) {class="@elements.args.get('_legendClass)"}>
-        @elements.args.get('_legend)
+            @elements.args.get('_legend)
         </legend>
     }
+
     @elements.errors.map{error => <span class="error-message">@Messages(error.split("[|]"))</span>}
 
     @radioOptions.map { case (value, label) =>
@@ -75,5 +82,9 @@
             </div>
         }
     }
-    </fieldset>
-</div>
+    @if(elements.args.get('_fieldset).isDefined) {
+        </fieldset>
+    }
+@if(elements.args.get('_div).isDefined) {
+    </div>
+}

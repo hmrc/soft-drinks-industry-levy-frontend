@@ -17,7 +17,9 @@
 @(key: String)(implicit messages: Messages)
 
 @if(messages.isDefinedAt(s"${key}.inner-heading")) {
-    <h2 class="heading-medium" aria-hidden="true">@Messages(s"$key.inner-heading")</h2>
+ <legend>
+    <h2 class="heading-medium">@Messages(s"$key.inner-heading")</h2>
+ </legend>
 }
 
 @for(msg <- Messages.many(s"${key}.inner-paragraph")) {

@@ -75,7 +75,7 @@
         @CSRF.formField
         <div class="form-group">
             @if(items.nonEmpty) {
-                <table class="margin-bottom-50">
+                <table class="margin-bottom-30">
                 @for((item, id) <- items.zipWithIndex) {
                     <tr>
                         <td>
@@ -101,20 +101,25 @@
                 </table>
             }
             @if(messages.isDefinedAt(s"$key.list-control.heading") && items.nonEmpty) {
-                <h2 class="heading-small add-to-list" aria-hidden="true">@Messages(s"$key.list-control.heading")</h2>
+                <fieldset class="form-field-group">
+                    <legend>
+                        <h2 class="heading-small add-to-list" aria-hidden="true">@Messages(s"$key.list-control.heading")</h2>
+                    </legend>
+
             }
-            @if(messages.isDefinedAt(s"$key.list-control.lead")) {
-                <span class="form-hint">@Messages(s"$key.list-control.lead")</span>
-            }
-            @inputRadioGroup(
-                form(key),
-                List[Control](Add, Done).map(_.toString).map{v => (v, Messages(key + ".option." + v.toLowerCase))},
-                '_labelClass -> "block-label",
-                '_labelAfter -> true,
-                '_groupClass -> "inline",
-                '_legend -> Messages(s"$key.list-control.heading"),
-                '_legendClass -> "visuallyhidden"
-            )
+                @if(messages.isDefinedAt(s"$key.list-control.lead")) {
+                    <span class="form-hint">@Messages(s"$key.list-control.lead")</span>
+                }
+                @inputRadioGroup(
+                    form(key),
+                    List[Control](Add, Done).map(_.toString).map{v => (v, Messages(key + ".option." + v.toLowerCase))},
+                    '_labelClass -> "block-label",
+                    '_labelAfter -> true,
+                    '_groupClass -> "inline",
+                    '_div -> true,
+                    '_groupDivClass -> "inline"
+                )
+                </fieldset>
         </div>
         @if(messages.isDefinedAt(s"$key.help")) {
 
