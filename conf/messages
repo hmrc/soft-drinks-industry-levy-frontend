@@ -229,7 +229,14 @@ error.start-month.invalid=Enter a real month
 error.start-year.invalid=Enter a real year
 error.start-date.before-tax-start=Date must be after 5 April 2018
 error.start-date.in-future=Date cannot be in the future
-error.date.invalid=Enter a valid date
+error.date.invalid=Enter a real date
+error.date.emptyfields=Enter the date you became liable to register for the Soft Drinks Industry Levy
+error.start-date.missing=The date you became liable to register must include a day
+error.start-month.missing=The date you became liable to register must include a month
+error.start-year.missing=The date you became liable to register must include a year
+error.start-day-and-month.missing=The date you became liable to register must include a day and month
+error.start-month-and-year.missing=The date you became liable to register must include a month and year
+error.start-day-and-year.missing=The date you became liable to register must include a day and year
 
 #Contact details
 
