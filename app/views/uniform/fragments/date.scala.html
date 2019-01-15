@@ -24,22 +24,19 @@
 
 @(key: String, form: Form[LocalDate])(implicit messages: Messages)
 <div class="form-group @if(form.hasErrors) {form-group-error}">
-    <fieldset>
-        <legend class="visually-hidden">@Messages(s"heading.$key")</legend>
-        <span class="form-hint">@Messages("sdil.start-date.example")</span>
-        <div class="form-date">
-            @form.errors.map { err => <span class="error-message">@Messages(err.message)</span> }
-            @for(field <- List("day", "month", "year")) {
-              <div class="form-group form-group-@{field}">
-                <label class="form-label" for="@{key}.@{field}">@Messages(field)</label>
-                <input class="form-control @if(form(s"$key.$field").hasErrors) {form-control-error}"
-                       id="@{key}.@{field}"
-                       name="@{key}.@{field}"
-                       value="@{form(s"$key.$field").value}"
-                >
-              </div>
-            }
+    <span class="form-hint">@Messages("sdil.start-date.example")</span>
+    <div class="form-date">
+        @form.errors.map { err => <span class="error-message">@Messages(err.message)</span> }
+        @for(field <- List("day", "month", "year")) {
+          <div class="form-group form-group-@{field}">
+            <label class="form-label" for="@{key}.@{field}">@Messages(field)</label>
+            <input class="form-control @if(form(s"$key.$field").hasErrors) {form-control-error}"
+                   id="@{key}.@{field}"
+                   name="@{key}.@{field}"
+                   value="@{form(s"$key.$field").value}"
+            >
+          </div>
+        }
 
-        </div>
-    </fieldset>
+    </div>
 </div>

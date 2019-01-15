@@ -232,6 +232,8 @@ trait SdilWMController extends WebMonadController
 
       val innerHead = views.html.uniform.fragments.innerhead(key)
       val innerHtml = htmlForm.asHtmlForm(key + ".inner", innerFormBound)
+      val innerHeadFieldset: Html = Html("<fieldset class='form-field-group'>")
+      val innerTailFieldset: Html = Html("</fieldset>")
 
       val outerHtml = {
         views.html.softdrinksindustrylevy.helpers.inlineRadioButtonWithConditionalContent(
@@ -240,13 +242,13 @@ trait SdilWMController extends WebMonadController
             "true" -> (("Yes", Some("hiddenTarget"))),
             "false" -> (("No", None))
           ),
-          Some(innerHead |+| innerHtml),
+          Some(innerHeadFieldset |+| innerHead |+| innerHtml |+| innerTailFieldset),
           '_labelClass -> "block-label",
           '_labelAfter -> true,
           '_groupClass -> "form-field-group inline",
+          '_groupDivClass -> "inline",
           '_dataTargetTrue -> "target",
-          '_legend -> Messages(s"heading.$key"),
-          '_legendClass -> "visuallyhidden"
+          '_div -> true
         )
       }
 

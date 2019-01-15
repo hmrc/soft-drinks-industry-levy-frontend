@@ -21,29 +21,27 @@
 @(identifyForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @views.html.main_template(Messages("sdil.identify.heading"), form = Some(identifyForm)) {
+    <fieldset class="form-field-group">
     @error_summary(identifyForm)
-
-    <h1 class="heading-large">@Messages("sdil.identify.heading")</h1>
-
+     <legend>
+        <h1 class="heading-large">@Messages("sdil.identify.heading")</h1>
+     </legend>
     <p class="lede">@Messages("sdil.identify.p1")</p>
 
     @form(sdil.controllers.routes.IdentifyController.submit()) {
+        @inputText(
+            identifyForm("utr"),
+            Messages("sdil.identify.utr"),
+            ('_hint, Messages("sdil.identify.help.p1")),
+            '_inputClass -> "form-control-35"
+        )
 
-    <fieldset class="form-field-group">
-        <legend class="visually-hidden">@Messages("sdil.identify.heading")</legend>
-            @inputText(
-                identifyForm("utr"),
-                Messages("sdil.identify.utr"),
-                ('_hint, Messages("sdil.identify.help.p1")),
-                '_inputClass -> "form-control-35"
-            )
-
-            @inputText(
-                identifyForm("postcode"),
-                Messages("sdil.identify.postcode"),
-                ('_hint, Messages("sdil.identify.postcode.hint")),
-                '_inputClass -> "input--cleared caps"
-            )
+        @inputText(
+            identifyForm("postcode"),
+            Messages("sdil.identify.postcode"),
+            ('_hint, Messages("sdil.identify.postcode.hint")),
+            '_inputClass -> "input--cleared caps"
+        )
     </fieldset>
 
     <button class="button" type="submit"> @Messages("sdil.common.continue")</button>

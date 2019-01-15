@@ -21,60 +21,72 @@
 
 @elements = @{new FieldElements(field.id, field, null, args.toMap, messages) }
 @fieldsetClass = {@elements.args.get('_groupClass)@if(elements.hasErrors){ form-group-error }}
+@errorClass = {@if(elements.hasErrors) {form-group-error}}
+@groupDivClass = {@if(elements.args.get('_groupDivClass).isDefined) {@elements.args.get('_groupDivClass)}}
 @labelAfter = @{ elements.args.get('_labelAfter).getOrElse(false).asInstanceOf[Boolean] }
 @target = @{elements.args.get('_dataTargetTrue)}
 
-<fieldset id="@{field.name}" class="@fieldsetClass"
-    @if(elements.args.get('_fieldsetAttributes).isDefined) {@elements.args.get('_fieldsetAttributes)}>
-@if(elements.args.get('_legend).isDefined) {
-    <legend @if(elements.args.get('_legendClass).isDefined) {class="@elements.args.get('_legendClass)"}>
-        @elements.args.get('_legend)
-    </legend>
+@if(elements.args.get('_div).isDefined) {
+<div class="@groupDivClass @errorClass">
+}
+    @if(elements.args.get('_fieldclass).isDefined) {
+    <fieldset class="@fieldsetClass"
+        @if(elements.args.get('_fieldsetAttributes).isDefined) {@elements.args.get('_fieldsetAttributes)}>
     }
-    @elements.errors.map{error => <span class="error-message">@Messages(error)</span>}
+        @if(elements.args.get('_legend).isDefined) {
+            <legend @if(elements.args.get('_legendClass).isDefined) {class="@elements.args.get('_legendClass)"}>
+                @elements.args.get('_legend)
+            </legend>
+        }
+        @elements.errors.map{error => <span class="error-message">@Messages(error)</span>}
 
-    @radioOptions.map { case (value, (label, targ)) =>
+        @radioOptions.map { case (value, (label, targ)) =>
 
-    @defining(s"${elements.field.name}-${value.toLowerCase.replace(" ","_")}")  { inputId =>
-        <div class="multiple-choice" @if(targ.nonEmpty) { data-target="@target"}>
+        @defining(s"${elements.field.name}-${value.toLowerCase.replace(" ","_")}")  { inputId =>
+            <div class="multiple-choice" @if(targ.nonEmpty) { data-target="@target"}>
 
-        <input
-        type="radio"
-        id="@{inputId}"
-        name="@elements.field.name"
-        value="@value"
-        @elements.args.get('_inputClass).map{inputClass => class="@inputClass"}
-        @field.value.filter( _ == value).map{_ => checked="checked"}/>
+            <input
+            type="radio"
+            id="@{inputId}"
+            name="@elements.field.name"
+            value="@value"
+            @elements.args.get('_inputClass).map{inputClass => class="@inputClass"}
+            @field.value.filter( _ == value).map{_ => checked="checked"}/>
 
-        <label for="@{inputId}"
-        @elements.args.get('_labelClass).map{labelClass => class="@labelClass@field.value.filter( _ == value).map{_ => selected}"}>
-        @if(!labelAfter) {
-            @if(elements.args.get('_stackedLabel)) {
-                @if(label.split(" ").length < 2) {<br>@label
-                } else {
-                    @for( (l, index) <- label.split(" ").zipWithIndex) {
-                        @if(index != 0) {<br>}@l
+            <label for="@{inputId}"
+            @elements.args.get('_labelClass).map{labelClass => class="@labelClass@field.value.filter( _ == value).map{_ => selected}"}>
+            @if(!labelAfter) {
+                @if(elements.args.get('_stackedLabel)) {
+                    @if(label.split(" ").length < 2) {<br>@label
+                    } else {
+                        @for( (l, index) <- label.split(" ").zipWithIndex) {
+                            @if(index != 0) {<br>}@l
+                        }
                     }
-                }
-            } else { @label }
+                } else { @label }
+            }
+
+            @if(labelAfter) {
+                @if(elements.args.get('_stackedLabel)) {
+                    @if(label.split(" ").length < 2) {<br>@label
+                    } else {
+                        @for( (l, index) <- label.split(" ").zipWithIndex) {
+                            @if(index != 0) {<br>}@l
+                        }
+                    }
+                } else { @label }
+            }
+            </label>
+            </div>
+        }
         }
 
-        @if(labelAfter) {
-            @if(elements.args.get('_stackedLabel)) {
-                @if(label.split(" ").length < 2) {<br>@label
-                } else {
-                    @for( (l, index) <- label.split(" ").zipWithIndex) {
-                        @if(index != 0) {<br>}@l
-                    }
-                }
-            } else { @label }
-        }
-        </label>
-        </div>
-    }
-    }
+@if(elements.args.get('_fieldclass).isDefined) {
     </fieldset>
-
+}
+@if(elements.args.get('_div).isDefined) {
+</div>
+}
 @if(extra.nonEmpty) {
     @* the show/hide js doesn't work properly in IE 8/9,
     * but the conditional content is hidden by the js-hidden class,

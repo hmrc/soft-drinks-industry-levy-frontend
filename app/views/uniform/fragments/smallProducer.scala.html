@@ -23,33 +23,31 @@
 @import sdil.models.SmallProducer
 
 @(key: String, form: Form[SmallProducer])(implicit messages: Messages)
-<fieldset class="form-field-group">
-    <legend class="visually-hidden">@Messages(s"heading.$key")</legend>
-    @inputText(
-        form(s"$key.alias"),
-        Messages("sdil.alias"),
-        '_inputType -> "text",
-        '_inputClass -> "input--no-spinner"
-    )
 
-    @inputText(
-        form(s"$key.sdilRef"),
-        Messages("sdil.sdilRef"),
-        '_inputType -> "text",
-        '_inputClass -> "input--no-spinner"
-    )
+@inputText(
+    form(s"$key.alias"),
+    Messages("sdil.alias"),
+    '_inputType -> "text",
+    '_inputClass -> "input--no-spinner"
+)
 
-    @inputText(
-        form(s"$key.lower"),
-        Messages("sdil.litreage.lowRate.smallProducer"),
-        '_inputType -> "text",
-        '_inputClass -> "input--no-spinner volume"
-    )
+@inputText(
+    form(s"$key.sdilRef"),
+    Messages("sdil.sdilRef"),
+    '_inputType -> "text",
+    '_inputClass -> "input--no-spinner"
+)
 
-    @inputText(
-        form(s"$key.higher"),
-        Messages("sdil.litreage.highRate.smallProducer"),
-        '_inputType -> "text",
-        '_inputClass -> "input--no-spinner volume"
-    )
-</fieldset>
+@inputText(
+    form(s"$key.lower"),
+    Messages("sdil.litreage.lowRate.smallProducer"),
+    '_inputType -> "text",
+    '_inputClass -> "input--no-spinner volume"
+)
+
+@inputText(
+    form(s"$key.higher"),
+    Messages("sdil.litreage.highRate.smallProducer"),
+    '_inputType -> "text",
+    '_inputClass -> "input--no-spinner volume"
+)
