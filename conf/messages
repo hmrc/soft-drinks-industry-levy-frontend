@@ -491,7 +491,7 @@ financiallineitem.centralassessment=Central Assessment
 financiallineitem.centralasstinterest=Interest on Central Assessment
 financiallineitem.officerassessment=Officers Assessment
 financiallineitem.officerasstinterest=Interest on Officers Assessment
-financiallineitem.paymentonaccount=Payment on Account
+financiallineitem.paymentonaccount=Payment on account
 
 #Common errors
 error.line1.required=Enter address line 1
@@ -1241,12 +1241,13 @@ view.balance.history=View your transaction history
 balance.history=Transaction History
 balance.table.title=Transaction history
 balance.table.p1=Your account balance may not reflect payments made in the last 3 days.
+balance.table.caption=Transaction history and description of credits and debits
 
 date.time=Date
 transaction=Transaction
-pound.credits=£ Credits
-pound.debits=£ Debits
-pound.balance=£ Balance
+pound.credits=Credits
+pound.debits=Debits
+pound.balance=Balance
 
 heading.partners=You cannot register online as a partnership
 heading.organisation-type=Which of these best describes your business?
@@ -1260,7 +1261,7 @@ heading.do-not-register=You do not need to register
 
 how-to-pay.title=Make sure you include your Soft Drinks Industry Levy reference <strong style="font-weight: bold">{0}</strong> when making payments. Find out\
   <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">\
-  how to pay the levy (opens in a new window or tab).\
+  how to pay the levy (opens in a new window or tab)\
   </a>
 how-to-pay.pay-by=You can pay by Bacs or CHAPS using:
 how-to-pay.sort-code=sort code: 20-05-17
