@@ -51,6 +51,7 @@
     @if(messages.isDefinedAt(s"$key.lead") || extraMessages.messages.get(s"$key.lead").nonEmpty) {
         <p class="lede">@Html(Messages.extraMessage(s"$key.lead"))</p>
     }
+
         @if(messages.isDefinedAt(s"$key.hint")) {
             <span class="form-hint">@Messages.extraMessage(s"$key.hint")</span>
             }
@@ -64,6 +65,7 @@
         }
     </fieldset>
         @helpText
+    </fieldset>
 
         <button class="button" type="submit" id="continue-button">
         @Messages(Seq(s"$key.continue","sdil.common.save-continue"))
