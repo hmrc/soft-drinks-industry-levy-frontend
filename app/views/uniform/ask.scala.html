@@ -29,15 +29,20 @@
 
     @backlink(breadcrumbs)
 
+    @helper.form(action = play.api.mvc.Call("post", key)) {
+    @CSRF.formField
     @error_summary(form)
-    <h1 class="heading-large" aria-hidden="true">
-        @if(messages.isDefinedAt(s"heading.$key.orgName")) {
-            <span class="govuk-caption-xl">
-                @Messages.extraMessage(s"heading.$key.orgName")
-            </span>
-        }
-        @Messages.extraMessage(s"heading.$key")
-    </h1>
+    <fieldset class="form-field-group">
+        <legend>
+            <h1 class="heading-large">
+                @if(messages.isDefinedAt(s"heading.$key.orgName")) {
+                    <span class="govuk-caption-xl">
+                        @Messages.extraMessage(s"heading.$key.orgName")
+                    </span>
+                }
+                @Messages.extraMessage(s"heading.$key")
+            </h1>
+        </legend>
     @for(msg <- Messages.many(s"$key.paragraph")) {
         <div class="lede">
             <p>@Html(msg)</p>
@@ -46,22 +51,18 @@
     @if(messages.isDefinedAt(s"$key.lead") || extraMessages.messages.get(s"$key.lead").nonEmpty) {
         <p class="lede">@Html(Messages.extraMessage(s"$key.lead"))</p>
     }
-    @helper.form(action = play.api.mvc.Call("post", key)) {
-        @CSRF.formField
-        <div class = "form-group">
-            @if(messages.isDefinedAt(s"$key.hint")) {
-                <span class="form-hint">@Messages.extraMessage(s"$key.hint")</span>
-                }
+        @if(messages.isDefinedAt(s"$key.hint")) {
+            <span class="form-hint">@Messages.extraMessage(s"$key.hint")</span>
+            }
 
-                @htmlForm
-        </div>
+        @htmlForm
 
         @for((help,title) <- Messages.many(s"$key.help") zip Messages.many(s"$key.help.header")) {
             @details(title) {
                 <div>@Html(help)</div>
             }
         }
-
+    </fieldset>
         @helpText
 
         <button class="button" type="submit" id="continue-button">

@@ -23,32 +23,30 @@
 @import sdil.models.backend.Site
 
 @(key: String, form: Form[Site])(implicit messages: Messages)
-<fieldset class="form-field-group">
-  <legend class="visuallyhidden">@Messages(s"heading.$key")</legend>
-    @inputText(
-        form(s"$key.address.line1"),
-        Messages("sdil.address.line1"),
-        '_divClass -> "form-group-compound"
-    )
-    @inputText(
-        form(s"$key.address.line2"),
-        Messages("sdil.address.line2"),
-        '_divClass -> "form-group-compound"
-    )
-    @inputText(
-        form(s"$key.address.line3"),
-        Messages("sdil.address.line3"),
-        '_divClass -> "form-group-compound"
-    )
-    @inputText(
-        form(s"$key.address.line4"),
-        Messages("sdil.address.line4"),
-        '_divClass -> "form-group-compound"
-    )
-    @inputText(
-        form(s"$key.address.postcode"),
-        Messages("sdil.address.postcode"),
-        '_divClass -> "form-group-compound",
-        '_inputClass -> "form-control-1-4 input--cleared caps"
-    )
-</fieldset>
+
+@inputText(
+    form(s"$key.address.line1"),
+    Messages("sdil.address.line1"),
+    '_divClass -> "form-group-compound"
+)
+@inputText(
+    form(s"$key.address.line2"),
+    Messages("sdil.address.line2"),
+    '_divClass -> "form-group-compound"
+)
+@inputText(
+    form(s"$key.address.line3"),
+    Messages("sdil.address.line3"),
+    '_divClass -> "form-group-compound"
+)
+@inputText(
+    form(s"$key.address.line4"),
+    Messages("sdil.address.line4"),
+    '_divClass -> "form-group-compound"
+)
+@inputText(
+    form(s"$key.address.postcode"),
+    Messages("sdil.address.postcode"),
+    '_divClass -> "form-group-compound",
+    '_inputClass -> "form-control-1-4 input--cleared caps"
+)

@@ -154,9 +154,9 @@ class VariationsController(
                                         case _ => None
                                       }
       useCopacker                 <- ask(bool("third-party-packagers"),"third-party-packagers", data.usesCopacker) when packLarge.contains(false)
-      packageOwn                  <- askOption(litreagePair.nonEmpty, "packaging-site")(approxLitreageForm, implicitly, implicitly) when packLarge.nonEmpty
-      copacks                     <- askOption(litreagePair.nonEmpty, "contract-packing")(approxLitreageForm, implicitly, implicitly)
-      imports                     <- askOption(litreagePair.nonEmpty, "imports")(approxLitreageForm, implicitly, implicitly)
+      packageOwn                  <- askOption(litreagePair.nonEmpty, "packaging-site")(approxLitreageForm, implicitly, implicitly, implicitly) when packLarge.nonEmpty
+      copacks                     <- askOption(litreagePair.nonEmpty, "contract-packing")(approxLitreageForm, implicitly, implicitly, implicitly)
+      imports                     <- askOption(litreagePair.nonEmpty, "imports")(approxLitreageForm, implicitly, implicitly, implicitly)
       noUkActivity                =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
@@ -284,9 +284,9 @@ class VariationsController(
           LocalDate.now.format(ofPattern("d MMMM yyyy")),
           LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)).some
       whnKey = variation match {
-        case a if a.manToVol => "manToVol"
-        case a if a.volToMan => "volToMan"
-        case _ => ""
+        case a if a.manToVol => "manToVol".some
+        case a if a.volToMan => "volToMan".some
+        case _ => None
       }
       whn = uniform.fragments.variationsWHN(
         path,
@@ -296,7 +296,7 @@ class VariationsController(
         closedWarehouseSites(variation),
         variation.some,
         None,
-        whnKey.some)
+        whnKey)
       exit <- journeyEnd(
         id = "variationDone",
         subheading = subheading,
@@ -341,8 +341,13 @@ class VariationsController(
 
       variation = ReturnVariationData(origReturn, newReturn, returnPeriod, base.original.orgName, base.original.address, "")
       path <- getPath
-//TODO Brought forward should not be 0
-      broughtForward = BigDecimal("0")
+      broughtForward <- if(config.balanceAllEnabled)
+        execute(sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+          extractTotal(listItemsWithTotal(x))
+        })
+      else
+        execute(sdilConnector.balance(sdilRef, withAssessment = false))
+
       extraMessages = ExtraMessages(
             messages = Map(
               "heading.check-your-variation-answers" -> s"${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return details",
@@ -368,7 +373,10 @@ class VariationsController(
       exit <- journeyEnd(
         id = "returnVariationDone",
         subheading = subheading,
-        whatHappensNext = uniform.fragments.variationsWHN(a = variation.copy(reason = reason, repaymentMethod = repayment)some, key = Some("return")).some)(extraMessages)
+        whatHappensNext = uniform.fragments.variationsWHN(
+          a = variation.copy(reason = reason, repaymentMethod = repayment).some,
+          key = Some("return")).some
+      )(extraMessages)
 
     } yield exit
   }

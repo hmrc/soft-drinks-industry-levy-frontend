@@ -95,9 +95,9 @@ class RegistrationController(
                           case _ => None
                         }
       useCopacker    <- ask(bool("copacked"),"copacked") when packLarge.contains(false)
-      packageOwn     <- askOption(litreagePair.nonEmpty, "package-own-uk")(approxLitreageForm, implicitly, implicitly) when packLarge.nonEmpty
-      copacks        <- askOption(litreagePair.nonEmpty, "package-copack")(approxLitreageForm, implicitly, implicitly)
-      imports        <- askOption(litreagePair.nonEmpty, "import")(approxLitreageForm, implicitly, implicitly)
+      packageOwn     <- askOption(litreagePair.nonEmpty, "package-own-uk")(approxLitreageForm, implicitly, implicitly, implicitly) when packLarge.nonEmpty
+      copacks        <- askOption(litreagePair.nonEmpty, "package-copack")(approxLitreageForm, implicitly, implicitly, implicitly)
+      imports        <- askOption(litreagePair.nonEmpty, "import")(approxLitreageForm, implicitly, implicitly, implicitly)
       noUkActivity   =  (copacks, imports).isEmpty
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       noReg          =  uniform.fragments.registration_not_required()(request, implicitly, implicitly)
@@ -166,8 +166,8 @@ class RegistrationController(
     } yield end
   }
   private def askRegDate(packLarge: Option[Boolean], copacks: Option[(Long, Long)], imports: Option[(Long, Long)]): WebMonad[LocalDate] = {
-    def askRD[T](mapping: Mapping[T], key: String, default: Option[T] = None, helpText: Option[Html])(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
-      formPage(key)(mapping, default) { (path, form, r) =>
+    def askRD[T](mapping: Mapping[T], key: String, helpText: Option[Html])(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
+      formPage(key)(mapping, None) { (path, form, r) =>
         implicit val request: Request[AnyContent] = r
         uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path, helpText)
       }
@@ -175,7 +175,6 @@ class RegistrationController(
       .verifying("error.start-date.in-future", !_.isAfter(LocalDate.now))
       .verifying("error.start-date.before-tax-start", !_.isBefore(LocalDate.of(2018, 4, 6))),
       "start-date",
-      None,
       Some(uniform.fragments.startDateHelp(packLarge.getOrElse(false), copacks.isDefined, imports.isDefined)))
   }
 }

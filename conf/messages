@@ -229,7 +229,14 @@ error.start-month.invalid=Enter a real month
 error.start-year.invalid=Enter a real year
 error.start-date.before-tax-start=Date must be after 5 April 2018
 error.start-date.in-future=Date cannot be in the future
-error.date.invalid=Enter a valid date
+error.date.invalid=Enter a real date
+error.date.emptyfields=Enter the date you became liable to register for the Soft Drinks Industry Levy
+error.start-date.missing=The date you became liable to register must include a day
+error.start-month.missing=The date you became liable to register must include a month
+error.start-year.missing=The date you became liable to register must include a year
+error.start-day-and-month.missing=The date you became liable to register must include a day and month
+error.start-month-and-year.missing=The date you became liable to register must include a month and year
+error.start-day-and-year.missing=The date you became liable to register must include a day and year
 
 #Contact details
 
@@ -1079,6 +1086,7 @@ brought-into-uk.help=A business is a small producer if it:\
   <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
   </ul>
 heading.brought-into-uk-from-small-producers=Are you reporting any liable drink you have brought into the UK from small producers?
+brought-into-uk-from-small-producers.lead.volMan=Include your own brands of liable drink produced outside of the UK.
 brought-into-uk-from-small-producers.inner-heading=How many litres?
 brought-into-uk-from-small-producers.help.header=Liable drink from small producers
 brought-into-uk-from-small-producers.help=<p>If you are a registered small producer and you bring your own brand of \
@@ -1097,6 +1105,8 @@ claim-credits-for-exports.help=You can claim a credit for liable drinks that hav
 claim-credits-for-exports.inner-heading=How many litres are you claiming a credit for?
 heading.claim-credits-for-lost-damaged=Do you want to claim a credit for any liable drink which have been lost or destroyed?
 claim-credits-for-lost-damaged.inner-heading=How many litres are you claiming a credit for?
+claim-credits-for-exports.lead.volMan=You can only claim a levy credit for drinks that you have paid the levy on \
+  or will pay the levy on. Do not include drinks produced for small producers or imported from them.
 claim-credits-for-lost-damaged.help.header=What can I claim credit for?
 claim-credits-for-lost-damaged.help=You can claim a credit for liable drinks that have been:<ul class="list list-bullet"><li>lost</li><li>destroyed</li>\
   <li>disposed of as waste</li><li>reprocessed</li><li>spilled and cannot be used</li></ul>\
