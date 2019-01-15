@@ -27,64 +27,61 @@
 
     <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
 
-    <fieldset class="">
-        <legend>
-            <h1 class="heading-large">
-                <span class="govuk-caption-xl">
-                    @orgName
-                </span>
-                @Messages("balance.table.title")
-            </h1>
-            <h2 class="heading-medium">
-            @if(balance == 0) {
-                @Html(Messages("account.balance.amount.zero"))
-            } else {
-                @if(balance > 0) {
-                    @printbalance("account.balance.amount.in-credit", balance)
-                } else {
-                    @printbalance("account.balance.amount.need-to-pay", balance.abs)
-                    @if(interest < 0) {
-                       @Messages("account.balance.amount.need-to-pay.interest", format_money(interest.abs))
-                    }
-                }
+    <h1 class="heading-large">
+        <span class="govuk-caption-xl">
+            @orgName
+        </span>
+        @Messages("balance.table.title")
+    </h1>
+    <p>
+    @if(balance == 0) {
+        @Html(Messages("account.balance.amount.zero"))
+    } else {
+        @if(balance > 0) {
+            @printbalance("account.balance.amount.in-credit", balance)
+        } else {
+            @printbalance("account.balance.amount.need-to-pay", balance.abs)
+            @if(interest < 0) {
+               @Messages("account.balance.amount.need-to-pay.interest", format_money(interest.abs))
             }
-            </h2>
-            @if(deregDate.isEmpty && pendingDereg.isEmpty) {
-                <div class="panel panel-border-wide">
-                    <p>
-                        @Html(Messages("how-to-pay.title", sdilRef))
-                    </p>
-                </div>
-            }
-        </legend>
-        @if(lineItems.nonEmpty) {
-        <div class="form-group">
-            <p>@Messages("balance.table.p1")</p>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>@Messages("date.time")</th>
-                        <th>@Messages("transaction")</th>
-                        <th class="numeric">@Messages("pound.credits")</th>
-                        <th class="numeric">@Messages("pound.debits")</th>
-                        <th class="numeric">@Messages("pound.balance")</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @for((item,runningTotal) <- lineItems) {
-                    <tr>
-                        <td>@{item.date.format(DateTimeFormatter.ofPattern("d MMM YYYY"))}</td>
-                        <td>@Html(Messages("item.description", item.description))</td>
-                        <td class="numeric">@if(item.amount >= 0) {@{f"${item.amount}%,.2f"}}</td>
-                        <td class="numeric">@if(item.amount <= 0) {@{f"${item.amount}%,.2f"}}</td>
-                        <td class="numeric">@{f"${runningTotal}%,.2f"}</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
         }
-    </fieldset>
+    }
+    </p>
+    @if(deregDate.isEmpty && pendingDereg.isEmpty) {
+        <div class="panel panel-border-wide">
+            <p>
+                @Html(Messages("how-to-pay.title", sdilRef))
+            </p>
+        </div>
+    }
+    @if(lineItems.nonEmpty) {
+    <div class="form-group">
+        <p>@Messages("balance.table.p1")</p>
+
+        <table>
+            <caption class="visually-hidden">@Messages("balance.table.caption")</caption>
+            <thead>
+                <tr>
+                    <th>@Messages("date.time")</th>
+                    <th>@Messages("transaction")</th>
+                    <th class="numeric">@Messages("pound.credits")</th>
+                    <th class="numeric">@Messages("pound.debits")</th>
+                    <th class="numeric">@Messages("pound.balance")</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @for((item,runningTotal) <- lineItems) {
+                <tr>
+                    <td>@{item.date.format(DateTimeFormatter.ofPattern("d MMM YYYY"))}</td>
+                    <td>@Html(Messages("item.description", item.description))</td>
+                    <td class="numeric">@if(item.amount > 0) {@{f"£${item.amount.abs}%,.2f"}} else {£0.00}</td>
+                    <td class="numeric">@if(item.amount < 0) {@{f"-£${item.amount.abs}%,.2f"}} else {£0.00}</td>
+                    <td class="numeric">@if(runningTotal < 0) {@{f"-£${runningTotal.abs}%,.2f"}} else { @if(runningTotal > 0) {@{f"£${runningTotal.abs}%,.2f"}}  else {£0.00} }</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
 }
