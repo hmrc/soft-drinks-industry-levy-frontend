@@ -1340,7 +1340,7 @@ check-return-changes.brought-into-uk=Brought into the UK
 check-return-changes.brought-into-uk-from-small-producers=Brought into the UK from small producers
 check-return-changes.claim-credits-for-exports=Exported
 check-return-changes.claim-credits-for-lost-damaged=Lost or destroyed
-check-return-changes.exemptions-for-small-producers =Contract packed for registered small producers
+check-return-changes.exemptions-for-small-producers=Contract packed for registered small producers
 
 sdil.check-return-changes.balance.return-correction-reason.subheading=Balance
 check-return-changes.total.original=Original return total
