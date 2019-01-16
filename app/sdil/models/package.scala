@@ -30,7 +30,7 @@ package object models {
   }
 
   def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] = {
-    items.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) {
+    items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) {
       (acc, n) => (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
     }
   }
