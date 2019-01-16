@@ -92,7 +92,7 @@
     }
 }
 
-@declaration_table(s"$key.balance", Messages("return-variation-reason.subheading")) {
+@declaration_table(s"$key.balance", Messages("return-correction-reason.subheading")) {
 
     <tr>
         <th scope="row">@Messages(s"$key.total.original")</th>
@@ -113,14 +113,14 @@
     </tr>
 }
 
-@declaration_table(s"$key.reason", Messages("return-variation-reason.subheading")) {
+@declaration_table(s"$key.reason", Messages("return-correction-reason.subheading")) {
     <tr>
-        <th>@Messages("return-variation-reason.label")</th>
+        <th>@Messages("return-correction-reason.label")</th>
         <td>@variation.reason</td>
         @if(showChangeLinks) {
             <td class="change-answer">
-                <a href="return-variation-reason">@Messages(s"sdil.declaration.change-link")</a>
-                <span class="visuallyhidden">@Messages(s"$key.change.reason")</span>
+                <a href="return-correction-reason">@Messages(s"sdil.declaration.change-link")</a>
+                <span class="visually-hidden">@Messages(s"$key.change.reason")</span>
             </td>
         }
     </tr>
@@ -130,8 +130,8 @@
             <td>@Messages(s"$x.short")</td>
             @if(showChangeLinks) {
                 <td class="change-answer" >
-                    <a href="repayment">@Messages(s"sdil.declaration.change-link")</a>
-                    <span class="visuallyhidden">@Messages(s"$key.change.repayment")</span>
+                    <a href="repayment-method">@Messages(s"sdil.declaration.change-link")</a>
+                    <span class="visually-hidden">@Messages(s"$key.change.repayment")</span>
                 </td>
             }
         </tr>
@@ -140,11 +140,11 @@
 
 @if(showChangeLinks) {
     <h2 class="heading-medium">
-    @Messages("check-return-differences.submit.heading")
+    @Messages("check-return-changes.submit.heading")
     </h2>
 
     <p>
-    @Messages("check-return-differences.submit.p")
+    @Messages("check-return-changes.submit.p")
     </p>
 
     <p>

@@ -312,15 +312,15 @@ class VariationsController(
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
       messages = variableReturns.map { x =>
-        s"returnPeriod.option.${x.year}${x.quarter}" -> s"${Messages(s"returnPeriod.option.${x.quarter}")} ${x.year}"
+        s"select-return.option.${x.year}${x.quarter}" -> s"${Messages(s"select-return.option.${x.quarter}")} ${x.year}"
       }.toMap ++ Map("error.radio-form.choose-option" -> "error.radio-form.choose-option.returnPeriod")
 
       extraMessages = ExtraMessages(messages)
 
-      returnPeriod <- askOneOf("returnPeriod", variableReturns.sortWith(_>_).map(x => s"${x.year}${x.quarter}"))(extraMessages)
+      returnPeriod <- askOneOf("select-return", variableReturns.sortWith(_>_).map(x => s"${x.year}${x.quarter}"))(extraMessages)
         .map(y => variableReturns.filter(x => x.quarter === y.takeRight(1).toInt && x.year === y.init.toInt).head)
       _ <- clear
-      _ <- resultToWebMonad[A](Redirect(routes.VariationsController.adjustment(year = returnPeriod.year, quarter = returnPeriod.quarter, id = "check-your-variation-answers")))
+      _ <- resultToWebMonad[A](Redirect(routes.VariationsController.adjustment(year = returnPeriod.year, quarter = returnPeriod.quarter, id = "return-details")))
     } yield throw new IllegalStateException("we shouldn't be here")
   }
 
@@ -350,22 +350,22 @@ class VariationsController(
 
       extraMessages = ExtraMessages(
             messages = Map(
-              "heading.check-your-variation-answers" -> s"${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return details",
-              "return-variation-reason.label" -> s"Reason for correcting ${Messages(s"returnPeriod.option.${variation.period.quarter}")} ${variation.period.year} return",
+              "heading.return-details" -> s"${Messages(s"select-return.option.${variation.period.quarter}")} ${variation.period.year} return details",
+              "return-correction-reason.label" -> s"Reason for correcting ${Messages(s"select-return.option.${variation.period.quarter}")} ${variation.period.year} return",
               "heading.check-answers.orgName" -> s"${subscription.orgName}"
             ))
 
       isSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, returnPeriod))
 
-      _ <- checkYourReturnAnswers("check-your-variation-answers", variation.revised, broughtForward, base.original, isSmallProd, originalReturn = variation.original.some)(extraMessages, implicitly)
+      _ <- checkYourReturnAnswers("return-details", variation.revised, broughtForward, base.original, isSmallProd, originalReturn = variation.original.some)(extraMessages, implicitly)
 
       reason <- askBigText(
-        "return-variation-reason",
-        constraints = List(("error.return-variation-reason.tooLong",
+        "return-correction-reason",
+        constraints = List(("error.return-correction-reason.tooLong",
           _.length <= 255)),
-        errorOnEmpty = "error.return-variation-reason.empty")(extraMessages)
-      repayment <- askOneOf("repayment", List("credit", "bankPayment"))(ltbs.play.scaffold.SdilComponents.extraMessages) when variation.revised.total - variation.original.total < 0
-      _ <- checkReturnChanges("check-return-differences", variation.copy(reason = reason, repaymentMethod = repayment))
+        errorOnEmpty = "error.return-correction-reason.empty")(extraMessages)
+      repayment <- askOneOf("repayment-method", List("credit", "bankPayment"))(ltbs.play.scaffold.SdilComponents.extraMessages) when variation.revised.total - variation.original.total < 0
+      _ <- checkReturnChanges("check-return-changes", variation.copy(reason = reason, repaymentMethod = repayment))
       _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
       _ <- clear
       subheading = uniform.fragments.return_variation_done_subheading(subscription, returnPeriod).some
