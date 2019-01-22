@@ -29,63 +29,80 @@
     }
 }
 
+@orgAddress = {
+        <dl class="margin-bottom-30">
+            <dt class="heading-medium no-margin">@organisation</dt>
+            <dd>
+                <p>@address.line1 <br/>
+                    @if(address.line2.nonEmpty) {
+                        @address.line2 <br/>
+                    }
+                    @if(address.line3.nonEmpty) {
+                        @address.line3 <br/>
+                    }
+                    @if(address.line4.nonEmpty) {
+                        @address.line4 <br/>
+                    }
+                    @address.postcode</p>
+            </dd>
+        </dl>
+}
+
 @main_template(title = verifyTitle, form = Some(verifyForm)) {
     
-    @error_summary(verifyForm)
-
-    <h1 class="heading-large" aria-hidden="true">
-        @verifyTitle
-    </h1>
-
-    <dl class="margin-bottom-30">
-        <dt class="heading-medium no-margin">@organisation</dt>
-        <dd>
-            <p>@address.line1<br/>
-                @if(address.line2.nonEmpty) { @address.line2<br/> }
-                @if(address.line3.nonEmpty) { @address.line3<br/> }
-                @if(address.line4.nonEmpty) { @address.line4<br/> }
-                @address.postcode</p>
-        </dd>
-    </dl>
-
     @if(!alreadyRegistered) {
-        <p>@Html(Messages("sdil.verify.p1", utr))</p>
-        @form(sdil.controllers.routes.VerifyController.submit()) {
-            @radioButtonWithConditionalContent(
-                field = verifyForm("detailsCorrect"),
-                radioOptions = Seq(
-                    ("yes",
-                            (Messages("sdil.verify.detailsCorrect.yes"),
-                                    None)
-                    ),
-                    ("differentAddress",
-                            (Messages("sdil.verify.detailsCorrect.differentAddress"),
-                                    Some(
-                                        addressFields(
-                                            verifyForm,
-                                            "alternativeAddress",
-                                            "sdil.verify.address",
-                                            showHint = false)
-                                    )
-                            )
-                    ),
-                    ("no",
-                            (Messages("sdil.verify.detailsCorrect.no"),
-                                    None))
-                ),
-                '_labelClass -> "block-label",
-                '_labelAfter -> true,
-                '_groupClass -> "form-field-group",
-                '_dataTargetTrue -> "something",
-                '_legend -> verifyTitle,
-                '_legendClass -> "visually-hidden"
-            )
+    @error_summary(verifyForm)
+    @form(sdil.controllers.routes.VerifyController.submit()) {
+        <fieldset class="form-field-group">
+            <legend>
+                <h1 class="heading-large" aria-hidden="true">
+                @verifyTitle
+                </h1>
+            </legend>
+        </fieldset>
 
-            <input class="button" value="@Messages("sdil.common.continue")" type="submit">
-        }
+        @orgAddress
+
+        <p>@Html(Messages("sdil.verify.p1", utr))</p>
+        @radioButtonWithConditionalContent(
+            field = verifyForm("detailsCorrect"),
+            radioOptions = Seq(
+                ("yes",
+                        (Messages("sdil.verify.detailsCorrect.yes"),
+                                None)
+                ),
+                ("differentAddress",
+                        (Messages("sdil.verify.detailsCorrect.differentAddress"),
+                                Some(
+                                    addressFields(
+                                        verifyForm,
+                                        "alternativeAddress",
+                                        "sdil.verify.address",
+                                        showHint = false)
+                                )
+                        )
+                ),
+                ("no",
+                        (Messages("sdil.verify.detailsCorrect.no"),
+                                None))
+            ),
+            '_labelClass -> "block-label",
+            '_labelAfter -> true,
+            '_groupClass -> "form-field-group",
+            '_dataTargetTrue -> "something",
+            '_legend -> verifyTitle,
+            '_legendClass -> "visually-hidden"
+        )
+
+
+    <input class="button" value="@Messages("sdil.common.continue")" type="submit">
+    }
     } else {
+
+        @orgAddress
+
         <p>@Messages("sdil.already.received.for.utr.info.p1")</p>
-        <p>
+<p>
             @Html(Messages("sdil.already.received.for.utr.info.p2",
                 sdil.controllers.routes.AuthenticationController.signOutNoFeedback()))
         </p>
