@@ -780,11 +780,12 @@ secondary-warehouse-details.option.add=Yes
 secondary-warehouse-details.option.done=No
 
 production-site-details.edit=Edit
-ask-secondary-warehouses.edit=Change
+ask-secondary-warehouses.edit=Edit
 secondary-warehouse-details.edit=Edit
 packSites.edit=Edit
 warehouses.edit=Edit
-small-producer-details.edit=Change
+small-producer-details.edit=Edit
+small-producer-details.delete=Remove
 production-site-details.delete=Remove
 heading.pack-at-business-address=Is your registered business address a UK packaging site that you operate to produce liable drinks?
 heading.pack-at-business-address-in-return=Is this address a UK packaging site you operate to produce liable drinks?
