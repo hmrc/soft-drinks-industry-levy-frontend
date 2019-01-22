@@ -28,7 +28,7 @@
 @labelAfter = @{ elements.args.get('_labelAfter).getOrElse(false).asInstanceOf[Boolean] }
 
 @if(elements.args.get('_div).isDefined) {
-<div class="@groupDivClass @errorClass">
+<div class="@groupDivClass @errorClass form-group">
 }
     @if(elements.args.get('_fieldset).isDefined) {
     <fieldset id="@field.id" class="@fieldsetClass"
