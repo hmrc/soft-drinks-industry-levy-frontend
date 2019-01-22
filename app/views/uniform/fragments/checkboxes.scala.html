@@ -23,7 +23,7 @@
 
 @(key: String, formIn: Form[List[String]], possibleValues: List[String])(implicit messages: Messages)
 
-<div class="@if(formIn.hasErrors) {form-group-error}">
+<div class="@if(formIn.hasErrors) {form-group-error} form-group">
     @formIn.errors.map { err => <span class="error-message">@Messages(err.message)</span> }
 
 @for(option <- possibleValues) {
