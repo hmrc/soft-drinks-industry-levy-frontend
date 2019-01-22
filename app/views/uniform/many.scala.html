@@ -90,7 +90,7 @@
                         }
                         @if(showEdit) {
                             <td class="align-right">
-                                <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "Change"))</button>
+                                <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "Edit"))</button>
                             </td>
                         } else {
                             <td/>
@@ -107,9 +107,6 @@
                     </legend>
 
             }
-                @if(messages.isDefinedAt(s"$key.list-control.lead")) {
-                    <span class="form-hint">@Messages(s"$key.list-control.lead")</span>
-                }
                 @inputRadioGroup(
                     form(key),
                     List[Control](Add, Done).map(_.toString).map{v => (v, Messages(key + ".option." + v.toLowerCase))},

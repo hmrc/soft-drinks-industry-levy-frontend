@@ -817,8 +817,8 @@ production-site-details.multi.lead=You have added {0} packaging site{1}
 production-site-details.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
   drinks. You must have at least one registered packaging site.
 production-site-details.list-control.heading=Do you need to add another packaging site?
-packaging-site-details.paragraph=Only add the addresses of UK packaging sites you operate. \
-  You must have at least one registered packaging site.
+packaging-site-details.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
+  drinks. You must have at least one registered packaging site.
 heading.edit-production-site-details=Enter your UK packaging site details
 edit-production-site-details.paragraph=Only add the addresses of UK packaging sites you operate.
 packaging-site-details.list-control.heading=Do you want to add another packaging site?

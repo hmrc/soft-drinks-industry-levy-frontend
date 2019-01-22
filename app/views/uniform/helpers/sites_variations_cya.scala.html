@@ -62,10 +62,10 @@
                 <td>@site.address.postCode</td>
                 @if(showChangeLinks) {
                     <td class="change-answer">
-                        <a href="@if(path.contains("change-production-sites")) {
-                            change-production-sites
+                        <a href="@if(path.contains("production-site-details")) {
+                            production-site-details
                         } else {
-                            change-packaging-sites
+                            packaging-site-details
                         }">
                         @Html(Messages("variations.cya.packsites.change.add"))
                         </a>
@@ -114,12 +114,12 @@
                 <td>@site.address.postCode</td>
                 @if(showChangeLinks) {
                     <td class="change-answer">
-                        <a href="@if(path.contains("change-production-sites")) {
-                            change-production-sites
+                        <a href="@if(path.contains("production-site-details")) {
+                            production-site-details
                         } else {
-                            change-packaging-sites
+                            packaging-site-details
                         }">
-                        @Html(Messages("variations.cya.packsites.change.remove"))
+                          @Html(Messages("variations.cya.packsites.change.remove"))
                         </a>
                     </td>
                 }
@@ -192,10 +192,10 @@
                 <td>@site.address.postCode</td>
                 @if(showChangeLinks) {
                     <td class="change-answer">
-                        <a href="@if(path.contains("change-secondary-warehouses")) {
-                            change-secondary-warehouses
+                        <a href="@if(path.contains("secondary-warehouse-details")) {
+                            secondary-warehouse-details
                         } else {
-                            change-warehouses
+                            warehouse-details
                         }">
                         @Html(Messages("variations.cya.warehouses.change.add"))
                         </a>
@@ -244,10 +244,10 @@
                 <td>@site.address.postCode</td>
                 @if(showChangeLinks) {
                     <td class="change-answer">
-                        <a href="@if(path.contains("change-secondary-warehouses")) {
-                            change-secondary-warehouses
+                        <a href="@if(path.contains("secondary-warehouse-details")) {
+                            secondary-warehouse-details
                         } else {
-                            change-warehouses
+                            warehouse-details
                         }">
                         @Html(Messages("variations.cya.warehouses.change.remove"))
                         </a>
