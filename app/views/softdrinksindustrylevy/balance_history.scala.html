@@ -26,11 +26,11 @@
 @main_template(Messages("balance.history")) {
 
     <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
-    
-    <h1 class="heading-large">
-        <span class="govuk-caption-xl">
-            @orgName
-        </span>
+
+    <span class="govuk-caption-xl service-comp-name">
+        @orgName
+    </span>
+    <h1 class="heading-large service-header">
         @Messages("balance.table.title")
     </h1>
     <p>

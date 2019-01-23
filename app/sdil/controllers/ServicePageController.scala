@@ -66,7 +66,7 @@ class ServicePageController(
   }
 
   def interest(items: List[FinancialLineItem]): BigDecimal =
-    items.collect {
+    items.distinct.collect {
       case a : Interest => a.amount
     }.sum
 

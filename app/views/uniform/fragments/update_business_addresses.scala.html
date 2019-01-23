@@ -30,11 +30,10 @@
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
 
-
     <div class="grid-row">
         <div class="column-two-thirds">
-            <h1>
-                <span class='govuk-caption-xl'>@subscription.orgName</span>
+            <span class='govuk-caption-xl service-comp-name'>@subscription.orgName</span>
+            <h1 class="service-header">
                 @Messages("sdil.updateBusinessAddresses.heading")
             </h1>
                 @declaration_table("service-page", "business-details.title") {

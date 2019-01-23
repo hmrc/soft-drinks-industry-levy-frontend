@@ -25,13 +25,14 @@
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
   @backlink(breadcrumbs)
 
-  <h1 class="heading-large">
-      @if(messages.isDefinedAt(s"heading.$key.orgName")) {
-          <span class="govuk-caption-xl">
-            @Messages.extraMessage(s"heading.$key.orgName")
-          </span>
-      }
-        @Messages.extraMessages(Seq(s"heading.$key", "sdil.declaration.heading"))
+  @if(messages.isDefinedAt(s"heading.$key.orgName")) {
+    <span class="govuk-caption-xl service-comp-name">
+        @Messages.extraMessage(s"heading.$key.orgName")
+    </span>
+  }
+
+  <h1 class="heading-large @if(messages.isDefinedAt(s"heading.$key.orgName")){service-header}">
+    @Messages.extraMessages(Seq(s"heading.$key", "sdil.declaration.heading"))
   </h1>
     @helper.form(action = play.api.mvc.Call("post", key)) {
         <div class="form-group">
