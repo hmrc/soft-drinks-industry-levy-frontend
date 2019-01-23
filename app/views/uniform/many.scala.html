@@ -107,18 +107,18 @@
                     </legend>
 
             }
-                @if(messages.isDefinedAt(s"$key.list-control.lead")) {
-                    <span class="form-hint">@Messages(s"$key.list-control.lead")</span>
-                }
-                @inputRadioGroup(
-                    form(key),
-                    List[Control](Add, Done).map(_.toString).map{v => (v, Messages(key + ".option." + v.toLowerCase))},
-                    '_labelClass -> "block-label",
-                    '_labelAfter -> true,
-                    '_groupClass -> "inline",
-                    '_div -> true,
-                    '_groupDivClass -> "inline"
-                )
+                    @if(messages.isDefinedAt(s"$key.list-control.lead")) {
+                        <span class="form-hint">@Messages(s"$key.list-control.lead")</span>
+                    }
+                    @inputRadioGroup(
+                        form(key),
+                        List[Control](Add, Done).map(_.toString).map{v => (v, Messages(key + ".option." + v.toLowerCase))},
+                        '_labelClass -> "block-label",
+                        '_labelAfter -> true,
+                        '_groupClass -> "inline",
+                        '_div -> true,
+                        '_groupDivClass -> "inline"
+                    )
                 </fieldset>
         </div>
         @if(messages.isDefinedAt(s"$key.help")) {
