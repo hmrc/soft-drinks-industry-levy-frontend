@@ -552,8 +552,8 @@ error.radio-form.choose-option.own-brands-packaged-at-own-sites=Select yes if yo
   liable drink you have packaged at UK sites you operate
 error.radio-form.choose-option.packaged-as-a-contract-packer=Select yes if you are reporting liable drink you have \
   packaged as a third party or contract packer at UK sites you operate
-error.radio-form.choose-option.exemptions-for-small-producers=Select yes if you to claim an exemption for any of the \
-  liable drink you have packaged for registered small producers
+error.radio-form.choose-option.exemptions-for-small-producers=Select yes if you need to claim an exemption for any of \
+  the liable drink you have packaged for registered small producers
 error.radio-form.choose-option.small-producer-details=Select yes if you need to add another small producer
 error.radio-form.choose-option.brought-into-uk=Select yes if you are reporting liable drink you have brought \
   into the UK from anywhere outside of the UK
