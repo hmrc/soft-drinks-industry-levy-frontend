@@ -107,6 +107,7 @@
                     </legend>
 
             }
+                    <span class="form-hint"></span>
                 @inputRadioGroup(
                     form(key),
                     List[Control](Add, Done).map(_.toString).map{v => (v, Messages(key + ".option." + v.toLowerCase))},
