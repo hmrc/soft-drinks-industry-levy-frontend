@@ -42,7 +42,7 @@
         } else {
             @printbalance("account.balance.amount.need-to-pay", balance.abs)
             @if(interest < 0) {
-               @Messages("account.balance.amount.need-to-pay.interest", format_money(interest.abs))
+               @Messages("account.balance.amount.need-to-pay.interest", format_money((interest / 2).abs))
             }
         }
     }
