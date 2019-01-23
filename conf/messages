@@ -136,7 +136,8 @@ sdil.litreage.volumes.content.p1=If you do not have the exact volumes you can en
 error.litreage.required.lower=Enter the number of litres in the low band
 error.litreage.required.higher=Enter the number of litres in the high band
 error.litreage.numeric=Number of litres must be a whole number
-error.litreage.max=Number of litres must be less than 14 digits
+error.litreage.max.lower=Number of litres in the low band must be less than 100,000,000,000,000
+error.litreage.max.higher=Number of litres in the high band must be less than 100,000,000,000,000
 error.litreage.min=Number of litres must be 0 or more
 error.litreage.zero=Number of litres must be 1 or more
 

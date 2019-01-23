@@ -118,7 +118,7 @@ object GdsComponents {
     .verifying("error.litreage.numeric", l => Try(BigDecimal.apply(l)).isSuccess)
     .transform[BigDecimal](BigDecimal.apply, _.toString)
     .verifying("error.litreage.numeric", _.isWhole)
-    .verifying("error.litreage.max", _ <= 9999999999999L)
+    .verifying(s"error.litreage.max.$key", _ <= 9999999999999L)
     .verifying("error.litreage.min", _ >= 0)
     .transform[Long](_.toLong, BigDecimal.apply)
 
