@@ -34,12 +34,12 @@
     @error_summary(form)
     <fieldset class="form-field-group">
         <legend>
-            <h1 class="heading-large">
-                @if(messages.isDefinedAt(s"heading.$key.orgName")) {
-                    <span class="govuk-caption-xl">
-                        @Messages.extraMessage(s"heading.$key.orgName")
-                    </span>
-                }
+            @if(messages.isDefinedAt(s"heading.$key.orgName")) {
+                <span class="govuk-caption-xl service-comp-name">
+                    @Messages.extraMessage(s"heading.$key.orgName")
+                </span>
+            }
+            <h1 class="heading-large  @if(messages.isDefinedAt(s"heading.$key.orgName")){service-header}">
                 @Messages.extraMessage(s"heading.$key")
             </h1>
         </legend>
