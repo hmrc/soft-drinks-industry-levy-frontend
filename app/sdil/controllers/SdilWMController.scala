@@ -478,7 +478,7 @@ trait SdilWMController extends WebMonadController
   implicit val smallProducerHtml: HtmlShow[SmallProducer] =
     HtmlShow.instance { producer =>
       Html(producer.alias.map { x =>
-        "<p class='heading-small'>" ++ Messages("small-producer-details.name", x)   //++"<br/>"
+        "<p class='heading-small'>" ++ Messages("small-producer-details.name", x)
       }.getOrElse(
         "<p class='heading-small'>"
       )
