@@ -1212,11 +1212,13 @@ return.file=Send a return
 return.file.final=Send a final return
 return.file.nil=I have no activity to report for this quarter
 
-heading.return-change-registration=Your registration details have changed
+heading.return-change-registration=You changed your soft drinks business activity
 return-change-registration.continue=Update registration
-returns.variation.new-importer-explanation=You have declared in this return that you have brought liable drinks into the UK. This activity is not reflected in your current registration. If this is not accurate you need to go back and change your answers, otherwise we will update your registration for you.
-returns.variation.new-packer-explanation=You have declared in this return that you have packaged liable drinks in the UK. This activity is not reflected in your current registration. If this is not accurate you need to go back and change your answers, otherwise we will update your registration for you.
-returns.variation.new-packer-and-importer-explanation=You have declared in this return that that you have brought liable drinks into the UK and that you have packaged liable drinks in the UK. This activity is not reflected in your current registration. If this is not accurate you need to go back and change your answers, otherwise we will update your registration for you.
+returns.variation.new-importer-explanation=You have declared in this return that you have brought liable drinks into the UK.
+returns.variation.new-packer-explanation=You have declared in this return that you have packaged liable drinks in the UK. 
+returns.variation.new-packer-and-importer-explanation=You have declared in this return that that you have brought liable drinks into the UK and that you have packaged liable drinks in the UK.
+returns.variation.update-reg=This is different to your registered business activity, so we will update your registration.
+returns.variation.change-answers=If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
 
 heading.partnerships=You cannot register online as a partnership
 account.balance=Account Balance
