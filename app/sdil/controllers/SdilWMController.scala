@@ -478,12 +478,11 @@ trait SdilWMController extends WebMonadController
   implicit val smallProducerHtml: HtmlShow[SmallProducer] =
     HtmlShow.instance { producer =>
       Html(producer.alias.map { x =>
-        "<h3>" ++ Messages("small-producer-details.name", x) ++"<br/>"
+        "<p class='heading-small'>" ++ Messages("small-producer-details.name", x)   //++"<br/>"
       }.getOrElse(
-        "<h3>"
+        "<p class='heading-small'>"
       )
-        ++ Messages("small-producer-details.refNumber", producer.sdilRef) ++ "</h3>"
-        ++ "<br/>"
+        ++ Messages("small-producer-details.refNumber", producer.sdilRef) ++ "</p>"
         ++ Messages("small-producer-details.lowBand", f"${producer.litreage._1}%,d")
         ++ "<br/>"
         ++ Messages("small-producer-details.highBand", f"${producer.litreage._2}%,d")

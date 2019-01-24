@@ -15,28 +15,25 @@
  *@
 
 @(pageRef: String, tableHeading: String, tableContent: Option[String] = None, changeLink: Option[Call] = None)(rowContent: Html)(implicit messages: Messages)
-
 <table class="check-your-answers">
-    <caption class="heading-medium">
-        @Messages(s"sdil.$pageRef.$tableHeading")
+    <caption class="heading-medium business-details-heading-help">
+        @Messages(s"sdil.$pageRef.$tableHeading") <br>
+        @tableContent.map { x =>
+            <p class="business-details-help">
+                @Messages(s"sdil.$pageRef.$tableHeading.$x")
+            </p>
+        }
     </caption>
     <thead>
         <tr>
-            <th colspan="2">
-                @tableContent.map { x =>
-                <p class="business-details-help">
-                    @Messages(s"sdil.$pageRef.$tableHeading.$x")
-                </p>
-                }
-            </th>
             <th class="change-answer" colspan="2">
                 @changeLink.map { link =>
-                  <a href="@link">@Messages("sdil.declaration.change-link")</a>
+                    <a href="@link">@Messages("sdil.declaration.change-link")</a>
                 }
             </th>
         </tr>
     </thead>
     <tbody>
-        @rowContent
+    @rowContent
     </tbody>
 </table>
