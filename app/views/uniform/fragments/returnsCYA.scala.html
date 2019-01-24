@@ -38,10 +38,10 @@
     }
     <thead>
         <tr>
-            <td class="table-header-bold">@Messages(s"$key.activity")</td>
-            <td class="table-header-bold">@Messages(s"$key.band")</td>
-            <td class="table-header-bold numeric">@Messages(s"$key.litres")</td>
-            <td class="table-header-bold numeric">@Messages(s"$key.levy")</td>
+            <th scope="col" class="table-header-bold">@Messages(s"$key.activity")</th>
+            <th scope="col" class="table-header-bold">@Messages(s"$key.band")</th>
+            <th scope="col" class="table-header-bold numeric">@Messages(s"$key.litres")</th>
+            <th scope="col" class="table-header-bold numeric">@Messages(s"$key.levy")</th>
             <td>&nbsp;</td>
         </tr>
     </thead>
@@ -49,7 +49,7 @@
     <tbody>
         @for((lineKey, litres, multiplier) <- lineItems) {
             <tr>
-                <th rowspan="2">@Messages(s"$key.$lineKey")</th>
+                <td rowspan="2">@Messages(s"$key.$lineKey")</td>
                 <td>@Messages(s"$key.low")</td>
                 <td class="numeric">@{f"${litres._1}%,d"}</td>
                 <td class="no-minus-wrapping numeric">@format_money(costLower * litres._1 * multiplier)</td>
