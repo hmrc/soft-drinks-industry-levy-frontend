@@ -49,17 +49,16 @@
 }
 
 @main_template(title = verifyTitle, form = Some(verifyForm)) {
-    
     @if(!alreadyRegistered) {
     @error_summary(verifyForm)
     @form(sdil.controllers.routes.VerifyController.submit()) {
         <fieldset class="form-field-group">
             <legend>
-                <h1 class="heading-large" aria-hidden="true">
+                <h1 class="heading-large">
                 @verifyTitle
                 </h1>
             </legend>
-        </fieldset>
+
 
         @orgAddress
 
@@ -89,11 +88,9 @@
             '_labelClass -> "block-label",
             '_labelAfter -> true,
             '_groupClass -> "form-field-group",
-            '_dataTargetTrue -> "something",
-            '_legend -> verifyTitle,
-            '_legendClass -> "visually-hidden"
+            '_dataTargetTrue -> "true",
+            '_div -> true
         )
-
 
     <input class="button" value="@Messages("sdil.common.continue")" type="submit">
     }
@@ -102,9 +99,11 @@
         @orgAddress
 
         <p>@Messages("sdil.already.received.for.utr.info.p1")</p>
-<p>
-            @Html(Messages("sdil.already.received.for.utr.info.p2",
-                sdil.controllers.routes.AuthenticationController.signOutNoFeedback()))
-        </p>
+        <p>@Html(
+            Messages(
+                "sdil.already.received.for.utr.info.p2",
+                sdil.controllers.routes.AuthenticationController.signOutNoFeedback()
+            )
+        )</p>
     }
 }

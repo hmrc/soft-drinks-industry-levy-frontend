@@ -20,17 +20,11 @@
 @import views.html.helper._
 
 @elements = @{new FieldElements(field.id, field, null, args.toMap, messages) }
-@fieldsetClass = {@elements.args.get('_groupClass)@if(elements.hasErrors){ form-group-error }}
 @labelAfter = @{ elements.args.get('_labelAfter).getOrElse(false).asInstanceOf[Boolean] }
 @target = @{elements.args.get('_dataTargetTrue)}
+@errorClass = {@if(elements.hasErrors) {form-group-error}}
 
-<fieldset id="@field.name" class="@fieldsetClass"
-    @if(elements.args.get('_fieldsetAttributes).isDefined) {@elements.args.get('_fieldsetAttributes)}>
-@if(elements.args.get('_legend).isDefined) {
-    <legend @if(elements.args.get('_legendClass).isDefined) {class="@elements.args.get('_legendClass)"}>
-    @elements.args.get('_legend)
-    </legend>
-}
+<div class="form-field-group @errorClass">
 @elements.errors.map{error => <span class="error-message">@Messages(error)</span>}
 
 @radioOptions.map { case (value, (label, extra)) =>
@@ -71,6 +65,7 @@
                 }
             </label>
         </div>
+    }
     @if(extra.nonEmpty) {
         @* the show/hide js doesn't work properly in IE 8/9,
          * but the conditional content is hidden by the js-hidden class,
@@ -88,6 +83,5 @@
             </div>
         <!--<![endif]-->
     }
-    }
 }
-</fieldset>
+    </div>
