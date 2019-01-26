@@ -1109,6 +1109,7 @@ claim-credits-for-lost-damaged.help=You can claim a credit for liable drinks tha
   <p>To be able to claim this credit, you must have documentation containing information such as the details of the incident,\
    how and where it occurred, the amount of liable drink and whether it was in the low band or the high band.</p>
 heading.check-your-answers=Check your answers before sending your return
+heading.check-your-answers.orgName=
 period.check-your-answers={0} to {1}
 check-your-answers.balance.due=You need to pay {0}
 check-your-answers.balance.nil=You don’t need to pay anything
@@ -1168,7 +1169,7 @@ return-sent.what-happens-next-heading=What you need to do next
 return-sent.returnsDoneMessage=Your Soft Drinks Industry Levy return for {0} to {1} {2} for {3} was sent at {4} on {5}.
 return-sent.servicePage=<p><a href="{0}">Go back to your Soft Drinks Industry Levy details</a></p>
 return-sent.paymentsBlurb.payby=You need to pay {0} by {1}.\
-  <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">See how to pay the levy.</a>
+  <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">See how to pay the levy</a>.
 return-sent.paymentsBlurb.payusing=Make sure you include your Soft Drinks Industry Levy reference <strong style="font-weight: bold">{0}</strong> \
   when making a payment.
 return-sent.paymentsBlurb.help-heading=Help using this service
@@ -1179,8 +1180,8 @@ return-sent.paymentsBlurb.payDetails.3=update warehouses or packaging sites
 return-sent.paymentsBlurb.payDetails.4=send your next return
 return-sent.paymentsBlurb.noReturn.p1=You do not need to do anything else.
 return-sent.paymentsBlurb.credit.p1= We will take the payment from your Soft Drinks Industry Levy account shortly.
-return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must submit it and make any \
-  payments due by {2}.
+return-sent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must send this return and make any \
+  payments by {2}.
 return-sent.paymentsBlurb.variation=We will send you a letter to confirm that you have changed your registration \
   details. This may take up to 15 days.
 return-sent.cya-table.header=Details of your return

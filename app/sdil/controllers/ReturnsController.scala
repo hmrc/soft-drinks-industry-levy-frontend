@@ -143,8 +143,8 @@ class ReturnsController (
   private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String, nilReturn: Boolean, id: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = {
     val em = ExtraMessages(Map(
-      "heading.check-your-answers" ->
-        s"<span class='govuk-caption-xl'>${subscription.orgName} - ${Messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))}</span>${Messages("heading.check-your-answers")}"
+      "heading.check-your-answers.orgName" ->
+        s"${subscription.orgName} - ${Messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))}"
       )
     )
     for {
