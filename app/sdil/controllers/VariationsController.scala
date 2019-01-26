@@ -144,7 +144,9 @@ class VariationsController(
   }
 
   private def activityUpdate(
-    data: RegistrationVariationData
+    data: RegistrationVariationData,
+    subscription: RetrievedSubscription,
+    returnPeriods: List[ReturnPeriod]
   ): WebMonad[RegistrationVariationData] = {
     
     for {
@@ -161,8 +163,11 @@ class VariationsController(
       smallProducerWithNoCopacker =  packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       shouldDereg                 =  noUkActivity && smallProducerWithNoCopacker
       packer                      =  (packLarge.contains(true) && packageOwn.flatten.nonEmpty) || !copacks.isEmpty
-      variation                   <- if (shouldDereg)
+      isVoluntary                 =  subscription.activity.voluntaryRegistration
+      variation                   <- if (shouldDereg && (returnPeriods.isEmpty || isVoluntary))
                                        tell("suggest-deregistration", uniform.confirmOrGoBackTo("suggest-deregistration", "amount-produced")) >> deregisterUpdate(data)
+                                    else if (shouldDereg && (returnPeriods.nonEmpty || !isVoluntary))
+                                      fileReturnsBeforeDereg(returnPeriods, data)
                                      else {
                                         val extraMessages = ExtraMessages(
                                           messages = Map(
@@ -248,7 +253,7 @@ class VariationsController(
         case None | Some(ChangeType.Returns) =>
           chooseReturn(subscription, sdilRef)
         case Some(ChangeType.Sites) => contactUpdate(base)
-        case Some(ChangeType.Activity) => activityUpdate(base)
+        case Some(ChangeType.Activity) => activityUpdate(base, subscription, returnPeriods)
         case Some(ChangeType.Deregister) if returnPeriods.isEmpty || isVoluntary =>
           deregisterUpdate(base)
         case Some(ChangeType.Deregister) if returnPeriods.nonEmpty || !isVoluntary =>
@@ -519,7 +524,8 @@ class VariationsController(
     val base = RegistrationVariationData(subscription)
 
     for {
-      variation <- activityUpdate(base)
+      returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
+      variation <- activityUpdate(base, subscription, returnPeriods)
 
       path <- getPath
       _ <- checkYourRegAnswers("checkyouranswers", variation, path)
