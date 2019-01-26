@@ -138,7 +138,16 @@
         }
         </div>
         <div class="margin-bottom-25 return-button-padding">
-            <a href='@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, false, "own-brands-packaged-at-own-sites")' class="button">
+            <a href='@sdil.controllers.routes.ReturnsController.index(
+                period.year,
+                period.quarter,
+                nilReturn = false,
+                if(subscription.activity.smallProducer){
+                    "packaged-as-a-contract-packer"
+                } else {
+                    "own-brands-packaged-at-own-sites"
+                }
+            )' class="button">
                 @Messages("return.file")
             </a>
         </div>
