@@ -24,8 +24,9 @@
 @import java.time.LocalDate
 @import java.time.ZoneId
 @import java.time.format.DateTimeFormatter._
+@import uk.gov.hmrc.play.views.html.helpers._
 
-@(address: Address, subscription: RetrievedSubscription, lastReturn: Option[SdilReturn], balance: BigDecimal, pendingDereg: Option[SdilReturn], variableReturns: List[ReturnPeriod])(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(verifyForm: Form[_], address: Address, subscription: RetrievedSubscription, lastReturn: Option[SdilReturn], balance: BigDecimal, pendingDereg: Option[SdilReturn], variableReturns: List[ReturnPeriod])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.registered.title"), noArticle = true) {
     <div class="grid-row">
@@ -67,9 +68,23 @@
                                 <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
                             }
                             </div>
-                            <div>
-                                <a href='@sdil.controllers.routes.ReturnsController.index(ReturnPeriod(deregDate).year, ReturnPeriod(deregDate).quarter, false, "own-brands-packaged-at-own-sites")' class="button">
+                            <div class="margin-bottom-25 return-button-padding">
+                                <a href='@sdil.controllers.routes.ReturnsController.index(
+                                    ReturnPeriod(deregDate).year,
+                                    ReturnPeriod(deregDate).quarter,
+                                    nilReturn = false,
+                                    "own-brands-packaged-at-own-sites"
+                                )' class="button">
                                 @Messages("return.file.final")
+                                </a>
+                            </div>
+                            <div>
+                                <a href='@sdil.controllers.routes.ReturnsController.index(
+                                    ReturnPeriod(deregDate).year,
+                                    ReturnPeriod(deregDate).quarter,
+                                    nilReturn = true,
+                                    "nil-return")'>
+                                @Messages("return.file.nil")
                                 </a>
                             </div>
                         }
@@ -77,6 +92,14 @@
                     <div class="alert alert--info margin-bottom-30">
                         <h2 class="heading-medium no-margin">@Messages("returnsHome.dereg.title")</h2>
                         <p>@Messages("returnsHome.dereg.p1", deregDate.format("dd MMMM yyyy"), deregDate.plusYears(7).format("dd MMMM yyyy"))</p>
+                    </div>
+                    <p>I would like to do a re-registration because my business practices are wild</p>
+                    <div>
+                        <a href='@sdil.controllers.routes.RegistrationController.index("organisation-type")'>
+                        @Messages("return.file.nil")
+                        </a>
+                        <input class="button" value="@Messages("sdil.common.continue")" type="submit">
+
                     </div>
                 }
             }

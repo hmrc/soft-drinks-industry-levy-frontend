@@ -21,6 +21,7 @@ import play.api.mvc.{Action, AnyContent}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.controllers.VerifyController.form
 import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
@@ -57,7 +58,7 @@ class ServicePageController(
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
       if(subscription.deregDate.nonEmpty){
-        Ok(deregistered_service_page(addr, subscription, lastReturn, balance, pendingDereg, variableReturns))
+        Ok(deregistered_service_page(form, addr, subscription, lastReturn, balance, pendingDereg, variableReturns))
       } else {
         Ok(service_page(addr, request.sdilEnrolment.value, subscription, returnPeriods, lastReturn, balance, interesting))
       }

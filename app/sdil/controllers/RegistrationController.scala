@@ -60,10 +60,11 @@ class RegistrationController(
   extends SdilWMController with FrontendController {
 
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
+    println("HIUWEFHWEFHWEIFWEFHIWEFHFEWHFHUIFFEWIHGUGU")
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)
     cache.get(request.internalId) flatMap {
-      case Some(fd) => runInner(request)(program(fd)(request, implicitly))(id)(persistence.dataGet,persistence.dataPut)
-      case None => NotFound("").pure[Future]
+      case Some(fd) => println("XXXXXXSSSSSSSSSSSSSSSSSSSSS");runInner(request)(program(fd)(request, implicitly))(id)(persistence.dataGet,persistence.dataPut)
+      case None => println("XXXXXXSSSSSSSSSSSSSSSSSSSSS");NotFound("").pure[Future]
     }
   }
 
