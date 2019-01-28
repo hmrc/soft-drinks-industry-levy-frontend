@@ -16,6 +16,7 @@
 
 package sdil.actions
 
+import cats.data.OptionT
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -52,7 +53,6 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
       val error: Option[Result] = invalidRole(role)(request).orElse(invalidAffinityGroup(affinity)(request))
 
       val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
-
       (maybeUtr, maybeSdil) match {
         case (Some(utr), None) =>
           sdilConnector.retrieveSubscription(utr, "utr") map {
@@ -63,8 +63,11 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
         }
         case (Some(utr), Some(_)) =>
           alreadyRegistered(utr).map(Left.apply)
-        case (None, Some(_)) =>
-          Future.successful(Left(Redirect(routes.ServicePageController.show())))
+        case (None, Some(sdilEnrolment)) =>
+          sdilConnector.retrieveSubscription(sdilEnrolment.value).map {
+            case Some(sub) if sub.deregDate.nonEmpty => Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
+            case _ => Left(Redirect(routes.ServicePageController.show()))
+          }
         case _ if error.nonEmpty =>
           Future.successful(Left(error.get))
         case _ =>
