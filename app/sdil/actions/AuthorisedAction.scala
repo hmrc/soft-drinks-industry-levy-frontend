@@ -16,7 +16,6 @@
 
 package sdil.actions
 
-import cats.data.OptionT
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc._
