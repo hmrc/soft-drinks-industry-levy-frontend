@@ -24,6 +24,7 @@
 @import java.time.LocalDate
 @import java.time.ZoneId
 @import java.time.format.DateTimeFormatter._
+@import uk.gov.hmrc.play.views.html.helpers._
 
 @(address: Address, subscription: RetrievedSubscription, lastReturn: Option[SdilReturn], balance: BigDecimal, pendingDereg: Option[SdilReturn], variableReturns: List[ReturnPeriod])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
@@ -31,12 +32,17 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
-
             @subscription.deregDate.map { deregDate =>
                 @if(pendingDereg.isEmpty) {
                     <div class="alert alert--info margin-bottom-30">
                         <h2 class="heading-medium no-margin">@Messages("sdil.service-page.deregistered.pending.title")</h2>
-                        <p>@Messages("sdil.service-page.deregistered.pending.p1", ReturnPeriod(deregDate).start.format("MMMM yyyy"), ReturnPeriod(deregDate).end.format("MMMM yyyy"), ReturnPeriod(deregDate).next.start.format("d MMMM"), ReturnPeriod(deregDate).deadline.format("d MMMM yyyy"))</p>
+                        <p>
+                        @Messages("sdil.service-page.deregistered.pending.p1",
+                            ReturnPeriod(deregDate).start.format("MMMM yyyy"),
+                            ReturnPeriod(deregDate).end.format("MMMM yyyy"),
+                            ReturnPeriod(deregDate).next.start.format("d MMMM"),
+                            ReturnPeriod(deregDate).deadline.format("d MMMM yyyy"))
+                        </p>
                         <p>@Messages("sdil.service-page.deregistered.pending.p2")</p>
                         <p>@Messages("sdil.service-page.deregistered.pending.p3")</p>
                     </div>
@@ -67,9 +73,23 @@
                                 <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
                             }
                             </div>
-                            <div>
-                                <a href='@sdil.controllers.routes.ReturnsController.index(ReturnPeriod(deregDate).year, ReturnPeriod(deregDate).quarter, false, "own-brands-packaged-at-own-sites")' class="button">
+                            <div class="margin-bottom-25 return-button-padding">
+                                <a href='@sdil.controllers.routes.ReturnsController.index(
+                                    ReturnPeriod(deregDate).year,
+                                    ReturnPeriod(deregDate).quarter,
+                                    nilReturn = false,
+                                    "own-brands-packaged-at-own-sites"
+                                )' class="button">
                                 @Messages("return.file.final")
+                                </a>
+                            </div>
+                            <div>
+                                <a href='@sdil.controllers.routes.ReturnsController.index(
+                                    ReturnPeriod(deregDate).year,
+                                    ReturnPeriod(deregDate).quarter,
+                                    nilReturn = true,
+                                    "nil-return")'>
+                                @Messages("return.file.nil")
                                 </a>
                             </div>
                         }
@@ -78,23 +98,48 @@
                         <h2 class="heading-medium no-margin">@Messages("returnsHome.dereg.title")</h2>
                         <p>@Messages("returnsHome.dereg.p1", deregDate.format("dd MMMM yyyy"), deregDate.plusYears(7).format("dd MMMM yyyy"))</p>
                     </div>
+
+
                 }
             }
-
-            @lastReturn.map { lr =>
-                <div class="panel-border-narrow panel">
-                    <p>
-                        @Messages(
-                            "sdil.service-page.completed-return",
-                            ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
-                            ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
-                            lr.submittedOn.getOrElse(LocalDateTime.now).atZone(ZoneId.of("Europe/London")).format(ofPattern("h:mma")).toLowerCase,
-                            lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")),
-                            ReturnPeriod(LocalDate.now).start.format("MMMM"),
-                            ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
-                            ReturnPeriod(LocalDate.now).deadline.format("d MMMM yyyy")
-                        )
-                    </p>
+            @if(pendingDereg.isEmpty) {
+                @lastReturn.map { lr =>
+                    <div class="panel-border-narrow panel">
+                        <p>
+                            @Messages(
+                                "sdil.service-page.completed-return",
+                                ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
+                                ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
+                                lr.submittedOn.getOrElse(LocalDateTime.now).atZone(ZoneId.of("Europe/London")).format(ofPattern("h:mma")).toLowerCase,
+                                lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")),
+                                ReturnPeriod(LocalDate.now).start.format("MMMM"),
+                                ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
+                                ReturnPeriod(LocalDate.now).deadline.format("d MMMM yyyy")
+                            )
+                        </p>
+                    </div>
+                }
+            } else {
+                @lastReturn.map { lr =>
+                    <div class="panel-border-narrow panel">
+                        <p>
+                            @Messages(
+                                "sdil.service-page.completed-return.dereg",
+                                ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
+                                ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
+                                lr.submittedOn.getOrElse(LocalDateTime.now).atZone(ZoneId.of("Europe/London")).format(ofPattern("h:mma")).toLowerCase,
+                                lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy"))
+                            )
+                        </p>
+                    </div>
+                }
+                <hr class="govuk-section-break--visible">
+                <h2 class="heading-medium">@Messages("returnsHome.rereg.title")</h2>
+                <p>@Messages("returnsHome.rereg.p1")</p>
+                <div>
+                    <a href='@sdil.controllers.routes.IdentifyController.start()' class="button">
+                    @Messages("returnsHome.rereg.button")
+                    </a>
                 </div>
             }
 

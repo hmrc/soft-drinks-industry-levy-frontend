@@ -390,6 +390,8 @@ sdil.service-page.p5.voluntary-used-to-be-man=If you stop being a small producer
   Drinks Industry Levy account to be updated. You will also receive a new reference number.
 sdil.service-page.completed-return=Your return for {0} to {1} was submitted at {2} on {3}.\
   Your next return will be for {4} to {5}. You must submit this return and make any payments due by {6}.
+sdil.service-page.completed-return.dereg=Your return for {0} to {1} was submitted at {2} on {3}.
+
 sdil.service-page.sdil-ref=Soft Drinks Industry Reference
 sdil.service-page.name=Name
 sdil.service-page.job-title=Job title
@@ -438,7 +440,7 @@ sdil.service-page.reregister.title=Register again for the Soft Drinks Industry L
 sdil.service-page.reregister.p1=If you become liable for the levy again, you will need to <a href="{0}">register.</a>
 sdil.service-page.reregister.p2=Check the guidance to \
   <a href="https://www.gov.uk/guidance/check-if-you-need-to-register-for-the-soft-drinks-industry-levy"> \
-  find out if you need to register.</a>
+  find out if you need to register.</a> 
 
 #service page when deregistered
 sdil.service-page.deregistered.pending.title=Your request to cancel your registration is on hold
@@ -1208,6 +1210,9 @@ returnsHome.dereg.final-return-title=Send final return
 returnsHome.dereg.final-return-p1=You must send a return for {0} to {1} before we can cancel your registration.
 returnsHome.dereg.title=This account is no longer registered with the Soft Drinks Industry Levy.
 returnsHome.dereg.p1=The registration was cancelled on {0}. You will be able to access this account until {1}.
+returnsHome.rereg.title=Changed your business activity?
+returnsHome.rereg.button=Register again
+returnsHome.rereg.p1=If you become liable to register for the Soft Drink Industry Levy, you must register again.
 
 return.file=Send a return
 return.file.final=Send a final return
