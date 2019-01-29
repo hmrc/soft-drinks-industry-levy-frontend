@@ -34,7 +34,7 @@
     }
 
     <h1 class="heading-large @if(messages.isDefinedAt(s"heading.$key.orgName")) {service-header}" >
-        @(Messages(s"heading.$key"))
+        @Messages.extraMessage(s"heading.$key")
     </h1>
 
     @helper.form(action = play.api.mvc.Call("post", key)) {
