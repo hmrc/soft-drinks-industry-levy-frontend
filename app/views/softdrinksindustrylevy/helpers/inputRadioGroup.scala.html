@@ -45,7 +45,7 @@
 
     @radioOptions.map { case (value, label) =>
         @defining(s"${elements.field.name}-${value.toLowerCase.replace(" ","_")}")  { inputId =>
-            <div class="multiple-choice">
+            <div class="multiple-choice govuk-radios__item">
                 <input
                 type="radio"
                 id="@{inputId}"
