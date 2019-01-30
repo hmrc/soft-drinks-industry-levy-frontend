@@ -50,10 +50,7 @@
     }, form = Some(form)) {
 
     @backlink(breadcrumbs)
-
-    @helper.form(action = play.api.mvc.Call("post", key)) {
     @error_summary(form)
-    @CSRF.formField
 
     <h1 class="heading-large">@multiTitle(items)</h1>
 
@@ -96,6 +93,8 @@
                 }
                 </table>
             }
+            @helper.form(action = play.api.mvc.Call("post", key)) {
+                @CSRF.formField
             @if(messages.isDefinedAt(s"$key.list-control.heading") && items.nonEmpty) {
                 <fieldset class="form-field-group">
                     <legend>
@@ -115,7 +114,9 @@
                         '_div -> true,
                         '_groupDivClass -> "inline"
                     )
+            @if(messages.isDefinedAt(s"$key.list-control.heading") && items.nonEmpty) {
                 </fieldset>
+            }
         </div>
         @if(messages.isDefinedAt(s"$key.help")) {
 
