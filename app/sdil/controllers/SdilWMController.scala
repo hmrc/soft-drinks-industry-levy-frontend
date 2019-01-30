@@ -138,8 +138,8 @@ trait SdilWMController extends WebMonadController
         })
   }
 
-  def checkReturnChanges(key: String, variation: ReturnVariationData) = {
-    val inner = uniform.fragments.returnVariationDifferences(key, variation)
+  def checkReturnChanges(key: String, variation: ReturnVariationData, broughtForward: BigDecimal): WebMonad[Unit] = {
+    val inner = uniform.fragments.returnVariationDifferences(key, variation, showChangeLinks = true, broughtForward.some)
     cya(key, inner,
       {
         case "exemptions-for-small-producers" =>

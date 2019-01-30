@@ -370,7 +370,7 @@ class VariationsController(
           _.length <= 255)),
         errorOnEmpty = "error.return-correction-reason.empty")(extraMessages)
       repayment <- askOneOf("repayment-method", List("credit", "bankPayment"))(ltbs.play.scaffold.SdilComponents.extraMessages) when variation.revised.total - variation.original.total < 0
-      _ <- checkReturnChanges("check-return-changes", variation.copy(reason = reason, repaymentMethod = repayment))
+      _ <- checkReturnChanges("check-return-changes", variation.copy(reason = reason, repaymentMethod = repayment), broughtForward)
       _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
       _ <- clear
       subheading = uniform.fragments.return_variation_done_subheading(subscription, returnPeriod).some

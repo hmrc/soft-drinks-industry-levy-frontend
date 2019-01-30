@@ -1315,6 +1315,7 @@ return-details.continue=Continue
 return-details.submit-subheading=Submit your return
 return-details.total.original=Original return total
 return-details.total.new=New return total
+return-details.total.balance=Account balance
 return-details.net.adjusted.positive=Net adjusted amount excluding interest
 return-details.net.adjusted.negative=Net adjusted amount
 return-details.interest.help=You may be charged interest on your net adjusted amount after \
@@ -1344,6 +1345,7 @@ check-return-changes.exemptions-for-small-producers=Contract packed for register
 sdil.check-return-changes.balance.return-correction-reason.subheading=Balance
 check-return-changes.total.original=Original return total
 check-return-changes.total.new=New return total
+check-return-changes.total.balance=Balance
 check-return-changes.net.adjusted.positive=Net adjusted amount excluding interest
 check-return-changes.net.adjusted.negative=Net adjusted amount
 
