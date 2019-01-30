@@ -24,6 +24,7 @@ error.sdilref.invalid=Small producer reference number must be 6 letters and 9 nu
 error.sdilref.notSmall=Small producer reference number does not match a business that is currently registered as a \
   small producer. Check and try again.
 error.sdilref.same=​Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
+error.sdilref.alreadyexists=Small producer reference number must be different to a small producer reference number you have already added
 
 #Address lines
 sdil.address.line1=Address line 1
