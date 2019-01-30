@@ -61,7 +61,7 @@
             "registerDeclaration",
             "producer",
             Some(sdil.controllers.routes.RegistrationController.index("producer")),
-            Messages(s"sdil.registerDeclaration.${producer.getOrElse(false)}"),
+            Messages(s"sdil.registerDeclaration.producer.${producer.getOrElse(None)}"),
             '_colspan -> "2"
         )
         @if(producer.nonEmpty) {
@@ -82,14 +82,14 @@
                     Some(sdil.controllers.routes.RegistrationController.index("copacked")),
                     Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
             }
-
+        @producer.map { isProducer =>
             @declaration_details_table_row(
                 "registerDeclaration",
                 "packaging",
                 Some(sdil.controllers.routes.RegistrationController.index("package-own-uk")),
                 Messages(s"sdil.registerDeclaration.${packageOwn.fold(false)(_ => true)}"),
                 '_colspan -> "2")
-
+        }
             @if(packageOwn.fold(false)(_ => true)) {
                 @declaration_details_litres(
                     "package-own-uk",

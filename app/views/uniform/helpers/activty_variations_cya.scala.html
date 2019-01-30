@@ -67,25 +67,25 @@
                 }
             </tr>
         }
-
-        <tr>
-            <td class="cya-question">
-            @Messages("variations.cya.activity-change.package-own")
-            </td>
-            <td>
-            @v.packageOwn.map { x =>
-                @Messages(s"variations.cya.$x")
-            }
-            </td>
-            @if(showChangeLinks) {
-                <td class="cya-change">
-                    <a href="packaging-site">
-                    @Html(Messages("variations.cya.activity-change.package-own.change"))
-                    </a>
+        @if(v.producer.isProducer) {
+            <tr>
+                <td class="cya-question">
+                @Messages("variations.cya.activity-change.package-own")
                 </td>
-            }
-        </tr>
-
+                <td>
+                @v.packageOwn.map { x =>
+                    @Messages(s"variations.cya.$x")
+                }
+                </td>
+                @if(showChangeLinks) {
+                    <td class="cya-change">
+                        <a href="packaging-site">
+                        @Html(Messages("variations.cya.activity-change.package-own.change"))
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
         @if(v.packageOwn.getOrElse(false)) {
             <tr>
                 <td class="cya-question">
