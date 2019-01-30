@@ -85,15 +85,11 @@
                             <td class="@if(showEdit) {align-centre} else {align-right}">
                                 <button name="@key" value="Delete.@id" class="link-button no-shadow">@Messages(Seq(s"$key.delete", "Remove"))</button>
                             </td>
-                        } else {
-                            <td/>
                         }
                         @if(showEdit) {
                             <td class="align-right">
                                 <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "Edit"))</button>
                             </td>
-                        } else {
-                            <td/>
                         }
 
                     </tr>
