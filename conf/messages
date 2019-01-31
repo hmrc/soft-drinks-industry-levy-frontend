@@ -295,13 +295,15 @@ sdil.declaration.email=Email address
 sdil.declaration.confirmation=By continuing you are confirming that the details provided are true and complete.
 sdil.declaration.continue=Confirm and send
 
-# TODO these can be deleted when we remove old style registration
 heading.declaration=Check your answers
 sdil.registerDeclaration.heading=Check your answers
 sdil.registerDeclaration.change-link=Change
 sdil.registerDeclaration.true=Yes
 sdil.registerDeclaration.false=No
 
+sdil.registerDeclaration.producer.true=Yes
+sdil.registerDeclaration.producer.false=Yes
+sdil.registerDeclaration.producer.None=No
 sdil.registerDeclaration.your-business=Business details
 sdil.registerDeclaration.utr=Unique Taxpayer Reference (UTR)
 sdil.registerDeclaration.business-name=Business name
