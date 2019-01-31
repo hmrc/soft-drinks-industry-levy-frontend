@@ -23,10 +23,10 @@
 @import uk.gov.hmrc.uniform.webmonad._
 @import sdil.controllers.ShowBackLink
 
-@(key: String, form: Form[Option[String]], items: List[Html], breadcrumbs: List[String], min: Int, showEdit: Boolean = false)(implicit messages: Messages, request: Request[_], config: AppConfig, showBacklink: ShowBackLink)
-@singular(items: List[Html]) = {@if(items.nonEmpty && items.length > 1) {s}}
+@(key: String, form: Form[Option[String]], items: List[(Html, String)], breadcrumbs: List[String], min: Int, showEdit: Boolean = false)(implicit messages: Messages, request: Request[_], config: AppConfig, showBacklink: ShowBackLink)
+@singular(items: List[(Html, String)]) = {@if(items.nonEmpty && items.length > 1) {s}}
 
-@multiTitle(items: List[Html]) = {
+@multiTitle(items: List[(Html, String)]) = {
     @if(items.isEmpty){
         @Messages(s"heading.$key")
     } else {
@@ -34,7 +34,7 @@
     }
 }
 
-@multiLead(items: List[Html]) = {
+@multiLead(items: List[(Html, String)]) = {
 @if(items.isEmpty){
     @Messages(s"$key.lead")
 } else {
@@ -48,7 +48,6 @@
     } else {
     Messages(s"heading.multi.$key", items.length, singular(items).toString)
     }, form = Some(form)) {
-
     @backlink(breadcrumbs)
     @error_summary(form)
 
@@ -70,23 +69,33 @@
         <p>@Messages(s"$key.paragraph.nonEmpty")</p>
     }
 
+
         <div class="form-group">
             @if(items.nonEmpty) {
                 <table class="margin-bottom-30">
-                @for((item, id) <- items.zipWithIndex) {
+                @for(((item, itemTitle), id) <- items.zipWithIndex) {
                     <tr>
                         <td>
                         @item
                         </td>
                         @if(items.length > min) {
                             <td class="@if(showEdit) {align-centre} else {align-right}">
-                                <button name="@key" value="Delete.@id" class="link-button no-shadow">@Messages(Seq(s"$key.delete", "Remove"))</button>
+                                <button name="@key" value="Delete.@id" class="link-button no-shadow" aria-hidden="true">
+                                    @Messages(Seq(s"$key.delete", "Remove"))
+                                </button>
+                                <span class="visually-hidden">
+                                    @Messages("sdil.remove.site.button", itemTitle)
+                                </span>
                             </td>
                         }
+
                         @if(showEdit) {
                             <td class="align-right">
                                 <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "Edit"))</button>
                             </td>
+                            <span class="visually-hidden">
+                                @Messages("sdil.edit.site.button", itemTitle)
+                            </span>
                         }
 
                     </tr>
@@ -131,5 +140,5 @@
         @Messages("sdil.common.save-continue")
         </button>
     }
-
 }
+

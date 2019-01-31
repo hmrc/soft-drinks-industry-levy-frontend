@@ -48,6 +48,9 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import cats.implicits._
 import sdil.models.variations.ReturnVariationData
+import sdil.uniform.ShowTitle
+//import sdil.uniform.ShowTitle.ops._
+import sdil.uniform.ShowTitle.instance
 
 trait SdilWMController extends WebMonadController
     with FrontendController with Modulus23Check
@@ -336,7 +339,7 @@ trait SdilWMController extends WebMonadController
     min: Int = 0,
     max: Int = 100,
     default: List[A] = List.empty[A]
-  )(implicit hs: HtmlShow[A], htmlForm: FormHtml[A], format: Format[A]): WebMonad[List[A]] =
+  )(implicit hs: HtmlShow[A], gt: ShowTitle[A], htmlForm: FormHtml[A], format: Format[A]): WebMonad[List[A]] =
     manyT[A](id, ask(innerMapping, _), min, max, default)
 
   protected def askBigText(
@@ -402,7 +405,7 @@ trait SdilWMController extends WebMonadController
       }
     }
 
-  protected def manyT[A](
+  protected def manyT[A: HtmlShow: Format](
     id: String,
     wm: String => WebMonad[A],
     min: Int = 0,
@@ -410,7 +413,7 @@ trait SdilWMController extends WebMonadController
     default: List[A] = List.empty[A],
     editSingleForm: Option[(Mapping[A], FormHtml[A])] = None,
     configOverride: JourneyConfig => JourneyConfig = identity
-  )(implicit hs: HtmlShow[A], format: Format[A], showBackLink: ShowBackLink): WebMonad[List[A]] = {
+  )(implicit showTitle: ShowTitle[A], showBackLink: ShowBackLink): WebMonad[List[A]] = {
     def outf(x: Option[String]): Control = x match {
       case Some("Add") => Add
       case Some("Done") => Done
@@ -439,10 +442,13 @@ trait SdilWMController extends WebMonadController
 
           formPage(id)(mapping, None, configOverride) { (path, b, r) =>
             implicit val request: Request[AnyContent] = r
-            uniform.many(id, b, items.map{_.showHtml}, path, min, editSingleForm.nonEmpty)
+            uniform.many(id, b, items.map{ x => (x.showHtml, showTitle.getTitle(x))}, path, min, editSingleForm.nonEmpty)
           }.imap(outf)(inf)
         }(wm)
       }
+
+  implicit val showText = instance[Site]{ _.getLines.mkString(",") }
+  implicit val showProd = instance[SmallProducer]{ _.sdilRef }
 
   def askPackSites(existingSites: List[Site]): WebMonad[List[Site]] =
     manyT("production-site-details",
