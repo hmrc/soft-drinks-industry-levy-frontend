@@ -24,7 +24,7 @@ import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.{packagingSiteForm, _}
 import play.api.data.Forms._
 import play.api.data.format.Formatter
-import play.api.data.validation._
+import play.api.data.validation.{Invalid, _}
 import play.api.data.{Form, Mapping, _}
 import play.api.i18n.Messages
 import play.api.libs.json._
@@ -495,7 +495,8 @@ trait SdilWMController extends WebMonadController
   implicit def smallProducer(
     origSdilRef: String,
     sdilConnector: SoftDrinksIndustryLevyConnector,
-    period: ReturnPeriod)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = {
+    period: ReturnPeriod, smallProducerList : List[SmallProducer], id : String)(implicit hc: HeaderCarrier): Mapping[SmallProducer] = {
+
     mapping(
       "alias" -> optional(text).verifying("error.alias.tooLong", _.getOrElse("").length <= 160),
       "sdilRef" -> text.verifying(Constraint { x: String =>
@@ -504,6 +505,7 @@ trait SdilWMController extends WebMonadController
           case b if b == origSdilRef => Invalid("error.sdilref.same")
           case c if !c.matches("^X[A-Z]SDIL000[0-9]{6}$") => Invalid("error.sdilref.invalid")
           case d if !isCheckCorrect(d, 1) => Invalid("error.sdilref.invalid")
+          case e if (id.equalsIgnoreCase("add-small-producer-details") && smallProducerList.map(x => x.sdilRef).contains(e)) => Invalid("error.sdilref.alreadyexists")
           case _ if !Await.result(isSmallProducer(x, sdilConnector, period), 20.seconds) => Invalid("error.sdilref.notSmall")
           case _ => Valid
         }
@@ -528,5 +530,7 @@ trait SdilWMController extends WebMonadController
       uniform.fragments.litreage(key, form, false)(messages)
     }
   }
+
+
 }
 
