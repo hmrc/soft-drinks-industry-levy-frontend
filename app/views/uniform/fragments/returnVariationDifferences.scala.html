@@ -21,7 +21,7 @@
 @import sdil.controllers.returnLiterageList
 @import views.html.softdrinksindustrylevy.helpers._
 
-@(key: String, variation: ReturnVariationData, showChangeLinks: Boolean = true)(implicit m: Messages)
+@(key: String, variation: ReturnVariationData, showChangeLinks: Boolean = true, broughtForward: Option[BigDecimal] = None)(implicit m: Messages)
 
 @cost(key: String, value: BigDecimal) = {
     @defining(
@@ -47,7 +47,10 @@
                 @if(showChangeLinks) {
                     <th class="change-answer" colspan="3">
                         <button name="@key" value="@changeLink" id="@key" class="link-button">
-                            @Messages("sdil.declaration.change-link") <span class="visuallyhidden">@Messages(s"$key.change.$title")</span>
+                            @Messages("sdil.declaration.change-link")
+                            <span class="visuallyhidden">
+                                @Messages(s"$key.change.$title")
+                            </span>
                         </button>
                     </th>
                 }
@@ -102,15 +105,21 @@
         <th scope="row">@Messages(s"$key.total.new")</th>
         <td class="numeric">@format_money(variation.revised.total)</td>
     </tr>
-    <tr>
-        @if((variation.revised.total - variation.original.total) < 0) {
-            <th scope="row"><span class="heading-small">@Messages(s"$key.net.adjusted.negative")</span></th>
-        } else {
-            <th scope="row"><span class="heading-small">@Messages(s"$key.net.adjusted.positive")</span></th>
+    @broughtForward.map { broughtForward =>
+        <tr>
+            <th scope="row">@Messages(s"$key.total.balance")</th>
+            <td class="numeric">@format_money(-broughtForward, "+")</td>
+        </tr>
+        <tr>
+            @if((variation.revised.total - variation.original.total) < 0) {
+                <th scope="row"><span class="heading-small">@Messages(s"$key.net.adjusted.negative")</span></th>
+            } else {
+                <th scope="row"><span class="heading-small">@Messages(s"$key.net.adjusted.positive")</span></th>
 
-        }
-        <td class="numeric"><span class="heading-small">@format_money(variation.revised.total - variation.original.total)</span></td>
-    </tr>
+            }
+            <td class="numeric"><span class="heading-small">@format_money(variation.revised.total - variation.original.total - broughtForward)</span></td>
+        </tr>
+    }
 }
 
 @declaration_table(s"$key.reason", Messages("return-correction-reason.subheading")) {

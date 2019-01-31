@@ -91,7 +91,11 @@
                 </tr>
                 <tr>
                     <th scope="row" colspan="3">@Messages(s"$key.total.new")</th>
-                    <td class="numeric">@format_money(total)</td>
+                    <td class="numeric">@format_money(subtotal)</td>
+                </tr>
+                <tr>
+                    <th scope="row" colspan="3">@Messages(s"$key.total.balance")</th>
+                    <td class="numeric">@format_money(-broughtForward, "+")</td>
                 </tr>
                 <tr>
                     @if((total - r.total) < 0) {
