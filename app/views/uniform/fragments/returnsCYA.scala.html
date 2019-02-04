@@ -55,7 +55,7 @@
                 <td class="no-minus-wrapping numeric">@format_money(costLower * litres._1 * multiplier)</td>
                 <td>
                     <a href="@lineKey" name="@key">
-                        <span aria-hidden="true">@Messages(s"$key.change")</span>
+                        <span aria-hidden="true" class="edit-change-link">@Messages(s"$key.change")</span>
                         <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
                     </a>
                 </td>
@@ -66,7 +66,7 @@
                 <td class="no-minus-wrapping numeric"> @format_money(costHigher * litres._2 * multiplier)</td>
                 <td>
                     <a href="@lineKey" name="@key">
-                        <span aria-hidden="true">@Messages(s"$key.change")</span>
+                        <span aria-hidden="true" class="edit-change-link">@Messages(s"$key.change")</span>
                         <span class="visuallyhidden">@Messages(s"$key.change.$lineKey")</span>
                     </a>
                 </td>
@@ -165,7 +165,7 @@
                         <td>@site.address.postCode</td>
                         <td class="change-answer">
                             <a href="production-site-details">
-                            @Html(Messages("variations.cya.packsites.change"))
+                                <p class="edit-change-link">@Html(Messages("variations.cya.packsites.change"))</p>
                             </a>
                         </td>
                     </tr>
@@ -208,7 +208,7 @@
                         <td>@site.address.postCode</td>
                         <td class="change-answer">
                             <a href="secondary-warehouse-details">
-                            @Html(Messages("variations.cya.warehouses.change"))
+                                <p class="edit-change-link">@Html(Messages("variations.cya.warehouses.change"))</p>
                             </a>
                         </td>
                     </tr>
@@ -249,6 +249,6 @@
 
 <p>
     <a href="javascript:window.print()" class="print-link" onclick="ga('send', 'event', 'print', 'click', 'Print')">
-        @Messages("sdil.common.print")
+       @Messages("sdil.common.print")
     </a>
 </p>
