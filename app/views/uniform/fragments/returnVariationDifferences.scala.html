@@ -128,7 +128,9 @@
         <td>@variation.reason</td>
         @if(showChangeLinks) {
             <td class="change-answer">
-                <a href="return-correction-reason">@Messages(s"sdil.declaration.change-link")</a>
+                <a href="return-correction-reason">
+                    <p class="edit-change-link">@Messages(s"sdil.declaration.change-link")</p>
+                </a>
                 <span class="visually-hidden">@Messages(s"$key.change.reason")</span>
             </td>
         }
@@ -139,7 +141,9 @@
             <td>@Messages(s"$x.short")</td>
             @if(showChangeLinks) {
                 <td class="change-answer" >
-                    <a href="repayment-method">@Messages(s"sdil.declaration.change-link")</a>
+                    <a href="repayment-method">
+                        <p class="edit-change-link">@Messages(s"sdil.declaration.change-link")</p>
+                    </a>
                     <span class="visually-hidden">@Messages(s"$key.change.repayment")</span>
                 </td>
             }
@@ -149,11 +153,11 @@
 
 @if(showChangeLinks) {
     <h2 class="heading-medium">
-    @Messages("check-return-changes.submit.heading")
+        @Messages("check-return-changes.submit.heading")
     </h2>
 
     <p>
-    @Messages("check-return-changes.submit.p")
+        @Messages("check-return-changes.submit.p")
     </p>
 
     <p>
