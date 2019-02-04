@@ -911,8 +911,17 @@ deregister.cancel-registration-reason.label=Reason for deregistering
 error.cancel-registration-reason.empty=Enter why you need to cancel your registration
 heading.cancel-registration-date=What date are you cancelling your registration from?
 heading.cancel-registration-date.orgName=
-error.cancel-registration-date.nopast=Deregistration date cannot be in the past
-error.cancel-registration-date.nofuture=Deregistration date cannot be more than 14 days in the future
+error.cancel-registration-date.nopast=The date you are cancelling your registration must be today or in the future
+error.cancel-registration-date.nofuture=The date you are cancelling your registration from cannot be more than 14 days in the future
+
+error.cancel-registration-date.emptyfields=Enter the date you are cancelling your registration from
+error.cancel-registration-date-day.missing=The date you are cancelling your registration from must include a day
+error.cancel-registration-date-month.missing=The date you are cancelling your registration from must include a month
+error.cancel-registration-date-year.missing=The date you are cancelling your registration from must include a year
+error.cancel-registration-date-day-and-month.missing=The date you are cancelling your registration from must include a day and month
+error.cancel-registration-date-month-and-year.missing=The date you are cancelling your registration from must include a month and year
+error.cancel-registration-date-day-and-year.missing=The date you are cancelling your registration from must include a day and year
+
 
 variations.cya.packLarge=Amount of own brand liable drink produced in the past 12 months
 variations.cya.packLarge.large=1 million litres or more

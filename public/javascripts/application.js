@@ -31,6 +31,10 @@ $(document).ready(function () {
         $("input[id^=" + "start-date" + "]").each(function(index) {
             $(this).addClass('form-control-error')
         })
+        $("input[id^=" + "cancel-registration-date" + "]").each(function(index) {
+                    $(this).addClass('form-control-error')
+                })
+
     }
 
     //The focus setting behaviour defined in Assests is having troubles with different browsers. So we need to override the behaviour to make it work across all browsers
@@ -49,6 +53,14 @@ $(document).ready(function () {
             }
         });
         $("input[id^=" + "start-date" + "]:eq(" + indexSetToFocus + ")").trigger('focus');
+
+        $("input[id^=" + "cancel-registration-date" + "]").each(function(index) {
+                    if($.trim($(this).val()) == "") {
+                        indexSetToFocus = index;
+                        return false;
+                    }
+                });
+        $("input[id^=" + "cancel-registration-date" + "]:eq(" + indexSetToFocus + ")").trigger('focus');
     })
 });
 
