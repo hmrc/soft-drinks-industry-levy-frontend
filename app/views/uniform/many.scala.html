@@ -68,8 +68,9 @@
     @if(messages.isDefinedAt(s"$key.paragraph.nonEmpty") && items.nonEmpty) {
         <p>@Messages(s"$key.paragraph.nonEmpty")</p>
     }
-
-
+    @helper.form(action = play.api.mvc.Call("post", key)) {
+        @CSRF.formField
+        <button class="error-button"></button>
         <div class="form-group">
             @if(items.nonEmpty) {
                 <table class="margin-bottom-30">
@@ -82,28 +83,28 @@
                             <td class="@if(showEdit) {align-centre} else {align-right}">
                                 <button name="@key" value="Delete.@id" class="link-button no-shadow" aria-hidden="true">
                                     @Messages(Seq(s"$key.delete", "Remove"))
+                                    <span class="visually-hidden">
+                                        @Messages("sdil.remove.site.button", itemTitle)
+                                    </span>
                                 </button>
-                                <span class="visually-hidden">
-                                    @Messages("sdil.remove.site.button", itemTitle)
-                                </span>
                             </td>
                         }
 
                         @if(showEdit) {
                             <td class="align-right">
-                                <button name="@key" value="Edit.@id" class="link-button no-shadow">@Messages(Seq(s"$key.edit", "Edit"))</button>
+                                <button name="@key" value="Edit.@id" class="link-button no-shadow" aria-hidden="true">
+                                    @Messages(Seq(s"$key.edit", "Edit"))
+                                    <span class="visually-hidden">
+                                        @Messages("sdil.edit.site.button", itemTitle)
+                                    </span>
+                                </button>
                             </td>
-                            <span class="visually-hidden">
-                                @Messages("sdil.edit.site.button", itemTitle)
-                            </span>
                         }
-
                     </tr>
                 }
                 </table>
             }
-            @helper.form(action = play.api.mvc.Call("post", key)) {
-                @CSRF.formField
+
             @if(messages.isDefinedAt(s"$key.list-control.heading") && items.nonEmpty) {
                 <fieldset class="form-field-group">
                     <legend>

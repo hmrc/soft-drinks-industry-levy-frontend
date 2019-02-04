@@ -33,6 +33,7 @@ import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
+import sdil.models.Address
 import sdil.models.backend.{Site, Subscription}
 import sdil.models.retrieved.RetrievedSubscription
 import uk.gov.hmrc.domain.Modulus23Check
@@ -447,8 +448,12 @@ trait SdilWMController extends WebMonadController
         }(wm)
       }
 
-  implicit val showText = instance[Site]{ _.getLines.mkString(",") }
-  implicit val showProd = instance[SmallProducer]{ _.sdilRef }
+  implicit val showText: ShowTitle[Site] {
+    def getTitle(in: Site): String
+  } = instance[Site]{ _.address.lines.take(2).mkString(",") ++ "." }
+  implicit val showProd: ShowTitle[SmallProducer] {
+    def getTitle(in: SmallProducer): String
+  } = instance[SmallProducer]{ _.getNameAndRef}
 
   def askPackSites(existingSites: List[Site]): WebMonad[List[Site]] =
     manyT("production-site-details",
@@ -484,14 +489,19 @@ trait SdilWMController extends WebMonadController
   implicit val smallProducerHtml: HtmlShow[SmallProducer] =
     HtmlShow.instance { producer =>
       Html(producer.alias.map { x =>
-        "<p class='heading-small'>" ++ Messages("small-producer-details.name", x)
+        "<p class='heading-small'>" ++
+          Messages("small-producer-details.name", x) ++
+          "</p> <p class='service-header heading-small'>"
       }.getOrElse(
         "<p class='heading-small'>"
       )
         ++ Messages("small-producer-details.refNumber", producer.sdilRef) ++ "</p>"
+        ++ "<p class='small-prod-litres'>"
         ++ Messages("small-producer-details.lowBand", f"${producer.litreage._1}%,d")
-        ++ "<br/>"
+        ++ "</p>"
+        ++ "<p class='service-header small-prod-litres'>"
         ++ Messages("small-producer-details.highBand", f"${producer.litreage._2}%,d")
+        ++ "</p>"
       )
     }
 
