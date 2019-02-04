@@ -39,19 +39,20 @@
     <table class="check-your-answers">
         <thead>
             <tr>
-                <th @if(showChangeLinks) {colspan="3"} else {colspan="4"}>
-                    <h2 class="heading-medium">
+                <th @if(showChangeLinks) {colspan="3"} else {colspan="4"} >
+                    <p class="heading-medium">
                     @Messages(s"$key.$title")
-                    </h2>
+                    </p>
                 </th>
                 @if(showChangeLinks) {
-                    <th class="change-answer" colspan="3">
+                    <th class="change-answer" colspan="1">
                         <button name="@key" value="@changeLink" id="@key" class="link-button">
                             @Messages("sdil.declaration.change-link")
                             <span class="visuallyhidden">
                                 @Messages(s"$key.change.$title")
                             </span>
                         </button>
+                        <a href=""
                     </th>
                 }
             </tr>

@@ -99,6 +99,33 @@
     }
 }
 
+@media (max-width: 320px) {
+    .table-row-answer.word-break {
+        word-break: break-all;
+    }
+
+    .button {
+        width: 100%;
+    }
+
+    .form-postcode .form-control {
+        width: 100%;
+    }
+
+    table th, table td {
+        font-size: 16px;
+        font-weight: 400;
+        vertical-align: text-top;
+        padding-right: 1%;
+        padding-left: 1%;
+    }
+
+    th h2 {
+        width: 200% !important;
+    }
+}
+
+
 details summary:not([tabindex]) {
     display: list-item;
 }
