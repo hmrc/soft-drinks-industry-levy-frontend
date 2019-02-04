@@ -7,6 +7,26 @@
     padding-right: 0;
 }
 
+.edit-change-link, .edit-change-link:hover {
+    display: inline;
+    background: none;
+    border: none;
+    color: #005ea5;
+    text-decoration: underline;
+    cursor: pointer;
+    -webkit-box-shadow: none;
+    outline: 0;
+    position: relative;
+    padding:0;
+    margin-right: 0;
+    font-size: 19px;
+}
+
+.edit-change-link:hover {
+    color: #4c2c92;
+}
+
+
 .no-shadow {
     box-shadow: none;
 }
