@@ -258,6 +258,15 @@ details .address.progressive-reveal {
     margin-bottom: 5%;
 }
 
+.small-prod-litres {
+    margin-bottom: 1%;
+    font-size: 18px;
+}
+
+.error-button {
+    display: none;
+}
+
 .govuk-fieldset__legend--xl {
     font-family: "nta",Arial,sans-serif;
     -webkit-font-smoothing: antialiased;
