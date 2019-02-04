@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package sdil.models
+package sdil.uniform
 
-case class SmallProducer(alias: Option[String], sdilRef: String, litreage: (Long, Long)) {
+import simulacrum._
 
-  def getNameAndRef: String = {
-    if(alias.isDefined)
-      alias.getOrElse("") ++ ", " ++ sdilRef ++ "."
-    else
-      sdilRef ++ "."
-  }
-
+trait ShowTitle[A] {
+  def getTitle(in :A): String
 }
 
+object ShowTitle {
+  def instance[A](f: A => String) = new ShowTitle[A] {
+    def getTitle(in: A): String = f(in)
+  }
+}
