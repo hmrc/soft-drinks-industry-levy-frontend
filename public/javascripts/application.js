@@ -33,7 +33,7 @@ $(document).ready(function () {
         })
         $("input[id^=" + "cancel-registration-date" + "]").each(function(index) {
                     $(this).addClass('form-control-error')
-                })
+        })
 
     }
 
@@ -55,10 +55,10 @@ $(document).ready(function () {
         $("input[id^=" + "start-date" + "]:eq(" + indexSetToFocus + ")").trigger('focus');
 
         $("input[id^=" + "cancel-registration-date" + "]").each(function(index) {
-                    if($.trim($(this).val()) == "") {
-                        indexSetToFocus = index;
-                        return false;
-                    }
+            if($.trim($(this).val()) == "") {
+                indexSetToFocus = index;
+                return false;
+            }
                 });
         $("input[id^=" + "cancel-registration-date" + "]:eq(" + indexSetToFocus + ")").trigger('focus');
     })
