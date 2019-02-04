@@ -217,7 +217,7 @@ class VariationsController(
         constraints = List(("error.deregReason.tooLong", _.length <= 255)),
         errorOnEmpty = "error.cancel-registration-reason.empty")(extraMessages)
 
-      deregDate <- ask(startDate
+      deregDate <- ask(cancelRegDate
         .verifying(
           "error.cancel-registration-date.nopast",
           _ >= LocalDate.now)

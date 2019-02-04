@@ -35,7 +35,7 @@
                 @if(showChangeLinks) {
                     <td class="cya-change">
                         <a href="cancel-registration-reason">
-                        @Html(Messages("variations.cya.deregistration.change.reason"))
+                            <p class="edit-change-link">@Html(Messages("variations.cya.deregistration.change.reason"))</p>
                         </a>
                     </td>
                 }
@@ -51,9 +51,9 @@
                 @{date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}
                 </td>
                 @if(showChangeLinks) {
-                    <td class="cya-change">
+                    <td class="cya-change">git commit -m ""
                         <a href="cancel-registration-date">
-                        @Html(Messages("variations.cya.deregistration.change.date"))
+                            <p class="edit-change-link">@Html(Messages("variations.cya.deregistration.change.date"))</p>
                         </a>
                     </td>
                 }

@@ -209,6 +209,45 @@ object SdilComponents extends FormHelpers {
     })
     .transform({ case (d, m, y) => LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt) }, duy => (duy.getDayOfMonth.toString, duy.getMonthValue.toString, duy.getYear.toString))
 
+  lazy val cancelRegDate: Mapping[LocalDate] = tuple(
+    "day" ->  text,
+    "month" -> text,
+    "year" -> text
+  ) .verifying("error.cancel-registration-date.emptyfields", x => x match {
+    case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) == "" && trim(y) == "")  => false
+    case _ => true
+  })
+    .verifying("error.cancel-registration-date-day.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) != "" && trim(y) != "") => false
+      case _ => true
+    })
+    .verifying("error.cancel-registration-date-month.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) == "" && trim(y) != "") => false
+      case _ => true
+    })
+    .verifying("error.cancel-registration-date-year.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) != "" && trim(y) == "") => false
+      case _ => true
+    })
+    .verifying("error.cancel-registration-date-day-and-month.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) == "" && trim(y) != "") => false
+      case _ => true
+    })
+    .verifying("error.cancel-registration-date-month-and-year.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) == "" && trim(y) == "") => false
+      case _ => true
+    })
+    .verifying("error.cancel-registration-date-day-and-year.missing", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) != "" && trim(y) == "") => false
+      case _ => true
+    })
+    .verifying("error.date.invalid", x => x match {
+      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) != "" && trim(y) != "") => Try(LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt)).isSuccess
+      case _ => true
+    })
+    .transform({ case (d, m, y) => LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt) }, duy => (duy.getDayOfMonth.toString, duy.getMonthValue.toString, duy.getYear.toString))
+
+
   def trim(inputStr : String) = inputStr.trim()
 
   def numeric(key: String): Mapping[Int] = text
