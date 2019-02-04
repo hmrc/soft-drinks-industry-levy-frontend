@@ -20,9 +20,9 @@ case class SmallProducer(alias: Option[String], sdilRef: String, litreage: (Long
 
   def getNameAndRef: String = {
     if(alias.isDefined)
-      alias.getOrElse("") ++ ", " ++ sdilRef
+      alias.getOrElse("") ++ ", " ++ sdilRef ++ "."
     else
-      sdilRef
+      sdilRef ++ "."
   }
 
 }

@@ -33,7 +33,6 @@ import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.Address
 import sdil.models.backend.{Site, Subscription}
 import sdil.models.retrieved.RetrievedSubscription
 import uk.gov.hmrc.domain.Modulus23Check
@@ -50,7 +49,6 @@ import scala.concurrent.duration._
 import cats.implicits._
 import sdil.models.variations.ReturnVariationData
 import sdil.uniform.ShowTitle
-//import sdil.uniform.ShowTitle.ops._
 import sdil.uniform.ShowTitle.instance
 
 trait SdilWMController extends WebMonadController
