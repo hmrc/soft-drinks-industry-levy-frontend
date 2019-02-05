@@ -712,8 +712,8 @@ complete.your.updates=Your application to register for the Soft Drinks Industry 
 # Uniform variation process
 heading.select-change=What do you need to do?
 select-change.option.sites=Update contact, packaging site or warehouse details
-select-change.option.activity=Change our business activity
-select-change.option.deregister=Deregister from the Soft Drinks Industry Levy
+select-change.option.activity=Change business activity
+select-change.option.deregister=Cancel Soft Drinks Industry Levy registration
 select-change.continue=Continue
 
 heading.change-registered-details=What do you need to change?
