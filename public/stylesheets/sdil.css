@@ -260,6 +260,10 @@ details .address.progressive-reveal {
     padding-top: 3%
 }
 
+.option-box-padding {
+    padding-top: 5%
+}
+
 .change-address-button {
     margin-top: 4%;
 }

@@ -377,7 +377,7 @@ sdil.complete.what-happens.help.link=What do you think of this service?
 sdil.complete.what-happens.help.p2= (takes 30 seconds)
 
 #Service page
-sdil.service-page.title=Soft Drinks Industry Levy details
+sdil.service-page.title=Your Soft Drinks Industry levy details and returns
 sdil.service-page.p1=Your Soft Drinks Industry Levy reference is:
 sdil.service-page.business-details.title=Business details
 sdil.service-page.contact-details.title=Contact person’s details
@@ -1241,7 +1241,7 @@ returns.variation.update-reg=This is different to your registered business activ
 returns.variation.change-answers=If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
 
 heading.partnerships=You cannot register online as a partnership
-account.balance=Account Balance
+account.balance=Account balance
 account.balance.amount=Your balance is {0}
 account.balance.amount.zero=Your balance is £0
 account.balance.amount.in-credit=You are {0} in credit
