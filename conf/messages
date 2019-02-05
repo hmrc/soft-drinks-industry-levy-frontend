@@ -1021,9 +1021,9 @@ heading.cancel-registration-reason=Why do you need to cancel your registration?
 cancel-registration-reason.label=Reason for deregistering
 cancel-registration-reason.hint=Enter a maximum of 255 characters
 
-heading.suggest-deregistration=You need to deregister
-suggest-deregistration.body=Based on your answers, you are a small producer who does not use a third party to package liable drinks. This means you can deregister from the Soft Drinks Industry Levy.
-suggest-deregistration.continue=Deregister
+heading.suggest-deregistration=You need to cancel your Soft Drinks Industry Levy registration
+suggest-deregistration.body=Based on your answers, you are a small producer who does not use a third party to package liable drinks.
+suggest-deregistration.continue=Cancel your registration
 
 doubt1=If you do not think this is right you need to
 doubt2=go back and change your answers
