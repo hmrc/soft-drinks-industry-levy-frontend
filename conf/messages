@@ -821,8 +821,8 @@ heading.packaging-site-details=Change your UK packaging site details
 heading.multi.packaging-site-details=Change your UK packaging site details
 heading.production-site-details=Your packaging sites
 heading.multi.production-site-details=Your packaging sites
-production-site-details.lead=Tell us about the packaging sites you operate in the UK to package liable drinks
-production-site-details.multi.lead=You have added {0} packaging site{1}
+production-site-details.lead=Tell us about the packaging sites you operate in the UK to package liable drinks.
+production-site-details.multi.lead=You have added {0} packaging site{1}.
 production-site-details.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
   drinks. You must have at least one registered packaging site.
 production-site-details.list-control.heading=Do you need to add another packaging site?
@@ -838,7 +838,7 @@ heading.edit-packaging-site-details=Enter your UK packaging site details
 heading.secondary-warehouse-details=Do you want to register any of the UK warehouses you use to store liable drinks? 
 heading.multi.secondary-warehouse-details=Your registered UK warehouses
 secondary-warehouse-details.lead=
-secondary-warehouse-details.multi.lead=You have added {0} warehouse{1}
+secondary-warehouse-details.multi.lead=You have added {0} warehouse{1}.
 secondary-warehouse-details.list-control.heading=Do you want to add another warehouse?
 warehouse-details.help.header=Why should I register a warehouse?
 warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
@@ -1061,7 +1061,7 @@ exemptions-for-small-producers.help=A business is a small producer if it:\
   </ul>
 heading.small-producer-details=Your small producer exemptions
 error.alias.tooLong=Small producer name must be 160 characters or less
-heading.multi.small-producer-details=You have added {0} small producer{1}
+heading.multi.small-producer-details=You have added {0} small producer{1}.
 small-producer-details.list-control.heading=Do you want to add another small producer?
 heading.edit-small-producer-details=Enter the registered small producer’s details
 

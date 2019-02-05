@@ -131,15 +131,16 @@
             @if(messages.isDefinedAt(s"$key.list-control.heading") && items.nonEmpty) {
                 </fieldset>
             }
-        </div>
-        @if(messages.isDefinedAt(s"$key.help")) {
+            @if(messages.isDefinedAt(s"$key.help")) {
 
-            @details(s"$key.help.header") {
-                <p>
-                    <span>@Messages(s"$key.help")</span>
-                </p>
+                @details(s"$key.help.header") {
+                    <p>
+                        <span>@Messages(s"$key.help")</span>
+                    </p>
+                }
             }
-        }
+        </div>
+
 
         <button class="button" type="submit">
         @Messages("sdil.common.save-continue")
