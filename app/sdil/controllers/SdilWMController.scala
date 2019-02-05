@@ -420,9 +420,12 @@ trait SdilWMController extends WebMonadController
       case Some(b) if b.startsWith("Edit") => Edit(b.split("\\.").last.toInt)
     }
     def inf(x: Control): Option[String] = Some(x.toString)
-    
-    def confirmation(q: A): WebMonad[Boolean] =
-      tell(s"remove-$id", q).map{_ => true}
+
+    def confirmation(q: A): WebMonad[Boolean] = {
+      val st = showTitle.getTitle(q)
+      val extraMessages: ExtraMessages = ExtraMessages(messages = Map(s"remove-$id.lead" -> st))
+      ask(bool(s"remove-$id"), s"remove-$id")(implicitly, implicitly, extraMessages, implicitly)
+    }
 
         def edit(q: A): WebMonad[A] = {
           editSingleForm.fold(NotFound: WebMonad[A]) { x =>
@@ -446,12 +449,9 @@ trait SdilWMController extends WebMonadController
         }(wm)
       }
 
-  implicit val showText: ShowTitle[Site] {
-    def getTitle(in: Site): String
-  } = instance[Site]{ _.address.lines.take(2).mkString(",") ++ "." }
-  implicit val showProd: ShowTitle[SmallProducer] {
-    def getTitle(in: SmallProducer): String
-  } = instance[SmallProducer]{ _.getNameAndRef}
+  implicit val showText = instance[Site]{ _.address.lines.take(2).mkString(", ") ++ "." }
+
+  implicit val showProd = instance[SmallProducer]{ _.getNameAndRef}
 
   def askPackSites(existingSites: List[Site]): WebMonad[List[Site]] =
     manyT("production-site-details",
