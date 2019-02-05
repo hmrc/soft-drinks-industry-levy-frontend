@@ -86,7 +86,7 @@
                                         @Messages(Seq(s"$key.delete", "Remove"))
                                     </span>
                                     <span class="visually-hidden">
-                                        @Messages("sdil.remove.site.button", itemTitle)
+                                        @Messages("sdil.remove.site.button", itemTitle.replace("</br>", ", "))
                                     </span>
                                 </button>
                             </td>
@@ -99,7 +99,7 @@
                                         @Messages(Seq(s"$key.edit", "Edit"))
                                     </span>
                                     <span class="visually-hidden">
-                                        @Messages("sdil.edit.site.button", itemTitle)
+                                        @Messages("sdil.edit.site.button", itemTitle.replace("</br>", ", "))
                                     </span>
                                 </button>
                             </td>

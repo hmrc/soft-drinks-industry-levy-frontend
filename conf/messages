@@ -362,8 +362,8 @@ sdil.hidden.registerDeclaration.name=Change contact name
 sdil.hidden.registerDeclaration.position=Change job title
 sdil.hidden.registerDeclaration.phone-number=Change telephone number
 sdil.hidden.registerDeclaration.email=Change email address
-sdil.remove.site.button=Remove {0}
-sdil.edit.site.button=Edit {0}
+sdil.remove.site.button=Remove {0}.
+sdil.edit.site.button=Edit {0}.
 
 #Complete
 sdil.complete.what-happens.title=What happens next

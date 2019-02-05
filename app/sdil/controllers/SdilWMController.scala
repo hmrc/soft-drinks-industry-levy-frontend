@@ -449,7 +449,8 @@ trait SdilWMController extends WebMonadController
         }(wm)
       }
 
-  implicit val showText = instance[Site]{ _.address.lines.take(2).mkString(", ") ++ "." }
+//  implicit val showText = instance[Site]{ _.address.lines.take(2).mkString(", ") ++ "." }
+  implicit val showText = instance[Site]{ _.getLines.mkString("</br>")}
 
   implicit val showProd = instance[SmallProducer]{ _.getNameAndRef}
 
