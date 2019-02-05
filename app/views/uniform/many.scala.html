@@ -81,8 +81,10 @@
                         </td>
                         @if(items.length > min) {
                             <td class="@if(showEdit) {align-centre} else {align-right}">
-                                <button name="@key" value="Delete.@id" class="link-button no-shadow" aria-hidden="true">
-                                    @Messages(Seq(s"$key.delete", "Remove"))
+                                <button name="@key" value="Delete.@id" class="link-button no-shadow">
+                                    <span aria-hidden="true">
+                                        @Messages(Seq(s"$key.delete", "Remove"))
+                                    </span>
                                     <span class="visually-hidden">
                                         @Messages("sdil.remove.site.button", itemTitle)
                                     </span>
@@ -92,8 +94,10 @@
 
                         @if(showEdit) {
                             <td class="align-right">
-                                <button name="@key" value="Edit.@id" class="link-button no-shadow" aria-hidden="true">
-                                    @Messages(Seq(s"$key.edit", "Edit"))
+                                <button name="@key" value="Edit.@id" class="link-button no-shadow" >
+                                    <span aria-hidden="true">
+                                        @Messages(Seq(s"$key.edit", "Edit"))
+                                    </span>
                                     <span class="visually-hidden">
                                         @Messages("sdil.edit.site.button", itemTitle)
                                     </span>

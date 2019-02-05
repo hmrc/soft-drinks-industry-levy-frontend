@@ -39,19 +39,17 @@
     <table class="check-your-answers">
         <thead>
             <tr>
-                <th @if(showChangeLinks) {colspan="3"} else {colspan="4"}>
-                    <h2 class="heading-medium">
+                <th @if(showChangeLinks) {colspan="3"} else {colspan="4"} >
+                    <p class="heading-medium">
                     @Messages(s"$key.$title")
-                    </h2>
+                    </p>
                 </th>
                 @if(showChangeLinks) {
-                    <th class="change-answer" colspan="3">
-                        <button name="@key" value="@changeLink" id="@key" class="link-button">
-                            @Messages("sdil.declaration.change-link")
-                            <span class="visuallyhidden">
-                                @Messages(s"$key.change.$title")
-                            </span>
-                        </button>
+                    <th class="change-answer change-link-title" colspan="1">
+                        <a href="@changeLink">
+                            <p class="edit-change-link">@Messages("sdil.declaration.change-link")</p>
+                            <span class="visuallyhidden">@Messages(s"$key.change.$title")</span>
+                        </a>
                     </th>
                 }
             </tr>
@@ -130,8 +128,8 @@
             <td class="change-answer">
                 <a href="return-correction-reason">
                     <p class="edit-change-link">@Messages(s"sdil.declaration.change-link")</p>
+                    <span class="visually-hidden">@Messages(s"$key.change.reason")</span>
                 </a>
-                <span class="visually-hidden">@Messages(s"$key.change.reason")</span>
             </td>
         }
     </tr>
@@ -143,8 +141,8 @@
                 <td class="change-answer" >
                     <a href="repayment-method">
                         <p class="edit-change-link">@Messages(s"sdil.declaration.change-link")</p>
+                        <span class="visually-hidden">@Messages(s"$key.change.repayment")</span>
                     </a>
-                    <span class="visually-hidden">@Messages(s"$key.change.repayment")</span>
                 </td>
             }
         </tr>

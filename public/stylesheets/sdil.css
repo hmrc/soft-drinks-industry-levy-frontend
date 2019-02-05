@@ -7,6 +7,10 @@
     padding-right: 0;
 }
 
+.change-link-title {
+    font-weight: 100;
+}
+
 .edit-change-link, .edit-change-link:hover {
     display: inline;
     background: none;
@@ -119,6 +123,15 @@
     }
 }
 
+@media (max-width: 320px) {
+
+    table th, table td {
+        padding-right: 1%;
+        padding-left: 1%;
+    }
+}
+
+
 details summary:not([tabindex]) {
     display: list-item;
 }
@@ -151,7 +164,6 @@ html .font-xsmall {
   color: #005ea5;
   text-decoration: underline;
   cursor: pointer;
-  -webkit-box-shadow: none;
   outline: 0;
   position: relative;
   padding:0;
@@ -160,6 +172,10 @@ html .font-xsmall {
 
 .link-button:hover {
     color: #4c2c92;
+}
+
+.link-button:focus {
+    outline: 3px solid #ffbf47;
 }
 
 .cya-change {
