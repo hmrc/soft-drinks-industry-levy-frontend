@@ -49,11 +49,11 @@
                         @if(LocalDate.now.isAfter(ReturnPeriod(LocalDate.of(2018,1,1)).end)) {
                             <h2 class="heading-medium no-margin">@Messages("returnsHome.dereg.final-return-title")</h2>
                             <p>
-                            @Messages(
-                                "returnsHome.dereg.final-return-p1",
-                                ReturnPeriod(deregDate).start.format("MMMM yyyy"),
-                                ReturnPeriod(deregDate).end.format("MMMM yyyy")
-                            )
+                                @Messages(
+                                    "returnsHome.dereg.final-return-p1",
+                                    ReturnPeriod(deregDate).start.format("MMMM yyyy"),
+                                    ReturnPeriod(deregDate).end.format("MMMM yyyy")
+                                )
                             </p>
                             <div>
                             @details("returnsHome.help.title") {
@@ -171,7 +171,7 @@
                     <td>@Messages("sdil.verify.address")</td>
                     <td>
                         @address.nonEmptyLines.init.map { l =>
-                            @l,<br/>
+                            @l<br/>
                         }
                         @address.postcode
                     </td>
@@ -184,44 +184,35 @@
                     <div class="column-one-half">
                         <h3 class="heading-small">
                             <a href='@sdil.controllers.routes.VariationsController.index("changeType")'>
-                            @Messages("sdil.service-page.deregistered.variations.subtitle.3")
+                                @Messages("sdil.service-page.deregistered.variations.subtitle.3")
                             </a>
                         </h3>
-                        <div class="form-group">
+                        <div>
                             <p>@Messages("sdil.service-page.variations.vary-returns-dereg")</p>
                         </div>
                     </div>
                 </div>
             </div>
-        } else {
-    </div>
-}
+            } else {
+            </div>
+            }
 
-    <div class="column-one-third">
-        <div class="section--blue-top"> </div>
-        <h2 class="heading-small">
-        @Messages("sdil.service-page.support.title2")
-        </h2>
-        <p>
+    <div class="column-one-third option-box-padding">
+        <div class="section--blue-top">
+            <h2 class="heading-small">@Messages("sdil.service-page.support.title2")</h2>
+
             <a href='@Messages("sdil.service-page.support.link1")'
             onclick="ga('send', 'event', 'moreLinks', 'click', 'guidance')">
-            @Messages("sdil.service-page.support.p3")
+                <p>@Messages("sdil.service-page.support.p3")</p>
             </a>
-        </p>
-        <p>
+
             <a href='@Messages("sdil.service-page.support.link2")'
             onclick="ga('send', 'event', 'moreLinks', 'click', 'legislation')">
-            @Messages("sdil.service-page.support.p4")
+                <p>@Messages("sdil.service-page.support.p4")</p>
             </a>
-        </p>
-        <ul class="list">
-            <li>
-            @Messages("sdil.service-page.support.p5")
-            </li>
-            <li>
-            @Messages("sdil.service-page.support.p6")
-            </li>
-        </ul>
-    </div>
+
+            <span>@Messages("sdil.service-page.support.p5")</span>
+            <span>@Messages("sdil.service-page.support.p6")</span>
+        </div>
     </div>
 }

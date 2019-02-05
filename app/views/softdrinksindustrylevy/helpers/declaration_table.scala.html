@@ -24,16 +24,18 @@
             </p>
         }
     </caption>
+@changeLink.map { link =>
     <thead>
         <tr>
             <th class="change-answer" colspan="4">
-                @changeLink.map { link =>
-                    <a href="@link">@Messages("sdil.declaration.change-link")</a>
-                }
+                <a href="@link">@Messages("sdil.declaration.change-link")</a>
             </th>
         </tr>
     </thead>
     <tbody>
+}
     @rowContent
+@changeLink.map { link =>
     </tbody>
+}
 </table>
