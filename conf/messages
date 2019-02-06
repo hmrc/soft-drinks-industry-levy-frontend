@@ -739,9 +739,11 @@ secondary-warehouse-details.help.header=Why should I register a warehouse?
 secondary-warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
   the warehouses you use to store them.
 heading.remove-warehouse-details=Are you sure you want to remove this warehouse?
-heading.remove-secondary-warehouse-details=Are you sure you want to remove this warehouse?
 remove-warehouse-details.continue=Save and continue
+error.radio-form.choose-option.remove-warehouse-details=Select yes if you want to remove this warehouse
+heading.remove-secondary-warehouse-details=Are you sure you want to remove this warehouse?
 remove-secondary-warehouse-details.continue=Save and continue
+error.radio-form.choose-option.remove-secondary-warehouse-details=Select yes if you want to remove this warehouse
 heading.add-packaging-site-details=Enter your packaging site details
 heading.add-production-site-details=Enter your UK packaging site details
 heading.first-production-site=Enter your UK packaging site details
@@ -749,9 +751,11 @@ first-production-site.paragraph=Only add the addresses of the packaging sites yo
 add-packaging-site.paragraph=Only add the addresses of the packaging sites you operate
 add-production-site-details.paragraph=Only add the addresses of the packaging sites you operate
 heading.remove-packaging-site-details=Are you sure you want to remove this packaging site?
-heading.remove-production-site-details=Are you sure you want to remove this packaging site?
 remove-packaging-site-details.continue=Save and continue
+error.radio-form.choose-option.remove-packaging-site-details=Select yes if you want to remove this packaging site
+heading.remove-production-site-details=Are you sure you want to remove this packaging site?
 remove-production-site-details.continue=Save and continue
+error.radio-form.choose-option.remove-production-site-details=Select yes if you want to remove this packaging site
 
 heading.amount-produced=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
 amount-produced.lead=This includes brands you own or have the rights to manufacture.
@@ -1036,6 +1040,10 @@ heading.business-address=Update your registered business address for the Soft Dr
 
 heading.check-answers=Check the updates you have made
 heading.check-answers.orgName=
+heading.return-details.orgName=
+heading.check-return-changes.orgName=
+heading.repayment-method.orgName=
+heading.return-correction-reason.orgName=
 check-answers.continue=Confirm updates and send
 
 # Returns
@@ -1088,6 +1096,7 @@ sdil.litreage.highRate.smallProducer=Litres in the high band for this quarter
 sdil.litreage.lowRate.smallProducer=Litres in the low band for this quarter
 heading.remove-small-producer-details=Are you sure you want to remove this small producer?
 remove-small-producer-details.continue=Save and continue
+error.radio-form.choose-option.remove-small-producer-details=Select yes if you want to remove this small producer
 heading.brought-into-uk=Are you reporting liable drink you have brought into the UK from anywhere outside of the UK?
 brought-into-uk.inner-heading=How many litres do you need to report?
 brought-into-uk.paragraph=Do not include liable drink from small producers or your own brands if you are a registered small producer.
@@ -1386,6 +1395,7 @@ return-correction-reason.lead=Make sure you provide as much detail as you can. W
 error.return-correction-reason.empty=Enter a reason for correcting your return
 sdil.check-return-changes.reason.return-correction-reason.subheading=Correction details
 return-correction-reason.label=Reason for correction
+return-correction-reason.label.2=Enter up to 255 characters.
 returnVariationDone.title=Correction sent
 returnVariationDone.subheading=We will review the details you updated and get back to you
 returnVariationDone.your.updates=Your updates for {0} were sent on {1} at {2}.

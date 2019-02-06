@@ -26,6 +26,7 @@
 <div class="form-group @if(form.hasErrors) {form-group-error}">
     <label for="@key">
         <span class="form-label">@Messages.extraMessage(s"${key}.label")</span>
+        <span class="form-label">@Messages.extraMessage(s"${key}.label.2")</span>
         @form.errors.map { error =>
             <span class="error-message" data-journey="search-page:error:@key">
             @Messages(error.message, error.args: _*)
