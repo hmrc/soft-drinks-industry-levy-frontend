@@ -448,10 +448,7 @@ trait SdilWMController extends WebMonadController
           }.imap(outf)(inf)
         }(wm)
       }
-
-//  implicit val showText = instance[Site]{ _.address.lines.take(2).mkString(", ") ++ "." }
   implicit val showText = instance[Site]{ _.getLines.mkString("</br>")}
-
   implicit val showProd = instance[SmallProducer]{ _.getNameAndRef}
 
   def askPackSites(existingSites: List[Site]): WebMonad[List[Site]] =
