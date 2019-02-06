@@ -1036,6 +1036,10 @@ heading.business-address=Update your registered business address for the Soft Dr
 
 heading.check-answers=Check the updates you have made
 heading.check-answers.orgName=
+heading.return-details.orgName=
+heading.check-return-changes.orgName=
+heading.repayment-method.orgName=
+heading.return-correction-reason.orgName=
 check-answers.continue=Confirm updates and send
 
 # Returns
