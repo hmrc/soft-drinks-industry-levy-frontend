@@ -47,12 +47,12 @@ trait ReturnJourney extends SdilWMController {
       editMode        <- read[Boolean]("_editSmallProducers").map{_.getOrElse(false)}
       opt             <- ask(bool("exemptions-for-small-producers"), "exemptions-for-small-producers", default.map{_.packSmall.nonEmpty})
       smallProdsJs    <- execute(sdilConnector.shortLiveCache.fetchAndGetEntry[Map[String, JsValue]](sdilRef, s"returns-${period.year}${period.quarter}").flatMap {
-                              _.getOrElse(Map.empty).get("small-producer-details_data").getOrElse(null) })
+                              _.getOrElse(Map.empty).get("small-producer-details_data") })
       smallProds      <- manyT("small-producer-details",
-                               {ask(smallProducer(sdilRef, sdilConnector, period, if(smallProdsJs != null) smallProdsJs.as[List[SmallProducer]] else List(),  id.getOrElse("")), _)(implicitly,implicitly,implicitly,ShowBackLink(true))},
+                               {ask(smallProducer(sdilRef, sdilConnector, period, getSmallProdsFromJs(smallProdsJs),  id.getOrElse("")), _)(implicitly,implicitly,implicitly,ShowBackLink(true))},
                                min = 1,
                                default = default.fold(List.empty[SmallProducer]){_.packSmall},
-                               editSingleForm = Some((smallProducer(sdilRef, sdilConnector, period, if(smallProdsJs != null) smallProdsJs.as[List[SmallProducer]] else List(), id.getOrElse("")), smallProducerForm)),
+                               editSingleForm = Some((smallProducer(sdilRef, sdilConnector, period, getSmallProdsFromJs(smallProdsJs), id.getOrElse("")), smallProducerForm)),
                                configOverride = _.copy(mode = if(editMode) SingleStep else (LeapAhead))
                               )(implicitly, implicitly, implicitly, ShowBackLink(true)) emptyUnless opt
       _               <- write[Boolean]("_editSmallProducers", false)
@@ -84,5 +84,14 @@ trait ReturnJourney extends SdilWMController {
       exportCredits  <- askEmptyOption(litreagePair, "claim-credits-for-exports", default.map{_.export})(implicitly, implicitly, implicitly, implicitly, em)
       wastage        <- askEmptyOption(litreagePair, "claim-credits-for-lost-damaged", default.map{_.wastage})
     } yield SdilReturn(ownBrands,contractPacked,smallProds,imports,importsSmall,exportCredits,wastage)
+  }
+
+  private def getSmallProdsFromJs(smallProdsJs : Option[JsValue]) : List[SmallProducer] = {
+
+    smallProdsJs match {
+      case Some(y : JsValue) => y.as[List[SmallProducer]]
+      case None => List()
+    }
+
   }
 }
