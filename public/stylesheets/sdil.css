@@ -30,6 +30,9 @@
     color: #4c2c92;
 }
 
+.change-link-padding {
+    padding-left: 59px;
+}
 
 .no-shadow {
     box-shadow: none;
