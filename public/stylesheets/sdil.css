@@ -163,6 +163,7 @@ html .font-xsmall {
   border: none;
   color: #005ea5;
   text-decoration: underline;
+  -webkit-box-shadow: none;
   cursor: pointer;
   outline: 0;
   position: relative;
@@ -176,6 +177,7 @@ html .font-xsmall {
 
 .link-button:focus {
     outline: 3px solid #ffbf47;
+    background-color: #ffbf47;
 }
 
 .cya-change {
