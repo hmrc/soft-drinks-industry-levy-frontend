@@ -1040,6 +1040,10 @@ heading.business-address=Update your registered business address for the Soft Dr
 
 heading.check-answers=Check the updates you have made
 heading.check-answers.orgName=
+heading.return-details.orgName=
+heading.check-return-changes.orgName=
+heading.repayment-method.orgName=
+heading.return-correction-reason.orgName=
 check-answers.continue=Confirm updates and send
 
 # Returns
@@ -1391,6 +1395,7 @@ return-correction-reason.lead=Make sure you provide as much detail as you can. W
 error.return-correction-reason.empty=Enter a reason for correcting your return
 sdil.check-return-changes.reason.return-correction-reason.subheading=Correction details
 return-correction-reason.label=Reason for correction
+return-correction-reason.label.2=Enter up to 255 characters.
 returnVariationDone.title=Correction sent
 returnVariationDone.subheading=We will review the details you updated and get back to you
 returnVariationDone.your.updates=Your updates for {0} were sent on {1} at {2}.

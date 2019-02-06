@@ -356,9 +356,14 @@ class VariationsController(
       extraMessages = ExtraMessages(
             messages = Map(
               "heading.return-details" -> s"${Messages(s"select-return.option.${variation.period.quarter}")} ${variation.period.year} return details",
-              "return-correction-reason.label" -> s"Reason for correcting ${Messages(s"select-return.option.${variation.period.quarter}")} ${variation.period.year} return",
-              "heading.check-answers.orgName" -> s"${subscription.orgName}"
-            ))
+              "return-correction-reason.label" -> s"Reason for correcting ${Messages(s"select-return.option.${variation.period.quarter}")} ${variation.period.year} return.",
+              "heading.check-answers.orgName" -> s"${subscription.orgName}",
+              "heading.return-details.orgName" -> s"${subscription.orgName}",
+              "heading.check-return-changes.orgName" -> s"${subscription.orgName}",
+              "heading.repayment-method.orgName" -> s"${subscription.orgName}",
+              "heading.return-correction-reason.orgName" -> s"${subscription.orgName}"
+            )
+      )
 
       isSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, returnPeriod))
 
@@ -369,8 +374,13 @@ class VariationsController(
         constraints = List(("error.return-correction-reason.tooLong",
           _.length <= 255)),
         errorOnEmpty = "error.return-correction-reason.empty")(extraMessages)
-      repayment <- askOneOf("repayment-method", List("credit", "bankPayment"))(ltbs.play.scaffold.SdilComponents.extraMessages) when variation.revised.total - variation.original.total < 0
-      _ <- checkReturnChanges("check-return-changes", variation.copy(reason = reason, repaymentMethod = repayment), broughtForward)
+
+      repayment <- askOneOf(
+        "repayment-method",
+        List("credit", "bankPayment")
+      )(extraMessages) when variation.revised.total - variation.original.total < 0
+
+      _ <- checkReturnChanges("check-return-changes", variation.copy(reason = reason, repaymentMethod = repayment), broughtForward)(extraMessages)
       _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
       _ <- clear
       subheading = uniform.fragments.return_variation_done_subheading(subscription, returnPeriod).some
