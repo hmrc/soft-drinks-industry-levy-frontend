@@ -50,7 +50,7 @@
             <tr>
                 <td>
                     <details role="group">
-                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                        <summary aria-controls="details-content-1" aria-expanded="false">
                             <span class="summary">@site.address.lines.head</span>
                         </summary>
                         @for(line <- site.address.lines.tail) {
@@ -102,7 +102,7 @@
             <tr>
                 <td>
                     <details role="group">
-                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                        <summary aria-controls="details-content-1" aria-expanded="false">
                             <span class="summary">@site.address.lines.head</span>
                         </summary>
                         @for(line <- site.address.lines.tail) {
@@ -178,9 +178,9 @@
             <tr>
                 <td>
                     <details role="group">
-                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                        <summary aria-controls="details-content-1" aria-expanded="false">
                             <span class="summary">
-                            @site.getLines.head
+                                @site.getLines.head
                             </span>
                         </summary>
                         @for(line <- site.getLines.tail.dropRight(1)) {
@@ -230,7 +230,7 @@
             <tr>
                 <td>
                     <details role="group">
-                        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+                        <summary aria-controls="details-content-1" aria-expanded="false">
                             <span class="summary">
                             @site.getLines.head
                             </span>
