@@ -362,8 +362,8 @@ sdil.hidden.registerDeclaration.name=Change contact name
 sdil.hidden.registerDeclaration.position=Change job title
 sdil.hidden.registerDeclaration.phone-number=Change telephone number
 sdil.hidden.registerDeclaration.email=Change email address
-sdil.remove.site.button=Remove {0}
-sdil.edit.site.button=Edit {0}
+sdil.remove.site.button=Remove {0}.
+sdil.edit.site.button=Edit {0}.
 
 #Complete
 sdil.complete.what-happens.title=What happens next
@@ -740,8 +740,8 @@ secondary-warehouse-details.help=You can delay the point you will have to report
   the warehouses you use to store them.
 heading.remove-warehouse-details=Are you sure you want to remove this warehouse?
 heading.remove-secondary-warehouse-details=Are you sure you want to remove this warehouse?
-remove-warehouse-details.continue=Remove
-remove-secondary-warehouse-details.continue=Remove
+remove-warehouse-details.continue=Save and continue
+remove-secondary-warehouse-details.continue=Save and continue
 heading.add-packaging-site-details=Enter your packaging site details
 heading.add-production-site-details=Enter your UK packaging site details
 heading.first-production-site=Enter your UK packaging site details
@@ -750,8 +750,8 @@ add-packaging-site.paragraph=Only add the addresses of the packaging sites you o
 add-production-site-details.paragraph=Only add the addresses of the packaging sites you operate
 heading.remove-packaging-site-details=Are you sure you want to remove this packaging site?
 heading.remove-production-site-details=Are you sure you want to remove this packaging site?
-remove-packaging-site-details.continue=Remove
-remove-production-site-details.continue=Remove
+remove-packaging-site-details.continue=Save and continue
+remove-production-site-details.continue=Save and continue
 
 heading.amount-produced=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
 amount-produced.lead=This includes brands you own or have the rights to manufacture.
@@ -821,8 +821,8 @@ heading.packaging-site-details=Change your UK packaging site details
 heading.multi.packaging-site-details=Change your UK packaging site details
 heading.production-site-details=Your packaging sites
 heading.multi.production-site-details=Your packaging sites
-production-site-details.lead=Tell us about the packaging sites you operate in the UK to package liable drinks
-production-site-details.multi.lead=You have added {0} packaging site{1}
+production-site-details.lead=Tell us about the packaging sites you operate in the UK to package liable drinks.
+production-site-details.multi.lead=You have added {0} packaging site{1}.
 production-site-details.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
   drinks. You must have at least one registered packaging site.
 production-site-details.list-control.heading=Do you need to add another packaging site?
@@ -838,7 +838,7 @@ heading.edit-packaging-site-details=Enter your UK packaging site details
 heading.secondary-warehouse-details=Do you want to register any of the UK warehouses you use to store liable drinks? 
 heading.multi.secondary-warehouse-details=Your registered UK warehouses
 secondary-warehouse-details.lead=
-secondary-warehouse-details.multi.lead=You have added {0} warehouse{1}
+secondary-warehouse-details.multi.lead=You have added {0} warehouse{1}.
 secondary-warehouse-details.list-control.heading=Do you want to add another warehouse?
 warehouse-details.help.header=Why should I register a warehouse?
 warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
@@ -1061,7 +1061,7 @@ exemptions-for-small-producers.help=A business is a small producer if it:\
   </ul>
 heading.small-producer-details=Your small producer exemptions
 error.alias.tooLong=Small producer name must be 160 characters or less
-heading.multi.small-producer-details=You have added {0} small producer{1}
+heading.multi.small-producer-details=You have added {0} small producer{1}.
 small-producer-details.list-control.heading=Do you want to add another small producer?
 heading.edit-small-producer-details=Enter the registered small producer’s details
 
@@ -1087,7 +1087,7 @@ sdil.sdilRef=Soft Drinks Industry Levy reference number
 sdil.litreage.highRate.smallProducer=Litres in the high band for this quarter
 sdil.litreage.lowRate.smallProducer=Litres in the low band for this quarter
 heading.remove-small-producer-details=Are you sure you want to remove this small producer?
-remove-small-producer-details.continue=Remove
+remove-small-producer-details.continue=Save and continue
 heading.brought-into-uk=Are you reporting liable drink you have brought into the UK from anywhere outside of the UK?
 brought-into-uk.inner-heading=How many litres do you need to report?
 brought-into-uk.paragraph=Do not include liable drink from small producers or your own brands if you are a registered small producer.
