@@ -49,7 +49,7 @@
                     </tr>
                 }
 
-            <button name="@key" value="@key" class="link-button change-address-button">
+            <button name="edit-business-address" value="@key" class="link-button change-address-button">
                 @Messages("sdil.updateBusinessAddresses.link.1")
             </button>
 
@@ -64,7 +64,7 @@
                 @declaration_details_table_row("service-page", "email", None, s"${subscription.contact.email}")
             }
 
-            <button name="@key" value="@key" class="link-button change-address-button">
+            <button name="edit-contact-details" value="@key" class="link-button change-address-button">
                 @Messages("sdil.updateBusinessAddresses.link.2")
             </button>
 
@@ -72,7 +72,7 @@
                 <h2 class="heading-medium return-button-padding">@Messages("sdil.updateBusinessAddresses.packaging.title")</h2>
                 @service_sites(subscription.productionSites, "packaging")
 
-                <button name="@key" value="@key" class="link-button change-address-button">
+                <button name="edit-packaging-sites" value="@key" class="link-button change-address-button">
                     @Messages("sdil.updateBusinessAddresses.link.3")
                 </button>
             }
@@ -81,7 +81,7 @@
                 <h2 class="heading-medium return-button-padding">@Messages("sdil.updateBusinessAddresses.warehouses.title")</h2>
                 @service_sites(subscription.warehouseSites, "warehouse")
                 
-                <button name="@key" value="@key" class="link-button change-address-button">
+                <button name="edit-warehouses" value="@key" class="link-button change-address-button">
                     @Messages("sdil.updateBusinessAddresses.link.4")
                 </button>
             }
