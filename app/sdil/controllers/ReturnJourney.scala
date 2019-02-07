@@ -59,8 +59,12 @@ trait ReturnJourney extends SdilWMController {
     } yield { smallProds }
 
     for {
-      // this update sets the value of the add another small producer question to no
-      _ <- update[String]("small-producer-details")(_.getOrElse("Done").some)
+      // this update sets the value of the add another small producer question to no in adjustments journey
+      editMode        <- read[Boolean]("_editSmallProducers").map{_.getOrElse(false)}
+      _ <- update[String]("small-producer-details")(_.getOrElse("Done").some) when !editMode
+      ownBrands      <- askEmptyOption(
+        litreagePair, "own-brands-packaged-at-own-sites", default.map{_.ownBrand}
+      ) emptyUnless !subscription.activity.smallProducer
       em = ExtraMessages(
         messages =
           if(subscription.activity.isVoluntaryMandatory) {
@@ -74,9 +78,6 @@ trait ReturnJourney extends SdilWMController {
             Map.empty
           }
       )
-      ownBrands      <- askEmptyOption(
-        litreagePair, "own-brands-packaged-at-own-sites", default.map{_.ownBrand}
-      ) emptyUnless !subscription.activity.smallProducer
       contractPacked <- askEmptyOption(litreagePair, "packaged-as-a-contract-packer", default.map{_.packLarge})
       smallProds     <- smallProdsJ
       imports        <- askEmptyOption(litreagePair, "brought-into-uk", default.map{_.importLarge})
