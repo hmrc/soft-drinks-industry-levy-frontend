@@ -31,7 +31,8 @@
         closedWarehouses: List[Site] = List.empty,
         v: Option[RegistrationVariationData] = None,
         a: Option[ReturnVariationData] = None,
-        key: Option[String] = None)(implicit messages: Messages
+        key: Option[String] = None,
+        broughtForward: Option[BigDecimal] = None)(implicit messages: Messages
 )
 
 @v.map { v =>
@@ -95,5 +96,5 @@
 @a.map { a =>
     <p>@Messages("return.check-return-changes.what-happens-next")</p>
     @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
-    @returnVariationDifferences("check-return-changes", a, showChangeLinks = false)
+    @returnVariationDifferences("check-return-changes", a, showChangeLinks = false, broughtForward)
 }

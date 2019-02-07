@@ -390,7 +390,8 @@ class VariationsController(
         subheading = subheading,
         whatHappensNext = uniform.fragments.variationsWHN(
           a = variation.copy(reason = reason, repaymentMethod = repayment).some,
-          key = Some("return")).some
+          key = Some("return"),
+          broughtForward = broughtForward.some).some
       )(extraMessages)
 
     } yield exit
