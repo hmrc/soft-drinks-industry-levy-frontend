@@ -356,7 +356,7 @@ class VariationsController(
       extraMessages = ExtraMessages(
             messages = Map(
               "heading.return-details" -> s"${Messages(s"select-return.option.${variation.period.quarter}")} ${variation.period.year} return details",
-              "return-correction-reason.label" -> s"Reason for correcting ${Messages(s"select-return.option.${variation.period.quarter}")} ${variation.period.year} return.",
+              "return-correction-reason.label" -> s"Reason for correcting ${Messages(s"select-return.option.${variation.period.quarter}")} ${variation.period.year} return",
               "heading.check-answers.orgName" -> s"${subscription.orgName}",
               "heading.return-details.orgName" -> s"${subscription.orgName}",
               "heading.check-return-changes.orgName" -> s"${subscription.orgName}",
