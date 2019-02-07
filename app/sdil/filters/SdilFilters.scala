@@ -24,7 +24,7 @@ import play.filters.headers.SecurityHeadersFilter
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.CookieCryptoFilter
 import uk.gov.hmrc.play.bootstrap.filters.frontend.deviceid.DeviceIdFilter
 import uk.gov.hmrc.play.bootstrap.filters.frontend.{FrontendAuditFilter, HeadersFilter, SessionTimeoutFilter}
-import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, FrontendFilters, LoggingFilter}
+import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, FrontendFilters, LoggingFilter, MDCFilter}
 
 class SdilFilters(configuration: Configuration,
                   loggingFilter: LoggingFilter,
@@ -37,7 +37,9 @@ class SdilFilters(configuration: Configuration,
                   cookieCryptoFilter: CookieCryptoFilter,
                   sessionTimeoutFilter: SessionTimeoutFilter,
                   cacheControlFilter: CacheControlFilter,
-                  variationsFilter: VariationsFilter) extends FrontendFilters(
+                  mdcFilter: MDCFilter,
+                  variationsFilter: VariationsFilter
+                  ) extends FrontendFilters(
   configuration: Configuration,
   loggingFilter: LoggingFilter,
   headersFilter: HeadersFilter,
@@ -48,7 +50,8 @@ class SdilFilters(configuration: Configuration,
   csrfFilter: CSRFFilter,
   cookieCryptoFilter: CookieCryptoFilter,
   sessionTimeoutFilter: SessionTimeoutFilter,
-  cacheControlFilter: CacheControlFilter
+  cacheControlFilter: CacheControlFilter,
+  mdcFilter: MDCFilter
 ) {
   override val filters: Seq[EssentialFilter] = {
     if (enableSecurityHeaderFilter) {

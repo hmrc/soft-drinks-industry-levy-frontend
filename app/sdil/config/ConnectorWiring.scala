@@ -16,6 +16,7 @@
 
 package sdil.config
 
+import akka.actor.ActorSystem
 import com.softwaremill.macwire.wire
 import play.api.libs.ws.WSClient
 import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector, TestConnector}
@@ -27,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, HttpClient}
 
 trait ConnectorWiring extends CommonWiring {
   val wsClient: WSClient
-
+  val actorSystem: ActorSystem
   lazy val auditConnector: AuditConnector = wire[DefaultAuditConnector]
   lazy val httpClient: HttpClient = wire[DefaultHttpClient]
   lazy val authConnector: AuthConnector = wire[DefaultAuthConnector]
