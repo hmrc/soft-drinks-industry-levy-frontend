@@ -1300,8 +1300,10 @@ how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs pa
 
 select-change.option.returns=Correct an error in a previous return
 heading.select-return=Which return do you need to correct?
-select-return.help.header=I can’t find the return I’m looking for
-select-return.help=If you did not file a return then it will not be listed here. Central assessments cannot be adjusted.<br/><br>You can correct returns up to 4 years after the end of the accounting period.
+select-return.help.header=I cannot find the return I’m looking for
+select-return.help=<p>If you did not send a return, then it will not be listed here.</p>\
+  <p>You can correct returns up to 4 years after the end of the tax year the return is in.</p>\
+  <p>You cannot correct a return if we estimated how much levy you need to pay.</p>
 select-return.continue=Continue
 
 select-return.option.0=January to March
