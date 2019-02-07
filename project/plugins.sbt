@@ -5,13 +5,13 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-auto-build" % "1.13.0")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-git-versioning" % "1.15.0")
 
-addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "1.1.0")
+addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "1.2.0")
 
-addSbtPlugin("uk.gov.hmrc" % "sbt-artifactory" % "0.13.0")
+addSbtPlugin("uk.gov.hmrc" % "sbt-artifactory" % "0.16.0")
 
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.12")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.19")
 
-addSbtPlugin("uk.gov.hmrc" % "sbt-settings" % "3.5.0")
+addSbtPlugin("uk.gov.hmrc" % "sbt-settings" % "3.9.0")
 
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.1.2")
 

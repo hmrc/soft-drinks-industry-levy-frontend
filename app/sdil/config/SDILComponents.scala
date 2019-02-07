@@ -28,7 +28,7 @@ import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
 import uk.gov.hmrc.play.bootstrap.config.Base64ConfigDecoder
 import uk.gov.hmrc.play.bootstrap.http.RequestHandler
-import uk.gov.hmrc.play.health.AdminController
+import uk.gov.hmrc.play.health.HealthController
 
 import scala.concurrent.ExecutionContext
 
@@ -53,7 +53,7 @@ class SDILComponents(context: Context)
   override lazy val httpRequestHandler: HttpRequestHandler = wire[RequestHandler]
   override lazy val httpErrorHandler: HttpErrorHandler = errorHandler
 
-  lazy val adminController: AdminController = wire[AdminController]
+  lazy val adminController: HealthController = wire[HealthController]
   lazy val templateController: Template = wire[Template]
 
   lazy val customInjector: Injector = new SimpleInjector(injector) + templateController + adminController + wsApi
