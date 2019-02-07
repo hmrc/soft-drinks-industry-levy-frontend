@@ -1069,7 +1069,7 @@ exemptions-for-small-producers.help=A business is a small producer if it:\
   </ul>
 heading.small-producer-details=Your small producer exemptions
 error.alias.tooLong=Small producer name must be 160 characters or less
-heading.multi.small-producer-details=You have added {0} small producer{1}.
+heading.multi.small-producer-details=You have added {0} small producer{1}
 small-producer-details.list-control.heading=Do you want to add another small producer?
 heading.edit-small-producer-details=Enter the registered small producer’s details
 
