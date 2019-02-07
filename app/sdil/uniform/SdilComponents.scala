@@ -95,7 +95,7 @@ object SdilComponents extends FormHelpers {
       Html(
         s"""<details role="group">
 
-        <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+        <summary aria-controls="details-content-1" aria-expanded="false">
           <span class="summary">${visibleText(site)}, ${site.address.postCode}</span>
         </summary>""" +
           lines(site) +
