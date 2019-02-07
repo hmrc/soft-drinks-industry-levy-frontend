@@ -855,10 +855,6 @@ warehouse-details.option.add=Yes
 warehouse-details.option.done=No
 
 heading.contact=Update your contact person for the Soft Drinks Industry Levy
-#contact-details.fullName=Full name
-#contact-details.position=Job title
-#contact-details.phoneNumber=Telephone number
-#contact-details.email=Email address
 
 heading.updatedBusinessDetails_orgName=Organisation Name
 updatedBusinessDetails_orgName.fieldlabel=Organisation Name
@@ -1187,7 +1183,6 @@ check-your-answers.variations.import-with-packSites=You declared in this return 
 check-your-answers.variations.import-without-packSites=You declared in this return that you packaged liable drinks in the UK.
 
 return-sent.title=Return sent
-#return-sent.subheading=You need to pay {0} </br> by {1}
 return-sent.subheading=We received your Soft Drinks Industry Levy return for {0} for {1}
 return-sent.subheading.nil-return=You do not owe anything
 return-sent.what-happens-next-heading=What you need to do next
@@ -1397,7 +1392,7 @@ return-correction-reason.lead=Make sure you provide as much detail as you can. W
 error.return-correction-reason.empty=Enter a reason for correcting your return
 sdil.check-return-changes.reason.return-correction-reason.subheading=Correction details
 return-correction-reason.label=Reason for correction
-return-correction-reason.label.2=Enter up to 255 characters.
+return-correction-reason.hint=Enter up to 255 characters
 returnVariationDone.title=Correction sent
 returnVariationDone.subheading=We will review the details you updated and get back to you
 returnVariationDone.your.updates=Your updates for {0} were sent on {1} at {2}.
