@@ -218,7 +218,7 @@
         }
 
         @if(variation.importer._1 || variation.packer._1) {
-            <h3 class="heading-medium">@Messages(s"$key.variations.subheading")</h3>
+            <h2 class="heading-medium">@Messages(s"$key.variations.subheading")</h2>
         }
 
         @if(variation.importer._1 && subscription.warehouseSites.isEmpty && variation.warehouses.nonEmpty) {
