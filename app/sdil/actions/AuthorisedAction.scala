@@ -19,6 +19,7 @@ package sdil.actions
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc._
+import play.api.Logger
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.routes
@@ -60,7 +61,7 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
             case None =>
               Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
         }
-        case (None, Some(sdilEnrolment)) =>
+        case (_, Some(sdilEnrolment)) =>
           sdilConnector.retrieveSubscription(sdilEnrolment.value).map {
             case Some(sub) if sub.deregDate.nonEmpty => Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
             case _ => Left(Redirect(routes.ServicePageController.show()))
