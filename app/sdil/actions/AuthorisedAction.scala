@@ -55,24 +55,27 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
       (maybeUtr, maybeSdil) match {
         case (Some(utr), None) =>
           sdilConnector.retrieveSubscription(utr, "utr") map {
-            case Some(_) =>
+            case Some(sub) if sub.deregDate.isEmpty =>
               Left(Redirect(routes.ServicePageController.show()))
+            case Some(sub) if sub.deregDate.nonEmpty =>
+              Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
             case None =>
               Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
-        }
-        case (_, Some(sdilEnrolment)) =>
-          sdilConnector.retrieveSubscription(sdilEnrolment.value).map {
-            case Some(sub) if sub.deregDate.nonEmpty => Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
-            case _ => Left(Redirect(routes.ServicePageController.show()))
           }
         case (Some(utr), Some(_)) =>
           alreadyRegistered(utr).map(Left.apply)
+        case (None, Some(sdilEnrolment)) =>
+          sdilConnector.retrieveSubscription(sdilEnrolment.value).map {
+            case Some(sub) if sub.deregDate.isEmpty => Left(Redirect(routes.ServicePageController.show()))
+            case Some(sub) if sub.deregDate.nonEmpty => Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
+            case _ => Left(Redirect(routes.ServicePageController.show()))
+          }
         case _ if error.nonEmpty =>
           Future.successful(Left(error.get))
         case _ =>
           Future.successful(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
       }
-        
+
     } recover {
       case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
     }
