@@ -29,8 +29,7 @@
 
 @(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, interest: BigDecimal = 0)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-
-@main_template(Messages("sdil.registered.title"), noArticle = true) {
+@main_template(Messages("sdil.service-page.title"), noArticle = true) {
     <div class="grid-row">
         <div class="column-two-thirds">
             <span class="govuk-caption-xl service-comp-name">
@@ -224,12 +223,12 @@
         <div class="section--blue-top">
             <h2 class="heading-small">@Messages("sdil.service-page.support.title2")</h2>
 
-            <a href='@Messages("sdil.service-page.support.link1")'
+            <a href='@Messages("sdil.service-page.support.link1")' target="_blank"
             onclick="ga('send', 'event', 'moreLinks', 'click', 'guidance')">
                 <p>@Messages("sdil.service-page.support.p3")</p>
             </a>
 
-            <a href='@Messages("sdil.service-page.support.link2")'
+            <a href='@Messages("sdil.service-page.support.link2")' target="_blank"
             onclick="ga('send', 'event', 'moreLinks', 'click', 'legislation')">
                 <p>@Messages("sdil.service-page.support.p4")</p>
             </a>

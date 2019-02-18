@@ -370,3 +370,16 @@ details .address.progressive-reveal {
     -ms-touch-action: manipulation;
     touch-action: manipulation;
 }
+
+.govuk-details {
+    font-family: "nta",Arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25;
+    color: #0b0c0c;
+    margin-bottom: 20px;
+    display: block;
+}
