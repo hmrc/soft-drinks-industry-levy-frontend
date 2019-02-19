@@ -29,7 +29,7 @@
     @args.collectFirst { case ('_hint, msg) =>
         <span class="form-hint">@Html(msg)</span>
     }
-    <input class="form-control
+    <input style="outline-offset: 0" class="form-control
         @args.toMap.get('_inputClass) @if(field.hasErrors) {form-control-error}"
         id="@field.name"
         name="@field.name"

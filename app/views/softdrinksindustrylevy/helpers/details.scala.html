@@ -14,13 +14,11 @@
  * limitations under the License.
  *@
 
-@import sdil.config.AppConfig
-
 @(summaryKey: String)(panelContent: Html)(implicit messages: Messages)
 
 <details class="padding-bottom-10 govuk-details">
-    <summary>
-        <span class="summary" onclick="ga('send', 'event', 'helpLinks', 'help', '@Messages(summaryKey)')">
+    <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text" onclick="ga('send', 'event', 'helpLinks', 'help', '@Messages(summaryKey)')">
         @Messages(summaryKey)
         </span>
     </summary>

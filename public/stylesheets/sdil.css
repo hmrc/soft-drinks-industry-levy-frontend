@@ -179,6 +179,7 @@ html .font-xsmall {
 .link-button:focus {
     outline: 3px solid #ffbf47;
     background-color: #ffbf47;
+    outline-offset: 0;
 }
 
 .cya-change {
@@ -375,11 +376,18 @@ details .address.progressive-reveal {
     font-family: "nta",Arial,sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-weight: 400;
-    font-size: 16px;
-    font-size: 1rem;
     line-height: 1.25;
     color: #0b0c0c;
-    margin-bottom: 20px;
     display: block;
+}
+
+.govuk-details__summary {
+    display: inline-block;
+    position: relative;
+    color: #005ea5;
+    cursor: pointer;
+}
+
+.govuk-details__summary-text {
+    text-decoration: underline;
 }
