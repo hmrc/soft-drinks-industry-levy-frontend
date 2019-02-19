@@ -290,7 +290,7 @@ details .address.progressive-reveal {
 
 .business-details-help {
     font-size: 19px;
-    margin-bottom: 0;
+    margin-bottom: 3%;
     margin-top: 1.9em;
 }
 
@@ -390,4 +390,39 @@ details .address.progressive-reveal {
 
 .govuk-details__summary-text {
     text-decoration: underline;
+}
+
+.govuk-summary-list {
+    display: table;
+    width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #0b0c0c;
+    margin: 0;
+    line-height: 1.31579;
+}
+
+.govuk-summary-list__row {
+    display: table-row;
+}
+
+.govuk-summary-list__key {
+    width: 60%;
+    word-break: break-all;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #bfc1c3;
+    display: table-cell;
+    padding-right: 20px;
+    margin: 0;
+}
+
+.govuk-summary-list__key, .govuk-summary-list__value, .govuk-summary-list__actions {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #bfc1c3;
+    display: table-cell;
+    padding-right: 20px;
+    margin: 0;
+    word-break: break-all;
 }

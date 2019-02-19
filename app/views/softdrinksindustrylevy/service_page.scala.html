@@ -175,20 +175,24 @@
             }
         ) { subKey =>
 
-            @declaration_table("service-page", "business-details.title", subKey) {
-                @declaration_details_table_row("service-page", "sdil-ref", None, s"$sdilReference")
-                @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
-                @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
+            <h2 class="heading-medium">@Messages("sdil.service-page.business-details.title")</h2>
+            @declaration_description_list("service-page", "business-details.title", subKey) {
+             @declaration_description_term("service-page", "sdil-ref", None, s"$sdilReference")
+             @declaration_description_term("verify", "utr", None, s"${subscription.utr}")
+             @declaration_description_term("verify", "organisation", None, s"${subscription.orgName}")
 
-                <tr>
-                    <td>@Messages("sdil.verify.address")</td>
-                    <td>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @Messages("sdil.verify.address")
+                    </dt>
+                    <dd class="govuk-summary-list__value">
                         @address.nonEmptyLines.init.map { l =>
                             @l<br/>
                         }
                         @address.postcode
-                    </td>
-                </tr>
+                    </dd>
+                </div>
+            </dl>
             }
         }
 
