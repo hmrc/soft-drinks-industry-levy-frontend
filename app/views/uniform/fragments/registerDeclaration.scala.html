@@ -39,23 +39,47 @@
 )(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 
-    @declaration_table("registerDeclaration","your-business") {
-        @declaration_details_table_row("registerDeclaration", "utr", None, formData.utr, '_colspan -> "2")
+    @declaration_description_list("service-page", "business-details.title") {
+        @declaration_description_term("verify", "utr", None, formData.utr)
+        @declaration_description_term("verify", "organisation", None, formData.rosmData.organisationName)
 
-        @declaration_details_table_row("registerDeclaration", "business-name", None,
-            formData.rosmData.organisationName, '_colspan -> "2")
-
-        <tr>
-            <td colspan = "2">@Messages("sdil.declaration.address")</td>
-            <td>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+            @Messages("sdil.verify.address")
+            </dt>
+            <dd class="govuk-summary-list__value">
                 @formData.primaryAddress.nonEmptyLines.map { l =>
-                  <div>@l</div>
+                    <div>@l</div>
                 }
                 <div>@Messages("sdil.declaration.uk")</div>
-            </td>
-        </tr>
+            </dd>
+        </div>
     }
-
+    @declaration_description_list("registerDeclaration","liable-activity") {
+        @declaration_description_term(
+            "registerDeclaration",
+            "producer",
+            Some(sdil.controllers.routes.RegistrationController.index("producer")),
+            Messages(s"sdil.registerDeclaration.producer.${producer.getOrElse(None)}")
+        )
+        @if(producer.nonEmpty) {
+            @declaration_description_term(
+                "registerDeclaration",
+                "isLargeProducer",
+                Some(sdil.controllers.routes.RegistrationController.index("producer")),
+                if(producer.getOrElse(false)) {
+                    Messages("sdil.declaration.largeProducer")
+                } else {
+                    Messages("sdil.declaration.smallProducer")
+                }
+            )
+            @if(useCopacker.nonEmpty) {
+                @declaration_description_term("registerDeclaration", "third-party",
+                    Some(sdil.controllers.routes.RegistrationController.index("copacked")),
+                    Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
+            }
+        }
+    }
     @declaration_table("registerDeclaration","liable-activity") {
         @declaration_details_table_row(
             "registerDeclaration",

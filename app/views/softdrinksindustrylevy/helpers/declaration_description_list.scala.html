@@ -16,11 +16,14 @@
 
 @(pageRef: String, tableHeading: String, tableContent: Option[String] = None, changeLink: Option[Call] = None)(rowContent: Html)(implicit messages: Messages)
 
+<h2 class="heading-medium">@Messages(s"sdil.$pageRef.$tableHeading")</h2>
+
 @tableContent.map { x =>
     <p class="business-details-help">
         @Messages(s"sdil.$pageRef.$tableHeading.$x")
     </p>
 }
+
 <dl class="govuk-summary-list">
     @rowContent
 </dl>

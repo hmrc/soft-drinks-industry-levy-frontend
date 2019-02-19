@@ -23,4 +23,12 @@
     <dd class="govuk-summary-list__value">
         @rowData
     </dd>
+    @changeRoute.map { route =>
+        <dd class="govuk-summary-list__value" style="text-align: right; margin-left: 60%">
+            <a href="@route" onclick="ga('send', 'event', 'registerDeclaration', 'clickChange', '@changeRoute')">
+                <span aria-hidden="true">@Messages("sdil.declaration.change-link")</span>
+                <span class="visually-hidden">@Messages(s"sdil.hidden.$pageRef.$questionKey")</span>
+            </a>
+        </dd>
+    }
 </div>
