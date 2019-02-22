@@ -408,7 +408,7 @@ details .address.progressive-reveal {
 
 .govuk-summary-list__key {
     width: 62%;
-    word-break: break-all;
+    word-break: normal;
     padding-top: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid #bfc1c3;
@@ -417,12 +417,22 @@ details .address.progressive-reveal {
     margin: 0;
 }
 
-.govuk-summary-list__key, .govuk-summary-list__value, .govuk-summary-list__actions {
+.govuk-summary-list__value {
     padding-top: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid #bfc1c3;
     display: table-cell;
     padding-right: 20px;
     margin: 0;
-    word-break: break-all;
+    word-break: normal;
+}
+
+.cya-change-no-word-break {
+    word-break: keep-all;
+    padding-right: 0;
+    text-align: right;
+}
+
+.icon-image {
+    top: 43%
 }

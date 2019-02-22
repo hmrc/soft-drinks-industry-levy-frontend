@@ -24,21 +24,22 @@
 
 <p>
     @Messages(
-"returnVariationDone.corrected.return",
-returnPeriod.start.format(ofPattern("MMMM")),
-returnPeriod.end.format(ofPattern("MMMM yyyy")),
-subscription.orgName,
-LocalDate.now.format(ofPattern("d MMMM yyyy")),
-LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase)
+        "returnVariationDone.corrected.return",
+        returnPeriod.start.format(ofPattern("MMMM")),
+        returnPeriod.end.format(ofPattern("MMMM yyyy")),
+        subscription.orgName,
+        LocalDate.now.format(ofPattern("d MMMM yyyy")),
+        LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
+    )
 </p>
 
 <div class="notice">
-    <i class="icon icon-important" style="top: 43%">
+    <i class="icon icon-important icon-image">
         <span class="visually-hidden">@Messages("warning")</span>
     </i>
     <p>
         <strong class="bold-small">
-        @Messages("returnVariationDone.payments.notice")
+            @Messages("returnVariationDone.payments.notice")
         </strong>
     </p>
 </div>
