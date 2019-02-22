@@ -436,3 +436,7 @@ details .address.progressive-reveal {
 .icon-image {
     top: 43%
 }
+
+.outline {
+    outline-offset: 0
+}
