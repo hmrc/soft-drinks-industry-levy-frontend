@@ -25,13 +25,13 @@ class VerifyFormSpec extends FormSpec {
     "require a 'details correct' selection" in {
       val f = form.bind(altAddressData - detailsCorrect)
 
-      mustContainError(f, detailsCorrect, "error.radio-form.choose-option.continue")
+      mustContainError(f, detailsCorrect, "sdil.verify.error.choose-option")
     }
 
     "reject invalid 'details correct' options" in {
       val f = form.bind(altAddressData.updated(detailsCorrect, "maybe"))
 
-      mustContainError(f, detailsCorrect, "error.radio-form.choose-option.continue")
+      mustContainError(f, detailsCorrect, "sdil.verify.error.choose-option")
     }
 
     "bind to VerifiedDetails if the details are correct and an alternative address is not provided" in {
