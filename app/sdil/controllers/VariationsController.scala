@@ -148,7 +148,7 @@ class VariationsController(
     subscription: RetrievedSubscription,
     returnPeriods: List[ReturnPeriod]
   ): WebMonad[RegistrationVariationData] = {
-    
+
     for {
       packLarge                   <- askOneOf("amount-produced", ProducerType.values.toList) map {
                                         case Large => Some(true)
@@ -236,18 +236,36 @@ class VariationsController(
       _ <- resultToWebMonad[A](Redirect(routes.ServicePageController.show()))
     } yield data
 
-  private def program(
+  private[controllers] def program(
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+
     val base = RegistrationVariationData(subscription)
 
     for {
       variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
       returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
-      onlyReturns = subscription.deregDate.nonEmpty
-      changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
-      isVoluntary = subscription.activity.voluntaryRegistration
+      x <- programInner(subscription, sdilRef, variableReturns, returnPeriods)
+    } yield (x)
+  }
+
+  // this has been separated out from program to facilitate unit testing -
+  // once the stubbing has been fixed the change here can be reverted
+  private[controllers] def programInner(
+    subscription: RetrievedSubscription,
+    sdilRef: String,
+    variableReturns: List[ReturnPeriod],
+    returnPeriods: List[ReturnPeriod]
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val base = RegistrationVariationData(subscription)
+
+    val onlyReturns = subscription.deregDate.nonEmpty
+    val changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
+    val isVoluntary = subscription.activity.voluntaryRegistration
+
+
+    for {
       changeType <- askOneOf("select-change", changeTypes, helpText = Html(Messages("change.latency")).some) when !onlyReturns
       variation <- changeType match {
         case None | Some(ChangeType.Returns) =>
@@ -401,7 +419,7 @@ class VariationsController(
     key: String,
     v: RegistrationVariationData,
     path: List[String])(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
-    
+
     val inner = uniform.fragments.variationsCYA(
       v,
       newPackagingSites(v),
@@ -480,7 +498,7 @@ class VariationsController(
     }
   }
 
-  private def changeBusinessAddressJourney (
+  private[controllers] def changeBusinessAddressJourney (
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {

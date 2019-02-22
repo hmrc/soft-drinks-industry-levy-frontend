@@ -67,7 +67,7 @@ class RegistrationController(
     }
   }
 
-  private def program(fd: RegistrationFormData)
+  private[controllers] def program(fd: RegistrationFormData)
                      (implicit request: AuthorisedRequest[AnyContent], hc: HeaderCarrier): WebMonad[Result] = {
 
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined

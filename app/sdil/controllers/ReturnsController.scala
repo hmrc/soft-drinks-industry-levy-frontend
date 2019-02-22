@@ -52,7 +52,7 @@ class ReturnsController (
   val config: AppConfig,
   val ec: ExecutionContext
 ) extends SdilWMController with FrontendController with Modulus23Check with ReturnJourney {
-  
+
   def confirmationPage(
     key: String,
     period: ReturnPeriod,
@@ -140,7 +140,7 @@ class ReturnsController (
     } yield packingSites
   }
 
-  private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String, nilReturn: Boolean, id: String)
+  private[controllers] def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String, nilReturn: Boolean, id: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = {
     val em = ExtraMessages(Map(
       "heading.check-your-answers.orgName" ->
