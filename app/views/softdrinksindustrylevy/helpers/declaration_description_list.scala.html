@@ -14,16 +14,16 @@
  * limitations under the License.
  *@
 
-@(summaryKey: String)(panelContent: Html)(implicit messages: Messages)
+@(pageRef: String, tableHeading: String, tableContent: Option[String] = None, changeLink: Option[Call] = None)(rowContent: Html)(implicit messages: Messages)
 
-<details class="padding-bottom-10 govuk-details">
-    <summary class="govuk-details__summary">
-        <span class="govuk-details__summary-text" onclick="ga('send', 'event', 'helpLinks', 'help', '@Messages(summaryKey)')">
-        @Messages(summaryKey)
-        </span>
-    </summary>
-    <div class="panel panel-border-narrow margin-bottom-1"
-         id="details-content-@summaryKey.toLowerCase.replace(" ", "-").replaceAll("[‘’{2}]", "")">
-    @panelContent
-    </div>
-</details>
+<h2 class="heading-medium">@Messages(s"sdil.$pageRef.$tableHeading")</h2>
+
+@tableContent.map { x =>
+    <p class="business-details-help">
+        @Messages(s"sdil.$pageRef.$tableHeading.$x")
+    </p>
+}
+
+<dl class="govuk-summary-list">
+    @rowContent
+</dl>

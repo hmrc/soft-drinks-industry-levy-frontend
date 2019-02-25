@@ -28,7 +28,7 @@
 
 @(address: Address, subscription: RetrievedSubscription, lastReturn: Option[SdilReturn], balance: BigDecimal, pendingDereg: Option[SdilReturn], variableReturns: List[ReturnPeriod])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.registered.title"), noArticle = true) {
+@main_template(Messages("sdil.service-page.title"), noArticle = true) {
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
@@ -164,18 +164,20 @@
 
             <hr class="govuk-section-break--visible">
 
-            @declaration_table("service-page", "business-details.title", None) {
-                @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
+            @declaration_description_list("service-page", "business-details.title", None) {
+                @declaration_description_term("verify", "organisation", None, s"${subscription.orgName}")
 
-                <tr>
-                    <td>@Messages("sdil.verify.address")</td>
-                    <td>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                    @Messages("sdil.verify.address")
+                    </dt>
+                    <dd class="govuk-summary-list__value">
                         @address.nonEmptyLines.init.map { l =>
-                            @l<br/>
+                            <div>@l</div>
                         }
-                        @address.postcode
-                    </td>
-                </tr>
+                        <div>@address.postcode</div>
+                    </dd>
+                </div>
             }
             @if(variableReturns.nonEmpty) {
                 <h2 class="heading-medium">@Messages("sdil.service-page.variations.title")</h2>

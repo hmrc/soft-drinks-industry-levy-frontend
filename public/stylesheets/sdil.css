@@ -179,6 +179,7 @@ html .font-xsmall {
 .link-button:focus {
     outline: 3px solid #ffbf47;
     background-color: #ffbf47;
+    outline-offset: 0;
 }
 
 .cya-change {
@@ -289,7 +290,7 @@ details .address.progressive-reveal {
 
 .business-details-help {
     font-size: 19px;
-    margin-bottom: 0;
+    margin-bottom: 3%;
     margin-top: 1.9em;
 }
 
@@ -369,4 +370,73 @@ details .address.progressive-reveal {
     cursor: pointer;
     -ms-touch-action: manipulation;
     touch-action: manipulation;
+}
+
+.govuk-details {
+    font-family: "nta",Arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.25;
+    color: #0b0c0c;
+    display: block;
+}
+
+.govuk-details__summary {
+    display: inline-block;
+    position: relative;
+    color: #005ea5;
+    cursor: pointer;
+}
+
+.govuk-details__summary-text {
+    text-decoration: underline;
+}
+
+.govuk-summary-list {
+    display: table;
+    width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #0b0c0c;
+    margin: 0;
+    line-height: 1.31579;
+}
+
+.govuk-summary-list__row {
+    display: table-row;
+}
+
+.govuk-summary-list__key {
+    width: 62%;
+    word-break: normal;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #bfc1c3;
+    display: table-cell;
+    padding-right: 20px;
+    margin: 0;
+}
+
+.govuk-summary-list__value {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #bfc1c3;
+    display: table-cell;
+    padding-right: 20px;
+    margin: 0;
+    word-break: normal;
+}
+
+.cya-change-no-word-break {
+    word-break: keep-all;
+    padding-right: 0;
+    text-align: right;
+}
+
+.icon-image {
+    top: 43%
+}
+
+.outline {
+    outline-offset: 0
 }
