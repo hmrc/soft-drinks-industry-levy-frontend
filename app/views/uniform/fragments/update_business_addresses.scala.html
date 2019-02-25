@@ -69,8 +69,7 @@
             </button>
 
             @if(subscription.productionSites.nonEmpty) {
-                <h2 class="heading-medium return-button-padding">@Messages("sdil.updateBusinessAddresses.packaging.title")</h2>
-                @service_sites(subscription.productionSites, "packaging")
+                @service_sites("packaging", subscription.productionSites, "packaging")
 
                 <button name="edit-packaging-sites" value="@key" class="link-button change-address-button">
                     @Messages("sdil.updateBusinessAddresses.link.3")
@@ -78,8 +77,7 @@
             }
 
             @if(subscription.warehouseSites.nonEmpty) {
-                <h2 class="heading-medium return-button-padding">@Messages("sdil.updateBusinessAddresses.warehouses.title")</h2>
-                @service_sites(subscription.warehouseSites, "warehouse")
+                @service_sites("warehouses", subscription.warehouseSites, "warehouse")
                 
                 <button name="edit-warehouses" value="@key" class="link-button change-address-button">
                     @Messages("sdil.updateBusinessAddresses.link.4")
