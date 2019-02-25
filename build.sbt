@@ -41,6 +41,8 @@ coverageExcludedPackages := Seq(
   "sdil.connectors.*",
   "sdil.models.*",
   "sdil.controllers.Routes",
+  "controllers.javascript.*",
+  "sdil.controllers.javascript.*",
   "sdil.controllers.RoutesPrefix",
   "testOnlyDoNotUseInAppConf.*",
   "sdil.controllers.test.*",
