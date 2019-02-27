@@ -21,6 +21,7 @@ import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
+import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.backend.Site
 import sdil.utils.FakeApplicationSpec
@@ -37,6 +38,14 @@ trait ControllerSpec extends FakeApplicationSpec {
   def verifyDataCached(formData: RegistrationFormData) = {
     verify(mockCache, times(1))
       .cache(matching("internal id"), matching(formData))(any())
+  }
+
+  def returnsDataCheck(returnPeriods : List[ReturnPeriod]) = {
+
+    when(returnsMock.variable(matching("utrNumber1234"))(any())).thenReturn {
+      Future.successful(returnPeriods)
+    }
+
   }
 
   def stubFormPage(

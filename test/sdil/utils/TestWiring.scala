@@ -71,6 +71,10 @@ trait TestWiring extends MockitoSugar {
   implicit val defaultMessages: Messages = messagesApi.preferred(FakeRequest())
   implicit val ec: ExecutionContext = defaultContext
 
+  val returnsMock = mock[mockSdilConnector.returns.type]
+  when(mockSdilConnector.returns).thenReturn(returnsMock)
+
+
   lazy val mockSdilConnector: SoftDrinksIndustryLevyConnector = {
     val m = mock[SoftDrinksIndustryLevyConnector]
     when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))

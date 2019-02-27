@@ -248,9 +248,7 @@ class VariationsControllerSpec extends ControllerSpec {
         "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668)
       )
 
-      when(mockSdilConnector.returns.variable(matching("utrNumber1234"))(any())).thenReturn {
-        Future.successful(returnPeriods)
-      }
+      returnsDataCheck(returnPeriods)
 
       println(Await.result(output, 10 seconds))
 
