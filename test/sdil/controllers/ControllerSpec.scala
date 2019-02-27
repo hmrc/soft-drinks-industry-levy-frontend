@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
+import org.mockito.stubbing.OngoingStubbing
 import sdil.models._
 import sdil.models.backend.Site
 import sdil.utils.FakeApplicationSpec
@@ -29,48 +30,54 @@ import scala.concurrent.Future
 trait ControllerSpec extends FakeApplicationSpec {
 
   def stubCacheEntry(value: Option[RegistrationFormData]) = {
-    when(mockCache.get(matching("internal id"))(any())).thenReturn(Future.successful(value))
+    when(mockCache.get(matching("internal id"))(any()))
+      .thenReturn(Future.successful(value))
   }
 
   def verifyDataCached(formData: RegistrationFormData) = {
-    verify(mockCache, times(1)).cache(matching("internal id"), matching(formData))(any())
+    verify(mockCache, times(1))
+      .cache(matching("internal id"), matching(formData))(any())
   }
 
-  def stubFormPage(rosmData: RosmRegistration = defaultRosmData,
-                   utr: String = defaultFormData.utr,
-                   verify: Option[DetailsCorrect] = defaultFormData.verify,
-                   orgType: Option[String] = defaultFormData.organisationType,
-                   producer: Option[Producer] = defaultFormData.producer,
-                   isPackagingForSelf: Option[Boolean] = defaultFormData.isPackagingForSelf,
-                   packageOwnVol: Option[Litreage] = defaultFormData.volumeForOwnBrand,
-                   packagesForOthers: Option[Boolean] = defaultFormData.packagesForOthers,
-                   volumeForCustomerBrands: Option[Litreage] = defaultFormData.volumeForCustomerBrands,
-                   usesCopacker: Option[Boolean] = defaultFormData.usesCopacker,
-                   imports: Option[Boolean] = defaultFormData.isImporter,
-                   importVolume: Option[Litreage] = defaultFormData.importVolume,
-                   startDate: Option[LocalDate] = defaultFormData.startDate,
-                   productionSites: Option[Seq[Site]] = defaultFormData.productionSites,
-                   secondaryWarehouses: Option[Seq[Site]] = defaultFormData.secondaryWarehouses,
-                   contactDetails: Option[ContactDetails] = defaultFormData.contactDetails) = {
+  def stubFormPage(
+      rosmData: RosmRegistration = defaultRosmData,
+      utr: String = defaultFormData.utr,
+      verify: Option[DetailsCorrect] = defaultFormData.verify,
+      orgType: Option[String] = defaultFormData.organisationType,
+      producer: Option[Producer] = defaultFormData.producer,
+      isPackagingForSelf: Option[Boolean] = defaultFormData.isPackagingForSelf,
+      packageOwnVol: Option[Litreage] = defaultFormData.volumeForOwnBrand,
+      packagesForOthers: Option[Boolean] = defaultFormData.packagesForOthers,
+      volumeForCustomerBrands: Option[Litreage] = defaultFormData.volumeForCustomerBrands,
+      usesCopacker: Option[Boolean] = defaultFormData.usesCopacker,
+      imports: Option[Boolean] = defaultFormData.isImporter,
+      importVolume: Option[Litreage] = defaultFormData.importVolume,
+      startDate: Option[LocalDate] = defaultFormData.startDate,
+      productionSites: Option[Seq[Site]] = defaultFormData.productionSites,
+      secondaryWarehouses: Option[Seq[Site]] = defaultFormData.secondaryWarehouses,
+      contactDetails: Option[ContactDetails] = defaultFormData.contactDetails
+  ): OngoingStubbing[Future[Option[RegistrationFormData]]] = {
 
-    stubCacheEntry(Some(RegistrationFormData(
-      rosmData,
-      utr,
-      verify,
-      orgType,
-      producer,
-      isPackagingForSelf,
-      packageOwnVol,
-      packagesForOthers,
-      volumeForCustomerBrands,
-      usesCopacker,
-      imports,
-      importVolume,
-      startDate,
-      productionSites,
-      secondaryWarehouses,
-      contactDetails
-    )))
+    stubCacheEntry(
+      Some(
+        RegistrationFormData(
+          rosmData,
+          utr,
+          verify,
+          orgType,
+          producer,
+          isPackagingForSelf,
+          packageOwnVol,
+          packagesForOthers,
+          volumeForCustomerBrands,
+          usesCopacker,
+          imports,
+          importVolume,
+          startDate,
+          productionSites,
+          secondaryWarehouses,
+          contactDetails
+        )))
   }
 
   def stubFilledInForm = {
@@ -79,7 +86,8 @@ trait ControllerSpec extends FakeApplicationSpec {
     )
   }
 
-  when(mockSdilConnector.getRosmRegistration(any())(any())).thenReturn(Future.successful(Some(defaultRosmData)))
+  when(mockSdilConnector.getRosmRegistration(any())(any()))
+    .thenReturn(Future.successful(Some(defaultRosmData)))
 
   lazy val defaultFormData: RegistrationFormData = {
     RegistrationFormData(
@@ -87,46 +95,61 @@ trait ControllerSpec extends FakeApplicationSpec {
       utr = "1234567890",
       verify = Some(DetailsCorrect.Yes),
       organisationType = Some("partnership"),
-      producer = Some(Producer(
-        isProducer = true,
-        isLarge = Some(false))),
+      producer = Some(Producer(isProducer = true, isLarge = Some(false))),
       isPackagingForSelf = Some(true),
-      volumeForOwnBrand = Some(Litreage(
-        atLowRate = 1,
-        atHighRate = 2
-      )),
+      volumeForOwnBrand = Some(
+        Litreage(
+          atLowRate = 1,
+          atHighRate = 2
+        )),
       packagesForOthers = Some(true),
-      volumeForCustomerBrands = Some(Litreage(
-        atLowRate = 3,
-        atHighRate = 4
-      )),
+      volumeForCustomerBrands = Some(
+        Litreage(
+          atLowRate = 3,
+          atHighRate = 4
+        )),
       usesCopacker = Some(true),
       isImporter = Some(true),
-      importVolume = Some(Litreage(
-        atLowRate = 9,
-        atHighRate = 10
-      )),
+      importVolume = Some(
+        Litreage(
+          atLowRate = 9,
+          atHighRate = 10
+        )),
       startDate = Some(LocalDate.of(2018, 4, 6)),
-      productionSites = Some(Seq(
-        Site.fromAddress(Address("1 Production Site St", "Production Site Town", "", "", "AA11 1AA"))
-         )),
-      secondaryWarehouses = Some(Seq(
-        Site.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA"))
-      )),
-      contactDetails = Some(ContactDetails(
-        fullName = "A person",
-        position = "A position",
-        phoneNumber = "1234",
-        email = "aa@bb.cc"
-      ))
+      productionSites = Some(
+        Seq(
+          Site.fromAddress(
+            Address("1 Production Site St",
+                    "Production Site Town",
+                    "",
+                    "",
+                    "AA11 1AA"))
+        )),
+      secondaryWarehouses = Some(
+        Seq(
+          Site.fromAddress(
+            Address("1 Warehouse Site St",
+                    "Warehouse Site Town",
+                    "",
+                    "",
+                    "AA11 1AA"))
+        )),
+      contactDetails = Some(
+        ContactDetails(
+          fullName = "A person",
+          position = "A position",
+          phoneNumber = "1234",
+          email = "aa@bb.cc"
+        ))
     )
   }
 
   lazy val defaultRosmData: RosmRegistration = RosmRegistration(
     "some-safe-id",
-    Some(OrganisationDetails(
-      "an organisation"
-    )),
+    Some(
+      OrganisationDetails(
+        "an organisation"
+      )),
     None,
     Address("1", "The Road", "", "", "AA11 1AA")
   )

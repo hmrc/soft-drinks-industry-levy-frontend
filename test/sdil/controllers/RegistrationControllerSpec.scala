@@ -16,46 +16,52 @@
 
 package sdil.controllers
 
-import cats.implicits._
-import org.mockito.ArgumentMatchers._
+import com.softwaremill.macwire._
+import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json._
 import play.api.mvc._
-import uk.gov.hmrc.http.{CoreDelete, CoreGet, CorePut, HeaderCarrier}
-import com.softwaremill.macwire._
-import play.api.test.FakeRequest
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-
-import scala.concurrent._
-import duration._
-import org.scalatest.MustMatchers._
-import com.softwaremill.macwire._
-import org.mockito.ArgumentMatchers.{any, eq => matching}
-import org.mockito.Mockito._
-import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.config.SDILShortLivedCaching
-import sdil.models._, backend._, retrieved._
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
-import play.api.libs.json._
-import scala.concurrent.Future
 import sdil.actions.AuthorisedRequest
+import sdil.config.RegistrationFormDataCache
+import sdil.models._
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.http.HeaderCarrier
+import cats.implicits._
+import org.scalatest.Matchers
+import play.api.i18n.Messages
+import uk.gov.hmrc.http.cache.client.CacheMap
 
-class RegistrationControllerSpec extends ControllerSpec {
+import scala.concurrent._
+import scala.concurrent.duration._
+
+
+class RegistrationControllerSpec extends ControllerSpec with MockitoSugar  {
 
   lazy val controller: RegistrationController = wire[RegistrationController]
   lazy val controllerTester = new UniformControllerTester(controller)
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  def request = AuthorisedRequest[AnyContent](
+  def request: AuthorisedRequest[AnyContent] = AuthorisedRequest[AnyContent](
     None, "", Enrolments(Set.empty), FakeRequest()
     .withFormUrlEncodedBody("utr" -> ""))
 
-
   "RegistrationController" should {
+
+    "return a 404 when index is called with an empty key" in {
+      val index = controller.index("")
+      status(index()(request)) mustBe NOT_FOUND
+    }
+
+    "redirect to organisation type page when index is called with a key" in {
+     stubCacheEntry(Some(defaultFormData))
+      val index = controller.index("organisation-type")
+
+      status(index()(request)) mustBe SEE_OTHER
+    }
+
     "execute main program" in {
       def formData = RegistrationFormData(
         RosmRegistration("safeId", None, None,
@@ -88,7 +94,5 @@ class RegistrationControllerSpec extends ControllerSpec {
 
     }
   }
-
 }
-
 //  val lastPage = "declaration"
