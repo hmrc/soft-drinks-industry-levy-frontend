@@ -30,6 +30,7 @@ import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.config.RegistrationFormDataCache
 import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector}
+import sdil.models.ReturnPeriod
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -74,6 +75,8 @@ trait TestWiring extends MockitoSugar {
     val m = mock[SoftDrinksIndustryLevyConnector]
     when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.retrieveSubscription(any(),any())(any())).thenReturn(Future.successful(None))
+    //when(m.returns.variable(any())(any())).thenReturn(Future.successful(any()))
+
     m
   }
 
