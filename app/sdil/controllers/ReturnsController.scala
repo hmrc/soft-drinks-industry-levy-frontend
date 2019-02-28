@@ -181,9 +181,9 @@ class ReturnsController (
       )
       _ <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, isSmallProd, Some(variation))(em, implicitly)
       _ <- cachedFuture(s"return-${period.count}")(
-        sdilConnector.returns(subscription.utr, period) = sdilReturn)
+        sdilConnector.returns_update(subscription.utr, period,sdilReturn))
       _ <- if (isNewImporter || isNewPacker) {
-        execute(sdilConnector.returns.variation(variation, sdilRef))
+        execute(sdilConnector.returns_variation(variation, sdilRef))
       } else {
         (()).pure[WebMonad]
       }
@@ -205,7 +205,7 @@ class ReturnsController (
     val persistence = SaveForLaterPersistence(s"returns-$year$quarter", sdilRef, cache)
     for {
       subscription <- sdilConnector.retrieveSubscription(sdilRef).map{_.get}
-      pendingReturns <- sdilConnector.returns.pending(subscription.utr)
+      pendingReturns <- sdilConnector.returns_pending(subscription.utr)
       r   <- if (pendingReturns.contains(period))
                runInner(request)(program(period, subscription, sdilRef, nilReturn, id))(id)(persistence.dataGet,persistence.dataPut, if (nilReturn) JourneyConfig(LeapAhead) else JourneyConfig(SingleStep))
              else

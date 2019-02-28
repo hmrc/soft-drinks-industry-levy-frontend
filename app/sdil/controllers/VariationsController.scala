@@ -57,7 +57,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class VariationsController(
   val messagesApi: MessagesApi,
-  sdilConnector: SoftDrinksIndustryLevyConnector,
+  val sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   cache: ShortLivedHttpCaching,
   errorHandler: FrontendErrorHandler
@@ -244,8 +244,8 @@ class VariationsController(
     val base = RegistrationVariationData(subscription)
 
     for {
-      variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
-      returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
+      variableReturns <- execute(sdilConnector.returns_variable(base.original.utr))
+      returnPeriods <- execute(sdilConnector.returns_pending(subscription.utr))
       x <- programInner(subscription, sdilRef, variableReturns, returnPeriods)
     } yield (x)
   }
@@ -333,7 +333,7 @@ class VariationsController(
   )(implicit hc: HeaderCarrier): WebMonad[A] = {
     val base = RegistrationVariationData(subscription)
     for {
-      variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
+      variableReturns <- execute(sdilConnector.returns_variable(base.original.utr))
       messages = variableReturns.map { x =>
         s"select-return.option.${x.year}${x.quarter}" -> s"${Messages(s"select-return.option.${x.quarter}")} ${x.year}"
       }.toMap ++ Map("error.radio-form.choose-option" -> "error.radio-form.choose-option.returnPeriod")
@@ -357,7 +357,7 @@ class VariationsController(
     implicit val showBackLink: ShowBackLink = ShowBackLink(false)
     for {
 
-      origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
+      origReturn <- execute(connector.returns_get(base.original.utr, returnPeriod))
         .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
 
       newReturn <- askReturn(base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
@@ -399,7 +399,7 @@ class VariationsController(
       )(extraMessages) when variation.revised.total - variation.original.total < 0
 
       _ <- checkReturnChanges("check-return-changes", variation.copy(reason = reason, repaymentMethod = repayment), broughtForward)(extraMessages)
-      _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
+      _ <- execute(sdilConnector.returns_vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
       _ <- clear
       subheading = uniform.fragments.return_variation_done_subheading(subscription, returnPeriod).some
 
@@ -553,7 +553,7 @@ class VariationsController(
     val base = RegistrationVariationData(subscription)
 
     for {
-      returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
+      returnPeriods <- execute(sdilConnector.returns_pending(subscription.utr))
       variation <- activityUpdate(base, subscription, returnPeriods)
 
       path <- getPath

@@ -48,6 +48,7 @@ import java.time.LocalDate
 class VariationsControllerSpec extends ControllerSpec {
 
   lazy val controller: VariationsController = wire[VariationsController]
+
   lazy val controllerTester = new UniformControllerTester(controller)
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

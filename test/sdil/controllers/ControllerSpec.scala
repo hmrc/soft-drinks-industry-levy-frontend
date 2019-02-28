@@ -42,7 +42,7 @@ trait ControllerSpec extends FakeApplicationSpec {
 
   def returnsDataCheck(returnPeriods : List[ReturnPeriod]) = {
 
-    when(returnsMock.variable(matching("utrNumber1234"))(any())).thenReturn {
+    when(mockSdilConnector.returns_variable(matching("utrNumber1234"))(any())).thenReturn {
       Future.successful(returnPeriods)
     }
 
