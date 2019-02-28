@@ -79,7 +79,6 @@ trait TestWiring extends MockitoSugar {
     val m = mock[SoftDrinksIndustryLevyConnector]
     when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.retrieveSubscription(any(),any())(any())).thenReturn(Future.successful(None))
-    //when(m.returns.variable(any())(any())).thenReturn(Future.successful(any()))
     when(m.returns_pending(any())(any())).thenReturn(Future.successful(Nil))
     when(m.returns_variable(any())(any())).thenReturn(Future.successful(Nil))
     when(m.returns_vary(any(), any())(any())).thenReturn(Future.successful(()))

@@ -51,7 +51,21 @@ class ReturnsControllerSpec extends ControllerSpec {
 
       def subProgram = controller.program(
         ReturnPeriod(2018,1),
-        RetrievedSubscription("", "", "", UkAddress(Nil,""), RetrievedActivity(false, false, false, false, false), java.time.LocalDate.now, Nil, Nil, Contact(None, None, "", "")),
+        RetrievedSubscription(
+          "",
+          "",
+          "",
+          UkAddress(Nil,""),
+          RetrievedActivity(
+            smallProducer = false,
+            largeProducer = false,
+            contractPacker = false,
+            importer = false,
+            voluntaryRegistration = false),
+          java.time.LocalDate.now,
+          Nil,
+          Nil,
+          Contact(None, None, "", "")),
         "",
         false,
         "start"
