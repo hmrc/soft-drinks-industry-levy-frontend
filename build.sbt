@@ -41,6 +41,8 @@ coverageExcludedPackages := Seq(
   "sdil.connectors.*",
   "sdil.models.*",
   "sdil.controllers.Routes",
+  "sdil.controllers.SdilWMController",
+  "sdil.filters.*",
   "controllers.javascript.*",
   "sdil.controllers.javascript.*",
   "sdil.controllers.RoutesPrefix",
@@ -49,7 +51,8 @@ coverageExcludedPackages := Seq(
   "sdil.connectors.TestConnector",
   "variations.Routes"
 ).mkString(";")
-coverageExcludedFiles := "<empty>;.*BuildInfo.*;.*Routes.*;"
+coverageExcludedFiles := "<empty>;.*BuildInfo.*;.*Routes.*;.*GDS.*;.*GdsComponents.*;.*WebMonadPersistence.*;" +
+  ".*SiteRef.*;.*ShowTitle.*;.*MoneyFormat.*;.*MappingWithExtraConstraint.*;"
 coverageMinimum := 80
 coverageFailOnMinimum := false
 coverageHighlighting := true

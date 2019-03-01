@@ -34,7 +34,7 @@ import sdil.models.ReturnPeriod
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
+import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -74,7 +74,6 @@ trait TestWiring extends MockitoSugar {
   // val returnsMock = mock[mockSdilConnector.returns.type]
   //when(mockSdilConnector.returns).thenReturn(returnsMock)
 
-
   lazy val mockSdilConnector: SoftDrinksIndustryLevyConnector = {
     val m = mock[SoftDrinksIndustryLevyConnector]
     when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))
@@ -85,7 +84,12 @@ trait TestWiring extends MockitoSugar {
     when(m.returns_update(any(), any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_get(any(),any())(any())).thenReturn(Future.successful(None))
     when(m.returns_variation(any(),any())(any())).thenReturn(Future.successful(()))
+    m
+  }
 
+  lazy val mockShortLivedCache: ShortLivedHttpCaching = {
+    val m = mock[ShortLivedHttpCaching]
+    when(m.fetchAndGetEntry(any(),any())(any(),any(),any())).thenReturn(Future.successful(None))
     m
   }
 
