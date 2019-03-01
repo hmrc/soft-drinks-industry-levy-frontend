@@ -40,6 +40,8 @@ import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import scala.concurrent.{ExecutionContext, Future}
 
 trait TestWiring extends MockitoSugar {
+  val returnPeriods = List(ReturnPeriod(2018,1), ReturnPeriod(2019, 1))
+
   val mockCache: RegistrationFormDataCache = {
     val m = mock[RegistrationFormDataCache]
     when(m.cache(anyString(), any())(any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
@@ -79,7 +81,7 @@ trait TestWiring extends MockitoSugar {
     when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.retrieveSubscription(any(),any())(any())).thenReturn(Future.successful(None))
     when(m.returns_pending(any())(any())).thenReturn(Future.successful(Nil))
-    when(m.returns_variable(any())(any())).thenReturn(Future.successful(Nil))
+    when(m.returns_variable(any())(any())).thenReturn(Future.successful(returnPeriods))
     when(m.returns_vary(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_update(any(), any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_get(any(),any())(any())).thenReturn(Future.successful(None))
