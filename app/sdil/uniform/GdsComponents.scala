@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ltbs.play.scaffold
+package sdil.uniform
 
 import uk.gov.hmrc.uniform._
 

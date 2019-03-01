@@ -21,6 +21,7 @@ import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
+import play.api.libs.json.JsValue
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.backend.Site
@@ -44,8 +45,15 @@ trait ControllerSpec extends FakeApplicationSpec {
     when(mockSdilConnector.returns_variable(matching("utrNumber1234"))(any())).thenReturn {
       Future.successful(returnPeriods)
     }
-
   }
+
+  def fetchAndGet(smallProd: JsValue) = {
+    when(mockShortLivedCache.fetchAndGetEntry[JsValue](matching("foo"), matching("bar"))(any(),any(),any())).thenReturn{
+      Future.successful(Some(smallProd))
+    }
+  }
+
+
 
   def stubFormPage(
       rosmData: RosmRegistration = defaultRosmData,

@@ -36,64 +36,103 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.config.SDILShortLivedCaching
-import sdil.models._, backend._, retrieved._
+import sdil.models._
+import backend._
+import retrieved._
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import play.api.libs.json._
+import uk.gov.hmrc.uniform.webmonad.WebMonad
+
 import scala.concurrent.Future
 
 class ReturnsControllerSpec extends ControllerSpec {
 
+
+  val validReturnPeriod = ReturnPeriod(2018,1)
+
+  val emptySub = RetrievedSubscription(
+      "",
+      "",
+      "",
+      UkAddress(Nil,""),
+      RetrievedActivity(
+        smallProducer = false,
+        largeProducer = false,
+        contractPacker = false,
+        importer = false,
+        voluntaryRegistration = false),
+      java.time.LocalDate.now,
+      Nil,
+      Nil,
+      Contact(None, None, "", ""))
+
+    val validSdilRef = "XCSDIL000000002"
+
+    val validId = "start"
+
+  val volManSub = emptySub.copy(
+    activity = RetrievedActivity(
+                smallProducer = true,
+                largeProducer = false,
+                contractPacker = false,
+                importer = true,
+                voluntaryRegistration = false)
+  )
+  val smallprod = Json.obj("smallProd" -> "here I am")
+
   "ReturnsController" should {
 
     "execute main program" in {
-
-      def subProgram = controller.program(
-        ReturnPeriod(2018,1),
-        RetrievedSubscription(
-          "",
-          "",
-          "",
-          UkAddress(Nil,""),
-          RetrievedActivity(
-            smallProducer = false,
-            largeProducer = false,
-            contractPacker = false,
-            importer = false,
-            voluntaryRegistration = false),
-          java.time.LocalDate.now,
-          Nil,
-          Nil,
-          Contact(None, None, "", "")),
-        "",
-        false,
-        "start"
-      )(hc)
+      def subProgram = controller.program(validReturnPeriod, emptySub, validSdilRef, false, validId)(hc)
 
       val output = controllerTester.testJourney(subProgram)(
-        "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
-        "packaged-as-a-contract-packer"        -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
-        "claim-credits-for-lost-damaged"       -> Json.obj("lower" -> 123, "higher" -> 234),
-        "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
-        "_editSmallProducers"                  -> Json.toJson(false),
         "own-brands-packaged-at-own-sites"     -> Json.obj("lower" -> 123234, "higher" -> 2340000),
+        "packaged-as-a-contract-packer"        -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
+        "_editSmallProducers"                  -> Json.toJson(false),
         "small-producer-details"               -> JsString("Done"),
-        "return-change-registration"           -> JsNull,
-        "brought-into-uk"                      -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
-        "ask-secondary-warehouses-in-return"   -> Json.toJson(false),
 //        "exemptions-for-small-producers"       -> Json.toJson(false),
+        "brought-into-uk"                      -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
+        "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
+        "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
+        "claim-credits-for-lost-damaged"       -> Json.obj("lower" -> 123, "higher" -> 234),
+        "return-change-registration"           -> JsNull,
+        "ask-secondary-warehouses-in-return"   -> Json.toJson(false),
         "pack-at-business-address-in-return"   -> Json.toJson(false),
         "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
         "production-site-details_data" -> JsArray(List(
           Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
           Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
-        )) //,
-//        "production-site-details" -> JsString("Done")
+        ))
       )
-      println(Await.result(output, 10 seconds))
+      status(output) mustBe SEE_OTHER
+    }
 
-      1 mustBe 1
+    "execute main program as a vol man user" in {
+      def subProgram: WebMonad[Result] = controller.program(validReturnPeriod, volManSub, validSdilRef, false, validId)(hc)
+      fetchAndGet(smallprod)
+
+      val output = controllerTester.testJourney(subProgram)(
+        "own-brands-packaged-at-own-sites"     -> Json.obj("lower" -> 123234, "higher" -> 2340000),
+        "packaged-as-a-contract-packer"        -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
+        "_editSmallProducers"                  -> Json.toJson(false),
+        "small-producer-details"               -> JsString("Done"),
+        //        "exemptions-for-small-producers"       -> Json.toJson(false),
+        "brought-into-uk"                      -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
+        "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
+        "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
+        "claim-credits-for-lost-damaged"       -> Json.obj("lower" -> 123, "higher" -> 234),
+        "return-change-registration"           -> JsNull,
+        "ask-secondary-warehouses-in-return"   -> Json.toJson(false),
+        "pack-at-business-address-in-return"   -> Json.toJson(false),
+        "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
+        "production-site-details_data" -> JsArray(List(
+          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
+          Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
+        ))
+      )
+      status(output) mustBe SEE_OTHER
     }
 
     // "askNewWarehouses" in {
