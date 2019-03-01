@@ -26,34 +26,38 @@ import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.backend.Site
 import sdil.utils.FakeApplicationSpec
+import uk.gov.hmrc.http.cache.client.{CacheMap, ShortLivedHttpCaching}
 
 import scala.concurrent.Future
 
 trait ControllerSpec extends FakeApplicationSpec {
 
-  def stubCacheEntry(value: Option[RegistrationFormData]) = {
+  def stubCacheEntry(value: Option[RegistrationFormData]): OngoingStubbing[Future[Option[RegistrationFormData]]] = {
     when(mockCache.get(matching("internal id"))(any()))
       .thenReturn(Future.successful(value))
   }
 
-  def verifyDataCached(formData: RegistrationFormData) = {
+  def verifyDataCached(formData: RegistrationFormData): Future[CacheMap] = {
     verify(mockCache, times(1))
       .cache(matching("internal id"), matching(formData))(any())
   }
 
-  def returnsDataCheck(returnPeriods : List[ReturnPeriod]) = {
+  def returnsDataCheck(returnPeriods : List[ReturnPeriod]): OngoingStubbing[Future[List[ReturnPeriod]]] = {
     when(mockSdilConnector.returns_variable(matching("utrNumber1234"))(any())).thenReturn {
       Future.successful(returnPeriods)
     }
   }
 
-  def fetchAndGet(smallProd: JsValue) = {
-    when(mockShortLivedCache.fetchAndGetEntry[JsValue](matching("foo"), matching("bar"))(any(),any(),any())).thenReturn{
+  def fetchAndGet(smallProd: JsValue): OngoingStubbing[Future[Option[JsValue]]] = {
+    when(mockSdilConnector.shortLiveCache) thenReturn cacheMock
+      when(cacheMock.fetchAndGetEntry[JsValue](
+      matching("XCSDIL000000002"),
+      matching("small-producer-details_data"
+      )
+    )(any(),any(),any())).thenReturn{
       Future.successful(Some(smallProd))
     }
   }
-
-
 
   def stubFormPage(
       rosmData: RosmRegistration = defaultRosmData,

@@ -90,9 +90,9 @@ class ReturnsControllerSpec extends ControllerSpec {
       val output = controllerTester.testJourney(subProgram)(
         "own-brands-packaged-at-own-sites"     -> Json.obj("lower" -> 123234, "higher" -> 2340000),
         "packaged-as-a-contract-packer"        -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
-        "_editSmallProducers"                  -> Json.toJson(false),
+        "_editSmallProducers"                  -> Json.toJson(true),
+        "exemptions-for-small-producers"       -> Json.toJson(false),
         "small-producer-details"               -> JsString("Done"),
-//        "exemptions-for-small-producers"       -> Json.toJson(false),
         "brought-into-uk"                      -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
         "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
         "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
@@ -116,9 +116,9 @@ class ReturnsControllerSpec extends ControllerSpec {
       val output = controllerTester.testJourney(subProgram)(
         "own-brands-packaged-at-own-sites"     -> Json.obj("lower" -> 123234, "higher" -> 2340000),
         "packaged-as-a-contract-packer"        -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
-        "_editSmallProducers"                  -> Json.toJson(false),
+        "_editSmallProducers"                  -> Json.toJson(true),
+        "exemptions-for-small-producers"       -> Json.toJson(false),
         "small-producer-details"               -> JsString("Done"),
-        //        "exemptions-for-small-producers"       -> Json.toJson(false),
         "brought-into-uk"                      -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
         "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
         "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
