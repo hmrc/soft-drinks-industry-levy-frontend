@@ -17,9 +17,10 @@
 package sdil.utils
 
 import java.io.File
+import java.time.LocalDate
 
 import com.softwaremill.macwire._
-import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi, Messages, MessagesApi}
@@ -31,6 +32,8 @@ import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.config.RegistrationFormDataCache
 import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector}
 import sdil.models.ReturnPeriod
+import sdil.models.backend.{Contact, Site, UkAddress}
+import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -81,18 +84,22 @@ trait TestWiring extends MockitoSugar {
 
   // val returnsMock = mock[mockSdilConnector.returns.type]
   //when(mockSdilConnector.returns).thenReturn(returnsMock)
+  val aSubscription =  RetrievedSubscription("0000000022","XKSDIL000000022","Super Lemonade Plc",UkAddress(List("63 Clifton Roundabout", "Worcester"),"WR53 7CX"),RetrievedActivity(false,true,false,false,false),LocalDate.of(2018,4,19),List(Site(UkAddress(List("33 Rhes Priordy", "East London"),"E73 2RP"),Some("88"),Some("Wild Lemonade Group"),Some(LocalDate.of(2018,2,26))), Site(UkAddress(List("117 Jerusalem Court", "St Albans"),"AL10 3UJ"),Some("87"),Some("Highly Addictive Drinks Plc"),Some(LocalDate.of(2019,8,19))), Site(UkAddress(List("87B North Liddle Street", "Guildford"),"GU34 7CM"),Some("94"),Some("Monster Bottle Ltd"),Some(LocalDate.of(2017,9,23))), Site(UkAddress(List("122 Dinsdale Crescent", "Romford"),"RM95 8FQ"),Some("27"),Some("Super Lemonade Group"),Some(LocalDate.of(2017,4,23))), Site(UkAddress(List("105B Godfrey Marchant Grove", "Guildford"),"GU14 8NL"),Some("96"),Some("Star Products Ltd"),Some(LocalDate.of(2017,2,11)))),List(),Contact(Some("Ava Adams"),Some("Chief Infrastructure Agent"),"04495 206189","Adeline.Greene@gmail.com"),None)
 
-    lazy val cacheMock = mock[ShortLivedHttpCaching]
+
+  lazy val cacheMock = mock[ShortLivedHttpCaching]
   lazy val mockSdilConnector: SoftDrinksIndustryLevyConnector = {
     val m = mock[SoftDrinksIndustryLevyConnector]
     when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.retrieveSubscription(any(),any())(any())).thenReturn(Future.successful(None))
-    when(m.returns_pending(any())(any())).thenReturn(Future.successful(Nil))
+    when(m.retrieveSubscription(matching("XZSDIL000100107"),any())(any())).thenReturn(Future.successful(Some(aSubscription)))
+    //when(m.returns_pending(any())(any())).thenReturn(Future.successful(Nil))
     when(m.returns_variable(any())(any())).thenReturn(Future.successful(returnPeriods))
     when(m.returns_vary(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_update(any(), any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_get(any(),any())(any())).thenReturn(Future.successful(None))
     when(m.returns_variation(any(),any())(any())).thenReturn(Future.successful(()))
+    when(m.submitVariation(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.shortLiveCache) thenReturn cacheMock
     when(cacheMock.fetchAndGetEntry[Any](any(),any())(any(),any(),any())).thenReturn(Future.successful(None))
     m

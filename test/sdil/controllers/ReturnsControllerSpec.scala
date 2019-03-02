@@ -43,6 +43,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import play.api.libs.json._
+import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.uniform.webmonad.WebMonad
 
 import scala.concurrent.Future
@@ -53,7 +54,7 @@ class ReturnsControllerSpec extends ControllerSpec {
   val validReturnPeriod = ReturnPeriod(2018,1)
 
   val emptySub = RetrievedSubscription(
-      "",
+      "0000000022",
       "",
       "",
       UkAddress(Nil,""),
@@ -98,7 +99,7 @@ class ReturnsControllerSpec extends ControllerSpec {
         "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
         "claim-credits-for-lost-damaged"       -> Json.obj("lower" -> 123, "higher" -> 234),
         "return-change-registration"           -> JsNull,
-        "ask-secondary-warehouses-in-return"   -> Json.toJson(false),
+        "ask-secondary-warehouses-in-return"   -> Json.toJson(true),
         "pack-at-business-address-in-return"   -> Json.toJson(false),
         "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
         "production-site-details_data" -> JsArray(List(
@@ -124,7 +125,7 @@ class ReturnsControllerSpec extends ControllerSpec {
         "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
         "claim-credits-for-lost-damaged"       -> Json.obj("lower" -> 123, "higher" -> 234),
         "return-change-registration"           -> JsNull,
-        "ask-secondary-warehouses-in-return"   -> Json.toJson(false),
+        "ask-secondary-warehouses-in-return"   -> Json.toJson(true),
         "pack-at-business-address-in-return"   -> Json.toJson(false),
         "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
         "production-site-details_data" -> JsArray(List(
@@ -152,6 +153,49 @@ class ReturnsControllerSpec extends ControllerSpec {
 
     // }
   }
+
+  "execute index journey" in {
+    val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+    }
+    when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+      Future.successful(Some(aSubscription))
+    }
+    when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
+
+    val result = controller.index(2018, 1, false, "idvalue").apply(FakeRequest())
+    status(result) mustEqual SEE_OTHER
+
+  }
+
+  "execute main program as a vol man user with secondary warehouses" in {
+    def subProgram: WebMonad[Result] = controller.program(validReturnPeriod, volManSub, validSdilRef, false, validId)(hc)
+    fetchAndGet(smallprod)
+
+    val output = controllerTester.testJourney(subProgram)(
+      "own-brands-packaged-at-own-sites"     -> Json.obj("lower" -> 123234, "higher" -> 2340000),
+      "packaged-as-a-contract-packer"        -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
+      "_editSmallProducers"                  -> Json.toJson(true),
+      "exemptions-for-small-producers"       -> Json.toJson(false),
+      "small-producer-details"               -> JsString("Done"),
+      "brought-into-uk"                      -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
+      "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
+      "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
+      "claim-credits-for-lost-damaged"       -> Json.obj("lower" -> 123, "higher" -> 234),
+      "return-change-registration"           -> JsNull,
+      "ask-secondary-warehouses-in-return"   -> Json.toJson(true),
+      "pack-at-business-address-in-return"   -> Json.toJson(false),
+      "first-warehouse"                      -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
+      "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
+      "production-site-details_data" -> JsArray(List(
+        Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
+        Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
+      ))
+    )
+    status(output) mustBe SEE_OTHER
+  }
+
 
   lazy val controller: ReturnsController = wire[ReturnsController]
   lazy val controllerTester = new UniformControllerTester(controller)

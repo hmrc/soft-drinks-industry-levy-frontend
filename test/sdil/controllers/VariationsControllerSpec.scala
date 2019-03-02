@@ -44,6 +44,7 @@ import play.api.libs.json._
 import scala.concurrent.Future
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import java.time.LocalDate
+import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 
 class VariationsControllerSpec extends ControllerSpec {
 
@@ -122,7 +123,9 @@ class VariationsControllerSpec extends ControllerSpec {
           Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
         )),
         "select-change" -> JsString("Activity"),
-        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668)
+        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668),
+        "check-answers" -> JsString("Done"),
+        "checkyouranswers" -> JsString("Done")
       )
 
       println(Await.result(output, 10 seconds))
@@ -185,7 +188,9 @@ class VariationsControllerSpec extends ControllerSpec {
           Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
         )),
         "select-change" -> JsString("Activity"),
-        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668)
+        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668),
+        "check-answers" -> JsString("Done"),
+        "checkyouranswers" -> JsString("Done")
       )
 
       println(Await.result(output, 10 seconds))
@@ -249,7 +254,9 @@ class VariationsControllerSpec extends ControllerSpec {
           Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
         )),
         "select-change" -> JsString("Deregister"),
-        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668)
+        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668),
+        "check-answers" -> JsString("Done"),
+        "checkyouranswers" -> JsString("Done")
       )
 
       println(Await.result(output, 10 seconds))
@@ -312,7 +319,9 @@ class VariationsControllerSpec extends ControllerSpec {
           Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
         )),
         "select-change" -> JsString("Deregister"),
-        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668)
+        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668),
+        "check-answers" -> JsString("Done"),
+        "checkyouranswers" -> JsString("Done")
       )
 
       println(Await.result(output, 10 seconds))
@@ -375,7 +384,9 @@ class VariationsControllerSpec extends ControllerSpec {
           Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
         )),
         "select-change" -> JsString("Returns"),
-        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668)
+        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668),
+        "check-answers" -> JsString("Done"),
+        "checkyouranswers" -> JsString("Done")
       )
 
       returnsDataCheck(returnPeriods)
@@ -441,7 +452,9 @@ class VariationsControllerSpec extends ControllerSpec {
           Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
         )),
         "select-change" -> JsString("Sites"),
-        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668)
+        "imports" -> Json.obj("lower" -> 12345,"higher" -> 34668),
+        "check-answers" -> JsString("Done"),
+        "checkyouranswers" -> JsString("Done")
       )
 
       println(Await.result(output, 10 seconds))
@@ -490,13 +503,72 @@ class VariationsControllerSpec extends ControllerSpec {
           "line4" -> "Worcestershire",
           "postcode" -> "WR53 7CX"
         ),
-        "warehouse-details" -> JsString("Done")
+        "warehouse-details" -> JsString("Done"),
+        "check-answers" -> JsString("Done"),
+        "checkyouranswers" -> JsString("Done")
       )
 
       println(Await.result(output, 10 seconds))
 
       1 mustBe 1
     }
+  }
+
+  "execute adjustment journey" in {
+    val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+    }
+    when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), anyString())(any())).thenReturn {
+      Future.successful(Some(aSubscription))
+    }
+
+    val result = controller.adjustment(2018, 1, "idType").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+    //status(result) mustEqual NOT_FOUND
+
+  }
+
+  "execute index journey" in {
+    val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+    }
+    when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), anyString())(any())).thenReturn {
+      Future.successful(Some(aSubscription))
+    }
+
+    val result = controller.index("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+    status(result) mustEqual SEE_OTHER
+
+  }
+
+  "execute changeBusinessAddress journey" in {
+    val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+    }
+    when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), anyString())(any())).thenReturn {
+      Future.successful(Some(aSubscription))
+    }
+
+    val result = controller.changeBusinessAddress("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+    status(result) mustEqual SEE_OTHER
+
+  }
+
+  "execute changeActorStatus journey" in {
+    val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+    }
+    when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), anyString())(any())).thenReturn {
+      Future.successful(Some(aSubscription))
+    }
+    when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
+
+    val result = controller.changeActorStatus("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+    status(result) mustEqual SEE_OTHER
+
   }
 
 }

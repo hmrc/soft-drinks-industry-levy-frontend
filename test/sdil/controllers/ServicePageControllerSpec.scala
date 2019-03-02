@@ -117,7 +117,7 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"))(any())).thenReturn {
         Future.successful(None)
       }
-      val request = FakeRequest("GET", "/home")
+      val request = FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue")
       val result = testController.show.apply(request)
 
       status(result) mustBe NOT_FOUND
