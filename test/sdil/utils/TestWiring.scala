@@ -97,7 +97,7 @@ trait TestWiring extends MockitoSugar {
     when(m.returns_variable(any())(any())).thenReturn(Future.successful(returnPeriods))
     when(m.returns_vary(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_update(any(), any(), any())(any())).thenReturn(Future.successful(()))
-    when(m.returns_get(any(),any())(any())).thenReturn(Future.successful(None))
+    //when(m.returns_get(any(),any())(any())).thenReturn(Future.successful(None))
     when(m.returns_variation(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.submitVariation(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.shortLiveCache) thenReturn cacheMock

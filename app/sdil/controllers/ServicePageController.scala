@@ -31,18 +31,20 @@ import cats.data.OptionT
 import scala.concurrent._
 import java.time.LocalDate
 
-import uk.gov.hmrc.uniform.webmonad.WebMonad
-import views.html.uniform.fragments.update_business_addresses
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 class ServicePageController(
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   errorHandler: FrontendErrorHandler)
-  (implicit config: AppConfig)
+  (implicit config: AppConfig,
+   val ec: ExecutionContext)
   extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = registeredAction.async { implicit request =>
+
 
     val sdilRef = request.sdilEnrolment.value
     val ret = for {
@@ -71,6 +73,8 @@ class ServicePageController(
     }.sum
 
   def balanceHistory: Action[AnyContent] = registeredAction.async { implicit request =>
+
+    println("MOHAN >>>> " + request.sdilEnrolment.value)
 
     val sdilRef = request.sdilEnrolment.value
 

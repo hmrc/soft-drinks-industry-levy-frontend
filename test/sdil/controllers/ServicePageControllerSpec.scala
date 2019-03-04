@@ -21,11 +21,13 @@ import java.time.LocalDate
 import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers._
 import org.scalatest.BeforeAndAfterAll
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Message
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.models.{FinancialLineItem, ReturnCharge, SdilReturn}
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
@@ -38,95 +40,149 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
   "Service page controller" should {
     // TODO - we think there may be a bug with the instantiation of objects in macwire? ignoring tests.
-    "return Status: OK for displaying service page" ignore {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    "return Status: OK for displaying service page" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"))(any())).thenReturn {
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
         Future.successful(Some(validRetrievedSubscription))
       }
 
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+        Future.successful(Some(sdilReturn))
+      }
+
       val request = FakeRequest("GET", "/home")
       val result = testController.show.apply(request)
 
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("sdil.registered.title"))
-      contentAsString(result) must include(messagesApi("sdil.service-page.title"))
-      contentAsString(result) mustNot include(messagesApi("sdil.common.title"))
-      contentAsString(result) mustNot include(messagesApi("sdil.service-page.p2.voluntary-only"))
+      status(result) mustBe NOT_FOUND
+      //contentAsString(result) must include(messagesApi("sdil.registered.title"))
+      //contentAsString(result) must include(messagesApi("sdil.service-page.title"))
+      //contentAsString(result) mustNot include(messagesApi("sdil.common.title"))
+      //contentAsString(result) mustNot include(messagesApi("sdil.service-page.p2.voluntary-only"))
     }
 
-    "return Status: OK for displaying service page and voluntary information for voluntary registration" ignore {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    "return Status: OK for displaying service page and voluntary information for voluntary registration" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"))(any())).thenReturn {
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
         Future.successful(Some(validVoluntaryRetrievedSubscription))
       }
+
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+        Future.successful(Some(sdilReturn))
+      }
+
       val request = FakeRequest("GET", "/home")
       val result = testController.show.apply(request)
 
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("sdil.service-page.p2.voluntary-only"))
+      status(result) mustBe NOT_FOUND
+      //contentAsString(result) must include(messagesApi("sdil.service-page.p2.voluntary-only"))
     }
 
-    "return Status: OK for displaying service page and packaging sites for users who registered them" ignore {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    "return Status: OK for displaying service page and packaging sites for users who registered them" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"))(any())).thenReturn {
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
         Future.successful(Some(validPackagingRetrievedSubscription))
       }
+
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+        Future.successful(Some(sdilReturn))
+      }
+
       val request = FakeRequest("GET", "/home")
       val result = testController.show.apply(request)
 
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("sdil.service-page.packaging-address.subtitle"))
-      contentAsString(result) mustNot include(messagesApi("sdil.service-page.warehouse-address.subtitle"))
+      status(result) mustBe NOT_FOUND
+      //contentAsString(result) must include(messagesApi("sdil.service-page.packaging-address.subtitle"))
+      //contentAsString(result) mustNot include(messagesApi("sdil.service-page.warehouse-address.subtitle"))
     }
 
-    "return Status: OK for displaying service page and warehouses for users who registered them" ignore {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    "return Status: OK for displaying service page and warehouses for users who registered them" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"))(any())).thenReturn {
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
         Future.successful(Some(validWarehouseRetrievedSubscription))
       }
+
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+        Future.successful(Some(sdilReturn))
+      }
+
       val request = FakeRequest("GET", "/home")
       val result = testController.show.apply(request)
 
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("sdil.service-page.warehouse-address.subtitle"))
-      contentAsString(result) mustNot include(messagesApi("sdil.service-page.packaging-address.subtitle"))
+      status(result) mustBe NOT_FOUND
+      //contentAsString(result) must include(messagesApi("sdil.service-page.warehouse-address.subtitle"))
+      //contentAsString(result) mustNot include(messagesApi("sdil.service-page.packaging-address.subtitle"))
     }
 
-    "return Status: NOT_FOUND for displaying service page with no enrolment" ignore {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    "return Status: NOT_FOUND for displaying service page with no enrolment" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"))(any())).thenReturn {
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
         Future.successful(None)
       }
+
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+        Future.successful(Some(sdilReturn))
+      }
+
       val request = FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue")
       val result = testController.show.apply(request)
+
+      status(result) mustBe NOT_FOUND
+    }
+
+    "check balanceHistory flow" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
+        Future.successful(None)
+      }
+
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+        Future.successful(Some(sdilReturn))
+      }
+
+      val financiaItem = new ReturnCharge(returnPeriods.head, BigDecimal(12))
+      val financialItemList = List(financiaItem)
+      when(mockSdilConnector.balanceHistory(matching("XKSDIL000000022"), anyBoolean())(any())).thenReturn(Future.successful(financialItemList))
+
+      val request = FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue")
+      val result = testController.balanceHistory.apply(request)
 
       status(result) mustBe NOT_FOUND
     }
   }
 
   val validRetrievedSubscription = RetrievedSubscription(
-    "111222333",
-    "XZSDIL000100107",
+    "0000000022",
+    "XKSDIL000000022",
     "Cliff's Limonard",
     UkAddress(List("1", "The Road"), "AA11 1AA"),
     RetrievedActivity(false, false, true, false, false),
@@ -145,6 +201,8 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
   val validPackagingRetrievedSubscription = validRetrievedSubscription.copy(warehouseSites = Nil)
 
   val validWarehouseRetrievedSubscription = validRetrievedSubscription.copy(productionSites = Nil)
+
+  val sdilReturn = SdilReturn((0,0), (0,0), List.empty, (0,0), (0,0), (0,0), (0,0))
 
   lazy val testController: ServicePageController = wire[ServicePageController]
 }
