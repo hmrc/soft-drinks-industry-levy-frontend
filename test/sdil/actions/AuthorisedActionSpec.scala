@@ -16,6 +16,8 @@
 
 package sdil.actions
 
+import java.time.LocalDate
+
 import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
@@ -24,6 +26,9 @@ import play.api.mvc.Results._
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import sdil.controllers.ControllerSpec
+import sdil.models.backend.{Contact, Site, UkAddress}
+import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.{Address, OrganisationDetails, RosmRegistration}
 import sdil.utils.FakeApplicationSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
@@ -32,7 +37,7 @@ import uk.gov.hmrc.auth.core.retrieve.~
 
 import scala.concurrent.Future
 
-class AuthorisedActionSpec extends FakeApplicationSpec {
+class AuthorisedActionSpec extends FakeApplicationSpec with ControllerSpec{
 
   "AuthorisedAction" should {
     "redirect to the gg sign in page if the user is not logged in" in {
@@ -141,7 +146,37 @@ class AuthorisedActionSpec extends FakeApplicationSpec {
 
       status(res) mustBe OK
     }
+
+    "invoke the block if the user has an ETMP registration, but not an SDIL registration with retrieval of a SDIL sub" in {
+      val someOtherEtmpEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "NotSDIL")
+      val enrolments = Enrolments(Set(new Enrolment("HMRC-OBTDS-ORG", Seq(someOtherEtmpEnrolment), "Active")))
+
+      when(mockSdilConnector.retrieveSubscription(matching("0000000022"), matching("utr"))(any())).thenReturn {
+        Future.successful(Some(aSubscription))
+      }
+
+      stubAuthResult(new ~(enrolments, Some(Admin)))
+      val res = testAction(FakeRequest())
+
+      status(res) mustBe OK
+    }
   }
+
+  val validRetrievedSubscription = RetrievedSubscription(
+    "111222333",
+    "XZSDIL000100107",
+    "Cliff's Limonard",
+    UkAddress(List("1", "The Road"), "AA11 1AA"),
+    RetrievedActivity(false, false, true, false, false),
+    LocalDate.of(2018, 4, 6),
+    List(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"), None, None, None)),
+    List(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"), None, None, None)),
+    Contact(
+      Some("A person"),
+      Some("A position"),
+      "1234",
+      "aa@bb.cc")
+  )
 
   lazy val testAuthorisedAction: AuthorisedAction = wire[AuthorisedAction]
 
