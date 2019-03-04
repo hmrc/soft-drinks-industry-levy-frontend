@@ -25,6 +25,7 @@ import play.api.libs.json.JsValue
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.backend.Site
+import sdil.models.retrieved.RetrievedSubscription
 import sdil.utils.FakeApplicationSpec
 import uk.gov.hmrc.http.cache.client.{CacheMap, ShortLivedHttpCaching}
 
@@ -48,6 +49,20 @@ trait ControllerSpec extends FakeApplicationSpec {
     }
   }
 
+  def getSubscription(retrievedSubscription: RetrievedSubscription) = {
+    when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"),any())(any())).thenReturn(Future.successful(Some(retrievedSubscription)))
+  }
+
+  def checkSmallProdStatus(isSmall: Boolean) = {
+    when(
+      mockSdilWMController.isSmallProducer(
+        matching("XPSDIL000000205"),
+        matching(mockSdilConnector),
+        matching(ReturnPeriod(2018, 3))
+      )(any())
+    ) thenReturn Future.successful(isSmall)
+  }
+
   def fetchAndGet(smallProd: JsValue): OngoingStubbing[Future[Option[JsValue]]] = {
     when(mockSdilConnector.shortLiveCache) thenReturn cacheMock
       when(cacheMock.fetchAndGetEntry[JsValue](
@@ -58,6 +73,20 @@ trait ControllerSpec extends FakeApplicationSpec {
       Future.successful(Some(smallProd))
     }
   }
+
+  def balanceHistory(financialData: List[FinancialLineItem])= {
+    when(mockSdilConnector.balanceHistory(any(),any())(any())).thenReturn{
+      Future.successful(financialData)
+    }
+  }
+
+  def balance(balance: BigDecimal) = {
+    when(mockSdilConnector.balance(any(), any())(any())).thenReturn{
+      Future.successful(balance)
+    }
+  }
+
+
 
   def stubFormPage(
       rosmData: RosmRegistration = defaultRosmData,

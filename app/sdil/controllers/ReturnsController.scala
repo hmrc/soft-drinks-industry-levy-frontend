@@ -213,12 +213,6 @@ class ReturnsController (
     } yield r
   }
 
-  def isSmallProducer(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] =
-    sdilConnector.retrieveSubscription(sdilRef).flatMap {
-      case Some(x) => x.activity.smallProducer
-      case None    => false
-    }
-
   def taxEstimation(r: SdilReturn): BigDecimal = {
     val t = r.packLarge |+| r.importLarge |+| r.ownBrand
     (t._1 * costLower |+| t._2 * costHigher) * 4

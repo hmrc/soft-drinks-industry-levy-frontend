@@ -16,6 +16,8 @@
 
 package sdil.controllers
 
+import java.time.LocalDate
+
 import cats.implicits._
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
@@ -83,28 +85,33 @@ class ReturnsControllerSpec extends ControllerSpec {
   )
   val smallprod = Json.obj("smallProd" -> "here I am")
 
+  val emptyReturn = SdilReturn((0,0), (0,0), List.empty, (0,0), (0,0), (0,0), (0,0))
+
+  val emptyReturnsVariation = ReturnsVariation("someOrg", UkAddress(Nil,"AA111AA"),(false,(0,0)),(false,(0,0)),Nil,Nil,"07830440425","legitemail@legitdomain.com",BigDecimal(0))
+
+
   "ReturnsController" should {
 
     "execute main program" in {
       def subProgram = controller.program(validReturnPeriod, emptySub, validSdilRef, false, validId)(hc)
 
       val output = controllerTester.testJourney(subProgram)(
-        "own-brands-packaged-at-own-sites"     -> Json.obj("lower" -> 123234, "higher" -> 2340000),
-        "packaged-as-a-contract-packer"        -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
-        "_editSmallProducers"                  -> Json.toJson(true),
-        "exemptions-for-small-producers"       -> Json.toJson(false),
-        "small-producer-details"               -> JsString("Done"),
-        "brought-into-uk"                      -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
+        "own-brands-packaged-at-own-sites" -> Json.obj("lower" -> 123234, "higher" -> 2340000),
+        "packaged-as-a-contract-packer" -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
+        "_editSmallProducers" -> Json.toJson(true),
+        "exemptions-for-small-producers" -> Json.toJson(false),
+        "small-producer-details" -> JsString("Done"),
+        "brought-into-uk" -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
         "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
-        "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
-        "claim-credits-for-lost-damaged"       -> Json.obj("lower" -> 123, "higher" -> 234),
-        "return-change-registration"           -> JsNull,
-        "ask-secondary-warehouses-in-return"   -> Json.toJson(true),
-        "pack-at-business-address-in-return"   -> Json.toJson(false),
-        "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
+        "claim-credits-for-exports" -> Json.obj("lower" -> 6789, "higher" -> 2345),
+        "claim-credits-for-lost-damaged" -> Json.obj("lower" -> 123, "higher" -> 234),
+        "return-change-registration" -> JsNull,
+        "ask-secondary-warehouses-in-return" -> Json.toJson(true),
+        "pack-at-business-address-in-return" -> Json.toJson(false),
+        "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
         "production-site-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
-          Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
+          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
+          Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
         ))
       )
       status(output) mustBe SEE_OTHER
@@ -112,90 +119,190 @@ class ReturnsControllerSpec extends ControllerSpec {
 
     "execute main program as a vol man user" in {
       def subProgram: WebMonad[Result] = controller.program(validReturnPeriod, volManSub, validSdilRef, false, validId)(hc)
+
       fetchAndGet(smallprod)
 
       val output = controllerTester.testJourney(subProgram)(
-        "own-brands-packaged-at-own-sites"     -> Json.obj("lower" -> 123234, "higher" -> 2340000),
-        "packaged-as-a-contract-packer"        -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
-        "_editSmallProducers"                  -> Json.toJson(true),
-        "exemptions-for-small-producers"       -> Json.toJson(false),
-        "small-producer-details"               -> JsString("Done"),
-        "brought-into-uk"                      -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
+        "own-brands-packaged-at-own-sites" -> Json.obj("lower" -> 123234, "higher" -> 2340000),
+        "packaged-as-a-contract-packer" -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
+        "_editSmallProducers" -> Json.toJson(true),
+        "exemptions-for-small-producers" -> Json.toJson(false),
+        "small-producer-details" -> JsString("Done"),
+        "brought-into-uk" -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
         "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
-        "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
-        "claim-credits-for-lost-damaged"       -> Json.obj("lower" -> 123, "higher" -> 234),
-        "return-change-registration"           -> JsNull,
-        "ask-secondary-warehouses-in-return"   -> Json.toJson(true),
-        "pack-at-business-address-in-return"   -> Json.toJson(false),
-        "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
+        "claim-credits-for-exports" -> Json.obj("lower" -> 6789, "higher" -> 2345),
+        "claim-credits-for-lost-damaged" -> Json.obj("lower" -> 123, "higher" -> 234),
+        "return-change-registration" -> JsNull,
+        "ask-secondary-warehouses-in-return" -> Json.toJson(true),
+        "pack-at-business-address-in-return" -> Json.toJson(false),
+        "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
         "production-site-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
-          Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
+          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
+          Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
         ))
       )
       status(output) mustBe SEE_OTHER
     }
 
-    // "askNewWarehouses" in {
-    //   def subProgram = controller.askNewWarehouses()(hc) >>
-    //   controller.resultToWebMonad[Result](controller.Ok("fin!"))
+    "execute main program as user who becomes mandatory and add packaging sites" in {
+      def subProgram: WebMonad[Result] = controller.program(validReturnPeriod, emptySub, validSdilRef, false, validId)(hc)
 
-    //   // dummy up a post request, may need to add in a session id too in order to avoid a redirect
-    //   def request: Request[AnyContent] = FakeRequest().withFormUrlEncodedBody("utr" -> "", "postcode" -> "").withSession { ("uuid" -> sessionUUID) }
-    //   def output = controller.runInner(request)(subProgram)(
-    //     "production-site-details" /* replace with the key of the very last form page */
-    //   )(persistence.dataGet, persistence.dataPut)
-    //   // We should get 'fin!' in the result as long as all the validation passes
-    //   // println(Await.result(output, 10 seconds).getClass)
-    //   // Await.result(output, 10 seconds).toString must contain("fin")
-    //   println(Await.result(output, 10 seconds).body.toString)
-    //   1 mustBe 1
+      val total: BigDecimal = 200000.12
+      val dummyLineItem: FinancialLineItem = CentralAssessment(LocalDate.of(2019, 1, 1), total)
 
-    // }
-  }
+      fetchAndGet(smallprod)
+      balanceHistory(List(dummyLineItem))
+      balance(total)
+      checkSmallProdStatus(true)
 
-  "execute index journey" in {
-    val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
-    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
-      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      val output = controllerTester.testJourney(subProgram)(
+        "own-brands-packaged-at-own-sites" -> Json.obj("lower" -> 123234, "higher" -> 2340000),
+        "packaged-as-a-contract-packer" -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
+        "_editSmallProducers" -> Json.toJson(true),
+        "exemptions-for-small-producers" -> Json.toJson(false),
+        "small-producer-details" -> JsString("Done"),
+        "brought-into-uk" -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
+        "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
+        "claim-credits-for-exports" -> Json.obj("lower" -> 6789, "higher" -> 2345),
+        "claim-credits-for-lost-damaged" -> Json.obj("lower" -> 123, "higher" -> 234),
+        "return-change-registration" -> Json.toJson(true),
+        "pack-at-business-address-in-return" -> Json.toJson(true),
+        "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
+        "production-site-details_data" -> JsArray(List(
+          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
+          Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
+        )),
+        "production-site-details" -> JsString("Done"),
+        "addWarehouses" -> Json.toJson(true),
+        "ask-secondary-warehouses-in-return" -> Json.toJson(false),
+        "secondary-warehouse-details" -> JsString("Done")
+        //        "first-warehouse"   -> Json.toJson(true),
+        //        "secondary-warehouses-details_data" -> JsArray(List(
+        //          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
+        //          Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
+        //        ))
+      )
+      status(output) mustBe SEE_OTHER
     }
-    when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
-      Future.successful(Some(aSubscription))
+
+    "show the confirmation page at the end of the journey" in {
+      val output: WebMonad[Result] = controller.confirmationPage(
+        "return-sent", validReturnPeriod, emptySub, emptyReturn, BigDecimal(0), validSdilRef, true, emptyReturnsVariation)
+
+      val program = controllerTester.testJourney(output)("blah" -> JsNull)
+
+      status(program) mustBe OK
     }
-    when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
 
-    val result = controller.index(2018, 1, false, "idvalue").apply(FakeRequest())
-    status(result) mustEqual SEE_OTHER
+    "show the confirmation page at the end of the journey with credit carried forward" in {
+      val output: WebMonad[Result] = controller.confirmationPage(
+        "return-sent", validReturnPeriod, emptySub, emptyReturn, BigDecimal(100), validSdilRef, true, emptyReturnsVariation)
 
+      val program = controllerTester.testJourney(output)("blah" -> JsNull)
+
+      status(program) mustBe OK
+    }
+
+    "show the confirmation page at the end of the journey with debit carried forward" in {
+      val output: WebMonad[Result] = controller.confirmationPage(
+        "return-sent", validReturnPeriod, emptySub, emptyReturn, BigDecimal(-100), validSdilRef, true, emptyReturnsVariation)
+
+      val program = controllerTester.testJourney(output)("blah" -> JsNull)
+
+      status(program) mustBe OK
+    }
+
+    //     "askNewWarehouses" in {
+    //       def subProgram = controller.askWarehouses(hc) >>
+    //       controller.resultToWebMonad[Result](controller.Ok("fin!"))
+    //
+    //       // dummy up a post request, may need to add in a session id too in order to avoid a redirect
+    //       def request: Request[AnyContent] = FakeRequest().withFormUrlEncodedBody("utr" -> "", "postcode" -> "").withSession { ("uuid" -> sessionUUID) }
+    //       def output = controller.runInner(request)(subProgram)(
+    //         "production-site-details" /* replace with the key of the very last form page */
+    //       )(persistence.dataGet, persistence.dataPut)
+    //       // We should get 'fin!' in the result as long as all the validation passes
+    //       // println(Await.result(output, 10 seconds).getClass)
+    //       // Await.result(output, 10 seconds).toString must contain("fin")
+    //       println(Await.result(output, 10 seconds).body.toString)
+    //       1 mustBe 1
+    //
+    //     }
+
+
+    "execute index journey" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+        Future.successful(Some(aSubscription))
+      }
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful(returnPeriods))
+
+      val result = controller.index(2018, 1, nilReturn = false, "idvalue").apply(FakeRequest())
+      status(result) mustEqual SEE_OTHER
+
+    }
+
+    "execute index journey with a nil return" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+        Future.successful(Some(aSubscription))
+      }
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful(returnPeriods))
+
+      val result = controller.index(2018, 1, true, "idvalue").apply(FakeRequest())
+      status(result) mustEqual SEE_OTHER
+
+    }
+
+    "execute index journey with a nil return and no pending returns" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+        Future.successful(Some(aSubscription))
+      }
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((Nil)))
+
+      val result = controller.index(2018, 1, true, "idvalue").apply(FakeRequest())
+      status(result) mustEqual SEE_OTHER
+
+    }
+    
+    "execute main program as a vol man user with secondary warehouses" in {
+      def subProgram: WebMonad[Result] = controller.program(validReturnPeriod, volManSub, validSdilRef, false, validId)(hc)
+
+      fetchAndGet(smallprod)
+
+      val output = controllerTester.testJourney(subProgram)(
+        "own-brands-packaged-at-own-sites" -> Json.obj("lower" -> 123234, "higher" -> 2340000),
+        "packaged-as-a-contract-packer" -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
+        "_editSmallProducers" -> Json.toJson(true),
+        "exemptions-for-small-producers" -> Json.toJson(false),
+        "small-producer-details" -> JsString("Done"),
+        "brought-into-uk" -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
+        "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
+        "claim-credits-for-exports" -> Json.obj("lower" -> 6789, "higher" -> 2345),
+        "claim-credits-for-lost-damaged" -> Json.obj("lower" -> 123, "higher" -> 234),
+        "return-change-registration" -> JsNull,
+        "ask-secondary-warehouses-in-return" -> Json.toJson(true),
+        "pack-at-business-address-in-return" -> Json.toJson(false),
+        "first-warehouse" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
+        "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
+        "production-site-details_data" -> JsArray(List(
+          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
+          Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
+        ))
+      )
+      status(output) mustBe SEE_OTHER
+    }
   }
-
-  "execute main program as a vol man user with secondary warehouses" in {
-    def subProgram: WebMonad[Result] = controller.program(validReturnPeriod, volManSub, validSdilRef, false, validId)(hc)
-    fetchAndGet(smallprod)
-
-    val output = controllerTester.testJourney(subProgram)(
-      "own-brands-packaged-at-own-sites"     -> Json.obj("lower" -> 123234, "higher" -> 2340000),
-      "packaged-as-a-contract-packer"        -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
-      "_editSmallProducers"                  -> Json.toJson(true),
-      "exemptions-for-small-producers"       -> Json.toJson(false),
-      "small-producer-details"               -> JsString("Done"),
-      "brought-into-uk"                      -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
-      "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
-      "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
-      "claim-credits-for-lost-damaged"       -> Json.obj("lower" -> 123, "higher" -> 234),
-      "return-change-registration"           -> JsNull,
-      "ask-secondary-warehouses-in-return"   -> Json.toJson(true),
-      "pack-at-business-address-in-return"   -> Json.toJson(false),
-      "first-warehouse"                      -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
-      "first-production-site" -> Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
-      "production-site-details_data" -> JsArray(List(
-        Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz","St Albans"),"postCode" -> "AL10 3UJ")),
-        Json.obj("address" -> Json.obj("lines" -> List("12 The Street","Blahdy Corner"),"postCode" -> "AB12 3CD"))
-      ))
-    )
-    status(output) mustBe SEE_OTHER
-  }
-
 
   lazy val controller: ReturnsController = wire[ReturnsController]
   lazy val controllerTester = new UniformControllerTester(controller)
