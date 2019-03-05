@@ -24,7 +24,7 @@ import org.mockito.stubbing.OngoingStubbing
 import play.api.libs.json.JsValue
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend.Site
+import sdil.models.backend._
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.utils.FakeApplicationSpec
 import uk.gov.hmrc.http.cache.client.{CacheMap, ShortLivedHttpCaching}
@@ -48,6 +48,15 @@ trait ControllerSpec extends FakeApplicationSpec {
       Future.successful(returnPeriods)
     }
   }
+
+  def submitRegistration(): OngoingStubbing[Future[Unit]] = {
+    val mySub = defaultSubscription.copy(orgType = "7")
+    when(mockSdilConnector.submit(any(), any())(any())) thenReturn Future.successful(())
+  }
+
+//  def desifySub(subscription: Subscription)= {
+//    when(mockSubscription.desify(matching(defaultSubscription))) thenReturn subscription
+//  }
 
   def returnsPendingCheck(returnPeriods : List[ReturnPeriod]): OngoingStubbing[Future[List[ReturnPeriod]]] = {
     when(mockSdilConnector.returns_pending(matching("utrNumber1234"))(any())) thenReturn Future.successful(returnPeriods)

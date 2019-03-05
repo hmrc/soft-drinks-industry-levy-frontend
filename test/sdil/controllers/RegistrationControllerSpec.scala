@@ -69,7 +69,8 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
         ),
         "utr"
       )
-
+      submitRegistration()
+//      desifySub(defaultSubscription.copy(orgType = "7"))
       val program = controller.program(formData)(request, hc)
       val output = controllerTester.testJourney(program)(
         "contact-details" -> Json.obj(
@@ -86,9 +87,10 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
         "package-own-uk" -> Json.obj("lower" -> 1000000, "higher" -> 2000000),
         "package-copack" -> Json.obj("lower" -> 110000, "higher" -> 130000),
         "organisation-type" -> JsString("limitedCompany"),
-        "producer" -> JsString("Large")
+        "producer" -> JsString("Large"),
+        "declaration" -> JsNull
       )
-      status(output) mustBe SEE_OTHER
+      status(output) mustBe OK
     }
 
     "execute main program and fail js validation when ask-secondary-warehouse is passed as a string" in {

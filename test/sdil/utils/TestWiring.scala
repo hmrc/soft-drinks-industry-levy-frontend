@@ -33,7 +33,7 @@ import sdil.config.RegistrationFormDataCache
 import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector}
 import sdil.controllers.{ReturnsController, SdilWMController}
 import sdil.models.ReturnPeriod
-import sdil.models.backend.{Contact, Site, UkAddress}
+import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
@@ -49,6 +49,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait TestWiring extends MockitoSugar {
   val returnPeriods = List(ReturnPeriod(2018,1), ReturnPeriod(2019, 1))
+
+  val defaultSubscription: Subscription = {
+    Subscription(
+      "1234567890",
+      "Patel's Sugary Syrup",
+      "limited company",
+      UkAddress(List("41", "my street", "my town", "my county"), "BN4 4GT"),
+      Activity(None, None, None, None, true),
+      LocalDate.of(2018,4,6),
+      Nil,
+      Nil,
+      Contact(Some("Rooty Tooty"), Some("Head of Household"), "01517362873", "a@a.com"))
+  }
 
   val mockCache: RegistrationFormDataCache = {
     val m = mock[RegistrationFormDataCache]
@@ -103,11 +116,11 @@ trait TestWiring extends MockitoSugar {
     when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.retrieveSubscription(any(),any())(any())).thenReturn(Future.successful(None))
     when(m.retrieveSubscription(matching("XZSDIL000100107"),any())(any())).thenReturn(Future.successful(Some(aSubscription)))
-    //when(m.returns_pending(any())(any())).thenReturn(Future.successful(Nil))
+    when(m.returns_pending(any())(any())).thenReturn(Future.successful(Nil))
     when(m.returns_variable(any())(any())).thenReturn(Future.successful(returnPeriods))
     when(m.returns_vary(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_update(any(), any(), any())(any())).thenReturn(Future.successful(()))
-    //when(m.returns_get(any(),any())(any())).thenReturn(Future.successful(None))
+    when(m.returns_get(any(),any())(any())).thenReturn(Future.successful(None))
     when(m.returns_variation(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.submitVariation(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.balanceHistory(any(),any())(any())).thenReturn(Future.successful(Nil))
@@ -115,9 +128,19 @@ trait TestWiring extends MockitoSugar {
     when(m.shortLiveCache) thenReturn cacheMock
     when(cacheMock.fetchAndGetEntry[Any](any(),any())(any(),any(),any())).thenReturn(Future.successful(None))
     when(m.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
+    when(m.submit(any(), any())(any())) thenReturn Future.successful(())
     m
   }
 
+  lazy val mockRegistrationFormDataCache = {
+
+  }
+
+//  lazy val mockSubscription: Subscription.type = {
+//    val m = mock[Subscription]
+//    when(m.desify(defaultSubscription)) thenReturn defaultSubscription
+//    m
+//  }
 //  lazy val mockCachedFuture: OngoingStubbing[Future[Nothing] => WebMonad[Nothing]] = {
 //    val m = mock[webmonad.type]
 //    when(m.cachedFuture(any())) thenReturn WebMonad[]
