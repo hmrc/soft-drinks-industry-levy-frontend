@@ -519,9 +519,9 @@ class VariationsControllerSpec extends ControllerSpec {
     when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
       Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
     }
-    when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), anyString())(any())).thenReturn {
-      Future.successful(Some(aSubscription))
-    }
+    //when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), anyString())(any())).thenReturn {
+    //  Future.successful(Some(aSubscription))
+    //}
 
     val result = controller.adjustment(2018, 1, "idType").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
     //status(result) mustEqual NOT_FOUND

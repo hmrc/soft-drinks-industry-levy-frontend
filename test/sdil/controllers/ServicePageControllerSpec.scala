@@ -27,7 +27,7 @@ import play.api.i18n.Messages
 import play.api.i18n.Messages.Message
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.models.{FinancialLineItem, ReturnCharge, SdilReturn}
+import sdil.models.{FinancialLineItem, ReturnCharge, ReturnPeriod, SdilReturn}
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
@@ -41,17 +41,17 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
   "Service page controller" should {
     // TODO - we think there may be a bug with the instantiation of objects in macwire? ignoring tests.
     "return Status: OK for displaying service page" in {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000033")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000033"), anyString())(any())).thenReturn {
         Future.successful(Some(validRetrievedSubscription))
       }
 
-      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
-      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+      when(mockSdilConnector.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
@@ -66,17 +66,17 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     }
 
     "return Status: OK for displaying service page and voluntary information for voluntary registration" in {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000033")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000033"), anyString())(any())).thenReturn {
         Future.successful(Some(validVoluntaryRetrievedSubscription))
       }
 
-      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
-      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+      when(mockSdilConnector.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
@@ -88,17 +88,17 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     }
 
     "return Status: OK for displaying service page and packaging sites for users who registered them" in {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000033")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000033"), anyString())(any())).thenReturn {
         Future.successful(Some(validPackagingRetrievedSubscription))
       }
 
-      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
-      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+      when(mockSdilConnector.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
@@ -111,17 +111,17 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     }
 
     "return Status: OK for displaying service page and warehouses for users who registered them" in {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000033")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000033"), anyString())(any())).thenReturn {
         Future.successful(Some(validWarehouseRetrievedSubscription))
       }
 
-      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
-      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+      when(mockSdilConnector.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
@@ -134,20 +134,19 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     }
 
     "return Status: NOT_FOUND for displaying service page with no enrolment" in {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000033")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
-        Future.successful(None)
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000033"), anyString())(any())).thenReturn {
+        Future.successful(Some(validRetrievedSubscription))
       }
 
-      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
-      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+      when(mockSdilConnector.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
-
       val request = FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue")
       val result = testController.show.apply(request)
 
@@ -155,23 +154,23 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     }
 
     "check balanceHistory flow" in {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000022")
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000033")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000022"), anyString())(any())).thenReturn {
-        Future.successful(None)
+      when(mockSdilConnector.retrieveSubscription(matching("XKSDIL000000033"), anyString())(any())).thenReturn {
+        Future.successful(Some(validRetrievedSubscription))
       }
 
-      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
-      when(mockSdilConnector.returns_get(matching("0000000022"), any())(any())).thenReturn {
+      when(mockSdilConnector.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
       val financiaItem = new ReturnCharge(returnPeriods.head, BigDecimal(12))
       val financialItemList = List(financiaItem)
-      when(mockSdilConnector.balanceHistory(matching("XKSDIL000000022"), anyBoolean())(any())).thenReturn(Future.successful(financialItemList))
+      when(mockSdilConnector.balanceHistory(matching("XKSDIL000000033"), anyBoolean())(any())).thenReturn(Future.successful(financialItemList))
 
       val request = FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue")
       val result = testController.balanceHistory.apply(request)
@@ -181,8 +180,8 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
   }
 
   val validRetrievedSubscription = RetrievedSubscription(
-    "0000000022",
-    "XKSDIL000000022",
+    "0000000033",
+    "XKSDIL000000033",
     "Cliff's Limonard",
     UkAddress(List("1", "The Road"), "AA11 1AA"),
     RetrievedActivity(false, false, true, false, false),
@@ -193,7 +192,8 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       Some("A person"),
       Some("A position"),
       "1234",
-      "aa@bb.cc")
+      "aa@bb.cc"),
+    Some(LocalDate.now.plusDays(30))
   )
 
   val validVoluntaryRetrievedSubscription = validRetrievedSubscription.copy(activity = RetrievedActivity(false, true, true, false, true))

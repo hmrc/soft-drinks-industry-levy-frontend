@@ -74,8 +74,6 @@ class ServicePageController(
 
   def balanceHistory: Action[AnyContent] = registeredAction.async { implicit request =>
 
-    println("MOHAN >>>> " + request.sdilEnrolment.value)
-
     val sdilRef = request.sdilEnrolment.value
 
     sdilConnector.balanceHistory(sdilRef, withAssessment = true) >>= { items =>
@@ -85,6 +83,7 @@ class ServicePageController(
       val ret = for {
         subscription <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
         deregCheck = subscription.deregDate.getOrElse(LocalDate.now.plusYears(100))
+
         pendingDereg <- OptionT(sdilConnector.returns_get(subscription.utr, ReturnPeriod(deregCheck)).map(_.some))
       } yield {
         Ok(
