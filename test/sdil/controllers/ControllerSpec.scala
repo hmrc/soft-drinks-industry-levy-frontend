@@ -49,11 +49,15 @@ trait ControllerSpec extends FakeApplicationSpec {
     }
   }
 
-  def getSubscription(retrievedSubscription: RetrievedSubscription) = {
+  def returnsPendingCheck(returnPeriods : List[ReturnPeriod]): OngoingStubbing[Future[List[ReturnPeriod]]] = {
+    when(mockSdilConnector.returns_pending(matching("utrNumber1234"))(any())) thenReturn Future.successful(returnPeriods)
+  }
+
+  def getSubscription(retrievedSubscription: RetrievedSubscription): OngoingStubbing[Future[Option[RetrievedSubscription]]] = {
     when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"),any())(any())).thenReturn(Future.successful(Some(retrievedSubscription)))
   }
 
-  def checkSmallProdStatus(isSmall: Boolean) = {
+  def checkSmallProdStatus(isSmall: Boolean): OngoingStubbing[Future[Boolean]] = {
     when(
       mockSdilWMController.isSmallProducer(
         matching("XPSDIL000000205"),
@@ -74,19 +78,17 @@ trait ControllerSpec extends FakeApplicationSpec {
     }
   }
 
-  def balanceHistory(financialData: List[FinancialLineItem])= {
+  def balanceHistory(financialData: List[FinancialLineItem]): OngoingStubbing[Future[List[FinancialLineItem]]] = {
     when(mockSdilConnector.balanceHistory(any(),any())(any())).thenReturn{
       Future.successful(financialData)
     }
   }
 
-  def balance(balance: BigDecimal) = {
+  def balance(balance: BigDecimal): OngoingStubbing[Future[BigDecimal]] = {
     when(mockSdilConnector.balance(any(), any())(any())).thenReturn{
       Future.successful(balance)
     }
   }
-
-
 
   def stubFormPage(
       rosmData: RosmRegistration = defaultRosmData,

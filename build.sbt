@@ -52,7 +52,7 @@ coverageExcludedPackages := Seq(
   "variations.Routes"
 ).mkString(";")
 coverageExcludedFiles := "<empty>;.*BuildInfo.*;.*Routes.*;.*GDS.*;.*GdsComponents.*;.*WebMonadPersistence.*;" +
-  ".*SiteRef.*;.*ShowTitle.*;.*MoneyFormat.*;.*MappingWithExtraConstraint.*;"
+  ".*SiteRef.*;.*ShowTitle.*;.*MoneyFormat.*;.*MappingWithExtraConstraint.*;.*AuthenticationController.*;"
 coverageMinimum := 80
 coverageFailOnMinimum := false
 coverageHighlighting := true

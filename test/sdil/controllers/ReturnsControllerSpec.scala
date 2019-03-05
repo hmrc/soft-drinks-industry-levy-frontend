@@ -274,7 +274,7 @@ class ReturnsControllerSpec extends ControllerSpec {
       status(result) mustEqual SEE_OTHER
 
     }
-    
+
     "execute main program as a vol man user with secondary warehouses" in {
       def subProgram: WebMonad[Result] = controller.program(validReturnPeriod, volManSub, validSdilRef, false, validId)(hc)
 
