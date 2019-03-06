@@ -255,8 +255,6 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
   val validWarehouseRetrievedSubscription = validRetrievedSubscription.copy(productionSites = Nil)
 
-  val sdilReturn = SdilReturn((0,0), (0,0), List.empty, (0,0), (0,0), (0,0), (0,0))
-
   lazy val testController: ServicePageController = wire[ServicePageController]
 
   lazy val mockSdilConnectorSPA: SoftDrinksIndustryLevyConnector = {

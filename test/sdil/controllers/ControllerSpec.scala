@@ -62,6 +62,12 @@ trait ControllerSpec extends FakeApplicationSpec {
     when(mockSdilConnector.returns_pending(matching("utrNumber1234"))(any())) thenReturn Future.successful(returnPeriods)
   }
 
+  def getOneReturn(sdilReturn: SdilReturn): OngoingStubbing[Future[Option[SdilReturn]]] = {
+    when(
+      mockSdilConnector.returns_get(matching("0000000022"),
+        matching(ReturnPeriod(2018,1)))(any())) thenReturn Future.successful(Some(sdilReturn))
+  }
+
   def getSubscription(retrievedSubscription: RetrievedSubscription): OngoingStubbing[Future[Option[RetrievedSubscription]]] = {
     when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"),any())(any())).thenReturn(Future.successful(Some(retrievedSubscription)))
   }

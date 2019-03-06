@@ -32,7 +32,7 @@ import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.config.RegistrationFormDataCache
 import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector}
 import sdil.controllers.{ReturnsController, SdilWMController}
-import sdil.models.ReturnPeriod
+import sdil.models.{ReturnPeriod, SdilReturn}
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
@@ -108,6 +108,7 @@ trait TestWiring extends MockitoSugar {
     "Super Lemonade Plc",
     UkAddress(List("63 Clifton Roundabout", "Worcester"),"WR53 7CX"),RetrievedActivity(false,true,false,false,false),LocalDate.of(2018,4,19),List(Site(UkAddress(List("33 Rhes Priordy", "East London"),"E73 2RP"),Some("88"),Some("Wild Lemonade Group"),Some(LocalDate.of(2018,2,26))), Site(UkAddress(List("117 Jerusalem Court", "St Albans"),"AL10 3UJ"),Some("87"),Some("Highly Addictive Drinks Plc"),Some(LocalDate.of(2019,8,19))), Site(UkAddress(List("87B North Liddle Street", "Guildford"),"GU34 7CM"),Some("94"),Some("Monster Bottle Ltd"),Some(LocalDate.of(2017,9,23))), Site(UkAddress(List("122 Dinsdale Crescent", "Romford"),"RM95 8FQ"),Some("27"),Some("Super Lemonade Group"),Some(LocalDate.of(2017,4,23))), Site(UkAddress(List("105B Godfrey Marchant Grove", "Guildford"),"GU14 8NL"),Some("96"),Some("Star Products Ltd"),Some(LocalDate.of(2017,2,11)))),List(),Contact(Some("Ava Adams"),Some("Chief Infrastructure Agent"),"04495 206189","Adeline.Greene@gmail.com"),None)
 
+  val sdilReturn = SdilReturn((0,0), (0,0), List.empty, (0,0), (0,0), (0,0), (0,0))
 
   lazy val cacheMock = mock[ShortLivedHttpCaching]
 

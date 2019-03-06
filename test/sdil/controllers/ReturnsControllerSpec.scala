@@ -304,6 +304,7 @@ class ReturnsControllerSpec extends ControllerSpec {
     }
   }
 
+
   lazy val controller: ReturnsController = wire[ReturnsController]
   lazy val controllerTester = new UniformControllerTester(controller)
 

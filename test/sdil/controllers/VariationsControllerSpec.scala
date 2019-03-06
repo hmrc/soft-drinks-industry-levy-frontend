@@ -50,6 +50,7 @@ import java.time.LocalDate
 
 import org.mockito.Mock
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
+import sdil.connectors._
 
 class VariationsControllerSpec extends ControllerSpec {
 
@@ -329,12 +330,12 @@ class VariationsControllerSpec extends ControllerSpec {
         "checkyouranswers" -> JsString("Done")
       )
 
-      println(Await.result(output, 10 seconds))
-
       1 mustBe 1
     }
 
     "execute the variations journey for change type value Returns" in {
+
+      //TODO Adam come back and fix this test so it traverses through the returns journey
       val program = controller.programInner(
         aSubscription,
         aSubscription.sdilRef,
@@ -344,8 +345,8 @@ class VariationsControllerSpec extends ControllerSpec {
 
       val output = controllerTester.testJourney(program)(
         "select-change" -> JsString("Returns"),
-//        "select-return" -> Json.toJson(2018,1),
-        "packaging-site-details" -> JsString("Done"),
+        "select-return" -> JsString("20181"),
+        "packaging(any()-site-details" -> JsString("Done"),
         "production-site-details" -> JsString("Done"),
         "secondary-warehouse-details" -> JsString("Done"),
         "packaging-site" -> Json.obj("lower" -> 123, "higher" -> 234),
@@ -364,10 +365,20 @@ class VariationsControllerSpec extends ControllerSpec {
         )),
         "imports" -> Json.obj("lower" -> 12345, "higher" -> 34668),
         "check-answers" -> JsString("Done"),
-        "checkyouranswers" -> JsString("Done")
+        "checkyouranswers" -> JsString("Done"),
+        "own-brands-packaged-at-own-sites" -> Json.obj("lower" -> 123234, "higher" -> 2340000),
+        "packaged-as-a-contract-packer" -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
+        "_editSmallProducers" -> Json.toJson(true),
+        "exemptions-for-small-producers" -> Json.toJson(false),
+        "small-producer-details" -> JsString("Done"),
+        "brought-into-uk" -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
+        "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
+        "claim-credits-for-exports" -> Json.obj("lower" -> 6789, "higher" -> 2345),
+        "claim-credits-for-lost-damaged" -> Json.obj("lower" -> 123, "higher" -> 234)
       )
 
       returnsDataCheck(returnPeriods)
+      getOneReturn(sdilReturn)
 
       status(output) mustBe SEE_OTHER
     }
