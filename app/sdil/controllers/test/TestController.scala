@@ -28,8 +28,11 @@ class TestController @Inject()(cache: RegistrationFormDataCache,
 
   def clearAllS4LEntries(): Action[AnyContent] = authorisedAction.async {
     implicit request =>
-      cache.clear(request.internalId) map {
-        _ => Ok(s"S4L for user id ${request.internalId} cleared")
-      }
+      for {
+        _ <- cache.clear(request.internalId)
+        _ <- cache.clearInternalIdOnly(request.internalId)
+      } yield {
+          Ok(s"S4L for user id ${request.internalId} cleared")
+        }
   }
 }
