@@ -28,6 +28,7 @@ import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
 import uk.gov.hmrc.play.bootstrap.config.Base64ConfigDecoder
 import uk.gov.hmrc.play.bootstrap.http.RequestHandler
+import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
 import uk.gov.hmrc.play.health.HealthController
 
 import scala.concurrent.ExecutionContext
@@ -56,5 +57,9 @@ class SDILComponents(context: Context)
   lazy val adminController: HealthController = wire[HealthController]
   lazy val templateController: Template = wire[Template]
 
-  lazy val customInjector: Injector = new SimpleInjector(injector) + templateController + adminController + wsApi
+  lazy val optimizelyConfig: OptimizelyConfig = new OptimizelyConfig(configuration)
+  lazy val assetConfig: AssetsConfig = new AssetsConfig(configuration)
+  lazy val gtmConfig: GTMConfig = new GTMConfig(configuration)
+
+  lazy val customInjector: Injector = new SimpleInjector(injector) + templateController + adminController + wsApi + optimizelyConfig + assetConfig + gtmConfig
 }

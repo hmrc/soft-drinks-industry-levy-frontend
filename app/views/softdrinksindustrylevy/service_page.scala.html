@@ -17,7 +17,7 @@
 @import sdil.config.AppConfig
 @import sdil.models.backend.UkAddress
 @import views.html.softdrinksindustrylevy.helpers._
-@import sdil.models._
+@import sdil.models.Address
 @import sdil.models.backend.Subscription
 @import sdil.models.RegistrationFormData
 @import sdil.models.retrieved.RetrievedSubscription
@@ -26,6 +26,8 @@
 @import java.time.LocalDateTime
 @import java.time.LocalDate
 @import java.time.ZoneId
+@import sdil.models.ReturnPeriod
+@import sdil.models.SdilReturn
 
 @(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, interest: BigDecimal = 0)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
