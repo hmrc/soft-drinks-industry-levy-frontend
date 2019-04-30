@@ -55,7 +55,7 @@ trait ReturnJourney extends SdilWMController {
                                editSingleForm = Some((smallProducer(sdilRef, sdilConnector, period, getSmallProdsFromJs(smallProdsJs), id.getOrElse("")), smallProducerForm)),
                                configOverride = _.copy(mode = if(editMode) SingleStep else (LeapAhead))
                               )(implicitly, implicitly, implicitly, ShowBackLink(true)) emptyUnless opt
-      _               <- write[Boolean]("_editSmallProducers", true)
+      _               <- write[Boolean]("_editSmallProducers", false)
     } yield { smallProds }
 
     for {
