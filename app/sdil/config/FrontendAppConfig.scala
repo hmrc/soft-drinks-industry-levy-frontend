@@ -25,7 +25,6 @@ trait AppConfig {
   val analyticsHost: String
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
-  val betaFeedbackUrlAuth: String
   val ggLoginUrl: String
   val signoutRegVarUrl: String
   val signoutReturnsUrl: String
@@ -47,7 +46,6 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, environment: En
   override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  override lazy val betaFeedbackUrlAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
 
   //Auth related config
   lazy val appName: String = loadConfig("appName")
