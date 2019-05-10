@@ -99,18 +99,10 @@
 
 @footerTop = {}
 
-@betaBanner = {
-    <div class="phase-banner">
-        <p>
-            <strong class="phase-tag">@Messages("sdil.common.beta")</strong>
-            @Html(Messages("sdil.common.alpha-info", appConfig.betaFeedbackUrlAuth))
-        </p>
-    </div>
-}
 
 @serviceInfo = {
 @uiLayouts.serviceInfo(
-    betaBanner = betaBanner,
+    betaBanner = HtmlFormat.empty,
     includeGridWrapper = false,
     serviceInfoContent = Some(serviceInfoContent))
 }
