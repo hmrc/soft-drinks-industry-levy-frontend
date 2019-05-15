@@ -60,7 +60,7 @@ coverageHighlighting := true
 
 
 libraryDependencies ++= Seq(
-  "uk.gov.hmrc"            %% "hmrctest"           % "3.4.0-play-25",
+  "uk.gov.hmrc"            %% "hmrctest"           % "3.8.0-play-25",
   "org.scalatest"          %% "scalatest"          % "3.0.5",
   "org.pegdown"            % "pegdown"             % "1.6.0",
   "org.jsoup"              % "jsoup"               % "1.11.3",
@@ -78,15 +78,15 @@ scalaVersion := "2.11.12"
 
 libraryDependencies ++= Seq(
   ws,
-  "uk.gov.hmrc"               %% "bootstrap-play-25"              % "4.8.0",
-  "uk.gov.hmrc"               %% "domain"                         % "5.3.0",
+  "uk.gov.hmrc"               %% "bootstrap-play-25"              % "4.11.0",
+  "uk.gov.hmrc"               %% "domain"                         % "5.6.0-play-25",
   "uk.gov.hmrc"               %% "govuk-template"                 % "5.22.0",
-  "uk.gov.hmrc"               %% "play-ui"                        % "7.17.0",
-  "uk.gov.hmrc"               %% "play-partials"                  % "6.3.0",
+  "uk.gov.hmrc"               %% "play-ui"                        % "7.39.0-play-25",
+  "uk.gov.hmrc"               %% "play-partials"                  % "6.9.0-play-25",
   "com.typesafe.play"         %% "play-json"                      % "2.5.18",
   "org.scalactic"             %% "scalactic"                      % "3.0.5",
-  "uk.gov.hmrc"               %% "auth-client"                    % "2.19.0-play-25",
-  "uk.gov.hmrc"               %% "http-caching-client"            % "8.0.0",
+  "uk.gov.hmrc"               %% "auth-client"                    % "2.20.0-play-25",
+  "uk.gov.hmrc"               %% "http-caching-client"            % "8.3.0",
   "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "0.2.0",
   "com.softwaremill.macwire"  %% "macros"                         % "2.3.1" % "provided",
   "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.1" % "provided",

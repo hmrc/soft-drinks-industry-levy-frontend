@@ -36,32 +36,32 @@
             <h1 class="service-header">
                 @Messages("sdil.updateBusinessAddresses.heading")
             </h1>
-                @declaration_table("service-page", "business-details.title") {
-                    @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
-                    <tr>
-                        <td>@Messages("sdil.verify.address")</td>
-                        <td>
+                @declaration_description_list("service-page", "business-details.title") {
+                    @declaration_description_term("verify", "organisation", None, s"${subscription.orgName}")
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">@Messages("sdil.verify.address")</dt>
+                        <dd class="govuk-summary-list__value">
                             @address.nonEmptyLines.init.map { l =>
-                                @l,<br/>
+                                <div>@l</div>
                             }
-                            @address.postcode
-                        </td>
-                    </tr>
+                            <div> @address.postcode</div>
+                        </dd>
+                    </div>
                 }
 
             <button name="edit-business-address" value="@key" class="link-button change-address-button">
                 @Messages("sdil.updateBusinessAddresses.link.1")
             </button>
 
-            @declaration_table("service-page", "contact-details.title") {
+            @declaration_description_list("service-page", "contact-details.title") {
                 @subscription.contact.name.map { name =>
-                    @declaration_details_table_row("service-page", "name", None, name)
+                    @declaration_description_term("service-page", "name", None, name)
                 }
                 @subscription.contact.positionInCompany.map { position =>
-                    @declaration_details_table_row("service-page", "job-title", None, position)
+                    @declaration_description_term("service-page", "job-title", None, position)
                 }
-                @declaration_details_table_row("service-page", "telephone", None, s"${subscription.contact.phoneNumber}")
-                @declaration_details_table_row("service-page", "email", None, s"${subscription.contact.email}")
+                @declaration_description_term("service-page", "telephone", None, s"${subscription.contact.phoneNumber}")
+                @declaration_description_term("service-page", "email", None, s"${subscription.contact.email}")
             }
 
             <button name="edit-contact-details" value="@key" class="link-button change-address-button">
@@ -69,8 +69,7 @@
             </button>
 
             @if(subscription.productionSites.nonEmpty) {
-                <h2 class="heading-medium return-button-padding">@Messages("sdil.updateBusinessAddresses.packaging.title")</h2>
-                @service_sites(subscription.productionSites, "packaging")
+                @service_sites("packaging", subscription.productionSites, "packaging")
 
                 <button name="edit-packaging-sites" value="@key" class="link-button change-address-button">
                     @Messages("sdil.updateBusinessAddresses.link.3")
@@ -78,8 +77,7 @@
             }
 
             @if(subscription.warehouseSites.nonEmpty) {
-                <h2 class="heading-medium return-button-padding">@Messages("sdil.updateBusinessAddresses.warehouses.title")</h2>
-                @service_sites(subscription.warehouseSites, "warehouse")
+                @service_sites("warehouses", subscription.warehouseSites, "warehouse")
                 
                 <button name="edit-warehouses" value="@key" class="link-button change-address-button">
                     @Messages("sdil.updateBusinessAddresses.link.4")

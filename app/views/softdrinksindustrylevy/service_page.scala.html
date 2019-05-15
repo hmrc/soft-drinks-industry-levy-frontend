@@ -17,7 +17,7 @@
 @import sdil.config.AppConfig
 @import sdil.models.backend.UkAddress
 @import views.html.softdrinksindustrylevy.helpers._
-@import sdil.models._
+@import sdil.models.Address
 @import sdil.models.backend.Subscription
 @import sdil.models.RegistrationFormData
 @import sdil.models.retrieved.RetrievedSubscription
@@ -26,11 +26,12 @@
 @import java.time.LocalDateTime
 @import java.time.LocalDate
 @import java.time.ZoneId
+@import sdil.models.ReturnPeriod
+@import sdil.models.SdilReturn
 
 @(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, interest: BigDecimal = 0)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-
-@main_template(Messages("sdil.registered.title"), noArticle = true) {
+@main_template(Messages("sdil.service-page.title"), noArticle = true) {
     <div class="grid-row">
         <div class="column-two-thirds">
             <span class="govuk-caption-xl service-comp-name">
@@ -43,7 +44,13 @@
             @if(subscription.activity.voluntaryRegistration) {
                 <div class="panel panel-border-wide">
                     <p>@Messages("sdil.service-page.p2.voluntary-only")</p>
-                    <p>@Html(Messages("sdil.service-page.p3.voluntary-only", sdil.controllers.routes.VariationsController.changeActorStatus("")))</p>
+                    <p>@Html(
+                         Messages(
+                             "sdil.service-page.p3.voluntary-only",
+                             sdil.controllers.routes.VariationsController.changeActorStatus("")
+                         )
+                        )
+                    </p>
                 </div>
             } else {
                 @lastReturn.map { lr =>
@@ -65,7 +72,7 @@
 
                 @for(period <- periodsDue.take(1)) {
                     <div class="notice">
-                        <i class="icon icon-important" style="top: 43%">
+                        <i class="icon icon-important icon-image">
                             <span class="visually-hidden">@Messages("warning")</span>
                         </i>
                         <p>
@@ -176,20 +183,23 @@
             }
         ) { subKey =>
 
-            @declaration_table("service-page", "business-details.title", subKey) {
-                @declaration_details_table_row("service-page", "sdil-ref", None, s"$sdilReference")
-                @declaration_details_table_row("verify", "utr", None, s"${subscription.utr}")
-                @declaration_details_table_row("verify", "organisation", None, s"${subscription.orgName}")
 
-                <tr>
-                    <td>@Messages("sdil.verify.address")</td>
-                    <td>
+            @declaration_description_list("service-page", "business-details.title", subKey) {
+             @declaration_description_term("service-page", "sdil-ref", None, s"$sdilReference")
+             @declaration_description_term("verify", "utr", None, s"${subscription.utr}")
+             @declaration_description_term("verify", "organisation", None, s"${subscription.orgName}")
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @Messages("sdil.verify.address")
+                    </dt>
+                    <dd class="govuk-summary-list__value">
                         @address.nonEmptyLines.init.map { l =>
-                            @l<br/>
+                            <div>@l</div>
                         }
-                        @address.postcode
-                    </td>
-                </tr>
+                        <div>@address.postcode</div>
+                    </dd>
+                </div>
             }
         }
 
@@ -224,12 +234,12 @@
         <div class="section--blue-top">
             <h2 class="heading-small">@Messages("sdil.service-page.support.title2")</h2>
 
-            <a href='@Messages("sdil.service-page.support.link1")'
+            <a href='@Messages("sdil.service-page.support.link1")' target="_blank"
             onclick="ga('send', 'event', 'moreLinks', 'click', 'guidance')">
                 <p>@Messages("sdil.service-page.support.p3")</p>
             </a>
 
-            <a href='@Messages("sdil.service-page.support.link2")'
+            <a href='@Messages("sdil.service-page.support.link2")' target="_blank"
             onclick="ga('send', 'event', 'moreLinks', 'click', 'legislation')">
                 <p>@Messages("sdil.service-page.support.p4")</p>
             </a>

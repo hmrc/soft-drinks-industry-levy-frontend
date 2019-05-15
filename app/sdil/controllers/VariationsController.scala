@@ -233,6 +233,7 @@ class VariationsController(
   private def fileReturnsBeforeDereg[A](returnPeriods: List[ReturnPeriod], data: RegistrationVariationData) =
     for {
       sendToReturns <- tell("file-return-before-deregistration", uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods))
+      _ <- clear
       _ <- resultToWebMonad[A](Redirect(routes.ServicePageController.show()))
     } yield data
 
@@ -274,7 +275,7 @@ class VariationsController(
         case Some(ChangeType.Activity) => activityUpdate(base, subscription, returnPeriods)
         case Some(ChangeType.Deregister) if returnPeriods.isEmpty || isVoluntary =>
           deregisterUpdate(base)
-        case Some(ChangeType.Deregister) if returnPeriods.nonEmpty || !isVoluntary =>
+        case Some(ChangeType.Deregister) =>
           fileReturnsBeforeDereg(returnPeriods, base)
       }
 

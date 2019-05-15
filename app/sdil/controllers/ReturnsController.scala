@@ -87,7 +87,6 @@ class ReturnsController (
         )
       }
 
-
     val returnDate = messages(
       "return-sent.returnsDoneMessage",
       period.start.format("MMMM"),

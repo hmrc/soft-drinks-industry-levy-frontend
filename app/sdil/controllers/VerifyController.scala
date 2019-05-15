@@ -79,7 +79,7 @@ class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormData
 object VerifyController extends FormHelpers {
   val form: Form[DetailsCorrect] = Form(
     mapping(
-      "detailsCorrect" -> oneOf(DetailsCorrect.options, "error.radio-form.choose-option.continue"),
+      "detailsCorrect" -> oneOf(DetailsCorrect.options, "sdil.verify.error.choose-option"),
       "alternativeAddress" -> mandatoryIf(isEqual("detailsCorrect", "differentAddress"), addressMapping)
     )(DetailsCorrect.apply)(DetailsCorrect.unapply)
   )

@@ -4,9 +4,6 @@ sdil.common.back=Back
 sdil.common.save-continue=Save and continue
 sdil.common.save=Save
 sdil.common.errorSummary=There is a problem
-sdil.common.alpha=ALPHA
-sdil.common.beta=BETA
-sdil.common.alpha-info=<span>This is a new service – your <a href="{0}">feedback</a> will help us to improve it.</span>
 sdil.common.or=Or
 sdil.common.yes=Yes
 sdil.common.no=No
@@ -67,6 +64,9 @@ sdil.verify.address.line2=Address line 2
 sdil.verify.address.line3=Address line 3
 sdil.verify.address.line4=Address line 4
 sdil.verify.postcode=Postcode
+sdil.verify.error.choose-option=Select if this is the business you want to register, if you want to register \
+  this business but want to add a new contact address for the Soft Drinks Industry Levy, or if you need to sign in \
+  using a different Government Gateway user ID
 
 #Registration pending
 sdil.registration-pending.title=You have already sent an application
@@ -320,12 +320,18 @@ sdil.registerDeclaration.low-band=Low band
 sdil.registerDeclaration.high-band=High band
 sdil.registerDeclaration.packaging=Package your own brand at your own sites?
 sdil.registerDeclaration.package-own-uk=Litres in next 12 months
+sdil.registerDeclaration.package-own-uk.low=Litres in the low band for next 12 months
+sdil.registerDeclaration.package-own-uk.high=Litres in the high band for next 12 months
 sdil.registerDeclaration.customerVol=Litres in next 12 months
+sdil.registerDeclaration.customerVol.low=Litres in the low band for next 12 months
+sdil.registerDeclaration.customerVol.high=Litres in the high band for next 12 months
 sdil.registerDeclaration.small-producers=Annual litres for small producers
 sdil.registerDeclaration.third-party=Use third party packagers?
 sdil.registerDeclaration.third-party-produced=Annual litres packaged by third parties
 sdil.registerDeclaration.import=Bring liable drinks into the UK?
 sdil.registerDeclaration.import-volume=Litres in next 12 months
+sdil.registerDeclaration.import-volume.low=Litres in the low band for next 12 months
+sdil.registerDeclaration.import-volume.high=Litres in the low band for next 12 months
 sdil.registerDeclaration.liable-date=Soft Drinks Industry Levy liability date
 sdil.registerDeclaration.date=Date liable from
 sdil.registerDeclaration.registered-sites=Registered UK sites
@@ -418,9 +424,9 @@ sdil.service-page.support.p1=Contact Soft Drinks Industry Levy support.
 sdil.service-page.support.p2=Telephone: 0300 200 3700
 sdil.service-page.support.title2=More options
 sdil.service-page.support.link1=https://www.gov.uk/guidance/soft-drinks-industry-levy
-sdil.service-page.support.p3=Soft Drinks Industry Levy guidance
+sdil.service-page.support.p3=Soft Drinks Industry Levy guidance (opens in a new window or tab)
 sdil.service-page.support.link2=https://www.legislation.gov.uk/uksi/2018/41/made
-sdil.service-page.support.p4=Draft Legislation: Soft Drinks Industry Levy
+sdil.service-page.support.p4=Draft Legislation: Soft Drinks Industry Levy (opens in a new window or tab)
 sdil.service-page.support.p5=Soft Drink Industry Levy general enquiries:
 sdil.service-page.support.p6=0300 200 3700
 sdil.service-page.variations.title=Manage your account
@@ -432,14 +438,12 @@ sdil.service-page.variations.subtitle.4=Manage notifications
 sdil.service-page.variations.p1=Add or remove a small producer, and keep their details up-to-date.
 sdil.service-page.variations.p2=Update your contact details, warehouses or packaging sites.
 sdil.service-page.variations.p3=Tell HMRC when you:
-sdil.service-page.variations.p4=Opt in to or stop receiving notifications about the Soft Drinks Industry Levy.
 sdil.service-page.variations.vary-returns-dereg=Correct an error in a previous return
 sdil.service-page.variations.li.1=correct an error in a previous return
 sdil.service-page.variations.li.2=change your registered business activities
 sdil.service-page.variations.li.3=start or stop using a warehouse or packaging site
 sdil.service-page.variations.li.4=cancel your registration for the Soft Drinks Industry Levy
 sdil.service-page.variations.change=Tell HMRC about a change
-sdil.service-page.variations.p4=Changes can take up to 15 working days to process.
 
 sdil.service-page.reregister.title=Register again for the Soft Drinks Industry Levy
 sdil.service-page.reregister.p1=If you become liable for the levy again, you will need to <a href="{0}">register.</a>
@@ -576,19 +580,6 @@ error.radio-form.choose-option.claim-credits-for-lost-damaged=Select yes if you 
 error.radio-form.choose-one-option=Select at least one option to continue
 error.no-such-element=Sorry, we are experiencing technical difficulties
 
-# Beta registration
-sdil.register-for-beta.title=Sign up to register early
-sdil.register-for-beta.fullName=Contact name
-sdil.register-for-beta.businessName=Business name
-sdil.register-for-beta.email=Email address
-sdil.register-for-beta.utr=Unique Taxpayer Reference (UTR) number
-sdil.register-for-beta.phone=Telephone number
-sdil.beta.register=Send
-sdil.register-for-beta.p1=We have reached the maximum number of businesses that can sign up to register early. However, \
-if you leave your email address we will contact you if any more spaces become available.
-
-sdil.beta-registration-confirmed.title=Thank you
-sdil.beta-registration-confirmed.p1=We will contact you if more spaces become available.
 error.businessName.required=Enter a business name
 
 #Variations retrieved summary
@@ -1153,13 +1144,28 @@ check-your-answers.total=Total
 check-your-answers.low=Low
 check-your-answers.high=High
 check-your-answers.change=Change
-check-your-answers.change.own-brands-packaged-at-own-sites=Change volume of own brand
-check-your-answers.change.exemptions-for-small-producers=Change volume contract packed for registered small producers
-check-your-answers.change.packaged-as-a-contract-packer=Change volume contract packed at your own site
-check-your-answers.change.brought-into-uk-from-small-producers=Change volume brought into the UK from small producers
-check-your-answers.change.brought-into-uk=Change volume brought into the UK
-check-your-answers.change.claim-credits-for-exports=Change volume exported
-check-your-answers.change.claim-credits-for-lost-damaged=Change volume lost, damaged or destroyed
+check-your-answers.change.own-brands-packaged-at-own-sites.low=Change volume of own brand for litres in low band
+check-your-answers.change.own-brands-packaged-at-own-sites.high=Change volume of own brand for litres in the high band
+check-your-answers.change.exemptions-for-small-producers.low=Change volume contract packed for registered small \
+  producers for litres in the low band
+check-your-answers.change.exemptions-for-small-producers.high=Change volume contract packed for registered small \
+  producers for litres in the high band
+check-your-answers.change.packaged-as-a-contract-packer.low=Change volume contract packed at your own site \
+  for litres in the low band
+check-your-answers.change.packaged-as-a-contract-packer.high=Change volume contract packed at your own site for \
+  litres in the high band
+check-your-answers.change.brought-into-uk-from-small-producers.low=Change volume brought into the UK from small \
+  producers for litres in the low band
+check-your-answers.change.brought-into-uk-from-small-producers.high=Change volume brought into the UK from small \
+  producers for litres in the high band
+check-your-answers.change.brought-into-uk.low=Change volume brought into the UK for litres in the low band
+check-your-answers.change.brought-into-uk.high=Change volume brought into the UK for litres in the high band
+check-your-answers.change.claim-credits-for-exports.low=Change volume exported for litres in the low band
+check-your-answers.change.claim-credits-for-exports.high=Change volume exported for litres in the high band
+check-your-answers.change.claim-credits-for-lost-damaged.low=Change volume lost, damaged or destroyed for litres in \
+  the low band
+check-your-answers.change.claim-credits-for-lost-damaged.high=Change volume lost, damaged or destroyed for litres in \
+  the high band
 check-return-changes.change.own-brands-packaged-at-own-sites=volume of own brand
 check-return-changes.change.exemptions-for-small-producers=volume contract packed for registered small producers
 check-return-changes.change.packaged-as-a-contract-packer=volume contract packed at your own site
@@ -1189,7 +1195,7 @@ return-sent.what-happens-next-heading=What you need to do next
 return-sent.returnsDoneMessage=Your Soft Drinks Industry Levy return for {0} to {1} {2} for {3} was sent at {4} on {5}.
 return-sent.servicePage=<p><a href="{0}">Go back to your Soft Drinks Industry Levy details</a></p>
 return-sent.paymentsBlurb.payby=You need to pay {0} by {1}.\
-  <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">See how to pay the levy</a>.
+  <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">See how to pay the levy (opens in new window or tab)</a>.
 return-sent.paymentsBlurb.payusing=Make sure you include your Soft Drinks Industry Levy reference <strong style="font-weight: bold">{0}</strong> \
   when making a payment.
 return-sent.paymentsBlurb.help-heading=Help using this service
@@ -1222,7 +1228,8 @@ returnsHome.help.p2=If the drink is dilutable, you must report the amount of rea
 returnsHome.help.p3=You can claim a credit for liable drinks that you have reported in either a previous or the current return that have been:
 returnsHome.help.li5=exported, or are expected to be exported
 returnsHome.help.li6=lost or destroyed
-returnsHome.help.guidance=You must get and keep <a href="{0}">certain types of evidence</a> to be able to claim a credit.
+returnsHome.help.guidance=<a href="{0}" target="_blank">You must get and keep certain types of evidence to be able \
+  to claim a credit (opens in a new window or tab)</a>.
 returnsHome.help.guidance.link=https://www.gov.uk/guidance/soft-drinks-industry-levy-credit-for-exported-lost-or-destroyed-drinks-notice-4
 returnsHome.dereg.final-return-title=Send final return
 returnsHome.dereg.final-return-p1=You must send a return for {0} to {1} before we can cancel your registration.
@@ -1336,6 +1343,29 @@ return-details.change.brought-into-uk-from-small-producers=Change volume brought
 return-details.change.brought-into-uk=Change volume brought into the UK
 return-details.change.claim-credits-for-exports=Change volume exported
 return-details.change.claim-credits-for-lost-damaged=Change volume lost, damaged or destroyed
+return-details.change.own-brands-packaged-at-own-sites.low=Change volume of own brand for litres in low band
+return-details.change.own-brands-packaged-at-own-sites.high=Change volume of own brand for litres in the high band
+return-details.change.exemptions-for-small-producers.low=Change volume contract packed for registered small \
+  producers for litres in the low band
+return-details.change.exemptions-for-small-producers.high=Change volume contract packed for registered small \
+  producers for litres in the high band
+return-details.change.packaged-as-a-contract-packer.low=Change volume contract packed at your own site \
+  for litres in the low band
+return-details.change.packaged-as-a-contract-packer.high=Change volume contract packed at your own site for \
+  litres in the high band
+return-details.change.brought-into-uk-from-small-producers.low=Change volume brought into the UK from small \
+  producers for litres in the low band
+return-details.change.brought-into-uk-from-small-producers.high=Change volume brought into the UK from small \
+  producers for litres in the high band
+return-details.change.brought-into-uk.low=Change volume brought into the UK for litres in the low band
+return-details.change.brought-into-uk.high=Change volume brought into the UK for litres in the high band
+return-details.change.claim-credits-for-exports.low=Change volume exported for litres in the low band
+return-details.change.claim-credits-for-exports.high=Change volume exported for litres in the high band
+return-details.change.claim-credits-for-lost-damaged.low=Change volume lost, damaged or destroyed for litres in \
+  the low band
+return-details.change.claim-credits-for-lost-damaged.high=Change volume lost, damaged or destroyed for litres in \
+  the high band
+
 return-details.continue=Continue
 return-details.submit-subheading=Submit your return
 return-details.total.original=Original return total
