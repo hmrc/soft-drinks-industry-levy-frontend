@@ -17,9 +17,10 @@
 package sdil.utils
 
 import java.io.File
+import java.time.LocalDate
 
 import com.softwaremill.macwire._
-import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi, Messages, MessagesApi}
@@ -30,15 +31,38 @@ import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.config.RegistrationFormDataCache
 import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector}
+import sdil.controllers.{ReturnsController, SdilWMController}
+import sdil.models.{ReturnPeriod, SdilReturn}
+import sdil.models.backend._
+import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
+import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.uniform.webmonad
+import uk.gov.hmrc.uniform.webmonad.WebMonad
+import cats.syntax._
+import org.mockito.stubbing.OngoingStubbing
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait TestWiring extends MockitoSugar {
+  val returnPeriods = List(ReturnPeriod(2018,1), ReturnPeriod(2019, 1))
+  val returnPeriods2 = List(ReturnPeriod(2018,1), ReturnPeriod(2019, 1), ReturnPeriod(2019, 2), ReturnPeriod(2019, 3))
+  val defaultSubscription: Subscription = {
+    Subscription(
+      "1234567890",
+      "Patel's Sugary Syrup",
+      "limited company",
+      UkAddress(List("41", "my street", "my town", "my county"), "BN4 4GT"),
+      Activity(None, None, None, None, true),
+      LocalDate.of(2018,4,6),
+      Nil,
+      Nil,
+      Contact(Some("Rooty Tooty"), Some("Head of Household"), "01517362873", "a@a.com"))
+  }
+
   val mockCache: RegistrationFormDataCache = {
     val m = mock[RegistrationFormDataCache]
     when(m.cache(anyString(), any())(any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
@@ -51,6 +75,12 @@ trait TestWiring extends MockitoSugar {
     val m = mock[SessionCache]
     when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
     when(m.fetchAndGetEntry[Any](anyString())(any(), any(), any())).thenReturn(Future.successful(None))
+    m
+  }
+
+  lazy val mockShortLivedCache: ShortLivedHttpCaching = {
+    val m = mock[ShortLivedHttpCaching]
+    when(m.fetchAndGetEntry[Any](any(),any())(any(),any(),any())).thenReturn(Future.successful(None))
     m
   }
 
@@ -70,10 +100,55 @@ trait TestWiring extends MockitoSugar {
   implicit val defaultMessages: Messages = messagesApi.preferred(FakeRequest())
   implicit val ec: ExecutionContext = defaultContext
 
+  // val returnsMock = mock[mockSdilConnector.returns.type]
+  //when(mockSdilConnector.returns).thenReturn(returnsMock)
+  val aSubscription =  RetrievedSubscription(
+    "0000000022",
+    "XKSDIL000000022",
+    "Super Lemonade Plc",
+    UkAddress(List("63 Clifton Roundabout", "Worcester"),"WR53 7CX"),RetrievedActivity(false,true,false,false,false),LocalDate.of(2018,4,19),List(Site(UkAddress(List("33 Rhes Priordy", "East London"),"E73 2RP"),Some("88"),Some("Wild Lemonade Group"),Some(LocalDate.of(2018,2,26))), Site(UkAddress(List("117 Jerusalem Court", "St Albans"),"AL10 3UJ"),Some("87"),Some("Highly Addictive Drinks Plc"),Some(LocalDate.of(2019,8,19))), Site(UkAddress(List("87B North Liddle Street", "Guildford"),"GU34 7CM"),Some("94"),Some("Monster Bottle Ltd"),Some(LocalDate.of(2017,9,23))), Site(UkAddress(List("122 Dinsdale Crescent", "Romford"),"RM95 8FQ"),Some("27"),Some("Super Lemonade Group"),Some(LocalDate.of(2017,4,23))), Site(UkAddress(List("105B Godfrey Marchant Grove", "Guildford"),"GU14 8NL"),Some("96"),Some("Star Products Ltd"),Some(LocalDate.of(2017,2,11)))),List(),Contact(Some("Ava Adams"),Some("Chief Infrastructure Agent"),"04495 206189","Adeline.Greene@gmail.com"),None)
+
+  val sdilReturn = SdilReturn((0,0), (0,0), List.empty, (0,0), (0,0), (0,0), (0,0))
+
+  lazy val cacheMock = mock[ShortLivedHttpCaching]
+
   lazy val mockSdilConnector: SoftDrinksIndustryLevyConnector = {
     val m = mock[SoftDrinksIndustryLevyConnector]
     when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.retrieveSubscription(any(),any())(any())).thenReturn(Future.successful(None))
+    when(m.retrieveSubscription(matching("XZSDIL000100107"),any())(any())).thenReturn(Future.successful(Some(aSubscription)))
+    when(m.returns_pending(any())(any())).thenReturn(Future.successful(Nil))
+    when(m.returns_variable(any())(any())).thenReturn(Future.successful(returnPeriods))
+    when(m.returns_vary(any(), any())(any())).thenReturn(Future.successful(()))
+    when(m.returns_update(any(), any(), any())(any())).thenReturn(Future.successful(()))
+    when(m.returns_get(any(),any())(any())).thenReturn(Future.successful(None))
+    when(m.returns_variation(any(),any())(any())).thenReturn(Future.successful(()))
+    when(m.submitVariation(any(),any())(any())).thenReturn(Future.successful(()))
+    when(m.balanceHistory(any(),any())(any())).thenReturn(Future.successful(Nil))
+    when(m.balance(any(),any())(any())).thenReturn(Future.successful(BigDecimal(0)))
+    when(m.shortLiveCache) thenReturn cacheMock
+    when(cacheMock.fetchAndGetEntry[Any](any(),any())(any(),any(),any())).thenReturn(Future.successful(None))
+    when(m.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
+    when(m.submit(any(), any())(any())) thenReturn Future.successful(())
+    m
+  }
+
+  lazy val mockRegistrationFormDataCache = {
+
+  }
+
+//  lazy val mockSubscription: Subscription.type = {
+//    val m = mock[Subscription]
+//    when(m.desify(defaultSubscription)) thenReturn defaultSubscription
+//    m
+//  }
+//  lazy val mockCachedFuture: OngoingStubbing[Future[Nothing] => WebMonad[Nothing]] = {
+//    val m = mock[webmonad.type]
+//    when(m.cachedFuture(any())) thenReturn WebMonad[]
+//  }
+  lazy val mockSdilWMController: SdilWMController = {
+    val m = mock[SdilWMController]
+    when(m.isSmallProducer(any(), any(), any())(any())) thenReturn Future.successful(false)
     m
   }
 
@@ -92,7 +167,6 @@ trait TestWiring extends MockitoSugar {
     when(m.sendEvent(any())(any(), any())).thenReturn(Future.successful(()))
     m
   }
-
   lazy val formAction: FormAction = wire[FormAction]
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
   lazy val registeredAction: RegisteredAction = wire[RegisteredAction]

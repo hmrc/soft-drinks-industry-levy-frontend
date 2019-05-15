@@ -46,8 +46,8 @@ trait ReturnJourney extends SdilWMController {
     def smallProdsJ: WebMonad[List[SmallProducer]] = for {
       editMode        <- read[Boolean]("_editSmallProducers").map{_.getOrElse(false)}
       opt             <- ask(bool("exemptions-for-small-producers"), "exemptions-for-small-producers", default.map{_.packSmall.nonEmpty})
-      smallProdsJs    <- execute(sdilConnector.shortLiveCache.fetchAndGetEntry[Map[String, JsValue]](sdilRef, s"returns-${period.year}${period.quarter}").flatMap {
-                              _.getOrElse(Map.empty).get("small-producer-details_data") })
+      smallProdsJs <- execute(sdilConnector.shortLiveCache.fetchAndGetEntry[Map[String, JsValue]](sdilRef, s"returns-${period.year}${period.quarter}").flatMap {
+                              x => x.getOrElse(Map.empty).get("small-producer-details_data") })
       smallProds      <- manyT("small-producer-details",
                                {ask(smallProducer(sdilRef, sdilConnector, period, getSmallProdsFromJs(smallProdsJs),  id.getOrElse("")), _)(implicitly,implicitly,implicitly,ShowBackLink(true))},
                                min = 1,
@@ -67,14 +67,14 @@ trait ReturnJourney extends SdilWMController {
       ) emptyUnless !subscription.activity.smallProducer
       em = ExtraMessages(
         messages =
-          if(subscription.activity.isVoluntaryMandatory) {
-            Map(
-              "brought-into-uk-from-small-producers.lead" ->
-                Messages("brought-into-uk-from-small-producers.lead.volMan"),
-              "claim-credits-for-exports.lead" ->
-                Messages("claim-credits-for-exports.lead.volMan")
-            )
-          } else {
+            if(subscription.activity.isVoluntaryMandatory) {
+              Map(
+                "brought-into-uk-from-small-producers.lead" ->
+                  Messages("brought-into-uk-from-small-producers.lead.volMan"),
+                "claim-credits-for-exports.lead" ->
+                  Messages("claim-credits-for-exports.lead.volMan")
+              )
+            } else {
             Map.empty
           }
       )

@@ -52,7 +52,7 @@ class ReturnsController (
   val config: AppConfig,
   val ec: ExecutionContext
 ) extends SdilWMController with FrontendController with Modulus23Check with ReturnJourney {
-  
+
   def confirmationPage(
     key: String,
     period: ReturnPeriod,
@@ -139,7 +139,7 @@ class ReturnsController (
     } yield packingSites
   }
 
-  private def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String, nilReturn: Boolean, id: String)
+  private[controllers] def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String, nilReturn: Boolean, id: String)
                      (implicit hc: HeaderCarrier): WebMonad[Result] = {
     val em = ExtraMessages(Map(
       "heading.check-your-answers.orgName" ->
@@ -180,9 +180,9 @@ class ReturnsController (
       )
       _ <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, isSmallProd, Some(variation))(em, implicitly)
       _ <- cachedFuture(s"return-${period.count}")(
-        sdilConnector.returns(subscription.utr, period) = sdilReturn)
+        sdilConnector.returns_update(subscription.utr, period,sdilReturn))
       _ <- if (isNewImporter || isNewPacker) {
-        execute(sdilConnector.returns.variation(variation, sdilRef))
+        execute(sdilConnector.returns_variation(variation, sdilRef))
       } else {
         (()).pure[WebMonad]
       }
@@ -204,19 +204,13 @@ class ReturnsController (
     val persistence = SaveForLaterPersistence(s"returns-$year$quarter", sdilRef, cache)
     for {
       subscription <- sdilConnector.retrieveSubscription(sdilRef).map{_.get}
-      pendingReturns <- sdilConnector.returns.pending(subscription.utr)
+      pendingReturns <- sdilConnector.returns_pending(subscription.utr)
       r   <- if (pendingReturns.contains(period))
                runInner(request)(program(period, subscription, sdilRef, nilReturn, id))(id)(persistence.dataGet,persistence.dataPut, if (nilReturn) JourneyConfig(LeapAhead) else JourneyConfig(SingleStep))
              else
                Redirect(routes.ServicePageController.show()).pure[Future]
     } yield r
   }
-
-  def isSmallProducer(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] =
-    sdilConnector.retrieveSubscription(sdilRef).flatMap {
-      case Some(x) => x.activity.smallProducer
-      case None    => false
-    }
 
   def taxEstimation(r: SdilReturn): BigDecimal = {
     val t = r.packLarge |+| r.importLarge |+| r.ownBrand

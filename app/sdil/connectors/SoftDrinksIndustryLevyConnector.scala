@@ -94,51 +94,47 @@ class SoftDrinksIndustryLevyConnector(
     http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map { _ => () }
   }
 
-  object returns {
-    import ltbs.play.scaffold.SdilComponents.longTupleFormatter
-
-    def pending(
-      utr: String
-    )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
-      http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
-    }
-
-    def variable(
-      utr: String
-    )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
-      http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable")
-    }
-
-    def vary(
-      sdilRef: String,
-      data: ReturnVariationData
-    )(implicit hc: HeaderCarrier): Future[Unit] = {
-      val uri = s"$sdilUrl/returns/vary/$sdilRef"
-      http.POST[ReturnVariationData, HttpResponse](uri, data) map { _ => () }
-    }
-
-    def update(
-      utr: String,
-      period: ReturnPeriod,
-      sdilReturn: SdilReturn
-    )(implicit hc: HeaderCarrier): Future[Unit] = {
-      val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
-      http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map { _ => () }
-    }
-
-    def get(
-      utr: String,
-      period: ReturnPeriod
-    )(implicit hc: HeaderCarrier): Future[Option[SdilReturn]] = {
-      val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
-      http.GET[Option[SdilReturn]](uri)
-    }
-
-    def variation(variation: ReturnsVariation, sdilRef: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-      http.POST[ReturnsVariation, HttpResponse](s"$sdilUrl/returns/variation/sdil/$sdilRef", variation) map { _ => () }
-    }
-
+  def returns_pending(
+    utr: String
+  )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
+    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
   }
+
+  def returns_variable(
+    utr: String
+  )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
+    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable")
+  }
+
+  def returns_vary(
+    sdilRef: String,
+    data: ReturnVariationData
+  )(implicit hc: HeaderCarrier): Future[Unit] = {
+    val uri = s"$sdilUrl/returns/vary/$sdilRef"
+    http.POST[ReturnVariationData, HttpResponse](uri, data) map { _ => () }
+  }
+
+  def returns_update(
+    utr: String,
+    period: ReturnPeriod,
+    sdilReturn: SdilReturn
+  )(implicit hc: HeaderCarrier): Future[Unit] = {
+    val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+    http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map { _ => () }
+  }
+
+  def returns_get(
+    utr: String,
+    period: ReturnPeriod
+  )(implicit hc: HeaderCarrier): Future[Option[SdilReturn]] = {
+    val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+    http.GET[Option[SdilReturn]](uri)
+  }
+
+  def returns_variation(variation: ReturnsVariation, sdilRef: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+    http.POST[ReturnsVariation, HttpResponse](s"$sdilUrl/returns/variation/sdil/$sdilRef", variation) map { _ => () }
+  }
+
 
   def balance(
    sdil: String,

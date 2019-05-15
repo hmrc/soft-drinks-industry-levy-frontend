@@ -30,9 +30,7 @@ case class Subscription(utr: String,
                         liabilityDate: LocalDate,
                         productionSites: Seq[Site],
                         warehouseSites: Seq[Site],
-                        contact: Contact)
-
-
+                        contact: Contact) {}
 
 object Subscription {
   implicit val format: Format[Subscription] = Json.format[Subscription]

@@ -57,7 +57,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class VariationsController(
   val messagesApi: MessagesApi,
-  sdilConnector: SoftDrinksIndustryLevyConnector,
+  val sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   cache: ShortLivedHttpCaching,
   errorHandler: FrontendErrorHandler
@@ -148,7 +148,7 @@ class VariationsController(
     subscription: RetrievedSubscription,
     returnPeriods: List[ReturnPeriod]
   ): WebMonad[RegistrationVariationData] = {
-    
+
     for {
       packLarge                   <- askOneOf("amount-produced", ProducerType.values.toList) map {
                                         case Large => Some(true)
@@ -237,18 +237,36 @@ class VariationsController(
       _ <- resultToWebMonad[A](Redirect(routes.ServicePageController.show()))
     } yield data
 
-  private def program(
+  private[controllers] def program(
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+
     val base = RegistrationVariationData(subscription)
 
     for {
-      variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
-      returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
-      onlyReturns = subscription.deregDate.nonEmpty
-      changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
-      isVoluntary = subscription.activity.voluntaryRegistration
+      variableReturns <- execute(sdilConnector.returns_variable(base.original.utr))
+      returnPeriods <- execute(sdilConnector.returns_pending(subscription.utr))
+      x <- programInner(subscription, sdilRef, variableReturns, returnPeriods)
+    } yield (x)
+  }
+
+  // this has been separated out from program to facilitate unit testing -
+  // once the stubbing has been fixed the change here can be reverted
+  private[controllers] def programInner(
+    subscription: RetrievedSubscription,
+    sdilRef: String,
+    variableReturns: List[ReturnPeriod],
+    returnPeriods: List[ReturnPeriod]
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+    val base = RegistrationVariationData(subscription)
+
+    val onlyReturns = subscription.deregDate.nonEmpty
+    val changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
+    val isVoluntary = subscription.activity.voluntaryRegistration
+
+
+    for {
       changeType <- askOneOf("select-change", changeTypes, helpText = Html(Messages("change.latency")).some) when !onlyReturns
       variation <- changeType match {
         case None | Some(ChangeType.Returns) =>
@@ -316,7 +334,7 @@ class VariationsController(
   )(implicit hc: HeaderCarrier): WebMonad[A] = {
     val base = RegistrationVariationData(subscription)
     for {
-      variableReturns <- execute(sdilConnector.returns.variable(base.original.utr))
+      variableReturns <- execute(sdilConnector.returns_variable(base.original.utr))
       messages = variableReturns.map { x =>
         s"select-return.option.${x.year}${x.quarter}" -> s"${Messages(s"select-return.option.${x.quarter}")} ${x.year}"
       }.toMap ++ Map("error.radio-form.choose-option" -> "error.radio-form.choose-option.returnPeriod")
@@ -340,7 +358,7 @@ class VariationsController(
     implicit val showBackLink: ShowBackLink = ShowBackLink(false)
     for {
 
-      origReturn <- execute(connector.returns.get(base.original.utr, returnPeriod))
+      origReturn <- execute(connector.returns_get(base.original.utr, returnPeriod))
         .map(_.getOrElse(throw new NotFoundException(s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
 
       newReturn <- askReturn(base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
@@ -382,7 +400,7 @@ class VariationsController(
       )(extraMessages) when variation.revised.total - variation.original.total < 0
 
       _ <- checkReturnChanges("check-return-changes", variation.copy(reason = reason, repaymentMethod = repayment), broughtForward)(extraMessages)
-      _ <- execute(sdilConnector.returns.vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
+      _ <- execute(sdilConnector.returns_vary(sdilRef, variation.copy(reason = reason, repaymentMethod = repayment)))
       _ <- clear
       subheading = uniform.fragments.return_variation_done_subheading(subscription, returnPeriod).some
 
@@ -402,7 +420,7 @@ class VariationsController(
     key: String,
     v: RegistrationVariationData,
     path: List[String])(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
-    
+
     val inner = uniform.fragments.variationsCYA(
       v,
       newPackagingSites(v),
@@ -481,7 +499,7 @@ class VariationsController(
     }
   }
 
-  private def changeBusinessAddressJourney (
+  private[controllers] def changeBusinessAddressJourney (
     subscription: RetrievedSubscription,
     sdilRef: String
   )(implicit hc: HeaderCarrier): WebMonad[Result] = {
@@ -536,7 +554,7 @@ class VariationsController(
     val base = RegistrationVariationData(subscription)
 
     for {
-      returnPeriods <- execute(sdilConnector.returns.pending(subscription.utr))
+      returnPeriods <- execute(sdilConnector.returns_pending(subscription.utr))
       variation <- activityUpdate(base, subscription, returnPeriods)
 
       path <- getPath

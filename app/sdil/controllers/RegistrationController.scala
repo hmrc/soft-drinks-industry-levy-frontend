@@ -67,7 +67,7 @@ class RegistrationController(
     }
   }
 
-  private def program(fd: RegistrationFormData)
+  private[controllers] def program(fd: RegistrationFormData)
                      (implicit request: AuthorisedRequest[AnyContent], hc: HeaderCarrier): WebMonad[Result] = {
 
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
@@ -165,7 +165,7 @@ class RegistrationController(
       end              <- clear >> journeyEnd("complete", whatHappensNext = complete.some, getTotal = subheading.some)(extraEndMessages)
     } yield end
   }
-  private def askRegDate(packLarge: Option[Boolean], copacks: Option[(Long, Long)], imports: Option[(Long, Long)]): WebMonad[LocalDate] = {
+  private[controllers] def askRegDate(packLarge: Option[Boolean], copacks: Option[(Long, Long)], imports: Option[(Long, Long)]): WebMonad[LocalDate] = {
     def askRD[T](mapping: Mapping[T], key: String, helpText: Option[Html])(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
       formPage(key)(mapping, None) { (path, form, r) =>
         implicit val request: Request[AnyContent] = r

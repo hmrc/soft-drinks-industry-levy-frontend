@@ -31,28 +31,33 @@ pipelineStages in Assets := Seq(concat)
 // ================================================================================
 // Testing
 // ================================================================================
-{
-  import scoverage.ScoverageKeys._
-  coverageExcludedPackages := Seq(
-    "app.*",
-    "views.*",
-    "uk.gov.hmrc.*",
-    "prod.*",
-    "sdil.config.*",
-    "sdil.connectors.*",
-    "sdil.models.*",
-    "sdil.controllers.Routes",
-    "sdil.controllers.RoutesPrefix",
-    "testOnlyDoNotUseInAppConf.*",
-    "sdil.controllers.test.*",
-    "sdil.connectors.TestConnector",
-    "variations.Routes"
-  ).mkString(";")
+import scoverage.ScoverageKeys._
+coverageExcludedPackages := Seq(
+  "app.*",
+  "views.*",
+  "uk.gov.hmrc.*",
+  "prod.*",
+  "sdil.config.*",
+  "sdil.connectors.*",
+  "sdil.models.*",
+  "sdil.controllers.Routes",
+  "sdil.controllers.SdilWMController",
+  "sdil.filters.*",
+  "controllers.javascript.*",
+  "sdil.controllers.javascript.*",
+  "sdil.controllers.RoutesPrefix",
+  "testOnlyDoNotUseInAppConf.*",
+  "sdil.controllers.test.*",
+  "sdil.connectors.TestConnector",
+  "sdil.forms",
+  "variations.Routes"
+).mkString(";")
+coverageExcludedFiles := "<empty>;.*BuildInfo.*;.*Routes.*;.*GDS.*;.*GdsComponents.*;.*WebMonadPersistence.*;" +
+  ".*SiteRef.*;.*ShowTitle.*;.*MoneyFormat.*;.*MappingWithExtraConstraint.*;.*AuthenticationController.*;"
+coverageMinimum := 80
+coverageFailOnMinimum := false
+coverageHighlighting := true
 
-  coverageMinimum := 80
-  coverageFailOnMinimum := false
-  coverageHighlighting := true
-}
 
 libraryDependencies ++= Seq(
   "uk.gov.hmrc"            %% "hmrctest"           % "3.8.0-play-25",
@@ -101,7 +106,7 @@ resolvers ++= Seq(
 // ================================================================================
 
 scalacOptions ++= Seq(
-//  "-Xfatal-warnings",                  // Fail the compilation if there are any warnings.  
+//  "-Xfatal-warnings",                  // Fail the compilation if there are any warnings.
   "-deprecation",                      // Emit warning and location for usages of deprecated APIs.
   "-encoding", "utf-8",                // Specify character encoding used by source files.
   "-explaintypes",                     // Explain type errors in more detail.
