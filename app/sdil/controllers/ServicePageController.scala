@@ -49,17 +49,17 @@ class ServicePageController(
     val sdilRef = request.sdilEnrolment.value
     val ret = for {
       subscription    <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
-      returnPeriods   <- OptionT.liftF(sdilConnector.returns.pending(subscription.utr))
-      lastReturn      <- OptionT.liftF(sdilConnector.returns.get(subscription.utr, ReturnPeriod(LocalDate.now).previous))
+      returnPeriods   <- OptionT.liftF(sdilConnector.returns_pending(subscription.utr))
+      lastReturn      <- OptionT.liftF(sdilConnector.returns_get(subscription.utr, ReturnPeriod(LocalDate.now).previous))
       isDereg         =  subscription.deregDate.nonEmpty
       deDatePeriod    =  subscription.deregDate.getOrElse(LocalDate.now.plusYears(500))
       pendingDereg    <- OptionT.liftF(
                           if(isDereg)
-                            sdilConnector.returns.get(subscription.utr, ReturnPeriod(deDatePeriod))
+                            sdilConnector.returns_get(subscription.utr, ReturnPeriod(deDatePeriod))
                           else
                             Future.successful(None)
                          )
-      variableReturns <- OptionT.liftF(sdilConnector.returns.variable(subscription.utr))
+      variableReturns <- OptionT.liftF(sdilConnector.returns_variable(subscription.utr))
       interesting     <- OptionT(sdilConnector.balanceHistory(sdilRef, withAssessment = true).map(x=>interest(x).some))
       balance         <- OptionT(sdilConnector.balance(sdilRef, withAssessment = true).map(_.some))
     } yield {
@@ -92,7 +92,7 @@ class ServicePageController(
         deDatePeriod    =  subscription.deregDate.getOrElse(LocalDate.now.plusYears(500))
         pendingDereg    <- OptionT.liftF(
           if(isDereg)
-            sdilConnector.returns.get(subscription.utr, ReturnPeriod(deDatePeriod))
+            sdilConnector.returns_get(subscription.utr, ReturnPeriod(deDatePeriod))
           else
             Future.successful(None)
         )
