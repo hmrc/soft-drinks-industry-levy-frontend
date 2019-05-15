@@ -57,13 +57,12 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
           sdilConnector.retrieveSubscription(utr, "utr") map {
             case Some(sub) if sub.deregDate.isEmpty =>
               Left(Redirect(routes.ServicePageController.show()))
-            case Some(sub) if sub.deregDate.nonEmpty =>
-              Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
-            case None =>
+            case _ =>
               Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
           }
         case (Some(utr), Some(_)) =>
           alreadyRegistered(utr).map(Left.apply)
+
         case (None, Some(sdilEnrolment)) =>
           sdilConnector.retrieveSubscription(sdilEnrolment.value).map {
             case Some(sub) if sub.deregDate.isEmpty => Left(Redirect(routes.ServicePageController.show()))

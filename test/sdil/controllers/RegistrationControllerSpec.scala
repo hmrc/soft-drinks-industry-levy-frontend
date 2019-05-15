@@ -92,8 +92,6 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
       status(output) mustBe OK
     }
 
-
-
     "execute main program and fail js validation when ask-secondary-warehouse is passed as a string" in {
       def formData = RegistrationFormData(
         RosmRegistration("safeId", None, None,

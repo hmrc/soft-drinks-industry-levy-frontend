@@ -21,7 +21,7 @@ import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
-import play.api.libs.json.JsValue
+import play.api.libs.json._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.backend._
@@ -146,7 +146,7 @@ trait ControllerSpec extends FakeApplicationSpec {
         )))
   }
 
-  def stubFilledInForm = {
+  def stubFilledInForm: OngoingStubbing[Future[Option[RegistrationFormData]]] = {
     stubCacheEntry(
       Some(defaultFormData)
     )

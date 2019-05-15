@@ -16,41 +16,23 @@
 
 package sdil.controllers
 
-import cats.implicits._
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
-import play.api.libs.json._
-import play.api.mvc._
-import uk.gov.hmrc.http.{CoreDelete, CoreGet, CorePut, HeaderCarrier}
-import com.softwaremill.macwire._
-import play.api.test.FakeRequest
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-
-import scala.concurrent._
-import duration._
-import org.scalatest.MustMatchers._
-import com.softwaremill.macwire._
-import org.mockito.ArgumentMatchers.{any, eq => matching}
-import org.mockito.Mockito._
-import play.api.i18n.Messages
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import sdil.config.SDILShortLivedCaching
-import sdil.models._
-import backend._
-import retrieved._
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
-import play.api.libs.json._
-
-import scala.concurrent.Future
-import sdil.connectors.SoftDrinksIndustryLevyConnector
 import java.time.LocalDate
 
-import org.mockito.Mock
+import com.softwaremill.macwire._
+import org.mockito.ArgumentMatchers.{any, eq => matching, _}
+import org.mockito.Mockito._
+import play.api.libs.json._
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import sdil.models._
+import sdil.models.backend._
+import sdil.models.retrieved._
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
-import sdil.connectors._
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
+import uk.gov.hmrc.http.{CoreDelete, CoreGet, CorePut, HeaderCarrier}
+
+import scala.concurrent.Future
 
 class VariationsControllerSpec extends ControllerSpec {
 
@@ -74,7 +56,7 @@ class VariationsControllerSpec extends ControllerSpec {
     val variableReturns = List(ReturnPeriod(2018, 1))
     val returnPeriods = List(ReturnPeriod(2018, 1))
 
-    "execute the variations journey" in {
+    "execute the variations journey for activity with return periods" in {
       val program = controller.programInner(
         aSubscription,
         aSubscription.sdilRef,
@@ -83,60 +65,19 @@ class VariationsControllerSpec extends ControllerSpec {
       )
 
       val output = controllerTester.testJourney(program)(
-        "contact-details" -> Json.obj(
-          "fullName" -> "Ava Adams",
-          "position" -> "Chief Infrastructure Agent",
-          "phoneNumber" -> "04495 206187",
-          "email" -> "Adeline.Greene@gmail.com"),
-        "warehouse-details_data" ->
-          JsArray(List(
-            Json.obj(
-              "address" -> Json.obj(
-                "lines" -> List("13 Bogus Crescent", "The Hyperquadrant", "Genericford", "Madeupshire"),
-                "postCode" -> "ZX98 7YV"
-              ),
-              "tradingName" -> "Sugar Storage Ltd")
-          )),
-        "packaging-site-details_data" -> JsArray(List(
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("117 Jerusalem Court", "St Albansx"),
-              "postCode" -> "AL10 3UJ"
-            )
-          ),
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("12 The Street", "Genericford"),
-              "postCode" -> "AB12 3CD"
-            )
-          )
-        )),
-        "packaging-site-details" -> JsString("Done"),
-        "third-party-packagers" -> JsBoolean(true),
-        "production-site-details" -> JsString("Done"),
-        "secondary-warehouse-details" -> JsString("Done"),
-        "packaging-site" -> Json.obj("lower" -> 123, "higher" -> 234),
-        "change-registered-account-details" -> JsNull,
-        "secondary-warehouse-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("23 Diabetes Street", "ABC"), "postCode" -> "FG45 7CD"), "tradingName" -> "Syrupshop"))),
-        "change-registered-details" -> JsArray(List("Sites", "ContactPerson", "ContactAddress").map(JsString)),
-        "business-address" -> Json.obj("line1" -> "63 Clifton Roundabout", "line2" -> "Worcester", "line3" -> "Stillworcester", "line4" -> "Worcestershire", "postcode" -> "WR53 7CX"),
-        "amount-produced" -> JsString("Large"),
-        "contract-packing" -> Json.obj("lower" -> 2345, "higher" -> 435657),
-        "warehouse-details" -> JsString("Done"),
-        "production-site-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
-          Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
-        )),
-        "select-change" -> JsString("Activity"),
-        "imports" -> Json.obj("lower" -> 12345, "higher" -> 34668),
-        "check-answers" -> JsString("Done"),
-        "checkyouranswers" -> JsString("Done")
+        selectChangeActivity,
+        amountProduced,
+        packagingSite,
+        contractPacking,
+        imports,
+        productionSiteDetails,
+        productionSiteDetailsData,
+        secondaryWarehouseDetails,
+        secondaryWarehouseDetailsData,
+        checkAnswers
       )
 
-      println(Await.result(output, 10 seconds))
-
-      1 mustBe 1
+      status(output) mustBe OK
     }
 
     "execute the variations journey Activity for empty Returns Period List" in {
@@ -148,64 +89,22 @@ class VariationsControllerSpec extends ControllerSpec {
       )
 
       val output = controllerTester.testJourney(program)(
-        "contact-details" -> Json.obj(
-          "fullName" -> "Ava Adams",
-          "position" -> "Chief Infrastructure Agent",
-          "phoneNumber" -> "04495 206187",
-          "email" -> "Adeline.Greene@gmail.com"),
-        "warehouse-details_data" ->
-          JsArray(List(
-            Json.obj(
-              "address" -> Json.obj(
-                "lines" -> List("13 Bogus Crescent", "The Hyperquadrant", "Genericford", "Madeupshire"),
-                "postCode" -> "ZX98 7YV"
-              ),
-              "tradingName" -> "Sugar Storage Ltd")
-          )),
-        "packaging-site-details_data" -> JsArray(List(
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("117 Jerusalem Court", "St Albansx"),
-              "postCode" -> "AL10 3UJ"
-            )
-          ),
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("12 The Street", "Genericford"),
-              "postCode" -> "AB12 3CD"
-            )
-          )
-        )),
-        "packaging-site-details" -> JsString("Done"),
-        "third-party-packagers" -> JsBoolean(true),
-        "production-site-details" -> JsString("Done"),
-        "secondary-warehouse-details" -> JsString("Done"),
-        "packaging-site" -> Json.obj("lower" -> 123, "higher" -> 234),
-        "change-registered-account-details" -> JsNull,
-        "secondary-warehouse-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("23 Diabetes Street", "ABC"), "postCode" -> "FG45 7CD"), "tradingName" -> "Syrupshop"))),
-        "change-registered-details" -> JsArray(List("Sites", "ContactPerson", "ContactAddress").map(JsString)),
-        "business-address" -> Json.obj("line1" -> "63 Clifton Roundabout", "line2" -> "Worcester", "line3" -> "Stillworcester", "line4" -> "Worcestershire", "postcode" -> "WR53 7CX"),
-        "amount-produced" -> JsString("Large"),
-        "contract-packing" -> Json.obj("lower" -> 2345, "higher" -> 435657),
-        "warehouse-details" -> JsString("Done"),
-        "production-site-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
-          Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
-        )),
-        "select-change" -> JsString("Activity"),
-        "imports" -> Json.obj("lower" -> 12345, "higher" -> 34668),
-        "check-answers" -> JsString("Done"),
-        "checkyouranswers" -> JsString("Done")
+        selectChangeActivity,
+        amountProduced,
+        packagingSite,
+        contractPacking,
+        imports,
+        productionSiteDetails,
+        productionSiteDetailsData,
+        secondaryWarehouseDetails,
+        secondaryWarehouseDetailsData,
+        checkAnswers
       )
-
-      println(Await.result(output, 10 seconds))
-
-      1 mustBe 1
+      status(output) mustBe OK
     }
 
 
-    "execute the variations De-register journey for a empty returnperiods list" in {
+    "execute the variations De-register journey" in {
       val program = controller.programInner(
         aSubscription,
         aSubscription.sdilRef,
@@ -214,60 +113,13 @@ class VariationsControllerSpec extends ControllerSpec {
       )
 
       val output = controllerTester.testJourney(program)(
-        "contact-details" -> Json.obj(
-          "fullName" -> "Ava Adams",
-          "position" -> "Chief Infrastructure Agent",
-          "phoneNumber" -> "04495 206187",
-          "email" -> "Adeline.Greene@gmail.com"),
-        "warehouse-details_data" ->
-          JsArray(List(
-            Json.obj(
-              "address" -> Json.obj(
-                "lines" -> List("13 Bogus Crescent", "The Hyperquadrant", "Genericford", "Madeupshire"),
-                "postCode" -> "ZX98 7YV"
-              ),
-              "tradingName" -> "Sugar Storage Ltd")
-          )),
-        "packaging-site-details_data" -> JsArray(List(
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("117 Jerusalem Court", "St Albansx"),
-              "postCode" -> "AL10 3UJ"
-            )
-          ),
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("12 The Street", "Genericford"),
-              "postCode" -> "AB12 3CD"
-            )
-          )
-        )),
-        "packaging-site-details" -> JsString("Done"),
-        "production-site-details" -> JsString("Done"),
-        "secondary-warehouse-details" -> JsString("Done"),
-        "packaging-site" -> Json.obj("lower" -> 123, "higher" -> 234),
-        "change-registered-account-details" -> JsNull,
-        "secondary-warehouse-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("23 Diabetes Street", "ABC"), "postCode" -> "FG45 7CD"), "tradingName" -> "Syrupshop"))),
-        "change-registered-details" -> JsArray(List("Sites", "ContactPerson", "ContactAddress").map(JsString)),
-        "business-address" -> Json.obj("line1" -> "63 Clifton Roundabout", "line2" -> "Worcester", "line3" -> "Stillworcester", "line4" -> "Worcestershire", "postcode" -> "WR53 7CX"),
-        "amount-produced" -> JsString("Large"),
-        "contract-packing" -> Json.obj("lower" -> 2345, "higher" -> 435657),
-        "warehouse-details" -> JsString("Done"),
-        "cancel-registration-reason" -> JsString("Done"),
-        "production-site-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
-          Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
-        )),
-        "select-change" -> JsString("Deregister"),
-        "imports" -> Json.obj("lower" -> 12345, "higher" -> 34668),
-        "check-answers" -> JsString("Done"),
-        "checkyouranswers" -> JsString("Done")
+        selectChangeDeregister,
+        cancelRegistrationReason,
+        cancelRegistrationDate,
+        checkAnswers
       )
 
-      println(Await.result(output, 10 seconds))
-
-      1 mustBe 1
+      status(output) mustBe OK
     }
 
     "execute the variations De-register journey for a non-Empty returnperiods list" in {
@@ -279,63 +131,16 @@ class VariationsControllerSpec extends ControllerSpec {
       )
 
       val output = controllerTester.testJourney(program)(
-        "contact-details" -> Json.obj(
-          "fullName" -> "Ava Adams",
-          "position" -> "Chief Infrastructure Agent",
-          "phoneNumber" -> "04495 206187",
-          "email" -> "Adeline.Greene@gmail.com"),
-        "warehouse-details_data" ->
-          JsArray(List(
-            Json.obj(
-              "address" -> Json.obj(
-                "lines" -> List("13 Bogus Crescent", "The Hyperquadrant", "Genericford", "Madeupshire"),
-                "postCode" -> "ZX98 7YV"
-              ),
-              "tradingName" -> "Sugar Storage Ltd")
-          )),
-        "packaging-site-details_data" -> JsArray(List(
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("117 Jerusalem Court", "St Albansx"),
-              "postCode" -> "AL10 3UJ"
-            )
-          ),
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("12 The Street", "Genericford"),
-              "postCode" -> "AB12 3CD"
-            )
-          )
-        )),
-        "packaging-site-details" -> JsString("Done"),
-        "production-site-details" -> JsString("Done"),
-        "secondary-warehouse-details" -> JsString("Done"),
-        "packaging-site" -> Json.obj("lower" -> 123, "higher" -> 234),
-        "change-registered-account-details" -> JsNull,
-        "secondary-warehouse-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("23 Diabetes Street", "ABC"), "postCode" -> "FG45 7CD"), "tradingName" -> "Syrupshop"))),
-        "change-registered-details" -> JsArray(List("Sites", "ContactPerson", "ContactAddress").map(JsString)),
-        "business-address" -> Json.obj("line1" -> "63 Clifton Roundabout", "line2" -> "Worcester", "line3" -> "Stillworcester", "line4" -> "Worcestershire", "postcode" -> "WR53 7CX"),
-        "amount-produced" -> JsString("Large"),
-        "contract-packing" -> Json.obj("lower" -> 2345, "higher" -> 435657),
-        "warehouse-details" -> JsString("Done"),
-        "cancel-registration-reason" -> JsString("Done"),
-        "production-site-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
-          Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
-        )),
-        "select-change" -> JsString("Deregister"),
-        "imports" -> Json.obj("lower" -> 12345, "higher" -> 34668),
-        "check-answers" -> JsString("Done"),
-        "checkyouranswers" -> JsString("Done")
+        selectChangeDeregister,
+        fileReturnBeforeDeregistration
       )
 
-      1 mustBe 1
+      status(output) mustBe SEE_OTHER
     }
 
     "execute the variations journey for change type value Returns" in {
 
-      //TODO Adam come back and fix this test so it traverses through the returns journey
+      //TODO Fix this test so it traverses through the returns journey
       val program = controller.programInner(
         aSubscription,
         aSubscription.sdilRef,
@@ -346,7 +151,7 @@ class VariationsControllerSpec extends ControllerSpec {
       val output = controllerTester.testJourney(program)(
         "select-change" -> JsString("Returns"),
         "select-return" -> JsString("20181"),
-        "packaging(any()-site-details" -> JsString("Done"),
+        "packaging-site-details" -> JsString("Done"),
         "production-site-details" -> JsString("Done"),
         "secondary-warehouse-details" -> JsString("Done"),
         "packaging-site" -> Json.obj("lower" -> 123, "higher" -> 234),
@@ -384,6 +189,24 @@ class VariationsControllerSpec extends ControllerSpec {
     }
 
 
+    "execute the contact details journey" in {
+      val program = controller.programInner(
+        aSubscription,
+        aSubscription.sdilRef,
+        variableReturns,
+        returnPeriods
+      )
+
+      val output = controllerTester.testJourney(program)(
+        selectChangeSites,
+        changeRegisteredDetailsContactPerson,
+        contactDetails,
+        checkAnswers
+      )
+
+      status(output) mustBe OK
+    }
+
     "execute the Sites journey for " in {
       val program = controller.programInner(
         aSubscription,
@@ -393,62 +216,17 @@ class VariationsControllerSpec extends ControllerSpec {
       )
 
       val output = controllerTester.testJourney(program)(
-        "contact-details" -> Json.obj(
-          "fullName" -> "Ava Adams",
-          "position" -> "Chief Infrastructure Agent",
-          "phoneNumber" -> "04495 206187",
-          "email" -> "Adeline.Greene@gmail.com"),
-        "warehouse-details_data" ->
-          JsArray(List(
-            Json.obj(
-              "address" -> Json.obj(
-                "lines" -> List("13 Bogus Crescent", "The Hyperquadrant", "Genericford", "Madeupshire"),
-                "postCode" -> "ZX98 7YV"
-              ),
-              "tradingName" -> "Sugar Storage Ltd")
-          )),
-        "packaging-site-details_data" -> JsArray(List(
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("117 Jerusalem Court", "St Albansx"),
-              "postCode" -> "AL10 3UJ"
-            )
-          ),
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("12 The Street", "Genericford"),
-              "postCode" -> "AB12 3CD"
-            )
-          )
-        )),
-        "packaging-site-details" -> JsString("Done"),
-        "production-site-details" -> JsString("Done"),
-        "secondary-warehouse-details" -> JsString("Done"),
-        "packaging-site" -> Json.obj("lower" -> 123, "higher" -> 234),
-        "change-registered-account-details" -> JsNull,
-        "secondary-warehouse-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("23 Diabetes Street", "ABC"), "postCode" -> "FG45 7CD"), "tradingName" -> "Syrupshop"))),
-        "change-registered-details" -> JsArray(List("Sites", "ContactPerson", "ContactAddress").map(JsString)),
-        "business-address" -> Json.obj("line1" -> "63 Clifton Roundabout", "line2" -> "Worcester", "line3" -> "Stillworcester", "line4" -> "Worcestershire", "postcode" -> "WR53 7CX"),
-        "amount-produced" -> JsString("Large"),
-        "contract-packing" -> Json.obj("lower" -> 2345, "higher" -> 435657),
-        "warehouse-details" -> JsString("Done"),
-        "cancel-registration-reason" -> JsString("Done"),
-        "production-site-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
-          Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
-        )),
-        "select-change" -> JsString("Sites"),
-        "imports" -> Json.obj("lower" -> 12345, "higher" -> 34668),
-        "check-answers" -> JsString("Done"),
-        "checkyouranswers" -> JsString("Done")
+        selectChangeSites,
+        changeRegisteredDetailsSites,
+        warehouseDetails,
+        warehouseDetailsData,
+        packagingSitesDetails,
+        packagingSitesDetailsData,
+        checkAnswers
       )
 
-      println(Await.result(output, 10 seconds))
-
-      1 mustBe 1
+      status(output) mustBe OK
     }
-
 
     "execute changeBusinessAddress journey" in {
       val program = controller.changeBusinessAddressJourney(
@@ -457,67 +235,17 @@ class VariationsControllerSpec extends ControllerSpec {
       )
 
       val output = controllerTester.testJourney(program)(
-        "contact-details" -> Json.obj(
-          "fullName" -> "Ava Adams",
-          "position" -> "Chief Infrastructure Agent",
-          "phoneNumber" -> "04495 206187",
-          "email" -> "Adeline.Greene@gmail.com"),
-        "warehouse-details_data" -> JsArray(List(Json.obj(
-          "address" -> Json.obj(
-            "lines" -> List("13 Bogus Crescent", "The Hyperquadrant", "Genericford", "Madeupshire"),
-            "postCode" -> "ZX98 7YV"
-          ),
-          "tradingName" -> "Sugar Storage Ltd")
-        )),
-        "packaging-site-details_data" -> JsArray(List(
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("117 Jerusalem Court", "St Albansx"),
-              "postCode" -> "AL10 3UJ")),
-          Json.obj(
-            "address" -> Json.obj(
-              "lines" -> List("12 The Street", "Genericford"),
-              "postCode" -> "AB12 3CD")
-          ))),
-        "packaging-site-details" -> JsString("Done"),
-        "change-registered-account-details" -> JsNull,
-        "change-registered-details" -> JsArray(List(
-          JsString("Sites"), JsString("ContactPerson"), JsString("ContactAddress"))),
-        "business-address" -> Json.obj(
-          "line1" -> "63 Clifton Roundabout",
-          "line2" -> "Worcester",
-          "line3" -> "Stillworcester",
-          "line4" -> "Worcestershire",
-          "postcode" -> "WR53 7CX"
-        ),
-        "warehouse-details" -> JsString("Done"),
-        "check-answers" -> JsString("Done"),
-        "checkyouranswers" -> JsString("Done")
+        selectChangeSites,
+        changeRegisteredAccountDetails,
+        changeRegisteredDetailsContactAddress,
+        businessAddress,
+        checkYourAnswers
       )
 
-      println(Await.result(output, 10 seconds))
-
-      1 mustBe 1
+      status(output) mustBe OK
     }
 
-
-//    "execute the variations journey from program" in {
-//      val program = controller.program(aSubscription, aSubscription.sdilRef)
-//
-//      returnsDataCheck(variableReturns)
-//      returnsPendingCheck(variableReturns)
-//      val mockInner = mock[VariationsController]
-//      when(mockInner.programInner(aSubscription,
-//        aSubscription.sdilRef,
-//        variableReturns,
-//        returnPeriods)) thenReturn program
-//
-//      val output = controllerTester.testJourney(program)("null" -> JsNull)
-//
-//      status(output) mustBe SEE_OTHER
-//    }
-
-    "execute adjustment journey" in {
+    "execute adjustment journey from index" in {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
@@ -531,7 +259,7 @@ class VariationsControllerSpec extends ControllerSpec {
 
     }
 
-    "execute index journey" in {
+    "execute index journey from index" in {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
@@ -574,6 +302,85 @@ class VariationsControllerSpec extends ControllerSpec {
 
     }
   }
+
+  private lazy val changeRegisteredDetailsAll: (String, JsArray) = "change-registered-details" -> JsArray(List(
+    "Sites", "ContactPerson", "ContactAddress").map(JsString)
+  )
+
+  //Deregester journey values
+  private lazy val selectChangeDeregister: (String, JsString) = "select-change" -> JsString("Deregister")
+  private lazy val cancelRegistrationReason: (String, JsString) = "cancel-registration-reason" -> JsString("Done")
+  private lazy val cancelRegistrationDate: (String, JsString) = "cancel-registration-date" -> JsString("2019-03-09")
+  private lazy val fileReturnBeforeDeregistration: (String, JsNull.type) = "file-return-before-deregistration" -> JsNull
+
+
+  //Activity journey values
+  private lazy val selectChangeActivity: (String, JsString) = "select-change" -> JsString("Activity")
+  private lazy val amountProduced: (String, JsString) = "amount-produced" -> JsString("Large")
+  private lazy val thirdPartyPackagers: (String, JsBoolean) = "third-party-packagers" -> JsBoolean(true)
+  private lazy val packagingSite: (String, JsObject) = "packaging-site" -> Json.obj("lower" -> 123, "higher" -> 234)
+  private lazy val contractPacking: (String, JsObject) = "contract-packing" -> Json.obj("lower" -> 2345, "higher" -> 435657)
+  private lazy val imports: (String, JsObject) = "imports" -> Json.obj("lower" -> 12345, "higher" -> 34668)
+  private lazy val productionSiteDetails: (String, JsString) = "production-site-details" -> JsString("Done")
+  private lazy val productionSiteDetailsData: (String, JsArray) = "production-site-details_data" -> JsArray(List(
+    Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
+    Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
+  ))
+  private lazy val secondaryWarehouseDetails: (String, JsString) = "secondary-warehouse-details" -> JsString("Done")
+  private lazy val secondaryWarehouseDetailsData: (String, JsArray) = "secondary-warehouse-details_data" -> JsArray(List(
+    Json.obj("address" -> Json.obj("lines" -> List("23 Diabetes Street", "ABC"), "postCode" -> "FG45 7CD"), "tradingName" -> "Syrupshop")
+  ))
+
+  //Contact Details journey values
+  private lazy val changeRegisteredDetailsContactPerson: (String, JsArray) = "change-registered-details" -> JsArray(List(JsString("ContactPerson")))
+  private lazy val contactDetails: (String, JsObject) = "contact-details" -> Json.obj(
+    "fullName" -> "Ava Adams",
+    "position" -> "Chief Infrastructure Agent",
+    "phoneNumber" -> "04495 206187",
+    "email" -> "Adeline.Greene@gmail.com")
+
+  //Sites journey values
+  private lazy val selectChangeSites: (String, JsString) = "select-change" -> JsString("Sites")
+  private lazy val changeRegisteredDetailsSites: (String, JsArray) = "change-registered-details" -> JsArray(List(JsString("Sites")))
+  private lazy val packagingSitesDetails: (String, JsString) = "packaging-site-details" -> JsString("Done")
+  private lazy val packagingSitesDetailsData: (String, JsArray) = "packaging-site-details_data" -> JsArray(List(
+    Json.obj(
+      "address" -> Json.obj(
+        "lines" -> List("117 Jerusalem Court", "St Albansx"),
+        "postCode" -> "AL10 3UJ"
+      )
+    ),
+    Json.obj(
+      "address" -> Json.obj(
+        "lines" -> List("12 The Street", "Genericford"),
+        "postCode" -> "AB12 3CD"
+      )
+    )
+  ))
+  private lazy val warehouseDetails: (String, JsString) = "warehouse-details" -> JsString("Done")
+  private lazy val warehouseDetailsData: (String, JsArray) = "warehouse-details_data" ->
+    JsArray(List(
+      Json.obj(
+        "address" -> Json.obj(
+          "lines" -> List("13 Bogus Crescent", "The Hyperquadrant", "Genericford", "Madeupshire"),
+          "postCode" -> "ZX98 7YV"
+        ),
+        "tradingName" -> "Sugar Storage Ltd")
+    ))
+
+  //businessAddress journey values
+  private lazy val changeRegisteredDetailsContactAddress: (String, JsArray) = "change-registered-details" -> JsArray(List(JsString("ContactAddress")))
+  private lazy val changeRegisteredAccountDetails: (String, JsNull.type) = "change-registered-account-details" -> JsNull
+  private lazy val businessAddress: (String, JsObject) = "business-address" -> Json.obj(
+    "line1" -> "63 Clifton Roundabout",
+    "line2" -> "Worcester",
+    "line3" -> "Stillworcester",
+    "line4" -> "Worcestershire",
+    "postcode" -> "WR53 7CX"
+  )
+
+  private lazy val checkAnswers: (String, JsString) = "check-answers" -> JsString("Done")
+  private lazy val checkYourAnswers: (String, JsString) = "checkyouranswers" -> JsString("Done")
 }
 
 // URI: http://localhost:8700/soft-drinks-industry-levy/variations/checkyouranswers

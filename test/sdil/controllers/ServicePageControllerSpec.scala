@@ -71,29 +71,30 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     }
 
     "return Status: OK for displaying deregistered service page" in {
-      val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "0000000033")), "Active")))
+      val irctEnrolment = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "0000000036")), "Active")))
       stubAuthResult(new ~(irctEnrolment, Some(User)))
 
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000033")
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XKSDIL000000036")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnectorSPA.retrieveSubscription(matching("XKSDIL000000033"), anyString())(any())).thenReturn {
+      when(mockSdilConnectorSPA.retrieveSubscription(matching("XKSDIL000000036"), anyString())(any())).thenReturn {
         Future.successful(Some(validDeregisteredRetrievedSubscription))
       }
 
-      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
-      when(mockSdilConnectorSPA.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
+      when(mockSdilConnectorSPA.returns_pending(matching("0000000036"))(any())).thenReturn(Future.successful(List.empty))
+      when(mockSdilConnectorSPA.returns_get(matching("0000000036"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
-      val request = FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000033", "utr" -> "0000000033")
+      val request = FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000036", "utr" -> "0000000036")
       val result = testController.show.apply(request)
 
       status(result) mustBe OK
       contentAsString(result) must include(messagesApi("sdil.registered.title"))
       contentAsString(result) must include(messagesApi("sdil.service-page.title"))
+      contentAsString(result) must include(messagesApi("returnsHome.dereg.title"))
       contentAsString(result) mustNot include(messagesApi("sdil.common.title"))
       contentAsString(result) mustNot include(messagesApi("sdil.service-page.p2.voluntary-only"))
     }
@@ -230,7 +231,13 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     "XKSDIL000000033",
     "Cliff's Limonard",
     UkAddress(List("1", "The Road"), "AA11 1AA"),
-    RetrievedActivity(false, false, true, false, false),
+    RetrievedActivity(
+      smallProducer = false,
+      largeProducer = false,
+      contractPacker = true,
+      importer = false,
+      voluntaryRegistration = false
+    ),
     LocalDate.of(2018, 4, 6),
     List(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"), None, None, None)),
     List(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"), None, None, None)),
@@ -261,6 +268,7 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     val m = mock[SoftDrinksIndustryLevyConnector]
     when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))
     when(m.retrieveSubscription(matching("XKSDIL000000033"),any())(any())).thenReturn(Future.successful(Some(validRetrievedSubscription)))
+    when(m.retrieveSubscription(matching("XKSDIL000000036"),any())(any())).thenReturn(Future.successful(Some(validDeregisteredRetrievedSubscription)))
     when(m.returns_variable(any())(any())).thenReturn(Future.successful(returnPeriods))
     when(m.returns_vary(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_update(any(), any(), any())(any())).thenReturn(Future.successful(()))

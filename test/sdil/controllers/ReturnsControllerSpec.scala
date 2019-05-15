@@ -52,44 +52,6 @@ import scala.concurrent.Future
 
 class ReturnsControllerSpec extends ControllerSpec {
 
-
-  val validReturnPeriod = ReturnPeriod(2018,1)
-
-  val emptySub = RetrievedSubscription(
-      "0000000022",
-      "",
-      "",
-      UkAddress(Nil,""),
-      RetrievedActivity(
-        smallProducer = false,
-        largeProducer = false,
-        contractPacker = false,
-        importer = false,
-        voluntaryRegistration = false),
-      java.time.LocalDate.now,
-      Nil,
-      Nil,
-      Contact(None, None, "", ""))
-
-    val validSdilRef = "XCSDIL000000002"
-
-    val validId = "start"
-
-  val volManSub = emptySub.copy(
-    activity = RetrievedActivity(
-                smallProducer = true,
-                largeProducer = false,
-                contractPacker = false,
-                importer = true,
-                voluntaryRegistration = false)
-  )
-  val smallprod = Json.obj("smallProd" -> "here I am")
-
-  val emptyReturn = SdilReturn((0,0), (0,0), List.empty, (0,0), (0,0), (0,0), (0,0))
-
-  val emptyReturnsVariation = ReturnsVariation("someOrg", UkAddress(Nil,"AA111AA"),(false,(0,0)),(false,(0,0)),Nil,Nil,"07830440425","legitemail@legitdomain.com",BigDecimal(0))
-
-
   "ReturnsController" should {
 
     "execute main program" in {
@@ -212,24 +174,6 @@ class ReturnsControllerSpec extends ControllerSpec {
       status(program) mustBe OK
     }
 
-    //     "askNewWarehouses" in {
-    //       def subProgram = controller.askWarehouses(hc) >>
-    //       controller.resultToWebMonad[Result](controller.Ok("fin!"))
-    //
-    //       // dummy up a post request, may need to add in a session id too in order to avoid a redirect
-    //       def request: Request[AnyContent] = FakeRequest().withFormUrlEncodedBody("utr" -> "", "postcode" -> "").withSession { ("uuid" -> sessionUUID) }
-    //       def output = controller.runInner(request)(subProgram)(
-    //         "production-site-details" /* replace with the key of the very last form page */
-    //       )(persistence.dataGet, persistence.dataPut)
-    //       // We should get 'fin!' in the result as long as all the validation passes
-    //       // println(Await.result(output, 10 seconds).getClass)
-    //       // Await.result(output, 10 seconds).toString must contain("fin")
-    //       println(Await.result(output, 10 seconds).body.toString)
-    //       1 mustBe 1
-    //
-    //     }
-
-
     "execute index journey" in {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
@@ -315,6 +259,39 @@ class ReturnsControllerSpec extends ControllerSpec {
     override def http: CoreGet with CorePut with CoreDelete = ???
   }
   lazy val hc: HeaderCarrier = HeaderCarrier()
+
+  private lazy val validReturnPeriod = ReturnPeriod(2018,1)
+  private lazy val emptySub = RetrievedSubscription(
+    "0000000022",
+    "",
+    "",
+    UkAddress(Nil,""),
+    RetrievedActivity(
+      smallProducer = false,
+      largeProducer = false,
+      contractPacker = false,
+      importer = false,
+      voluntaryRegistration = false),
+    java.time.LocalDate.now,
+    Nil,
+    Nil,
+    Contact(None, None, "", ""))
+  private lazy val validSdilRef = "XCSDIL000000002"
+  private lazy val validId = "start"
+  private lazy val volManSub = emptySub.copy(
+    activity = RetrievedActivity(
+      smallProducer = true,
+      largeProducer = false,
+      contractPacker = false,
+      importer = true,
+      voluntaryRegistration = false)
+  )
+  private lazy val smallprod = Json.obj("smallProd" -> "here I am")
+
+  private lazy val emptyReturn = SdilReturn((0,0), (0,0), List.empty, (0,0), (0,0), (0,0), (0,0))
+
+  private lazy val emptyReturnsVariation = ReturnsVariation("someOrg", UkAddress(Nil,"AA111AA"),(false,(0,0)),(false,(0,0)),Nil,Nil,"07830440425","legitemail@legitdomain.com",BigDecimal(0))
+
 
   // DATA OUT:Map(claim-credits-for-exports -> {"lower":6789,"higher":2345}, packaged-as-a-contract-packer -> {"lower":1234579,"higher":2345679}, claim-credits-for-lost-damaged -> {"lower":123,"higher":234}, brought-into-uk-from-small-producers -> {"lower":1234,"higher":2345}, _editSmallProducers -> false, own-brands-packaged-at-own-sites -> {"lower":123234,"higher":2340000}, small-producer-details -> "Done", return-change-registration -> null, brought-into-uk -> {"lower":1234562,"higher":2345672}, ask-secondary-warehouses-in-return -> false, exemptions-for-small-producers -> false)
 

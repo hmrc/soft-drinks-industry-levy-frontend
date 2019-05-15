@@ -67,14 +67,14 @@ trait ReturnJourney extends SdilWMController {
       ) emptyUnless !subscription.activity.smallProducer
       em = ExtraMessages(
         messages =
-          if(subscription.activity.isVoluntaryMandatory) {
-            Map(
-              "brought-into-uk-from-small-producers.lead" ->
-                Messages("brought-into-uk-from-small-producers.lead.volMan"),
-              "claim-credits-for-exports.lead" ->
-                Messages("claim-credits-for-exports.lead.volMan")
-            )
-          } else {
+            if(subscription.activity.isVoluntaryMandatory) {
+              Map(
+                "brought-into-uk-from-small-producers.lead" ->
+                  Messages("brought-into-uk-from-small-producers.lead.volMan"),
+                "claim-credits-for-exports.lead" ->
+                  Messages("claim-credits-for-exports.lead.volMan")
+              )
+            } else {
             Map.empty
           }
       )

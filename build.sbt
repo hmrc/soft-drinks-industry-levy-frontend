@@ -49,6 +49,7 @@ coverageExcludedPackages := Seq(
   "testOnlyDoNotUseInAppConf.*",
   "sdil.controllers.test.*",
   "sdil.connectors.TestConnector",
+  "sdil.forms",
   "variations.Routes"
 ).mkString(";")
 coverageExcludedFiles := "<empty>;.*BuildInfo.*;.*Routes.*;.*GDS.*;.*GdsComponents.*;.*WebMonadPersistence.*;" +

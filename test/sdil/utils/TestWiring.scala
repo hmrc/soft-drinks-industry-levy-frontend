@@ -49,7 +49,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait TestWiring extends MockitoSugar {
   val returnPeriods = List(ReturnPeriod(2018,1), ReturnPeriod(2019, 1))
-
+  val returnPeriods2 = List(ReturnPeriod(2018,1), ReturnPeriod(2019, 1), ReturnPeriod(2019, 2), ReturnPeriod(2019, 3))
   val defaultSubscription: Subscription = {
     Subscription(
       "1234567890",
