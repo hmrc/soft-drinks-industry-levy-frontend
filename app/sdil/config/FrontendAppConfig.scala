@@ -18,7 +18,8 @@ package sdil.config
 
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.config.RunMode
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
   val analyticsToken: String
@@ -34,8 +35,8 @@ trait AppConfig {
   val balanceAllEnabled: Boolean
 }
 
-class FrontendAppConfig(val runModeConfiguration: Configuration, environment: Environment) extends AppConfig with ServicesConfig {
-  override protected def mode: Mode = environment.mode
+class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMode, environment: Environment)
+  extends ServicesConfig(runModeConfiguration, runMode) with AppConfig {
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 

@@ -18,20 +18,21 @@ package sdil.actions
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
-import play.api.mvc.{ActionBuilder, Request, Result, WrappedRequest}
+import play.api.mvc._
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.controllers.routes
 import sdil.models.RegistrationFormData
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class FormAction(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, authorisedAction: AuthorisedAction)
-                (implicit config: AppConfig)
-  extends ActionBuilder[RegistrationFormRequest] with I18nSupport {
+class FormAction(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, authorisedAction: AuthorisedAction, controllerComponents: ControllerComponents)
+                (implicit config: AppConfig, val executionContext: ExecutionContext)
+  extends ActionBuilder[RegistrationFormRequest, AnyContent] with I18nSupport {
+
+  val parser: BodyParser[AnyContent] = controllerComponents.parsers.defaultBodyParser
 
   type Body[A] = RegistrationFormRequest[A] => Future[Result]
 

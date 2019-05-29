@@ -22,7 +22,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Result
+import play.api.mvc.{MessagesControllerComponents, Result}
 import sdil.actions.{AuthorisedAction, AuthorisedRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -34,11 +34,12 @@ import ltbs.play.scaffold.SdilComponents._
 
 import scala.concurrent.Future
 
-class IdentifyController(val messagesApi: MessagesApi,
+class IdentifyController(override val messagesApi: MessagesApi,
+                         mcc: MessagesControllerComponents,
                          cache: RegistrationFormDataCache,
                          authorisedAction: AuthorisedAction,
                          softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
-  extends FrontendController with I18nSupport {
+  extends FrontendController(mcc) with I18nSupport {
 
   import IdentifyController.form
 

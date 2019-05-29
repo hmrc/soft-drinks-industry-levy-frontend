@@ -78,22 +78,22 @@ scalaVersion := "2.11.12"
 
 libraryDependencies ++= Seq(
   ws,
-  "uk.gov.hmrc"               %% "bootstrap-play-25"              % "4.11.0",
-  "uk.gov.hmrc"               %% "domain"                         % "5.6.0-play-25",
-  "uk.gov.hmrc"               %% "govuk-template"                 % "5.22.0",
-  "uk.gov.hmrc"               %% "play-ui"                        % "7.39.0-play-25",
-  "uk.gov.hmrc"               %% "play-partials"                  % "6.9.0-play-25",
-  "com.typesafe.play"         %% "play-json"                      % "2.5.18",
+  "uk.gov.hmrc"               %% "bootstrap-play-26"              % "0.40.0",
+  "uk.gov.hmrc"               %% "domain"                         % "5.6.0-play-26",  //see if can be removed after upgrade
+  "uk.gov.hmrc"               %% "govuk-template"                 % "5.35.0-play-26",
+  "uk.gov.hmrc"               %% "play-ui"                        % "7.39.0-play-26",
+  "uk.gov.hmrc"               %% "play-partials"                  % "6.9.0-play-26",
+  "com.typesafe.play"         %% "play-json"                      % "2.6.13",
   "org.scalactic"             %% "scalactic"                      % "3.0.5",
-  "uk.gov.hmrc"               %% "auth-client"                    % "2.20.0-play-25",
-  "uk.gov.hmrc"               %% "http-caching-client"            % "8.3.0",
+//  "uk.gov.hmrc"               %% "auth-client"                    % "2.21.0-play-26",  //check version
+  "uk.gov.hmrc"               %% "http-caching-client"            % "8.4.0-play-26",
   "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "0.2.0",
   "com.softwaremill.macwire"  %% "macros"                         % "2.3.1" % "provided",
   "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.1" % "provided",
   "com.softwaremill.macwire"  %% "util"                           % "2.3.1",
   "com.softwaremill.macwire"  %% "proxy"                          % "2.3.1",
-  "org.typelevel"             %% "cats-core"                      % "1.1.0",
-  "uk.gov.hmrc"               %% "uniform"                        % "0.1.9"
+  "org.typelevel"             %% "cats-core"                      % "1.1.0",  //Upgrade later to 1.6.0
+  "uk.gov.hmrc"               %% "uniform"                        % "0.1.9"  //maybe later
 )
 
 resolvers ++= Seq(

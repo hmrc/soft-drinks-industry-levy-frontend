@@ -16,23 +16,17 @@
 
 package sdil.config
 
-import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-import uk.gov.hmrc.play.bootstrap.config.AppName
+import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.ServicesConfig
 
-class SDILShortLivedCaching(val http: HttpClient, val configuration: Configuration, environment: Environment)
-  extends ShortLivedHttpCaching with AppName with ServicesConfig {
+class SDILShortLivedCaching(val http: HttpClient, val configuration: Configuration, val runMode: RunMode, environment: Environment)
+  extends ServicesConfig(configuration, runMode) with ShortLivedHttpCaching {
 
-  override def defaultSource: String = appName
+  override def defaultSource: String = configuration.get[String]("appName")
 
   override def baseUri: String = baseUrl("cacheable.short-lived-cache")
 
   override def domain: String = getConfString("cacheable.short-lived-cache.domain", throw new Exception("Missing config cacheable.short-lived-cache.domain"))
-
-  override protected def mode: Mode = environment.mode
-
-  override protected def runModeConfiguration: Configuration = configuration
 }

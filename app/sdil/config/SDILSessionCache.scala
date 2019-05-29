@@ -16,25 +16,20 @@
 
 package sdil.config
 
-import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.bootstrap.config.AppName
+import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.ServicesConfig
 
 class SDILSessionCache(val http: HttpClient,
                        val configuration: Configuration,
+                       val runMode: RunMode,
                        environment: Environment)
-  extends SessionCache with AppName with ServicesConfig {
+  extends ServicesConfig(configuration, runMode) with SessionCache {
 
-  override def defaultSource: String = appName
+  override def defaultSource: String = configuration.get[String]("appName")
 
   override def baseUri: String = baseUrl("cacheable.session-cache")
 
   override def domain: String = getConfString("cacheable.session-cache.domain", throw new RuntimeException("Missing config cacheable.session-cache.domain"))
-
-  override protected def mode: Mode = environment.mode
-
-  override protected def runModeConfiguration: Configuration = configuration
 }

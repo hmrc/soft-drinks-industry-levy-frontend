@@ -20,22 +20,22 @@ import play.api.Mode.Mode
 import play.api.libs.json.Json
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.config.RunMode
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class GaConnector(http: HttpClient,
                   environment: Environment,
-                  val runModeConfiguration: Configuration) extends ServicesConfig {
+                  val runModeConfiguration: Configuration,
+                  val runMode: RunMode) extends ServicesConfig(runModeConfiguration, runMode) {
 
   implicit val dimensionWrites = Json.writes[DimensionValue]
   implicit val eventWrites = Json.writes[Event]
   implicit val analyticsWrites = Json.writes[AnalyticsRequest]
 
   val serviceUrl: String = s"${baseUrl("platform-analytics")}/platform-analytics/event"
-
-  override protected def mode: Mode = environment.mode
 
   def sendEvent(request: AnalyticsRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     http.POST(serviceUrl, request).map(_ => ()) recover {
