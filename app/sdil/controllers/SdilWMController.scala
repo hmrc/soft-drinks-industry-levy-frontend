@@ -26,7 +26,7 @@ import play.api.data.Forms._
 import play.api.data.format.Formatter
 import play.api.data.validation.{Invalid, _}
 import play.api.data.{Form, Mapping, _}
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesProvider}
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
 import play.twirl.api.Html
@@ -51,11 +51,11 @@ import sdil.models.variations.ReturnVariationData
 import sdil.uniform.ShowTitle
 import sdil.uniform.ShowTitle.instance
 
-trait SdilWMController extends WebMonadController
-    with FrontendController with Modulus23Check
+trait SdilWMController extends WebMonadController with Modulus23Check
 {
 
   implicit def config: AppConfig
+  implicit val messagesProvider: MessagesProvider
 
   val costLower = BigDecimal("0.18")
   val costHigher = BigDecimal("0.24")
@@ -543,7 +543,7 @@ trait SdilWMController extends WebMonadController
     sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
       case Some(x) => x // the given sdilRef matches a customer that was a small producer at some point in the quarter
       case None    => false
-    }(mdcExecutionContext)
+    }
 
   implicit val litreageForm = new FormHtml[(Long,Long)] {
     def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {

@@ -16,11 +16,13 @@
 
 package sdil.controllers.test
 
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.connectors.TestConnector
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-class TestingController(testConnector: TestConnector) extends FrontendController {
+import scala.concurrent.ExecutionContext
+
+class TestingController(testConnector: TestConnector, mcc: MessagesControllerComponents)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   def reset(url: String): Action[AnyContent] = Action.async { implicit request =>
     testConnector.reset(url) map {
@@ -51,5 +53,4 @@ class TestingController(testConnector: TestConnector) extends FrontendController
       case None => NotFound
     }
   }
-
 }

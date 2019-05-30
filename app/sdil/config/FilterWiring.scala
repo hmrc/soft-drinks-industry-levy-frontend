@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.ControllerConfigs
 import uk.gov.hmrc.play.bootstrap.filters._
 import uk.gov.hmrc.play.bootstrap.filters.frontend._
-import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.{CookieCryptoFilter, DefaultCookieCryptoFilter, SessionCookieCrypto}
+import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.{DefaultSessionCookieCryptoFilter, SessionCookieCrypto, SessionCookieCryptoFilter}
 import uk.gov.hmrc.play.bootstrap.filters.frontend.deviceid.{DefaultDeviceIdFilter, DeviceIdFilter}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
@@ -48,7 +48,7 @@ trait FilterWiring extends CommonWiring {
   lazy val frontendAuditFilter: FrontendAuditFilter = wire[DefaultFrontendAuditFilter]
   lazy val metricsFilter: MetricsFilter = wire[MetricsFilterImpl]
   lazy val deviceIdFilter: DeviceIdFilter = wire[DefaultDeviceIdFilter]
-  lazy val cookieCryptoFilter: CookieCryptoFilter = wire[DefaultCookieCryptoFilter]
+  lazy val cookieCryptoFilter: SessionCookieCryptoFilter = wire[DefaultSessionCookieCryptoFilter]
   lazy val sessionTimeoutFilter: SessionTimeoutFilter = wire[SessionTimeoutFilter]
   lazy val cacheControlFilter: CacheControlFilter = wire[CacheControlFilter]
 

@@ -32,13 +32,13 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
 import ltbs.play.scaffold.SdilComponents._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class IdentifyController(override val messagesApi: MessagesApi,
                          mcc: MessagesControllerComponents,
                          cache: RegistrationFormDataCache,
                          authorisedAction: AuthorisedAction,
-                         softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
+                         softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
   import IdentifyController.form

@@ -22,7 +22,7 @@ import java.time.format._
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{Messages, MessagesApi, MessagesProvider}
 import play.api.mvc.{AnyContent, _}
 import play.twirl.api.Html
 import sdil.actions.RegisteredAction
@@ -44,14 +44,16 @@ import views.html.uniform
 import scala.concurrent._
 
 class ReturnsController (
-  val messagesApi: MessagesApi,
+  override val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
-  cache: ShortLivedHttpCaching
+  cache: ShortLivedHttpCaching,
+  mcc: MessagesControllerComponents
 )(implicit
   val config: AppConfig,
-  val ec: ExecutionContext
-) extends SdilWMController with FrontendController with Modulus23Check with ReturnJourney {
+  val ec: ExecutionContext,
+  override val messagesProvider: MessagesProvider
+) extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney {
 
   def confirmationPage(
     key: String,

@@ -29,10 +29,13 @@ import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 import views.html.softdrinksindustrylevy.{errors, register}
 import ltbs.play.scaffold.GdsComponents.oneOf
 import ltbs.play.scaffold.SdilComponents.addressMapping
+import play.api.mvc.MessagesControllerComponents
 
-class VerifyController(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, formAction: FormAction,
-                       sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig)
-  extends FrontendController with I18nSupport {
+import scala.concurrent.ExecutionContext
+
+class VerifyController(override val messagesApi: MessagesApi, cache: RegistrationFormDataCache, formAction: FormAction,
+                       sdilConnector: SoftDrinksIndustryLevyConnector, mcc: MessagesControllerComponents)(implicit config: AppConfig, ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport {
 
   import VerifyController._
 

@@ -21,7 +21,7 @@ import play.api.Configuration
 import play.api.mvc.EssentialFilter
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
-import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.CookieCryptoFilter
+import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCryptoFilter
 import uk.gov.hmrc.play.bootstrap.filters.frontend.deviceid.DeviceIdFilter
 import uk.gov.hmrc.play.bootstrap.filters.frontend.{FrontendAuditFilter, HeadersFilter, SessionTimeoutFilter}
 import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, FrontendFilters, LoggingFilter, MDCFilter}
@@ -34,7 +34,7 @@ class SdilFilters(configuration: Configuration,
                   metricsFilter: MetricsFilter,
                   deviceIdFilter: DeviceIdFilter,
                   csrfFilter: CSRFFilter,
-                  cookieCryptoFilter: CookieCryptoFilter,
+                  cookieCryptoFilter: SessionCookieCryptoFilter,
                   sessionTimeoutFilter: SessionTimeoutFilter,
                   cacheControlFilter: CacheControlFilter,
                   mdcFilter: MDCFilter,
@@ -48,7 +48,7 @@ class SdilFilters(configuration: Configuration,
   metricsFilter: MetricsFilter,
   deviceIdFilter: DeviceIdFilter,
   csrfFilter: CSRFFilter,
-  cookieCryptoFilter: CookieCryptoFilter,
+  cookieCryptoFilter: SessionCookieCryptoFilter,
   sessionTimeoutFilter: SessionTimeoutFilter,
   cacheControlFilter: CacheControlFilter,
   mdcFilter: MDCFilter
