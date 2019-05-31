@@ -18,7 +18,8 @@ package sdil.config
 
 import com.kenshoo.play.metrics.{Metrics, MetricsFilter, MetricsFilterImpl}
 import com.softwaremill.macwire.{wire, wireWith}
-import play.api.http.HttpConfiguration
+import play.api.http.{HttpConfiguration, SessionConfiguration}
+import play.api.mvc.{DefaultSessionCookieBaker, SessionCookieBaker}
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
 import sdil.filters.{SdilFilters, VariationsFilter}
@@ -39,7 +40,9 @@ trait FilterWiring extends CommonWiring {
   val metrics: Metrics
   val errorHandler: FrontendErrorHandler
 
-  lazy val filters: FrontendFilters = wire[SdilFilters]
+//  lazy val filters: FrontendFilters = wire[SdilFilters]
+//  lazy val sessionCookieBaker: SessionCookieBaker = wire[DefaultSessionCookieBaker]
+//  lazy val sessionCookieBaker1: SessionConfiguration = wire[SessionConfiguration]
   lazy val mdcFilter: MDCFilter = wire[MDCFilter]
   lazy val variationsFilter: VariationsFilter = wire[VariationsFilter]
   lazy val loggingFilter: LoggingFilter = wire[DefaultLoggingFilter]
@@ -47,7 +50,7 @@ trait FilterWiring extends CommonWiring {
   lazy val frontendAuditFilter: FrontendAuditFilter = wire[DefaultFrontendAuditFilter]
   lazy val metricsFilter: MetricsFilter = wire[MetricsFilterImpl]
   lazy val deviceIdFilter: DeviceIdFilter = wire[DefaultDeviceIdFilter]
-  lazy val cookieCryptoFilter: SessionCookieCryptoFilter = wire[DefaultSessionCookieCryptoFilter]
+//  lazy val cookieCryptoFilter: SessionCookieCryptoFilter = wire[DefaultSessionCookieCryptoFilter]
   lazy val sessionTimeoutFilter: SessionTimeoutFilter = wire[SessionTimeoutFilter]
   lazy val cacheControlFilter: CacheControlFilter = wire[CacheControlFilter]
   lazy val controllerConfigs: ControllerConfigs = wireWith(ControllerConfigs.fromConfig _)
@@ -56,4 +59,6 @@ trait FilterWiring extends CommonWiring {
   lazy val cacheControlConfig: CacheControlConfig = wireWith(CacheControlConfig.fromConfig _)
   lazy val httpAuditEvent: HttpAuditEvent = wire[DefaultHttpAuditEvent]
   val appName = configuration.get[String]("appName")
+
+  val applicationCrypto = new ApplicationCrypto(configuration.underlying)
 }

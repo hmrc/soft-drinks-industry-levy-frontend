@@ -20,11 +20,11 @@ import com.softwaremill.macwire._
 import controllers.template.Template
 import controllers.{AssetsConfiguration, AssetsMetadata, DefaultAssetsMetadata}
 import play.api.ApplicationLoader.Context
-import play.api.http.{HttpErrorHandler, HttpRequestHandler}
+import play.api.http.{DefaultHttpFilters, HttpErrorHandler, HttpFilters, HttpRequestHandler}
 import play.api.i18n.I18nComponents
 import play.api.inject.{Injector, SimpleInjector}
 import play.api.libs.ws.ahc.AhcWSComponents
-import play.api.mvc.{DefaultMessagesControllerComponents, MessagesControllerComponents}
+import play.api.mvc._
 import play.api.{BuiltInComponentsFromContext, Configuration, DefaultApplication}
 import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
@@ -53,19 +53,19 @@ class SDILComponents(context: Context)
 
   override lazy val configuration: Configuration = decodeConfig(context.initialConfiguration)
 
-  override lazy val httpRequestHandler: HttpRequestHandler = wire[RequestHandler]
   override lazy val httpErrorHandler: HttpErrorHandler = errorHandler
 
-  lazy val adminController: HealthController = wire[HealthController]
   lazy val templateController: Template = wire[Template]
 
   lazy val optimizelyConfig: OptimizelyConfig = new OptimizelyConfig(configuration)
   lazy val assetConfig: AssetsConfig = new AssetsConfig(configuration)
   lazy val gtmConfig: GTMConfig = new GTMConfig(configuration)
 
-  lazy val customInjector: Injector = new SimpleInjector(injector) + templateController + adminController + wsClient + optimizelyConfig + assetConfig + gtmConfig
-
-  override val mcc: MessagesControllerComponents = wire[DefaultMessagesControllerComponents]
+  lazy val customInjector: Injector = new SimpleInjector(injector) + templateController  + wsClient + optimizelyConfig + assetConfig + gtmConfig
+//  controllerComponents
+//  override val mcc: MessagesControllerComponents = wire[DefaultMessagesControllerComponents]
   override val assetsMetadata: AssetsMetadata = wire[DefaultAssetsMetadata]
   lazy val assetsConfiguration = new AssetsConfiguration()
+//  lazy val adminController: HealthController = wire[HealthController]
+
 }

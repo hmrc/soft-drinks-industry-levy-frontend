@@ -26,7 +26,7 @@ import play.api.data.Forms._
 import play.api.data.format.Formatter
 import play.api.data.validation.{Invalid, _}
 import play.api.data.{Form, Mapping, _}
-import play.api.i18n.{Messages, MessagesProvider}
+import play.api.i18n._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
 import play.twirl.api.Html
@@ -47,15 +47,22 @@ import views.html.uniform
 import scala.concurrent._
 import scala.concurrent.duration._
 import cats.implicits._
+import com.softwaremill.macwire.wire
+import sdil.controllers.test.TestController
 import sdil.models.variations.ReturnVariationData
 import sdil.uniform.ShowTitle
 import sdil.uniform.ShowTitle.instance
 
+
 trait SdilWMController extends WebMonadController with Modulus23Check
 {
 
+//  implicit lazy val messages: Messages = wire[MessagesImpl]
+//  this: I18nSupport =>
+
   implicit def config: AppConfig
-  implicit val messagesProvider: MessagesProvider
+  implicit val messages: Messages = implicitly[Messages]
+//  implicit val messages: Messages
 
   val costLower = BigDecimal("0.18")
   val costHigher = BigDecimal("0.24")
@@ -369,7 +376,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check
 
     formPage(id)(mapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      val fragment = uniform.fragments.bigtext(id, b)(implicitly, extraMessages)
+      val fragment = uniform.fragments.bigtext(id, b)(implicitly, extraMessages, implicitly)
       uniform.ask(id, b, fragment, path)
     }
   }
@@ -397,7 +404,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check
               subheading,
               whatHappensNext,
               getTotal
-            )(implicitly, implicitly, implicitly, extraMessages)
+            )(implicitly, implicitly, implicitly, extraMessages, implicitly)
           ).asLeft[Result]
         )
       }

@@ -59,8 +59,7 @@ class VariationsController(
   mcc: MessagesControllerComponents
 )(implicit
   val config: AppConfig,
-  val ec: ExecutionContext,
-  override val messagesProvider: MessagesProvider
+  val ec: ExecutionContext
 ) extends FrontendController(mcc) with SdilWMController with FormHelpers with ReturnJourney {
 
   sealed trait ChangeType extends EnumEntry
@@ -144,7 +143,7 @@ class VariationsController(
     data: RegistrationVariationData,
     subscription: RetrievedSubscription,
     returnPeriods: List[ReturnPeriod]
-  ): WebMonad[RegistrationVariationData] = {
+  )(implicit request: Request[_]): WebMonad[RegistrationVariationData] = {
 
     for {
       packLarge                   <- askOneOf("amount-produced", ProducerType.values.toList) map {
@@ -237,7 +236,7 @@ class VariationsController(
   private[controllers] def program(
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+  )(implicit hc: HeaderCarrier, request: Request[_]): WebMonad[Result] = {
 
     val base = RegistrationVariationData(subscription)
 
@@ -255,7 +254,7 @@ class VariationsController(
     sdilRef: String,
     variableReturns: List[ReturnPeriod],
     returnPeriods: List[ReturnPeriod]
-  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+  )(implicit hc: HeaderCarrier, request :Request[_]): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
 
     val onlyReturns = subscription.deregDate.nonEmpty
@@ -328,7 +327,7 @@ class VariationsController(
   private def chooseReturn[A](
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier): WebMonad[A] = {
+  )(implicit hc: HeaderCarrier, request: Request[_]): WebMonad[A] = {
     val base = RegistrationVariationData(subscription)
     for {
       variableReturns <- execute(sdilConnector.returns_variable(base.original.utr))
@@ -547,7 +546,7 @@ class VariationsController(
   private def changeActorStatusJourney(
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+  )(implicit hc: HeaderCarrier, request: Request[_]): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
 
     for {

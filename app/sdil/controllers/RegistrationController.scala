@@ -27,9 +27,9 @@ import ltbs.play.scaffold.SdilComponents.extraMessages
 import play.api.data.Mapping
 import uk.gov.hmrc.uniform.webmonad._
 import uk.gov.hmrc.uniform.playutil._
-import play.api.i18n.{Messages, MessagesApi, MessagesProvider}
+import play.api.i18n._
 import play.api.libs.json.Format
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
@@ -46,19 +46,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 class RegistrationController(
-                              override val messagesApi: MessagesApi,
+//                              override val messagesApi: MessagesApi,
                               authorisedAction: AuthorisedAction,
                               sdilConnector: SoftDrinksIndustryLevyConnector,
                               registeredAction: RegisteredAction,
                               cache: RegistrationFormDataCache,
-                              mcc: MessagesControllerComponents
-                            )(
-                              implicit
-                              val config: AppConfig,
-                              val ec: ExecutionContext,
-                              override val messagesProvider: MessagesProvider
-                            )
-  extends FrontendController(mcc) with SdilWMController {
+                              mcc: MessagesControllerComponents)
+                            (implicit val config: AppConfig, val ec: ExecutionContext)
+  extends FrontendController(mcc) with SdilWMController with I18nSupport {
 
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)

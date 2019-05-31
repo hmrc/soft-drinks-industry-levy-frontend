@@ -20,6 +20,7 @@ import com.kenshoo.play.metrics.{Metrics, MetricsController, MetricsImpl}
 import com.softwaremill.macwire.wire
 import controllers.template.Template
 import controllers.{Assets, AssetsMetadata}
+import play.api.i18n.I18nSupport
 import play.api.inject.DefaultApplicationLifecycle
 import play.api.mvc.MessagesControllerComponents
 import play.api.routing.Router

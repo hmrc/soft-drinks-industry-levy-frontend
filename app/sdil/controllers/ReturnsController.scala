@@ -51,8 +51,7 @@ class ReturnsController (
   mcc: MessagesControllerComponents
 )(implicit
   val config: AppConfig,
-  val ec: ExecutionContext,
-  override val messagesProvider: MessagesProvider
+  val ec: ExecutionContext
 ) extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney {
 
   def confirmationPage(
