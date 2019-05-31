@@ -24,7 +24,7 @@ import play.filters.headers.SecurityHeadersFilter
 import sdil.filters.{SdilFilters, VariationsFilter}
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.bootstrap.config.ControllerConfigs
+import uk.gov.hmrc.play.bootstrap.config.{ControllerConfigs, DefaultHttpAuditEvent, HttpAuditEvent}
 import uk.gov.hmrc.play.bootstrap.filters._
 import uk.gov.hmrc.play.bootstrap.filters.frontend._
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.{DefaultSessionCookieCryptoFilter, SessionCookieCrypto, SessionCookieCryptoFilter}
@@ -40,7 +40,6 @@ trait FilterWiring extends CommonWiring {
   val errorHandler: FrontendErrorHandler
 
   lazy val filters: FrontendFilters = wire[SdilFilters]
-
   lazy val mdcFilter: MDCFilter = wire[MDCFilter]
   lazy val variationsFilter: VariationsFilter = wire[VariationsFilter]
   lazy val loggingFilter: LoggingFilter = wire[DefaultLoggingFilter]
@@ -51,12 +50,10 @@ trait FilterWiring extends CommonWiring {
   lazy val cookieCryptoFilter: SessionCookieCryptoFilter = wire[DefaultSessionCookieCryptoFilter]
   lazy val sessionTimeoutFilter: SessionTimeoutFilter = wire[SessionTimeoutFilter]
   lazy val cacheControlFilter: CacheControlFilter = wire[CacheControlFilter]
-
   lazy val controllerConfigs: ControllerConfigs = wireWith(ControllerConfigs.fromConfig _)
-
   lazy val sessionCookieCrypto: SessionCookieCrypto = SessionCookieCrypto(new ApplicationCrypto(configuration.underlying).SessionCookieCrypto)
-
   lazy val sessionTimeoutFilterConfig: SessionTimeoutFilterConfig = wireWith(SessionTimeoutFilterConfig.fromConfig _)
-
   lazy val cacheControlConfig: CacheControlConfig = wireWith(CacheControlConfig.fromConfig _)
+  lazy val httpAuditEvent: HttpAuditEvent = wire[DefaultHttpAuditEvent]
+  val appName = configuration.get[String]("appName")
 }

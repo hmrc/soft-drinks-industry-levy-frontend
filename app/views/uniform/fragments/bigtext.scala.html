@@ -21,7 +21,7 @@
 @import sdil.config.AppConfig
 @import views.html.uniform.helpers._
 
-@(key: String, form: Form[String])(implicit messages: Messages, extraMessages: ExtraMessages)
+@(key: String, form: Form[String])(implicit messages: Messages, extraMessages: ExtraMessages, lang: Lang)
 
 <div class="form-group @if(form.hasErrors) {form-group-error}">
     <label for="@key">

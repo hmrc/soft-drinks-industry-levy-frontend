@@ -20,7 +20,6 @@ import java.time.LocalDate
 
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents
 import ltbs.play.scaffold.SdilComponents.OrganisationType.{partnership, soleTrader}
 import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
 import ltbs.play.scaffold.SdilComponents.{litreageForm => approxLitreageForm, _}

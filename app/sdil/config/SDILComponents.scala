@@ -18,11 +18,13 @@ package sdil.config
 
 import com.softwaremill.macwire._
 import controllers.template.Template
+import controllers.{AssetsConfiguration, AssetsMetadata, DefaultAssetsMetadata}
 import play.api.ApplicationLoader.Context
 import play.api.http.{HttpErrorHandler, HttpRequestHandler}
 import play.api.i18n.I18nComponents
 import play.api.inject.{Injector, SimpleInjector}
 import play.api.libs.ws.ahc.AhcWSComponents
+import play.api.mvc.{DefaultMessagesControllerComponents, MessagesControllerComponents}
 import play.api.{BuiltInComponentsFromContext, Configuration, DefaultApplication}
 import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
@@ -61,5 +63,9 @@ class SDILComponents(context: Context)
   lazy val assetConfig: AssetsConfig = new AssetsConfig(configuration)
   lazy val gtmConfig: GTMConfig = new GTMConfig(configuration)
 
-  lazy val customInjector: Injector = new SimpleInjector(injector) + templateController + adminController + wsApi + optimizelyConfig + assetConfig + gtmConfig
+  lazy val customInjector: Injector = new SimpleInjector(injector) + templateController + adminController + wsClient + optimizelyConfig + assetConfig + gtmConfig
+
+  override val mcc: MessagesControllerComponents = wire[DefaultMessagesControllerComponents]
+  override val assetsMetadata: AssetsMetadata = wire[DefaultAssetsMetadata]
+  lazy val assetsConfiguration = new AssetsConfiguration()
 }

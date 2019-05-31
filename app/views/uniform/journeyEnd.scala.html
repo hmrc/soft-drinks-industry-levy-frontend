@@ -19,7 +19,7 @@
 @import java.time.format.DateTimeFormatter
 
 @(id: String, breadcrumbs: List[String], now: LocalDate = LocalDate.now, updateTimeMessage: Option[Html] = None,
-        whatHappensNext: Option[Html] = None, getTotal: Option[Html] = None)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages)
+        whatHappensNext: Option[Html] = None, getTotal: Option[Html] = None)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages, lang: Lang)
 
 @views.html.main_template(title = Messages.extraMessage(s"$id.title")) {
 
