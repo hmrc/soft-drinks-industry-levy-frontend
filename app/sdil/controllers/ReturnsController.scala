@@ -54,6 +54,8 @@ class ReturnsController (
   val ec: ExecutionContext
 ) extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney {
 
+  override lazy val parse = mcc.parsers
+
   def confirmationPage(
     key: String,
     period: ReturnPeriod,

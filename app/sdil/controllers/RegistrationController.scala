@@ -55,6 +55,8 @@ class RegistrationController(
                             (implicit val config: AppConfig, val ec: ExecutionContext)
   extends FrontendController(mcc) with SdilWMController with I18nSupport {
 
+  override lazy val parse = mcc.parsers
+
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)
     cache.get(request.internalId) flatMap {

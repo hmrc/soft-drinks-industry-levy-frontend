@@ -58,7 +58,7 @@ trait FilterWiring extends CommonWiring {
   lazy val sessionTimeoutFilterConfig: SessionTimeoutFilterConfig = wireWith(SessionTimeoutFilterConfig.fromConfig _)
   lazy val cacheControlConfig: CacheControlConfig = wireWith(CacheControlConfig.fromConfig _)
   lazy val httpAuditEvent: HttpAuditEvent = wire[DefaultHttpAuditEvent]
-  val appName = configuration.get[String]("appName")
+  val appName: String
 
   val applicationCrypto = new ApplicationCrypto(configuration.underlying)
 }

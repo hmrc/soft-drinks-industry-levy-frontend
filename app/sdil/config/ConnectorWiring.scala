@@ -42,5 +42,5 @@ trait ConnectorWiring extends CommonWiring {
   lazy val httpAuditing: HttpAuditing = wire[DefaultHttpAuditing]
   lazy val auditingConfigProvider: AuditingConfigProvider = wire[AuditingConfigProvider]
   lazy val auditingConfig: AuditingConfig = auditingConfigProvider.get()
-  val appName = configuration.get[String]("appName")
+  val appName: String
 }

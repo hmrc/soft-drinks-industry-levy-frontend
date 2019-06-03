@@ -62,6 +62,8 @@ class VariationsController(
   val ec: ExecutionContext
 ) extends FrontendController(mcc) with SdilWMController with FormHelpers with ReturnJourney {
 
+  override lazy val parse = mcc.parsers
+
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
     val values = findValues

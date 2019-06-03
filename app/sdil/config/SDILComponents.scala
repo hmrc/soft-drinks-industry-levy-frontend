@@ -16,6 +16,7 @@
 
 package sdil.config
 
+import com.kenshoo.play.metrics.{Metrics, MetricsImpl}
 import com.softwaremill.macwire._
 import controllers.template.Template
 import controllers.{AssetsConfiguration, AssetsMetadata, DefaultAssetsMetadata}
@@ -24,7 +25,7 @@ import play.api.http.{DefaultHttpFilters, HttpErrorHandler, HttpFilters, HttpReq
 import play.api.i18n.I18nComponents
 import play.api.inject.{Injector, SimpleInjector}
 import play.api.libs.ws.ahc.AhcWSComponents
-import play.api.mvc._
+import play.api.mvc.{MessagesActionBuilderImpl, _}
 import play.api.{BuiltInComponentsFromContext, Configuration, DefaultApplication}
 import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
@@ -45,8 +46,9 @@ class SDILComponents(context: Context)
     with RoutesWiring
     with FilterWiring
     with ConnectorWiring
-    with ConfigWiring {
+    with ConfigWiring{
 
+//  override val httpFilters = wire[DefaultHttpFilters].filters
   override lazy val application: DefaultApplication = wire[DefaultApplication]
 
   implicit lazy val ec: ExecutionContext = actorSystem.dispatcher
@@ -62,10 +64,14 @@ class SDILComponents(context: Context)
   lazy val gtmConfig: GTMConfig = new GTMConfig(configuration)
 
   lazy val customInjector: Injector = new SimpleInjector(injector) + templateController  + wsClient + optimizelyConfig + assetConfig + gtmConfig
-//  controllerComponents
-//  override val mcc: MessagesControllerComponents = wire[DefaultMessagesControllerComponents]
+
+  override val mcc: MessagesControllerComponents = wire[DefaultMessagesControllerComponents]
+  lazy val messagesActionBuilder = wire[DefaultMessagesActionBuilderImpl]
   override val assetsMetadata: AssetsMetadata = wire[DefaultAssetsMetadata]
   lazy val assetsConfiguration = new AssetsConfiguration()
 //  lazy val adminController: HealthController = wire[HealthController]
+  override val appName = configuration.get[String]("appName")
 
+  override lazy val metrics: Metrics = wire[MetricsImpl]
 }
+

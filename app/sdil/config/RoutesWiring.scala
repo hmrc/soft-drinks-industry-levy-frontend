@@ -21,7 +21,7 @@ import com.softwaremill.macwire.wire
 import controllers.template.Template
 import controllers.{Assets, AssetsMetadata}
 import play.api.i18n.I18nSupport
-import play.api.inject.DefaultApplicationLifecycle
+import play.api.inject.{ApplicationLifecycle, DefaultApplicationLifecycle}
 import play.api.mvc.MessagesControllerComponents
 import play.api.routing.Router
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
@@ -35,7 +35,6 @@ import uk.gov.hmrc.play.health.HealthController
 
 trait RoutesWiring extends CommonWiring {
   val errorHandler: FrontendErrorHandler
-  val applicationLifecycle: DefaultApplicationLifecycle
   val httpClient: HttpClient
   val authConnector: AuthConnector
   val cache: RegistrationFormDataCache
@@ -67,7 +66,7 @@ trait RoutesWiring extends CommonWiring {
 
   private lazy val testOnlyRoutes: testOnlyDoNotUseInAppConf.Routes = wire[testOnlyDoNotUseInAppConf.Routes]
 
-  lazy val metrics: Metrics = wire[MetricsImpl]
+  val metrics: Metrics
   lazy val metricsController: MetricsController = wire[MetricsController]
 
   lazy val prefix: String = ""
