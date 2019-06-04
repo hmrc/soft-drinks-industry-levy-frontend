@@ -27,7 +27,7 @@ import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, litreageForm => approxLitreageForm, _}
 import play.api.data.format.Formatter
 import play.api.data.{FormError, Forms, Mapping}
-import play.api.i18n.{Messages, MessagesApi, MessagesProvider}
+import play.api.i18n.{Messages, MessagesApi, MessagesImpl, MessagesProvider}
 import play.api.mvc._
 import play.twirl.api.Html
 import sdil.actions.RegisteredAction
@@ -61,6 +61,7 @@ class VariationsController(
   val config: AppConfig,
   val ec: ExecutionContext
 ) extends FrontendController(mcc) with SdilWMController with FormHelpers with ReturnJourney {
+  override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
 
   override lazy val parse = mcc.parsers
 

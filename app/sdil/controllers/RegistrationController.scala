@@ -46,7 +46,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 class RegistrationController(
-//                              override val messagesApi: MessagesApi,
+                              override val messagesApi: MessagesApi,
                               authorisedAction: AuthorisedAction,
                               sdilConnector: SoftDrinksIndustryLevyConnector,
                               registeredAction: RegisteredAction,
@@ -54,8 +54,12 @@ class RegistrationController(
                               mcc: MessagesControllerComponents)
                             (implicit val config: AppConfig, val ec: ExecutionContext)
   extends FrontendController(mcc) with SdilWMController with I18nSupport {
+//  override implicit val messagesApi: MessagesApi = messagesApi
+
+  override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
 
   override lazy val parse = mcc.parsers
+//  override implicit val messagesApi: Messages = mcc.messagesApi
 
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)

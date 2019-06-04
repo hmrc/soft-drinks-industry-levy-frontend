@@ -22,7 +22,7 @@ import controllers.template.Template
 import controllers.{AssetsConfiguration, AssetsMetadata, DefaultAssetsMetadata}
 import play.api.ApplicationLoader.Context
 import play.api.http.{DefaultHttpFilters, HttpErrorHandler, HttpFilters, HttpRequestHandler}
-import play.api.i18n.I18nComponents
+import play.api.i18n.{I18nComponents, MessagesApi}
 import play.api.inject.{Injector, SimpleInjector}
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.mvc.{MessagesActionBuilderImpl, _}
@@ -76,5 +76,6 @@ class SDILComponents(context: Context)
   override val appName = configuration.get[String]("appName")
 
   override lazy val metrics: Metrics = wire[MetricsImpl]
+//  override val messagesApi: MessagesApi = controllerComponents.messagesApi
 }
 

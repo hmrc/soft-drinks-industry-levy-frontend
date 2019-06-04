@@ -20,7 +20,7 @@ import com.kenshoo.play.metrics.{Metrics, MetricsController, MetricsImpl}
 import com.softwaremill.macwire.wire
 import controllers.template.Template
 import controllers.{Assets, AssetsMetadata}
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.inject.{ApplicationLifecycle, DefaultApplicationLifecycle}
 import play.api.mvc.MessagesControllerComponents
 import play.api.routing.Router
@@ -43,6 +43,7 @@ trait RoutesWiring extends CommonWiring {
   val testConnector: TestConnector
   val gaConnector: GaConnector
   val keystore: SessionCache
+  val messagesApi: MessagesApi
 
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
   lazy val formAction: FormAction = wire[FormAction]
