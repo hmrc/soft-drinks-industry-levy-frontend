@@ -28,11 +28,11 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FormAction(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, authorisedAction: AuthorisedAction, controllerComponents: ControllerComponents)
+class FormAction(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, authorisedAction: AuthorisedAction, mcc: MessagesControllerComponents)
                 (implicit config: AppConfig, val executionContext: ExecutionContext)
   extends ActionBuilder[RegistrationFormRequest, AnyContent] with I18nSupport {
 
-  val parser: BodyParser[AnyContent] = controllerComponents.parsers.defaultBodyParser
+  val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 
   type Body[A] = RegistrationFormRequest[A] => Future[Result]
 

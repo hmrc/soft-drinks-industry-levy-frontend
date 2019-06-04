@@ -60,13 +60,13 @@ coverageHighlighting := true
 
 
 libraryDependencies ++= Seq(
-  "uk.gov.hmrc"            %% "hmrctest"           % "3.8.0-play-25",
-  "org.scalatest"          %% "scalatest"          % "3.0.5",
+  "uk.gov.hmrc"            %% "hmrctest"           % "3.9.0-play-26",
+  "org.scalatest"          %% "scalatest"          % "3.0.7",
   "org.pegdown"            % "pegdown"             % "1.6.0",
   "org.jsoup"              % "jsoup"               % "1.11.3",
   "com.typesafe.play"      %% "play-test"          % play.core.PlayVersion.current,
   "org.mockito"            % "mockito-core"        % "2.13.0",
-  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1",
+  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2",
   "org.scalacheck"         %% "scalacheck"         % "1.14.0"
 ).map(_ % "test")
 

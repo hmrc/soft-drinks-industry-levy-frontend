@@ -22,11 +22,11 @@ import ltbs.play.scaffold.SdilComponents
 import org.scalatest.{FlatSpec, Matchers}
 import play.api.data.Form
 import play.api.test.FakeRequest
+import sdil.controllers.ControllerSpec
 import sdil.models.{Address, Litreage}
 import sdil.models.backend.{Site, UkAddress}
-import sdil.utils.TestWiring
 
-class SdilComponents extends FlatSpec with Matchers with TestWiring {
+class SdilComponents extends ControllerSpec {
 
   val address : Address =  Address("line1", "line2", "line3", "line4", "AL1 1UJ")
   val uKAddress : UkAddress = UkAddress(List("ukAddr1", "ukAddr2"), "WD25 7HQ")
@@ -60,7 +60,7 @@ class SdilComponents extends FlatSpec with Matchers with TestWiring {
   val formContactDetails =  Form (SdilComponents.contactDetailsMapping)
   val wareHouseSiteMapping = Form(SdilComponents.warehouseSiteMapping)
 
-  "A SdilComponent Call for contactDetails" should "correctly bind" in {
+  "A SdilComponent Call for contactDetails correctly bind" in {
 
     SdilComponents.addressHtml.showHtml(address)
     SdilComponents.contactDetailsForm.asHtmlForm("fail data", formContactDetails.bindFromRequest()(requestContactDetails))
@@ -109,10 +109,6 @@ class SdilComponents extends FlatSpec with Matchers with TestWiring {
     SdilComponents.showLitreage.showHtml(litreage)
     SdilComponents.longTupToLitreage((20L, 505L))
 
-
-
-    1 shouldBe 1
-
+    1 mustBe 1
   }
-
 }

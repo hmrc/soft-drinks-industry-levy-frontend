@@ -27,11 +27,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegisteredAction(val authConnector: AuthConnector, sdilConnector: SoftDrinksIndustryLevyConnector, controllerComponents: ControllerComponents)
+class RegisteredAction(val authConnector: AuthConnector, sdilConnector: SoftDrinksIndustryLevyConnector, mcc: MessagesControllerComponents)
                       (implicit config: AppConfig, val executionContext: ExecutionContext)
   extends ActionRefiner[Request, RegisteredRequest] with ActionBuilder[RegisteredRequest, AnyContent] with AuthorisedFunctions with ActionHelpers {
 
-  val parser: BodyParser[AnyContent] = controllerComponents.parsers.defaultBodyParser
+  val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, RegisteredRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))

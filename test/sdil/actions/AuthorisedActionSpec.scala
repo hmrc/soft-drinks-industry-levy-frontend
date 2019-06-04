@@ -37,7 +37,7 @@ import uk.gov.hmrc.auth.core.retrieve.~
 
 import scala.concurrent.Future
 
-class AuthorisedActionSpec extends FakeApplicationSpec with ControllerSpec{
+class AuthorisedActionSpec extends ControllerSpec {
 
   "AuthorisedAction" should {
     "redirect to the gg sign in page if the user is not logged in" in {
