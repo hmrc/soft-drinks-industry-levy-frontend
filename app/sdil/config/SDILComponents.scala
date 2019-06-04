@@ -27,10 +27,12 @@ import play.api.inject.{Injector, SimpleInjector}
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.mvc.{MessagesActionBuilderImpl, _}
 import play.api.{BuiltInComponentsFromContext, Configuration, DefaultApplication}
+import play.filters.HttpFiltersComponents
 import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
+import sdil.filters.SdilFilters
 import uk.gov.hmrc.play.bootstrap.config.Base64ConfigDecoder
-import uk.gov.hmrc.play.bootstrap.http.RequestHandler
+import uk.gov.hmrc.play.bootstrap.filters.FrontendFilters
 import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
 import uk.gov.hmrc.play.health.HealthController
 
@@ -48,6 +50,7 @@ class SDILComponents(context: Context)
     with ConnectorWiring
     with ConfigWiring{
 
+  override lazy val httpFilters = wire[SdilFilters].filters
 //  override val httpFilters = wire[DefaultHttpFilters].filters
   override lazy val application: DefaultApplication = wire[DefaultApplication]
 
@@ -65,8 +68,8 @@ class SDILComponents(context: Context)
 
   lazy val customInjector: Injector = new SimpleInjector(injector) + templateController  + wsClient + optimizelyConfig + assetConfig + gtmConfig
 
+  lazy val messagesActionBuilder = new DefaultMessagesActionBuilderImpl(controllerComponents.parsers.defaultBodyParser, controllerComponents.messagesApi)
   override val mcc: MessagesControllerComponents = wire[DefaultMessagesControllerComponents]
-  lazy val messagesActionBuilder = wire[DefaultMessagesActionBuilderImpl]
   override val assetsMetadata: AssetsMetadata = wire[DefaultAssetsMetadata]
   lazy val assetsConfiguration = new AssetsConfiguration()
 //  lazy val adminController: HealthController = wire[HealthController]

@@ -61,7 +61,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check
 //  this: I18nSupport =>
 
   implicit def config: AppConfig
-  implicit val messages: Messages = implicitly[Messages]
+  implicit val messages: Messages = wire[MessagesImpl]
 //  implicit val messages: Messages
 
   val costLower = BigDecimal("0.18")

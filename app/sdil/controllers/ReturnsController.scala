@@ -22,7 +22,7 @@ import java.time.format._
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
-import play.api.i18n.{Messages, MessagesApi, MessagesProvider}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi, MessagesProvider}
 import play.api.mvc.{AnyContent, _}
 import play.twirl.api.Html
 import sdil.actions.RegisteredAction
@@ -52,7 +52,7 @@ class ReturnsController (
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney {
+) extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney with I18nSupport {
 
   override lazy val parse = mcc.parsers
 
