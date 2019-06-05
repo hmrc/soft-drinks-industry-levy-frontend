@@ -46,7 +46,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 class RegistrationController(
-                              override val messagesApi: MessagesApi,
+//                              override val messagesApi: MessagesApi,
                               authorisedAction: AuthorisedAction,
                               sdilConnector: SoftDrinksIndustryLevyConnector,
                               registeredAction: RegisteredAction,
@@ -88,9 +88,12 @@ class RegistrationController(
     for {
       orgType        <- askOneOf("organisation-type", organisationTypes)
       noPartners     =  uniform.fragments.partnerships()
-      _              <- if (orgType == partnership) {
+      _              <- {
+
+        val a = orgType == partnership
+        if (orgType == partnership) {
                           end("partnerships", noPartners)
-                        } else (()).pure[WebMonad]
+                        } else (()).pure[WebMonad]}
       packLarge       <- askOneOf("producer", ProducerType.values.toList) map {
                           case Large => Some(true)
                           case Small => Some(false)

@@ -44,6 +44,8 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
   lazy val controllerTester = new UniformControllerTester(controller)
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
+//  override val stubMessages = Map("heading.partners" -> Map("some RandomString" -> "value"))
+
   def request: AuthorisedRequest[AnyContent] = AuthorisedRequest[AnyContent](
     None, "", Enrolments(Set.empty), FakeRequest()
       .withFormUrlEncodedBody("utr" -> ""))
@@ -150,11 +152,7 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
         "producer" -> JsString("Large")
       )
       status(output) mustBe OK
-
-
-      println("wabuda" + Messages("heading.partners"))
-      println("wabuda" + contentAsString(output))
-      contentAsString(output) must include(Messages("heading.partners"))
+      contentAsString(output) must include(Messages("heading.partnerships"))
     }
 
     "execute main program as a small producer who uses a copacker" in {

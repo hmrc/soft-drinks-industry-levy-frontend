@@ -417,9 +417,11 @@ trait SdilWMController extends WebMonadController with Modulus23Check
     webMonad{ (rid, request, path, db) =>
       implicit val r = request
 
-      Future.successful {
+      val a = Future.successful {
         (id.some, path, db, Ok(uniform.end(id, path, input.showHtml)).asLeft[R])
       }
+
+      a
     }
 
   protected def manyT[A: HtmlShow: Format](

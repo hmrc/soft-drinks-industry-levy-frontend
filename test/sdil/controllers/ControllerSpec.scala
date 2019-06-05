@@ -18,11 +18,13 @@ package sdil.controllers
 
 import java.time.LocalDate
 
+import com.softwaremill.macwire.wire
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import play.api.libs.json._
 import play.api.mvc.MessagesControllerComponents
+import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.backend._

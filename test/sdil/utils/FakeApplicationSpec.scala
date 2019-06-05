@@ -92,14 +92,17 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     loader.load(context)
   }
 
-  implicit val stubMessagesControllerComponents: MessagesControllerComponents = {
-    def stub = Helpers.stubControllerComponents()
+  val stubMessages: Map[String, Map[String, String]] = Map("en" -> Map("heading.partnerships" -> "someOtherValueShouldAppear"))
+  implicit lazy val stubMessagesControllerComponents: MessagesControllerComponents = {
+    def stub = Helpers.stubControllerComponents(messagesApi = Helpers.stubMessagesApi(messages = stubMessages))
     new DefaultMessagesControllerComponents(
       new DefaultMessagesActionBuilderImpl(Helpers.stubBodyParser(AnyContentAsEmpty), stub.messagesApi)(stub.executionContext),
       DefaultActionBuilder(stub.actionBuilder.parser)(stub.executionContext), stub.parsers,
       stub.messagesApi, stub.langs, stub.fileMimeTypes, stub.executionContext
     )
   }
+
+//  new DefaultMessagesApiProvider(env, configuration, langs, httpConfiguration).get
     //app.injector.instanceOf[DefaultMessagesControllerComponents]
 
     implicit val lang:Lang = Lang("en")
@@ -156,8 +159,13 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     //scala will not compile implicit conversion from Boolean → AnyRef
     lazy val configuration: Configuration = Configuration.load(env, Map("metrics.enabled" -> false.asInstanceOf[AnyRef]))
 
-    val messagesApi: MessagesApi = new DefaultMessagesApi
-    implicit val defaultMessages: Messages = messagesApi.preferred(FakeRequest())
+
+
+
+    val messagesApi: MessagesApi = stubMessagesControllerComponents.messagesApi //
+//   new DefaultMessagesApi()
+//    implicit val defaultMessages: Messages = messagesApi.preferred(FakeRequest())
+    implicit val defaultMessages: Messages = messagesApi.preferred(Seq.empty)
     implicit val ec: ExecutionContext = defaultContext
 
     // val returnsMock = mock[mockSdilConnector.returns.type]
