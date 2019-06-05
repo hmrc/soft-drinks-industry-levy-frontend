@@ -150,6 +150,10 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
         "producer" -> JsString("Large")
       )
       status(output) mustBe OK
+
+
+      println("wabuda" + Messages("heading.partners"))
+      println("wabuda" + contentAsString(output))
       contentAsString(output) must include(Messages("heading.partners"))
     }
 

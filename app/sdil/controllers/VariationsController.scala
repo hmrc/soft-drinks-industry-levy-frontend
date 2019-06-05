@@ -47,7 +47,7 @@ import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
 
-import scala.concurrent.ExecutionContext.Implicits.global
+//import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class VariationsController(

@@ -25,6 +25,8 @@ Concat.groups := Seq(
   ))
 )
 
+uglifyCompressOptions := Seq("unused=false", "dead_code=false")
+
 // force asset pipeline to operate in dev rather than only prod
 pipelineStages in Assets := Seq(concat)
 
@@ -74,7 +76,7 @@ libraryDependencies ++= Seq(
 // Dependencies
 // ================================================================================
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.12.0"
 
 libraryDependencies ++= Seq(
   ws,
@@ -85,15 +87,15 @@ libraryDependencies ++= Seq(
   "uk.gov.hmrc"               %% "play-partials"                  % "6.9.0-play-26",
   "com.typesafe.play"         %% "play-json"                      % "2.6.13",
   "org.scalactic"             %% "scalactic"                      % "3.0.5",
-//  "uk.gov.hmrc"               %% "auth-client"                    % "2.21.0-play-26",  //check version
+  "uk.gov.hmrc"               %% "auth-client"                    % "2.21.0-play-26",  //check version
   "uk.gov.hmrc"               %% "http-caching-client"            % "8.4.0-play-26",
-  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "0.2.0",
+  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "1.1.0-play-26",
   "com.softwaremill.macwire"  %% "macros"                         % "2.3.1" % "provided",
   "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.1" % "provided",
   "com.softwaremill.macwire"  %% "util"                           % "2.3.1",
   "com.softwaremill.macwire"  %% "proxy"                          % "2.3.1",
   "org.typelevel"             %% "cats-core"                      % "1.1.0",  //Upgrade later to 1.6.0
-  "uk.gov.hmrc"               %% "uniform"                        % "0.1.9"  //maybe later
+  "uk.gov.hmrc"               %% "uniform"                        % "0.1.9" exclude("com.typesafe.play", "play-logback")  //maybe later
 )
 
 resolvers ++= Seq(
