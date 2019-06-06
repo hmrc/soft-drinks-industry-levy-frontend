@@ -16,9 +16,12 @@
 
 package sdil.controllers
 
+import ltbs.play.scaffold.GdsComponents.oneOf
+import ltbs.play.scaffold.SdilComponents.addressMapping
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.MessagesControllerComponents
 import sdil.actions.FormAction
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -27,9 +30,6 @@ import sdil.models.{DetailsCorrect, Journey, VerifyPage}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 import views.html.softdrinksindustrylevy.{errors, register}
-import ltbs.play.scaffold.GdsComponents.oneOf
-import ltbs.play.scaffold.SdilComponents.addressMapping
-import play.api.mvc.MessagesControllerComponents
 
 import scala.concurrent.ExecutionContext
 

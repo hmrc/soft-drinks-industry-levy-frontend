@@ -18,19 +18,15 @@ package sdil.controllers
 
 import java.time.LocalDate
 
-import com.softwaremill.macwire.wire
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import play.api.libs.json._
-import play.api.mvc.MessagesControllerComponents
-import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
-import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.backend._
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.utils.FakeApplicationSpec
-import uk.gov.hmrc.http.cache.client.{CacheMap, ShortLivedHttpCaching}
+import uk.gov.hmrc.http.cache.client.CacheMap
 
 import scala.concurrent.Future
 

@@ -57,15 +57,8 @@ import sdil.uniform.ShowTitle.instance
 trait SdilWMController extends WebMonadController with Modulus23Check
 {
 
-//  implicit lazy val messages: Messages = wire[MessagesImpl]
-//  this: I18nSupport =>
-
   implicit def config: AppConfig
-//  implicit val messages: Messages = wire[MessagesImpl]
   implicit val messages: Messages
-
-
-//  val messages: Messages = MessagesImpl(wire[Lang], messagesApi)
 
   val costLower = BigDecimal("0.18")
   val costHigher = BigDecimal("0.24")
@@ -417,11 +410,9 @@ trait SdilWMController extends WebMonadController with Modulus23Check
     webMonad{ (rid, request, path, db) =>
       implicit val r = request
 
-      val a = Future.successful {
+      Future.successful {
         (id.some, path, db, Ok(uniform.end(id, path, input.showHtml)).asLeft[R])
       }
-
-      a
     }
 
   protected def manyT[A: HtmlShow: Format](

@@ -20,59 +20,30 @@ import java.io.File
 import java.time.LocalDate
 
 import com.softwaremill.macwire.wire
-import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory, PlaySpec}
-import play.api.i18n.{DefaultMessagesApi, Lang, Messages, MessagesApi}
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.DefaultApplicationLifecycle
 import play.api.libs.concurrent.Execution.defaultContext
 import play.api.mvc._
-import play.api.test.{FakeRequest, Helpers}
+import play.api.test.Helpers
+import play.api.{Application, ApplicationLoader, Configuration, Environment}
 import play.core.DefaultWebCommands
 import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.config.{RegistrationFormDataCache, SDILApplicationLoader}
 import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector}
 import sdil.controllers.SdilWMController
-import sdil.models.{ReturnPeriod, SdilReturn}
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
+import sdil.models.{ReturnPeriod, SdilReturn}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
-
-import scala.concurrent.{ExecutionContext, Future}
-import java.io.File
-import java.time.LocalDate
-
-import com.softwaremill.macwire._
-import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
-import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
-import play.api.i18n._
-import play.api.libs.concurrent.Execution.defaultContext
-import play.api.test.FakeRequest
-import play.api.{Application, ApplicationLoader, Configuration, Environment}
-import play.twirl.api.Html
-import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
-import sdil.config.RegistrationFormDataCache
-import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector}
-import sdil.controllers.{ReturnsController, SdilWMController}
-import sdil.models.{ReturnPeriod, SdilReturn}
-import sdil.models.backend._
-import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache, ShortLivedHttpCaching}
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
-import uk.gov.hmrc.uniform.webmonad
-import uk.gov.hmrc.uniform.webmonad.WebMonad
-import cats.syntax._
-import org.mockito.stubbing.OngoingStubbing
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -85,14 +56,14 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
       initialConfiguration = configuration,
       lifecycle = new DefaultApplicationLifecycle()
     )
-    //    implicit lazy val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
-
-
     val loader = new SDILApplicationLoader
     loader.load(context)
   }
 
-  val stubMessages: Map[String, Map[String, String]] = Map("en" -> Map("heading.partnerships" -> "someOtherValueShouldAppear"))
+  // in the controller where you want to access messages override this lazy val
+  // e.g. Map("en" -> Map("heading.partnerships" -> "someOtherValueShouldAppear"))
+  lazy val stubMessages: Map[String, Map[String, String]] = Map.empty
+  implicit val lang:Lang = Lang("en") // lang used for messages en == english
   implicit lazy val stubMessagesControllerComponents: MessagesControllerComponents = {
     def stub = Helpers.stubControllerComponents(messagesApi = Helpers.stubMessagesApi(messages = stubMessages))
     new DefaultMessagesControllerComponents(
@@ -101,16 +72,11 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
       stub.messagesApi, stub.langs, stub.fileMimeTypes, stub.executionContext
     )
   }
+  val messagesApi: MessagesApi = stubMessagesControllerComponents.messagesApi
+  implicit val defaultMessages: Messages = messagesApi.preferred(Seq.empty)
+  implicit val ec: ExecutionContext = defaultContext
 
-//  new DefaultMessagesApiProvider(env, configuration, langs, httpConfiguration).get
-    //app.injector.instanceOf[DefaultMessagesControllerComponents]
 
-    implicit val lang:Lang = Lang("en")
-    //  lazy val mockCc =  Helpers.stubControllerComponents() //StubMessagesControl // mock[MessagesControllerComponents]
-
-    //  DefaultMessagesActionBuilderImpl
-
-    //  val mcc =  DefaultMessagesControllerComponents(mockCc.actionBuilder, mockCc.parsers, mockCc.messagesApi, mockCc.langs, mockCc.fileMimeTypes)
     val returnPeriods = List(ReturnPeriod(2018,1), ReturnPeriod(2019, 1))
     val returnPeriods2 = List(ReturnPeriod(2018,1), ReturnPeriod(2019, 1), ReturnPeriod(2019, 2), ReturnPeriod(2019, 3))
     val defaultSubscription: Subscription = {
@@ -158,15 +124,6 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     lazy val env: Environment = Environment.simple(new File("."))
     //scala will not compile implicit conversion from Boolean → AnyRef
     lazy val configuration: Configuration = Configuration.load(env, Map("metrics.enabled" -> false.asInstanceOf[AnyRef]))
-
-
-
-
-    val messagesApi: MessagesApi = stubMessagesControllerComponents.messagesApi //
-//   new DefaultMessagesApi()
-//    implicit val defaultMessages: Messages = messagesApi.preferred(FakeRequest())
-    implicit val defaultMessages: Messages = messagesApi.preferred(Seq.empty)
-    implicit val ec: ExecutionContext = defaultContext
 
     // val returnsMock = mock[mockSdilConnector.returns.type]
     //when(mockSdilConnector.returns).thenReturn(returnsMock)

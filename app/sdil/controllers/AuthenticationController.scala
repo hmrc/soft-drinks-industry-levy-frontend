@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 class AuthenticationController(override val messagesApi: MessagesApi, mcc: MessagesControllerComponents)
                               (implicit config: AppConfig)
-  extends FrontendController(mcc) with I18nSupport {
+  extends FrontendController(mcc) {
 
   def signIn = Action { implicit request =>
     Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName)))

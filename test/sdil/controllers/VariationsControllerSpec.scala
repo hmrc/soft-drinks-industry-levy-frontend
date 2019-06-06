@@ -22,7 +22,6 @@ import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{any, eq => matching, _}
 import org.mockito.Mockito._
 import play.api.libs.json._
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models._

@@ -16,12 +16,11 @@
 
 package sdil.config
 
-import com.kenshoo.play.metrics.{Metrics, MetricsController, MetricsImpl}
+import com.kenshoo.play.metrics.{Metrics, MetricsController}
 import com.softwaremill.macwire.wire
 import controllers.template.Template
 import controllers.{Assets, AssetsMetadata}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.inject.{ApplicationLifecycle, DefaultApplicationLifecycle}
+import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import play.api.routing.Router
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}

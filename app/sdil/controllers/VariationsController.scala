@@ -27,7 +27,7 @@ import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, litreageForm => approxLitreageForm, _}
 import play.api.data.format.Formatter
 import play.api.data.{FormError, Forms, Mapping}
-import play.api.i18n.{Messages, MessagesApi, MessagesImpl, MessagesProvider}
+import play.api.i18n.{Messages, MessagesApi, MessagesImpl}
 import play.api.mvc._
 import play.twirl.api.Html
 import sdil.actions.RegisteredAction
@@ -47,11 +47,9 @@ import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
 
-//import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class VariationsController(
-  override val messagesApi: MessagesApi,
   val sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   cache: ShortLivedHttpCaching,
@@ -61,8 +59,8 @@ class VariationsController(
   val config: AppConfig,
   val ec: ExecutionContext
 ) extends FrontendController(mcc) with SdilWMController with FormHelpers with ReturnJourney {
-  override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
 
+  override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
   override lazy val parse = mcc.parsers
 
   sealed trait ChangeType extends EnumEntry

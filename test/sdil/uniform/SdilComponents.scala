@@ -19,12 +19,11 @@ package uniform
 import java.time.LocalDate
 
 import ltbs.play.scaffold.SdilComponents
-import org.scalatest.{FlatSpec, Matchers}
 import play.api.data.Form
 import play.api.test.FakeRequest
 import sdil.controllers.ControllerSpec
-import sdil.models.{Address, Litreage}
 import sdil.models.backend.{Site, UkAddress}
+import sdil.models.{Address, Litreage}
 
 class SdilComponents extends ControllerSpec {
 

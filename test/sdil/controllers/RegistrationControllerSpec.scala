@@ -40,11 +40,14 @@ import scala.concurrent.duration._
 
 class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
 
+  override lazy val stubMessages: Map[String, Map[String, String]] =
+    Map("en" -> Map("heading.partnerships" -> "someOtherValueShouldAppear"))
+
   lazy val controller: RegistrationController = wire[RegistrationController]
   lazy val controllerTester = new UniformControllerTester(controller)
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-//  override val stubMessages = Map("heading.partners" -> Map("some RandomString" -> "value"))
+
 
   def request: AuthorisedRequest[AnyContent] = AuthorisedRequest[AnyContent](
     None, "", Enrolments(Set.empty), FakeRequest()

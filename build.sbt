@@ -25,8 +25,6 @@ Concat.groups := Seq(
   ))
 )
 
-uglifyCompressOptions := Seq("unused=false", "dead_code=false")
-
 // force asset pipeline to operate in dev rather than only prod
 pipelineStages in Assets := Seq(concat)
 

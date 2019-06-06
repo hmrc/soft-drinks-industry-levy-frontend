@@ -18,12 +18,12 @@ package sdil.config
 
 import com.kenshoo.play.metrics.{Metrics, MetricsFilter, MetricsFilterImpl}
 import com.softwaremill.macwire.{wire, wireWith}
-import play.api.http.{HttpConfiguration, SecretConfiguration, SessionConfiguration}
+import play.api.http.HttpConfiguration
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.mvc.{DefaultSessionCookieBaker, SessionCookieBaker}
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
-import sdil.filters.{SdilFilters, VariationsFilter}
+import sdil.filters.VariationsFilter
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.{ControllerConfigs, DefaultHttpAuditEvent, HttpAuditEvent}

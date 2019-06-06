@@ -18,6 +18,7 @@ package sdil.controllers
 
 import cats.data.OptionT
 import cats.implicits._
+import ltbs.play.scaffold.SdilComponents._
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
@@ -30,7 +31,6 @@ import sdil.forms.FormHelpers
 import sdil.models.{Address, Identification, RegistrationFormData}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.softdrinksindustrylevy.register
-import ltbs.play.scaffold.SdilComponents._
 
 import scala.concurrent.{ExecutionContext, Future}
 

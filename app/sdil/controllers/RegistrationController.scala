@@ -22,11 +22,8 @@ import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents.OrganisationType.{partnership, soleTrader}
 import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
-import ltbs.play.scaffold.SdilComponents.{litreageForm => approxLitreageForm, _}
-import ltbs.play.scaffold.SdilComponents.extraMessages
+import ltbs.play.scaffold.SdilComponents.{extraMessages, litreageForm => approxLitreageForm, _}
 import play.api.data.Mapping
-import uk.gov.hmrc.uniform.webmonad._
-import uk.gov.hmrc.uniform.playutil._
 import play.api.i18n._
 import play.api.libs.json.Format
 import play.api.mvc._
@@ -40,13 +37,14 @@ import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.uniform.FormHtml
+import uk.gov.hmrc.uniform.playutil._
+import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
 
 import scala.concurrent.{ExecutionContext, Future}
 
 
 class RegistrationController(
-//                              override val messagesApi: MessagesApi,
                               authorisedAction: AuthorisedAction,
                               sdilConnector: SoftDrinksIndustryLevyConnector,
                               registeredAction: RegisteredAction,
@@ -54,12 +52,9 @@ class RegistrationController(
                               mcc: MessagesControllerComponents)
                             (implicit val config: AppConfig, val ec: ExecutionContext)
   extends FrontendController(mcc) with SdilWMController with I18nSupport {
-//  override implicit val messagesApi: MessagesApi = messagesApi
 
   override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
-
   override lazy val parse = mcc.parsers
-//  override implicit val messagesApi: Messages = mcc.messagesApi
 
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)
@@ -88,12 +83,9 @@ class RegistrationController(
     for {
       orgType        <- askOneOf("organisation-type", organisationTypes)
       noPartners     =  uniform.fragments.partnerships()
-      _              <- {
-
-        val a = orgType == partnership
-        if (orgType == partnership) {
+      _              <- if (orgType == partnership) {
                           end("partnerships", noPartners)
-                        } else (()).pure[WebMonad]}
+                        } else (()).pure[WebMonad]
       packLarge       <- askOneOf("producer", ProducerType.values.toList) map {
                           case Large => Some(true)
                           case Small => Some(false)

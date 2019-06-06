@@ -21,20 +21,17 @@ import com.softwaremill.macwire._
 import controllers.template.Template
 import controllers.{AssetsConfiguration, AssetsMetadata, DefaultAssetsMetadata}
 import play.api.ApplicationLoader.Context
-import play.api.http.{DefaultHttpFilters, HttpErrorHandler, HttpFilters, HttpRequestHandler}
-import play.api.i18n.{I18nComponents, MessagesApi}
+import play.api.http.HttpErrorHandler
+import play.api.i18n.I18nComponents
 import play.api.inject.{Injector, SimpleInjector}
 import play.api.libs.ws.ahc.AhcWSComponents
-import play.api.mvc.{MessagesActionBuilderImpl, _}
+import play.api.mvc._
 import play.api.{BuiltInComponentsFromContext, Configuration, DefaultApplication}
-import play.filters.HttpFiltersComponents
 import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
 import sdil.filters.SdilFilters
 import uk.gov.hmrc.play.bootstrap.config.Base64ConfigDecoder
-import uk.gov.hmrc.play.bootstrap.filters.FrontendFilters
 import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
-import uk.gov.hmrc.play.health.HealthController
 
 import scala.concurrent.ExecutionContext
 
@@ -51,7 +48,6 @@ class SDILComponents(context: Context)
     with ConfigWiring{
 
   override lazy val httpFilters = wire[SdilFilters].filters
-//  override val httpFilters = wire[DefaultHttpFilters].filters
   override lazy val application: DefaultApplication = wire[DefaultApplication]
 
   implicit lazy val ec: ExecutionContext = actorSystem.dispatcher
@@ -72,10 +68,7 @@ class SDILComponents(context: Context)
   override val mcc: MessagesControllerComponents = wire[DefaultMessagesControllerComponents]
   override val assetsMetadata: AssetsMetadata = wire[DefaultAssetsMetadata]
   lazy val assetsConfiguration = new AssetsConfiguration()
-//  lazy val adminController: HealthController = wire[HealthController]
   override val appName = configuration.get[String]("appName")
 
   override lazy val metrics: Metrics = wire[MetricsImpl]
-//  override val messagesApi: MessagesApi = controllerComponents.messagesApi
 }
-

@@ -16,8 +16,6 @@
 
 package sdil.connectors
 
-import java.time.LocalDate
-
 import play.api.{Configuration, Environment}
 import sdil.config.SDILSessionCache
 import sdil.models._
@@ -27,7 +25,6 @@ import sdil.models.variations.{ReturnVariationData, VariationsSubmission}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
