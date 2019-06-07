@@ -18,13 +18,14 @@ package sdil.controllers.test
 
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent}
-import sdil.actions.AuthorisedAction
+import sdil.actions.{AuthorisedAction, RegisteredAction}
 import sdil.config.RegistrationFormDataCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 @Singleton
 class TestController @Inject()(cache: RegistrationFormDataCache,
-                               authorisedAction: AuthorisedAction) extends FrontendController {
+                               authorisedAction: AuthorisedAction,
+                               registeredAction: RegisteredAction) extends FrontendController {
 
   def clearAllS4LEntries(): Action[AnyContent] = authorisedAction.async {
     implicit request =>
@@ -37,6 +38,13 @@ class TestController @Inject()(cache: RegistrationFormDataCache,
     implicit request =>
       cache.clearInternalIdOnly(request.internalId) map {
         _ => Ok(s"S4L for user id ${request.internalId} cleared")
+      }
+  }
+
+  def clearById(): Action[AnyContent] = registeredAction.async {
+    implicit request =>
+      cache.clearBySdilNumber(request.sdilEnrolment.value) map {
+        _ => Ok(s"S4L for user id ${request.sdilEnrolment.value} cleared")
       }
   }
 }
