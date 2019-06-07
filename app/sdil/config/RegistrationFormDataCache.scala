@@ -54,4 +54,8 @@ class RegistrationFormDataCache(val runModeConfiguration: Configuration,
     remove(internalId) map { _ => () }
   }
 
+  def clearBySdilNumber(sdilNo: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+    remove(sdilNo) map { _ => () }
+  }
+
 }
