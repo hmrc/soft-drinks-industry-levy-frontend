@@ -16,10 +16,12 @@
 
 package sdil.config
 
-import com.kenshoo.play.metrics.{Metrics, MetricsController, MetricsImpl}
+import com.kenshoo.play.metrics.{Metrics, MetricsController}
 import com.softwaremill.macwire.wire
-import controllers.Assets
-import play.api.inject.DefaultApplicationLifecycle
+import controllers.template.Template
+import controllers.{Assets, AssetsMetadata}
+import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
 import play.api.routing.Router
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.connectors._
@@ -28,10 +30,10 @@ import sdil.controllers.{VariationsController, RegistrationController => Uniform
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
+import uk.gov.hmrc.play.health.HealthController
 
 trait RoutesWiring extends CommonWiring {
   val errorHandler: FrontendErrorHandler
-  val applicationLifecycle: DefaultApplicationLifecycle
   val httpClient: HttpClient
   val authConnector: AuthConnector
   val cache: RegistrationFormDataCache
@@ -40,6 +42,7 @@ trait RoutesWiring extends CommonWiring {
   val testConnector: TestConnector
   val gaConnector: GaConnector
   val keystore: SessionCache
+  val messagesApi: MessagesApi
 
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
   lazy val formAction: FormAction = wire[FormAction]
@@ -57,16 +60,20 @@ trait RoutesWiring extends CommonWiring {
   lazy val uniformRegistrationsController: UniformRegistrationController = wire[UniformRegistrationController]
 
   private lazy val appRoutes: app.Routes = wire[app.Routes]
-  private lazy val healthRoutes = new health.Routes()
-  private lazy val templateRoutes = new template.Routes()
+  private lazy val healthRoutes = wire[health.Routes]
+  private lazy val templateRoutes = wire[template.Routes]
   private lazy val prodRoutes: prod.Routes = wire[prod.Routes]
 
   private lazy val testOnlyRoutes: testOnlyDoNotUseInAppConf.Routes = wire[testOnlyDoNotUseInAppConf.Routes]
 
-  lazy val metrics: Metrics = wire[MetricsImpl]
+  val metrics: Metrics
   lazy val metricsController: MetricsController = wire[MetricsController]
 
   lazy val prefix: String = ""
+  val mcc: MessagesControllerComponents
+  val assetsMetadata: AssetsMetadata
+  lazy val healthController = wire[HealthController]
+  lazy val templateWire = wire[Template]
 
   /* hacky way to allow the router to be overridden to the test-only router
    *

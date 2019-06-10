@@ -60,13 +60,13 @@ coverageHighlighting := true
 
 
 libraryDependencies ++= Seq(
-  "uk.gov.hmrc"            %% "hmrctest"           % "3.8.0-play-25",
-  "org.scalatest"          %% "scalatest"          % "3.0.5",
+  "uk.gov.hmrc"            %% "hmrctest"           % "3.9.0-play-26",
+  "org.scalatest"          %% "scalatest"          % "3.0.7",
   "org.pegdown"            % "pegdown"             % "1.6.0",
-  "org.jsoup"              % "jsoup"               % "1.11.3",
+  "org.jsoup"              % "jsoup"               % "1.12.1",
   "com.typesafe.play"      %% "play-test"          % play.core.PlayVersion.current,
-  "org.mockito"            % "mockito-core"        % "2.13.0",
-  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1",
+  "org.mockito"            % "mockito-core"        % "2.28.2",
+  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2",
   "org.scalacheck"         %% "scalacheck"         % "1.14.0"
 ).map(_ % "test")
 
@@ -74,26 +74,26 @@ libraryDependencies ++= Seq(
 // Dependencies
 // ================================================================================
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.12.0"
 
 libraryDependencies ++= Seq(
   ws,
-  "uk.gov.hmrc"               %% "bootstrap-play-25"              % "4.11.0",
-  "uk.gov.hmrc"               %% "domain"                         % "5.6.0-play-25",
-  "uk.gov.hmrc"               %% "govuk-template"                 % "5.22.0",
-  "uk.gov.hmrc"               %% "play-ui"                        % "7.39.0-play-25",
-  "uk.gov.hmrc"               %% "play-partials"                  % "6.9.0-play-25",
-  "com.typesafe.play"         %% "play-json"                      % "2.5.18",
+  "uk.gov.hmrc"               %% "bootstrap-play-26"              % "0.40.0",
+  "uk.gov.hmrc"               %% "domain"                         % "5.6.0-play-26",  //see if can be removed after upgrade
+  "uk.gov.hmrc"               %% "govuk-template"                 % "5.35.0-play-26",
+  "uk.gov.hmrc"               %% "play-ui"                        % "7.39.0-play-26",
+  "uk.gov.hmrc"               %% "play-partials"                  % "6.9.0-play-26",
+  "com.typesafe.play"         %% "play-json"                      % "2.6.13",
   "org.scalactic"             %% "scalactic"                      % "3.0.5",
-  "uk.gov.hmrc"               %% "auth-client"                    % "2.20.0-play-25",
-  "uk.gov.hmrc"               %% "http-caching-client"            % "8.3.0",
-  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "0.2.0",
+  "uk.gov.hmrc"               %% "auth-client"                    % "2.21.0-play-26",  //check version
+  "uk.gov.hmrc"               %% "http-caching-client"            % "8.4.0-play-26",
+  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "1.1.0-play-26",
   "com.softwaremill.macwire"  %% "macros"                         % "2.3.1" % "provided",
   "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.1" % "provided",
   "com.softwaremill.macwire"  %% "util"                           % "2.3.1",
   "com.softwaremill.macwire"  %% "proxy"                          % "2.3.1",
-  "org.typelevel"             %% "cats-core"                      % "1.1.0",
-  "uk.gov.hmrc"               %% "uniform"                        % "0.1.9"
+  "org.typelevel"             %% "cats-core"                      % "1.1.0",  //Upgrade later to 1.6.0
+  "uk.gov.hmrc"               %% "uniform"                        % "0.1.9" exclude("com.typesafe.play", "play-logback")  //maybe later
 )
 
 resolvers ++= Seq(

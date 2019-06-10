@@ -16,8 +16,6 @@
 
 package sdil.connectors
 
-import java.time.LocalDate
-
 import play.api.{Configuration, Environment}
 import sdil.config.SDILSessionCache
 import sdil.models._
@@ -26,23 +24,22 @@ import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{ReturnVariationData, VariationsSubmission}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
+import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
 import scala.concurrent.Future
 
 class SoftDrinksIndustryLevyConnector(
-  http: HttpClient,
-  environment: Environment,
-  val runModeConfiguration: Configuration,
-  val shortLiveCache: ShortLivedHttpCaching,
-  val sessionCache: SDILSessionCache
-) extends ServicesConfig {
+                                       http: HttpClient,
+                                       environment: Environment,
+                                       val runModeConfiguration: Configuration,
+                                       val runMode: RunMode,
+                                       val shortLiveCache: ShortLivedHttpCaching,
+                                       val sessionCache: SDILSessionCache
+) extends ServicesConfig(runModeConfiguration, runMode) {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
-
-  override protected def mode = environment.mode
 
   def getRosmRegistration(utr: String)(implicit hc: HeaderCarrier): Future[Option[RosmRegistration]] = {
     http.GET[Option[RosmRegistration]](s"$sdilUrl/rosm-registration/lookup/$utr")

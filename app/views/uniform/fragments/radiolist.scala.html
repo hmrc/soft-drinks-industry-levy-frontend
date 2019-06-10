@@ -21,7 +21,7 @@
 @import views.html.helper.options
 @import views.html.uniform.helpers._
 
-@(key: String, form: Form[String], possibleValues: List[String])(implicit messages: Messages, extraMessages: ExtraMessages)
+@(key: String, form: Form[String], possibleValues: List[String])(implicit messages: Messages, extraMessages: ExtraMessages, lang: Lang)
 @inputRadioGroup(
     form(key),
     possibleValues.map{v => (v, Messages.extraMessages(Seq(key + ".option." + v.toLowerCase, v)))},

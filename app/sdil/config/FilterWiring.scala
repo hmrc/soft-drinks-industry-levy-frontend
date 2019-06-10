@@ -19,15 +19,17 @@ package sdil.config
 import com.kenshoo.play.metrics.{Metrics, MetricsFilter, MetricsFilterImpl}
 import com.softwaremill.macwire.{wire, wireWith}
 import play.api.http.HttpConfiguration
+import play.api.libs.crypto.DefaultCookieSigner
+import play.api.mvc.{DefaultSessionCookieBaker, SessionCookieBaker}
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
-import sdil.filters.{SdilFilters, VariationsFilter}
+import sdil.filters.VariationsFilter
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.bootstrap.config.ControllerConfigs
+import uk.gov.hmrc.play.bootstrap.config.{ControllerConfigs, DefaultHttpAuditEvent, HttpAuditEvent}
 import uk.gov.hmrc.play.bootstrap.filters._
 import uk.gov.hmrc.play.bootstrap.filters.frontend._
-import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.{CookieCryptoFilter, DefaultCookieCryptoFilter, SessionCookieCrypto}
+import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.{DefaultSessionCookieCryptoFilter, SessionCookieCrypto, SessionCookieCryptoFilter}
 import uk.gov.hmrc.play.bootstrap.filters.frontend.deviceid.{DefaultDeviceIdFilter, DeviceIdFilter}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
@@ -39,7 +41,9 @@ trait FilterWiring extends CommonWiring {
   val metrics: Metrics
   val errorHandler: FrontendErrorHandler
 
-  lazy val filters: FrontendFilters = wire[SdilFilters]
+  lazy val sessionCookieBaker: SessionCookieBaker = new DefaultSessionCookieBaker(httpConfiguration.session,
+    httpConfiguration.secret,
+    new DefaultCookieSigner(httpConfiguration.secret))
 
   lazy val mdcFilter: MDCFilter = wire[MDCFilter]
   lazy val variationsFilter: VariationsFilter = wire[VariationsFilter]
@@ -48,15 +52,15 @@ trait FilterWiring extends CommonWiring {
   lazy val frontendAuditFilter: FrontendAuditFilter = wire[DefaultFrontendAuditFilter]
   lazy val metricsFilter: MetricsFilter = wire[MetricsFilterImpl]
   lazy val deviceIdFilter: DeviceIdFilter = wire[DefaultDeviceIdFilter]
-  lazy val cookieCryptoFilter: CookieCryptoFilter = wire[DefaultCookieCryptoFilter]
+  lazy val cookieCryptoFilter: SessionCookieCryptoFilter = wire[DefaultSessionCookieCryptoFilter]
   lazy val sessionTimeoutFilter: SessionTimeoutFilter = wire[SessionTimeoutFilter]
   lazy val cacheControlFilter: CacheControlFilter = wire[CacheControlFilter]
-
   lazy val controllerConfigs: ControllerConfigs = wireWith(ControllerConfigs.fromConfig _)
-
   lazy val sessionCookieCrypto: SessionCookieCrypto = SessionCookieCrypto(new ApplicationCrypto(configuration.underlying).SessionCookieCrypto)
-
   lazy val sessionTimeoutFilterConfig: SessionTimeoutFilterConfig = wireWith(SessionTimeoutFilterConfig.fromConfig _)
-
   lazy val cacheControlConfig: CacheControlConfig = wireWith(CacheControlConfig.fromConfig _)
+  lazy val httpAuditEvent: HttpAuditEvent = wire[DefaultHttpAuditEvent]
+  val appName: String
+
+  val applicationCrypto = new ApplicationCrypto(configuration.underlying)
 }

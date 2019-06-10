@@ -40,9 +40,14 @@ import scala.concurrent.duration._
 
 class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
 
+  override lazy val stubMessages: Map[String, Map[String, String]] =
+    Map("en" -> Map("heading.partnerships" -> "someOtherValueShouldAppear"))
+
   lazy val controller: RegistrationController = wire[RegistrationController]
   lazy val controllerTester = new UniformControllerTester(controller)
   implicit val hc: HeaderCarrier = HeaderCarrier()
+
+
 
   def request: AuthorisedRequest[AnyContent] = AuthorisedRequest[AnyContent](
     None, "", Enrolments(Set.empty), FakeRequest()
@@ -150,7 +155,7 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
         "producer" -> JsString("Large")
       )
       status(output) mustBe OK
-      contentAsString(output) must include(Messages("heading.partners"))
+      contentAsString(output) must include(Messages("heading.partnerships"))
     }
 
     "execute main program as a small producer who uses a copacker" in {

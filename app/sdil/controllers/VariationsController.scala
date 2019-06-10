@@ -17,24 +17,19 @@
 package sdil.controllers
 
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter._
 import java.time.{LocalDate, LocalTime, ZoneId}
 
 import cats.implicits._
 import enumeratum._
-import java.time.format.DateTimeFormatter._
-
 import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents
 import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, litreageForm => approxLitreageForm, _}
 import play.api.data.format.Formatter
 import play.api.data.{FormError, Forms, Mapping}
-import uk.gov.hmrc.uniform.webmonad._
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json.{Format, Json, Writes}
-import play.api.mvc.{Action, AnyContent, Request, Result}
-import play.twirl.api.{Html, HtmlFormat}
-import uk.gov.hmrc.uniform.playutil
+import play.api.i18n.{Messages, MessagesApi, MessagesImpl}
+import play.api.mvc._
+import play.twirl.api.Html
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -44,27 +39,29 @@ import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistence
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
-import uk.gov.hmrc.uniform.HtmlShow
 import uk.gov.hmrc.uniform.playutil.ExtraMessages
+import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class VariationsController(
-  val messagesApi: MessagesApi,
   val sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   cache: ShortLivedHttpCaching,
-  errorHandler: FrontendErrorHandler
+  errorHandler: FrontendErrorHandler,
+  mcc: MessagesControllerComponents
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController with FormHelpers with ReturnJourney {
+) extends FrontendController(mcc) with SdilWMController with FormHelpers with ReturnJourney {
+
+  override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
+  override lazy val parse = mcc.parsers
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
@@ -147,7 +144,7 @@ class VariationsController(
     data: RegistrationVariationData,
     subscription: RetrievedSubscription,
     returnPeriods: List[ReturnPeriod]
-  ): WebMonad[RegistrationVariationData] = {
+  )(implicit request: Request[_]): WebMonad[RegistrationVariationData] = {
 
     for {
       packLarge                   <- askOneOf("amount-produced", ProducerType.values.toList) map {
@@ -240,7 +237,7 @@ class VariationsController(
   private[controllers] def program(
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+  )(implicit hc: HeaderCarrier, request: Request[_]): WebMonad[Result] = {
 
     val base = RegistrationVariationData(subscription)
 
@@ -258,7 +255,7 @@ class VariationsController(
     sdilRef: String,
     variableReturns: List[ReturnPeriod],
     returnPeriods: List[ReturnPeriod]
-  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+  )(implicit hc: HeaderCarrier, request :Request[_]): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
 
     val onlyReturns = subscription.deregDate.nonEmpty
@@ -331,7 +328,7 @@ class VariationsController(
   private def chooseReturn[A](
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier): WebMonad[A] = {
+  )(implicit hc: HeaderCarrier, request: Request[_]): WebMonad[A] = {
     val base = RegistrationVariationData(subscription)
     for {
       variableReturns <- execute(sdilConnector.returns_variable(base.original.utr))
@@ -550,7 +547,7 @@ class VariationsController(
   private def changeActorStatusJourney(
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+  )(implicit hc: HeaderCarrier, request: Request[_]): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
 
     for {

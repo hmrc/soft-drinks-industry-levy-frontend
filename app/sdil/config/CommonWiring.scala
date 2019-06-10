@@ -19,8 +19,9 @@ package sdil.config
 import akka.stream.Materializer
 import com.softwaremill.macwire.wire
 import play.api.i18n.MessagesApi
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
+import uk.gov.hmrc.play.bootstrap.config.RunMode
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.ExecutionContext
@@ -33,6 +34,8 @@ trait CommonWiring {
   implicit val ec: ExecutionContext
   implicit val appConfig: AppConfig
   implicit val materializer: Materializer
+  lazy val runMode: RunMode = wire[RunMode]
+  lazy val mode: Mode = environment.mode
   lazy val shortLivedCaching: ShortLivedHttpCaching = wire[SDILShortLivedCaching]
   lazy val keystore: SDILSessionCache = wire[SDILSessionCache]
 }

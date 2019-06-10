@@ -22,7 +22,7 @@ import java.time.format._
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n._
 import play.api.mvc.{AnyContent, _}
 import play.twirl.api.Html
 import sdil.actions.RegisteredAction
@@ -37,21 +37,24 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.uniform.playutil._
-import uk.gov.hmrc.uniform.webmonad
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
 
 import scala.concurrent._
 
 class ReturnsController (
-  val messagesApi: MessagesApi,
+  override val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
-  cache: ShortLivedHttpCaching
+  cache: ShortLivedHttpCaching,
+  mcc: MessagesControllerComponents
 )(implicit
   val config: AppConfig,
   val ec: ExecutionContext
-) extends SdilWMController with FrontendController with Modulus23Check with ReturnJourney {
+) extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney with I18nSupport {
+
+  override lazy val parse = mcc.parsers
+  override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
 
   def confirmationPage(
     key: String,

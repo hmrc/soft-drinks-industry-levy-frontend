@@ -26,7 +26,7 @@ import play.api.data.Forms._
 import play.api.data.format.Formatter
 import play.api.data.validation.{Invalid, _}
 import play.api.data.{Form, Mapping, _}
-import play.api.i18n.Messages
+import play.api.i18n._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
 import play.twirl.api.Html
@@ -47,15 +47,18 @@ import views.html.uniform
 import scala.concurrent._
 import scala.concurrent.duration._
 import cats.implicits._
+import com.softwaremill.macwire.wire
+import sdil.controllers.test.TestController
 import sdil.models.variations.ReturnVariationData
 import sdil.uniform.ShowTitle
 import sdil.uniform.ShowTitle.instance
 
-trait SdilWMController extends WebMonadController
-    with FrontendController with Modulus23Check
+
+trait SdilWMController extends WebMonadController with Modulus23Check
 {
 
   implicit def config: AppConfig
+  implicit val messages: Messages
 
   val costLower = BigDecimal("0.18")
   val costHigher = BigDecimal("0.24")
@@ -369,7 +372,7 @@ trait SdilWMController extends WebMonadController
 
     formPage(id)(mapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
-      val fragment = uniform.fragments.bigtext(id, b)(implicitly, extraMessages)
+      val fragment = uniform.fragments.bigtext(id, b)(implicitly, extraMessages, implicitly)
       uniform.ask(id, b, fragment, path)
     }
   }
@@ -397,7 +400,7 @@ trait SdilWMController extends WebMonadController
               subheading,
               whatHappensNext,
               getTotal
-            )(implicitly, implicitly, implicitly, extraMessages)
+            )(implicitly, implicitly, implicitly, extraMessages, implicitly)
           ).asLeft[Result]
         )
       }
@@ -543,7 +546,7 @@ trait SdilWMController extends WebMonadController
     sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
       case Some(x) => x // the given sdilRef matches a customer that was a small producer at some point in the quarter
       case None    => false
-    }(mdcExecutionContext)
+    }
 
   implicit val litreageForm = new FormHtml[(Long,Long)] {
     def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {

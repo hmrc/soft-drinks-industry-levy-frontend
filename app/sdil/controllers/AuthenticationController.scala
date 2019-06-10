@@ -17,13 +17,13 @@
 package sdil.controllers
 
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-class AuthenticationController(val messagesApi: MessagesApi)
+class AuthenticationController(override val messagesApi: MessagesApi, mcc: MessagesControllerComponents)
                               (implicit config: AppConfig)
-  extends FrontendController with I18nSupport {
+  extends FrontendController(mcc) {
 
   def signIn = Action { implicit request =>
     Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName)))

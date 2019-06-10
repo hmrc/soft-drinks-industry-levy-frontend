@@ -16,8 +16,12 @@
 
 package sdil.controllers
 
+import java.time.LocalDate
+
+import cats.data.OptionT
+import cats.implicits._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -25,23 +29,18 @@ import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.softdrinksindustrylevy._
-import cats.implicits._
-import cats.data.OptionT
 
-import scala.concurrent._
-import java.time.LocalDate
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class ServicePageController(
-  val messagesApi: MessagesApi,
+  override val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
-  errorHandler: FrontendErrorHandler)
+  errorHandler: FrontendErrorHandler,
+  mcc: MessagesControllerComponents)
   (implicit config: AppConfig,
    val ec: ExecutionContext)
-  extends FrontendController with I18nSupport {
+  extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = registeredAction.async { implicit request =>
 

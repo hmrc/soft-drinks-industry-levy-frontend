@@ -21,8 +21,8 @@ import play.api.libs.ws.WSClient
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
 import scala.concurrent.Future
@@ -30,11 +30,10 @@ import scala.concurrent.Future
 class TestConnector(http: HttpClient,
                     environment: Environment,
                     ws: WSClient,
-                    val runModeConfiguration: Configuration) extends ServicesConfig {
+                    val runModeConfiguration: Configuration,
+                    val runMode: RunMode) extends ServicesConfig(runModeConfiguration, runMode) {
 
   lazy val testUrl: String = baseUrl("soft-drinks-industry-levy")
-
-  override protected def mode = environment.mode
 
   def reset(url: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     http.GET[HttpResponse](s"$testUrl/test-only/$url")

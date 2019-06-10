@@ -17,15 +17,18 @@
 package sdil.controllers.test
 
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.actions.{AuthorisedAction, RegisteredAction}
 import sdil.config.RegistrationFormDataCache
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
+import scala.concurrent.ExecutionContext
+
 @Singleton
 class TestController @Inject()(cache: RegistrationFormDataCache,
                                authorisedAction: AuthorisedAction,
-                               registeredAction: RegisteredAction) extends FrontendController {
+                               registeredAction: RegisteredAction,
+                               mcc: MessagesControllerComponents)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   def clearAllS4LEntries(): Action[AnyContent] = authorisedAction.async {
     implicit request =>

@@ -29,15 +29,13 @@ import play.api.test.Helpers._
 import sdil.controllers.ControllerSpec
 import sdil.models.backend.{Contact, Site, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.{Address, OrganisationDetails, RosmRegistration}
-import sdil.utils.FakeApplicationSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 
 import scala.concurrent.Future
 
-class AuthorisedActionSpec extends FakeApplicationSpec with ControllerSpec{
+class AuthorisedActionSpec extends ControllerSpec {
 
   "AuthorisedAction" should {
     "redirect to the gg sign in page if the user is not logged in" in {

@@ -20,17 +20,13 @@ import java.time.LocalDate
 
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents
 import ltbs.play.scaffold.SdilComponents.OrganisationType.{partnership, soleTrader}
 import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
-import ltbs.play.scaffold.SdilComponents.{litreageForm => approxLitreageForm, _}
-import ltbs.play.scaffold.SdilComponents.extraMessages
+import ltbs.play.scaffold.SdilComponents.{extraMessages, litreageForm => approxLitreageForm, _}
 import play.api.data.Mapping
-import uk.gov.hmrc.uniform.webmonad._
-import uk.gov.hmrc.uniform.playutil._
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n._
 import play.api.libs.json.Format
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.mvc._
 import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
@@ -41,23 +37,24 @@ import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.uniform.FormHtml
+import uk.gov.hmrc.uniform.playutil._
+import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
 
 import scala.concurrent.{ExecutionContext, Future}
 
 
 class RegistrationController(
-                              val messagesApi: MessagesApi,
                               authorisedAction: AuthorisedAction,
                               sdilConnector: SoftDrinksIndustryLevyConnector,
                               registeredAction: RegisteredAction,
-                              cache: RegistrationFormDataCache
-                            )(
-                              implicit
-                              val config: AppConfig,
-                              val ec: ExecutionContext
-                            )
-  extends SdilWMController with FrontendController {
+                              cache: RegistrationFormDataCache,
+                              mcc: MessagesControllerComponents)
+                            (implicit val config: AppConfig, val ec: ExecutionContext)
+  extends FrontendController(mcc) with SdilWMController with I18nSupport {
+
+  override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
+  override lazy val parse = mcc.parsers
 
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)

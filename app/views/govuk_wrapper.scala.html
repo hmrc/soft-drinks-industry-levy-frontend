@@ -15,6 +15,11 @@
  *@
 
 @import sdil.config.AppConfig
+@import play.twirl.api.HtmlFormat
+@import layouts.{govuk_template => hmrcGovUkTemplate}
+@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+@import uk.gov.hmrc.play.views.html.{helpers => uiHelpers}
+
 @(appConfig: AppConfig,
         title: String,
         mainClass: Option[String] = None,
@@ -27,9 +32,6 @@
         scriptElem: Option[Html] = None,
         form: Option[Form[_]] = None)(implicit request: Request[_], messages: Messages)
 
-@import layouts.{govuk_template => hmrcGovUkTemplate}
-@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
-@import uk.gov.hmrc.play.views.html.{helpers => uiHelpers}
 
 @head = {
 @uiLayouts.head(

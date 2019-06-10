@@ -21,7 +21,7 @@
 @import views.html.helper.options
 @import views.html.uniform.helpers._
 
-@(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages)
+@(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages, lang: Lang)
 @views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
   @backlink(breadcrumbs)
 

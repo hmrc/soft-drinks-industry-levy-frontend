@@ -25,13 +25,14 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class RegisteredAction(val authConnector: AuthConnector, sdilConnector: SoftDrinksIndustryLevyConnector)
-                      (implicit config: AppConfig)
-  extends ActionRefiner[Request, RegisteredRequest] with ActionBuilder[RegisteredRequest] with AuthorisedFunctions with ActionHelpers {
+class RegisteredAction(val authConnector: AuthConnector, sdilConnector: SoftDrinksIndustryLevyConnector, mcc: MessagesControllerComponents)
+                      (implicit config: AppConfig, val executionContext: ExecutionContext)
+  extends ActionRefiner[Request, RegisteredRequest] with ActionBuilder[RegisteredRequest, AnyContent] with AuthorisedFunctions with ActionHelpers {
+
+  val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, RegisteredRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
