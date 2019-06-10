@@ -288,6 +288,19 @@ class VariationsControllerSpec extends ControllerSpec {
 
     }
 
+    "NotFound when execute changeBusinessAddress journey from index sdilConnector returns None" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100108")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+      when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100108"), anyString())(any())).thenReturn {
+        Future.successful(None)
+      }
+
+      val result = controller.changeBusinessAddress("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+      status(result) mustEqual NOT_FOUND
+    }
+
     "execute changeActorStatus journey from index" in {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
@@ -301,6 +314,20 @@ class VariationsControllerSpec extends ControllerSpec {
       val result = controller.changeActorStatus("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
       status(result) mustEqual SEE_OTHER
 
+    }
+
+    "NotFound when execute changeActorStatus journey from index sdilConnector returns None" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100108")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+      when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100108"), anyString())(any())).thenReturn {
+        Future.successful(None)
+      }
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
+
+      val result = controller.changeActorStatus("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+      status(result) mustEqual NOT_FOUND
     }
   }
 
