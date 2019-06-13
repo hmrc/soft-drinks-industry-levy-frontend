@@ -20,7 +20,7 @@ import com.kenshoo.play.metrics.{Metrics, MetricsFilter, MetricsFilterImpl}
 import com.softwaremill.macwire.{wire, wireWith}
 import play.api.http.HttpConfiguration
 import play.api.libs.crypto.DefaultCookieSigner
-import play.api.mvc.{DefaultSessionCookieBaker, LegacySessionCookieBaker, SessionCookieBaker}
+import play.api.mvc.{LegacySessionCookieBaker, SessionCookieBaker}
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
 import sdil.filters.VariationsFilter
