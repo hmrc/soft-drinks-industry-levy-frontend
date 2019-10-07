@@ -16,12 +16,12 @@
 
 package sdil.forms
 
+import org.scalatest.{Matchers, WordSpecLike}
 import play.api.data.Form
 import sdil.controllers.IdentifyController.form
 import sdil.models.Identification
-import uk.gov.hmrc.play.test.UnitSpec
 
-class IdentifyFormSpec extends UnitSpec {
+class IdentifyFormSpec extends WordSpecLike with Matchers {
 
   "The identify form" should {
     "require the UTR to be non-empty" in {
