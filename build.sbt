@@ -60,7 +60,6 @@ coverageHighlighting := true
 
 
 libraryDependencies ++= Seq(
-  "uk.gov.hmrc"            %% "hmrctest"           % "3.9.0-play-26",
   "org.scalatest"          %% "scalatest"          % "3.0.7",
   "org.pegdown"            % "pegdown"             % "1.6.0",
   "org.jsoup"              % "jsoup"               % "1.12.1",
