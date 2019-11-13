@@ -34,7 +34,7 @@ object Convert {
       if (first == other) None else Some(first)
   }
 
-  implicit class PoorA[A <: {def nonEmpty : Boolean}](a: A) {
+  implicit class PoorA[A <: { def nonEmpty: Boolean }](a: A) {
     def ifNonEmpty: Option[A] = if (a.nonEmpty) Some(a) else None
   }
 
@@ -101,33 +101,44 @@ object Convert {
         Some(vd.updatedContactDetails.email)
       )
 
-      val highestNum = {orig.productionSites ++ orig.warehouseSites}.foldLeft(0) { (id, site) =>
-        Math.max(id, site.ref.flatMap{x => Try(x.toInt).toOption}.getOrElse(0))
+      val highestNum = { orig.productionSites ++ orig.warehouseSites }.foldLeft(0) { (id, site) =>
+        Math.max(
+          id,
+          site.ref
+            .flatMap { x =>
+              Try(x.toInt).toOption
+            }
+            .getOrElse(0))
       }
 
-      val ps = productionSites.zipWithIndex map { case (site,id) =>
-        VariationsSite(
-          site.tradingName.getOrElse(""),
-          site.ref.getOrElse({highestNum + id + 1}.toString),
-          contact.copy(address = Some(Address.fromUkAddress(site.address))),
-          "Production Site")
+      val ps = productionSites.zipWithIndex map {
+        case (site, id) =>
+          VariationsSite(
+            site.tradingName.getOrElse(""),
+            site.ref.getOrElse({ highestNum + id + 1 }.toString),
+            contact.copy(address = Some(Address.fromUkAddress(site.address))),
+            "Production Site"
+          )
       }
 
-      val w = warehouses.zipWithIndex map { case (warehouse,id) =>
-        VariationsSite(
-          warehouse.tradingName.getOrElse(""),
-          warehouse.ref.getOrElse({highestNum + id + 1 + productionSites.size}.toString),
-          contact.copy(address = Some(Address.fromUkAddress(warehouse.address))),
-          "Warehouse"
-        )
+      val w = warehouses.zipWithIndex map {
+        case (warehouse, id) =>
+          VariationsSite(
+            warehouse.tradingName.getOrElse(""),
+            warehouse.ref.getOrElse({ highestNum + id + 1 + productionSites.size }.toString),
+            contact.copy(address = Some(Address.fromUkAddress(warehouse.address))),
+            "Warehouse"
+          )
       }
 
       (ps ++ w).toList
     }
 
     val newSites: List[VariationsSite] = {
-      val newProductionSites = vd.updatedProductionSites.diff(orig.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))))
-      val newWarehouses = vd.updatedWarehouseSites.diff(orig.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))))
+      val newProductionSites =
+        vd.updatedProductionSites.diff(orig.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))))
+      val newWarehouses =
+        vd.updatedWarehouseSites.diff(orig.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))))
 
       variationsSites(newProductionSites, newWarehouses)
     }
@@ -141,10 +152,12 @@ object Convert {
           ClosedSite("", site.ref.getOrElse("1"), "This site is no longer open.")
         }
 
-      val closedWarehouses = orig.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))).diff(
-        vd.updatedWarehouseSites
-      ) map {
-        warehouse => ClosedSite("", warehouse.ref.getOrElse("1"), "This site is no longer open.")
+      val closedWarehouses = orig.warehouseSites
+        .filter(_.closureDate.forall(_.isAfter(LocalDate.now)))
+        .diff(
+          vd.updatedWarehouseSites
+        ) map { warehouse =>
+        ClosedSite("", warehouse.ref.getOrElse("1"), "This site is no longer open.")
       }
 
       closedProductionSites ++ closedWarehouses

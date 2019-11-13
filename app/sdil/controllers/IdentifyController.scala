@@ -34,12 +34,13 @@ import views.html.softdrinksindustrylevy.register
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IdentifyController(override val messagesApi: MessagesApi,
-                         mcc: MessagesControllerComponents,
-                         cache: RegistrationFormDataCache,
-                         authorisedAction: AuthorisedAction,
-                         softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+class IdentifyController(
+  override val messagesApi: MessagesApi,
+  mcc: MessagesControllerComponents,
+  cache: RegistrationFormDataCache,
+  authorisedAction: AuthorisedAction,
+  softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig, ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   import IdentifyController.form
 
@@ -53,39 +54,39 @@ class IdentifyController(override val messagesApi: MessagesApi,
       .getOrElse(Redirect(routes.IdentifyController.show))
   }
 
-  private def restoreSession(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] = {
+  private def restoreSession(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] =
     OptionT(cache.get(request.internalId) map {
       case Some(_) => Some(Redirect(routes.VerifyController.show()))
-      case None => None
+      case None    => None
     })
-  }
 
-  private def retrieveRosmData(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] = {
+  private def retrieveRosmData(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] =
     for {
-      utr <- OptionT.fromOption[Future](request.utr)
+      utr      <- OptionT.fromOption[Future](request.utr)
       rosmData <- OptionT(softDrinksIndustryLevyConnector.getRosmRegistration(utr))
-      _ <- OptionT.liftF(cache.cache(request.internalId, RegistrationFormData(rosmData, utr)))
+      _        <- OptionT.liftF(cache.cache(request.internalId, RegistrationFormData(rosmData, utr)))
     } yield {
       Redirect(routes.VerifyController.show())
     }
-  }
 
   def submit = authorisedAction.async { implicit request =>
-    form.bindFromRequest().fold(
-      errors => BadRequest(register.identify(errors)),
-      identification => softDrinksIndustryLevyConnector.getRosmRegistration(identification.utr) flatMap {
-        case Some(reg) if postcodesMatch(reg.address, identification) =>
-          cache.cache(request.internalId, RegistrationFormData(reg, identification.utr)) map { _ =>
-            Redirect(routes.VerifyController.show())
-          }
-        case _ => BadRequest(register.identify(form.fill(identification).withError("utr", "error.utr.no-record")))
-      }
-    )
+    form
+      .bindFromRequest()
+      .fold(
+        errors => BadRequest(register.identify(errors)),
+        identification =>
+          softDrinksIndustryLevyConnector.getRosmRegistration(identification.utr) flatMap {
+            case Some(reg) if postcodesMatch(reg.address, identification) =>
+              cache.cache(request.internalId, RegistrationFormData(reg, identification.utr)) map { _ =>
+                Redirect(routes.VerifyController.show())
+              }
+            case _ => BadRequest(register.identify(form.fill(identification).withError("utr", "error.utr.no-record")))
+        }
+      )
   }
 
-  private def postcodesMatch(rosmAddress: Address, identification: Identification) = {
+  private def postcodesMatch(rosmAddress: Address, identification: Identification) =
     rosmAddress.postcode.replaceAll(" ", "").equalsIgnoreCase(identification.postcode.replaceAll(" ", ""))
-  }
 }
 
 object IdentifyController extends FormHelpers {
@@ -93,10 +94,10 @@ object IdentifyController extends FormHelpers {
     mapping(
       "utr" -> text.verifying(Constraint { x: String =>
         x match {
-          case "" => Invalid("error.utr.required")
+          case ""                            => Invalid("error.utr.required")
           case utr if utr.exists(!_.isDigit) => Invalid("error.utr.invalid")
-          case utr if utr.length != 10 => Invalid("error.utr.length")
-          case _ => Valid
+          case utr if utr.length != 10       => Invalid("error.utr.length")
+          case _                             => Valid
         }
       }),
       "postcode" -> postcode

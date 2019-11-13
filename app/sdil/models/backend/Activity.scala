@@ -19,11 +19,12 @@ package sdil.models.backend
 import play.api.libs.json.{Format, JsResult, JsValue, Json}
 import sdil.models.Litreage
 
-case class Activity(ProducedOwnBrand: Option[Litreage],
-                    Imported: Option[Litreage],
-                    CopackerAll: Option[Litreage],
-                    Copackee: Option[Litreage],
-                    isLarge: Boolean) {
+case class Activity(
+  ProducedOwnBrand: Option[Litreage],
+  Imported: Option[Litreage],
+  CopackerAll: Option[Litreage],
+  Copackee: Option[Litreage],
+  isLarge: Boolean) {
 
   def nonEmpty: Boolean = Seq(ProducedOwnBrand, Imported, CopackerAll, Copackee).flatten.nonEmpty
 }
@@ -32,16 +33,14 @@ object Activity {
   private implicit val litreageFormat: Format[Litreage] = new Format[Litreage] {
     override def writes(o: Litreage): JsValue = Json.obj("lower" -> o.atLowRate, "upper" -> o.atHighRate)
 
-    override def reads(json: JsValue): JsResult[Litreage] = {
+    override def reads(json: JsValue): JsResult[Litreage] =
       for {
-        low <- (json \ "lower").validate[BigDecimal]
+        low  <- (json \ "lower").validate[BigDecimal]
         high <- (json \ "upper").validate[BigDecimal]
       } yield {
         Litreage(low, high)
       }
-    }
   }
 
   implicit val format: Format[Activity] = Json.format[Activity]
 }
-

@@ -23,9 +23,8 @@ import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.Future
 
-class VariationsFilter(errorHandler: FrontendErrorHandler)
-                      (implicit config: AppConfig, val mat: Materializer) extends Filter {
-  override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
-      f(rh)
-  }
+class VariationsFilter(errorHandler: FrontendErrorHandler)(implicit config: AppConfig, val mat: Materializer)
+    extends Filter {
+  override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] =
+    f(rh)
 }

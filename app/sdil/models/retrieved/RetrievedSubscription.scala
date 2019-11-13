@@ -29,29 +29,27 @@ case class RetrievedActivity(
   voluntaryRegistration: Boolean
 ) {
 
-
-  def isLiable: Boolean = {
+  def isLiable: Boolean =
     !smallProducer && (largeProducer || contractPacker || importer)
-  }
 
-  def isVoluntaryMandatory: Boolean = {
+  def isVoluntaryMandatory: Boolean =
     smallProducer && (contractPacker || importer)
-  }
 }
 object RetrievedActivity {
   implicit val format = Json.format[RetrievedActivity]
 }
 
-case class RetrievedSubscription(utr: String,
-                                 sdilRef: String,
-                                 orgName: String,
-                                 address: UkAddress,
-                                 activity: RetrievedActivity,
-                                 liabilityDate: LocalDate,
-                                 productionSites: List[Site],
-                                 warehouseSites: List[Site],
-                                 contact: Contact,
-                                 deregDate: Option[LocalDate] = None)
+case class RetrievedSubscription(
+  utr: String,
+  sdilRef: String,
+  orgName: String,
+  address: UkAddress,
+  activity: RetrievedActivity,
+  liabilityDate: LocalDate,
+  productionSites: List[Site],
+  warehouseSites: List[Site],
+  contact: Contact,
+  deregDate: Option[LocalDate] = None)
 
 object RetrievedSubscription {
   implicit val format = Json.format[RetrievedSubscription]

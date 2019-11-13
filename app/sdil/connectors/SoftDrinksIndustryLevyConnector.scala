@@ -31,84 +31,85 @@ import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetai
 import scala.concurrent.Future
 
 class SoftDrinksIndustryLevyConnector(
-                                       http: HttpClient,
-                                       environment: Environment,
-                                       val runModeConfiguration: Configuration,
-                                       val runMode: RunMode,
-                                       val shortLiveCache: ShortLivedHttpCaching,
-                                       val sessionCache: SDILSessionCache
+  http: HttpClient,
+  environment: Environment,
+  val runModeConfiguration: Configuration,
+  val runMode: RunMode,
+  val shortLiveCache: ShortLivedHttpCaching,
+  val sessionCache: SDILSessionCache
 ) extends ServicesConfig(runModeConfiguration, runMode) {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
 
-  def getRosmRegistration(utr: String)(implicit hc: HeaderCarrier): Future[Option[RosmRegistration]] = {
+  def getRosmRegistration(utr: String)(implicit hc: HeaderCarrier): Future[Option[RosmRegistration]] =
     http.GET[Option[RosmRegistration]](s"$sdilUrl/rosm-registration/lookup/$utr")
-  }
 
-  def submit(subscription: Subscription, safeId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POST[Subscription, HttpResponse](s"$sdilUrl/subscription/utr/${subscription.utr}/$safeId", subscription) map { _ => () }
-  }
+  def submit(subscription: Subscription, safeId: String)(implicit hc: HeaderCarrier): Future[Unit] =
+    http.POST[Subscription, HttpResponse](s"$sdilUrl/subscription/utr/${subscription.utr}/$safeId", subscription) map {
+      _ =>
+        ()
+    }
 
-  def checkPendingQueue(utr: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def checkPendingQueue(utr: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](s"$sdilUrl/check-enrolment-status/$utr") recover {
       case _: NotFoundException => HttpResponse(404)
     }
-  }
 
-  def retrieveSubscription(sdilNumber: String, identifierType: String = "sdil")(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
+  def retrieveSubscription(sdilNumber: String, identifierType: String = "sdil")(
+    implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] =
     sessionCache.fetchAndGetEntry[RetrievedSubscription](s"sdil-$sdilNumber") flatMap {
       case Some(s) => Future.successful(Some(s))
       case _ =>
         http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/$identifierType/$sdilNumber").flatMap {
           case Some(a) =>
-            sessionCache.cache(s"sdil-$sdilNumber", a).map {
-              _ =>
-                Some(a)
+            sessionCache.cache(s"sdil-$sdilNumber", a).map { _ =>
+              Some(a)
             }
           case _ => Future.successful(None)
         }
     }
-  }
 
   def checkSmallProducerStatus(
     sdilRef: String,
     period: ReturnPeriod
-  )(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
+  )(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
     sessionCache.fetchAndGetEntry[Boolean](s"sdil-$sdilRef-${period.year}-${period.quarter}") flatMap {
       case Some(s) => Future.successful(Some(s))
       case _ =>
-        http.GET[Option[Boolean]](s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}").flatMap {
-          case Some(a) =>
-            sessionCache.cache(s"sdil-$sdilRef-${period.year}-${period.quarter}", a).map {
-              _ => Some(a)
-            }
-          case _ => Future.successful(None)
-        }
+        http
+          .GET[Option[Boolean]](s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}")
+          .flatMap {
+            case Some(a) =>
+              sessionCache.cache(s"sdil-$sdilRef-${period.year}-${period.quarter}", a).map { _ =>
+                Some(a)
+              }
+            case _ => Future.successful(None)
+          }
     }
-  }
 
-  def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map { _ => () }
-  }
+  def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Unit] =
+    http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map { _ =>
+      ()
+    }
 
   def returns_pending(
     utr: String
-  )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
+  )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
     http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
-  }
 
   def returns_variable(
     utr: String
-  )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
+  )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
     http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable")
-  }
 
   def returns_vary(
     sdilRef: String,
     data: ReturnVariationData
   )(implicit hc: HeaderCarrier): Future[Unit] = {
     val uri = s"$sdilUrl/returns/vary/$sdilRef"
-    http.POST[ReturnVariationData, HttpResponse](uri, data) map { _ => () }
+    http.POST[ReturnVariationData, HttpResponse](uri, data) map { _ =>
+      ()
+    }
   }
 
   def returns_update(
@@ -117,7 +118,9 @@ class SoftDrinksIndustryLevyConnector(
     sdilReturn: SdilReturn
   )(implicit hc: HeaderCarrier): Future[Unit] = {
     val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
-    http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map { _ => () }
+    http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map { _ =>
+      ()
+    }
   }
 
   def returns_get(
@@ -128,17 +131,16 @@ class SoftDrinksIndustryLevyConnector(
     http.GET[Option[SdilReturn]](uri)
   }
 
-  def returns_variation(variation: ReturnsVariation, sdilRef: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POST[ReturnsVariation, HttpResponse](s"$sdilUrl/returns/variation/sdil/$sdilRef", variation) map { _ => () }
-  }
-
+  def returns_variation(variation: ReturnsVariation, sdilRef: String)(implicit hc: HeaderCarrier): Future[Unit] =
+    http.POST[ReturnsVariation, HttpResponse](s"$sdilUrl/returns/variation/sdil/$sdilRef", variation) map { _ =>
+      ()
+    }
 
   def balance(
-   sdil: String,
-   withAssessment: Boolean
-  )(implicit hc: HeaderCarrier): Future[BigDecimal] = {
+    sdil: String,
+    withAssessment: Boolean
+  )(implicit hc: HeaderCarrier): Future[BigDecimal] =
     http.GET[BigDecimal](s"$sdilUrl/balance/$sdil/$withAssessment")
-  }
 
   def balanceHistory(
     sdil: String,

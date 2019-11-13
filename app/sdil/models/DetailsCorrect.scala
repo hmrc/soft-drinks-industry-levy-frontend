@@ -29,28 +29,28 @@ object DetailsCorrect {
 
   def apply(value: String, address: Option[Address]): DetailsCorrect = (value, address) match {
     case (_, Some(addr)) => DifferentAddress(addr)
-    case ("yes", _) => Yes
-    case _ => No
+    case ("yes", _)      => Yes
+    case _               => No
   }
 
-  def unapply(d: DetailsCorrect): Option[(String, Option[Address])] =  d match {
-    case Yes => Some(("yes", None))
+  def unapply(d: DetailsCorrect): Option[(String, Option[Address])] = d match {
+    case Yes                    => Some(("yes", None))
     case DifferentAddress(addr) => Some(("differentAddress", Some(addr)))
-    case No => Some(("no", None))
+    case No                     => Some(("no", None))
   }
 
   implicit val format: Format[DetailsCorrect] = new Format[DetailsCorrect] {
     override def reads(json: JsValue): JsResult[DetailsCorrect] = json match {
       case JsString("yes") => JsSuccess(Yes)
-      case JsString("no") => JsSuccess(No)
-      case _: JsObject => (json \ "alternativeAddress").validate[Address].map(DifferentAddress)
-      case _ => JsError(s"Unable to parse $json into DetailsCorrect")
+      case JsString("no")  => JsSuccess(No)
+      case _: JsObject     => (json \ "alternativeAddress").validate[Address].map(DifferentAddress)
+      case _               => JsError(s"Unable to parse $json into DetailsCorrect")
     }
 
     override def writes(o: DetailsCorrect): JsValue = o match {
-      case Yes => JsString("yes")
+      case Yes                       => JsString("yes")
       case DifferentAddress(address) => Json.obj("alternativeAddress" -> address)
-      case No => JsString("no")
+      case No                        => JsString("no")
     }
   }
 }

@@ -21,15 +21,19 @@ import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-class SDILSessionCache(val http: HttpClient,
-                       val configuration: Configuration,
-                       val runMode: RunMode,
-                       environment: Environment)
-  extends ServicesConfig(configuration, runMode) with SessionCache {
+class SDILSessionCache(
+  val http: HttpClient,
+  val configuration: Configuration,
+  val runMode: RunMode,
+  environment: Environment)
+    extends ServicesConfig(configuration, runMode) with SessionCache {
 
   override def defaultSource: String = configuration.get[String]("appName")
 
   override def baseUri: String = baseUrl("cacheable.session-cache")
 
-  override def domain: String = getConfString("cacheable.session-cache.domain", throw new RuntimeException("Missing config cacheable.session-cache.domain"))
+  override def domain: String =
+    getConfString(
+      "cacheable.session-cache.domain",
+      throw new RuntimeException("Missing config cacheable.session-cache.domain"))
 }

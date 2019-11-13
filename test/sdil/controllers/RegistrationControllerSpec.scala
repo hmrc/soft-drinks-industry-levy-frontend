@@ -37,7 +37,6 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import scala.concurrent._
 import scala.concurrent.duration._
 
-
 class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
 
   override lazy val stubMessages: Map[String, Map[String, String]] =
@@ -47,11 +46,13 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
   lazy val controllerTester = new UniformControllerTester(controller)
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-
-
-  def request: AuthorisedRequest[AnyContent] = AuthorisedRequest[AnyContent](
-    None, "", Enrolments(Set.empty), FakeRequest()
-      .withFormUrlEncodedBody("utr" -> ""))
+  def request: AuthorisedRequest[AnyContent] =
+    AuthorisedRequest[AnyContent](
+      None,
+      "",
+      Enrolments(Set.empty),
+      FakeRequest()
+        .withFormUrlEncodedBody("utr" -> ""))
 
   "RegistrationController" should {
 
@@ -69,59 +70,55 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
 
     "execute main program" in {
       def formData = RegistrationFormData(
-        RosmRegistration("safeId", None, None,
-          Address("", "", "", "", "")
-        ),
+        RosmRegistration("safeId", None, None, Address("", "", "", "", "")),
         "utr"
       )
       submitRegistration()
       val program = controller.program(formData)(request, hc)
       val output = controllerTester.testJourney(program)(
         "contact-details" -> Json.obj(
-          "fullName" -> "Fred",
-          "position" -> "Smith",
+          "fullName"    -> "Fred",
+          "position"    -> "Smith",
           "phoneNumber" -> "01234 567890",
-          "email" -> "fred.smith@ecola.co.uk"
+          "email"       -> "fred.smith@ecola.co.uk"
         ),
         "ask-secondary-warehouses" -> JsBoolean(false),
-        "production-site-details" -> JsString("Done"),
-        "start-date" -> JsString("2018-10-01"),
-        "import" -> Json.obj("lower" -> 2345, "higher" -> 56789),
+        "production-site-details"  -> JsString("Done"),
+        "start-date"               -> JsString("2018-10-01"),
+        "import"                   -> Json.obj("lower" -> 2345, "higher" -> 56789),
         "pack-at-business-address" -> JsBoolean(true),
-        "package-own-uk" -> Json.obj("lower" -> 1000000, "higher" -> 2000000),
-        "package-copack" -> Json.obj("lower" -> 110000, "higher" -> 130000),
-        "organisation-type" -> JsString("limitedCompany"),
-        "producer" -> JsString("Large"),
-        "declaration" -> JsNull
+        "package-own-uk"           -> Json.obj("lower" -> 1000000, "higher" -> 2000000),
+        "package-copack"           -> Json.obj("lower" -> 110000, "higher" -> 130000),
+        "organisation-type"        -> JsString("limitedCompany"),
+        "producer"                 -> JsString("Large"),
+        "declaration"              -> JsNull
       )
       status(output) mustBe OK
     }
 
     "execute main program and fail js validation when ask-secondary-warehouse is passed as a string" in {
       def formData = RegistrationFormData(
-        RosmRegistration("safeId", None, None,
-          Address("", "", "", "", "")
-        ),
+        RosmRegistration("safeId", None, None, Address("", "", "", "", "")),
         "utr"
       )
 
       val program = controller.program(formData)(request, hc)
       val output = controllerTester.testJourney(program)(
         "contact-details" -> Json.obj(
-          "fullName" -> "Fred",
-          "position" -> "Smith",
+          "fullName"    -> "Fred",
+          "position"    -> "Smith",
           "phoneNumber" -> "01234 567890",
-          "email" -> "fred.smith@ecola.co.uk"
+          "email"       -> "fred.smith@ecola.co.uk"
         ),
         "ask-secondary-warehouses" -> JsString("hi"),
-        "production-site-details" -> JsString("Done"),
-        "start-date" -> JsString("2018-10-01"),
-        "import" -> Json.obj("lower" -> 2345, "higher" -> 56789),
+        "production-site-details"  -> JsString("Done"),
+        "start-date"               -> JsString("2018-10-01"),
+        "import"                   -> Json.obj("lower" -> 2345, "higher" -> 56789),
         "pack-at-business-address" -> JsBoolean(true),
-        "package-own-uk" -> Json.obj("lower" -> 1000000, "higher" -> 2000000),
-        "package-copack" -> Json.obj("lower" -> 110000, "higher" -> 130000),
-        "organisation-type" -> JsString("limitedCompany"),
-        "producer" -> JsString("Large")
+        "package-own-uk"           -> Json.obj("lower" -> 1000000, "higher" -> 2000000),
+        "package-copack"           -> Json.obj("lower" -> 110000, "higher" -> 130000),
+        "organisation-type"        -> JsString("limitedCompany"),
+        "producer"                 -> JsString("Large")
       )
       intercept[JsResultException] {
         status(output)
@@ -130,29 +127,27 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
 
     "execute main program and show the partnerships page" in {
       def formData = RegistrationFormData(
-        RosmRegistration("safeId", None, None,
-          Address("", "", "", "", "")
-        ),
+        RosmRegistration("safeId", None, None, Address("", "", "", "", "")),
         "utr"
       )
 
       val program = controller.program(formData)(request, hc)
       val output = controllerTester.testJourney(program)(
         "contact-details" -> Json.obj(
-          "fullName" -> "Fred",
-          "position" -> "Smith",
+          "fullName"    -> "Fred",
+          "position"    -> "Smith",
           "phoneNumber" -> "01234 567890",
-          "email" -> "fred.smith@ecola.co.uk"
+          "email"       -> "fred.smith@ecola.co.uk"
         ),
         "ask-secondary-warehouses" -> JsBoolean(false),
-        "production-site-details" -> JsString("Done"),
-        "start-date" -> JsString("2018-10-01"),
-        "import" -> Json.obj("lower" -> 2345, "higher" -> 56789),
+        "production-site-details"  -> JsString("Done"),
+        "start-date"               -> JsString("2018-10-01"),
+        "import"                   -> Json.obj("lower" -> 2345, "higher" -> 56789),
         "pack-at-business-address" -> JsBoolean(true),
-        "package-own-uk" -> Json.obj("lower" -> 1000000, "higher" -> 2000000),
-        "package-copack" -> Json.obj("lower" -> 110000, "higher" -> 130000),
-        "organisation-type" -> JsString("partnership"),
-        "producer" -> JsString("Large")
+        "package-own-uk"           -> Json.obj("lower" -> 1000000, "higher" -> 2000000),
+        "package-copack"           -> Json.obj("lower" -> 110000, "higher" -> 130000),
+        "organisation-type"        -> JsString("partnership"),
+        "producer"                 -> JsString("Large")
       )
       status(output) mustBe OK
       contentAsString(output) must include(Messages("heading.partnerships"))
@@ -160,111 +155,103 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
 
     "execute main program as a small producer who uses a copacker" in {
       def formData = RegistrationFormData(
-        RosmRegistration("safeId", None, None,
-          Address("", "", "", "", "")
-        ),
+        RosmRegistration("safeId", None, None, Address("", "", "", "", "")),
         "utr"
       )
 
       val program = controller.program(formData)(request, hc)
       val output = controllerTester.testJourney(program)(
         "contact-details" -> Json.obj(
-          "fullName" -> "Fred",
-          "position" -> "Smith",
+          "fullName"    -> "Fred",
+          "position"    -> "Smith",
           "phoneNumber" -> "01234 567890",
-          "email" -> "fred.smith@ecola.co.uk"
+          "email"       -> "fred.smith@ecola.co.uk"
         ),
         "ask-secondary-warehouses" -> JsBoolean(false),
-        "production-site-details" -> JsString("Done"),
-        "start-date" -> JsString("2018-10-01"),
-        "import" -> Json.obj("lower" -> 2345, "higher" -> 56789),
+        "production-site-details"  -> JsString("Done"),
+        "start-date"               -> JsString("2018-10-01"),
+        "import"                   -> Json.obj("lower" -> 2345, "higher" -> 56789),
         "pack-at-business-address" -> JsBoolean(true),
-        "package-own-uk" -> Json.obj("lower" -> 1000000, "higher" -> 2000000),
-        "package-copack" -> Json.obj("lower" -> 110000, "higher" -> 130000),
-        "organisation-type" -> JsString("limitedCompany"),
-        "copacked" -> JsBoolean(true),
-        "producer" -> JsString("Small")
+        "package-own-uk"           -> Json.obj("lower" -> 1000000, "higher" -> 2000000),
+        "package-copack"           -> Json.obj("lower" -> 110000, "higher" -> 130000),
+        "organisation-type"        -> JsString("limitedCompany"),
+        "copacked"                 -> JsBoolean(true),
+        "producer"                 -> JsString("Small")
       )
       status(output) mustBe SEE_OTHER
     }
 
     "execute main program as a small producer who doesn't use a copacker" in {
       def formData = RegistrationFormData(
-        RosmRegistration("safeId", None, None,
-          Address("", "", "", "", "")
-        ),
+        RosmRegistration("safeId", None, None, Address("", "", "", "", "")),
         "utr"
       )
 
       val program = controller.program(formData)(request, hc)
       val output = controllerTester.testJourney(program)(
         "contact-details" -> Json.obj(
-          "fullName" -> "Fred",
-          "position" -> "Smith",
+          "fullName"    -> "Fred",
+          "position"    -> "Smith",
           "phoneNumber" -> "01234 567890",
-          "email" -> "fred.smith@ecola.co.uk"
+          "email"       -> "fred.smith@ecola.co.uk"
         ),
         "ask-secondary-warehouses" -> JsBoolean(false),
-        "production-site-details" -> JsString("Done"),
-        "start-date" -> JsString("2018-10-01"),
-        "import" -> Json.obj("lower" -> 2345, "higher" -> 56789),
+        "production-site-details"  -> JsString("Done"),
+        "start-date"               -> JsString("2018-10-01"),
+        "import"                   -> Json.obj("lower" -> 2345, "higher" -> 56789),
         "pack-at-business-address" -> JsBoolean(true),
-        "package-own-uk" -> Json.obj("lower" -> 1000000, "higher" -> 2000000),
-        "package-copack" -> Json.obj("lower" -> 110000, "higher" -> 130000),
-        "organisation-type" -> JsString("limitedCompany"),
-        "copacked" -> JsBoolean(false),
-        "producer" -> JsString("Small")
+        "package-own-uk"           -> Json.obj("lower" -> 1000000, "higher" -> 2000000),
+        "package-copack"           -> Json.obj("lower" -> 110000, "higher" -> 130000),
+        "organisation-type"        -> JsString("limitedCompany"),
+        "copacked"                 -> JsBoolean(false),
+        "producer"                 -> JsString("Small")
       )
       status(output) mustBe SEE_OTHER
     }
 
     "execute main program as a user who doesn't packageOwn" in {
       def formData = RegistrationFormData(
-        RosmRegistration("safeId", None, None,
-          Address("", "", "", "", "")
-        ),
+        RosmRegistration("safeId", None, None, Address("", "", "", "", "")),
         "utr"
       )
 
       val program = controller.program(formData)(request, hc)
       val output = controllerTester.testJourney(program)(
         "contact-details" -> Json.obj(
-          "fullName" -> "Fred",
-          "position" -> "Smith",
+          "fullName"    -> "Fred",
+          "position"    -> "Smith",
           "phoneNumber" -> "01234 567890",
-          "email" -> "fred.smith@ecola.co.uk"
+          "email"       -> "fred.smith@ecola.co.uk"
         ),
         "ask-secondary-warehouses" -> JsBoolean(false),
-        "production-site-details" -> JsString("Done"),
-        "start-date" -> JsString("2018-10-01"),
-        "import" -> Json.obj("lower" -> 2345, "higher" -> 56789),
+        "production-site-details"  -> JsString("Done"),
+        "start-date"               -> JsString("2018-10-01"),
+        "import"                   -> Json.obj("lower" -> 2345, "higher" -> 56789),
         "pack-at-business-address" -> JsBoolean(true),
-        "package-copack" -> Json.obj("lower" -> 110000, "higher" -> 130000),
-        "organisation-type" -> JsString("limitedCompany"),
-        "copacked" -> JsBoolean(true),
-        "producer" -> JsString("Not")
+        "package-copack"           -> Json.obj("lower" -> 110000, "higher" -> 130000),
+        "organisation-type"        -> JsString("limitedCompany"),
+        "copacked"                 -> JsBoolean(true),
+        "producer"                 -> JsString("Not")
       )
       status(output) mustBe SEE_OTHER
     }
 
     "execute main program as a small producer who doesn't use a copacker and has no liable activity" in {
       def formData = RegistrationFormData(
-        RosmRegistration("safeId", None, None,
-          Address("", "", "", "", "")
-        ),
+        RosmRegistration("safeId", None, None, Address("", "", "", "", "")),
         "utr"
       )
 
       val program = controller.program(formData)(request, hc)
       val output = controllerTester.testJourney(program)(
         "organisation-type" -> JsString("limitedCompany"),
-        "producer" -> JsString("Small"),
-        "copacked" -> JsBoolean(false),
+        "producer"          -> JsString("Small"),
+        "copacked"          -> JsBoolean(false),
         "contact-details" -> Json.obj(
-          "fullName" -> "Fred",
-          "position" -> "Smith",
+          "fullName"    -> "Fred",
+          "position"    -> "Smith",
           "phoneNumber" -> "01234 567890",
-          "email" -> "fred.smith@ecola.co.uk"
+          "email"       -> "fred.smith@ecola.co.uk"
         )
       )
       status(output) mustBe SEE_OTHER

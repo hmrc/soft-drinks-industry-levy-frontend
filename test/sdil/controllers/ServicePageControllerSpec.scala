@@ -38,7 +38,6 @@ import uk.gov.hmrc.auth.core._
 
 import scala.concurrent.Future
 
-
 class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
   "Service page controller" should {
@@ -55,12 +54,14 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
         Future.successful(Some(validRetrievedSubscription))
       }
 
-      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any()))
+        .thenReturn(Future.successful((returnPeriods)))
       when(mockSdilConnectorSPA.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
-      val request = FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000033", "utr" -> "0000000033")
+      val request =
+        FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000033", "utr" -> "0000000033")
       val result = testController.show.apply(request)
 
       status(result) mustBe OK
@@ -83,12 +84,14 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
         Future.successful(Some(validDeregisteredRetrievedSubscription))
       }
 
-      when(mockSdilConnectorSPA.returns_pending(matching("0000000036"))(any())).thenReturn(Future.successful(List.empty))
+      when(mockSdilConnectorSPA.returns_pending(matching("0000000036"))(any()))
+        .thenReturn(Future.successful(List.empty))
       when(mockSdilConnectorSPA.returns_get(matching("0000000036"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
-      val request = FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000036", "utr" -> "0000000036")
+      val request =
+        FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000036", "utr" -> "0000000036")
       val result = testController.show.apply(request)
 
       status(result) mustBe OK
@@ -112,12 +115,14 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
         Future.successful(Some(validVoluntaryRetrievedSubscription))
       }
 
-      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any()))
+        .thenReturn(Future.successful((returnPeriods)))
       when(mockSdilConnectorSPA.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
-      val request = FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000033", "utr" -> "0000000033")
+      val request =
+        FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000033", "utr" -> "0000000033")
       val result = testController.show.apply(request)
 
       status(result) mustBe OK
@@ -137,12 +142,14 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
         Future.successful(Some(validPackagingRetrievedSubscription))
       }
 
-      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any()))
+        .thenReturn(Future.successful((returnPeriods)))
       when(mockSdilConnectorSPA.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
-      val request = FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000033", "utr" -> "0000000033")
+      val request =
+        FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000033", "utr" -> "0000000033")
       val result = testController.show.apply(request)
 
       status(result) mustBe OK
@@ -162,12 +169,14 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
         Future.successful(Some(validWarehouseRetrievedSubscription))
       }
 
-      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any()))
+        .thenReturn(Future.successful((returnPeriods)))
       when(mockSdilConnectorSPA.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
-      val request = FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000033", "utr" -> "0000000033")
+      val request =
+        FakeRequest("GET", "/home").withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000033", "utr" -> "0000000033")
       val result = testController.show.apply(request)
 
       status(result) mustBe OK
@@ -187,7 +196,8 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
         Future.successful(Some(validRetrievedSubscription))
       }
 
-      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any()))
+        .thenReturn(Future.successful((returnPeriods)))
       when(mockSdilConnectorSPA.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
@@ -210,14 +220,16 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
         Future.successful(Some(validRetrievedSubscription))
       }
 
-      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnectorSPA.returns_pending(matching("0000000033"))(any()))
+        .thenReturn(Future.successful((returnPeriods)))
       when(mockSdilConnectorSPA.returns_get(matching("0000000033"), any[ReturnPeriod]())(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
       val financiaItem = new ReturnCharge(returnPeriods.head, BigDecimal(12))
       val financialItemList = List(financiaItem)
-      when(mockSdilConnectorSPA.balanceHistory(matching("XKSDIL000000033"), anyBoolean())(any())).thenReturn(Future.successful(financialItemList))
+      when(mockSdilConnectorSPA.balanceHistory(matching("XKSDIL000000033"), anyBoolean())(any()))
+        .thenReturn(Future.successful(financialItemList))
 
       val request = FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "XKSDIL000000033", "utr" -> "0000000033")
       val result = testController.balanceHistory.apply(request)
@@ -241,22 +253,19 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     LocalDate.of(2018, 4, 6),
     List(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"), None, None, None)),
     List(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"), None, None, None)),
-    Contact(
-      Some("A person"),
-      Some("A position"),
-      "1234",
-      "aa@bb.cc"),
+    Contact(Some("A person"), Some("A position"), "1234", "aa@bb.cc"),
     None
   )
 
-  def stubAuthResult(res: Enrolments ~ Option[CredentialRole]) = {
+  def stubAuthResult(res: Enrolments ~ Option[CredentialRole]) =
     when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
       Future.successful(new ~(new ~(res, Some("internal id")), Some(Organisation)))
     }
-  }
-  val validDeregisteredRetrievedSubscription = validRetrievedSubscription.copy(deregDate = Some(LocalDate.now.plusDays(30)))
+  val validDeregisteredRetrievedSubscription =
+    validRetrievedSubscription.copy(deregDate = Some(LocalDate.now.plusDays(30)))
 
-  val validVoluntaryRetrievedSubscription = validRetrievedSubscription.copy(activity = RetrievedActivity(false, true, true, false, true))
+  val validVoluntaryRetrievedSubscription =
+    validRetrievedSubscription.copy(activity = RetrievedActivity(false, true, true, false, true))
 
   val validPackagingRetrievedSubscription = validRetrievedSubscription.copy(warehouseSites = Nil)
 
@@ -266,19 +275,21 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
   lazy val mockSdilConnectorSPA: SoftDrinksIndustryLevyConnector = {
     val m = mock[SoftDrinksIndustryLevyConnector]
-    when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))
-    when(m.retrieveSubscription(matching("XKSDIL000000033"),any())(any())).thenReturn(Future.successful(Some(validRetrievedSubscription)))
-    when(m.retrieveSubscription(matching("XKSDIL000000036"),any())(any())).thenReturn(Future.successful(Some(validDeregisteredRetrievedSubscription)))
+    when(m.submit(any(), any())(any())).thenReturn(Future.successful(()))
+    when(m.retrieveSubscription(matching("XKSDIL000000033"), any())(any()))
+      .thenReturn(Future.successful(Some(validRetrievedSubscription)))
+    when(m.retrieveSubscription(matching("XKSDIL000000036"), any())(any()))
+      .thenReturn(Future.successful(Some(validDeregisteredRetrievedSubscription)))
     when(m.returns_variable(any())(any())).thenReturn(Future.successful(returnPeriods))
     when(m.returns_vary(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_update(any(), any(), any())(any())).thenReturn(Future.successful(()))
     //when(m.returns_get(any(),any())(any())).thenReturn(Future.successful(None))
-    when(m.returns_variation(any(),any())(any())).thenReturn(Future.successful(()))
-    when(m.submitVariation(any(),any())(any())).thenReturn(Future.successful(()))
-    when(m.balanceHistory(any(),any())(any())).thenReturn(Future.successful(Nil))
-    when(m.balance(any(),any())(any())).thenReturn(Future.successful(BigDecimal(0)))
+    when(m.returns_variation(any(), any())(any())).thenReturn(Future.successful(()))
+    when(m.submitVariation(any(), any())(any())).thenReturn(Future.successful(()))
+    when(m.balanceHistory(any(), any())(any())).thenReturn(Future.successful(Nil))
+    when(m.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(0)))
     when(m.shortLiveCache) thenReturn cacheMock
-    when(cacheMock.fetchAndGetEntry[Any](any(),any())(any(),any(),any())).thenReturn(Future.successful(None))
+    when(cacheMock.fetchAndGetEntry[Any](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
     when(m.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
 
     m

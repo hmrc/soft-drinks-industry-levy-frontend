@@ -22,11 +22,12 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
 
-class TestingController(testConnector: TestConnector, mcc: MessagesControllerComponents)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
+class TestingController(testConnector: TestConnector, mcc: MessagesControllerComponents)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) {
 
   def reset(url: String): Action[AnyContent] = Action.async { implicit request =>
-    testConnector.reset(url) map {
-      r => Status(r.status)
+    testConnector.reset(url) map { r =>
+      Status(r.status)
     }
   }
 
@@ -34,12 +35,12 @@ class TestingController(testConnector: TestConnector, mcc: MessagesControllerCom
     val contentType = fileId match {
       case "pdf" => "application/pdf"
       case "xml" => "application/xml"
-      case _ => "application/octet-stream"
+      case _     => "application/octet-stream"
     }
 
     val actualFileId = fileId match {
       case "xml" => "xmlDocument"
-      case _ => fileId
+      case _     => fileId
     }
 
     testConnector.getFile(envelopeId, actualFileId) map {
@@ -50,7 +51,7 @@ class TestingController(testConnector: TestConnector, mcc: MessagesControllerCom
   def getVariationHtml(sdilRef: String): Action[AnyContent] = Action.async { implicit request =>
     testConnector.getVariationHtml(sdilRef) map {
       case Some(html) => Ok(html)
-      case None => NotFound
+      case None       => NotFound
     }
   }
 }

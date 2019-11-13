@@ -22,22 +22,23 @@ import play.api.libs.json.{Format, Json}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Litreage, RegistrationFormData}
 
-case class Subscription(utr: String,
-                        orgName: String,
-                        orgType: String,
-                        address: UkAddress,
-                        activity: Activity,
-                        liabilityDate: LocalDate,
-                        productionSites: Seq[Site],
-                        warehouseSites: Seq[Site],
-                        contact: Contact) {}
+case class Subscription(
+  utr: String,
+  orgName: String,
+  orgType: String,
+  address: UkAddress,
+  activity: Activity,
+  liabilityDate: LocalDate,
+  productionSites: Seq[Site],
+  warehouseSites: Seq[Site],
+  contact: Contact) {}
 
 object Subscription {
   implicit val format: Format[Subscription] = Json.format[Subscription]
 
-  def fromFormData(formData: RegistrationFormData): Option[Subscription] = {
+  def fromFormData(formData: RegistrationFormData): Option[Subscription] =
     for {
-      orgType <- formData.organisationType
+      orgType  <- formData.organisationType
       producer <- formData.producer
       startDate = formData.startDate.getOrElse(LocalDate.now)
       productionSites = formData.productionSites.getOrElse(Nil)
@@ -67,18 +68,16 @@ object Subscription {
         )
       )
     }
-  }
 
-  def desify(subscription: Subscription): Subscription = {
+  def desify(subscription: Subscription): Subscription =
     subscription.copy(orgType = toEnum(subscription.orgType))
-  }
 
   private def toEnum: String => String = {
-    case "soleTrader" => "1"
+    case "soleTrader"                  => "1"
     case "limitedLiabilityPartnership" => "2"
-    case "partnership" => "3"
-    case "unincorporatedBody" => "5"
-    case "limitedCompany" => "7"
-    case other => throw new IllegalArgumentException(s"Unexpected orgType $other")
+    case "partnership"                 => "3"
+    case "unincorporatedBody"          => "5"
+    case "limitedCompany"              => "7"
+    case other                         => throw new IllegalArgumentException(s"Unexpected orgType $other")
   }
 }

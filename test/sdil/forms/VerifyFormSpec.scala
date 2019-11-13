@@ -59,11 +59,11 @@ class VerifyFormSpec extends FormSpec {
   lazy val postcode = "alternativeAddress.postcode"
 
   lazy val altAddressData = Map(
-    detailsCorrect -> "differentAddress",
-    line1 -> "some street",
-    line2 -> "some town",
+    detailsCorrect             -> "differentAddress",
+    line1                      -> "some street",
+    line2                      -> "some town",
     "alternativeAddress.line3" -> "",
     "alternativeAddress.line4" -> "",
-    postcode -> "AA11 1AA"
+    postcode                   -> "AA11 1AA"
   )
 }

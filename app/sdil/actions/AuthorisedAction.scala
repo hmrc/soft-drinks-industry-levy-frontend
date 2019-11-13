@@ -34,51 +34,58 @@ import views.html.softdrinksindustrylevy.errors
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 
-class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: MessagesApi, sdilConnector: SoftDrinksIndustryLevyConnector, mcc: MessagesControllerComponents)
-                      (implicit config: AppConfig, val executionContext: ExecutionContext)
-  extends ActionRefiner[Request, AuthorisedRequest] with ActionBuilder[AuthorisedRequest, AnyContent] with AuthorisedFunctions with I18nSupport with ActionHelpers {
+class AuthorisedAction(
+  val authConnector: AuthConnector,
+  val messagesApi: MessagesApi,
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  mcc: MessagesControllerComponents)(implicit config: AppConfig, val executionContext: ExecutionContext)
+    extends ActionRefiner[Request, AuthorisedRequest] with ActionBuilder[AuthorisedRequest, AnyContent]
+    with AuthorisedFunctions with I18nSupport with ActionHelpers {
 
   val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
     implicit val req: Request[A] = request
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     val retrieval = allEnrolments and credentialRole and internalId and affinityGroup
 
-    authorised(AuthProviders(GovernmentGateway)).retrieve(retrieval) { case enrolments ~ role ~ id ~ affinity =>
-      val maybeUtr = getUtr(enrolments)
-      val maybeSdil = getSdilEnrolment(enrolments)
+    authorised(AuthProviders(GovernmentGateway)).retrieve(retrieval) {
+      case enrolments ~ role ~ id ~ affinity =>
+        val maybeUtr = getUtr(enrolments)
+        val maybeSdil = getSdilEnrolment(enrolments)
 
-      val error: Option[Result] = invalidRole(role)(request).orElse(invalidAffinityGroup(affinity)(request))
+        val error: Option[Result] = invalidRole(role)(request).orElse(invalidAffinityGroup(affinity)(request))
 
-      val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
-      (maybeUtr, maybeSdil) match {
-        case (Some(utr), None) =>
-          sdilConnector.retrieveSubscription(utr, "utr") map {
-            case Some(sub) if sub.deregDate.isEmpty =>
-              Left(Redirect(routes.ServicePageController.show()))
-            case _ =>
-              Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
-          }
-        case (Some(utr), Some(_)) =>
-          sdilConnector.retrieveSubscription(utr, "utr") flatMap {
-            case Some(sub) if sub.deregDate.isEmpty =>
-              alreadyRegistered(utr).map(Left.apply)
-            case _ =>
-              Future.successful(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
-          }
-        case (None, Some(sdilEnrolment)) =>
-          sdilConnector.retrieveSubscription(sdilEnrolment.value).map {
-            case Some(sub) if sub.deregDate.isEmpty => Left(Redirect(routes.ServicePageController.show()))
-            case Some(sub) if sub.deregDate.nonEmpty => Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
-            case _ => Left(Redirect(routes.ServicePageController.show()))
-          }
-        case _ if error.nonEmpty =>
-          Future.successful(Left(error.get))
-        case _ =>
-          Future.successful(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
-      }
+        val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
+        (maybeUtr, maybeSdil) match {
+          case (Some(utr), None) =>
+            sdilConnector.retrieveSubscription(utr, "utr") map {
+              case Some(sub) if sub.deregDate.isEmpty =>
+                Left(Redirect(routes.ServicePageController.show()))
+              case _ =>
+                Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
+            }
+          case (Some(utr), Some(_)) =>
+            sdilConnector.retrieveSubscription(utr, "utr") flatMap {
+              case Some(sub) if sub.deregDate.isEmpty =>
+                alreadyRegistered(utr).map(Left.apply)
+              case _ =>
+                Future.successful(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
+            }
+          case (None, Some(sdilEnrolment)) =>
+            sdilConnector.retrieveSubscription(sdilEnrolment.value).map {
+              case Some(sub) if sub.deregDate.isEmpty => Left(Redirect(routes.ServicePageController.show()))
+              case Some(sub) if sub.deregDate.nonEmpty =>
+                Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
+              case _ => Left(Redirect(routes.ServicePageController.show()))
+            }
+          case _ if error.nonEmpty =>
+            Future.successful(Left(error.get))
+          case _ =>
+            Future.successful(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
+        }
 
     } recover {
       case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
@@ -86,30 +93,26 @@ class AuthorisedAction(val authConnector: AuthConnector, val messagesApi: Messag
   }
 
   private def alreadyRegistered(utr: String)(implicit request: Request[_]): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     sdilConnector.getRosmRegistration(utr)(hc) map {
       case Some(a) => Forbidden(errors.already_registered(utr, a.organisationName, a.address))
-      case _ => Redirect(routes.AuthenticationController.signIn())
+      case _       => Redirect(routes.AuthenticationController.signIn())
     }
   }
 
-  private def invalidRole(credentialRole: Option[CredentialRole])(implicit request: Request[_]): Option[Result] = {
+  private def invalidRole(credentialRole: Option[CredentialRole])(implicit request: Request[_]): Option[Result] =
     credentialRole collect {
       case Assistant => Forbidden(errors.invalid_role())
     }
-  }
 
-  private def invalidAffinityGroup(affinityGroup: Option[AffinityGroup])(implicit request: Request[_]): Option[Result] = {
+  private def invalidAffinityGroup(affinityGroup: Option[AffinityGroup])(implicit request: Request[_]): Option[Result] =
     affinityGroup match {
       case Some(Agent) | None => Some(Forbidden(errors.invalid_affinity()))
-      case _ => None
+      case _                  => None
     }
-  }
 }
 
-case class AuthorisedRequest[A](utr: Option[String],
-                                internalId: String,
-                                enrolments: Enrolments,
-                                request: Request[A])
-  extends WrappedRequest(request)
+case class AuthorisedRequest[A](utr: Option[String], internalId: String, enrolments: Enrolments, request: Request[A])
+    extends WrappedRequest(request)

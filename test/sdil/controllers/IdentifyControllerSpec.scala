@@ -151,11 +151,12 @@ class IdentifyControllerSpec extends ControllerSpec {
     "return 400 - Bad Request and the identify page if the postcode does not match ROSM's business partner record" in {
       val rosmData = defaultRosmData.copy(address = defaultRosmData.address.copy(postcode = "AA12 2AA"))
 
-      when(mockSdilConnector.getRosmRegistration(matching("4455667788"))(any())).thenReturn(Future.successful(Some(rosmData)))
+      when(mockSdilConnector.getRosmRegistration(matching("4455667788"))(any()))
+        .thenReturn(Future.successful(Some(rosmData)))
 
       val request = FakeRequest().withFormUrlEncodedBody("utr" -> "4455667788", "postcode" -> "AA11 1AA")
       val res = testController.submit()(request)
-      
+
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include(Messages("error.utr.no-record"))
     }
@@ -199,9 +200,8 @@ class IdentifyControllerSpec extends ControllerSpec {
 
   lazy val testController = wire[IdentifyController]
 
-  def stubAuthResult(res: Enrolments ~ Option[CredentialRole]) = {
+  def stubAuthResult(res: Enrolments ~ Option[CredentialRole]) =
     when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
       Future.successful(new ~(new ~(res, Some("internal id")), Some(Organisation)))
     }
-  }
 }

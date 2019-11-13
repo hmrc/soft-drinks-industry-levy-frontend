@@ -19,10 +19,11 @@ package sdil.models
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class RosmRegistration(safeId: String,
-                            organisation: Option[OrganisationDetails],
-                            individual: Option[IndividualDetails],
-                            address: Address) {
+case class RosmRegistration(
+  safeId: String,
+  organisation: Option[OrganisationDetails],
+  individual: Option[IndividualDetails],
+  address: Address) {
 
   lazy val organisationName: String = {
     organisation.map(_.organisationName).orElse(individual.map(i => s"${i.firstName} ${i.lastName}")).getOrElse("")
@@ -47,7 +48,7 @@ object RosmRegistration {
   )(unlift(Address.unapply))
 
   private implicit val addressFormat: Format[Address] = Format(addressReads, addressWrites)
-  
+
   implicit val format: Format[RosmRegistration] = Json.format[RosmRegistration]
 }
 

@@ -27,35 +27,34 @@ import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetai
 
 import scala.concurrent.Future
 
-class RegistrationFormDataCache(val runModeConfiguration: Configuration,
-                                val runMode: RunMode,
-                                val shortLiveCache: ShortLivedHttpCaching,
-                                environment: Environment)
-                               (implicit val crypto: CompositeSymmetricCrypto)
-  extends ServicesConfig(runModeConfiguration, runMode) with ShortLivedCache {
+class RegistrationFormDataCache(
+  val runModeConfiguration: Configuration,
+  val runMode: RunMode,
+  val shortLiveCache: ShortLivedHttpCaching,
+  environment: Environment)(implicit val crypto: CompositeSymmetricCrypto)
+    extends ServicesConfig(runModeConfiguration, runMode) with ShortLivedCache {
 
-  def cache(internalId: String, body: RegistrationFormData)
-           (implicit hc: HeaderCarrier): Future[CacheMap] = {
+  def cache(internalId: String, body: RegistrationFormData)(implicit hc: HeaderCarrier): Future[CacheMap] =
     cache(s"$internalId-sdil-registration", "formData", body)
-  }
 
-  def get(internalId: String)
-         (implicit hc: HeaderCarrier): Future[Option[RegistrationFormData]] = {
+  def get(internalId: String)(implicit hc: HeaderCarrier): Future[Option[RegistrationFormData]] =
     fetchAndGetEntry[RegistrationFormData](s"$internalId-sdil-registration", "formData").recover {
       case _: JsResultException => None
     }
-  }
 
-  def clear(internalId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    remove(s"$internalId-sdil-registration") map { _ => () }
-  }
+  def clear(internalId: String)(implicit hc: HeaderCarrier): Future[Unit] =
+    remove(s"$internalId-sdil-registration") map { _ =>
+      ()
+    }
 
-  def clearInternalIdOnly(internalId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    remove(internalId) map { _ => () }
-  }
+  def clearInternalIdOnly(internalId: String)(implicit hc: HeaderCarrier): Future[Unit] =
+    remove(internalId) map { _ =>
+      ()
+    }
 
-  def clearBySdilNumber(sdilNo: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    remove(sdilNo) map { _ => () }
-  }
+  def clearBySdilNumber(sdilNo: String)(implicit hc: HeaderCarrier): Future[Unit] =
+    remove(sdilNo) map { _ =>
+      ()
+    }
 
 }

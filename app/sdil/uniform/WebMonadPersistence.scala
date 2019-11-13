@@ -28,12 +28,13 @@ import uk.gov.hmrc.uniform._
 case class SessionCachePersistence(
   journeyName: String,
   keystore: uk.gov.hmrc.http.cache.client.SessionCache
-)(implicit
-    ec: ExecutionContext,
-  hc: HeaderCarrier
-) extends Persistence {
+)(
+  implicit
+  ec: ExecutionContext,
+  hc: HeaderCarrier)
+    extends Persistence {
   def dataGet(session: String): Future[Map[String, JsValue]] =
-    keystore.fetchAndGetEntry[Map[String, JsValue]](journeyName).map{
+    keystore.fetchAndGetEntry[Map[String, JsValue]](journeyName).map {
       _.getOrElse(Map.empty)
     }
 
@@ -46,15 +47,15 @@ case class SaveForLaterPersistence(
   journeyName: String,
   userId: String,
   shortLiveCache: ShortLivedHttpCaching
-)(implicit
-    ec: ExecutionContext,
-  hc: HeaderCarrier
-) extends Persistence {
-  def dataGet(session: String): Future[Map[String, JsValue]] = {
-    shortLiveCache.fetchAndGetEntry[Map[String, JsValue]](userId, journeyName).map{
+)(
+  implicit
+  ec: ExecutionContext,
+  hc: HeaderCarrier)
+    extends Persistence {
+  def dataGet(session: String): Future[Map[String, JsValue]] =
+    shortLiveCache.fetchAndGetEntry[Map[String, JsValue]](userId, journeyName).map {
       _.getOrElse(Map.empty)
     }
-  }
 
   def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
     shortLiveCache.cache(userId, journeyName, dataIn)

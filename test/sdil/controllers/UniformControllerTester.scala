@@ -25,18 +25,19 @@ import uk.gov.hmrc.uniform.webmonad.WebMonad
 
 case class UniformControllerTester(controller: SdilWMController) {
 
-  case class SharedSessionPersistence(initialData: (String,JsValue)*)(implicit ec: ExecutionContext) {
-    var data: Map[String,JsValue] = Map(initialData:_*)
+  case class SharedSessionPersistence(initialData: (String, JsValue)*)(implicit ec: ExecutionContext) {
+    var data: Map[String, JsValue] = Map(initialData: _*)
     def dataGet(session: String): Future[Map[String, JsValue]] =
       data.pure[Future]
     def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
       data = dataIn
   }
 
-  def testJourney(program: WebMonad[Result])(answers: (String,JsValue)*)(implicit ec: ExecutionContext): Future[Result] = {
+  def testJourney(program: WebMonad[Result])(answers: (String, JsValue)*)(
+    implicit ec: ExecutionContext): Future[Result] = {
 
     val sessionUUID = java.util.UUID.randomUUID.toString
-    val persistence = SharedSessionPersistence(answers :_*)
+    val persistence = SharedSessionPersistence(answers: _*)
 
     val request: Request[AnyContent] = FakeRequest()
       .withFormUrlEncodedBody("utr" -> "")

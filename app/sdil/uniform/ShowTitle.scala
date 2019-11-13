@@ -19,7 +19,7 @@ package sdil.uniform
 import simulacrum._
 
 trait ShowTitle[A] {
-  def getTitle(in :A): String
+  def getTitle(in: A): String
 }
 
 object ShowTitle {

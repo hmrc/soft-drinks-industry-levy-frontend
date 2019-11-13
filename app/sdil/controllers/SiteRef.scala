@@ -25,12 +25,11 @@ trait SiteRef extends FormHelpers {
 
   def nextRef(original: Seq[Site], updated: Seq[Site]): String = (original, updated) match {
     case (Nil, Nil) => "1"
-    case (o, Nil) => (maxRef(o) + 1).toString
-    case (Nil, u) => (maxRef(u) + 1).toString
-    case (o, u) => (maxRef(o).max(maxRef(u)) + 1).toString
+    case (o, Nil)   => (maxRef(o) + 1).toString
+    case (Nil, u)   => (maxRef(u) + 1).toString
+    case (o, u)     => (maxRef(o).max(maxRef(u)) + 1).toString
   }
 
-  private def maxRef(sites: Seq[Site]): Int = {
+  private def maxRef(sites: Seq[Site]): Int =
     sites.map(_.ref.fold(0)(x => Try(x.toInt).toOption.getOrElse(0))).max
-  }
 }

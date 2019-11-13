@@ -27,27 +27,26 @@ import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetai
 
 import scala.concurrent.Future
 
-class TestConnector(http: HttpClient,
-                    environment: Environment,
-                    ws: WSClient,
-                    val runModeConfiguration: Configuration,
-                    val runMode: RunMode) extends ServicesConfig(runModeConfiguration, runMode) {
+class TestConnector(
+  http: HttpClient,
+  environment: Environment,
+  ws: WSClient,
+  val runModeConfiguration: Configuration,
+  val runMode: RunMode)
+    extends ServicesConfig(runModeConfiguration, runMode) {
 
   lazy val testUrl: String = baseUrl("soft-drinks-industry-levy")
 
-  def reset(url: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def reset(url: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](s"$testUrl/test-only/$url")
-  }
 
-  def getFile(envelopeId: String, fileName: String)(implicit hc: HeaderCarrier): Future[ByteString] = {
+  def getFile(envelopeId: String, fileName: String)(implicit hc: HeaderCarrier): Future[ByteString] =
     ws.url(s"$testUrl/test-only/get-file/$envelopeId/$fileName").get().map(_.bodyAsBytes)
-  }
 
-  def getVariationHtml(sdilRef: String)(implicit hc: HeaderCarrier): Future[Option[Html]] = {
+  def getVariationHtml(sdilRef: String)(implicit hc: HeaderCarrier): Future[Option[Html]] =
     http.GET[HttpResponse](s"$testUrl/test-only/get-last-variation/$sdilRef") map {
       case res if res.status == 200 => Some(Html(res.body))
-      case _ => None
+      case _                        => None
     }
-  }
 
 }

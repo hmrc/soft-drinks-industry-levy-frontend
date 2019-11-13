@@ -32,6 +32,7 @@ pipelineStages in Assets := Seq(concat)
 // Testing
 // ================================================================================
 import scoverage.ScoverageKeys._
+import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 coverageExcludedPackages := Seq(
   "app.*",
   "views.*",
@@ -57,7 +58,8 @@ coverageExcludedFiles := "<empty>;.*BuildInfo.*;.*Routes.*;.*GDS.*;.*GdsComponen
 coverageMinimum := 80
 coverageFailOnMinimum := false
 coverageHighlighting := true
-
+scalafmtOnCompile in Compile := true
+scalafmtOnCompile in Test := true
 
 libraryDependencies ++= Seq(
   "org.scalatest"          %% "scalatest"          % "3.0.7",
