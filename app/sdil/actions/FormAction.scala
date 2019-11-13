@@ -28,28 +28,35 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FormAction(val messagesApi: MessagesApi, cache: RegistrationFormDataCache, authorisedAction: AuthorisedAction, mcc: MessagesControllerComponents)
-                (implicit config: AppConfig, val executionContext: ExecutionContext)
-  extends ActionBuilder[RegistrationFormRequest, AnyContent] with I18nSupport {
+class FormAction(
+  val messagesApi: MessagesApi,
+  cache: RegistrationFormDataCache,
+  authorisedAction: AuthorisedAction,
+  mcc: MessagesControllerComponents)(implicit config: AppConfig, val executionContext: ExecutionContext)
+    extends ActionBuilder[RegistrationFormRequest, AnyContent] with I18nSupport {
 
   val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 
   type Body[A] = RegistrationFormRequest[A] => Future[Result]
 
-  override def invokeBlock[A](request: Request[A], block: Body[A]): Future[Result] = {
-    authorisedAction.invokeBlock[A](request, { implicit req =>
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+  override def invokeBlock[A](request: Request[A], block: Body[A]): Future[Result] =
+    authorisedAction.invokeBlock[A](
+      request, { implicit req =>
+        implicit val hc: HeaderCarrier =
+          HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-      cache.get(req.internalId) flatMap {
-        case Some(data) => block(RegistrationFormRequest(request, data, req.internalId, req.enrolments))
-        case None => Future.successful(Redirect(routes.IdentifyController.show()))
+        cache.get(req.internalId) flatMap {
+          case Some(data) => block(RegistrationFormRequest(request, data, req.internalId, req.enrolments))
+          case None       => Future.successful(Redirect(routes.IdentifyController.show()))
+        }
       }
-    })
-  }
+    )
 
 }
 
-case class RegistrationFormRequest[T](request: Request[T],
-                                      formData: RegistrationFormData,
-                                      internalId: String,
-                                      enrolments: Enrolments) extends WrappedRequest[T](request)
+case class RegistrationFormRequest[T](
+  request: Request[T],
+  formData: RegistrationFormData,
+  internalId: String,
+  enrolments: Enrolments)
+    extends WrappedRequest[T](request)

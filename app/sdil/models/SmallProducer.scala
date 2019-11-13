@@ -18,12 +18,10 @@ package sdil.models
 
 case class SmallProducer(alias: Option[String], sdilRef: String, litreage: (Long, Long)) {
 
-  def getNameAndRef: String = {
-    if(alias.isDefined)
+  def getNameAndRef: String =
+    if (alias.isDefined)
       alias.getOrElse("") ++ "</br>" ++ sdilRef
     else
       sdilRef
-  }
 
 }
-

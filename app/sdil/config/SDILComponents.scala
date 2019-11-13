@@ -36,16 +36,9 @@ import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
 import scala.concurrent.ExecutionContext
 
 class SDILComponents(context: Context)
-  extends BuiltInComponentsFromContext(context)
-    with Base64ConfigDecoder
-    with I18nComponents
-    with SecurityHeadersComponents
-    with CSRFComponents
-    with AhcWSComponents
-    with RoutesWiring
-    with FilterWiring
-    with ConnectorWiring
-    with ConfigWiring{
+    extends BuiltInComponentsFromContext(context) with Base64ConfigDecoder with I18nComponents
+    with SecurityHeadersComponents with CSRFComponents with AhcWSComponents with RoutesWiring with FilterWiring
+    with ConnectorWiring with ConfigWiring {
 
   override lazy val httpFilters = wire[SdilFilters].filters
   override lazy val application: DefaultApplication = wire[DefaultApplication]
@@ -62,9 +55,12 @@ class SDILComponents(context: Context)
   lazy val assetConfig: AssetsConfig = new AssetsConfig(configuration)
   lazy val gtmConfig: GTMConfig = new GTMConfig(configuration)
 
-  lazy val customInjector: Injector = new SimpleInjector(injector) + templateController  + wsClient + optimizelyConfig + assetConfig + gtmConfig
+  lazy val customInjector
+    : Injector = new SimpleInjector(injector) + templateController + wsClient + optimizelyConfig + assetConfig + gtmConfig
 
-  lazy val messagesActionBuilder = new DefaultMessagesActionBuilderImpl(controllerComponents.parsers.defaultBodyParser, controllerComponents.messagesApi)
+  lazy val messagesActionBuilder = new DefaultMessagesActionBuilderImpl(
+    controllerComponents.parsers.defaultBodyParser,
+    controllerComponents.messagesApi)
   override val mcc: MessagesControllerComponents = wire[DefaultMessagesControllerComponents]
   override val assetsMetadata: AssetsMetadata = wire[DefaultAssetsMetadata]
   lazy val assetsConfiguration = new AssetsConfiguration()

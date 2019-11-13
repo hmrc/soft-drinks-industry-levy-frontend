@@ -26,21 +26,21 @@ object VariationsSubmission {
   implicit val writes: Writes[VariationsSubmission] = Json.writes[VariationsSubmission]
 }
 
-
 /** The payload that is sent to GForms */
-case class VariationsSubmission(tradingName: Option[String] = None,
-                                displayOrgName : String,
-                                ppobAddress : UkAddress,
-                                businessContact: Option[VariationsContact],
-                                correspondenceContact: Option[VariationsContact],
-                                primaryPersonContact: Option[VariationsPersonalDetails],
-                                sdilActivity: Option[SdilActivity],
-                                deregistrationText: Option[String] = None,
-                                deregistrationDate: Option[LocalDate] = None,
-                                newSites: List[VariationsSite] = Nil,
-                                amendSites: List[VariationsSite] = Nil,
-                                closeSites: List[ClosedSite] = Nil) {
-  def nonEmpty: Boolean = {
+case class VariationsSubmission(
+  tradingName: Option[String] = None,
+  displayOrgName: String,
+  ppobAddress: UkAddress,
+  businessContact: Option[VariationsContact],
+  correspondenceContact: Option[VariationsContact],
+  primaryPersonContact: Option[VariationsPersonalDetails],
+  sdilActivity: Option[SdilActivity],
+  deregistrationText: Option[String] = None,
+  deregistrationDate: Option[LocalDate] = None,
+  newSites: List[VariationsSite] = Nil,
+  amendSites: List[VariationsSite] = Nil,
+  closeSites: List[ClosedSite] = Nil) {
+  def nonEmpty: Boolean =
     (Seq(
       tradingName,
       businessContact,
@@ -50,7 +50,6 @@ case class VariationsSubmission(tradingName: Option[String] = None,
       deregistrationDate,
       deregistrationText
     ).flatten ++ newSites ++ amendSites ++ closeSites).nonEmpty
-  }
 
   def isEmpty: Boolean = !nonEmpty
 }
@@ -58,20 +57,21 @@ case class VariationsSubmission(tradingName: Option[String] = None,
 object VariationsContact {
   implicit val writes: Writes[VariationsContact] = new Writes[VariationsContact] {
     override def writes(o: VariationsContact): JsValue = Json.obj(
-      "addressLine1" -> o.address.map(_.line1),
-      "addressLine2" -> o.address.map(_.line2),
-      "addressLine3" -> o.address.map(_.line3),
-      "addressLine4" -> o.address.map(_.line4),
-      "postCode" -> o.address.map(_.postcode),
+      "addressLine1"    -> o.address.map(_.line1),
+      "addressLine2"    -> o.address.map(_.line2),
+      "addressLine3"    -> o.address.map(_.line3),
+      "addressLine4"    -> o.address.map(_.line4),
+      "postCode"        -> o.address.map(_.postcode),
       "telephoneNumber" -> o.telephoneNumber,
-      "emailAddress" -> o.emailAddress
+      "emailAddress"    -> o.emailAddress
     )
   }
 }
 
-case class VariationsContact(address: Option[Address] = None,
-                             telephoneNumber: Option[String] = None,
-                             emailAddress: Option[String] = None) {
+case class VariationsContact(
+  address: Option[Address] = None,
+  telephoneNumber: Option[String] = None,
+  emailAddress: Option[String] = None) {
   def nonEmpty: Boolean = Seq(address, telephoneNumber, emailAddress).flatten.nonEmpty
 }
 
@@ -79,10 +79,11 @@ object VariationsPersonalDetails {
   implicit val writes: Writes[VariationsPersonalDetails] = Json.writes[VariationsPersonalDetails]
 }
 
-case class VariationsPersonalDetails(name: Option[String] = None,
-                                     position: Option[String] = None,
-                                     telephoneNumber: Option[String] = None,
-                                     emailAddress: Option[String] = None) {
+case class VariationsPersonalDetails(
+  name: Option[String] = None,
+  position: Option[String] = None,
+  telephoneNumber: Option[String] = None,
+  emailAddress: Option[String] = None) {
   def nonEmpty: Boolean = Seq(name, position, telephoneNumber, emailAddress).flatten.nonEmpty
 }
 
@@ -91,13 +92,14 @@ object SdilActivity {
   implicit val writes: Writes[SdilActivity] = Json.writes[SdilActivity]
 }
 
-case class SdilActivity(activity: Option[Activity],
-                        produceLessThanOneMillionLitres: Option[Boolean],
-                        smallProducerExemption: Option[Boolean], //If true then the user does not have to file returns
-                        usesContractPacker: Option[Boolean],
-                        voluntarilyRegistered: Option[Boolean],
-                        reasonForAmendment: Option[String],
-                        taxObligationStartDate: Option[LocalDate]) {
+case class SdilActivity(
+  activity: Option[Activity],
+  produceLessThanOneMillionLitres: Option[Boolean],
+  smallProducerExemption: Option[Boolean], //If true then the user does not have to file returns
+  usesContractPacker: Option[Boolean],
+  voluntarilyRegistered: Option[Boolean],
+  reasonForAmendment: Option[String],
+  taxObligationStartDate: Option[LocalDate]) {
   def nonEmpty: Boolean = Seq(activity, reasonForAmendment, taxObligationStartDate).flatten.nonEmpty
 }
 
@@ -105,15 +107,14 @@ object VariationsSite {
   implicit val writes: Writes[VariationsSite] = Json.writes[VariationsSite]
 }
 
-case class VariationsSite(tradingName: String,
-                          siteReference: String,
-                          variationsContact: VariationsContact,
-                          typeOfSite: String)
+case class VariationsSite(
+  tradingName: String,
+  siteReference: String,
+  variationsContact: VariationsContact,
+  typeOfSite: String)
 
 object ClosedSite {
   implicit val writes: Writes[ClosedSite] = Json.writes[ClosedSite]
 }
 
-case class ClosedSite(tradingName: String,
-                      siteReference: String,
-                      reasonOfClosure: String)
+case class ClosedSite(tradingName: String, siteReference: String, reasonOfClosure: String)

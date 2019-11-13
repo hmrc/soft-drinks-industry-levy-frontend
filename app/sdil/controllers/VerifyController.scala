@@ -33,9 +33,13 @@ import views.html.softdrinksindustrylevy.{errors, register}
 
 import scala.concurrent.ExecutionContext
 
-class VerifyController(override val messagesApi: MessagesApi, cache: RegistrationFormDataCache, formAction: FormAction,
-                       sdilConnector: SoftDrinksIndustryLevyConnector, mcc: MessagesControllerComponents)(implicit config: AppConfig, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+class VerifyController(
+  override val messagesApi: MessagesApi,
+  cache: RegistrationFormDataCache,
+  formAction: FormAction,
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  mcc: MessagesControllerComponents)(implicit config: AppConfig, ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   import VerifyController._
 
@@ -44,45 +48,56 @@ class VerifyController(override val messagesApi: MessagesApi, cache: Registratio
 
     sdilConnector.checkPendingQueue(data.utr) map { res =>
       (res.status, Journey.expectedPage(VerifyPage)) match {
-        case (ACCEPTED, _) => Ok(errors.registration_pending(data.utr, data.rosmData.organisationName, data.rosmData.address))
-        case (OK, VerifyPage) => Ok(register.verify(
-            data.verify.fold(form)(form.fill),
-            data.utr,
-            data.rosmData.organisationName,
-            data.rosmData.address,
-            alreadyRegistered = true
-          ))
-        case (_, VerifyPage) => Ok(register.verify(
-            data.verify.fold(form)(form.fill),
-            data.utr,
-            data.rosmData.organisationName,
-            data.rosmData.address
-          ))
+        case (ACCEPTED, _) =>
+          Ok(errors.registration_pending(data.utr, data.rosmData.organisationName, data.rosmData.address))
+        case (OK, VerifyPage) =>
+          Ok(
+            register.verify(
+              data.verify.fold(form)(form.fill),
+              data.utr,
+              data.rosmData.organisationName,
+              data.rosmData.address,
+              alreadyRegistered = true
+            ))
+        case (_, VerifyPage) =>
+          Ok(
+            register.verify(
+              data.verify.fold(form)(form.fill),
+              data.utr,
+              data.rosmData.organisationName,
+              data.rosmData.address
+            ))
         case (_, otherPage) => Redirect(otherPage.show)
       }
     }
   }
 
   def submit = formAction.async { implicit request =>
-    form.bindFromRequest().fold(
-      errors => BadRequest(register.verify(errors, request.formData.utr, request.formData.rosmData.organisationName, request.formData.rosmData.address)),
-      {
-        case DetailsCorrect.No => Redirect(routes.AuthenticationController.signOutNoFeedback())
-        case detailsCorrect =>
-          val updated = request.formData.copy(verify = Some(detailsCorrect))
-          cache.cache(request.internalId, updated) map { _ =>
-            Redirect(routes.RegistrationController.index("organisation-type")
-          )
+    form
+      .bindFromRequest()
+      .fold(
+        errors =>
+          BadRequest(
+            register.verify(
+              errors,
+              request.formData.utr,
+              request.formData.rosmData.organisationName,
+              request.formData.rosmData.address)), {
+          case DetailsCorrect.No => Redirect(routes.AuthenticationController.signOutNoFeedback())
+          case detailsCorrect =>
+            val updated = request.formData.copy(verify = Some(detailsCorrect))
+            cache.cache(request.internalId, updated) map { _ =>
+              Redirect(routes.RegistrationController.index("organisation-type"))
+            }
         }
-      }
-    )
+      )
   }
 }
 
 object VerifyController extends FormHelpers {
   val form: Form[DetailsCorrect] = Form(
     mapping(
-      "detailsCorrect" -> oneOf(DetailsCorrect.options, "sdil.verify.error.choose-option"),
+      "detailsCorrect"     -> oneOf(DetailsCorrect.options, "sdil.verify.error.choose-option"),
       "alternativeAddress" -> mandatoryIf(isEqual("detailsCorrect", "differentAddress"), addressMapping)
     )(DetailsCorrect.apply)(DetailsCorrect.unapply)
   )

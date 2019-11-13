@@ -34,17 +34,20 @@ trait AppConfig {
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMode, environment: Environment)
-  extends ServicesConfig(runModeConfiguration, runMode) with AppConfig {
+    extends ServicesConfig(runModeConfiguration, runMode) with AppConfig {
 
-  private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+  private def loadConfig(key: String) =
+    runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
   private lazy val contactHost = runModeConfiguration.getString(s"contact-frontend.host").getOrElse("")
   private lazy val contactFormServiceIdentifier = runModeConfiguration.getString("appName").get
 
   override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
   override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
-  override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemPartialUrl =
+    s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemNonJSUrl =
+    s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
 
   //Auth related config
   lazy val appName: String = loadConfig("appName")

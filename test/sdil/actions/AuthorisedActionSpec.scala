@@ -52,9 +52,10 @@ class AuthorisedActionSpec extends ControllerSpec {
     "redirect to the service page if the user has an SDIL enrolment, but no UTR enrolment" in {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100108")
 
-      val enrolments = Enrolments(Set(
-        new Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active")
-      ))
+      val enrolments = Enrolments(
+        Set(
+          new Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active")
+        ))
 
       stubAuthResult(new ~(enrolments, Some(User)))
 
@@ -67,10 +68,11 @@ class AuthorisedActionSpec extends ControllerSpec {
       val otherEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZFH00000123456")
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000123456")
 
-      val enrolments = Enrolments(Set(
-        new Enrolment("HMRC-OBTDS-ORG", Seq(otherEnrolment), "Active"),
-        new Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active")
-      ))
+      val enrolments = Enrolments(
+        Set(
+          new Enrolment("HMRC-OBTDS-ORG", Seq(otherEnrolment), "Active"),
+          new Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active")
+        ))
 
       stubAuthResult(new ~(enrolments, Some(User)))
 
@@ -107,7 +109,7 @@ class AuthorisedActionSpec extends ControllerSpec {
 
       val res = testAction(FakeRequest())
       status(res) mustBe FORBIDDEN
-      contentAsString(res) must include (Messages("sdil.invalid-affinity.title"))
+      contentAsString(res) must include(Messages("sdil.invalid-affinity.title"))
     }
 
     "show the 'invalid role' error page if the user is an assistant" in {
@@ -115,7 +117,7 @@ class AuthorisedActionSpec extends ControllerSpec {
       val res = testAction(FakeRequest())
 
       status(res) mustBe FORBIDDEN
-      contentAsString(res) must include (Messages("sdil.invalid-role.title"))
+      contentAsString(res) must include(Messages("sdil.invalid-role.title"))
     }
 
     "invoke the block if the user is logged in and not registered in SDIL" in {
@@ -169,20 +171,15 @@ class AuthorisedActionSpec extends ControllerSpec {
     LocalDate.of(2018, 4, 6),
     List(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"), None, None, None)),
     List(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"), None, None, None)),
-    Contact(
-      Some("A person"),
-      Some("A position"),
-      "1234",
-      "aa@bb.cc")
+    Contact(Some("A person"), Some("A position"), "1234", "aa@bb.cc")
   )
 
   lazy val testAuthorisedAction: AuthorisedAction = wire[AuthorisedAction]
 
   lazy val testAction: Action[AnyContent] = testAuthorisedAction(_ => Ok)
 
-  def stubAuthResult(res: => Enrolments ~ Option[CredentialRole]) = {
+  def stubAuthResult(res: => Enrolments ~ Option[CredentialRole]) =
     when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())) thenReturn {
       Future.successful(new ~(new ~(res, Some("internal id")), Some(Organisation)))
     }
-  }
 }

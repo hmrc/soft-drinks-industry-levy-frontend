@@ -28,25 +28,29 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegisteredAction(val authConnector: AuthConnector, sdilConnector: SoftDrinksIndustryLevyConnector, mcc: MessagesControllerComponents)
-                      (implicit config: AppConfig, val executionContext: ExecutionContext)
-  extends ActionRefiner[Request, RegisteredRequest] with ActionBuilder[RegisteredRequest, AnyContent] with AuthorisedFunctions with ActionHelpers {
+class RegisteredAction(
+  val authConnector: AuthConnector,
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  mcc: MessagesControllerComponents)(implicit config: AppConfig, val executionContext: ExecutionContext)
+    extends ActionRefiner[Request, RegisteredRequest] with ActionBuilder[RegisteredRequest, AnyContent]
+    with AuthorisedFunctions with ActionHelpers {
 
   val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, RegisteredRequest[A]]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
-
       (getSdilEnrolment(enrolments), getUtr(enrolments)) match {
-        case (Some(e),_) => Future.successful{Right(RegisteredRequest(e, request))}
-        case (None,Some(utr)) => sdilConnector.retrieveSubscription(utr, "utr").map {
-          case Some(subscription) =>
-            Right(RegisteredRequest(EnrolmentIdentifier("sdil", subscription.sdilRef), request))
-          case None =>
-            Left(Redirect(sdil.controllers.routes.IdentifyController.start()))
-        }
+        case (Some(e), _) => Future.successful { Right(RegisteredRequest(e, request)) }
+        case (None, Some(utr)) =>
+          sdilConnector.retrieveSubscription(utr, "utr").map {
+            case Some(subscription) =>
+              Right(RegisteredRequest(EnrolmentIdentifier("sdil", subscription.sdilRef), request))
+            case None =>
+              Left(Redirect(sdil.controllers.routes.IdentifyController.start()))
+          }
         case _ => Future.successful(Left(Redirect(sdil.controllers.routes.IdentifyController.start())))
       }
 

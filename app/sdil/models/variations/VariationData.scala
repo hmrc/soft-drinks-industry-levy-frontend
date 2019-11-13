@@ -34,7 +34,7 @@ case class ReturnVariationData(
   repaymentMethod: Option[String] = None
 ) {
 
-  def changedLitreages: Map[String, ((Long, Long),(Long,Long))] = original.compare(revised)
+  def changedLitreages: Map[String, ((Long, Long), (Long, Long))] = original.compare(revised)
   def removedSmallProducers: List[SmallProducer] = original.packSmall.filterNot(revised.packSmall.toSet)
   def addedSmallProducers: List[SmallProducer] = revised.packSmall.filterNot(original.packSmall.toSet)
 
@@ -59,17 +59,14 @@ case class RegistrationVariationData(
   deregDate: Option[LocalDate] = None
 ) {
 
-  def isLiablePacker: Boolean = {
+  def isLiablePacker: Boolean =
     producer.isLarge.getOrElse(false) || copackForOthers
-  }
 
-  def isLiable: Boolean = {
+  def isLiable: Boolean =
     (producer.isProducer && producer.isLarge.getOrElse(false)) || imports || copackForOthers
-  }
 
-  def isVoluntary: Boolean = {
+  def isVoluntary: Boolean =
     usesCopacker.getOrElse(false) && producer.isLarge.contains(false) && !isLiable
-  }
 
   /** Material changes are updates to sites, reporting liability or
     * contact details.
@@ -77,14 +74,13 @@ case class RegistrationVariationData(
     * A material change must by law be reported as a variation
     * whereas a non-material change cannot be submitted as a variation.
     */
-
   lazy val orig = RegistrationVariationData(original)
 
   lazy val volToMan: Boolean = orig.isVoluntary && isLiable
 
   lazy val manToVol: Boolean = orig.isLiable && isVoluntary
 
-  def isMaterialChange: Boolean = {
+  def isMaterialChange: Boolean =
     List(
       updatedContactDetails != orig.updatedContactDetails,
       isLiable != orig.isLiable,
@@ -92,36 +88,33 @@ case class RegistrationVariationData(
       updatedProductionSites.nonEmpty,
       deregDate.isDefined
     ).foldLeft(false)(_ || _)
-  }
 }
-
 
 object RegistrationVariationData {
   import sdil.connectors._
 
   implicit val callWrites: Format[Call] = new Format[Call] {
-    override def writes(o: Call): JsValue = {
+    override def writes(o: Call): JsValue =
       Json.obj(
         "method" -> o.method,
-        "url" -> o.url
+        "url"    -> o.url
       )
-    }
 
-    override def reads(json: JsValue): JsResult[Call] = for {
-      method <- (json \ "method").validate[String]
-      url <- (json \ "url").validate[String]
-    } yield Call(method, url)
+    override def reads(json: JsValue): JsResult[Call] =
+      for {
+        method <- (json \ "method").validate[String]
+        url    <- (json \ "url").validate[String]
+      } yield Call(method, url)
   }
 
-  implicit val returnTupleFormat: Format[(SdilReturn,SdilReturn)] = Json.format[(SdilReturn,SdilReturn)]
+  implicit val returnTupleFormat: Format[(SdilReturn, SdilReturn)] = Json.format[(SdilReturn, SdilReturn)]
   implicit val format: Format[RegistrationVariationData] = Json.format[RegistrationVariationData]
-
 
   def apply(original: RetrievedSubscription): RegistrationVariationData = RegistrationVariationData(
     original,
     Address.fromUkAddress(original.address),
     Producer(original.activity.largeProducer || original.activity.smallProducer, Some(original.activity.largeProducer)),
-    usesCopacker = if(original.activity.voluntaryRegistration) Some(true) else None,
+    usesCopacker = if (original.activity.voluntaryRegistration) Some(true) else None,
     packageOwn = None,
     packageOwnVol = None,
     original.activity.contractPacker,

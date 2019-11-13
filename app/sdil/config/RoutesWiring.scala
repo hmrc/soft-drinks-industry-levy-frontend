@@ -81,12 +81,11 @@ trait RoutesWiring extends CommonWiring {
    *
    * can't use reflection (like `Router.load` does) as this needs to bind to specific wired instances of the routers
    */
-  def router: Router = {
+  def router: Router =
     if (configuration.underlying.hasPath("play.http.router")) {
       configuration.getString("play.http.router") match {
         case Some("testOnlyDoNotUseInAppConf.routes") | Some("testOnlyDoNotUseInAppConf.Routes") => testOnlyRoutes
-        case _ => prodRoutes
+        case _                                                                                   => prodRoutes
       }
     } else prodRoutes
-  }
 }

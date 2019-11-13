@@ -18,7 +18,6 @@ package sdil
 
 object utility {
   implicit class MoneyFormat(in: BigDecimal) {
-    def pounds: String = f"£${in}%,.2f".replace("£-","-£")
+    def pounds: String = f"£$in%,.2f".replace("£-", "-£")
   }
 }
-

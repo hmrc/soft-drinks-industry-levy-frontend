@@ -24,19 +24,21 @@ import sdil.models.backend.Site
 
 trait FormHelpers {
 
-  lazy val siteJsonMapping: Mapping[Site] = text.transform[Site](s => Json.parse(s).as[Site], s => Json.toJson(s).toString)
+  lazy val siteJsonMapping: Mapping[Site] =
+    text.transform[Site](s => Json.parse(s).as[Site], s => Json.toJson(s).toString)
 
   def required(key: String): Constraint[String] = Constraint {
     case "" => Invalid(s"error.$key.required")
-    case _ => Valid
+    case _  => Valid
   }
 
   lazy val mandatoryBoolean: Mapping[Boolean] = optional(boolean)
-    .verifying("error.radio-form.choose-option", _.nonEmpty).transform(_.get, Some.apply)
+    .verifying("error.radio-form.choose-option", _.nonEmpty)
+    .transform(_.get, Some.apply)
 
   def combine[T](c1: Constraint[T], c2: Constraint[T]): Constraint[T] = Constraint { v =>
     c1.apply(v) match {
-      case Valid => c2.apply(v)
+      case Valid      => c2.apply(v)
       case i: Invalid => i
     }
   }

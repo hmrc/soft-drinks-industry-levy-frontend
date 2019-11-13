@@ -20,17 +20,17 @@ import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 
 trait FormSpec extends PlaySpec {
-  def mustContainError(f: Form[_], fieldName: String, expectedError: String) = {
-    if(f(fieldName).hasErrors) {
+  def mustContainError(f: Form[_], fieldName: String, expectedError: String) =
+    if (f(fieldName).hasErrors) {
       f(fieldName).error.value.message mustBe expectedError
     } else {
       fail(s"No error when $fieldName = ${f(fieldName).value}; actual errors: ${f.errors}")
     }
-  }
 
-  def mustContainNoError(f: Form[_], fieldName: String) = {
-    assert(f(fieldName).errors.isEmpty, s"Unexpected errors when $fieldName = ${f(fieldName).value}\nErrors: ${f(fieldName).errors}")
-  }
+  def mustContainNoError(f: Form[_], fieldName: String) =
+    assert(
+      f(fieldName).errors.isEmpty,
+      s"Unexpected errors when $fieldName = ${f(fieldName).value}\nErrors: ${f(fieldName).errors}")
 
   def mustValidateAddress(form: Form[_], prefix: String, data: Map[String, String]) = {
     mustRequire(s"$prefix.line1")(form, data, requiredError = "error.line1.required")
@@ -52,13 +52,11 @@ trait FormSpec extends PlaySpec {
     }
   }
 
-  def mustRequire(fieldName: String)(f: Form[_], data: Map[String, String], requiredError: String = "error.required") = {
+  def mustRequire(fieldName: String)(f: Form[_], data: Map[String, String], requiredError: String = "error.required") =
     mustContainError(f.bind(data.updated(fieldName, "")), fieldName, requiredError)
-  }
 
-  def mustNotRequire(fieldName: String)(f: Form[_], data: Map[String, String]) = {
+  def mustNotRequire(fieldName: String)(f: Form[_], data: Map[String, String]) =
     mustContainNoError(f.bind(data.updated(fieldName, "")), fieldName)
-  }
 
   def mustHaveMaxLength(fieldName: String, max: Int)(f: Form[_], data: Map[String, String], expectedError: String) = {
     val underMax = (1 until max).map(_ => 'A').mkString

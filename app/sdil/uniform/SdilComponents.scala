@@ -40,39 +40,33 @@ import scala.util.Try
 object SdilComponents extends FormHelpers {
 
   implicit val addressForm = new FormHtml[Address] {
-    def asHtmlForm(key: String, form: Form[Address])(implicit messages: Messages): Html = {
+    def asHtmlForm(key: String, form: Form[Address])(implicit messages: Messages): Html =
       uniform.fragments.address(key, form)
-    }
   }
 
   implicit val smallProducerForm = new FormHtml[SmallProducer] {
-    def asHtmlForm(key: String, form: Form[SmallProducer])(implicit messages: Messages): Html = {
+    def asHtmlForm(key: String, form: Form[SmallProducer])(implicit messages: Messages): Html =
       uniform.fragments.smallProducer(key, form)
-    }
   }
 
-  implicit val litreageForm = new FormHtml[(Long,Long)] {
-    def asHtmlForm(key: String, form: Form[(Long,Long)])(implicit messages: Messages): Html = {
+  implicit val litreageForm = new FormHtml[(Long, Long)] {
+    def asHtmlForm(key: String, form: Form[(Long, Long)])(implicit messages: Messages): Html =
       uniform.fragments.litreage(key, form, approximate = true)
-    }
   }
 
   implicit val siteForm = new FormHtml[Site] {
-    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html = {
+    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html =
       uniform.fragments.site(key, form)
-    }
   }
 
   val packagingSiteForm = new FormHtml[Site] {
-    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html = {
+    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html =
       uniform.fragments.packagingSite(key, form)
-    }
   }
 
   val warehouseSiteForm = new FormHtml[Site] {
-    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html = {
+    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html =
       uniform.fragments.warehouseSite(key, form)
-    }
   }
 
   implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map.empty[String, String])
@@ -87,9 +81,8 @@ object SdilComponents extends FormHelpers {
       }
     }.mkString
 
-    def visibleText(s: Site): String = {
-      s.tradingName.fold(s.address.lines.head)(x=>x)
-    }
+    def visibleText(s: Site): String =
+      s.tradingName.fold(s.address.lines.head)(x => x)
 
     HtmlShow.instance { site =>
       Html(
@@ -106,9 +99,8 @@ object SdilComponents extends FormHelpers {
   }
 
   implicit val contactDetailsForm = new FormHtml[ContactDetails] {
-    def asHtmlForm(key: String, form: Form[ContactDetails])(implicit messages: Messages): Html = {
+    def asHtmlForm(key: String, form: Form[ContactDetails])(implicit messages: Messages): Html =
       uniform.fragments.contactdetails(key, form)
-    }
   }
 
   implicit val addressHtml: HtmlShow[Address] =
@@ -117,25 +109,28 @@ object SdilComponents extends FormHelpers {
       Html(s"<div>$lines</div>")
     }
 
-  implicit def showLitreage(implicit messages: Messages): HtmlShow[Litreage] = new HtmlShow[Litreage]{
+  implicit def showLitreage(implicit messages: Messages): HtmlShow[Litreage] = new HtmlShow[Litreage] {
     def showHtml(l: Litreage): Html = l match {
-      case Litreage(lower, higher) => Html(
-        Messages("sdil.declaration.low-band") + f": $lower%,.0f" +
-          "<br>" +
-          Messages("sdil.declaration.high-band") + f": $higher%,.0f"
-      )
+      case Litreage(lower, higher) =>
+        Html(
+          Messages("sdil.declaration.low-band") + f": $lower%,.0f" +
+            "<br>" +
+            Messages("sdil.declaration.high-band") + f": $higher%,.0f"
+        )
     }
   }
 
   implicit val longTupleFormatter: Format[(Long, Long)] = (
     (JsPath \ "lower").format[Long] and
       (JsPath \ "higher").format[Long]
-    )((a: Long, b: Long) => (a,b), unlift({x: (Long,Long) => Tuple2.unapply(x)}))
+  )((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
+    Tuple2.unapply(x)
+  }))
 
   lazy val contactDetailsMapping: Mapping[ContactDetails] = mapping(
     "fullName" -> text.verifying(Constraint { x: String =>
       x match {
-        case "" => Invalid("error.fullName.required")
+        case ""                       => Invalid("error.fullName.required")
         case name if name.length > 40 => Invalid("error.fullName.over")
         case name if !name.matches("^[a-zA-Z &`\\-\\'\\.^]{1,40}$") =>
           Invalid("error.fullName.invalid")
@@ -144,7 +139,7 @@ object SdilComponents extends FormHelpers {
     }),
     "position" -> text.verifying(Constraint { x: String =>
       x match {
-        case "" => Invalid("error.position.required")
+        case ""                                => Invalid("error.position.required")
         case position if position.length > 155 => Invalid("error.position.over")
         case position if !position.matches("^[a-zA-Z &`\\-\\'\\.^]{1,155}$") =>
           Invalid("error.position.invalid")
@@ -153,107 +148,170 @@ object SdilComponents extends FormHelpers {
     }),
     "phoneNumber" -> text.verifying(Constraint { x: String =>
       x match {
-        case "" => Invalid("error.phoneNumber.required")
+        case ""                         => Invalid("error.phoneNumber.required")
         case phone if phone.length > 24 => Invalid("error.phoneNumber.over")
         case phone if !phone.matches("^[A-Z0-9 )/(\\-*#+]{1,24}$") =>
           Invalid("error.phoneNumber.invalid")
         case _ => Valid
       }
     }),
-    "email" -> text.verifying(combine(Constraint { x: String =>
-      x match {
-        case "" => Invalid("error.email.required")
-        case e if e.length >= 132 => Invalid("error.email.over")
-        case _ => Valid
-      }
-    },
-      Constraints.emailAddress)
-    )
+    "email" -> text.verifying(
+      combine(
+        Constraint { x: String =>
+          x match {
+            case ""                   => Invalid("error.email.required")
+            case e if e.length >= 132 => Invalid("error.email.over")
+            case _                    => Valid
+          }
+        },
+        Constraints.emailAddress
+      ))
   )(ContactDetails.apply)(ContactDetails.unapply)
 
   lazy val startDate: Mapping[LocalDate] = tuple(
-    "day" ->  text,
+    "day"   -> text,
     "month" -> text,
-    "year" -> text
-  ) .verifying("error.date.emptyfields", x => x match {
-    case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) == "" && trim(y) == "")  => false
-    case _ => true
-  })
-    .verifying("error.start-date.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) != "" && trim(y) != "") => false
-      case _ => true
-    })
-    .verifying("error.start-month.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) == "" && trim(y) != "") => false
-      case _ => true
-    })
-    .verifying("error.start-year.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) != "" && trim(y) == "") => false
-      case _ => true
-    })
-    .verifying("error.start-day-and-month.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) == "" && trim(y) != "") => false
-      case _ => true
-    })
-    .verifying("error.start-month-and-year.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) == "" && trim(y) == "") => false
-      case _ => true
-    })
-    .verifying("error.start-day-and-year.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) != "" && trim(y) == "") => false
-      case _ => true
-    })
-    .verifying("error.date.invalid", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) != "" && trim(y) != "") => Try(LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt)).isSuccess
-      case _ => true
-    })
-    .transform({ case (d, m, y) => LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt) }, duy => (duy.getDayOfMonth.toString, duy.getMonthValue.toString, duy.getYear.toString))
+    "year"  -> text
+  ).verifying(
+      "error.date.emptyfields",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) == "" && trim(m) == "" && trim(y) == "") => false
+          case _                                                                                      => true
+      })
+    .verifying(
+      "error.start-date.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) == "" && trim(m) != "" && trim(y) != "") => false
+          case _                                                                                      => true
+      })
+    .verifying(
+      "error.start-month.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) != "" && trim(m) == "" && trim(y) != "") => false
+          case _                                                                                      => true
+      })
+    .verifying(
+      "error.start-year.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) != "" && trim(m) != "" && trim(y) == "") => false
+          case _                                                                                      => true
+      })
+    .verifying(
+      "error.start-day-and-month.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) == "" && trim(m) == "" && trim(y) != "") => false
+          case _                                                                                      => true
+      })
+    .verifying(
+      "error.start-month-and-year.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) != "" && trim(m) == "" && trim(y) == "") => false
+          case _                                                                                      => true
+      })
+    .verifying(
+      "error.start-day-and-year.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) == "" && trim(m) != "" && trim(y) == "") => false
+          case _                                                                                      => true
+      })
+    .verifying(
+      "error.date.invalid",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) != "" && trim(m) != "" && trim(y) != "") =>
+            Try(LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt)).isSuccess
+          case _ => true
+      }
+    )
+    .transform(
+      { case (d, m, y) => LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt) },
+      duy => (duy.getDayOfMonth.toString, duy.getMonthValue.toString, duy.getYear.toString)
+    )
 
   lazy val cancelRegDate: Mapping[LocalDate] = tuple(
-    "day" ->  text,
+    "day"   -> text,
     "month" -> text,
-    "year" -> text
-  ) .verifying("error.cancel-registration-date.emptyfields", x => x match {
-    case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) == "" && trim(y) == "")  => false
-    case _ => true
-  })
-    .verifying("error.cancel-registration-date-day.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) != "" && trim(y) != "") => false
-      case _ => true
-    })
-    .verifying("error.cancel-registration-date-month.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) == "" && trim(y) != "") => false
-      case _ => true
-    })
-    .verifying("error.cancel-registration-date-year.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) != "" && trim(y) == "") => false
-      case _ => true
-    })
-    .verifying("error.cancel-registration-date-day-and-month.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) == "" && trim(y) != "") => false
-      case _ => true
-    })
-    .verifying("error.cancel-registration-date-month-and-year.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) == "" && trim(y) == "") => false
-      case _ => true
-    })
-    .verifying("error.cancel-registration-date-day-and-year.missing", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) == "" && trim(m) != "" && trim(y) == "") => false
-      case _ => true
-    })
-    .verifying("error.date.invalid", x => x match {
-      case (d : String, m : String, y : String) if(trim(d) != "" && trim(m) != "" && trim(y) != "") => Try(LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt)).isSuccess
-      case _ => true
-    })
-    .transform({ case (d, m, y) => LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt) }, duy => (duy.getDayOfMonth.toString, duy.getMonthValue.toString, duy.getYear.toString))
+    "year"  -> text
+  ).verifying(
+      "error.cancel-registration-date.emptyfields",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) == "" && trim(m) == "" && trim(y) == "") => false
+          case _                                                                                      => true
+      })
+    .verifying(
+      "error.cancel-registration-date-day.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) == "" && trim(m) != "" && trim(y) != "") => false
+          case _                                                                                      => true
+      })
+    .verifying(
+      "error.cancel-registration-date-month.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) != "" && trim(m) == "" && trim(y) != "") => false
+          case _                                                                                      => true
+      })
+    .verifying(
+      "error.cancel-registration-date-year.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) != "" && trim(m) != "" && trim(y) == "") => false
+          case _                                                                                      => true
+      })
+    .verifying(
+      "error.cancel-registration-date-day-and-month.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) == "" && trim(m) == "" && trim(y) != "") => false
+          case _                                                                                      => true
+      }
+    )
+    .verifying(
+      "error.cancel-registration-date-month-and-year.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) != "" && trim(m) == "" && trim(y) == "") => false
+          case _                                                                                      => true
+      }
+    )
+    .verifying(
+      "error.cancel-registration-date-day-and-year.missing",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) == "" && trim(m) != "" && trim(y) == "") => false
+          case _                                                                                      => true
+      }
+    )
+    .verifying(
+      "error.date.invalid",
+      x =>
+        x match {
+          case (d: String, m: String, y: String) if (trim(d) != "" && trim(m) != "" && trim(y) != "") =>
+            Try(LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt)).isSuccess
+          case _ => true
+      }
+    )
+    .transform(
+      { case (d, m, y) => LocalDate.of(trim(y).toInt, trim(m).toInt, trim(d).toInt) },
+      duy => (duy.getDayOfMonth.toString, duy.getMonthValue.toString, duy.getYear.toString)
+    )
 
+  def trim(inputStr: String) = inputStr.trim()
 
-  def trim(inputStr : String) = inputStr.trim()
-
-  def numeric(key: String): Mapping[Int] = text
-    .verifying(s"error.$key.required", _.nonEmpty)
-    .verifying(s"error.$key.number", v => v.isEmpty || Try(v.toInt).isSuccess)
-    .transform[Int](_.toInt, _.toString)
+  def numeric(key: String): Mapping[Int] =
+    text
+      .verifying(s"error.$key.required", _.nonEmpty)
+      .verifying(s"error.$key.number", v => v.isEmpty || Try(v.toInt).isSuccess)
+      .transform[Int](_.toInt, _.toString)
 
   sealed trait OrganisationType extends EnumEntry
   object OrganisationType extends Enum[OrganisationType] {
@@ -274,10 +332,13 @@ object SdilComponents extends FormHelpers {
   }
 
   lazy val warehouseSiteMapping: Mapping[Site] = mapping(
-    "address" -> ukAddressMapping,
+    "address"     -> ukAddressMapping,
     "tradingName" -> optional(tradingNameMapping)
-  ) { (a, b) => Site.apply(a, none, b, none) }(Site.unapply(_).map { case (address, _, tradingName, _) =>
-    (address, tradingName)
+  ) { (a, b) =>
+    Site.apply(a, none, b, none)
+  }(Site.unapply(_).map {
+    case (address, _, tradingName, _) =>
+      (address, tradingName)
   })
 
   lazy val tradingNameMapping: Mapping[String] = {
@@ -285,57 +346,57 @@ object SdilComponents extends FormHelpers {
   }
 
   private def optionalTradingNameConstraint: Constraint[String] = Constraint {
-    case s if s.length > 160 => Invalid("error.tradingName.length")
+    case s if s.length > 160                          => Invalid("error.tradingName.length")
     case s if !s.matches("""^[a-zA-Z0-9 '.&\\/]*$""") => Invalid("error.tradingName.invalid")
-    case _ => Valid
+    case _                                            => Valid
   }
 
   lazy val packagingSiteMapping: Mapping[Site] = mapping(
     "address" -> ukAddressMapping
-  ) { a => Site.apply(a, none, none, none) }(Site.unapply(_).map(x => x._1))
+  ) { a =>
+    Site.apply(a, none, none, none)
+  }(Site.unapply(_).map(x => x._1))
 
   private val ukAddressMapping: Mapping[UkAddress] =
     addressMapping.transform(UkAddress.fromAddress, Address.fromUkAddress)
 
   lazy val addressMapping: Mapping[Address] = mapping(
-    "line1" -> mandatoryAddressLine("line1"),
-    "line2" -> mandatoryAddressLine("line2"),
-    "line3" -> optionalAddressLine("line3"),
-    "line4" -> optionalAddressLine("line4"),
+    "line1"    -> mandatoryAddressLine("line1"),
+    "line2"    -> mandatoryAddressLine("line2"),
+    "line3"    -> optionalAddressLine("line3"),
+    "line4"    -> optionalAddressLine("line4"),
     "postcode" -> postcode
   )(Address.apply)(Address.unapply)
 
-  private def mandatoryAddressLine(key: String): Mapping[String] = {
+  private def mandatoryAddressLine(key: String): Mapping[String] =
     text.transform[String](_.trim, s => s).verifying(combine(required(key), optionalAddressLineConstraint(key)))
-  }
 
-  private def optionalAddressLine(key: String): Mapping[String] = {
+  private def optionalAddressLine(key: String): Mapping[String] =
     text.transform[String](_.trim, s => s).verifying(optionalAddressLineConstraint(key))
-  }
 
   private def optionalAddressLineConstraint(key: String): Constraint[String] = Constraint {
     case a if !a.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") => Invalid(s"error.$key.invalid")
-    case b if b.length > 35 => Invalid(s"error.$key.over")
-    case _ => Valid
+    case b if b.length > 35                             => Invalid(s"error.$key.over")
+    case _                                              => Valid
   }
 
   def postcode: Mapping[String] = {
     val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$"
     val specialRegex = """^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"""
 
-    text.transform[String](_.toUpperCase.trim, identity)
+    text
+      .transform[String](_.toUpperCase.trim, identity)
       .verifying(Constraint { x: String =>
         x match {
-          case "" => Invalid("error.postcode.empty")
-          case pc if !pc.matches(specialRegex) => Invalid("error.postcode.special")
+          case ""                               => Invalid("error.postcode.empty")
+          case pc if !pc.matches(specialRegex)  => Invalid("error.postcode.special")
           case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
-          case _ => Valid
+          case _                                => Valid
         }
-      }
-      )
+      })
   }
 
-  def longTupToLitreage(in: (Long,Long)): Option[Litreage] =
+  def longTupToLitreage(in: (Long, Long)): Option[Litreage] =
     if (in.isEmpty) None else Litreage(in._1, in._2).some
 
 }

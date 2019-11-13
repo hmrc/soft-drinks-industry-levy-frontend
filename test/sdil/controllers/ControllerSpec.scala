@@ -32,21 +32,18 @@ import scala.concurrent.Future
 
 trait ControllerSpec extends FakeApplicationSpec {
 
-  def stubCacheEntry(value: Option[RegistrationFormData]): OngoingStubbing[Future[Option[RegistrationFormData]]] = {
+  def stubCacheEntry(value: Option[RegistrationFormData]): OngoingStubbing[Future[Option[RegistrationFormData]]] =
     when(mockCache.get(matching("internal id"))(any()))
       .thenReturn(Future.successful(value))
-  }
 
-  def verifyDataCached(formData: RegistrationFormData): Future[CacheMap] = {
+  def verifyDataCached(formData: RegistrationFormData): Future[CacheMap] =
     verify(mockCache, times(1))
       .cache(matching("internal id"), matching(formData))(any())
-  }
 
-  def returnsDataCheck(returnPeriods : List[ReturnPeriod]): OngoingStubbing[Future[List[ReturnPeriod]]] = {
+  def returnsDataCheck(returnPeriods: List[ReturnPeriod]): OngoingStubbing[Future[List[ReturnPeriod]]] =
     when(mockSdilConnector.returns_variable(matching("utrNumber1234"))(any())).thenReturn {
       Future.successful(returnPeriods)
     }
-  }
 
   def submitRegistration(): OngoingStubbing[Future[Unit]] = {
     val mySub = defaultSubscription.copy(orgType = "7")
@@ -57,21 +54,20 @@ trait ControllerSpec extends FakeApplicationSpec {
 //    when(mockSubscription.desify(matching(defaultSubscription))) thenReturn subscription
 //  }
 
-  def returnsPendingCheck(returnPeriods : List[ReturnPeriod]): OngoingStubbing[Future[List[ReturnPeriod]]] = {
-    when(mockSdilConnector.returns_pending(matching("utrNumber1234"))(any())) thenReturn Future.successful(returnPeriods)
-  }
+  def returnsPendingCheck(returnPeriods: List[ReturnPeriod]): OngoingStubbing[Future[List[ReturnPeriod]]] =
+    when(mockSdilConnector.returns_pending(matching("utrNumber1234"))(any())) thenReturn Future.successful(
+      returnPeriods)
 
-  def getOneReturn(sdilReturn: SdilReturn): OngoingStubbing[Future[Option[SdilReturn]]] = {
-    when(
-      mockSdilConnector.returns_get(matching("0000000022"),
-        matching(ReturnPeriod(2018,1)))(any())) thenReturn Future.successful(Some(sdilReturn))
-  }
+  def getOneReturn(sdilReturn: SdilReturn): OngoingStubbing[Future[Option[SdilReturn]]] =
+    when(mockSdilConnector.returns_get(matching("0000000022"), matching(ReturnPeriod(2018, 1)))(any())) thenReturn Future
+      .successful(Some(sdilReturn))
 
-  def getSubscription(retrievedSubscription: RetrievedSubscription): OngoingStubbing[Future[Option[RetrievedSubscription]]] = {
-    when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"),any())(any())).thenReturn(Future.successful(Some(retrievedSubscription)))
-  }
+  def getSubscription(
+    retrievedSubscription: RetrievedSubscription): OngoingStubbing[Future[Option[RetrievedSubscription]]] =
+    when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), any())(any()))
+      .thenReturn(Future.successful(Some(retrievedSubscription)))
 
-  def checkSmallProdStatus(isSmall: Boolean): OngoingStubbing[Future[Boolean]] = {
+  def checkSmallProdStatus(isSmall: Boolean): OngoingStubbing[Future[Boolean]] =
     when(
       mockSdilWMController.isSmallProducer(
         matching("XPSDIL000000205"),
@@ -79,50 +75,46 @@ trait ControllerSpec extends FakeApplicationSpec {
         matching(ReturnPeriod(2018, 3))
       )(any())
     ) thenReturn Future.successful(isSmall)
-  }
 
   def fetchAndGet(smallProd: JsValue): OngoingStubbing[Future[Option[JsValue]]] = {
     when(mockSdilConnector.shortLiveCache) thenReturn cacheMock
-      when(cacheMock.fetchAndGetEntry[JsValue](
-      matching("XCSDIL000000002"),
-      matching("small-producer-details_data"
-      )
-    )(any(),any(),any())).thenReturn{
+    when(
+      cacheMock.fetchAndGetEntry[JsValue](
+        matching("XCSDIL000000002"),
+        matching("small-producer-details_data")
+      )(any(), any(), any())).thenReturn {
       Future.successful(Some(smallProd))
     }
   }
 
-  def balanceHistory(financialData: List[FinancialLineItem]): OngoingStubbing[Future[List[FinancialLineItem]]] = {
-    when(mockSdilConnector.balanceHistory(any(),any())(any())).thenReturn{
+  def balanceHistory(financialData: List[FinancialLineItem]): OngoingStubbing[Future[List[FinancialLineItem]]] =
+    when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn {
       Future.successful(financialData)
     }
-  }
 
-  def balance(balance: BigDecimal): OngoingStubbing[Future[BigDecimal]] = {
-    when(mockSdilConnector.balance(any(), any())(any())).thenReturn{
+  def balance(balance: BigDecimal): OngoingStubbing[Future[BigDecimal]] =
+    when(mockSdilConnector.balance(any(), any())(any())).thenReturn {
       Future.successful(balance)
     }
-  }
 
   def stubFormPage(
-      rosmData: RosmRegistration = defaultRosmData,
-      utr: String = defaultFormData.utr,
-      verify: Option[DetailsCorrect] = defaultFormData.verify,
-      orgType: Option[String] = defaultFormData.organisationType,
-      producer: Option[Producer] = defaultFormData.producer,
-      isPackagingForSelf: Option[Boolean] = defaultFormData.isPackagingForSelf,
-      packageOwnVol: Option[Litreage] = defaultFormData.volumeForOwnBrand,
-      packagesForOthers: Option[Boolean] = defaultFormData.packagesForOthers,
-      volumeForCustomerBrands: Option[Litreage] = defaultFormData.volumeForCustomerBrands,
-      usesCopacker: Option[Boolean] = defaultFormData.usesCopacker,
-      imports: Option[Boolean] = defaultFormData.isImporter,
-      importVolume: Option[Litreage] = defaultFormData.importVolume,
-      startDate: Option[LocalDate] = defaultFormData.startDate,
-      productionSites: Option[Seq[Site]] = defaultFormData.productionSites,
-      secondaryWarehouses: Option[Seq[Site]] = defaultFormData.secondaryWarehouses,
-      contactDetails: Option[ContactDetails] = defaultFormData.contactDetails
-  ): OngoingStubbing[Future[Option[RegistrationFormData]]] = {
-
+    rosmData: RosmRegistration = defaultRosmData,
+    utr: String = defaultFormData.utr,
+    verify: Option[DetailsCorrect] = defaultFormData.verify,
+    orgType: Option[String] = defaultFormData.organisationType,
+    producer: Option[Producer] = defaultFormData.producer,
+    isPackagingForSelf: Option[Boolean] = defaultFormData.isPackagingForSelf,
+    packageOwnVol: Option[Litreage] = defaultFormData.volumeForOwnBrand,
+    packagesForOthers: Option[Boolean] = defaultFormData.packagesForOthers,
+    volumeForCustomerBrands: Option[Litreage] = defaultFormData.volumeForCustomerBrands,
+    usesCopacker: Option[Boolean] = defaultFormData.usesCopacker,
+    imports: Option[Boolean] = defaultFormData.isImporter,
+    importVolume: Option[Litreage] = defaultFormData.importVolume,
+    startDate: Option[LocalDate] = defaultFormData.startDate,
+    productionSites: Option[Seq[Site]] = defaultFormData.productionSites,
+    secondaryWarehouses: Option[Seq[Site]] = defaultFormData.secondaryWarehouses,
+    contactDetails: Option[ContactDetails] = defaultFormData.contactDetails
+  ): OngoingStubbing[Future[Option[RegistrationFormData]]] =
     stubCacheEntry(
       Some(
         RegistrationFormData(
@@ -143,13 +135,11 @@ trait ControllerSpec extends FakeApplicationSpec {
           secondaryWarehouses,
           contactDetails
         )))
-  }
 
-  def stubFilledInForm: OngoingStubbing[Future[Option[RegistrationFormData]]] = {
+  def stubFilledInForm: OngoingStubbing[Future[Option[RegistrationFormData]]] =
     stubCacheEntry(
       Some(defaultFormData)
     )
-  }
 
   when(mockSdilConnector.getRosmRegistration(any())(any()))
     .thenReturn(Future.successful(Some(defaultRosmData)))
@@ -183,21 +173,11 @@ trait ControllerSpec extends FakeApplicationSpec {
       startDate = Some(LocalDate.of(2018, 4, 6)),
       productionSites = Some(
         Seq(
-          Site.fromAddress(
-            Address("1 Production Site St",
-                    "Production Site Town",
-                    "",
-                    "",
-                    "AA11 1AA"))
+          Site.fromAddress(Address("1 Production Site St", "Production Site Town", "", "", "AA11 1AA"))
         )),
       secondaryWarehouses = Some(
         Seq(
-          Site.fromAddress(
-            Address("1 Warehouse Site St",
-                    "Warehouse Site Town",
-                    "",
-                    "",
-                    "AA11 1AA"))
+          Site.fromAddress(Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA"))
         )),
       contactDetails = Some(
         ContactDetails(

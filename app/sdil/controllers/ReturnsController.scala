@@ -42,16 +42,17 @@ import views.html.uniform
 
 import scala.concurrent._
 
-class ReturnsController (
+class ReturnsController(
   override val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   cache: ShortLivedHttpCaching,
   mcc: MessagesControllerComponents
-)(implicit
+)(
+  implicit
   val config: AppConfig,
-  val ec: ExecutionContext
-) extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney with I18nSupport {
+  val ec: ExecutionContext)
+    extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney with I18nSupport {
 
   override lazy val parse = mcc.parsers
   override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
@@ -70,17 +71,17 @@ class ReturnsController (
     val data = returnAmount(sdilReturn, isSmallProducer)
     val subtotal = calculateSubtotal(data)
     val total = subtotal - broughtForward
-    val prettyPeriod = messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))
+    val prettyPeriod =
+      messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))
 
-    def formatMoney (total: BigDecimal) = {
-      if(total < 0)
+    def formatMoney(total: BigDecimal) =
+      if (total < 0)
         f"-£${total.abs}%,.2f"
-       else
+      else
         f"£$total%,.2f"
-      }
 
     val getTotal =
-      if (total <= 0 )
+      if (total <= 0)
         messages("return-sent.subheading.nil-return")
       else {
         messages(
@@ -100,73 +101,93 @@ class ReturnsController (
       now.format("dd MMMM yyyy")
     )
 
-    val whatHappensNext = uniform.fragments.returnsPaymentsBlurb(
-      subscription,
-      period,
-      sdilRef,
-      total,
-      formatMoney(total),
-      variation,
-      data,
-      costLower,
-      costHigher,
-      subtotal,
-      broughtForward)(messages).some
+    val whatHappensNext = uniform.fragments
+      .returnsPaymentsBlurb(
+        subscription,
+        period,
+        sdilRef,
+        total,
+        formatMoney(total),
+        variation,
+        data,
+        costLower,
+        costHigher,
+        subtotal,
+        broughtForward)(messages)
+      .some
 
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
 
-  private def askNewWarehouses()(implicit hc: HeaderCarrier): WebMonad[List[Site]] = for {
-    addWarehouses  <- ask(bool(), "ask-secondary-warehouses-in-return")
-    firstWarehouse <- ask(warehouseSiteMapping,"first-warehouse")(warehouseSiteForm, implicitly, extraMessages, implicitly) when
-      addWarehouses
-    warehouses     <- askWarehouses(firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless
-      addWarehouses
-  } yield warehouses
+  private def askNewWarehouses()(implicit hc: HeaderCarrier): WebMonad[List[Site]] =
+    for {
+      addWarehouses <- ask(bool(), "ask-secondary-warehouses-in-return")
+      firstWarehouse <- ask(warehouseSiteMapping, "first-warehouse")(
+                         warehouseSiteForm,
+                         implicitly,
+                         extraMessages,
+                         implicitly) when
+                         addWarehouses
+      warehouses <- askWarehouses(firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless
+                     addWarehouses
+    } yield warehouses
 
   private def askNewPackingSites(subscription: Subscription)(implicit hc: HeaderCarrier): WebMonad[List[Site]] = {
-    implicit val extraMessages  = ExtraMessages(
+    implicit val extraMessages = ExtraMessages(
       messages = Map(
         "pack-at-business-address-in-return.lead" -> s"${Address.fromUkAddress(subscription.address).nonEmptyLines.mkString("<br/>")}")
     )
     for {
-      usePPOBAddress   <- ask(bool(), "pack-at-business-address-in-return")
-      packingSites     = if (usePPOBAddress) {
+      usePPOBAddress <- ask(bool(), "pack-at-business-address-in-return")
+      packingSites = if (usePPOBAddress) {
         List(Site.fromAddress(Address.fromUkAddress(subscription.address)))
       } else {
         List.empty[Site]
       }
-      firstPackingSite <- ask(packagingSiteMapping,"first-production-site")(packagingSiteForm, implicitly, implicitly, implicitly) when
-        packingSites.isEmpty
-      packingSites     <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x)))
+      firstPackingSite <- ask(packagingSiteMapping, "first-production-site")(
+                           packagingSiteForm,
+                           implicitly,
+                           implicitly,
+                           implicitly) when
+                           packingSites.isEmpty
+      packingSites <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x)))
     } yield packingSites
   }
 
-  private[controllers] def program(period: ReturnPeriod, subscription: Subscription, sdilRef: String, nilReturn: Boolean, id: String)
-                     (implicit hc: HeaderCarrier): WebMonad[Result] = {
+  private[controllers] def program(
+    period: ReturnPeriod,
+    subscription: Subscription,
+    sdilRef: String,
+    nilReturn: Boolean,
+    id: String)(implicit hc: HeaderCarrier): WebMonad[Result] = {
     val em = ExtraMessages(Map(
       "heading.check-your-answers.orgName" ->
         s"${subscription.orgName} - ${Messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))}"
-      )
-    )
+    ))
     for {
       _ <- write[Boolean]("_editSmallProducers", true)
-      emptyReturn = SdilReturn((0,0), (0,0), List.empty, (0,0), (0,0), (0,0), (0,0))
-      sdilReturn <- askReturn(subscription, sdilRef, sdilConnector, period, if(nilReturn) emptyReturn.some else None, Some(id))
+      emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
+      sdilReturn <- askReturn(
+                     subscription,
+                     sdilRef,
+                     sdilConnector,
+                     period,
+                     if (nilReturn) emptyReturn.some else None,
+                     Some(id))
 
       // check if they need to vary
       isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
       isNewPacker = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
       inner = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
-      _ <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
+      _               <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
       newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
-      newWarehouses <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
-      broughtForward <- if(config.balanceAllEnabled)
-        execute(sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
-          extractTotal(listItemsWithTotal(x))
-        })
-      else
-        execute(sdilConnector.balance(sdilRef, withAssessment = false))
+      newWarehouses   <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
+      broughtForward <- if (config.balanceAllEnabled)
+                         execute(sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+                           extractTotal(listItemsWithTotal(x))
+                         })
+                       else
+                         execute(sdilConnector.balance(sdilRef, withAssessment = false))
 
       isSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, period))
 
@@ -181,38 +202,47 @@ class ReturnsController (
         email = subscription.contact.email,
         taxEstimation = taxEstimation(sdilReturn)
       )
-      _ <- checkYourReturnAnswers("check-your-answers", sdilReturn, broughtForward, subscription, isSmallProd, Some(variation))(em, implicitly)
-      _ <- cachedFuture(s"return-${period.count}")(
-        sdilConnector.returns_update(subscription.utr, period,sdilReturn))
+      _ <- checkYourReturnAnswers(
+            "check-your-answers",
+            sdilReturn,
+            broughtForward,
+            subscription,
+            isSmallProd,
+            Some(variation))(em, implicitly)
+      _ <- cachedFuture(s"return-${period.count}")(sdilConnector.returns_update(subscription.utr, period, sdilReturn))
       _ <- if (isNewImporter || isNewPacker) {
-        execute(sdilConnector.returns_variation(variation, sdilRef))
-      } else {
-        (()).pure[WebMonad]
-      }
+            execute(sdilConnector.returns_variation(variation, sdilRef))
+          } else {
+            (()).pure[WebMonad]
+          }
       end <- clear >> confirmationPage(
-        "return-sent",
-        period,
-        subscription,
-        sdilReturn,
-        broughtForward,
-        sdilRef,
-        isSmallProd,
-        variation
-      )
+              "return-sent",
+              period,
+              subscription,
+              sdilReturn,
+              broughtForward,
+              sdilRef,
+              isSmallProd,
+              variation
+            )
     } yield end
   }
-  def index(year: Int, quarter: Int, nilReturn: Boolean, id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    val sdilRef = request.sdilEnrolment.value
-    val period = ReturnPeriod(year, quarter)
-    val persistence = SaveForLaterPersistence(s"returns-$year$quarter", sdilRef, cache)
-    for {
-      subscription <- sdilConnector.retrieveSubscription(sdilRef).map{_.get}
-      pendingReturns <- sdilConnector.returns_pending(subscription.utr)
-      r   <- if (pendingReturns.contains(period))
-               runInner(request)(program(period, subscription, sdilRef, nilReturn, id))(id)(persistence.dataGet,persistence.dataPut, if (nilReturn) JourneyConfig(LeapAhead) else JourneyConfig(SingleStep))
-             else
-               Redirect(routes.ServicePageController.show()).pure[Future]
-    } yield r
+  def index(year: Int, quarter: Int, nilReturn: Boolean, id: String): Action[AnyContent] = registeredAction.async {
+    implicit request =>
+      val sdilRef = request.sdilEnrolment.value
+      val period = ReturnPeriod(year, quarter)
+      val persistence = SaveForLaterPersistence(s"returns-$year$quarter", sdilRef, cache)
+      for {
+        subscription   <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
+        pendingReturns <- sdilConnector.returns_pending(subscription.utr)
+        r <- if (pendingReturns.contains(period))
+              runInner(request)(program(period, subscription, sdilRef, nilReturn, id))(id)(
+                persistence.dataGet,
+                persistence.dataPut,
+                if (nilReturn) JourneyConfig(LeapAhead) else JourneyConfig(SingleStep))
+            else
+              Redirect(routes.ServicePageController.show()).pure[Future]
+      } yield r
   }
 
   def taxEstimation(r: SdilReturn): BigDecimal = {

@@ -86,29 +86,34 @@ object FinancialLineItem {
     Json.format[ReturnPeriod]
 
   implicit val formatter: Format[FinancialLineItem] =
-    new Format[FinancialLineItem]
-  {
-    def reads(json: JsValue): JsResult[FinancialLineItem] =
-      (json \ "type").as[String] match {
-        case "ReturnCharge" => Json.format[ReturnCharge].reads(json)
-        case "ReturnChargeInterest" => Json.format[ReturnChargeInterest].reads(json)
-        case "CentralAssessment" => Json.format[CentralAssessment].reads(json)
-        case "CentralAsstInterest" => Json.format[CentralAsstInterest].reads(json)
-        case "OfficerAssessment" => Json.format[OfficerAssessment].reads(json)
-        case "OfficerAsstInterest" => Json.format[OfficerAsstInterest].reads(json)
-        case "PaymentOnAccount" => Json.format[PaymentOnAccount].reads(json)
-        case "Unknown" => Json.format[Unknown].reads(json)
-      }
+    new Format[FinancialLineItem] {
+      def reads(json: JsValue): JsResult[FinancialLineItem] =
+        (json \ "type").as[String] match {
+          case "ReturnCharge"         => Json.format[ReturnCharge].reads(json)
+          case "ReturnChargeInterest" => Json.format[ReturnChargeInterest].reads(json)
+          case "CentralAssessment"    => Json.format[CentralAssessment].reads(json)
+          case "CentralAsstInterest"  => Json.format[CentralAsstInterest].reads(json)
+          case "OfficerAssessment"    => Json.format[OfficerAssessment].reads(json)
+          case "OfficerAsstInterest"  => Json.format[OfficerAsstInterest].reads(json)
+          case "PaymentOnAccount"     => Json.format[PaymentOnAccount].reads(json)
+          case "Unknown"              => Json.format[Unknown].reads(json)
+        }
 
-    def writes(o: FinancialLineItem): JsValue = o match {
-      case i: ReturnCharge => Json.format[ReturnCharge].writes(i).as[JsObject] + ("type" -> JsString("ReturnCharge"))
-      case i: ReturnChargeInterest => Json.format[ReturnChargeInterest].writes(i).as[JsObject] + ("type" -> JsString("ReturnChargeInterest"))
-      case i: CentralAssessment => Json.format[CentralAssessment].writes(i).as[JsObject] + ("type" -> JsString("CentralAssessment"))
-      case i: CentralAsstInterest => Json.format[CentralAsstInterest].writes(i).as[JsObject] + ("type" -> JsString("CentralAsstInterest"))
-      case i: OfficerAssessment => Json.format[OfficerAssessment].writes(i).as[JsObject] + ("type" -> JsString("OfficerAssessment"))
-      case i: OfficerAsstInterest => Json.format[OfficerAsstInterest].writes(i).as[JsObject] + ("type" -> JsString("OfficerAsstInterest"))
-      case i: PaymentOnAccount => Json.format[PaymentOnAccount].writes(i).as[JsObject] + ("type" -> JsString("PaymentOnAccount"))
-      case i: Unknown => Json.format[Unknown].writes(i).as[JsObject] + ("type" -> JsString("Unknown"))
+      def writes(o: FinancialLineItem): JsValue = o match {
+        case i: ReturnCharge => Json.format[ReturnCharge].writes(i).as[JsObject] + ("type" -> JsString("ReturnCharge"))
+        case i: ReturnChargeInterest =>
+          Json.format[ReturnChargeInterest].writes(i).as[JsObject] + ("type" -> JsString("ReturnChargeInterest"))
+        case i: CentralAssessment =>
+          Json.format[CentralAssessment].writes(i).as[JsObject] + ("type" -> JsString("CentralAssessment"))
+        case i: CentralAsstInterest =>
+          Json.format[CentralAsstInterest].writes(i).as[JsObject] + ("type" -> JsString("CentralAsstInterest"))
+        case i: OfficerAssessment =>
+          Json.format[OfficerAssessment].writes(i).as[JsObject] + ("type" -> JsString("OfficerAssessment"))
+        case i: OfficerAsstInterest =>
+          Json.format[OfficerAsstInterest].writes(i).as[JsObject] + ("type" -> JsString("OfficerAsstInterest"))
+        case i: PaymentOnAccount =>
+          Json.format[PaymentOnAccount].writes(i).as[JsObject] + ("type" -> JsString("PaymentOnAccount"))
+        case i: Unknown => Json.format[Unknown].writes(i).as[JsObject] + ("type" -> JsString("Unknown"))
+      }
     }
-  }
 }

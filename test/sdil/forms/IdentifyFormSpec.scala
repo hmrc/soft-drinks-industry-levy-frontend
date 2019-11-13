@@ -81,7 +81,6 @@ class IdentifyFormSpec extends WordSpecLike with Matchers {
   lazy val postcode = "postcode"
   lazy val validData = Map(utr -> "1234567890", postcode -> "SW1A 1AA")
 
-  private def errorFor(form: Form[_], fieldName: String): String = {
+  private def errorFor(form: Form[_], fieldName: String): String =
     form(fieldName).error.fold("")(_.message)
-  }
 }

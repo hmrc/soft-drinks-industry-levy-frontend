@@ -22,7 +22,7 @@ trait ActionHelpers {
   protected def getSdilEnrolment(enrolments: Enrolments): Option[EnrolmentIdentifier] = {
     val sdil = for {
       enrolment <- enrolments.enrolments if enrolment.key.equalsIgnoreCase("HMRC-OBTDS-ORG")
-      sdil <- enrolment.getIdentifier("EtmpRegistrationNumber") if sdil.value.slice(2, 4) == "SD"
+      sdil      <- enrolment.getIdentifier("EtmpRegistrationNumber") if sdil.value.slice(2, 4) == "SD"
     } yield {
       sdil
     }
@@ -30,7 +30,9 @@ trait ActionHelpers {
     sdil.headOption
   }
 
-  protected def getUtr(enrolments: Enrolments): Option[String] = {
-    enrolments.getEnrolment("IR-CT").orElse(enrolments.getEnrolment("IR-SA")).flatMap(_.getIdentifier("UTR").map(_.value))
-  }
+  protected def getUtr(enrolments: Enrolments): Option[String] =
+    enrolments
+      .getEnrolment("IR-CT")
+      .orElse(enrolments.getEnrolment("IR-SA"))
+      .flatMap(_.getIdentifier("UTR").map(_.value))
 }

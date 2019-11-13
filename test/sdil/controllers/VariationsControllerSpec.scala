@@ -51,8 +51,82 @@ class VariationsControllerSpec extends ControllerSpec {
   "VariationsController" should {
     implicit val fakeRequest = FakeRequest()
 
-    val aSubscription = RetrievedSubscription("0000000022", "XKSDIL000000022", "Super Lemonade Plc", UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), RetrievedActivity(false, true, false, false, false), LocalDate.of(2018, 4, 19), List(Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("88"), Some("Wild Lemonade Group"), Some(LocalDate.of(2018, 2, 26))), Site(UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"), Some("87"), Some("Highly Addictive Drinks Plc"), Some(LocalDate.now().plusDays(3))), Site(UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"), Some("94"), Some("Monster Bottle Ltd"), Some(LocalDate.of(2017, 9, 23))), Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"), Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23))), Site(UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"), Some("96"), Some("Star Products Ltd"), Some(LocalDate.of(2017, 2, 11)))), List(), Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"), None)
-    val voluntarySubscription = RetrievedSubscription("0000000022", "XKSDIL000000022", "Super Lemonade Plc", UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), RetrievedActivity(false, true, false, false, true), LocalDate.of(2018, 4, 19), List(Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("88"), Some("Wild Lemonade Group"), Some(LocalDate.of(2018, 2, 26))), Site(UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"), Some("87"), Some("Highly Addictive Drinks Plc"), Some(LocalDate.now().plusDays(3))), Site(UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"), Some("94"), Some("Monster Bottle Ltd"), Some(LocalDate.of(2017, 9, 23))), Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"), Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23))), Site(UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"), Some("96"), Some("Star Products Ltd"), Some(LocalDate.of(2017, 2, 11)))), List(), Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"), None)
+    val aSubscription = RetrievedSubscription(
+      "0000000022",
+      "XKSDIL000000022",
+      "Super Lemonade Plc",
+      UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+      RetrievedActivity(false, true, false, false, false),
+      LocalDate.of(2018, 4, 19),
+      List(
+        Site(
+          UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+          Some("88"),
+          Some("Wild Lemonade Group"),
+          Some(LocalDate.of(2018, 2, 26))),
+        Site(
+          UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
+          Some("87"),
+          Some("Highly Addictive Drinks Plc"),
+          Some(LocalDate.now().plusDays(3))),
+        Site(
+          UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
+          Some("94"),
+          Some("Monster Bottle Ltd"),
+          Some(LocalDate.of(2017, 9, 23))),
+        Site(
+          UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
+          Some("27"),
+          Some("Super Lemonade Group"),
+          Some(LocalDate.of(2017, 4, 23))),
+        Site(
+          UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
+          Some("96"),
+          Some("Star Products Ltd"),
+          Some(LocalDate.of(2017, 2, 11)))
+      ),
+      List(),
+      Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
+      None
+    )
+    val voluntarySubscription = RetrievedSubscription(
+      "0000000022",
+      "XKSDIL000000022",
+      "Super Lemonade Plc",
+      UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+      RetrievedActivity(false, true, false, false, true),
+      LocalDate.of(2018, 4, 19),
+      List(
+        Site(
+          UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+          Some("88"),
+          Some("Wild Lemonade Group"),
+          Some(LocalDate.of(2018, 2, 26))),
+        Site(
+          UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
+          Some("87"),
+          Some("Highly Addictive Drinks Plc"),
+          Some(LocalDate.now().plusDays(3))),
+        Site(
+          UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
+          Some("94"),
+          Some("Monster Bottle Ltd"),
+          Some(LocalDate.of(2017, 9, 23))),
+        Site(
+          UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
+          Some("27"),
+          Some("Super Lemonade Group"),
+          Some(LocalDate.of(2017, 4, 23))),
+        Site(
+          UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
+          Some("96"),
+          Some("Star Products Ltd"),
+          Some(LocalDate.of(2017, 2, 11)))
+      ),
+      List(),
+      Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
+      None
+    )
 
     val variableReturns = List(ReturnPeriod(2018, 1))
     val returnPeriods = List(ReturnPeriod(2018, 1))
@@ -104,7 +178,6 @@ class VariationsControllerSpec extends ControllerSpec {
       status(output) mustBe OK
     }
 
-
     "execute the variations De-register journey" in {
       val program = controller.programInner(
         aSubscription,
@@ -150,37 +223,47 @@ class VariationsControllerSpec extends ControllerSpec {
       )
 
       val output = controllerTester.testJourney(program)(
-        "select-change" -> JsString("Returns"),
-        "select-return" -> JsString("20181"),
-        "packaging-site-details" -> JsString("Done"),
-        "production-site-details" -> JsString("Done"),
-        "secondary-warehouse-details" -> JsString("Done"),
-        "packaging-site" -> Json.obj("lower" -> 123, "higher" -> 234),
+        "select-change"                     -> JsString("Returns"),
+        "select-return"                     -> JsString("20181"),
+        "packaging-site-details"            -> JsString("Done"),
+        "production-site-details"           -> JsString("Done"),
+        "secondary-warehouse-details"       -> JsString("Done"),
+        "packaging-site"                    -> Json.obj("lower" -> 123, "higher" -> 234),
         "change-registered-account-details" -> JsNull,
-        "secondary-warehouse-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("23 Diabetes Street", "ABC"), "postCode" -> "FG45 7CD"), "tradingName" -> "Syrupshop"))),
+        "secondary-warehouse-details_data" -> JsArray(
+          List(
+            Json.obj(
+              "address"     -> Json.obj("lines" -> List("23 Diabetes Street", "ABC"), "postCode" -> "FG45 7CD"),
+              "tradingName" -> "Syrupshop"))),
         "change-registered-details" -> JsArray(List("Sites", "ContactPerson", "ContactAddress").map(JsString)),
-        "business-address" -> Json.obj("line1" -> "63 Clifton Roundabout", "line2" -> "Worcester", "line3" -> "Stillworcester", "line4" -> "Worcestershire", "postcode" -> "WR53 7CX"),
-        "amount-produced" -> JsString("Large"),
-        "contract-packing" -> Json.obj("lower" -> 2345, "higher" -> 435657),
-        "warehouse-details" -> JsString("Done"),
+        "business-address" -> Json.obj(
+          "line1"    -> "63 Clifton Roundabout",
+          "line2"    -> "Worcester",
+          "line3"    -> "Stillworcester",
+          "line4"    -> "Worcestershire",
+          "postcode" -> "WR53 7CX"),
+        "amount-produced"            -> JsString("Large"),
+        "contract-packing"           -> Json.obj("lower" -> 2345, "higher" -> 435657),
+        "warehouse-details"          -> JsString("Done"),
         "cancel-registration-reason" -> JsString("Done"),
-        "production-site-details_data" -> JsArray(List(
-          Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
-          Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
-        )),
-        "imports" -> Json.obj("lower" -> 12345, "higher" -> 34668),
-        "check-answers" -> JsString("Done"),
-        "checkyouranswers" -> JsString("Done"),
-        "own-brands-packaged-at-own-sites" -> Json.obj("lower" -> 123234, "higher" -> 2340000),
-        "packaged-as-a-contract-packer" -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
-        "_editSmallProducers" -> Json.toJson(true),
-        "exemptions-for-small-producers" -> Json.toJson(false),
-        "small-producer-details" -> JsString("Done"),
-        "brought-into-uk" -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
+        "production-site-details_data" -> JsArray(
+          List(
+            Json.obj(
+              "address"        -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
+            Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode"    -> "AB12 3CD"))
+          )),
+        "imports"                              -> Json.obj("lower" -> 12345, "higher" -> 34668),
+        "check-answers"                        -> JsString("Done"),
+        "checkyouranswers"                     -> JsString("Done"),
+        "own-brands-packaged-at-own-sites"     -> Json.obj("lower" -> 123234, "higher" -> 2340000),
+        "packaged-as-a-contract-packer"        -> Json.obj("lower" -> 1234579, "higher" -> 2345679),
+        "_editSmallProducers"                  -> Json.toJson(true),
+        "exemptions-for-small-producers"       -> Json.toJson(false),
+        "small-producer-details"               -> JsString("Done"),
+        "brought-into-uk"                      -> Json.obj("lower" -> 1234562, "higher" -> 2345672),
         "brought-into-uk-from-small-producers" -> Json.obj("lower" -> 1234, "higher" -> 2345),
-        "claim-credits-for-exports" -> Json.obj("lower" -> 6789, "higher" -> 2345),
-        "claim-credits-for-lost-damaged" -> Json.obj("lower" -> 123, "higher" -> 234)
+        "claim-credits-for-exports"            -> Json.obj("lower" -> 6789, "higher" -> 2345),
+        "claim-credits-for-lost-damaged"       -> Json.obj("lower" -> 123, "higher" -> 234)
       )
 
       returnsDataCheck(returnPeriods)
@@ -188,7 +271,6 @@ class VariationsControllerSpec extends ControllerSpec {
 
       status(output) mustBe SEE_OTHER
     }
-
 
     "execute the contact details journey" in {
       val program = controller.programInner(
@@ -255,7 +337,9 @@ class VariationsControllerSpec extends ControllerSpec {
         Future.successful(Some(aSubscription))
       }
 
-      val result = controller.adjustment(2018, 1, "idType").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+      val result = controller
+        .adjustment(2018, 1, "idType")
+        .apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
       status(result) mustEqual SEE_OTHER
 
     }
@@ -269,7 +353,8 @@ class VariationsControllerSpec extends ControllerSpec {
         Future.successful(Some(aSubscription))
       }
 
-      val result = controller.index("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+      val result =
+        controller.index("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
       status(result) mustEqual SEE_OTHER
 
     }
@@ -283,7 +368,9 @@ class VariationsControllerSpec extends ControllerSpec {
         Future.successful(Some(aSubscription))
       }
 
-      val result = controller.changeBusinessAddress("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+      val result = controller
+        .changeBusinessAddress("idvalue")
+        .apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
       status(result) mustEqual SEE_OTHER
 
     }
@@ -297,7 +384,9 @@ class VariationsControllerSpec extends ControllerSpec {
         Future.successful(None)
       }
 
-      val result = controller.changeBusinessAddress("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+      val result = controller
+        .changeBusinessAddress("idvalue")
+        .apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
       status(result) mustEqual NOT_FOUND
     }
 
@@ -309,9 +398,12 @@ class VariationsControllerSpec extends ControllerSpec {
       when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), anyString())(any())).thenReturn {
         Future.successful(Some(aSubscription))
       }
-      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any()))
+        .thenReturn(Future.successful((returnPeriods)))
 
-      val result = controller.changeActorStatus("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+      val result = controller
+        .changeActorStatus("idvalue")
+        .apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
       status(result) mustEqual SEE_OTHER
 
     }
@@ -324,90 +416,102 @@ class VariationsControllerSpec extends ControllerSpec {
       when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100108"), anyString())(any())).thenReturn {
         Future.successful(None)
       }
-      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful((returnPeriods)))
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any()))
+        .thenReturn(Future.successful((returnPeriods)))
 
-      val result = controller.changeActorStatus("idvalue").apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
+      val result = controller
+        .changeActorStatus("idvalue")
+        .apply(FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> "someValue"))
       status(result) mustEqual NOT_FOUND
     }
   }
 
-  private lazy val changeRegisteredDetailsAll: (String, JsArray) = "change-registered-details" -> JsArray(List(
-    "Sites", "ContactPerson", "ContactAddress").map(JsString)
-  )
+  private lazy val changeRegisteredDetailsAll: (String, JsArray) = "change-registered-details" -> JsArray(
+    List("Sites", "ContactPerson", "ContactAddress").map(JsString))
 
   //Deregester journey values
-  private lazy val selectChangeDeregister: (String, JsString) = "select-change" -> JsString("Deregister")
-  private lazy val cancelRegistrationReason: (String, JsString) = "cancel-registration-reason" -> JsString("Done")
-  private lazy val cancelRegistrationDate: (String, JsString) = "cancel-registration-date" -> JsString("2019-03-09")
+  private lazy val selectChangeDeregister: (String, JsString) = "select-change"                                -> JsString("Deregister")
+  private lazy val cancelRegistrationReason: (String, JsString) = "cancel-registration-reason"                 -> JsString("Done")
+  private lazy val cancelRegistrationDate: (String, JsString) = "cancel-registration-date"                     -> JsString("2019-03-09")
   private lazy val fileReturnBeforeDeregistration: (String, JsNull.type) = "file-return-before-deregistration" -> JsNull
 
-
   //Activity journey values
-  private lazy val selectChangeActivity: (String, JsString) = "select-change" -> JsString("Activity")
-  private lazy val amountProduced: (String, JsString) = "amount-produced" -> JsString("Large")
+  private lazy val selectChangeActivity: (String, JsString) = "select-change"         -> JsString("Activity")
+  private lazy val amountProduced: (String, JsString) = "amount-produced"             -> JsString("Large")
   private lazy val thirdPartyPackagers: (String, JsBoolean) = "third-party-packagers" -> JsBoolean(true)
-  private lazy val packagingSite: (String, JsObject) = "packaging-site" -> Json.obj("lower" -> 123, "higher" -> 234)
-  private lazy val contractPacking: (String, JsObject) = "contract-packing" -> Json.obj("lower" -> 2345, "higher" -> 435657)
-  private lazy val imports: (String, JsObject) = "imports" -> Json.obj("lower" -> 12345, "higher" -> 34668)
+  private lazy val packagingSite: (String, JsObject) = "packaging-site"               -> Json.obj("lower" -> 123, "higher" -> 234)
+  private lazy val contractPacking: (String, JsObject) = "contract-packing" -> Json
+    .obj("lower" -> 2345, "higher" -> 435657)
+  private lazy val imports: (String, JsObject) = "imports"                               -> Json.obj("lower" -> 12345, "higher" -> 34668)
   private lazy val productionSiteDetails: (String, JsString) = "production-site-details" -> JsString("Done")
-  private lazy val productionSiteDetailsData: (String, JsArray) = "production-site-details_data" -> JsArray(List(
-    Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
-    Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode" -> "AB12 3CD"))
-  ))
+  private lazy val productionSiteDetailsData: (String, JsArray) = "production-site-details_data" -> JsArray(
+    List(
+      Json.obj("address" -> Json.obj("lines" -> List("117 Jerusalem Courtz", "St Albans"), "postCode" -> "AL10 3UJ")),
+      Json.obj("address" -> Json.obj("lines" -> List("12 The Street", "Blahdy Corner"), "postCode"    -> "AB12 3CD"))
+    ))
   private lazy val secondaryWarehouseDetails: (String, JsString) = "secondary-warehouse-details" -> JsString("Done")
-  private lazy val secondaryWarehouseDetailsData: (String, JsArray) = "secondary-warehouse-details_data" -> JsArray(List(
-    Json.obj("address" -> Json.obj("lines" -> List("23 Diabetes Street", "ABC"), "postCode" -> "FG45 7CD"), "tradingName" -> "Syrupshop")
-  ))
+  private lazy val secondaryWarehouseDetailsData: (String, JsArray) = "secondary-warehouse-details_data" -> JsArray(
+    List(
+      Json.obj(
+        "address"     -> Json.obj("lines" -> List("23 Diabetes Street", "ABC"), "postCode" -> "FG45 7CD"),
+        "tradingName" -> "Syrupshop")
+    ))
 
   //Contact Details journey values
-  private lazy val changeRegisteredDetailsContactPerson: (String, JsArray) = "change-registered-details" -> JsArray(List(JsString("ContactPerson")))
+  private lazy val changeRegisteredDetailsContactPerson: (String, JsArray) = "change-registered-details" -> JsArray(
+    List(JsString("ContactPerson")))
   private lazy val contactDetails: (String, JsObject) = "contact-details" -> Json.obj(
-    "fullName" -> "Ava Adams",
-    "position" -> "Chief Infrastructure Agent",
+    "fullName"    -> "Ava Adams",
+    "position"    -> "Chief Infrastructure Agent",
     "phoneNumber" -> "04495 206187",
-    "email" -> "Adeline.Greene@gmail.com")
+    "email"       -> "Adeline.Greene@gmail.com")
 
   //Sites journey values
   private lazy val selectChangeSites: (String, JsString) = "select-change" -> JsString("Sites")
-  private lazy val changeRegisteredDetailsSites: (String, JsArray) = "change-registered-details" -> JsArray(List(JsString("Sites")))
+  private lazy val changeRegisteredDetailsSites: (String, JsArray) = "change-registered-details" -> JsArray(
+    List(JsString("Sites")))
   private lazy val packagingSitesDetails: (String, JsString) = "packaging-site-details" -> JsString("Done")
-  private lazy val packagingSitesDetailsData: (String, JsArray) = "packaging-site-details_data" -> JsArray(List(
-    Json.obj(
-      "address" -> Json.obj(
-        "lines" -> List("117 Jerusalem Court", "St Albansx"),
-        "postCode" -> "AL10 3UJ"
-      )
-    ),
-    Json.obj(
-      "address" -> Json.obj(
-        "lines" -> List("12 The Street", "Genericford"),
-        "postCode" -> "AB12 3CD"
-      )
-    )
-  ))
-  private lazy val warehouseDetails: (String, JsString) = "warehouse-details" -> JsString("Done")
-  private lazy val warehouseDetailsData: (String, JsArray) = "warehouse-details_data" ->
-    JsArray(List(
+  private lazy val packagingSitesDetailsData: (String, JsArray) = "packaging-site-details_data" -> JsArray(
+    List(
       Json.obj(
         "address" -> Json.obj(
-          "lines" -> List("13 Bogus Crescent", "The Hyperquadrant", "Genericford", "Madeupshire"),
-          "postCode" -> "ZX98 7YV"
-        ),
-        "tradingName" -> "Sugar Storage Ltd")
+          "lines"    -> List("117 Jerusalem Court", "St Albansx"),
+          "postCode" -> "AL10 3UJ"
+        )
+      ),
+      Json.obj(
+        "address" -> Json.obj(
+          "lines"    -> List("12 The Street", "Genericford"),
+          "postCode" -> "AB12 3CD"
+        )
+      )
     ))
+  private lazy val warehouseDetails: (String, JsString) = "warehouse-details" -> JsString("Done")
+  private lazy val warehouseDetailsData: (String, JsArray) = "warehouse-details_data" ->
+    JsArray(
+      List(
+        Json.obj(
+          "address" -> Json.obj(
+            "lines"    -> List("13 Bogus Crescent", "The Hyperquadrant", "Genericford", "Madeupshire"),
+            "postCode" -> "ZX98 7YV"
+          ),
+          "tradingName" -> "Sugar Storage Ltd"
+        )
+      ))
 
   //businessAddress journey values
-  private lazy val changeRegisteredDetailsContactAddress: (String, JsArray) = "change-registered-details" -> JsArray(List(JsString("ContactAddress")))
+  private lazy val changeRegisteredDetailsContactAddress: (String, JsArray) = "change-registered-details" -> JsArray(
+    List(JsString("ContactAddress")))
   private lazy val changeRegisteredAccountDetails: (String, JsNull.type) = "change-registered-account-details" -> JsNull
   private lazy val businessAddress: (String, JsObject) = "business-address" -> Json.obj(
-    "line1" -> "63 Clifton Roundabout",
-    "line2" -> "Worcester",
-    "line3" -> "Stillworcester",
-    "line4" -> "Worcestershire",
+    "line1"    -> "63 Clifton Roundabout",
+    "line2"    -> "Worcester",
+    "line3"    -> "Stillworcester",
+    "line4"    -> "Worcestershire",
     "postcode" -> "WR53 7CX"
   )
 
-  private lazy val checkAnswers: (String, JsString) = "check-answers" -> JsString("Done")
+  private lazy val checkAnswers: (String, JsString) = "check-answers"        -> JsString("Done")
   private lazy val checkYourAnswers: (String, JsString) = "checkyouranswers" -> JsString("Done")
 }
 

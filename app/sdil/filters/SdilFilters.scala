@@ -26,20 +26,7 @@ import uk.gov.hmrc.play.bootstrap.filters.frontend.deviceid.DeviceIdFilter
 import uk.gov.hmrc.play.bootstrap.filters.frontend.{FrontendAuditFilter, HeadersFilter, SessionTimeoutFilter}
 import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, FrontendFilters, LoggingFilter, MDCFilter}
 
-class SdilFilters(configuration: Configuration,
-                  loggingFilter: LoggingFilter,
-                  headersFilter: HeadersFilter,
-                  securityFilter: SecurityHeadersFilter,
-                  frontendAuditFilter: FrontendAuditFilter,
-                  metricsFilter: MetricsFilter,
-                  deviceIdFilter: DeviceIdFilter,
-                  csrfFilter: CSRFFilter,
-                  cookieCryptoFilter: SessionCookieCryptoFilter,
-                  sessionTimeoutFilter: SessionTimeoutFilter,
-                  cacheControlFilter: CacheControlFilter,
-                  mdcFilter: MDCFilter,
-                  variationsFilter: VariationsFilter
-                  ) extends FrontendFilters(
+class SdilFilters(
   configuration: Configuration,
   loggingFilter: LoggingFilter,
   headersFilter: HeadersFilter,
@@ -51,8 +38,22 @@ class SdilFilters(configuration: Configuration,
   cookieCryptoFilter: SessionCookieCryptoFilter,
   sessionTimeoutFilter: SessionTimeoutFilter,
   cacheControlFilter: CacheControlFilter,
-  mdcFilter: MDCFilter
-) {
+  mdcFilter: MDCFilter,
+  variationsFilter: VariationsFilter)
+    extends FrontendFilters(
+      configuration: Configuration,
+      loggingFilter: LoggingFilter,
+      headersFilter: HeadersFilter,
+      securityFilter: SecurityHeadersFilter,
+      frontendAuditFilter: FrontendAuditFilter,
+      metricsFilter: MetricsFilter,
+      deviceIdFilter: DeviceIdFilter,
+      csrfFilter: CSRFFilter,
+      cookieCryptoFilter: SessionCookieCryptoFilter,
+      sessionTimeoutFilter: SessionTimeoutFilter,
+      cacheControlFilter: CacheControlFilter,
+      mdcFilter: MDCFilter
+    ) {
   override val filters: Seq[EssentialFilter] = {
     if (enableSecurityHeaderFilter) {
       Seq(securityFilter) ++ frontendFilters :+ variationsFilter

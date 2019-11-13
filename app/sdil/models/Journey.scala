@@ -49,6 +49,6 @@ object Journey {
 
   def nextPage(page: Page, formData: RegistrationFormData)(implicit config: AppConfig): Page = {
     implicit val fd: RegistrationFormData = formData
-      pages.dropWhile(_ != page).tail.find(p => p.isVisible).getOrElse(pages.last)
-    }
+    pages.dropWhile(_ != page).tail.find(p => p.isVisible).getOrElse(pages.last)
   }
+}

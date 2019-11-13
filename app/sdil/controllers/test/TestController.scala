@@ -25,29 +25,28 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class TestController @Inject()(cache: RegistrationFormDataCache,
-                               authorisedAction: AuthorisedAction,
-                               registeredAction: RegisteredAction,
-                               mcc: MessagesControllerComponents)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
+class TestController @Inject()(
+  cache: RegistrationFormDataCache,
+  authorisedAction: AuthorisedAction,
+  registeredAction: RegisteredAction,
+  mcc: MessagesControllerComponents)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) {
 
-  def clearAllS4LEntries(): Action[AnyContent] = authorisedAction.async {
-    implicit request =>
-      cache.clear(request.internalId) map {
-        _ => Ok(s"S4L for user id ${request.internalId}-sdil-registration cleared")
-      }
+  def clearAllS4LEntries(): Action[AnyContent] = authorisedAction.async { implicit request =>
+    cache.clear(request.internalId) map { _ =>
+      Ok(s"S4L for user id ${request.internalId}-sdil-registration cleared")
+    }
   }
 
-  def clearAllS4LEntriesInternal(): Action[AnyContent] = authorisedAction.async {
-    implicit request =>
-      cache.clearInternalIdOnly(request.internalId) map {
-        _ => Ok(s"S4L for user id ${request.internalId} cleared")
-      }
+  def clearAllS4LEntriesInternal(): Action[AnyContent] = authorisedAction.async { implicit request =>
+    cache.clearInternalIdOnly(request.internalId) map { _ =>
+      Ok(s"S4L for user id ${request.internalId} cleared")
+    }
   }
 
-  def clearById(): Action[AnyContent] = registeredAction.async {
-    implicit request =>
-      cache.clearBySdilNumber(request.sdilEnrolment.value) map {
-        _ => Ok(s"S4L for user id ${request.sdilEnrolment.value} cleared")
-      }
+  def clearById(): Action[AnyContent] = registeredAction.async { implicit request =>
+    cache.clearBySdilNumber(request.sdilEnrolment.value) map { _ =>
+      Ok(s"S4L for user id ${request.sdilEnrolment.value} cleared")
+    }
   }
 }

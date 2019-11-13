@@ -21,22 +21,23 @@ import java.time.LocalDate
 import play.api.libs.json._
 import sdil.models.backend.Site
 
-case class RegistrationFormData(rosmData: RosmRegistration,
-                                utr: String,
-                                verify: Option[DetailsCorrect] = None,
-                                organisationType: Option[String] = None,
-                                producer: Option[Producer] = None,
-                                isPackagingForSelf: Option[Boolean] = None,
-                                volumeForOwnBrand: Option[Litreage] = None,
-                                packagesForOthers: Option[Boolean] = None,
-                                volumeForCustomerBrands: Option[Litreage] = None,
-                                usesCopacker: Option[Boolean] = None,
-                                isImporter: Option[Boolean] = None,
-                                importVolume: Option[Litreage] = None,
-                                startDate: Option[LocalDate] = None,
-                                productionSites: Option[Seq[Site]] = None,
-                                secondaryWarehouses: Option[Seq[Site]] = None,
-                                contactDetails: Option[ContactDetails] = None) {
+case class RegistrationFormData(
+  rosmData: RosmRegistration,
+  utr: String,
+  verify: Option[DetailsCorrect] = None,
+  organisationType: Option[String] = None,
+  producer: Option[Producer] = None,
+  isPackagingForSelf: Option[Boolean] = None,
+  volumeForOwnBrand: Option[Litreage] = None,
+  packagesForOthers: Option[Boolean] = None,
+  volumeForCustomerBrands: Option[Litreage] = None,
+  usesCopacker: Option[Boolean] = None,
+  isImporter: Option[Boolean] = None,
+  importVolume: Option[Litreage] = None,
+  startDate: Option[LocalDate] = None,
+  productionSites: Option[Seq[Site]] = None,
+  secondaryWarehouses: Option[Seq[Site]] = None,
+  contactDetails: Option[ContactDetails] = None) {
 
   /**
     * users cannot register if they are a small producer globally, do not use a copacker, and do not copack or import in the UK
@@ -53,15 +54,15 @@ case class RegistrationFormData(rosmData: RosmRegistration,
 
   lazy val isVoluntary: Boolean = {
     producer.flatMap(_.isLarge).forall(_ == false) &&
-      usesCopacker.contains(true) &&
-      isImporter.contains(false) &&
-      packagesForOthers.contains(false)
+    usesCopacker.contains(true) &&
+    isImporter.contains(false) &&
+    packagesForOthers.contains(false)
   }
-  
+
   lazy val primaryAddress: Address = {
     verify match {
       case Some(DetailsCorrect.DifferentAddress(a)) => a
-      case _ => rosmData.address
+      case _                                        => rosmData.address
     }
   }
 

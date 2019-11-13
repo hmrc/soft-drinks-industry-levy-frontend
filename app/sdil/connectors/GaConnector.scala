@@ -24,10 +24,12 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class GaConnector(http: HttpClient,
-                  environment: Environment,
-                  val runModeConfiguration: Configuration,
-                  val runMode: RunMode) extends ServicesConfig(runModeConfiguration, runMode) {
+class GaConnector(
+  http: HttpClient,
+  environment: Environment,
+  val runModeConfiguration: Configuration,
+  val runMode: RunMode)
+    extends ServicesConfig(runModeConfiguration, runMode) {
 
   implicit val dimensionWrites = Json.writes[DimensionValue]
   implicit val eventWrites = Json.writes[Event]
@@ -35,15 +37,19 @@ class GaConnector(http: HttpClient,
 
   val serviceUrl: String = s"${baseUrl("platform-analytics")}/platform-analytics/event"
 
-  def sendEvent(request: AnalyticsRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  def sendEvent(request: AnalyticsRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     http.POST(serviceUrl, request).map(_ => ()) recover {
       case e: Exception => Logger.error(s"Couldn't send analytics event $request", e)
     }
-  }
 }
 
 case class DimensionValue(index: Int, value: String)
 
-case class Event(category: String, action: String, label: String, dimensions: Seq[DimensionValue] = Nil, userId: Option[String] = None)
+case class Event(
+  category: String,
+  action: String,
+  label: String,
+  dimensions: Seq[DimensionValue] = Nil,
+  userId: Option[String] = None)
 
 case class AnalyticsRequest(gaClientId: String, events: Seq[Event])

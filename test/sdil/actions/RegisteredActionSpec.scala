@@ -34,7 +34,6 @@ import uk.gov.hmrc.auth.core._
 
 import scala.concurrent.Future
 
-
 class RegisteredActionSpec extends ControllerSpec with BeforeAndAfterEach {
 
   lazy val testAuthorisedAction: RegisteredAction = wire[RegisteredAction]
@@ -59,15 +58,12 @@ class RegisteredActionSpec extends ControllerSpec with BeforeAndAfterEach {
     LocalDate.of(2018, 4, 6),
     List(Site(UkAddress(List("1 Production Site St", "Production Site Town"), "AA11 1AA"), None, None, None)),
     List(Site(UkAddress(List("1 Warehouse Site St", "Warehouse Site Town"), "AA11 1AA"), None, None, None)),
-    Contact(
-      Some("A person"),
-      Some("A position"),
-      "1234",
-      "aa@bb.cc"),
+    Contact(Some("A person"), Some("A position"), "1234", "aa@bb.cc"),
     None
   )
 
-  val validDeregisteredRetrievedSubscription = validRetrievedSubscription.copy(deregDate = Some(LocalDate.now.plusDays(30)))
+  val validDeregisteredRetrievedSubscription =
+    validRetrievedSubscription.copy(deregDate = Some(LocalDate.now.plusDays(30)))
 
   "RegisteredAction" should {
     "redirect to /register/start when no sdil enrolments and no utr" in {
@@ -75,11 +71,12 @@ class RegisteredActionSpec extends ControllerSpec with BeforeAndAfterEach {
       val enrolments = Enrolments(Set(new Enrolment("HMRC-AS-AGENT", Seq(agentEnrolment), "Active")))
 
       when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any())) thenReturn {
-        Future.successful(enrolments)}
+        Future.successful(enrolments)
+      }
 
       when(mockSdilConnectorSPA.retrieveSubscription(matching(irCtEnrolment.value), anyString())(any())).thenReturn {
-        Future.successful(Some(validRetrievedSubscription))}
-
+        Future.successful(Some(validRetrievedSubscription))
+      }
 
       val result = testAction(fakeRequest)
 
@@ -90,10 +87,12 @@ class RegisteredActionSpec extends ControllerSpec with BeforeAndAfterEach {
       implicit val fakeRequest: FakeRequest[AnyContent] = FakeRequest()
 
       when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any())) thenReturn {
-        Future.successful(enrolments)}
+        Future.successful(enrolments)
+      }
 
       when(mockSdilConnectorSPA.retrieveSubscription(matching(irCtEnrolment.value), anyString())(any())).thenReturn {
-        Future.successful(None)}
+        Future.successful(None)
+      }
 
       val result = testAction(fakeRequest)
 
@@ -101,13 +100,14 @@ class RegisteredActionSpec extends ControllerSpec with BeforeAndAfterEach {
       redirectLocation(result).get mustBe "/soft-drinks-industry-levy/register/start" //should then redirect to auth login page
     }
 
-
     "Proceed when able to retreive subscrtion for derived UTR" in {
       implicit val fakeRequest: FakeRequest[AnyContent] = FakeRequest()
       when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any())) thenReturn {
-        Future.successful(enrolments)}
+        Future.successful(enrolments)
+      }
       when(mockSdilConnectorSPA.retrieveSubscription(matching(irCtEnrolment.value), anyString())(any())).thenReturn {
-        Future.successful(Some(validRetrievedSubscription))}
+        Future.successful(Some(validRetrievedSubscription))
+      }
 
       val result = testAction(fakeRequest)
       status(result) mustBe 200
@@ -117,10 +117,12 @@ class RegisteredActionSpec extends ControllerSpec with BeforeAndAfterEach {
       implicit val fakeRequest: FakeRequest[AnyContent] = FakeRequest()
 
       when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any())) thenReturn {
-        Future.successful(enrolments)}
+        Future.successful(enrolments)
+      }
 
       when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())) thenReturn {
-        Future.failed(MissingBearerToken())}
+        Future.failed(MissingBearerToken())
+      }
 
       val result = testAction(fakeRequest)
 
@@ -131,19 +133,21 @@ class RegisteredActionSpec extends ControllerSpec with BeforeAndAfterEach {
 
   lazy val mockSdilConnectorSPA: SoftDrinksIndustryLevyConnector = {
     val m = mock[SoftDrinksIndustryLevyConnector]
-    when(m.submit(any(),any())(any())).thenReturn(Future.successful(()))
-    when(m.retrieveSubscription(matching("XKSDIL000000033"),any())(any())).thenReturn(Future.successful(Some(validRetrievedSubscription)))
-    when(m.retrieveSubscription(matching("XKSDIL000000036"),any())(any())).thenReturn(Future.successful(Some(validDeregisteredRetrievedSubscription)))
+    when(m.submit(any(), any())(any())).thenReturn(Future.successful(()))
+    when(m.retrieveSubscription(matching("XKSDIL000000033"), any())(any()))
+      .thenReturn(Future.successful(Some(validRetrievedSubscription)))
+    when(m.retrieveSubscription(matching("XKSDIL000000036"), any())(any()))
+      .thenReturn(Future.successful(Some(validDeregisteredRetrievedSubscription)))
     when(m.returns_variable(any())(any())).thenReturn(Future.successful(returnPeriods))
     when(m.returns_vary(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_update(any(), any(), any())(any())).thenReturn(Future.successful(()))
     //when(m.returns_get(any(),any())(any())).thenReturn(Future.successful(None))
-    when(m.returns_variation(any(),any())(any())).thenReturn(Future.successful(()))
-    when(m.submitVariation(any(),any())(any())).thenReturn(Future.successful(()))
-    when(m.balanceHistory(any(),any())(any())).thenReturn(Future.successful(Nil))
-    when(m.balance(any(),any())(any())).thenReturn(Future.successful(BigDecimal(0)))
+    when(m.returns_variation(any(), any())(any())).thenReturn(Future.successful(()))
+    when(m.submitVariation(any(), any())(any())).thenReturn(Future.successful(()))
+    when(m.balanceHistory(any(), any())(any())).thenReturn(Future.successful(Nil))
+    when(m.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(0)))
     when(m.shortLiveCache) thenReturn cacheMock
-    when(cacheMock.fetchAndGetEntry[Any](any(),any())(any(),any(),any())).thenReturn(Future.successful(None))
+    when(cacheMock.fetchAndGetEntry[Any](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
     when(m.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
 
     m

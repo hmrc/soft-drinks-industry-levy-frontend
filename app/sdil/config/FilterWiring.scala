@@ -42,8 +42,8 @@ trait FilterWiring extends CommonWiring {
   val errorHandler: FrontendErrorHandler
 
   //TODO change to DefaultSessionCookieBaker when 2.6 available platform wide
-  lazy val sessionCookieBaker: SessionCookieBaker = new LegacySessionCookieBaker(httpConfiguration.session,
-    new DefaultCookieSigner(httpConfiguration.secret))
+  lazy val sessionCookieBaker: SessionCookieBaker =
+    new LegacySessionCookieBaker(httpConfiguration.session, new DefaultCookieSigner(httpConfiguration.secret))
 
   lazy val mdcFilter: MDCFilter = wire[MDCFilter]
   lazy val variationsFilter: VariationsFilter = wire[VariationsFilter]
@@ -56,7 +56,8 @@ trait FilterWiring extends CommonWiring {
   lazy val sessionTimeoutFilter: SessionTimeoutFilter = wire[SessionTimeoutFilter]
   lazy val cacheControlFilter: CacheControlFilter = wire[CacheControlFilter]
   lazy val controllerConfigs: ControllerConfigs = wireWith(ControllerConfigs.fromConfig _)
-  lazy val sessionCookieCrypto: SessionCookieCrypto = SessionCookieCrypto(new ApplicationCrypto(configuration.underlying).SessionCookieCrypto)
+  lazy val sessionCookieCrypto: SessionCookieCrypto = SessionCookieCrypto(
+    new ApplicationCrypto(configuration.underlying).SessionCookieCrypto)
   lazy val sessionTimeoutFilterConfig: SessionTimeoutFilterConfig = wireWith(SessionTimeoutFilterConfig.fromConfig _)
   lazy val cacheControlConfig: CacheControlConfig = wireWith(CacheControlConfig.fromConfig _)
   lazy val httpAuditEvent: HttpAuditEvent = wire[DefaultHttpAuditEvent]

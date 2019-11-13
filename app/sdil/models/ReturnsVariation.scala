@@ -22,8 +22,8 @@ import sdil.models.backend.{Site, UkAddress}
 case class ReturnsVariation(
   orgName: String,
   ppobAddress: UkAddress,
-  importer: (Boolean, (Long,Long)) = (false, (0,0)),
-  packer: (Boolean, (Long,Long)) = (false, (0,0)),
+  importer: (Boolean, (Long, Long)) = (false, (0, 0)),
+  packer: (Boolean, (Long, Long)) = (false, (0, 0)),
   warehouses: List[Site] = Nil,
   packingSites: List[Site] = Nil,
   phoneNumber: String,

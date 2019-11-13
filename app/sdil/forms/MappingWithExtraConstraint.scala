@@ -27,7 +27,8 @@ trait MappingWithExtraConstraint[T] extends Mapping[T] {
 
   final override def unbind(value: T): Map[String, String] = underlying.unbind(value)
 
-  final override def unbindAndValidate(value: T): (Map[String, String], Seq[FormError]) = underlying.unbindAndValidate(value)
+  final override def unbindAndValidate(value: T): (Map[String, String], Seq[FormError]) =
+    underlying.unbindAndValidate(value)
 
   //not required
   final override val key: String = ""

@@ -35,7 +35,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = testController.show()(FakeRequest())
 
       status(res) mustBe OK
-      contentAsString(res) must include (Messages("sdil.verify.heading"))
+      contentAsString(res) must include(Messages("sdil.verify.heading"))
     }
 
     "always return 303 Redirect and the pending page when submission is pending" in {
@@ -43,7 +43,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = testController.show()(FakeRequest())
 
       status(res) mustBe OK
-      contentAsString(res) must include (Messages("sdil.registration-pending.p1"))
+      contentAsString(res) must include(Messages("sdil.registration-pending.p1"))
     }
   }
 
@@ -52,7 +52,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
       val res = testController.submit()(FakeRequest())
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include (Messages("sdil.verify.heading"))
+      contentAsString(res) must include(Messages("sdil.verify.heading"))
     }
 
     "redirect to the gg sign in page if the details are incorrect" in {
@@ -65,11 +65,11 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
     "store the form data in keystore if it is valid" in {
       val request = FakeRequest().withFormUrlEncodedBody(
-        "detailsCorrect" -> "differentAddress",
-        "alternativeAddress.line1" -> "line1",
-        "alternativeAddress.line2" -> "line2",
-        "alternativeAddress.line3" -> "line3",
-        "alternativeAddress.line4" -> "line4",
+        "detailsCorrect"              -> "differentAddress",
+        "alternativeAddress.line1"    -> "line1",
+        "alternativeAddress.line2"    -> "line2",
+        "alternativeAddress.line3"    -> "line3",
+        "alternativeAddress.line4"    -> "line4",
         "alternativeAddress.postcode" -> "AA11 1AA"
       )
 
@@ -77,7 +77,8 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
       status(res) mustBe SEE_OTHER
 
-      val expectedBody = defaultFormData.copy(verify = Some(DifferentAddress(Address("line1", "line2", "line3", "line4", "AA11 1AA"))))
+      val expectedBody =
+        defaultFormData.copy(verify = Some(DifferentAddress(Address("line1", "line2", "line3", "line4", "AA11 1AA"))))
 
       verify(mockCache, times(1)).cache(matching("internal id"), matching(expectedBody))(any())
     }
