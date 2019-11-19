@@ -1266,6 +1266,7 @@ account.balance.amount.pay=You need to pay.
 account.balance.amount.credit=You are in credit.
 account.balance.amount.closed=This account is closed.
 account.balance.amount.dereg-in-credit=Your balance is {0} in credit. <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/soft-drinks-industry-levy">Call the Soft Drinks Industry Levy helpline</a> to arrange repayment.
+account.balance.pay-now = Pay now
 view.balance.history=View your transaction history
 balance.history=Transaction History
 balance.table.title=Transaction history

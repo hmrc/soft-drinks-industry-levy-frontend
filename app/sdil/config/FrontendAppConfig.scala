@@ -62,6 +62,5 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMod
   lazy val signoutUrlNoFeedback: String = s"$companyAuthFrontend$companyAuthSignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
 
-  lazy val payApiBaseUrl: String = loadConfig("payments.payApiBaseUrl")
   override val balanceAllEnabled: Boolean = getBoolean("balanceAll.enabled")
 }
