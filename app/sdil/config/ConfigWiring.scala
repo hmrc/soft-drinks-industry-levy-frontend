@@ -22,7 +22,7 @@ import uk.gov.hmrc.crypto.{ApplicationCrypto, CompositeSymmetricCrypto}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 trait ConfigWiring extends CommonWiring {
-  implicit lazy val appConfig: AppConfig = wire[FrontendAppConfig]
+  implicit lazy val appConfig: FrontendAppConfig = wire[FrontendAppConfig]
   private lazy val applicationCrypto: ApplicationCrypto = new ApplicationCrypto(configuration.underlying)
   private implicit lazy val crypto: CompositeSymmetricCrypto = applicationCrypto.JsonCrypto
   lazy val cache: RegistrationFormDataCache = wire[RegistrationFormDataCache]

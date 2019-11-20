@@ -32,7 +32,7 @@ trait CommonWiring {
   val messagesApi: MessagesApi
   val httpClient: HttpClient
   implicit val ec: ExecutionContext
-  implicit val appConfig: AppConfig
+  implicit val appConfig: FrontendAppConfig
   implicit val materializer: Materializer
   lazy val runMode: RunMode = wire[RunMode]
   lazy val mode: Mode = environment.mode

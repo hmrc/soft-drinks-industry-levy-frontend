@@ -25,18 +25,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PayApiConnector(http: HttpClient, config: ServicesConfig) {
 
-  lazy val payApiBaseUrl: String = s"${config.baseUrl("payments.payApiBaseUrl")}/pay-api"
-//  lazy val payFrontendBaseUrl: String = s"${config.baseUrl("payments.payFrontendBaseUrl")}/pay"
+  lazy val payApiBaseUrl: String = s"${config.baseUrl("pay-api")}/pay-api"
 
   def getSdilPayLink(
     spjRequest: SpjRequestBtaSdil)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[NextUrl] =
-    http
-      .POST[SpjRequestBtaSdil, NextUrl](s"$payApiBaseUrl/bta/epaye/bill/journey/start", spjRequest)
-//      .recover({
-//        case _: Exception =>
-//          NextUrl(s"$payFrontendBaseUrl/service-unavailable")
-//      })
-
+    http.POST[SpjRequestBtaSdil, NextUrl](s"$payApiBaseUrl/bta/sdil/journey/start", spjRequest)
 }
 
 final case class SpjRequestBtaSdil(
