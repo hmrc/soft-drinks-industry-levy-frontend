@@ -155,7 +155,7 @@
         <div>
             <h2 class="heading-medium">@Messages("account.balance")</h2>
 
-            <p class="bold">
+            <p @if(balance < 0){ class="bold" }>
             @if(balance == 0) {
                 @Html(Messages("account.balance.amount.zero.fullstop"))
             } else {
@@ -184,8 +184,8 @@
 
                 <a class="button button-secondary" href="@sdil.controllers.routes.PaymentController.payNow()">@Messages("account.balance.pay-now")</a>
                 <br>
+                <br>
             }
-            <br>
             <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
         </div>
         <hr class="govuk-section-break--visible">
