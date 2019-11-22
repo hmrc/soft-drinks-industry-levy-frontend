@@ -171,19 +171,20 @@
                 }
             }
             </p>
-            <p>@Messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
-
-            <div class="panel panel-border-wide">
-                <p>
-                @Html(Messages("how-to-pay.title", sdilReference))
-                </p>
-            </div>
-            <p class="font-xsmall">@Messages("balance.table.p1")</p>
 
             @if(balance < 0) {
+                <p>@Messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
+
+                <div class="panel panel-border-wide">
+                    <p>
+                    @Html(Messages("how-to-pay.title", sdilReference))
+                    </p>
+                </div>
+                <p class="font-xsmall">@Messages("balance.table.p1")</p>
+
                 <a class="button button-secondary" href="@sdil.controllers.routes.PaymentController.payNow()">@Messages("account.balance.pay-now")</a>
+                <br>
             }
-            <br>
             <br>
             <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
         </div>
