@@ -29,7 +29,10 @@ class PayApiConnector(http: HttpClient, config: ServicesConfig) {
 
   def getSdilPayLink(
     spjRequest: SpjRequestBtaSdil)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[NextUrl] =
-    http.POST[SpjRequestBtaSdil, NextUrl](s"$payApiBaseUrl/bta/sdil/journey/start", spjRequest)
+    http.POST[SpjRequestBtaSdil, NextUrl](
+      s"$payApiBaseUrl/bta/sdil/journey/start",
+      spjRequest,
+      Seq("X-Session-Id" -> headerCarrier.sessionId.get.value))
 }
 
 final case class SpjRequestBtaSdil(

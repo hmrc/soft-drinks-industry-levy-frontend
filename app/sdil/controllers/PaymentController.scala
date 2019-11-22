@@ -37,8 +37,8 @@ class PaymentController(
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   frontendAppConfig: FrontendAppConfig,
-  cc: ControllerComponents)(implicit config: AppConfig, val ec: ExecutionContext)
-    extends BackendController(cc) {
+  fcc: MessagesControllerComponents)(implicit config: AppConfig, val ec: ExecutionContext)
+    extends FrontendController(fcc) {
 
   def payNow(): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value

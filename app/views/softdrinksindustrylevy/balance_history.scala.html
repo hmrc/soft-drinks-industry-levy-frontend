@@ -33,31 +33,9 @@
     <h1 class="heading-large service-header">
         @Messages("balance.table.title")
     </h1>
-    <p>
-    @if(balance == 0) {
-        @Html(Messages("account.balance.amount.zero"))
-    } else {
-        @if(balance > 0) {
-            @printbalance("account.balance.amount.in-credit", balance)
-        } else {
-            @printbalance("account.balance.amount.need-to-pay", balance.abs)
-            @if(interest < 0) {
-               @Messages("account.balance.amount.need-to-pay.interest", format_money(interest.abs))
-            }
-        }
-    }
-    </p>
-    @if(deregDate.isEmpty && pendingDereg.isEmpty) {
-        <div class="panel panel-border-wide">
-            <p>
-                @Html(Messages("how-to-pay.title", sdilRef))
-            </p>
-        </div>
-    }
+
     @if(lineItems.nonEmpty) {
     <div class="form-group">
-        <p>@Messages("balance.table.p1")</p>
-
         <table>
             <caption class="visually-hidden">@Messages("balance.table.caption")</caption>
             <thead>
