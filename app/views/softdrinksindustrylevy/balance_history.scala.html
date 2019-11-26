@@ -21,7 +21,7 @@
 @import java.time.LocalDate
 
 @import sdil.models.backend.Subscription
-@(orgName: String, lineItems: List[(FinancialLineItem, BigDecimal)], balance: BigDecimal, sdilRef: String, deregDate: Option[LocalDate] = None, pendingDereg: Option[SdilReturn] = None, interest: BigDecimal = 0)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(orgName: String, lineItems: List[(FinancialLineItem, BigDecimal)])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("balance.history")) {
 
@@ -35,31 +35,42 @@
     </h1>
 
     @if(lineItems.nonEmpty) {
-    <div class="form-group">
-        <table>
-            <caption class="visually-hidden">@Messages("balance.table.caption")</caption>
-            <thead>
-                <tr>
-                    <th scope="col">@Messages("date.time")</th>
-                    <th scope="col">@Messages("transaction")</th>
-                    <th scope="col" class="numeric">@Messages("pound.credits")</th>
-                    <th scope="col" class="numeric">@Messages("pound.debits")</th>
-                    <th scope="col" class="numeric">@Messages("pound.balance")</th>
-                </tr>
-            </thead>
+        <div class="govuk-tabs" data-module="govuk-tabs">
+            <ul class="govuk-tabs__list">
+              @for(year <- lineItems.map(_._1.date.getYear).distinct) {
+                <li class="govuk-tabs__list-item" role="presentation">
+                    <a class="govuk-tabs__tab @if(year == lineItems.head._1.date.getYear){govuk-tabs__tab--selected}" role="tab" href="#year-tab-@year" id="tab_year-tab-@year">@year</a> @* *@
+                </li>
+              }
+            </ul>
+            @for(year <- lineItems.map(_._1.date.getYear).distinct) {
+                <section class="govuk-tabs__panel @if(year != lineItems.head._1.date.getYear){govuk-tabs__panel--hidden}" role="tabpanel" id="year-tab-@year" aria-labelledby="tab_year-tab-@year">
+                    <table>
+                        <caption class="visually-hidden">@Messages("balance.table.caption")</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">@Messages("date.time")</th>
+                                <th scope="col">@Messages("transaction")</th>
+                                <th scope="col" class="numeric">@Messages("pound.credits")</th>
+                                <th scope="col" class="numeric">@Messages("pound.debits")</th>
+                                <th scope="col" class="numeric">@Messages("pound.balance")</th>
+                            </tr>
+                        </thead>
 
-            <tbody>
-                @for((item,runningTotal) <- lineItems) {
-                <tr>
-                    <td>@{item.date.format(DateTimeFormatter.ofPattern("d MMM YYYY"))}</td>
-                    <td>@Html(Messages("item.description", item.description))</td>
-                    <td class="numeric">@if(item.amount > 0) {@{f"£${item.amount.abs}%,.2f"}} else {£0.00}</td>
-                    <td class="numeric">@if(item.amount < 0) {@{f"-£${item.amount.abs}%,.2f"}} else {£0.00}</td>
-                    <td class="numeric">@if(runningTotal < 0) {@{f"-£${runningTotal.abs}%,.2f"}} else { @if(runningTotal > 0) {@{f"£${runningTotal.abs}%,.2f"}}  else {£0.00} }</td>
-                </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                        <tbody>
+                        @for((item, runningTotal) <- lineItems.filter(lineItem => lineItem._1.date.getYear == year)) {
+                            <tr>
+                                <td>@{item.date.format(DateTimeFormatter.ofPattern("d MMM YYYY"))}</td>
+                                <td>@Html(Messages("item.description", item.description))</td>
+                                <td class="numeric">@if(item.amount > 0) {@{f"£${item.amount.abs}%,.2f"}} else {£0.00}</td>
+                                <td class="numeric">@if(item.amount < 0) {@{f"-£${item.amount.abs}%,.2f"}} else {£0.00}</td>
+                                <td class="numeric">@if(runningTotal < 0) {@{f"-£${runningTotal.abs}%,.2f"}} else { @if(runningTotal > 0) {@{f"£${runningTotal.abs}%,.2f"}}  else {£0.00} }</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </section>
+            }
+        </div>
     }
 }

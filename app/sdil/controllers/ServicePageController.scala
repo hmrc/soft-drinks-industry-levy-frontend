@@ -100,14 +100,7 @@ class ServicePageController(
                        )
       } yield {
         Ok(
-          balance_history(
-            subscription.orgName,
-            itemsWithRunningTotal,
-            total,
-            request.sdilEnrolment.value,
-            subscription.deregDate,
-            pendingDereg,
-            interest(items))
+          balance_history(subscription.orgName, itemsWithRunningTotal)
         )
       }
       ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
