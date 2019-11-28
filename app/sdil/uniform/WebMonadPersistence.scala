@@ -38,8 +38,10 @@ case class SessionCachePersistence(
       _.getOrElse(Map.empty)
     }
 
-  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
+  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit = {
     keystore.cache(journeyName, dataIn)
+    ()
+  }
 
 }
 
@@ -57,7 +59,9 @@ case class SaveForLaterPersistence(
       _.getOrElse(Map.empty)
     }
 
-  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit =
+  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit = {
     shortLiveCache.cache(userId, journeyName, dataIn)
+    ()
+  }
 
 }

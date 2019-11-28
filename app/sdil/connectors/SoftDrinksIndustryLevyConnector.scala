@@ -26,9 +26,8 @@ import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SoftDrinksIndustryLevyConnector(
   http: HttpClient,
@@ -37,7 +36,8 @@ class SoftDrinksIndustryLevyConnector(
   val runMode: RunMode,
   val shortLiveCache: ShortLivedHttpCaching,
   val sessionCache: SDILSessionCache
-) extends ServicesConfig(runModeConfiguration, runMode) {
+)(implicit ec: ExecutionContext)
+    extends ServicesConfig(runModeConfiguration, runMode) {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
 

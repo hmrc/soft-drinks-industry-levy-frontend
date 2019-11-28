@@ -43,9 +43,9 @@ import backend._
 import retrieved._
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
 import play.api.libs.json._
-import uk.gov.hmrc.auth.core.retrieve.Retrievals.allEnrolments
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.uniform.webmonad.WebMonad
 
 import scala.concurrent.Future

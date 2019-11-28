@@ -28,7 +28,7 @@ import sdil.models._
 import sdil.models.backend._
 import sdil.models.retrieved._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.http.{CoreDelete, CoreGet, CorePut, HeaderCarrier}
 

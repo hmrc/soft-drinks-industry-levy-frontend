@@ -32,7 +32,7 @@ import sdil.models.{FinancialLineItem, ReturnCharge, ReturnPeriod, SdilReturn}
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
-import uk.gov.hmrc.auth.core.retrieve.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core._
 
