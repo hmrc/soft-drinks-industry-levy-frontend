@@ -23,16 +23,15 @@ import play.twirl.api.Html
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext.fromLoggingDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class TestConnector(
   http: HttpClient,
   environment: Environment,
   ws: WSClient,
   val runModeConfiguration: Configuration,
-  val runMode: RunMode)
+  val runMode: RunMode)(implicit ec: ExecutionContext)
     extends ServicesConfig(runModeConfiguration, runMode) {
 
   lazy val testUrl: String = baseUrl("soft-drinks-industry-levy")

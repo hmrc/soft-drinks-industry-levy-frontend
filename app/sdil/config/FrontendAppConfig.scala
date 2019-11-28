@@ -37,10 +37,10 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMod
     extends ServicesConfig(runModeConfiguration, runMode) with AppConfig {
 
   private def loadConfig(key: String) =
-    runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+    runModeConfiguration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  private lazy val contactHost = runModeConfiguration.getString(s"contact-frontend.host").getOrElse("")
-  private lazy val contactFormServiceIdentifier = runModeConfiguration.getString("appName").get
+  private lazy val contactHost = runModeConfiguration.getOptional[String](s"contact-frontend.host").getOrElse("")
+  private lazy val contactFormServiceIdentifier = runModeConfiguration.get[String]("appName")
 
   override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
   override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
