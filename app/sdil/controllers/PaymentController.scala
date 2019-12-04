@@ -16,21 +16,13 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
-import cats.data.OptionT
-import cats.implicits._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.actions.RegisteredAction
 import sdil.config.{AppConfig, FrontendAppConfig}
 import sdil.connectors.{PayApiConnector, SoftDrinksIndustryLevyConnector, SpjRequestBtaSdil}
-import sdil.models._
-import uk.gov.hmrc.play.bootstrap.controller.{BackendController, FrontendController}
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
-import views.html.softdrinksindustrylevy._
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class PaymentController(
   payApiConnector: PayApiConnector,
@@ -40,50 +32,22 @@ class PaymentController(
   fcc: MessagesControllerComponents)(implicit config: AppConfig, val ec: ExecutionContext)
     extends FrontendController(fcc) {
 
+  private def balanceToPaymentPrepopulateAmount(balance: BigDecimal): Long = {
+    val balanceInPence = balance * 100
+    val amountOwed = balanceInPence * -1
+    amountOwed.toLongExact
+  }
+
   def payNow(): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     sdilConnector.balance(sdilRef, withAssessment = true).flatMap { balance =>
       val spjRequestBtaSdil = SpjRequestBtaSdil(
         sdilRef,
-        (balance * 100).toLongExact,
+        balanceToPaymentPrepopulateAmount(balance),
         frontendAppConfig.sdilHomePage,
         frontendAppConfig.sdilHomePage
       )
       payApiConnector.getSdilPayLink(spjRequestBtaSdil).map(nextUrl => Redirect(nextUrl.nextUrl))
     }
   }
-
-//    val sdilRef = request.sdilEnrolment.value
-//    val ret = for {
-//      subscription  <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
-//      returnPeriods <- OptionT.liftF(sdilConnector.returns_pending(subscription.utr))
-//      lastReturn    <- OptionT.liftF(sdilConnector.returns_get(subscription.utr, ReturnPeriod(LocalDate.now).previous))
-//      isDereg = subscription.deregDate.nonEmpty
-//      deDatePeriod = subscription.deregDate.getOrElse(LocalDate.now.plusYears(500))
-//      pendingDereg <- OptionT.liftF(
-//                       if (isDereg)
-//                         sdilConnector.returns_get(subscription.utr, ReturnPeriod(deDatePeriod))
-//                       else
-//                         Future.successful(None)
-//                     )
-//      variableReturns <- OptionT.liftF(sdilConnector.returns_variable(subscription.utr))
-//      interesting     <- OptionT(sdilConnector.balanceHistory(sdilRef, withAssessment = true).map(x => interest(x).some))
-//      balance         <- OptionT(sdilConnector.balance(sdilRef, withAssessment = true).map(_.some))
-//    } yield {
-//      val addr = Address.fromUkAddress(subscription.address)
-//      if (subscription.deregDate.nonEmpty) {
-//        Ok(deregistered_service_page(addr, subscription, lastReturn, balance, pendingDereg, variableReturns))
-//      } else {
-//        Ok(
-//          service_page(
-//            addr,
-//            request.sdilEnrolment.value,
-//            subscription,
-//            returnPeriods,
-//            lastReturn,
-//            balance,
-//            interesting))
-//      }
-//    }
-//    ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
 }
