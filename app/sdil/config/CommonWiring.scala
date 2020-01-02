@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ trait CommonWiring {
   val messagesApi: MessagesApi
   val httpClient: HttpClient
   implicit val ec: ExecutionContext
-  implicit val appConfig: FrontendAppConfig
+  implicit val appConfig: AppConfig
   implicit val materializer: Materializer
   lazy val runMode: RunMode = wire[RunMode]
   lazy val mode: Mode = environment.mode

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import uk.gov.hmrc.crypto.{ApplicationCrypto, CompositeSymmetricCrypto}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 trait ConfigWiring extends CommonWiring {
-  implicit lazy val appConfig: FrontendAppConfig = wire[FrontendAppConfig]
+  implicit lazy val appConfig: AppConfig = wire[FrontendAppConfig]
   private lazy val applicationCrypto: ApplicationCrypto = new ApplicationCrypto(configuration.underlying)
   private implicit lazy val crypto: CompositeSymmetricCrypto = applicationCrypto.JsonCrypto
   lazy val cache: RegistrationFormDataCache = wire[RegistrationFormDataCache]

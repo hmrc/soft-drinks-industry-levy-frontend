@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ class PaymentController(
   payApiConnector: PayApiConnector,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
-  frontendAppConfig: FrontendAppConfig,
   fcc: MessagesControllerComponents)(implicit config: AppConfig, val ec: ExecutionContext)
     extends FrontendController(fcc) {
 
@@ -44,8 +43,8 @@ class PaymentController(
       val spjRequestBtaSdil = SpjRequestBtaSdil(
         sdilRef,
         balanceToPaymentPrepopulateAmount(balance),
-        frontendAppConfig.sdilHomePage,
-        frontendAppConfig.sdilHomePage
+        config.sdilHomePage,
+        config.sdilHomePage
       )
       payApiConnector.getSdilPayLink(spjRequestBtaSdil).map(nextUrl => Redirect(nextUrl.nextUrl))
     }
