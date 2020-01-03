@@ -39,7 +39,7 @@ class PaymentControllerSpec extends ControllerSpec {
     "contact pay-api and get a redirect url" in {
       val testPayApiRequest = SpjRequestBtaSdil("XKSDIL000000033", 0L, testConfig.sdilHomePage, testConfig.sdilHomePage)
 
-      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+      when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(testSdilEnrolment), "Active"))))
       }
 
@@ -58,7 +58,7 @@ class PaymentControllerSpec extends ControllerSpec {
       val testPayApiRequestWithAmount =
         SpjRequestBtaSdil("XKSDIL000000033", 1000L, testConfig.sdilHomePage, testConfig.sdilHomePage)
 
-      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+      when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(testSdilEnrolment), "Active"))))
       }
 
