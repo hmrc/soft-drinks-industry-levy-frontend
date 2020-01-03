@@ -225,14 +225,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     m
   }
 
-  lazy val mockPayApiConnector: PayApiConnector = {
-    val m = mock[PayApiConnector]
-//    when(m.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
-//      Future.successful(
-//        new ~(new ~(new ~(Enrolments(Set.empty), Some(Admin)), Some("internal id")), Some(Organisation)))
-//    }
-    m
-  }
+  lazy val mockPayApiConnector: PayApiConnector = mock[PayApiConnector]
 
   lazy val mockGaConnector: GaConnector = {
     val m = mock[GaConnector]
