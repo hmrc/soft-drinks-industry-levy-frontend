@@ -48,3 +48,5 @@ GET         /uregistrations/                                   sdil.controllers.
 GET         /uregistrations/:id                                sdil.controllers.RegistrationController.index(id: String)
 POST        /uregistrations/                                   sdil.controllers.RegistrationController.index(id = "")
 POST        /uregistrations/:id                                sdil.controllers.RegistrationController.index(id: String)
+
+GET         /pay-now                                           sdil.controllers.PaymentController.payNow()

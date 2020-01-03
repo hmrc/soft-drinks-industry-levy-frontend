@@ -1256,17 +1256,19 @@ account.balance=Account balance
 account.balance.amount=Your balance is {0}
 account.balance.amount.zero=Your balance is £0
 account.balance.amount.in-credit=You are {0} in credit
-account.balance.amount.need-to-pay=You need to pay {0}
+account.balance.amount.need-to-pay=Your balance is {0}
 account.balance.amount.need-to-pay.interest=including {0} of interest
 account.balance.amount.zero.fullstop=Your balance is £0.
 account.balance.amount.in-credit.fullstop=You are {0} in credit.
-account.balance.amount.need-to-pay.fullstop=You need to pay {0}.
+account.balance.amount.need-to-pay.fullstop=Your balance is {0}.
 account.balance.amount.need-to-pay.interest.fullstop=including {0} of interest.
 account.balance.amount.pay=You need to pay.
 account.balance.amount.credit=You are in credit.
 account.balance.amount.closed=This account is closed.
 account.balance.amount.dereg-in-credit=Your balance is {0} in credit. <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/soft-drinks-industry-levy">Call the Soft Drinks Industry Levy helpline</a> to arrange repayment.
-view.balance.history=View your transaction history
+account.balance.need-to-pay-by=You need to pay by {0}.
+account.balance.pay-now=Pay now
+view.balance.history=View your balance history
 balance.history=Transaction History
 balance.table.title=Transaction history
 balance.table.p1=Your account balance may not reflect payments made in the last 3 days.
@@ -1289,9 +1291,7 @@ organisation-type.option.limitedcompany=Limited company
 heading.do-not-register=You do not need to register
 
 how-to-pay.title=Make sure you include your Soft Drinks Industry Levy reference <strong style="font-weight: bold">{0}</strong> when making payments. Find out\
-  <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">\
-  how to pay the levy (opens in a new window or tab)\
-  </a>
+  <a href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">how to pay the levy (opens in a new window or tab)</a>.
 how-to-pay.pay-by=You can pay by Bacs or CHAPS using:
 how-to-pay.sort-code=sort code: 20-05-17
 how-to-pay.acct-no=account number: 40204374

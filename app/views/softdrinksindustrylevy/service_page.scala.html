@@ -1,5 +1,5 @@
 @*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,7 +155,7 @@
         <div>
             <h2 class="heading-medium">@Messages("account.balance")</h2>
 
-            <p>
+            <p @if(balance < 0){ class="bold" }>
             @if(balance == 0) {
                 @Html(Messages("account.balance.amount.zero.fullstop"))
             } else {
@@ -172,6 +172,20 @@
             }
             </p>
 
+            @if(balance < 0) {
+                <p>@Messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
+
+                <div class="panel panel-border-wide">
+                    <p>
+                    @Html(Messages("how-to-pay.title", sdilReference))
+                    </p>
+                </div>
+                <p class="font-xsmall">@Messages("balance.table.p1")</p>
+
+                <a class="button button-secondary" href="@sdil.controllers.routes.PaymentController.payNow()">@Messages("account.balance.pay-now")</a>
+                <br>
+                <br>
+            }
             <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
         </div>
         <hr class="govuk-section-break--visible">

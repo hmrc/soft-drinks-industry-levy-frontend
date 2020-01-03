@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ trait RoutesWiring extends CommonWiring {
   val cache: RegistrationFormDataCache
   val shortLivedCaching: ShortLivedHttpCaching
   val sdilConnector: SoftDrinksIndustryLevyConnector
+  val payApiConnector: PayApiConnector
   val testConnector: TestConnector
   val gaConnector: GaConnector
   val keystore: SessionCache
@@ -49,6 +50,7 @@ trait RoutesWiring extends CommonWiring {
   lazy val registeredAction: RegisteredAction = wire[RegisteredAction]
   lazy val assets: Assets = wire[Assets]
   lazy val servicePageController: ServicePageController = wire[ServicePageController]
+  lazy val paymentController: PaymentController = wire[PaymentController]
   lazy val identifyController: IdentifyController = wire[IdentifyController]
   lazy val verifyController: VerifyController = wire[VerifyController]
   lazy val signoutController: AuthenticationController = wire[AuthenticationController]

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import play.core.DefaultWebCommands
 import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.config.{RegistrationFormDataCache, SDILApplicationLoader}
-import sdil.connectors.{GaConnector, SoftDrinksIndustryLevyConnector}
+import sdil.connectors.{GaConnector, PayApiConnector, SoftDrinksIndustryLevyConnector}
 import sdil.controllers.SdilWMController
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
@@ -224,6 +224,8 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     }
     m
   }
+
+  lazy val mockPayApiConnector: PayApiConnector = mock[PayApiConnector]
 
   lazy val mockGaConnector: GaConnector = {
     val m = mock[GaConnector]
