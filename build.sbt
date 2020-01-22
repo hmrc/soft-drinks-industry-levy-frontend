@@ -79,16 +79,16 @@ scalaVersion := "2.12.0"
 
 libraryDependencies ++= Seq(
   ws,
-  "uk.gov.hmrc"               %% "bootstrap-play-26"              % "1.1.0",
+  "uk.gov.hmrc"               %% "bootstrap-play-26"              % "1.3.0",
   "uk.gov.hmrc"               %% "domain"                         % "5.6.0-play-26",  //see if can be removed after upgrade
-  "uk.gov.hmrc"               %% "govuk-template"                 % "5.35.0-play-26",
-  "uk.gov.hmrc"               %% "play-ui"                        % "8.3.0-play-26",
+  "uk.gov.hmrc"               %% "govuk-template"                 % "5.48.0-play-26",
+  "uk.gov.hmrc"               %% "play-ui"                        % "8.7.0-play-26",
   "uk.gov.hmrc"               %% "play-partials"                  % "6.9.0-play-26",
   "com.typesafe.play"         %% "play-json"                      % "2.6.13",
   "org.scalactic"             %% "scalactic"                      % "3.0.5",
-  "uk.gov.hmrc"               %% "auth-client"                    % "2.31.0-play-26",  //check version
+  "uk.gov.hmrc"               %% "auth-client"                    % "2.32.0-play-26",  //check version
   "uk.gov.hmrc"               %% "http-caching-client"            % "9.0.0-play-26",
-  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "1.1.0-play-26",
+  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "1.2.0-play-26",
   "com.softwaremill.macwire"  %% "macros"                         % "2.3.1" % "provided",
   "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.1" % "provided",
   "com.softwaremill.macwire"  %% "util"                           % "2.3.1",
