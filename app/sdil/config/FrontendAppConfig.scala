@@ -57,8 +57,8 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMod
   lazy val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
   lazy val feedbackSurveyUrl: String = loadConfig("microservice.services.feedback-survey.url")
   lazy val signOutSdilUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath?continue=$feedbackSurveyUrl"
-  lazy val signoutRegVarUrl: String = s"$signOutSdilUrl?origin=SDIL"
-  lazy val signoutReturnsUrl: String = s"$signOutSdilUrl?origin=SDILRETURN"
+  lazy val signoutRegVarUrl: String = s"$signOutSdilUrl/SDIL"
+  lazy val signoutReturnsUrl: String = s"$signOutSdilUrl/SDILRETURN"
   lazy val signoutUrlNoFeedback: String = s"$companyAuthFrontend$companyAuthSignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
 
