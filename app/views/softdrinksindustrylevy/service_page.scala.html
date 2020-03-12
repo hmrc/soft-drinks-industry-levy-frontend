@@ -173,7 +173,9 @@
             </p>
 
             @if(balance < 0) {
-                <p>@Messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
+                @if(periodsDue.nonEmpty) {
+                  <p>@Messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
+                }
 
                 <div class="panel panel-border-wide">
                     <p>
