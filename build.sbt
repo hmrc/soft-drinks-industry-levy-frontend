@@ -145,7 +145,7 @@ scalacOptions ++= Seq(
 // ================================================================================
 // Misc
 // ================================================================================
-
+disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
 initialCommands in console := "import cats.implicits._"
 
 majorVersion := 0
