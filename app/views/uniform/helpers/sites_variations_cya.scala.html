@@ -28,7 +28,7 @@
 @if(newPackingSites.nonEmpty) {
 
     <table class="check-your-answers">
-        <caption class="heading-medium">@Messages("variations.cya.packsites.add")</caption>
+        <caption><h2>@Messages("variations.cya.packsites.add")</h2></caption>
 
         <thead>
             <tr>
@@ -81,7 +81,7 @@
 
 
     <table class="check-your-answers">
-        <caption class="heading-medium">@Messages("variations.cya.packsites.remove")</caption>
+        <caption><h2>@Messages("variations.cya.packsites.remove")</h2></caption>
         <thead>
             <tr>
                 <th class="cya-width">
@@ -131,7 +131,7 @@
 
 @if(path.contains("change-packaging-sites") && newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
     <table class="check-your-answers">
-        <caption class="heading-medium">@Messages("variations.cya.packsites.same")</caption>
+        <caption><h2>@Messages("variations.cya.packsites.same")</h2></caption>
         <tbody>
             <tr>
                 <th class="table-header-bold">
@@ -156,7 +156,7 @@
 
 @if(newWarehouseSites.nonEmpty) {
     <table class="check-your-answers">
-        <caption class="heading-medium">@Messages("variations.cya.warehouses.add")</caption>
+        <caption><h2>@Messages("variations.cya.warehouses.add")</h2></caption>
 
         <thead>
             <tr>
@@ -209,7 +209,7 @@
 
 @if(closedWarehouses.nonEmpty) {
     <table class="check-your-answers">
-        <caption class="heading-medium">@Messages("variations.cya.warehouses.remove")</caption>
+        <caption><h2>@Messages("variations.cya.warehouses.remove")</h2></caption>
         <thead>
             <tr>
                 <th class="cya-width">
@@ -263,7 +263,7 @@
 
 
     <table class="check-your-answers">
-        <caption class="heading-medium">@Messages("variations.cya.warehouses.same")</caption>
+        <caption><h2>@Messages("variations.cya.warehouses.same")</h2></caption>
         <tbody>
             <tr>
                 <th class="table-header-bold">
