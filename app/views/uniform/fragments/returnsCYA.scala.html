@@ -28,12 +28,12 @@
 <table class="check-your-answers">
 
     @if(total == 0) {
-        <caption class="heading-medium">@Messages(s"$key.balance.nil", format_money(total))</caption>
+        <caption><h2>@Messages(s"$key.balance.nil", format_money(total))</h2></caption>
     } else {
         @if(total > 0) {
-            <caption class="heading-medium">@Messages(s"$key.balance.due", format_money(total))</caption>
+            <caption><h2>@Messages(s"$key.balance.due", format_money(total))</h2></caption>
         } else {
-            <caption class="heading-medium">@Messages(s"$key.balance.credit", format_money(total.abs))</caption>
+            <caption><h2>@Messages(s"$key.balance.credit", format_money(total.abs))</h2></caption>
         }
     }
     <thead>
@@ -135,7 +135,7 @@
         @if(variation.packingSites.nonEmpty) {
 
             <table class="check-your-answers">
-                <caption class="heading-medium">@Messages("variations.cya.packsites.add")</caption>
+                <caption><h2>@Messages("variations.cya.packsites.add")</h2></caption>
 
                 <thead>
                     <tr>
@@ -176,7 +176,7 @@
 
         @if(variation.warehouses.nonEmpty) {
             <table class="check-your-answers">
-                <caption class="heading-medium">@Messages("variations.cya.warehouses.add")</caption>
+                <caption><h2>@Messages("variations.cya.warehouses.add")</h2></caption>
 
                 <thead>
                     <tr>
