@@ -38,8 +38,8 @@
         <div class="govuk-tabs" data-module="govuk-tabs">
             <ul class="govuk-tabs__list" role="tablist">
               @for(year <- lineItems.map(_._1.date.getYear).distinct) {
-                <li class="govuk-tabs__list-item">
-                    <a class="govuk-tabs__tab @if(year == lineItems.head._1.date.getYear){govuk-tabs__tab--selected}" role="tab" href="#year-tab-@year" id="tab_year-tab-@year">@year</a> @* *@
+                <li class="govuk-tabs__list-item" role="tab">
+                    <a class="govuk-tabs__tab @if(year == lineItems.head._1.date.getYear){govuk-tabs__tab--selected}" href="#year-tab-@year" id="tab_year-tab-@year">@year</a> @* *@
                 </li>
               }
             </ul>
