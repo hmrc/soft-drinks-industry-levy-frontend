@@ -15,6 +15,6 @@ GET        /soft-drinks-industry-levy/test-only/:url                            
 GET        /soft-drinks-industry-levy/test-only/get-file/:envId/:fileId            sdil.controllers.test.TestingController.getFile(envId, fileId)
 GET        /soft-drinks-industry-levy/test-only/get-last-variation/:sdilRef        sdil.controllers.test.TestingController.getVariationHtml(sdilRef)
 
-GET        /soft-drinks-industry-levy/test-only/clear-s4l                                    sdil.controllers.test.TestController.clearAllS4LEntries()
-GET        /soft-drinks-industry-levy/test-only/clear-s4l-internalOnly                       sdil.controllers.test.TestController.clearAllS4LEntriesInternal
-GET        /soft-drinks-industry-levy/test-only/clear-sdil                                   sdil.controllers.test.TestController.clearById()
+GET        /soft-drinks-industry-levy/save-later/test-only/clear-s4l               sdil.controllers.test.TestController.clearAllS4LEntries()
+GET        /soft-drinks-industry-levy/save-later/test-only/clear-s4l-internalOnly  sdil.controllers.test.TestController.clearAllS4LEntriesInternal
+GET        /soft-drinks-industry-levy/save-later/test-only/clear-sdil              sdil.controllers.test.TestController.clearById()
