@@ -49,7 +49,7 @@
         </div>
     }
     @if(messages.isDefinedAt(s"$key.lead") || extraMessages.messages.get(s"$key.lead").nonEmpty) {
-        <p class="lede">@Html(Messages.extraMessage(s"$key.lead"))</p>
+        <p tabindex="-1" class="lede">@Html(Messages.extraMessage(s"$key.lead"))</p>
     }
 
         @if(messages.isDefinedAt(s"$key.hint")) {
