@@ -45,7 +45,7 @@
         </legend>
     @for(msg <- Messages.many(s"$key.paragraph")) {
         <div class="lede">
-            <p>@Html(msg)</p>
+            <p tabindex="-1">Mohan @Html(msg)</p>
         </div>
     }
     @if(messages.isDefinedAt(s"$key.lead") || extraMessages.messages.get(s"$key.lead").nonEmpty) {
