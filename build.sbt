@@ -79,21 +79,21 @@ scalaVersion := "2.12.0"
 
 libraryDependencies ++= Seq(
   ws,
-  "uk.gov.hmrc"               %% "bootstrap-play-26"              % "1.3.0",
-  "uk.gov.hmrc"               %% "domain"                         % "5.6.0-play-26",  //see if can be removed after upgrade
-  "uk.gov.hmrc"               %% "govuk-template"                 % "5.48.0-play-26",
-  "uk.gov.hmrc"               %% "play-ui"                        % "8.7.0-play-26",
-  "uk.gov.hmrc"               %% "play-partials"                  % "6.9.0-play-26",
+  "uk.gov.hmrc"               %% "bootstrap-play-26"              % "1.7.0",
+  "uk.gov.hmrc"               %% "domain"                         % "5.8.0-play-26",  //see if can be removed after upgrade
+  "uk.gov.hmrc"               %% "govuk-template"                 % "5.54.0-play-26",
+  "uk.gov.hmrc"               %% "play-ui"                        % "8.9.0-play-26",
+  "uk.gov.hmrc"               %% "play-partials"                  % "6.10.0-play-26",
   "com.typesafe.play"         %% "play-json"                      % "2.6.14",
   "org.scalactic"             %% "scalactic"                      % "3.0.8",
-  "uk.gov.hmrc"               %% "auth-client"                    % "2.32.0-play-26",  //check version
+  "uk.gov.hmrc"               %% "auth-client"                    % "3.0.0-play-26",
   "uk.gov.hmrc"               %% "http-caching-client"            % "9.0.0-play-26",
   "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "1.2.0-play-26",
   "com.softwaremill.macwire"  %% "macros"                         % "2.3.3" % "provided",
   "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.3" % "provided",
   "com.softwaremill.macwire"  %% "util"                           % "2.3.3",
   "com.softwaremill.macwire"  %% "proxy"                          % "2.3.3",
-  "org.typelevel"             %% "cats-core"                      % "1.6.1",  //Upgrade later to 1.6.0
+  "org.typelevel"             %% "cats-core"                      % "1.6.1",
   "uk.gov.hmrc"               %% "uniform"                        % "0.1.9" exclude("com.typesafe.play", "play-logback")  //maybe later
 )
 
