@@ -1067,11 +1067,11 @@ heading.add-small-producer-details=Enter the registered small producer’s detai
 heading.first-small-producer-details=Enter the registered small producer’s details
 add-small-producer-details.help.header=What are the bands?
 first-small-producer-details.help.header=What are the bands?
-add-small-producer-details.help=<p>The low band applies where the liable drink contains at least 5 grams of sugar per \
-  100 millilitres.</p><p>The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
+add-small-producer-details.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per \
+  100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
   millilitres.</p>
-first-small-producer-details.help=<p>The low band applies where the liable drink contains at least 5 grams of sugar per \
-  100 millilitres.</p><p>The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
+first-small-producer-details.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per \
+  100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
   millilitres.</p>
 small-producer-details.name=Name: {0}
 small-producer-details.refNumber=Reference number: {0}
