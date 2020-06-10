@@ -177,9 +177,9 @@
                   <p>@Messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
                 }
 
-            @manage_direct_debit_section(hasExistingDD)
+                @manage_direct_debit_section(hasExistingDD)
 
-            <div class="panel panel-border-wide">
+                <div class="panel panel-border-wide">
                     <p>
                     @Html(Messages("how-to-pay.title", sdilReference))
                     </p>

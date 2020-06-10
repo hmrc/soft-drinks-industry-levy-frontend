@@ -25,7 +25,7 @@
     @if(hasExistingDD){
         <p>@Messages("direct-debit.manage.section.existing.p1")</p>
 
-        <a href="@startDdJourneyLink">@Messages("direct-debit.manage.section.existing.l1")</a>
+        <p><a href="@startDdJourneyLink">@Messages("direct-debit.manage.section.existing.l1")</a></p>
     }else{
         <p>@Html(Messages("direct-debit.manage.section.setup.p1", startDdJourneyLink.url))</p>
     }
