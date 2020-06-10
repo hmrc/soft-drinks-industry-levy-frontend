@@ -57,7 +57,7 @@ class ServicePageController(
       variableReturns <- OptionT.liftF(sdilConnector.returns_variable(subscription.utr))
       interesting     <- OptionT(sdilConnector.balanceHistory(sdilRef, withAssessment = true).map(x => interest(x).some))
       balance         <- OptionT(sdilConnector.balance(sdilRef, withAssessment = true).map(_.some))
-      hasExistingDD   = true
+      hasExistingDD   <- OptionT.liftF(sdilConnector.checkDirectDebitStatus(sdilRef))
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
       if (subscription.deregDate.nonEmpty) {
