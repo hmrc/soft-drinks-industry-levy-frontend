@@ -50,3 +50,4 @@ POST        /uregistrations/                                   sdil.controllers.
 POST        /uregistrations/:id                                sdil.controllers.RegistrationController.index(id: String)
 
 GET         /pay-now                                           sdil.controllers.PaymentController.payNow()
+GET         /start-direct-debit-journey                        sdil.controllers.DirectDebitController.startDirectDebitJourney()
