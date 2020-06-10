@@ -57,6 +57,7 @@ class ServicePageController(
       variableReturns <- OptionT.liftF(sdilConnector.returns_variable(subscription.utr))
       interesting     <- OptionT(sdilConnector.balanceHistory(sdilRef, withAssessment = true).map(x => interest(x).some))
       balance         <- OptionT(sdilConnector.balance(sdilRef, withAssessment = true).map(_.some))
+      hasExistingDD   = true
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
       if (subscription.deregDate.nonEmpty) {
@@ -70,7 +71,9 @@ class ServicePageController(
             returnPeriods,
             lastReturn,
             balance,
-            interesting))
+            interesting,
+            hasExistingDD
+          ))
       }
     }
     ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }

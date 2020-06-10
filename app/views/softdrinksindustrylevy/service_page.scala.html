@@ -29,7 +29,7 @@
 @import sdil.models.ReturnPeriod
 @import sdil.models.SdilReturn
 
-@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, interest: BigDecimal = 0)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, interest: BigDecimal = 0, hasExistingDD: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.service-page.title"), noArticle = true) {
     <div class="grid-row">
@@ -176,6 +176,8 @@
                 @if(periodsDue.nonEmpty) {
                   <p>@Messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
                 }
+
+            @manage_direct_debit_section(hasExistingDD)
 
                 <div class="panel panel-border-wide">
                     <p>
