@@ -179,7 +179,7 @@
 
             @manage_direct_debit_section(hasExistingDD)
 
-                <div class="panel panel-border-wide">
+            <div class="panel panel-border-wide">
                     <p>
                     @Html(Messages("how-to-pay.title", sdilReference))
                     </p>
@@ -189,6 +189,8 @@
                 <a class="button button-secondary" href="@sdil.controllers.routes.PaymentController.payNow()">@Messages("account.balance.pay-now")</a>
                 <br>
                 <br>
+            } else {
+                @manage_direct_debit_section(hasExistingDD)
             }
             <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
         </div>
