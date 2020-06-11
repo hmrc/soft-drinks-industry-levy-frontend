@@ -30,12 +30,12 @@ class DirectDebitController(
   registeredAction: RegisteredAction,
   fcc: MessagesControllerComponents)(implicit config: AppConfig, val ec: ExecutionContext)
     extends FrontendController(fcc) {
+
   def startDirectDebitJourney(): Action[AnyContent] = registeredAction.async { implicit request =>
     val startRequest = StartSdilReturnFromSdilFrontend(
       returnUrl = config.sdilHomePage,
       backUrl = config.sdilHomePage
     )
-
     ddConnector.getSdilDirectDebitLink(startRequest).map(nextUrl => Redirect(nextUrl.nextUrl))
   }
 }

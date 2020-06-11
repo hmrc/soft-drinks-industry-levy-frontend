@@ -34,7 +34,7 @@ import play.core.DefaultWebCommands
 import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.config.{RegistrationFormDataCache, SDILApplicationLoader}
-import sdil.connectors.{GaConnector, PayApiConnector, SoftDrinksIndustryLevyConnector}
+import sdil.connectors.{DirectDebitBackendConnector, GaConnector, PayApiConnector, SoftDrinksIndustryLevyConnector}
 import sdil.controllers.SdilWMController
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
@@ -226,6 +226,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
   }
 
   lazy val mockPayApiConnector: PayApiConnector = mock[PayApiConnector]
+  lazy val mockDirectDebitBackendConnector: DirectDebitBackendConnector = mock[DirectDebitBackendConnector]
 
   lazy val mockGaConnector: GaConnector = {
     val m = mock[GaConnector]
