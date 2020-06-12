@@ -239,37 +239,37 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
     "show setup direct debit content when they do not have an existing direct debit and when their balance is < 0" in
       new SetupDirectDebitStubs(hasExistingDirectDebit = false, balance = -1) {
-      val result = testController.show.apply(request)
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
-      contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.p1"))
-    }
+        val result = testController.show.apply(request)
+        status(result) mustBe OK
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.p1"))
+      }
 
     "show setup direct debit content when they do not have an existing direct debit and when their balance is >= 0" in
       new SetupDirectDebitStubs(hasExistingDirectDebit = false, balance = 1) {
-      val result = testController.show.apply(request)
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
-      contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.p1"))
-    }
+        val result = testController.show.apply(request)
+        status(result) mustBe OK
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.p1"))
+      }
 
     "show existing direct debit content when they have an existing direct debit and when their balance is < 0" in
       new SetupDirectDebitStubs(hasExistingDirectDebit = true, balance = -1) {
-      val result = testController.show.apply(request)
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
-      contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.p1"))
-      contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.l1"))
-    }
+        val result = testController.show.apply(request)
+        status(result) mustBe OK
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.p1"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.l1"))
+      }
 
     "show existing direct debit content when they have an existing direct debit and when their balance is >= 0" in
       new SetupDirectDebitStubs(hasExistingDirectDebit = true, balance = 1) {
-      val result = testController.show.apply(request)
-      status(result) mustBe OK
-      contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
-      contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.p1"))
-      contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.l1"))
-    }
+        val result = testController.show.apply(request)
+        status(result) mustBe OK
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.p1"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.l1"))
+      }
 
     class SetupDirectDebitStubs(hasExistingDirectDebit: Boolean, balance: BigDecimal) {
       val sdilRef = "XKSDIL000000040"

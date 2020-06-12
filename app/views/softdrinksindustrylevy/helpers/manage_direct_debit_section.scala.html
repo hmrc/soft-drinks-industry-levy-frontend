@@ -16,17 +16,22 @@
 
 @import views.html.softdrinksindustrylevy.helpers._
 
-@(hasExistingDD:Boolean)(implicit messages: Messages)
+@(optHasExistingDD:Option[Boolean])(implicit messages: Messages)
 
 @startDdJourneyLink = @{ sdil.controllers.routes.DirectDebitController.startDirectDebitJourney() }
 
+@optHasExistingDD.map{ hasExistingDD =>
 <div>
-    <h3>@Messages("direct-debit.manage.section.header")</h3>
     @if(hasExistingDD){
+        <h3>@Messages("direct-debit.manage.section.existing.header")</h3>
+
         <p>@Messages("direct-debit.manage.section.existing.p1")</p>
 
         <p><a href="@startDdJourneyLink">@Messages("direct-debit.manage.section.existing.l1")</a></p>
     }else{
+        <h3>@Messages("direct-debit.manage.section.setup.header")</h3>
+
         <p>@Html(Messages("direct-debit.manage.section.setup.p1", startDdJourneyLink.url))</p>
     }
 </div>
+}
