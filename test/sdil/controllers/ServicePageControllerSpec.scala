@@ -241,7 +241,7 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       new SetupDirectDebitStubs(hasExistingDirectDebit = false, balance = -1) {
         val result = testController.show.apply(request)
         status(result) mustBe OK
-        contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.header"))
         contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.p1"))
       }
 
@@ -249,7 +249,7 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       new SetupDirectDebitStubs(hasExistingDirectDebit = false, balance = 1) {
         val result = testController.show.apply(request)
         status(result) mustBe OK
-        contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.header"))
         contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.p1"))
       }
 
@@ -257,7 +257,7 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       new SetupDirectDebitStubs(hasExistingDirectDebit = true, balance = -1) {
         val result = testController.show.apply(request)
         status(result) mustBe OK
-        contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.header"))
         contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.p1"))
         contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.l1"))
       }
@@ -266,7 +266,7 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       new SetupDirectDebitStubs(hasExistingDirectDebit = true, balance = 1) {
         val result = testController.show.apply(request)
         status(result) mustBe OK
-        contentAsString(result) must include(messagesApi("direct-debit.manage.section.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.header"))
         contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.p1"))
         contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.l1"))
       }
