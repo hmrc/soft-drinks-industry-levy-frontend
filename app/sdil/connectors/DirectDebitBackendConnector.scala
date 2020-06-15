@@ -30,7 +30,7 @@ class DirectDebitBackendConnector(http: HttpClient, config: ServicesConfig)(impl
   def getSdilDirectDebitLink(request: StartSdilReturnFromSdilFrontend)(
     implicit headerCarrier: HeaderCarrier): Future[DirectDebitNextUrl] =
     http.POST[StartSdilReturnFromSdilFrontend, DirectDebitNextUrl](
-      s"$directDebitBaseUrl/zsdl/journey/start",
+      s"$directDebitBaseUrl/sdil-frontend/zsdl/journey/start",
       request
     )
 }
