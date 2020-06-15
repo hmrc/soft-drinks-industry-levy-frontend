@@ -21,7 +21,7 @@ import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.connectors.{DirectDebitNextUrl, NextUrl, SpjRequestBtaSdil, StartSdilReturnFromSdilFrontend}
+import sdil.connectors.{DirectDebitNextUrl, StartSdilReturnFromSdilFrontend}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
 import scala.concurrent.Future
