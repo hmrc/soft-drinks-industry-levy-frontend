@@ -1274,6 +1274,13 @@ balance.table.title=Transaction history
 balance.table.p1=Your account balance may not reflect payments made in the last 3 days.
 balance.table.caption=Transaction history and description of credits and debits
 
+#Direct Debit manage section
+direct-debit.manage.section.setup.header = Pay by Direct Debit
+direct-debit.manage.section.existing.header = How you pay the levy
+direct-debit.manage.section.setup.p1 = You can <a href="{0}"> set up a Direct Debit</a> to pay the Soft Drinks Industry Levy. You need to do this at least 3 working days before your return and payment due date.
+direct-debit.manage.section.existing.p1 = You have set up a Direct Debit to pay the levy. It will not collect any interest and penalties you owe.
+direct-debit.manage.section.existing.l1 = Change or cancel your Direct Debit and view your next payment collection date
+
 date.time=Date
 transaction=Transaction
 pound.credits=Credits

@@ -40,6 +40,7 @@ trait RoutesWiring extends CommonWiring {
   val shortLivedCaching: ShortLivedHttpCaching
   val sdilConnector: SoftDrinksIndustryLevyConnector
   val payApiConnector: PayApiConnector
+  val directDebitBackendConnector: DirectDebitBackendConnector
   val testConnector: TestConnector
   val gaConnector: GaConnector
   val keystore: SessionCache
@@ -51,6 +52,7 @@ trait RoutesWiring extends CommonWiring {
   lazy val assets: Assets = wire[Assets]
   lazy val servicePageController: ServicePageController = wire[ServicePageController]
   lazy val paymentController: PaymentController = wire[PaymentController]
+  lazy val directDebitController: DirectDebitController = wire[DirectDebitController]
   lazy val identifyController: IdentifyController = wire[IdentifyController]
   lazy val verifyController: VerifyController = wire[VerifyController]
   lazy val signoutController: AuthenticationController = wire[AuthenticationController]

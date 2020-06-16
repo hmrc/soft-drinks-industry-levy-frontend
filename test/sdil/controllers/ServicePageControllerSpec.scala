@@ -236,6 +236,57 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
 
       status(result) mustBe OK
     }
+
+    "show setup direct debit content when they do not have an existing direct debit and when their balance is < 0" in
+      new SetupDirectDebitStubs(hasExistingDirectDebit = false, balance = -1) {
+        val result = testController.show.apply(request)
+        status(result) mustBe OK
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.p1"))
+      }
+
+    "show setup direct debit content when they do not have an existing direct debit and when their balance is >= 0" in
+      new SetupDirectDebitStubs(hasExistingDirectDebit = false, balance = 1) {
+        val result = testController.show.apply(request)
+        status(result) mustBe OK
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.setup.p1"))
+      }
+
+    "show existing direct debit content when they have an existing direct debit and when their balance is < 0" in
+      new SetupDirectDebitStubs(hasExistingDirectDebit = true, balance = -1) {
+        val result = testController.show.apply(request)
+        status(result) mustBe OK
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.p1"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.l1"))
+      }
+
+    "show existing direct debit content when they have an existing direct debit and when their balance is >= 0" in
+      new SetupDirectDebitStubs(hasExistingDirectDebit = true, balance = 1) {
+        val result = testController.show.apply(request)
+        status(result) mustBe OK
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.header"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.p1"))
+        contentAsString(result) must include(messagesApi("direct-debit.manage.section.existing.l1"))
+      }
+
+    class SetupDirectDebitStubs(hasExistingDirectDebit: Boolean, balance: BigDecimal) {
+      val sdilRef = "XKSDIL000000040"
+      val retrievedSubscription = validRetrievedSubscription.copy(sdilRef = sdilRef)
+
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", sdilRef)
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+      when(mockSdilConnectorSPA.retrieveSubscription(matching(sdilRef), any())(any()))
+        .thenReturn(Future.successful(Some(retrievedSubscription)))
+      when(mockSdilConnectorSPA.checkDirectDebitStatus(matching(sdilRef))(any()))
+        .thenReturn(Future.successful(hasExistingDirectDebit))
+      when(mockSdilConnectorSPA.balance(any(), any())(any())).thenReturn(Future.successful(balance))
+
+      val request = FakeRequest().withFormUrlEncodedBody("sdilEnrolment" -> sdilRef, "utr" -> "0000000033")
+    }
   }
 
   val validRetrievedSubscription = RetrievedSubscription(
@@ -280,6 +331,10 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
       .thenReturn(Future.successful(Some(validRetrievedSubscription)))
     when(m.retrieveSubscription(matching("XKSDIL000000036"), any())(any()))
       .thenReturn(Future.successful(Some(validDeregisteredRetrievedSubscription)))
+    when(m.checkDirectDebitStatus(matching("XKSDIL000000033"))(any()))
+      .thenReturn(Future.successful(false))
+    when(m.checkDirectDebitStatus(matching("XKSDIL000000036"))(any()))
+      .thenReturn(Future.successful(false))
     when(m.returns_variable(any())(any())).thenReturn(Future.successful(returnPeriods))
     when(m.returns_vary(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_update(any(), any(), any())(any())).thenReturn(Future.successful(()))

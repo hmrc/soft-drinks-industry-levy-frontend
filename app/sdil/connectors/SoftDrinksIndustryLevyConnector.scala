@@ -16,6 +16,7 @@
 
 package sdil.connectors
 
+import play.api.libs.json.JsObject
 import play.api.{Configuration, Environment}
 import sdil.config.SDILSessionCache
 import sdil.models._
@@ -53,6 +54,11 @@ class SoftDrinksIndustryLevyConnector(
   def checkPendingQueue(utr: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](s"$sdilUrl/check-enrolment-status/$utr") recover {
       case _: NotFoundException => HttpResponse(404)
+    }
+
+  def checkDirectDebitStatus(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    http.GET[JsObject](s"$sdilUrl/check-direct-debit-status/$sdilRef").map { result =>
+      result.value("directDebitMandateFound").as[Boolean]
     }
 
   def retrieveSubscription(sdilNumber: String, identifierType: String = "sdil")(

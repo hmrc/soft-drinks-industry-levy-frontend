@@ -31,6 +31,7 @@ trait AppConfig {
   val sdilHomePage: String
   val appName: String
   val balanceAllEnabled: Boolean
+  val directDebitEnabled: Boolean
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMode, environment: Environment)
@@ -63,4 +64,6 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMod
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
 
   override val balanceAllEnabled: Boolean = getBoolean("balanceAll.enabled")
+
+  override val directDebitEnabled: Boolean = getBoolean("directDebit.enabled")
 }
