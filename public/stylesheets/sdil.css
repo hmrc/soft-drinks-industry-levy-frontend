@@ -1,11 +1,11 @@
 .button-secondary {
-    background-color: #dee0e2;
+    background-color: #f3f2f1;
     box-shadow: #0b0c0c;
     color: #0b0c0c !important;
 }
 
 .button-secondary:visited {
-    background-color: #dee0e2;
+    background-color: #f3f2f1;
     color: #0b0c0c;
 }
 
@@ -31,7 +31,7 @@
     display: inline;
     background: none;
     border: none;
-    color: #005ea5;
+    color: #1d70b8;
     text-decoration: underline;
     cursor: pointer;
     -webkit-box-shadow: none;
@@ -179,7 +179,7 @@ html .font-xsmall {
     border: none;
     box-shadow: none;
     -webkit-box-shadow: none;
-    color: #005ea5;
+    color: #1d70b8;
     text-decoration: underline;
     cursor: pointer;
     outline: 0;
@@ -193,8 +193,8 @@ html .font-xsmall {
 }
 
 .link-button:focus {
-    outline: 3px solid #ffbf47;
-    background-color: #ffbf47;
+    outline: 3px solid #ffdd00;
+    background-color: #ffdd00;
     outline-offset: 0;
 }
 
@@ -400,7 +400,7 @@ details .address.progressive-reveal {
 .govuk-details__summary {
     display: inline-block;
     position: relative;
-    color: #005ea5;
+    color: #1d70b8;
     cursor: pointer;
 }
 
@@ -589,13 +589,13 @@ details .address.progressive-reveal {
 }
 
 .govuk-tabs__tab:focus {
-    outline: 3px solid #ffbf47;
+    outline: 3px solid #ffdd00;
     outline-offset: 0;
-    background-color: #ffbf47;
+    background-color: #ffdd00;
 }
 
 .govuk-tabs__tab:link {
-    color: #005ea5;
+    color: #1d70b8;
 }
 
 .govuk-tabs__tab:visited {
