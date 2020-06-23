@@ -193,9 +193,12 @@ html .font-xsmall {
 }
 
 .link-button:focus {
-    outline: 3px solid #ffdd00;
-    background-color: #ffdd00;
-    outline-offset: 0;
+    outline: 3px solid transparent;
+    color: #0b0c0c;
+    background-color: #fd0;
+    -webkit-box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+    box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+    text-decoration: none;
 }
 
 .cya-change {
