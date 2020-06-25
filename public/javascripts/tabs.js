@@ -46,13 +46,14 @@
 
   function jsTabs() {
     var tabs = d.querySelectorAll('.govuk-tabs')
-    var tabSelectedClass = 'govuk-tabs__tab--selected'
+    var tabSelectedClass = 'govuk-tabs__list-item--selected'
     var panelHiddenClass = 'govuk-tabs__panel--hidden'
 
     Array.prototype.forEach.call(tabs, function (tabsEl, i) {
       
       var tabLinks = tabsEl.querySelectorAll('.govuk-tabs__tab')
       var tabPanels = tabsEl.querySelectorAll('.govuk-tabs__panel')
+      var tabList = tabsEl.querySelectorAll('.govuk-tabs__list-item')
 
       Array.prototype.forEach.call(tabLinks, function (tabLink) {
         
@@ -64,18 +65,36 @@
 
       })
 
+        Array.prototype.forEach.call(tabList, function (tabListItem) {
+
+            //setup event listener for tabs
+            tabListItem.addEventListener('click', function(event) {
+                event.preventDefault()
+                tabListClick(this)
+            })
+
+        })
+
+        function tabListClick(tab) {
+            //remove all tabSelectedClass from all tabs
+            Array.prototype.forEach.call(tabList, function (tabListItem) {
+                removeClass(tabListItem, tabSelectedClass)
+            })
+
+            //add selected class to the selected tab
+            addClass(tab, tabSelectedClass)
+        }
+
       function tabClick(tab) {
         
         //remove all tabSelectedClass from all tabs
         //change aria-selected to false for all tabs
         Array.prototype.forEach.call(tabLinks, function (tabLink) {
-          removeClass(tabLink, tabSelectedClass)
           tabLink.setAttribute('aria-selected', 'false')
         })
-        
-        //add selected class to the selected tab
+
         //change aria-selected to true for the selected tab
-        addClass(tab, tabSelectedClass)
+
         tab.setAttribute('aria-selected', 'true')
 
         //hide all the panels
