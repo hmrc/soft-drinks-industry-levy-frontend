@@ -466,6 +466,13 @@ details .address.progressive-reveal {
 
 @media (min-width: 40.0625em) {
     .govuk-tabs {
+        font-size: 19px;
+        line-height: 1.31579;
+    }
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-tabs {
         margin-top:5px
     }
 }
@@ -475,11 +482,11 @@ details .address.progressive-reveal {
     }
 }
 .govuk-tabs__title {
-    font-family:"GDS Transport",Arial,sans-serif;
+    font-family:"nta",Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
-    font-weight:400;font-size:16px;
-    font-size:1rem;
+    font-weight:400;
+    font-size:19px;
     line-height:1.25;
     color:#0b0c0c;
     margin-bottom:10px
@@ -492,7 +499,6 @@ details .address.progressive-reveal {
 @media (min-width: 40.0625em) {
     .govuk-tabs__title {
         font-size:19px;
-        font-size:1.1875rem;
         line-height:1.31579
     }
 }
@@ -520,12 +526,11 @@ details .address.progressive-reveal {
     }
 }
 .govuk-tabs__list-item {
-    font-family:"GDS Transport",Arial,sans-serif;
+    font-family:"nta",Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
     font-weight:400;
-    font-size:16px;
-    font-size:1rem;
+    font-size:19px;
     line-height:1.25;
     margin-left:25px
 }
@@ -534,13 +539,7 @@ details .address.progressive-reveal {
         font-family:sans-serif
     }
 }
-@media (min-width: 40.0625em) {
-    .govuk-tabs__list-item {
-        font-size:19px;
-        font-size:1.1875rem;
-        line-height:1.31579
-    }
-}
+
 @media print {
     .govuk-tabs__list-item {
         font-size:14pt;
@@ -548,11 +547,11 @@ details .address.progressive-reveal {
     }
 }
 .govuk-tabs__list-item::before {
-    color:#0b0c0c;
-    content:"\2014 ";
-    margin-left:-25px;
-    padding-right:5px
+    content: "— ";
+    margin-left: -25px;
+    padding-right: 5px;
 }
+
 @media print {
     .govuk-tabs__list-item::before {
         color:#000
