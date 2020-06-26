@@ -186,7 +186,7 @@
                 </div>
                 <p class="font-xsmall">@Messages("balance.table.p1")</p>
 
-                <a class="button button-secondary" href="@sdil.controllers.routes.PaymentController.payNow()">@Messages("account.balance.pay-now")</a>
+                <a class="button--secondary" href="@sdil.controllers.routes.PaymentController.payNow()">@Messages("account.balance.pay-now")</a>
                 <br>
                 <br>
             } else {
@@ -254,15 +254,15 @@
         <div class="section--blue-top">
             <h2 class="heading-small">@Messages("sdil.service-page.support.title2")</h2>
 
-            <a href='@Messages("sdil.service-page.support.link1")' target="_blank"
+            <p><a href='@Messages("sdil.service-page.support.link1")' target="_blank"
             onclick="ga('send', 'event', 'moreLinks', 'click', 'guidance')">
-                <p>@Messages("sdil.service-page.support.p3")</p>
-            </a>
+                @Messages("sdil.service-page.support.p3")
+            </a></p>
 
-            <a href='@Messages("sdil.service-page.support.link2")' target="_blank"
+            <p><a href='@Messages("sdil.service-page.support.link2")' target="_blank"
             onclick="ga('send', 'event', 'moreLinks', 'click', 'legislation')">
-                <p>@Messages("sdil.service-page.support.p4")</p>
-            </a>
+                @Messages("sdil.service-page.support.p4")
+            </a></p>
 
             <span>@Messages("sdil.service-page.support.p5")</span>
             <span>@Messages("sdil.service-page.support.p6")</span>

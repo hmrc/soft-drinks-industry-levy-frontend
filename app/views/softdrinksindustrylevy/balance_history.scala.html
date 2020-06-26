@@ -23,7 +23,7 @@
 @import sdil.models.backend.Subscription
 @(orgName: String, lineItems: List[(FinancialLineItem, BigDecimal)])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("balance.history")) {
+@main_template(Messages("balance.history"), noArticle = true) {
 
     <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
 
@@ -38,8 +38,8 @@
         <div class="govuk-tabs" data-module="govuk-tabs">
             <ul class="govuk-tabs__list" role="tablist">
               @for(year <- lineItems.map(_._1.date.getYear).distinct) {
-                <li class="govuk-tabs__list-item" role="tab">
-                    <a class="govuk-tabs__tab @if(year == lineItems.head._1.date.getYear){govuk-tabs__tab--selected}" href="#year-tab-@year" id="tab_year-tab-@year">@year</a> @* *@
+                <li class="govuk-tabs__list-item  @if(year == lineItems.head._1.date.getYear){govuk-tabs__list-item--selected}" role="tab">
+                    <a class="govuk-tabs__tab" href="#year-tab-@year" id="tab_year-tab-@year">@year</a>
                 </li>
               }
             </ul>

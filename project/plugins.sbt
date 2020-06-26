@@ -23,3 +23,5 @@ libraryDependencies += "io.monix" %% "monix" % "2.3.0" pomOnly()
 addSbtPlugin("com.typesafe.sbt" % "sbt-uglify" % "2.0.0")
 
 addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.16")
+
+addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.4.13")
