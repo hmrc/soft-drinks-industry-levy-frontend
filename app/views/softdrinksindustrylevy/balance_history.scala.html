@@ -23,7 +23,7 @@
 @import sdil.models.backend.Subscription
 @(orgName: String, lineItems: List[(FinancialLineItem, BigDecimal)])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("balance.history")) {
+@main_template(Messages("balance.history"), noArticle = true) {
 
     <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
 
