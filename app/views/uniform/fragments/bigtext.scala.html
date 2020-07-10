@@ -35,7 +35,5 @@
     <textarea class="form-control form-control-3-4 @if(form.hasErrors) {form-control-error}"
     id="@key"
     name="@key"
-    rows="5">
-        @{form(key).value.getOrElse("")}
-    </textarea>
+    rows="5">@{form(key).value.getOrElse("")}</textarea>
 </div>
