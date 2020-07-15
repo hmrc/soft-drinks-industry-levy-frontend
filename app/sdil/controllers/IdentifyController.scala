@@ -30,7 +30,7 @@ import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
 import sdil.models.{Address, Identification, RegistrationFormData}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.softdrinksindustrylevy.register
+import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,13 +39,14 @@ class IdentifyController(
   mcc: MessagesControllerComponents,
   cache: RegistrationFormDataCache,
   authorisedAction: AuthorisedAction,
-  softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector)(implicit config: AppConfig, ec: ExecutionContext)
+  softDrinksIndustryLevyConnector: SoftDrinksIndustryLevyConnector,
+  views: Views)(implicit config: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   import IdentifyController.form
 
   def show = authorisedAction { implicit request =>
-    Ok(register.identify(form))
+    Ok(views.identify(form))
   }
 
   def start = authorisedAction.async { implicit request =>
@@ -73,14 +74,14 @@ class IdentifyController(
     form
       .bindFromRequest()
       .fold(
-        errors => BadRequest(register.identify(errors)),
+        errors => BadRequest(views.identify(errors)),
         identification =>
           softDrinksIndustryLevyConnector.getRosmRegistration(identification.utr) flatMap {
             case Some(reg) if postcodesMatch(reg.address, identification) =>
               cache.cache(request.internalId, RegistrationFormData(reg, identification.utr)) map { _ =>
                 Redirect(routes.VerifyController.show())
               }
-            case _ => BadRequest(register.identify(form.fill(identification).withError("utr", "error.utr.no-record")))
+            case _ => BadRequest(views.identify(form.fill(identification).withError("utr", "error.utr.no-record")))
         }
       )
   }

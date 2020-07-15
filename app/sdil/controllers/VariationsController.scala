@@ -46,6 +46,7 @@ import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
+import views.uniform.Uniform
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,15 +55,15 @@ class VariationsController(
   registeredAction: RegisteredAction,
   cache: ShortLivedHttpCaching,
   errorHandler: FrontendErrorHandler,
-  mcc: MessagesControllerComponents
-)(
-  implicit
-  val config: AppConfig,
-  val ec: ExecutionContext)
-    extends FrontendController(mcc) with SdilWMController with FormHelpers with ReturnJourney {
+  mcc: MessagesControllerComponents,
+  uniformHelpers: Uniform,
+  config: AppConfig
+)(override implicit val ec: ExecutionContext)
+    extends ReturnJourney(uniformHelpers, mcc, config) with FormHelpers {
 
   override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
   override lazy val parse = mcc.parsers
+  implicit val appConfig = config
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
@@ -535,8 +536,8 @@ class VariationsController(
     formPage(id)(unitMapping, none[Unit]) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
 
-      uniform.fragments
-        .update_business_addresses(id, form, path, subscription, Address.fromUkAddress(subscription.address))
+      uniformHelpers
+        .updateBusinessAddresses(id, form, path, subscription, Address.fromUkAddress(subscription.address))
     }
   }
 

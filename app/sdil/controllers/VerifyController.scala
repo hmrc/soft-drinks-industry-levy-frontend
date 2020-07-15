@@ -29,7 +29,8 @@ import sdil.forms.FormHelpers
 import sdil.models.{DetailsCorrect, Journey, VerifyPage}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
-import views.html.softdrinksindustrylevy.{errors, register}
+import views.Views
+import views.softdrinksindustrylevy.errors.Errors
 
 import scala.concurrent.ExecutionContext
 
@@ -38,7 +39,9 @@ class VerifyController(
   cache: RegistrationFormDataCache,
   formAction: FormAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,
-  mcc: MessagesControllerComponents)(implicit config: AppConfig, ec: ExecutionContext)
+  mcc: MessagesControllerComponents,
+  errors: Errors,
+  views: Views)(implicit config: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   import VerifyController._
@@ -49,10 +52,10 @@ class VerifyController(
     sdilConnector.checkPendingQueue(data.utr) map { res =>
       (res.status, Journey.expectedPage(VerifyPage)) match {
         case (ACCEPTED, _) =>
-          Ok(errors.registration_pending(data.utr, data.rosmData.organisationName, data.rosmData.address))
+          Ok(errors.registrationPending(data.utr, data.rosmData.organisationName, data.rosmData.address))
         case (OK, VerifyPage) =>
           Ok(
-            register.verify(
+            views.verify(
               data.verify.fold(form)(form.fill),
               data.utr,
               data.rosmData.organisationName,
@@ -61,7 +64,7 @@ class VerifyController(
             ))
         case (_, VerifyPage) =>
           Ok(
-            register.verify(
+            views.verify(
               data.verify.fold(form)(form.fill),
               data.utr,
               data.rosmData.organisationName,
@@ -78,7 +81,7 @@ class VerifyController(
       .fold(
         errors =>
           BadRequest(
-            register.verify(
+            views.verify(
               errors,
               request.formData.utr,
               request.formData.rosmData.organisationName,

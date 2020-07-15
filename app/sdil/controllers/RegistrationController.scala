@@ -40,6 +40,7 @@ import uk.gov.hmrc.uniform.FormHtml
 import uk.gov.hmrc.uniform.playutil._
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
+import views.uniform.Uniform
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,11 +49,14 @@ class RegistrationController(
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   cache: RegistrationFormDataCache,
-  mcc: MessagesControllerComponents)(implicit val config: AppConfig, val ec: ExecutionContext)
-    extends FrontendController(mcc) with SdilWMController with I18nSupport {
+  mcc: MessagesControllerComponents,
+  uniformHelpers: Uniform,
+  config: AppConfig)(override implicit val ec: ExecutionContext)
+    extends SdilWMController(uniformHelpers, mcc, config) with I18nSupport {
 
   override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
   override lazy val parse = mcc.parsers
+  implicit val appConfig = config
 
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)
@@ -188,7 +192,7 @@ class RegistrationController(
       extraMessages: ExtraMessages): WebMonad[T] =
       formPage(key)(mapping, None) { (path, form, r) =>
         implicit val request: Request[AnyContent] = r
-        uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path, helpText)
+        uniformHelpers.ask(key, form, htmlForm.asHtmlForm(key, form), path, helpText)
       }
     askRD(
       startDate

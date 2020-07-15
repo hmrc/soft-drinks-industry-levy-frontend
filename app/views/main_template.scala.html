@@ -15,6 +15,10 @@
  *@
 
 @import sdil.config.AppConfig
+@import views.ViewHelpers
+
+@this(govukWrapper: govuk_wrapper,
+      viewHelpers: ViewHelpers)
 
 @(title: String,
   sidebarLinks: Option[Html] = None,
@@ -25,23 +29,21 @@
   noArticle: Boolean = false,
   form: Option[Form[_]] = None)(mainContent: Html)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@import uk.gov.hmrc.play.views.html.layouts
-
 @serviceInfoContent = {}
 
 @sidebar = {
     @if(sidebarLinks.isDefined) {
-        @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
+        @viewHelpers.sidebar(sidebarLinks.get, Some("sidebar"))
     }
 }
 
-@govuk_wrapper(appConfig = config,
+@govukWrapper(appConfig = config,
                title = title ++ " - Soft Drinks Industry Levy - GOV.UK",
                mainClass = mainClass,
                bodyClasses = bodyClasses,
                sidebar = sidebar,
                contentHeader = contentHeader,
-               mainContent = if(noArticle) mainContent else layouts.article(mainContent),
+               mainContent = if(noArticle) mainContent else viewHelpers.article(mainContent),
                serviceInfoContent = serviceInfoContent,
                scriptElem = scriptElem,
                form = form

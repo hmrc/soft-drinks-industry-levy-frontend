@@ -18,9 +18,11 @@
 @import sdil.models.Address
 @import views.html.softdrinksindustrylevy.helpers._
 
+@this(main: main_template)
+
 @(utr: String, organisation: String, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.already-enrolled.heading")) {
+@main(Messages("sdil.already-enrolled.heading")) {
     <h1 class="heading-large" id="registration-status">@Messages("sdil.already-enrolled.heading")</h1>
 
     @businessDetails(utr, organisation, address)

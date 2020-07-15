@@ -21,8 +21,11 @@
 @import views.html.helper.options
 @import views.html.uniform.helpers._
 
+@this(main: main_template)
+
 @(key: String, breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig)
-@views.html.main_template(Messages(Seq(s"heading.$key", "sdil.variations.title"))) {
+
+@main(Messages(Seq(s"heading.$key", "sdil.variations.title"))) {
   @backlink(breadcrumbs)
 
   <h1 class="heading-large">

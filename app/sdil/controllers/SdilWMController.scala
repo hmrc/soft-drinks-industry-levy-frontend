@@ -28,7 +28,7 @@ import play.api.data.validation.{Invalid, _}
 import play.api.data.{Form, Mapping, _}
 import play.api.i18n._
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, Request, Result}
+import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
 import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -48,15 +48,22 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import cats.implicits._
 import com.softwaremill.macwire.wire
+import javax.inject.Inject
 import sdil.controllers.test.TestController
 import sdil.models.variations.ReturnVariationData
 import sdil.uniform.ShowTitle
 import sdil.uniform.ShowTitle.instance
+import views.uniform.Uniform
 
-trait SdilWMController extends WebMonadController with Modulus23Check {
+class SdilWMController @Inject()(
+  uniformHelpers: Uniform,
+  mcc: MessagesControllerComponents,
+  implicit val config: AppConfig
+)(implicit val ec: ExecutionContext)
+    extends FrontendController(mcc) with WebMonadController with Modulus23Check {
 
-  implicit def config: AppConfig
-  implicit val messages: Messages
+  override lazy val parse = mcc.parsers
+  implicit lazy val messages: MessagesImpl = MessagesImpl(mcc.langs.availables.head, messagesApi)
 
   val costLower = BigDecimal("0.18")
   val costHigher = BigDecimal("0.24")
@@ -93,7 +100,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
       path <- getPath
       r <- formPage(key)(getMapping(path), None) { (path, form, r) =>
             implicit val request: Request[AnyContent] = r
-            uniform.cya(key, form, path, mainContent)
+            uniformHelpers.cya(key, form, path, mainContent)
           }.flatMap {
             case "DONE"                         => ().pure[WebMonad]
             case x if editRoutes.isDefinedAt(x) => clear(key) >> editRoutes.apply(x)
@@ -183,7 +190,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
     ) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
       val inner = uniform.fragments.radiolist(id, b, possValues.map(_.toString))
-      uniform.ask(id, b, inner, path, helpText)
+      uniformHelpers.ask(id, b, inner, path, helpText)
     }.imap(valueMap(_))(_.toString)
   }
 
@@ -205,7 +212,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
     ) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
       val innerHtml = uniform.fragments.checkboxes(id, form, valueMap.keys.toList)
-      uniform.ask(id, form, innerHtml, path, helpText)
+      uniformHelpers.ask(id, form, innerHtml, path, helpText)
     }.imap(_.map { valueMap(_) }.toSet)(_.map(_.toString).toList)
   }
 
@@ -266,7 +273,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
         )
       }
 
-      uniform.ask(key, form, outerHtml, path)
+      uniformHelpers.ask(key, form, outerHtml, path)
     }
   }
 
@@ -293,7 +300,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
   )(implicit htmlForm: FormHtml[T], fmt: Format[T], extraMessages: ExtraMessages): WebMonad[T] =
     formPage(key)(mapping, default, configOverride) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
-      uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path)
+      uniformHelpers.ask(key, form, htmlForm.asHtmlForm(key, form), path)
     }
 
   def ask[T](
@@ -307,7 +314,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
     showBackLink: ShowBackLink): WebMonad[T] =
     formPage(key)(mapping, default) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
-      uniform.ask(key, form, htmlForm.asHtmlForm(key, form), path)
+      uniformHelpers.ask(key, form, htmlForm.asHtmlForm(key, form), path)
     }
 
   def ask[T](
@@ -352,7 +359,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
     formPage(id)(unitMapping, none[Unit]) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
 
-      uniform.tell(id, form, path, a.showHtml)
+      uniformHelpers.tell(id, form, path, a.showHtml)
     }
   }
 
@@ -387,7 +394,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
     formPage(id)(mapping, default) { (path, b, r) =>
       implicit val request: Request[AnyContent] = r
       val fragment = uniform.fragments.bigtext(id, b)(implicitly, extraMessages, implicitly)
-      uniform.ask(id, b, fragment, path)
+      uniformHelpers.ask(id, b, fragment, path)
     }
   }
 
@@ -407,7 +414,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
           path,
           db,
           Ok(
-            uniform.journeyEnd(
+            uniformHelpers.journeyEnd(
               id,
               path,
               now,
@@ -425,7 +432,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
       implicit val r = request
 
       Future.successful {
-        (id.some, path, db, Ok(uniform.end(id, path, input.showHtml)).asLeft[R])
+        (id.some, path, db, Ok(uniformHelpers.end(id, path, input.showHtml)).asLeft[R])
       }
     }
 
@@ -467,7 +474,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
 
         formPage(id)(mapping, None, configOverride) { (path, b, r) =>
           implicit val request: Request[AnyContent] = r
-          uniform.many(id, b, items.map { x =>
+          uniformHelpers.many(id, b, items.map { x =>
             (x.showHtml, showTitle.getTitle(x))
           }, path, min, editSingleForm.nonEmpty)
         }.imap(outf)(inf)

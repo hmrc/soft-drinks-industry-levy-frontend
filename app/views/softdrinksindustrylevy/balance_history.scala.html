@@ -19,11 +19,13 @@
 @import sdil.config.AppConfig
 @import java.time.format.DateTimeFormatter
 @import java.time.LocalDate
-
 @import sdil.models.backend.Subscription
+
+@this(main: main_template)
+
 @(orgName: String, lineItems: List[(FinancialLineItem, BigDecimal)])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("balance.history"), noArticle = true) {
+@main(Messages("balance.history"), noArticle = true) {
 
     <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
 

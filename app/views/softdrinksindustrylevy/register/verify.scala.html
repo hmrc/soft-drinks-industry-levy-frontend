@@ -14,10 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.config.AppConfig
 @import sdil.models.Address
+@import views.ViewHelpers
+
+@this(main: main_template, viewHelpers: ViewHelpers)
 
 @(verifyForm: Form[_], utr: String, organisation: String, address: Address, alreadyRegistered: Boolean = false)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
@@ -48,10 +50,10 @@
         </dl>
 }
 
-@main_template(title = verifyTitle, form = Some(verifyForm)) {
+@main(title = verifyTitle, form = Some(verifyForm)) {
     @if(!alreadyRegistered) {
     @error_summary(verifyForm)
-    @form(sdil.controllers.routes.VerifyController.submit()) {
+    @viewHelpers.form(sdil.controllers.routes.VerifyController.submit()) {
         <fieldset class="form-field-group">
             <legend>
                 <h1 class="heading-large">

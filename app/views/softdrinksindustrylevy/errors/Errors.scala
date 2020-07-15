@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import sdil.config.AppConfig
+package views.softdrinksindustrylevy.errors
 
-@this(main: main_template)
+import javax.inject.Inject
+import views.html.softdrinksindustrylevy.errors._
 
-@()(implicit request: Request[_], messages: Messages, config: AppConfig)
-
-@main(title = Messages("sdil.time-out.title")) {
-    <h1>@Messages("sdil.time-out.title")</h1>
-    <p>@Messages("sdil.time-out.p1")</p>
-
-    <a href="@sdil.controllers.routes.AuthenticationController.timeIn(request.headers.get("Referer")
-            .getOrElse(config.sdilHomePage))" class="button">
-    @Messages("sdil.common.sign-in")
-    </a>
-}
+class Errors @Inject()(
+  val alreadyRegistered: already_registered,
+  val invalidAffinity: invalid_affinity,
+  val invalidRole: invalid_role,
+  val registrationPending: registration_pending
+) {}
