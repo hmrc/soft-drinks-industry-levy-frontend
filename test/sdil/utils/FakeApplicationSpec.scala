@@ -44,6 +44,15 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
+import uk.gov.hmrc.play.views.html.helpers._
+import uk.gov.hmrc.play.views.html.layouts._
+import views.{ViewHelpers, Views}
+import views.html.{error_template, govuk_wrapper, main_template, time_out}
+import views.html.softdrinksindustrylevy.errors.{already_registered, invalid_affinity, invalid_role, registration_pending}
+import views.html.softdrinksindustrylevy.{balance_history, deregistered_service_page, service_page}
+import views.softdrinksindustrylevy.errors.Errors
+import views.uniform.Uniform
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -236,4 +245,76 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
   lazy val formAction: FormAction = wire[FormAction]
   lazy val authorisedAction: AuthorisedAction = wire[AuthorisedAction]
   lazy val registeredAction: RegisteredAction = wire[RegisteredAction]
+
+  lazy val errors: Errors = wire[Errors]
+  lazy val Views: Views = wire[Views]
+  lazy val uniformHelpers: Uniform = wire[Uniform]
+  lazy val viewHelpers: ViewHelpers = wire[ViewHelpers]
+  lazy val govukTemplate: views.html.layouts.GovUkTemplate = wire[views.html.layouts.GovUkTemplate]
+
+  lazy val alreadyRegistered: already_registered = wire[already_registered]
+  lazy val invalidAffinity: invalid_affinity = wire[invalid_affinity]
+  lazy val invalidRole: invalid_role = wire[invalid_role]
+  lazy val registrationPending: registration_pending = wire[registration_pending]
+  lazy val timeOut: time_out = wire[time_out]
+  lazy val identify: views.html.softdrinksindustrylevy.register.identify =
+    wire[views.html.softdrinksindustrylevy.register.identify]
+  lazy val verifyView: views.html.softdrinksindustrylevy.register.verify =
+    wire[views.html.softdrinksindustrylevy.register.verify]
+  lazy val balanceHistory: balance_history = wire[balance_history]
+  lazy val deregisteredServicePage: deregistered_service_page = wire[deregistered_service_page]
+  lazy val servicePage: service_page = wire[service_page]
+  lazy val errorTemplate: error_template = wire[error_template]
+
+  lazy val updateBusinessAddresses: views.html.uniform.fragments.update_business_addresses =
+    wire[views.html.uniform.fragments.update_business_addresses]
+  lazy val ask: views.html.uniform.ask = wire[views.html.uniform.ask]
+  lazy val cya: views.html.uniform.cya = wire[views.html.uniform.cya]
+  lazy val end: views.html.uniform.end = wire[views.html.uniform.end]
+  lazy val journeyEnd: views.html.uniform.journeyEnd = wire[views.html.uniform.journeyEnd]
+  lazy val many: views.html.uniform.many = wire[views.html.uniform.many]
+  lazy val tell: views.html.uniform.tell = wire[views.html.uniform.tell]
+
+  lazy val main: main_template = wire[main_template]
+  lazy val govUkWrapper: govuk_wrapper = wire[govuk_wrapper]
+
+  //copied from uk.gov.hmrc.play.views.html.helpers
+  lazy val addressView: uk.gov.hmrc.play.views.html.helpers.Address = wire[uk.gov.hmrc.play.views.html.helpers.Address]
+  lazy val dateFields: DateFields = wire[DateFields]
+  lazy val dateFieldsFreeInline: DateFieldsFreeInline = wire[DateFieldsFreeInline]
+  lazy val dateFieldsFreeInlineLegend: DateFieldsFreeInlineLegend = wire[DateFieldsFreeInlineLegend]
+  lazy val dateFieldsFreeYearInline: DateFieldsFreeYearInline = wire[DateFieldsFreeYearInline]
+  lazy val dateFieldsFreeYear: DateFieldsFreeYear = wire[DateFieldsFreeYear]
+  lazy val dateFieldsInline: DateFieldsInline = wire[DateFieldsInline]
+  lazy val dropdown: Dropdown = wire[Dropdown]
+  lazy val errorInline: ErrorInline = wire[ErrorInline]
+  lazy val errorNotifications: ErrorNotifications = wire[ErrorNotifications]
+  lazy val errorSummary: ErrorSummary = wire[ErrorSummary]
+  lazy val fieldGroup: FieldGroup = wire[FieldGroup]
+  lazy val form: FormWithCSRF = wire[FormWithCSRF]
+  lazy val input: Input = wire[Input]
+  lazy val inputRadioGroup: InputRadioGroup = wire[InputRadioGroup]
+  lazy val reportAProblemLink: ReportAProblemLink = wire[ReportAProblemLink]
+  lazy val singleCheckbox: SingleCheckbox = wire[SingleCheckbox]
+  lazy val textArea: TextArea = wire[TextArea]
+  //copied from uk.gov.hmrc.play.views.html.layouts
+  lazy val article: Article = wire[Article]
+  lazy val attorneyBanner: AttorneyBanner = wire[AttorneyBanner]
+  lazy val betaBanner: BetaBanner = wire[BetaBanner]
+  lazy val footer: Footer = wire[Footer]
+  lazy val euExitLinks: EuExitLinks = wire[EuExitLinks]
+  lazy val footerLinks: FooterLinks = wire[FooterLinks]
+  lazy val head: Head = wire[Head]
+  lazy val headerNav: HeaderNav = wire[HeaderNav]
+  lazy val loginStatus: LoginStatus = wire[LoginStatus]
+  lazy val mainContent: MainContent = wire[MainContent]
+  lazy val mainContentHeader: MainContentHeader = wire[MainContentHeader]
+  lazy val optimizelySnippet: OptimizelySnippet = wire[OptimizelySnippet]
+  lazy val gtmSnippet: GTMSnippet = wire[GTMSnippet]
+  lazy val serviceInfo: ServiceInfo = wire[ServiceInfo]
+  lazy val sidebar: Sidebar = wire[Sidebar]
+
+  lazy val optimizelyConfig: OptimizelyConfig = wire[OptimizelyConfig]
+  lazy val assetConfig: AssetsConfig = wire[AssetsConfig]
+  lazy val gtmConfig: GTMConfig = wire[GTMConfig]
 }
