@@ -29,7 +29,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import views.html.softdrinksindustrylevy.errors
+import views.softdrinksindustrylevy.errors.Errors
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 
@@ -37,7 +37,8 @@ class AuthorisedAction(
   val authConnector: AuthConnector,
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
-  mcc: MessagesControllerComponents)(implicit config: AppConfig, val executionContext: ExecutionContext)
+  mcc: MessagesControllerComponents,
+  errors: Errors)(implicit config: AppConfig, val executionContext: ExecutionContext)
     extends ActionRefiner[Request, AuthorisedRequest] with ActionBuilder[AuthorisedRequest, AnyContent]
     with AuthorisedFunctions with I18nSupport with ActionHelpers {
 
@@ -96,19 +97,19 @@ class AuthorisedAction(
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     sdilConnector.getRosmRegistration(utr)(hc) map {
-      case Some(a) => Forbidden(errors.already_registered(utr, a.organisationName, a.address))
+      case Some(a) => Forbidden(errors.alreadyRegistered(utr, a.organisationName, a.address))
       case _       => Redirect(routes.AuthenticationController.signIn())
     }
   }
 
   private def invalidRole(credentialRole: Option[CredentialRole])(implicit request: Request[_]): Option[Result] =
     credentialRole collect {
-      case Assistant => Forbidden(errors.invalid_role())
+      case Assistant => Forbidden(errors.invalidRole())
     }
 
   private def invalidAffinityGroup(affinityGroup: Option[AffinityGroup])(implicit request: Request[_]): Option[Result] =
     affinityGroup match {
-      case Some(Agent) | None => Some(Forbidden(errors.invalid_affinity()))
+      case Some(Agent) | None => Some(Forbidden(errors.invalidAffinity()))
       case _                  => None
     }
 }

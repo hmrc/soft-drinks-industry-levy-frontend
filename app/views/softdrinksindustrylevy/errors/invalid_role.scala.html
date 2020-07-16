@@ -16,9 +16,11 @@
 
 @import sdil.config.AppConfig
 
+@this(main: main_template)
+
 @()(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.invalid-role.title")) {
+@main(Messages("sdil.invalid-role.title")) {
     <h1 class="heading-large">@Messages("sdil.invalid-role.title")</h1>
 
     <p id="registration-status">@Messages("sdil.invalid-role.p1")</p>

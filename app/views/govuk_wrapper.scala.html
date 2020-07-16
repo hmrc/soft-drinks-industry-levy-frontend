@@ -16,9 +16,11 @@
 
 @import sdil.config.AppConfig
 @import play.twirl.api.HtmlFormat
-@import layouts.{govuk_template => hmrcGovUkTemplate}
-@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
-@import uk.gov.hmrc.play.views.html.{helpers => uiHelpers}
+@import views.ViewHelpers
+@import views.html.layouts.GovUkTemplate
+
+@this(viewHelpers: ViewHelpers,
+      govUkTemplate: GovUkTemplate)
 
 @(appConfig: AppConfig,
         title: String,
@@ -32,9 +34,8 @@
         scriptElem: Option[Html] = None,
         form: Option[Form[_]] = None)(implicit request: Request[_], messages: Messages)
 
-
 @head = {
-@uiLayouts.head(
+@viewHelpers.head(
     linkElem = Some(linksElement),
     headScripts = None)
     <meta name="format-detection" content="telephone=no" />
@@ -84,7 +85,7 @@
 }
 
 @insideHeader = {
-@uiLayouts.header_nav(
+@viewHelpers.headerNav(
     navTitle = Some(pageTitle),
     navTitleLink = None,
     showBetaLink = false,
@@ -94,7 +95,7 @@
 @afterHeader = {}
 
 @bodyEnd = {
-@uiLayouts.footer(
+@viewHelpers.footer(
     analyticsToken = Some(appConfig.analyticsToken),
     analyticsHost = appConfig.analyticsHost,
     ssoUrl = None,
@@ -106,7 +107,7 @@
 
 
 @serviceInfo = {
-@uiLayouts.serviceInfo(
+@viewHelpers.serviceInfo(
     betaBanner = HtmlFormat.empty,
     includeGridWrapper = false,
     serviceInfoContent = Some(serviceInfoContent))
@@ -114,16 +115,16 @@
 
 @mainContentHeader = {
 @if(contentHeader.isDefined) {
-    @uiLayouts.main_content_header(contentHeader = contentHeader.get)
+    @viewHelpers.mainContentHeader(contentHeader = contentHeader.get)
 }
 }
 
 @getHelpForm = @{
-    uiHelpers.reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)
+    viewHelpers.reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)
 }
 
 @content = {
-@uiLayouts.main_content(
+@viewHelpers.mainContent(
     article = mainContent,
     mainClass = mainClass,
     mainDataAttributes = mainDataAttributes,
@@ -137,4 +138,4 @@
     if(form.exists(_.hasErrors)) s"${Messages("sdil.common.error")}: $title" else title
 }
 
-@hmrcGovUkTemplate(Some(tabTitle), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+@govUkTemplate(Some(tabTitle), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(viewHelpers.footerLinks()), true)(content)

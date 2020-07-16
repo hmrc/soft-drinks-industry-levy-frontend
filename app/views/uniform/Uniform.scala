@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import sdil.config.AppConfig
+package views.uniform
+import javax.inject.Inject
 
-@this(main: main_template)
-
-@()(implicit request: Request[_], messages: Messages, config: AppConfig)
-
-@main(title = Messages("sdil.time-out.title")) {
-    <h1>@Messages("sdil.time-out.title")</h1>
-    <p>@Messages("sdil.time-out.p1")</p>
-
-    <a href="@sdil.controllers.routes.AuthenticationController.timeIn(request.headers.get("Referer")
-            .getOrElse(config.sdilHomePage))" class="button">
-    @Messages("sdil.common.sign-in")
-    </a>
-}
+class Uniform @Inject()(
+  val updateBusinessAddresses: views.html.uniform.fragments.update_business_addresses,
+  val ask: views.html.uniform.ask,
+  val cya: views.html.uniform.cya,
+  val end: views.html.uniform.end,
+  val journeyEnd: views.html.uniform.journeyEnd,
+  val many: views.html.uniform.many,
+  val tell: views.html.uniform.tell
+) {}

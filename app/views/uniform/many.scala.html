@@ -23,7 +23,10 @@
 @import uk.gov.hmrc.uniform.webmonad._
 @import sdil.controllers.ShowBackLink
 
+@this(main: main_template)
+
 @(key: String, form: Form[Option[String]], items: List[(Html, String)], breadcrumbs: List[String], min: Int, showEdit: Boolean = false)(implicit messages: Messages, request: Request[_], config: AppConfig, showBacklink: ShowBackLink)
+
 @singular(items: List[(Html, String)]) = {@if(items.nonEmpty && items.length > 1) {s}}
 
 @multiTitle(items: List[(Html, String)]) = {
@@ -42,7 +45,7 @@
 }
 }
 
-@views.html.main_template(
+@main(
     if(items.isEmpty) {
         Messages(Seq(s"heading.$key", "sdil.variations.title"))
     } else {

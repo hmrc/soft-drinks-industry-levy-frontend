@@ -28,7 +28,7 @@ import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
-import views.html.softdrinksindustrylevy._
+import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,7 +37,8 @@ class ServicePageController(
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   errorHandler: FrontendErrorHandler,
-  mcc: MessagesControllerComponents)(implicit config: AppConfig, val ec: ExecutionContext)
+  mcc: MessagesControllerComponents,
+  views: Views)(implicit config: AppConfig, val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = registeredAction.async { implicit request =>
@@ -63,10 +64,10 @@ class ServicePageController(
     } yield {
       val addr = Address.fromUkAddress(subscription.address)
       if (subscription.deregDate.nonEmpty) {
-        Ok(deregistered_service_page(addr, subscription, lastReturn, balance, pendingDereg, variableReturns))
+        Ok(views.deregisteredServicePage(addr, subscription, lastReturn, balance, pendingDereg, variableReturns))
       } else {
         Ok(
-          service_page(
+          views.servicePage(
             addr,
             request.sdilEnrolment.value,
             subscription,
@@ -105,7 +106,7 @@ class ServicePageController(
                        )
       } yield {
         Ok(
-          balance_history(subscription.orgName, itemsWithRunningTotal)
+          views.balanceHistory(subscription.orgName, itemsWithRunningTotal)
         )
       }
       ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }

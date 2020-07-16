@@ -20,8 +20,9 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.Views
 
-class AuthenticationController(override val messagesApi: MessagesApi, mcc: MessagesControllerComponents)(
+class AuthenticationController(override val messagesApi: MessagesApi, mcc: MessagesControllerComponents, views: Views)(
   implicit config: AppConfig)
     extends FrontendController(mcc) {
 
@@ -42,7 +43,7 @@ class AuthenticationController(override val messagesApi: MessagesApi, mcc: Messa
   }
 
   def timeOut: Action[AnyContent] = Action { implicit request =>
-    Ok(views.html.time_out()).withNewSession
+    Ok(views.timeOut()).withNewSession
   }
 
   def signOutNoFeedback: Action[AnyContent] = Action { implicit request =>

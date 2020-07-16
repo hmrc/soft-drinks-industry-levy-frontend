@@ -39,6 +39,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.uniform.playutil._
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
+import views.uniform.Uniform
 
 import scala.concurrent._
 
@@ -47,11 +48,9 @@ class ReturnsController(
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   cache: ShortLivedHttpCaching,
-  mcc: MessagesControllerComponents
-)(
-  implicit
-  val config: AppConfig,
-  val ec: ExecutionContext)
+  mcc: MessagesControllerComponents,
+  override val uniformHelpers: Uniform
+)(implicit val config: AppConfig, val ec: ExecutionContext)
     extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney with I18nSupport {
 
   override lazy val parse = mcc.parsers
