@@ -56,14 +56,12 @@ class VariationsController(
   cache: ShortLivedHttpCaching,
   errorHandler: FrontendErrorHandler,
   mcc: MessagesControllerComponents,
-  uniformHelpers: Uniform,
-  config: AppConfig
-)(override implicit val ec: ExecutionContext)
-    extends ReturnJourney(uniformHelpers, mcc, config) with FormHelpers {
+  override val uniformHelpers: Uniform
+)(implicit val config: AppConfig, val ec: ExecutionContext)
+    extends FrontendController(mcc) with SdilWMController with FormHelpers with ReturnJourney {
 
   override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
   override lazy val parse = mcc.parsers
-  implicit val appConfig = config
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {

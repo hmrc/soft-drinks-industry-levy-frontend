@@ -50,13 +50,11 @@ class RegistrationController(
   registeredAction: RegisteredAction,
   cache: RegistrationFormDataCache,
   mcc: MessagesControllerComponents,
-  uniformHelpers: Uniform,
-  config: AppConfig)(override implicit val ec: ExecutionContext)
-    extends SdilWMController(uniformHelpers, mcc, config) with I18nSupport {
+  override val uniformHelpers: Uniform)(implicit val config: AppConfig, val ec: ExecutionContext)
+    extends FrontendController(mcc) with SdilWMController with I18nSupport {
 
   override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
   override lazy val parse = mcc.parsers
-  implicit val appConfig = config
 
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)

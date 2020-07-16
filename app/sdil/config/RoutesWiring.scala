@@ -31,14 +31,6 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
 import uk.gov.hmrc.play.health.HealthController
-import views.{ViewHelpers, Views}
-import views.html.{error_template, govuk_wrapper, main_template, time_out}
-import views.html.softdrinksindustrylevy.{balance_history, deregistered_service_page, service_page}
-import views.html.softdrinksindustrylevy.errors.{already_registered, invalid_affinity, invalid_role, registration_pending}
-import views.softdrinksindustrylevy.errors.Errors
-import views.uniform.Uniform
-import uk.gov.hmrc.play.views.html.helpers._
-import uk.gov.hmrc.play.views.html.layouts._
 
 trait RoutesWiring extends CommonWiring {
   val errorHandler: FrontendErrorHandler

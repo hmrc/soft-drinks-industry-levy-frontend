@@ -49,14 +49,13 @@ class ReturnsController(
   registeredAction: RegisteredAction,
   cache: ShortLivedHttpCaching,
   mcc: MessagesControllerComponents,
-  uniformHelpers: Uniform,
-  config: AppConfig
-)(override implicit val ec: ExecutionContext)
-    extends ReturnJourney(uniformHelpers, mcc, config) with Modulus23Check with I18nSupport {
+  override val uniformHelpers: Uniform
+)(implicit val config: AppConfig, val ec: ExecutionContext)
+    extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney with I18nSupport {
 
   override lazy val parse = mcc.parsers
   override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
-  implicit val appConfig = config
+
   def confirmationPage(
     key: String,
     period: ReturnPeriod,

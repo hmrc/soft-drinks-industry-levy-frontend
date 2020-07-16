@@ -55,15 +55,11 @@ import sdil.uniform.ShowTitle
 import sdil.uniform.ShowTitle.instance
 import views.uniform.Uniform
 
-class SdilWMController @Inject()(
-  uniformHelpers: Uniform,
-  mcc: MessagesControllerComponents,
-  implicit val config: AppConfig
-)(implicit val ec: ExecutionContext)
-    extends FrontendController(mcc) with WebMonadController with Modulus23Check {
+trait SdilWMController extends WebMonadController with Modulus23Check {
 
-  override lazy val parse = mcc.parsers
-  implicit lazy val messages: MessagesImpl = MessagesImpl(mcc.langs.availables.head, messagesApi)
+  implicit def config: AppConfig
+  implicit val messages: Messages
+  val uniformHelpers: Uniform
 
   val costLower = BigDecimal("0.18")
   val costHigher = BigDecimal("0.24")

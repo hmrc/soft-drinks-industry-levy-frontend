@@ -24,19 +24,16 @@ import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
 import play.api.i18n.Messages
 import play.api.libs.json.{Format, JsValue}
-import play.api.mvc.MessagesControllerComponents
-import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.retrieved.RetrievedSubscription
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import uk.gov.hmrc.uniform.webmonad._
-import views.uniform.Uniform
 
-class ReturnJourney @Inject()(uniformHelpers: Uniform, mcc: MessagesControllerComponents, config: AppConfig)(
-  override implicit val ec: ExecutionContext)
-    extends SdilWMController(uniformHelpers, mcc, config) {
+trait ReturnJourney extends SdilWMController {
+
+  implicit val ec: ExecutionContext
 
   def askReturn(
     subscription: RetrievedSubscription,
