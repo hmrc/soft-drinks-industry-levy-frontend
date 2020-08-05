@@ -32,6 +32,8 @@ trait AppConfig {
   val appName: String
   val balanceAllEnabled: Boolean
   val directDebitEnabled: Boolean
+  val accessibilityStatementTested: String
+  val accessibilityStatementUpdated: String
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMode, environment: Environment)
@@ -66,4 +68,7 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMod
   override val balanceAllEnabled: Boolean = getBoolean("balanceAll.enabled")
 
   override val directDebitEnabled: Boolean = getBoolean("directDebit.enabled")
+
+  val accessibilityStatementUpdated = getConfString("accessibility-statement.updated", "5th August 2020")
+  override val accessibilityStatementTested = getString("accessibility-statement.tested")
 }

@@ -43,7 +43,10 @@ class RegisteredAction(
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
       (getSdilEnrolment(enrolments), getUtr(enrolments)) match {
-        case (Some(e), _) => Future.successful { Right(RegisteredRequest(e, request)) }
+        case (Some(e), _) =>
+          Future.successful {
+            Right(RegisteredRequest(e, request))
+          }
         case (None, Some(utr)) =>
           sdilConnector.retrieveSubscription(utr, "utr").map {
             case Some(subscription) =>

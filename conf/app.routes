@@ -51,3 +51,4 @@ POST        /uregistrations/:id                                sdil.controllers.
 
 GET         /pay-now                                           sdil.controllers.PaymentController.payNow()
 GET         /start-direct-debit-journey                        sdil.controllers.DirectDebitController.startDirectDebitJourney()
+GET         /accessibility-statement                           sdil.controllers.AccessibilityStatementController.get()

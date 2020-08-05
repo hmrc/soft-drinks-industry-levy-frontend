@@ -27,5 +27,6 @@ class Views @Inject()(
   val balanceHistory: balance_history,
   val deregisteredServicePage: deregistered_service_page,
   val servicePage: service_page,
-  val errorTemplate: error_template
+  val errorTemplate: error_template,
+  val accessibilityStatement: views.html.accessibility.accessibility_statement
 ) {}

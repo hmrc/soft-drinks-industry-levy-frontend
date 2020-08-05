@@ -58,6 +58,7 @@ trait RoutesWiring extends CommonWiring {
   lazy val signoutController: AuthenticationController = wire[AuthenticationController]
   lazy val testController: TestingController = wire[TestingController]
   lazy val newTestController: TestController = wire[TestController]
+  lazy val accessibilityController: AccessibilityStatementController = wire[AccessibilityStatementController]
 
   lazy val VariationsController: VariationsController = wire[VariationsController]
   lazy val returnsController: ReturnsController = wire[ReturnsController]

@@ -26,6 +26,7 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
 import uk.gov.hmrc.play.views.html.helpers._
 import uk.gov.hmrc.play.views.html.layouts._
+import views.html.accessibility.accessibility_statement
 import views.{ViewHelpers, Views}
 import views.html.softdrinksindustrylevy.{balance_history, deregistered_service_page, service_page}
 import views.html.softdrinksindustrylevy.errors.{already_registered, invalid_affinity, invalid_role, registration_pending}
@@ -115,6 +116,8 @@ trait CommonWiring {
   lazy val gtmSnippet: GTMSnippet = wire[GTMSnippet]
   lazy val serviceInfo: ServiceInfo = wire[ServiceInfo]
   lazy val sidebar: Sidebar = wire[Sidebar]
+
+  lazy val accessibilityStatement: accessibility_statement = wire[views.html.accessibility.accessibility_statement]
 
   val optimizelyConfig: OptimizelyConfig
   val assetConfig: AssetsConfig
