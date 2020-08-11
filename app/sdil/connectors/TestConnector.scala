@@ -20,19 +20,14 @@ import akka.util.ByteString
 import play.api.libs.ws.WSClient
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TestConnector(
-  http: HttpClient,
-  environment: Environment,
-  ws: WSClient,
-  val runModeConfiguration: Configuration,
-  val runMode: RunMode)(implicit ec: ExecutionContext)
-    extends ServicesConfig(runModeConfiguration, runMode) {
+class TestConnector(http: HttpClient, environment: Environment, ws: WSClient, val runModeConfiguration: Configuration)(
+  implicit ec: ExecutionContext)
+    extends ServicesConfig(runModeConfiguration) {
 
   lazy val testUrl: String = baseUrl("soft-drinks-industry-levy")
 

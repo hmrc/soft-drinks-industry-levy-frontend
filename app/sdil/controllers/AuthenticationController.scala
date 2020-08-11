@@ -19,7 +19,7 @@ package sdil.controllers
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.config.AppConfig
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 
 class AuthenticationController(override val messagesApi: MessagesApi, mcc: MessagesControllerComponents, views: Views)(

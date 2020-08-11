@@ -17,7 +17,7 @@
 package sdil.config
 
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
   val analyticsToken: String
@@ -34,8 +34,8 @@ trait AppConfig {
   val directDebitEnabled: Boolean
 }
 
-class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMode, environment: Environment)
-    extends ServicesConfig(runModeConfiguration, runMode) with AppConfig {
+class FrontendAppConfig(val runModeConfiguration: Configuration, environment: Environment)
+    extends ServicesConfig(runModeConfiguration) with AppConfig {
 
   private def loadConfig(key: String) =
     runModeConfiguration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))

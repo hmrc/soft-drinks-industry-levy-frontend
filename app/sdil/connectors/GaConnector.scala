@@ -19,17 +19,13 @@ package sdil.connectors
 import play.api.libs.json.Json
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class GaConnector(
-  http: HttpClient,
-  environment: Environment,
-  val runModeConfiguration: Configuration,
-  val runMode: RunMode)
-    extends ServicesConfig(runModeConfiguration, runMode) {
+class GaConnector(http: HttpClient, environment: Environment, val runModeConfiguration: Configuration)
+    extends ServicesConfig(runModeConfiguration) {
 
   implicit val dimensionWrites = Json.writes[DimensionValue]
   implicit val eventWrites = Json.writes[Event]

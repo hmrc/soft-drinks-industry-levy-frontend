@@ -17,9 +17,8 @@
 package sdil.config
 
 import com.softwaremill.macwire.wire
-import play.api.Play
 import uk.gov.hmrc.crypto.{ApplicationCrypto, CompositeSymmetricCrypto}
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 trait ConfigWiring extends CommonWiring {
   implicit lazy val appConfig: AppConfig = wire[FrontendAppConfig]

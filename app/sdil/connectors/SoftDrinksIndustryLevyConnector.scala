@@ -24,9 +24,8 @@ import sdil.models.backend.Subscription
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{ReturnVariationData, VariationsSubmission}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, NotFoundException}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,11 +33,10 @@ class SoftDrinksIndustryLevyConnector(
   http: HttpClient,
   environment: Environment,
   val runModeConfiguration: Configuration,
-  val runMode: RunMode,
   val shortLiveCache: ShortLivedHttpCaching,
   val sessionCache: SDILSessionCache
 )(implicit ec: ExecutionContext)
-    extends ServicesConfig(runModeConfiguration, runMode) {
+    extends ServicesConfig(runModeConfiguration) {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
 
