@@ -16,6 +16,8 @@
 
 package sdil.config
 
+import java.util.UUID
+
 import com.kenshoo.play.metrics.{Metrics, MetricsFilter, MetricsFilterImpl}
 import com.softwaremill.macwire.{wire, wireWith}
 import play.api.http.HttpConfiguration
@@ -45,6 +47,8 @@ trait FilterWiring extends CommonWiring {
   lazy val sessionCookieBaker: SessionCookieBaker =
     new LegacySessionCookieBaker(httpConfiguration.session, new DefaultCookieSigner(httpConfiguration.secret))
 
+  lazy val whitelistFilter: WhitelistFilter = wire[WhitelistFilter]
+  lazy val sessionIdFilter: SessionIdFilter = wire[SessionIdFilter]
   lazy val mdcFilter: MDCFilter = wire[MDCFilter]
   lazy val variationsFilter: VariationsFilter = wire[VariationsFilter]
   lazy val loggingFilter: LoggingFilter = wire[DefaultLoggingFilter]
