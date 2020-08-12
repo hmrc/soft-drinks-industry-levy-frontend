@@ -23,7 +23,7 @@ import controllers.{AssetsConfiguration, AssetsMetadata, DefaultAssetsMetadata}
 import play.api.ApplicationLoader.Context
 import play.api.http.HttpErrorHandler
 import play.api.i18n.I18nComponents
-import play.api.inject.{Injector, SimpleInjector}
+import play.api.inject.{ApplicationLifecycle, DefaultApplicationLifecycle, Injector, SimpleInjector}
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.mvc._
 import play.api.{BuiltInComponentsFromContext, Configuration, DefaultApplication}
@@ -42,6 +42,7 @@ class SDILComponents(context: Context)
 
   override lazy val httpFilters = wire[SdilFilters].filters
   override lazy val application: DefaultApplication = wire[DefaultApplication]
+  override lazy val applicationLifecycle: ApplicationLifecycle = wire[DefaultApplicationLifecycle]
 
   implicit lazy val ec: ExecutionContext = actorSystem.dispatcher
 

@@ -46,7 +46,7 @@ trait FilterWiring extends CommonWiring {
   //TODO change to DefaultSessionCookieBaker when 2.6 available platform wide
   lazy val sessionCookieBaker: SessionCookieBaker =
     new LegacySessionCookieBaker(httpConfiguration.session, new DefaultCookieSigner(httpConfiguration.secret))
-
+  val uuid: UUID = UUID.randomUUID()
   lazy val whitelistFilter: WhitelistFilter = wire[WhitelistFilter]
   lazy val sessionIdFilter: SessionIdFilter = wire[SessionIdFilter]
   lazy val mdcFilter: MDCFilter = wire[MDCFilter]
