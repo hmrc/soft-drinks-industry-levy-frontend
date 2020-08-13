@@ -17,9 +17,9 @@
 package sdil.config
 
 import play.api.{Configuration, Environment}
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 class SDILShortLivedCaching(val http: HttpClient, val configuration: Configuration, environment: Environment)
     extends ServicesConfig(configuration) with ShortLivedHttpCaching {
