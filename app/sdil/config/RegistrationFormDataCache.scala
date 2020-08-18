@@ -27,10 +27,10 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 class RegistrationFormDataCache(
-  val runModeConfiguration: Configuration,
+  val configuration: Configuration,
   val shortLiveCache: ShortLivedHttpCaching,
   environment: Environment)(implicit val crypto: CompositeSymmetricCrypto, ec: ExecutionContext)
-    extends ServicesConfig(runModeConfiguration) with ShortLivedCache {
+    extends ServicesConfig(configuration) with ShortLivedCache {
 
   def cache(internalId: String, body: RegistrationFormData)(implicit hc: HeaderCarrier): Future[CacheMap] =
     cache(s"$internalId-sdil-registration", "formData", body)

@@ -22,7 +22,7 @@ import com.kenshoo.play.metrics.{Metrics, MetricsFilter, MetricsFilterImpl}
 import com.softwaremill.macwire.{wire, wireWith}
 import play.api.http.HttpConfiguration
 import play.api.libs.crypto.DefaultCookieSigner
-import play.api.mvc.{LegacySessionCookieBaker, SessionCookieBaker}
+import play.api.mvc.{DefaultSessionCookieBaker, LegacySessionCookieBaker, SessionCookieBaker}
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
 import sdil.filters.VariationsFilter
@@ -43,9 +43,11 @@ trait FilterWiring extends CommonWiring {
   val metrics: Metrics
   val errorHandler: FrontendErrorHandler
 
-  //TODO change to DefaultSessionCookieBaker when 2.6 available platform wide
-  lazy val sessionCookieBaker: SessionCookieBaker =
-    new LegacySessionCookieBaker(httpConfiguration.session, new DefaultCookieSigner(httpConfiguration.secret))
+  lazy val sessionCookieBaker: DefaultSessionCookieBaker =
+    new DefaultSessionCookieBaker(
+      httpConfiguration.session,
+      httpConfiguration.secret,
+      new DefaultCookieSigner(httpConfiguration.secret))
   val uuid: UUID = UUID.randomUUID()
   lazy val whitelistFilter: WhitelistFilter = wire[WhitelistFilter]
   lazy val sessionIdFilter: SessionIdFilter = wire[SessionIdFilter]

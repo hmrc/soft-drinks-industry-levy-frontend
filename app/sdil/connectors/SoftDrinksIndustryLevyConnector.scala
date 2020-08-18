@@ -32,11 +32,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class SoftDrinksIndustryLevyConnector(
   http: HttpClient,
   environment: Environment,
-  val runModeConfiguration: Configuration,
+  val configuration: Configuration,
   val shortLiveCache: ShortLivedHttpCaching,
   val sessionCache: SDILSessionCache
 )(implicit ec: ExecutionContext)
-    extends ServicesConfig(runModeConfiguration) {
+    extends ServicesConfig(configuration) {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
 

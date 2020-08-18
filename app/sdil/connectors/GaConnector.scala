@@ -23,8 +23,8 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class GaConnector(http: HttpClient, environment: Environment, val runModeConfiguration: Configuration)
-    extends ServicesConfig(runModeConfiguration) {
+class GaConnector(http: HttpClient, environment: Environment, val configuration: Configuration)
+    extends ServicesConfig(configuration) {
 
   implicit val dimensionWrites = Json.writes[DimensionValue]
   implicit val eventWrites = Json.writes[Event]
