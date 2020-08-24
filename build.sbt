@@ -64,9 +64,9 @@ scalafmtOnCompile in Test := true
 libraryDependencies ++= Seq(
   "org.scalatest"          %% "scalatest"          % "3.0.8",
   "org.pegdown"            % "pegdown"             % "1.6.0",
-  "org.jsoup"              % "jsoup"               % "1.12.1",
+  "org.jsoup"              % "jsoup"               % "1.13.1",
   "com.typesafe.play"      %% "play-test"          % play.core.PlayVersion.current,
-  "org.mockito"            % "mockito-core"        % "3.2.4",
+  "org.mockito"            % "mockito-core"        % "3.4.6",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3",
   "org.scalacheck"         %% "scalacheck"         % "1.14.3"
 ).map(_ % "test")
@@ -75,25 +75,25 @@ libraryDependencies ++= Seq(
 // Dependencies
 // ================================================================================
 
-scalaVersion := "2.12.0"
+scalaVersion := "2.12.11"
 
 libraryDependencies ++= Seq(
   ws,
-  "uk.gov.hmrc"               %% "bootstrap-play-26"              % "1.7.0",
-  "uk.gov.hmrc"               %% "domain"                         % "5.8.0-play-26",
-  "uk.gov.hmrc"               %% "govuk-template"                 % "5.54.0-play-26",
-  "uk.gov.hmrc"               %% "play-ui"                        % "8.9.0-play-26",
-  "uk.gov.hmrc"               %% "play-partials"                  % "6.10.0-play-26",
+  "uk.gov.hmrc"               %% "bootstrap-frontend-play-26"     % "2.24.0",
+  "uk.gov.hmrc"               %% "domain"                         % "5.9.0-play-26",
+  "uk.gov.hmrc"               %% "govuk-template"                 % "5.55.0-play-26",
+  "uk.gov.hmrc"               %% "play-ui"                        % "8.11.0-play-26",
+  "uk.gov.hmrc"               %% "play-partials"                  % "6.11.0-play-26",
   "com.typesafe.play"         %% "play-json"                      % "2.6.14",
   "org.scalactic"             %% "scalactic"                      % "3.0.8",
   "uk.gov.hmrc"               %% "auth-client"                    % "3.0.0-play-26",
-  "uk.gov.hmrc"               %% "http-caching-client"            % "9.0.0-play-26",
-  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "1.2.0-play-26",
-  "com.softwaremill.macwire"  %% "macros"                         % "2.3.3" % "provided",
-  "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.3" % "provided",
-  "com.softwaremill.macwire"  %% "util"                           % "2.3.3",
-  "com.softwaremill.macwire"  %% "proxy"                          % "2.3.3",
-  "org.typelevel"             %% "cats-core"                      % "1.6.1",
+  "uk.gov.hmrc"               %% "http-caching-client"            % "9.1.0-play-26",
+  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "1.3.0-play-26",
+  "com.softwaremill.macwire"  %% "macros"                         % "2.3.7" % "provided",
+  "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.7" % "provided",
+  "com.softwaremill.macwire"  %% "util"                           % "2.3.7",
+  "com.softwaremill.macwire"  %% "proxy"                          % "2.3.7",
+  "org.typelevel"             %% "cats-core"                      % "2.1.1",
   "uk.gov.hmrc"               %% "uniform"                        % "0.1.9" exclude("com.typesafe.play", "play-logback")
 )
 

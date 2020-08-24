@@ -28,8 +28,9 @@ import sdil.connectors._
 import sdil.controllers.test.{TestController, TestingController}
 import sdil.controllers.{VariationsController, RegistrationController => UniformRegistrationController, _}
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
-import uk.gov.hmrc.play.bootstrap.http.{FrontendErrorHandler, HttpClient}
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.health.HealthController
 
 trait RoutesWiring extends CommonWiring {
