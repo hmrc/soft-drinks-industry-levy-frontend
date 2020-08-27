@@ -71,7 +71,6 @@ class FrontendAppConfig(val configuration: Configuration, environment: Environme
 
   override val directDebitEnabled: Boolean = getBoolean("directDebit.enabled")
 
-  lazy val frontendHost: String = getString("frontend-host")
   val accessibilityStatementUpdated = getConfString("accessibility-statement.updated", "5th August 2020")
   override val accessibilityStatementTested = getString("accessibility-statement.tested")
   def reportAccessibilityIssueUrl(problemPageUri: String): String =
