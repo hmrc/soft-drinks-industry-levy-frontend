@@ -31,4 +31,8 @@ class TestConfig extends AppConfig {
   override val signoutUrlNoFeedback: String = "http://localhost:9025/gg/sign-out"
   override val balanceAllEnabled: Boolean = true
   override val directDebitEnabled: Boolean = true
+  override val accessibilityStatementTested: String = "4 August 2020"
+  override val accessibilityStatementUpdated: String = "5 August 2020"
+  override def reportAccessibilityIssueUrl(problemPageUri: String): String =
+    ???
 }

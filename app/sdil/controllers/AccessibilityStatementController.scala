@@ -28,7 +28,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 class AccessibilityStatementController @Inject()(
-  val registeredAction: RegisteredAction,
+  val authorisedAction: AuthorisedAction,
   override val messagesApi: MessagesApi,
   mcc: MessagesControllerComponents,
   views: Views)(implicit config: AppConfig, val executionContext: ExecutionContext)
@@ -36,8 +36,8 @@ class AccessibilityStatementController @Inject()(
 
   implicit val lang = mcc.langs.availables.head
 
-  def get: Action[AnyContent] = registeredAction.async { implicit request =>
-    Future.successful(Ok(views.accessibilityStatement()))
+  def get(problemPageUri: String): Action[AnyContent] = authorisedAction.async { implicit request =>
+    Future.successful(Ok(views.accessibilityStatement(problemPageUri)))
 
   }
 

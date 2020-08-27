@@ -105,6 +105,10 @@
 
 @footerTop = {}
 
+@footerLinks = {
+    @viewHelpers.footerLinks(accessibilityFooterUrl=Some(sdil.controllers.routes.AccessibilityStatementController.get(request.uri).url))
+
+}
 
 @serviceInfo = {
 @viewHelpers.serviceInfo(
@@ -138,4 +142,4 @@
     if(form.exists(_.hasErrors)) s"${Messages("sdil.common.error")}: $title" else title
 }
 
-@govUkTemplate(Some(tabTitle), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(viewHelpers.footerLinks()), true)(content)
+@govUkTemplate(Some(tabTitle), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinks), true)(content)

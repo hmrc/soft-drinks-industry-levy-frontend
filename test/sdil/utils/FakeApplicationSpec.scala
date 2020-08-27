@@ -274,6 +274,8 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
   lazy val journeyEnd: views.html.uniform.journeyEnd = wire[views.html.uniform.journeyEnd]
   lazy val many: views.html.uniform.many = wire[views.html.uniform.many]
   lazy val tell: views.html.uniform.tell = wire[views.html.uniform.tell]
+  lazy val accessibilityStatement: views.html.accessibility.accessibility_statement =
+    wire[views.html.accessibility.accessibility_statement]
 
   lazy val main: main_template = wire[main_template]
   lazy val govUkWrapper: govuk_wrapper = wire[govuk_wrapper]

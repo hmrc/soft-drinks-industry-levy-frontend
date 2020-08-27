@@ -17,6 +17,7 @@
 package sdil.config
 
 import play.api.{Configuration, Environment}
+import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 
 trait AppConfig {
@@ -34,6 +35,7 @@ trait AppConfig {
   val directDebitEnabled: Boolean
   val accessibilityStatementTested: String
   val accessibilityStatementUpdated: String
+  def reportAccessibilityIssueUrl(problemPageUri: String): String
 }
 
 class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMode, environment: Environment)
@@ -69,6 +71,10 @@ class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMod
 
   override val directDebitEnabled: Boolean = getBoolean("directDebit.enabled")
 
+  lazy val frontendHost: String = getString("frontend-host")
   val accessibilityStatementUpdated = getConfString("accessibility-statement.updated", "5th August 2020")
   override val accessibilityStatementTested = getString("accessibility-statement.tested")
+  def reportAccessibilityIssueUrl(problemPageUri: String): String =
+    s"$contactHost/contact/accessibility?service=$contactFormServiceIdentifier&userAction=${SafeRedirectUrl(
+      companyAuthFrontend + problemPageUri).encodedUrl}"
 }
