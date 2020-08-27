@@ -22,16 +22,15 @@ import sdil.models.RegistrationFormData
 import uk.gov.hmrc.crypto.CompositeSymmetricCrypto
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.{CacheMap, ShortLivedCache, ShortLivedHttpCaching}
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 class RegistrationFormDataCache(
-  val runModeConfiguration: Configuration,
-  val runMode: RunMode,
+  val configuration: Configuration,
   val shortLiveCache: ShortLivedHttpCaching,
   environment: Environment)(implicit val crypto: CompositeSymmetricCrypto, ec: ExecutionContext)
-    extends ServicesConfig(runModeConfiguration, runMode) with ShortLivedCache {
+    extends ServicesConfig(configuration) with ShortLivedCache {
 
   def cache(internalId: String, body: RegistrationFormData)(implicit hc: HeaderCarrier): Future[CacheMap] =
     cache(s"$internalId-sdil-registration", "formData", body)

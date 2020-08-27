@@ -21,10 +21,10 @@ import play.api.Configuration
 import play.api.mvc.EssentialFilter
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
-import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCryptoFilter
-import uk.gov.hmrc.play.bootstrap.filters.frontend.deviceid.DeviceIdFilter
-import uk.gov.hmrc.play.bootstrap.filters.frontend.{FrontendAuditFilter, HeadersFilter, SessionTimeoutFilter}
-import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, FrontendFilters, LoggingFilter, MDCFilter}
+import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, LoggingFilter, MDCFilter}
+import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCryptoFilter
+import uk.gov.hmrc.play.bootstrap.frontend.filters.deviceid.DeviceIdFilter
+import uk.gov.hmrc.play.bootstrap.frontend.filters.{FrontendAuditFilter, FrontendFilters, HeadersFilter, SessionIdFilter, SessionTimeoutFilter, WhitelistFilter}
 
 class SdilFilters(
   configuration: Configuration,
@@ -39,6 +39,8 @@ class SdilFilters(
   sessionTimeoutFilter: SessionTimeoutFilter,
   cacheControlFilter: CacheControlFilter,
   mdcFilter: MDCFilter,
+  whitelistFilter: WhitelistFilter,
+  sessionIdFilter: SessionIdFilter,
   variationsFilter: VariationsFilter)
     extends FrontendFilters(
       configuration: Configuration,
@@ -52,13 +54,7 @@ class SdilFilters(
       cookieCryptoFilter: SessionCookieCryptoFilter,
       sessionTimeoutFilter: SessionTimeoutFilter,
       cacheControlFilter: CacheControlFilter,
-      mdcFilter: MDCFilter
-    ) {
-  override val filters: Seq[EssentialFilter] = {
-    if (enableSecurityHeaderFilter) {
-      Seq(securityFilter) ++ frontendFilters :+ variationsFilter
-    } else {
-      frontendFilters :+ variationsFilter
-    }
-  }
-}
+      mdcFilter: MDCFilter,
+      whitelistFilter: WhitelistFilter,
+      sessionIdFilter: SessionIdFilter
+    ) {}

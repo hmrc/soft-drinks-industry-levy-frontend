@@ -18,7 +18,7 @@ package sdil.config
 
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
   val analyticsToken: String
@@ -38,14 +38,14 @@ trait AppConfig {
   def reportAccessibilityIssueUrl(problemPageUri: String): String
 }
 
-class FrontendAppConfig(val runModeConfiguration: Configuration, runMode: RunMode, environment: Environment)
-    extends ServicesConfig(runModeConfiguration, runMode) with AppConfig {
+class FrontendAppConfig(val configuration: Configuration, environment: Environment)
+    extends ServicesConfig(configuration) with AppConfig {
 
   private def loadConfig(key: String) =
-    runModeConfiguration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+    configuration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  private lazy val contactHost = runModeConfiguration.getOptional[String](s"contact-frontend.host").getOrElse("")
-  private lazy val contactFormServiceIdentifier = runModeConfiguration.get[String]("appName")
+  private lazy val contactHost = configuration.getOptional[String](s"contact-frontend.host").getOrElse("")
+  private lazy val contactFormServiceIdentifier = configuration.get[String]("appName")
 
   override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
   override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")

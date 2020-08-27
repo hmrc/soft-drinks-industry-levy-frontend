@@ -16,11 +16,13 @@
 
 package sdil.config
 
+import java.util.UUID
+
 import com.kenshoo.play.metrics.{Metrics, MetricsFilter, MetricsFilterImpl}
 import com.softwaremill.macwire.{wire, wireWith}
 import play.api.http.HttpConfiguration
 import play.api.libs.crypto.DefaultCookieSigner
-import play.api.mvc.{LegacySessionCookieBaker, SessionCookieBaker}
+import play.api.mvc.{DefaultSessionCookieBaker, LegacySessionCookieBaker, SessionCookieBaker}
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
 import sdil.filters.VariationsFilter
@@ -28,10 +30,10 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.{ControllerConfigs, DefaultHttpAuditEvent, HttpAuditEvent}
 import uk.gov.hmrc.play.bootstrap.filters._
-import uk.gov.hmrc.play.bootstrap.filters.frontend._
-import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.{DefaultSessionCookieCryptoFilter, SessionCookieCrypto, SessionCookieCryptoFilter}
-import uk.gov.hmrc.play.bootstrap.filters.frontend.deviceid.{DefaultDeviceIdFilter, DeviceIdFilter}
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.filters._
+import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.{DefaultSessionCookieCryptoFilter, SessionCookieCrypto, SessionCookieCryptoFilter}
+import uk.gov.hmrc.play.bootstrap.frontend.filters.deviceid.{DefaultDeviceIdFilter, DeviceIdFilter}
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 trait FilterWiring extends CommonWiring {
   val httpConfiguration: HttpConfiguration
@@ -41,10 +43,14 @@ trait FilterWiring extends CommonWiring {
   val metrics: Metrics
   val errorHandler: FrontendErrorHandler
 
-  //TODO change to DefaultSessionCookieBaker when 2.6 available platform wide
-  lazy val sessionCookieBaker: SessionCookieBaker =
-    new LegacySessionCookieBaker(httpConfiguration.session, new DefaultCookieSigner(httpConfiguration.secret))
-
+  lazy val sessionCookieBaker: DefaultSessionCookieBaker =
+    new DefaultSessionCookieBaker(
+      httpConfiguration.session,
+      httpConfiguration.secret,
+      new DefaultCookieSigner(httpConfiguration.secret))
+  val uuid: UUID = UUID.randomUUID()
+  lazy val whitelistFilter: WhitelistFilter = wire[WhitelistFilter]
+  lazy val sessionIdFilter: SessionIdFilter = wire[SessionIdFilter]
   lazy val mdcFilter: MDCFilter = wire[MDCFilter]
   lazy val variationsFilter: VariationsFilter = wire[VariationsFilter]
   lazy val loggingFilter: LoggingFilter = wire[DefaultLoggingFilter]
