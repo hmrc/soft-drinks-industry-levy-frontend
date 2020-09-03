@@ -39,7 +39,7 @@ class SdilFilters(
   sessionTimeoutFilter: SessionTimeoutFilter,
   cacheControlFilter: CacheControlFilter,
   mdcFilter: MDCFilter,
-  whitelistFilter: WhitelistFilter,
+  allowlistFilter: WhitelistFilter,
   sessionIdFilter: SessionIdFilter,
   variationsFilter: VariationsFilter)
     extends FrontendFilters(
@@ -55,6 +55,6 @@ class SdilFilters(
       sessionTimeoutFilter: SessionTimeoutFilter,
       cacheControlFilter: CacheControlFilter,
       mdcFilter: MDCFilter,
-      whitelistFilter: WhitelistFilter,
+      allowlistFilter: WhitelistFilter,
       sessionIdFilter: SessionIdFilter
     ) {}

@@ -491,11 +491,6 @@ sdil.invalid-role.title=You cannot register using this Government Gateway accoun
 sdil.invalid-role.p1=You have signed in as an assistant. You cannot register for the Soft Drinks Industry Levy using this account.
 sdil.invalid-role.p2=The organisation or individual you are representing must apply to register themselves.
 
-#Not whitelisted
-sdil.not-whitelisted.title=Service temporarily unavailable
-sdil.not-whitelisted.p1=We are sorry, but the Soft Drinks Industry Levy service is currently unavailable.
-sdil.not-whitelisted.p2=Please try again later.
-
 item.description={0}
 financiallineitem.returncharge=Return <br/><span class="form-hint">for {0} to {1}</span>
 financiallineitem.returnchargeinterest=Interest Charged<br/><span class="form-hint">up to {0}</span>
