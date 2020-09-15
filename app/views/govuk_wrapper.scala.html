@@ -105,13 +105,7 @@
 
 @footerTop = {}
 
-@footerLinks = {
-    @if(appConfig.accessibilityStatementToggle) {
-        @viewHelpers.footerLinks(accessibilityFooterUrl=Some(appConfig.accessibilityStatementUrl(request.uri)))
-    } else {
-        @viewHelpers.footerLinks()
-    }
-}
+@footerLinks = {}
 
 @serviceInfo = {
 @viewHelpers.serviceInfo(
@@ -145,4 +139,4 @@
     if(form.exists(_.hasErrors)) s"${Messages("sdil.common.error")}: $title" else title
 }
 
-@govUkTemplate(Some(tabTitle), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinks), true)(content)
+@govUkTemplate(Some(tabTitle), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(viewHelpers.footerLinks()), true)(content)
