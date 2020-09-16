@@ -32,9 +32,4 @@ class TestConfig extends AppConfig {
   override val signoutUrlNoFeedback: String = "http://localhost:9025/gg/sign-out"
   override val balanceAllEnabled: Boolean = true
   override val directDebitEnabled: Boolean = true
-  override val accessibilityStatementToggle: Boolean = true
-  override val accessibilityBaseUrl: String = "http://localhost:12346"
-  override def accessibilityStatementUrl(referrer: String): String =
-    s"$accessibilityBaseUrl/accessibility-statement/soft-drinks-industry-levy?referrerUrl=${SafeRedirectUrl(
-      accessibilityBaseUrl + referrer).encodedUrl}"
 }

@@ -31,7 +31,7 @@ import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
 import sdil.filters.SdilFilters
 import uk.gov.hmrc.play.bootstrap.config.Base64ConfigDecoder
-import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
+import uk.gov.hmrc.play.config.{AccessibilityStatementConfig, AssetsConfig, GTMConfig, OptimizelyConfig}
 
 import scala.concurrent.ExecutionContext
 
@@ -55,6 +55,8 @@ class SDILComponents(context: Context)
   lazy val optimizelyConfig: OptimizelyConfig = new OptimizelyConfig(configuration)
   lazy val assetConfig: AssetsConfig = new AssetsConfig(configuration)
   lazy val gtmConfig: GTMConfig = new GTMConfig(configuration)
+  lazy val accessibilityStatementConfig: AccessibilityStatementConfig = new AccessibilityStatementConfig(
+    (configuration))
 
   lazy val customInjector
     : Injector = new SimpleInjector(injector) + templateController + wsClient + optimizelyConfig + assetConfig + gtmConfig

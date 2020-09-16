@@ -44,7 +44,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
-import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
+import uk.gov.hmrc.play.config.{AccessibilityStatementConfig, AssetsConfig, GTMConfig, OptimizelyConfig}
 import uk.gov.hmrc.play.views.html.helpers._
 import uk.gov.hmrc.play.views.html.layouts._
 import views.{ViewHelpers, Views}
@@ -317,4 +317,5 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
   lazy val optimizelyConfig: OptimizelyConfig = wire[OptimizelyConfig]
   lazy val assetConfig: AssetsConfig = wire[AssetsConfig]
   lazy val gtmConfig: GTMConfig = wire[GTMConfig]
+  lazy val accessibilityStatementConfig: AccessibilityStatementConfig = wire[AccessibilityStatementConfig]
 }

@@ -33,9 +33,6 @@ trait AppConfig {
   val appName: String
   val balanceAllEnabled: Boolean
   val directDebitEnabled: Boolean
-  val accessibilityStatementToggle: Boolean
-  val accessibilityBaseUrl: String
-  def accessibilityStatementUrl(referrer: String): String
 }
 
 class FrontendAppConfig(val configuration: Configuration, environment: Environment)
