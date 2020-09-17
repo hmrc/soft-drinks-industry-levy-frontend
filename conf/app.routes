@@ -1,6 +1,7 @@
 # microservice specific routes
 GET         /assets/*file                                      controllers.Assets.at(path="/public", file)
 
+GET         /                                                  sdil.controllers.ServicePageController.show
 GET         /home                                              sdil.controllers.ServicePageController.show
 GET         /transaction-history                               sdil.controllers.ServicePageController.balanceHistory
 
