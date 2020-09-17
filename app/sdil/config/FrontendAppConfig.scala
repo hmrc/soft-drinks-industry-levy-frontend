@@ -33,9 +33,6 @@ trait AppConfig {
   val appName: String
   val balanceAllEnabled: Boolean
   val directDebitEnabled: Boolean
-  val accessibilityStatementToggle: Boolean
-  val accessibilityBaseUrl: String
-  def accessibilityStatementUrl(referrer: String): String
 }
 
 class FrontendAppConfig(val configuration: Configuration, environment: Environment)
@@ -71,10 +68,4 @@ class FrontendAppConfig(val configuration: Configuration, environment: Environme
 
   override val directDebitEnabled: Boolean = getBoolean("directDebit.enabled")
 
-  val frontendHost: String = loadConfig("accessibility-statement-baseUrl")
-  lazy val accessibilityStatementToggle: Boolean = configuration.get[Boolean]("accessibility-statement-toggle")
-  lazy val accessibilityBaseUrl: String = configuration.get[String]("accessibility-statement-baseUrl")
-  def accessibilityStatementUrl(referrer: String) =
-    s"$accessibilityBaseUrl/accessibility-statement/soft-drinks-industry-levy?referrerUrl=${SafeRedirectUrl(
-      frontendHost + referrer).encodedUrl}"
 }

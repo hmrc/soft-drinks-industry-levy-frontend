@@ -22,7 +22,7 @@ import play.api.i18n.MessagesApi
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
+import uk.gov.hmrc.play.config.{AccessibilityStatementConfig, AssetsConfig, GTMConfig, OptimizelyConfig}
 import uk.gov.hmrc.play.views.html.helpers._
 import uk.gov.hmrc.play.views.html.layouts._
 import views.{ViewHelpers, Views}
@@ -117,4 +117,5 @@ trait CommonWiring {
   val optimizelyConfig: OptimizelyConfig
   val assetConfig: AssetsConfig
   val gtmConfig: GTMConfig
+  val accessibilityStatementConfig: AccessibilityStatementConfig
 }
