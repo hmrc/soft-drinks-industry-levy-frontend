@@ -44,7 +44,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache, ShortLivedHttpCaching}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
-import uk.gov.hmrc.play.config.{AccessibilityStatementConfig, AssetsConfig, GTMConfig, OptimizelyConfig}
+import uk.gov.hmrc.play.config._
 import uk.gov.hmrc.play.views.html.helpers._
 import uk.gov.hmrc.play.views.html.layouts._
 import views.{ViewHelpers, Views}
@@ -305,6 +305,9 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
   lazy val euExitLinks: EuExitLinks = wire[EuExitLinks]
   lazy val footerLinks: FooterLinks = wire[FooterLinks]
   lazy val head: Head = wire[Head]
+  lazy val headWithTrackingConsent: HeadWithTrackingConsent = wire[HeadWithTrackingConsent]
+  lazy val trackingConsentSnippet: TrackingConsentSnippet = wire[TrackingConsentSnippet]
+  lazy val trackingConsentConfig: TrackingConsentConfig = wire[TrackingConsentConfig]
   lazy val headerNav: HeaderNav = wire[HeaderNav]
   lazy val loginStatus: LoginStatus = wire[LoginStatus]
   lazy val mainContent: MainContent = wire[MainContent]
