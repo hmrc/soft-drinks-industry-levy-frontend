@@ -35,7 +35,7 @@
         form: Option[Form[_]] = None)(implicit request: Request[_], messages: Messages)
 
 @head = {
-@viewHelpers.head(
+@viewHelpers.headWithTrackingConsent(
     linkElem = Some(linksElement),
     headScripts = None)
     <meta name="format-detection" content="telephone=no" />
