@@ -222,6 +222,22 @@ class ReturnsControllerSpec extends ControllerSpec {
 
     }
 
+    "execute index journey and throw a NoSuchElementException" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+        Future.successful(Some(aSubscription))
+      }
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any()))
+        .thenThrow(new NoSuchElementException("Exception occurred while retrieving pendingReturns"))
+
+      val result = controller.index(2018, 1, nilReturn = false, "idvalue").apply(FakeRequest())
+      status(result) mustEqual SEE_OTHER
+
+    }
+
     "execute index journey with a nil return" in {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
