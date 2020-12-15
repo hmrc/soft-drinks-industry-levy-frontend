@@ -22,6 +22,7 @@ import java.time.format._
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
+import play.api.Logger
 import play.api.i18n._
 import play.api.mvc.{AnyContent, _}
 import play.twirl.api.Html
@@ -231,7 +232,7 @@ class ReturnsController(
       val sdilRef = request.sdilEnrolment.value
       val period = ReturnPeriod(year, quarter)
       val persistence = SaveForLaterPersistence(s"returns-$year$quarter", sdilRef, cache)
-      for {
+      (for {
         subscription   <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
         pendingReturns <- sdilConnector.returns_pending(subscription.utr)
         r <- if (pendingReturns.contains(period))
@@ -241,7 +242,12 @@ class ReturnsController(
                 if (nilReturn) JourneyConfig(LeapAhead) else JourneyConfig(SingleStep))
             else
               Redirect(routes.ServicePageController.show()).pure[Future]
-      } yield r
+      } yield r) recoverWith {
+        case t: Throwable => {
+          Logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
+          Redirect(routes.ServicePageController.show()).pure[Future]
+        }
+      }
   }
 
   def taxEstimation(r: SdilReturn): BigDecimal = {
