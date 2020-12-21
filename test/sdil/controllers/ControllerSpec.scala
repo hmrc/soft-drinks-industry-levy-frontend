@@ -45,10 +45,8 @@ trait ControllerSpec extends FakeApplicationSpec {
       Future.successful(returnPeriods)
     }
 
-  def submitRegistration(): OngoingStubbing[Future[Unit]] = {
-    val mySub = defaultSubscription.copy(orgType = "7")
+  def submitRegistration(): OngoingStubbing[Future[Unit]] =
     when(mockSdilConnector.submit(any(), any())(any())) thenReturn Future.successful(())
-  }
 
 //  def desifySub(subscription: Subscription)= {
 //    when(mockSubscription.desify(matching(defaultSubscription))) thenReturn subscription

@@ -17,7 +17,6 @@
 package sdil.utils
 
 import sdil.config.AppConfig
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 
 class TestConfig extends AppConfig {
   override val analyticsToken: String = "token"

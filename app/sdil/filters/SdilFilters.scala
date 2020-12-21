@@ -18,7 +18,6 @@ package sdil.filters
 
 import com.kenshoo.play.metrics.MetricsFilter
 import play.api.Configuration
-import play.api.mvc.EssentialFilter
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
 import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, LoggingFilter, MDCFilter}

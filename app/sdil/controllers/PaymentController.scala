@@ -18,10 +18,9 @@ package sdil.controllers
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.actions.RegisteredAction
-import sdil.config.{AppConfig, FrontendAppConfig}
+import sdil.config.AppConfig
 import sdil.connectors.{PayApiConnector, SoftDrinksIndustryLevyConnector, SpjRequestBtaSdil}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext
 
 class PaymentController(

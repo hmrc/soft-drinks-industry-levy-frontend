@@ -78,6 +78,11 @@ libraryDependencies ++= Seq(
 scalaVersion := "2.12.11"
 
 libraryDependencies ++= Seq(
+  compilerPlugin("com.github.ghik" % "silencer-plugin" % "1.7.1" cross CrossVersion.full),
+  "com.github.ghik" % "silencer-lib" % "1.7.1" % Provided cross CrossVersion.full
+)
+
+libraryDependencies ++= Seq(
   ws,
   "uk.gov.hmrc"               %% "bootstrap-frontend-play-26"     % "2.24.0",
   "uk.gov.hmrc"               %% "domain"                         % "5.9.0-play-26",
@@ -132,13 +137,14 @@ scalacOptions ++= Seq(
   "-Xlint:type-parameter-shadow",      // A local type parameter shadows a type already in scope.
   "-Xlint:unsound-match",              // Pattern match may not be typesafe.
   "-Yno-adapted-args",                 // Do not adapt an argument list (either by inserting () or creating a tuple) to match the receiver.
-  "-Ywarn-dead-code",                  // Warn when dead code is identified.
+//  "-Ywarn-dead-code",                  // Warn when dead code is identified.
   "-Ywarn-inaccessible",               // Warn about inaccessible types in method signatures.
   "-Ywarn-infer-any",                  // Warn when a type argument is inferred to be `Any`.
   "-Ywarn-nullary-override",           // Warn when non-nullary `def f()' overrides nullary `def f'.
   "-Ywarn-nullary-unit",               // Warn when nullary methods return Unit.
   "-Ywarn-numeric-widen",              // Warn when numerics are widened.
   "-Ywarn-unused",                     // Warn if an import selector is not referenced.
+  "-P:silencer:pathFilters=views;routes;TestStorage",
   "-Ywarn-value-discard"               // Warn when non-Unit expression results are unused.
 )
 

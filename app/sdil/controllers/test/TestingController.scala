@@ -18,8 +18,7 @@ package sdil.controllers.test
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.connectors.TestConnector
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext
 
 class TestingController(testConnector: TestConnector, mcc: MessagesControllerComponents)(implicit ec: ExecutionContext)

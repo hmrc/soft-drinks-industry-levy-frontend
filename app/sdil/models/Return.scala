@@ -17,11 +17,8 @@
 package sdil.models
 
 import java.time.{LocalDate, LocalDateTime}
-
 import cats.implicits._
-import play.api.libs.json.Json
 import sdil.controllers.returnLiterageList
-
 import scala.collection.immutable.ListMap
 
 case class SdilReturn(

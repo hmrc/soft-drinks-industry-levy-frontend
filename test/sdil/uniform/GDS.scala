@@ -16,7 +16,7 @@
 
 package sdil.uniform
 
-import ltbs.play.scaffold.{GdsComponents, SdilComponents}
+import ltbs.play.scaffold.GdsComponents
 import org.scalatest.{FlatSpec, Matchers}
 
 class GDS extends FlatSpec with Matchers {

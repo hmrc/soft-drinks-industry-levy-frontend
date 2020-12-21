@@ -16,12 +16,9 @@
 
 package sdil.uniform
 
-import cats.implicits._
 import play.api.libs.json._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-
-import scala.collection.mutable.{Map => MMap}
 import scala.concurrent._
 import uk.gov.hmrc.uniform._
 

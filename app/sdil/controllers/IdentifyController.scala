@@ -29,7 +29,7 @@ import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
 import sdil.models.{Address, Identification, RegistrationFormData}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}

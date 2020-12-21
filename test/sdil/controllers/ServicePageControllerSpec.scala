@@ -16,26 +16,22 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
 import com.softwaremill.macwire._
-import org.mockito.ArgumentMatchers.{any, eq => matching}
+import org.mockito.ArgumentMatchers.{any, eq => matching, _}
 import org.mockito.Mockito.when
-import org.mockito.ArgumentMatchers._
 import org.scalatest.BeforeAndAfterAll
-import play.api.i18n.Messages
-import play.api.i18n.Messages.Message
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.{FinancialLineItem, ReturnCharge, ReturnPeriod, SdilReturn}
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
+import sdil.models.{ReturnCharge, ReturnPeriod}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core._
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {

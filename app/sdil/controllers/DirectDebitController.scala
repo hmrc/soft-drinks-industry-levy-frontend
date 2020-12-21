@@ -19,9 +19,8 @@ package sdil.controllers
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
-import sdil.connectors.{DirectDebitBackendConnector, SoftDrinksIndustryLevyConnector, StartSdilReturnFromSdilFrontend}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
+import sdil.connectors.{DirectDebitBackendConnector, StartSdilReturnFromSdilFrontend}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext
 
 class DirectDebitController(

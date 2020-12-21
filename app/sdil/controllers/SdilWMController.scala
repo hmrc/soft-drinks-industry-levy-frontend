@@ -28,16 +28,15 @@ import play.api.data.validation.{Invalid, _}
 import play.api.data.{Form, Mapping, _}
 import play.api.i18n._
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{AnyContent, Request, Result}
 import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend.{Site, Subscription}
+import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import uk.gov.hmrc.domain.Modulus23Check
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.uniform.HtmlShow.ops._
 import uk.gov.hmrc.uniform._
 import uk.gov.hmrc.uniform.playutil._
@@ -47,9 +46,6 @@ import views.html.uniform
 import scala.concurrent._
 import scala.concurrent.duration._
 import cats.implicits._
-import com.softwaremill.macwire.wire
-import javax.inject.Inject
-import sdil.controllers.test.TestController
 import sdil.models.variations.ReturnVariationData
 import sdil.uniform.ShowTitle
 import sdil.uniform.ShowTitle.instance
@@ -239,7 +235,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
     val outerMapping: Mapping[Option[T]] = mapping(
       "outer" -> bool(key),
       "inner" -> mandatoryIfTrue(s"$key.outer", innerMapping)
-    ) { (_, _) match { case (outer, inner) => inner } }(a => (a.isDefined, a).some)
+    ) { (_, _) match { case (_, inner) => inner } }(a => (a.isDefined, a).some)
 
     formPage(key)(outerMapping, default) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
@@ -401,7 +397,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
     whatHappensNext: Option[Html] = None,
     getTotal: Option[Html] = None
   )(implicit extraMessages: ExtraMessages): WebMonad[Result] =
-    webMonad { (rid, request, path, db) =>
+    webMonad { (_, request, path, db) =>
       implicit val r = request
 
       Future.successful {
@@ -424,7 +420,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
     }
 
   protected def end[A: HtmlShow, R](id: String, input: A): WebMonad[R] =
-    webMonad { (rid, request, path, db) =>
+    webMonad { (_, request, path, db) =>
       implicit val r = request
 
       Future.successful {
@@ -461,7 +457,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
       }
 
     many[A](id, min, max, default, confirmation, Some(edit)) {
-      case (iid, minA, maxA, items) =>
+      case (_, _, _, items) =>
         val mapping =
           optional(text) // N.b. ideally this would just be 'text' but sadly text triggers the default play "required" message for 'text'
             .verifying(s"error.radio-form.choose-option.$id|error.radio-form.choose-option", a => a.nonEmpty)
