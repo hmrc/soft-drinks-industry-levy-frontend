@@ -16,11 +16,6 @@
 
 package sdil
 
-import play.api.libs.json._
-import sdil.models.retrieved.RetrievedSubscription
-
-import scala.collection.immutable
-import scala.collection.immutable.ListMap
 import scala.concurrent.Future
 import scala.language.implicitConversions
 

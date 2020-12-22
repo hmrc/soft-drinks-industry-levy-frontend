@@ -14,12 +14,8 @@
  * limitations under the License.
  *@
 
-@import helper.{inputRadioGroup => _, _}
-@import play.api.Configuration
+@import helper.{inputRadioGroup => _}
 @import views.html.softdrinksindustrylevy.helpers._
-@import sdil.config.AppConfig
-@import views.html.helper.options
-@import views.html.uniform.helpers._
 
 @(key: String, form: Form[String], possibleValues: List[String])(implicit messages: Messages, extraMessages: ExtraMessages, lang: Lang)
 @inputRadioGroup(

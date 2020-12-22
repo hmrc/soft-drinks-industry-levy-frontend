@@ -17,25 +17,16 @@
 package sdil.controllers
 
 import com.softwaremill.macwire._
-import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
-import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.i18n.Messages
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.actions.AuthorisedRequest
-import sdil.config.RegistrationFormDataCache
 import sdil.models._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
-import cats.implicits._
-import org.scalatest.Matchers
-import play.api.i18n.Messages
-import uk.gov.hmrc.http.cache.client.CacheMap
-
-import scala.concurrent._
-import scala.concurrent.duration._
 
 class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
 

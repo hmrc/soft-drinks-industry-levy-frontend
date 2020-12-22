@@ -19,7 +19,7 @@ package sdil.filters
 import akka.stream.Materializer
 import play.api.mvc.{Filter, RequestHeader, Result}
 import sdil.config.AppConfig
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 import scala.concurrent.Future
 

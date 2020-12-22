@@ -27,7 +27,7 @@ import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
 import ltbs.play.scaffold.SdilComponents.{packagingSiteMapping, litreageForm => approxLitreageForm, _}
 import play.api.data.format.Formatter
 import play.api.data.{FormError, Forms, Mapping}
-import play.api.i18n.{Messages, MessagesApi, MessagesImpl}
+import play.api.i18n.{Messages, MessagesImpl}
 import play.api.mvc._
 import play.twirl.api.Html
 import sdil.actions.RegisteredAction
@@ -41,8 +41,7 @@ import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
@@ -54,7 +53,6 @@ class VariationsController(
   val sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
   cache: ShortLivedHttpCaching,
-  errorHandler: FrontendErrorHandler,
   mcc: MessagesControllerComponents,
   override val uniformHelpers: Uniform
 )(implicit val config: AppConfig, val ec: ExecutionContext)
@@ -303,7 +301,7 @@ class VariationsController(
       changeType <- askOneOf("select-change", changeTypes, helpText = Html(Messages("change.latency")).some) when !onlyReturns
       variation <- changeType match {
                     case None | Some(ChangeType.Returns) =>
-                      chooseReturn(subscription, sdilRef)
+                      chooseReturn(subscription)
                     case Some(ChangeType.Sites)    => contactUpdate(base)
                     case Some(ChangeType.Activity) => activityUpdate(base, subscription, returnPeriods)
                     case Some(ChangeType.Deregister) if returnPeriods.isEmpty || isVoluntary =>
@@ -360,8 +358,7 @@ class VariationsController(
   }
 
   private def chooseReturn[A](
-    subscription: RetrievedSubscription,
-    sdilRef: String
+    subscription: RetrievedSubscription
   )(implicit hc: HeaderCarrier, request: Request[_]): WebMonad[A] = {
     val base = RegistrationVariationData(subscription)
     for {

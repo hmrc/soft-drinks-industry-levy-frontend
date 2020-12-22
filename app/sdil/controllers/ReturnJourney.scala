@@ -15,15 +15,13 @@
  */
 
 package sdil.controllers
-import java.time.LocalDateTime
 
 import scala.concurrent._
 import cats.implicits._
-import javax.inject.Inject
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
 import play.api.i18n.Messages
-import play.api.libs.json.{Format, JsValue}
+import play.api.libs.json.JsValue
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.retrieved.RetrievedSubscription

@@ -35,7 +35,7 @@ import sdil.models.backend._
 import sdil.models.{Litreage, RegistrationFormData}
 import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.uniform.FormHtml
 import uk.gov.hmrc.uniform.playutil._
 import uk.gov.hmrc.uniform.webmonad._

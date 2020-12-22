@@ -16,12 +16,11 @@
 
 package sdil.models
 
-import org.scalatest.{FlatSpec, Matchers}
-import java.time.LocalDate
-import org.scalacheck.Arbitrary._
-import org.scalacheck.Prop._
 import org.scalacheck.Gen
 import org.scalatest.prop.PropertyChecks
+import org.scalatest.{FlatSpec, Matchers}
+
+import java.time.LocalDate
 
 class ReturnSpec extends FlatSpec with Matchers with PropertyChecks {
 

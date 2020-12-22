@@ -16,7 +16,7 @@
 
 package sdil.controllers
 
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -26,19 +26,19 @@ class AuthenticationController(override val messagesApi: MessagesApi, mcc: Messa
   implicit config: AppConfig)
     extends FrontendController(mcc) {
 
-  def signIn = Action { implicit request =>
+  def signIn = Action {
     Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName)))
   }
 
-  def signOut: Action[AnyContent] = Action { implicit request =>
+  def signOut: Action[AnyContent] = Action {
     Redirect(config.signoutRegVarUrl).withNewSession
   }
 
-  def signOutReturns: Action[AnyContent] = Action { implicit request =>
+  def signOutReturns: Action[AnyContent] = Action {
     Redirect(config.signoutReturnsUrl).withNewSession
   }
 
-  def timeIn(referrer: String): Action[AnyContent] = Action { implicit request =>
+  def timeIn(referrer: String): Action[AnyContent] = Action {
     Redirect(config.ggLoginUrl, Map("continue" -> Seq(referrer), "origin" -> Seq(config.appName)))
   }
 
@@ -46,7 +46,7 @@ class AuthenticationController(override val messagesApi: MessagesApi, mcc: Messa
     Ok(views.timeOut()).withNewSession
   }
 
-  def signOutNoFeedback: Action[AnyContent] = Action { implicit request =>
+  def signOutNoFeedback: Action[AnyContent] = Action {
     Redirect(config.signoutUrlNoFeedback).withNewSession
   }
 }

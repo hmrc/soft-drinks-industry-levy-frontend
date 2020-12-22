@@ -31,7 +31,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import views.softdrinksindustrylevy.errors.Errors
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.implicitConversions
 
 class AuthorisedAction(
   val authConnector: AuthConnector,

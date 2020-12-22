@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package uniform
+package sdil.uniform
 
-import java.time.LocalDate
-
-import ltbs.play.scaffold.SdilComponents
+import ltbs.play.scaffold.{SdilComponents => SdilComponentsUtil}
 import play.api.data.Form
 import play.api.test.FakeRequest
 import sdil.controllers.ControllerSpec
 import sdil.models.backend.{Site, UkAddress}
 import sdil.models.{Address, Litreage}
+
+import java.time.LocalDate
 
 class SdilComponents extends ControllerSpec {
 
@@ -55,19 +55,19 @@ class SdilComponents extends ControllerSpec {
     "email"       -> "&*()ghghjgjjj"
   )
 
-  val formContactDetails = Form(SdilComponents.contactDetailsMapping)
-  val wareHouseSiteMapping = Form(SdilComponents.warehouseSiteMapping)
+  val formContactDetails = Form(SdilComponentsUtil.contactDetailsMapping)
+  val wareHouseSiteMapping = Form(SdilComponentsUtil.warehouseSiteMapping)
 
   "A SdilComponent Call for contactDetails correctly bind" in {
 
-    SdilComponents.addressHtml.showHtml(address)
-    SdilComponents.contactDetailsForm
+    SdilComponentsUtil.addressHtml.showHtml(address)
+    SdilComponentsUtil.contactDetailsForm
       .asHtmlForm("fail data", formContactDetails.bindFromRequest()(requestContactDetails))
-    SdilComponents.contactDetailsForm
+    SdilComponentsUtil.contactDetailsForm
       .asHtmlForm("fail data", formContactDetails.bindFromRequest()(reqContactDetailsMissing))
-    SdilComponents.contactDetailsForm
+    SdilComponentsUtil.contactDetailsForm
       .asHtmlForm("fail data", formContactDetails.bindFromRequest()(reqContactDetailsWrongLengths))
-    SdilComponents.contactDetailsForm
+    SdilComponentsUtil.contactDetailsForm
       .asHtmlForm("fail data", formContactDetails.bindFromRequest()(reqContactDetailsWrongChars))
 
     val dateMap = Map("day" -> "01", "month" -> "02", "year" -> "2019")
@@ -83,30 +83,30 @@ class SdilComponents extends ControllerSpec {
     val allMissingMap = dateMap + ("day"            -> "") + ("month" -> "") + ("year" -> "")
     val invalidDayMap = dateMap + ("day"            -> "567")
 
-    SdilComponents.startDate.bind(dateMap).toString
-    SdilComponents.startDate.bind(dayMissingMap)
-    SdilComponents.startDate.bind(monthMissingMap)
-    SdilComponents.startDate.bind(yearMissingMap)
-    SdilComponents.startDate.bind(dayAndMonthMissingMap)
-    SdilComponents.startDate.bind(dayAndYearMissingMap)
-    SdilComponents.startDate.bind(monthAndYearMissingMap)
-    SdilComponents.startDate.bind(allMissingMap)
-    SdilComponents.startDate.bind(invalidDayMap)
+    SdilComponentsUtil.startDate.bind(dateMap).toString
+    SdilComponentsUtil.startDate.bind(dayMissingMap)
+    SdilComponentsUtil.startDate.bind(monthMissingMap)
+    SdilComponentsUtil.startDate.bind(yearMissingMap)
+    SdilComponentsUtil.startDate.bind(dayAndMonthMissingMap)
+    SdilComponentsUtil.startDate.bind(dayAndYearMissingMap)
+    SdilComponentsUtil.startDate.bind(monthAndYearMissingMap)
+    SdilComponentsUtil.startDate.bind(allMissingMap)
+    SdilComponentsUtil.startDate.bind(invalidDayMap)
 
-    SdilComponents.cancelRegDate.bind(dateMap).toString
-    SdilComponents.cancelRegDate.bind(dayMissingMap)
-    SdilComponents.cancelRegDate.bind(monthMissingMap)
-    SdilComponents.cancelRegDate.bind(yearMissingMap)
-    SdilComponents.cancelRegDate.bind(dayAndMonthMissingMap)
-    SdilComponents.cancelRegDate.bind(dayAndYearMissingMap)
-    SdilComponents.cancelRegDate.bind(monthAndYearMissingMap)
-    SdilComponents.cancelRegDate.bind(allMissingMap)
-    SdilComponents.cancelRegDate.bind(invalidDayMap)
+    SdilComponentsUtil.cancelRegDate.bind(dateMap).toString
+    SdilComponentsUtil.cancelRegDate.bind(dayMissingMap)
+    SdilComponentsUtil.cancelRegDate.bind(monthMissingMap)
+    SdilComponentsUtil.cancelRegDate.bind(yearMissingMap)
+    SdilComponentsUtil.cancelRegDate.bind(dayAndMonthMissingMap)
+    SdilComponentsUtil.cancelRegDate.bind(dayAndYearMissingMap)
+    SdilComponentsUtil.cancelRegDate.bind(monthAndYearMissingMap)
+    SdilComponentsUtil.cancelRegDate.bind(allMissingMap)
+    SdilComponentsUtil.cancelRegDate.bind(invalidDayMap)
 
-    SdilComponents.numeric("litreage").bind(Map("text" -> "2.35"))
-    SdilComponents.siteProgressiveRevealHtml.showHtml(siteObj)
-    SdilComponents.showLitreage.showHtml(litreage)
-    SdilComponents.longTupToLitreage((20L, 505L))
+    SdilComponentsUtil.numeric("litreage").bind(Map("text" -> "2.35"))
+    SdilComponentsUtil.siteProgressiveRevealHtml.showHtml(siteObj)
+    SdilComponentsUtil.showLitreage.showHtml(litreage)
+    SdilComponentsUtil.longTupToLitreage((20L, 505L))
 
     1 mustBe 1
   }

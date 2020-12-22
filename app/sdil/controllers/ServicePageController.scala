@@ -17,7 +17,6 @@
 package sdil.controllers
 
 import java.time.LocalDate
-
 import cats.data.OptionT
 import cats.implicits._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -26,8 +25,8 @@ import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -92,18 +91,17 @@ class ServicePageController(
 
     sdilConnector.balanceHistory(sdilRef, withAssessment = true) >>= { items =>
       val itemsWithRunningTotal = listItemsWithTotal(items)
-      val total = extractTotal(itemsWithRunningTotal)
 
       val ret = for {
         subscription <- OptionT(sdilConnector.retrieveSubscription(sdilRef))
         isDereg = subscription.deregDate.nonEmpty
         deDatePeriod = subscription.deregDate.getOrElse(LocalDate.now.plusYears(500))
-        pendingDereg <- OptionT.liftF(
-                         if (isDereg)
-                           sdilConnector.returns_get(subscription.utr, ReturnPeriod(deDatePeriod))
-                         else
-                           Future.successful(None)
-                       )
+        _ <- OptionT.liftF(
+              if (isDereg)
+                sdilConnector.returns_get(subscription.utr, ReturnPeriod(deDatePeriod))
+              else
+                Future.successful(None)
+            )
       } yield {
         Ok(
           views.balanceHistory(subscription.orgName, itemsWithRunningTotal)

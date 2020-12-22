@@ -16,38 +16,23 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
-import cats.implicits._
-import org.mockito.ArgumentMatchers._
+import com.softwaremill.macwire._
+import org.mockito.ArgumentMatchers.{any, eq => matching, _}
 import org.mockito.Mockito._
 import play.api.libs.json._
 import play.api.mvc._
-import uk.gov.hmrc.http.{CoreDelete, CoreGet, CorePut, HeaderCarrier}
-import com.softwaremill.macwire._
-import play.api.test.FakeRequest
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-
-import scala.concurrent._
-import duration._
-import org.scalatest.MustMatchers._
-import com.softwaremill.macwire._
-import org.mockito.ArgumentMatchers.{any, eq => matching}
-import org.mockito.Mockito._
-import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.config.SDILShortLivedCaching
 import sdil.models._
-import backend._
-import retrieved._
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
+import sdil.models.backend._
+import sdil.models.retrieved._
 import uk.gov.hmrc.auth.core._
-import play.api.libs.json._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
+import uk.gov.hmrc.http.{CoreDelete, CoreGet, CorePut, HeaderCarrier}
 import uk.gov.hmrc.uniform.webmonad.WebMonad
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class ReturnsControllerSpec extends ControllerSpec {

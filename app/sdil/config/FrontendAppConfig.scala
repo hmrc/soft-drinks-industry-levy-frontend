@@ -16,8 +16,7 @@
 
 package sdil.config
 
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
+import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
@@ -35,8 +34,7 @@ trait AppConfig {
   val directDebitEnabled: Boolean
 }
 
-class FrontendAppConfig(val configuration: Configuration, environment: Environment)
-    extends ServicesConfig(configuration) with AppConfig {
+class FrontendAppConfig(val configuration: Configuration) extends ServicesConfig(configuration) with AppConfig {
 
   private def loadConfig(key: String) =
     configuration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
