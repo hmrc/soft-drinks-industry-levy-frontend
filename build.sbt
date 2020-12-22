@@ -112,7 +112,6 @@ resolvers ++= Seq(
 // ================================================================================
 
 scalacOptions ++= Seq(
-//  "-Xfatal-warnings",                  // Fail the compilation if there are any warnings.
   "-deprecation",                      // Emit warning and location for usages of deprecated APIs.
   "-encoding", "utf-8",                // Specify character encoding used by source files.
   "-explaintypes",                     // Explain type errors in more detail.
@@ -137,14 +136,12 @@ scalacOptions ++= Seq(
   "-Xlint:type-parameter-shadow",      // A local type parameter shadows a type already in scope.
   "-Xlint:unsound-match",              // Pattern match may not be typesafe.
   "-Yno-adapted-args",                 // Do not adapt an argument list (either by inserting () or creating a tuple) to match the receiver.
-//  "-Ywarn-dead-code",                  // Warn when dead code is identified.
   "-Ywarn-inaccessible",               // Warn about inaccessible types in method signatures.
   "-Ywarn-infer-any",                  // Warn when a type argument is inferred to be `Any`.
   "-Ywarn-nullary-override",           // Warn when non-nullary `def f()' overrides nullary `def f'.
   "-Ywarn-nullary-unit",               // Warn when nullary methods return Unit.
   "-Ywarn-numeric-widen",              // Warn when numerics are widened.
   "-Ywarn-unused",                     // Warn if an import selector is not referenced.
-//  "-P:silencer:pathFilters=views;routes;TestStorage",
   "-P:silencer:lineContentFilters=^\\w",// Avoid '^\\w' warnings for Twirl template
   "-Ywarn-value-discard"               // Warn when non-Unit expression results are unused.
 )
