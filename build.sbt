@@ -144,7 +144,8 @@ scalacOptions ++= Seq(
   "-Ywarn-nullary-unit",               // Warn when nullary methods return Unit.
   "-Ywarn-numeric-widen",              // Warn when numerics are widened.
   "-Ywarn-unused",                     // Warn if an import selector is not referenced.
-  "-P:silencer:pathFilters=views;routes;TestStorage",
+//  "-P:silencer:pathFilters=views;routes;TestStorage",
+  "-P:silencer:lineContentFilters=^\\w",// Avoid '^\\w' warnings for Twirl template
   "-Ywarn-value-discard"               // Warn when non-Unit expression results are unused.
 )
 
