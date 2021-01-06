@@ -23,12 +23,12 @@ class TestConfig extends AppConfig {
   override val analyticsHost: String = "host"
   override val reportAProblemPartialUrl: String = "reportProblem"
   override val reportAProblemNonJSUrl: String = "reportProblemNonJs"
-  override val ggLoginUrl: String = "http://localhost:9025/gg/sign-in"
+  override val ggLoginUrl: String = "http://localhost:9553/bas-gateway/sign-in"
   override val sdilHomePage: String = "http://localhost:8700/soft-drinks-industry-levy/register/identify"
   override val appName: String = "soft-drinks-industry-levy-frontend"
-  override val signoutRegVarUrl: String = "http://localhost:9025/gg/sign-out"
-  override val signoutReturnsUrl: String = "http://localhost:9025/gg/sign-out"
-  override val signoutUrlNoFeedback: String = "http://localhost:9025/gg/sign-out"
+  override val signoutRegVarUrl: String = "http://localhost:9553/bas-gateway/sign-out-without-state"
+  override val signoutReturnsUrl: String = "http://localhost:9553/bas-gateway/sign-out-without-state"
+  override val signoutUrlNoFeedback: String = "http://localhost:9553/bas-gateway/sign-out-without-state"
   override val balanceAllEnabled: Boolean = true
   override val directDebitEnabled: Boolean = true
 }
