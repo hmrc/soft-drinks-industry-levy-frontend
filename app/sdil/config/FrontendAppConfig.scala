@@ -51,15 +51,15 @@ class FrontendAppConfig(val configuration: Configuration) extends ServicesConfig
 
   //Auth related config
   lazy val appName: String = loadConfig("appName")
-  private lazy val companyAuthFrontend = getConfString("company-auth.url", "")
-  private lazy val companyAuthSignInPath = getConfString("company-auth.sign-in-path", "")
-  private lazy val companyAuthSignOutPath = getConfString("company-auth.sign-out-path", "")
-  lazy val ggLoginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
+  private lazy val basGatewayFrontend = getConfString("bas-gateway.url", "")
+  private lazy val basGatewaySignInPath = getConfString("bas-gateway.sign-in-path", "")
+  private lazy val basGatewaySignOutPath = getConfString("bas-gateway.sign-out-path", "")
+  lazy val ggLoginUrl: String = s"$basGatewayFrontend$basGatewaySignInPath"
   lazy val feedbackSurveyUrl: String = loadConfig("microservice.services.feedback-survey.url")
-  lazy val signOutSdilUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath?continue=$feedbackSurveyUrl"
+  lazy val signOutSdilUrl: String = s"$basGatewayFrontend$basGatewaySignOutPath?continue=$feedbackSurveyUrl"
   lazy val signoutRegVarUrl: String = s"$signOutSdilUrl/SDIL"
   lazy val signoutReturnsUrl: String = s"$signOutSdilUrl/SDILRETURN"
-  lazy val signoutUrlNoFeedback: String = s"$companyAuthFrontend$companyAuthSignOutPath"
+  lazy val signoutUrlNoFeedback: String = s"$basGatewayFrontend$basGatewaySignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
 
   override val balanceAllEnabled: Boolean = getBoolean("balanceAll.enabled")
