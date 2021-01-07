@@ -27,7 +27,7 @@ class AuthenticationController(override val messagesApi: MessagesApi, mcc: Messa
     extends FrontendController(mcc) {
 
   def signIn = Action {
-    Redirect(config.ggLoginUrl, Map("continue" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName)))
+    Redirect(config.ggLoginUrl, Map("continue_url" -> Seq(config.sdilHomePage), "origin" -> Seq(config.appName)))
   }
 
   def signOut: Action[AnyContent] = Action {
@@ -39,7 +39,7 @@ class AuthenticationController(override val messagesApi: MessagesApi, mcc: Messa
   }
 
   def timeIn(referrer: String): Action[AnyContent] = Action {
-    Redirect(config.ggLoginUrl, Map("continue" -> Seq(referrer), "origin" -> Seq(config.appName)))
+    Redirect(config.ggLoginUrl, Map("continue_url" -> Seq(referrer), "origin" -> Seq(config.appName)))
   }
 
   def timeOut: Action[AnyContent] = Action { implicit request =>
