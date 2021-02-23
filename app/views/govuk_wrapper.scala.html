@@ -80,7 +80,16 @@
 
 @afterHeader = {}
 
-@bodyEnd = {}
+@bodyEnd = {
+@viewHelpers.footer(
+    analyticsToken = None,
+    analyticsHost = "",
+    ssoUrl = None,
+    scriptElem = None,
+    gaCalls = None
+        )
+    }
+}
 
 @footerTop = {}
 

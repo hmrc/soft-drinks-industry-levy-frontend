@@ -30,3 +30,5 @@ class TestConfig extends AppConfig {
   override val balanceAllEnabled: Boolean = true
   override val directDebitEnabled: Boolean = true
 }
+
+
