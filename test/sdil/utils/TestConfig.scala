@@ -19,8 +19,6 @@ package sdil.utils
 import sdil.config.AppConfig
 
 class TestConfig extends AppConfig {
-  override val analyticsToken: String = "token"
-  override val analyticsHost: String = "host"
   override val reportAProblemPartialUrl: String = "reportProblem"
   override val reportAProblemNonJSUrl: String = "reportProblemNonJs"
   override val ggLoginUrl: String = "http://localhost:9553/bas-gateway/sign-in"
