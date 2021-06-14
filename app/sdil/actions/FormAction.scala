@@ -19,12 +19,12 @@ package sdil.actions
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc._
-import sdil.config.{AppConfig, RegistrationFormDataCache}
+import sdil.config.RegistrationFormDataCache
 import sdil.controllers.routes
 import sdil.models.RegistrationFormData
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -32,7 +32,7 @@ class FormAction(
   val messagesApi: MessagesApi,
   cache: RegistrationFormDataCache,
   authorisedAction: AuthorisedAction,
-  mcc: MessagesControllerComponents)(implicit config: AppConfig, val executionContext: ExecutionContext)
+  mcc: MessagesControllerComponents)(implicit val executionContext: ExecutionContext)
     extends ActionBuilder[RegistrationFormRequest, AnyContent] with I18nSupport {
 
   val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
@@ -43,7 +43,7 @@ class FormAction(
     authorisedAction.invokeBlock[A](
       request, { implicit req =>
         implicit val hc: HeaderCarrier =
-          HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+          HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
         cache.get(req.internalId) flatMap {
           case Some(data) => block(RegistrationFormRequest(request, data, req.internalId, req.enrolments))

@@ -49,7 +49,6 @@ trait FilterWiring extends CommonWiring {
       httpConfiguration.secret,
       new DefaultCookieSigner(httpConfiguration.secret))
   val uuid: UUID = UUID.randomUUID()
-  lazy val allowlistFilter: WhitelistFilter = wire[WhitelistFilter]
   lazy val sessionIdFilter: SessionIdFilter = wire[SessionIdFilter]
   lazy val mdcFilter: MDCFilter = wire[MDCFilter]
   lazy val variationsFilter: VariationsFilter = wire[VariationsFilter]

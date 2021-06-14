@@ -19,12 +19,10 @@ package sdil.filters
 import akka.stream.Materializer
 import play.api.mvc.{Filter, RequestHeader, Result}
 import sdil.config.AppConfig
-import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 import scala.concurrent.Future
 
-class VariationsFilter(errorHandler: FrontendErrorHandler)(implicit config: AppConfig, val mat: Materializer)
-    extends Filter {
+class VariationsFilter(implicit config: AppConfig, val mat: Materializer) extends Filter {
   override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] =
     f(rh)
 }

@@ -22,6 +22,7 @@ import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,7 +35,7 @@ class TestConnector(http: HttpClient, environment: Environment, ws: WSClient, va
   def reset(url: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](s"$testUrl/test-only/$url")
 
-  def getFile(envelopeId: String, fileName: String)(implicit hc: HeaderCarrier): Future[ByteString] =
+  def getFile(envelopeId: String, fileName: String): Future[ByteString] =
     ws.url(s"$testUrl/test-only/get-file/$envelopeId/$fileName").get().map(_.bodyAsBytes)
 
   def getVariationHtml(sdilRef: String)(implicit hc: HeaderCarrier): Future[Option[Html]] =

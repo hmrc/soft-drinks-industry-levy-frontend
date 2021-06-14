@@ -21,7 +21,7 @@ import com.softwaremill.macwire.wire
 import play.api.i18n.MessagesApi
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.config._
 import uk.gov.hmrc.play.views.html.helpers._
 import uk.gov.hmrc.play.views.html.layouts._
@@ -112,7 +112,6 @@ trait CommonWiring {
   lazy val loginStatus: LoginStatus = wire[LoginStatus]
   lazy val mainContent: MainContent = wire[MainContent]
   lazy val mainContentHeader: MainContentHeader = wire[MainContentHeader]
-  lazy val optimizelySnippet: OptimizelySnippet = wire[OptimizelySnippet]
   lazy val gtmSnippet: GTMSnippet = wire[GTMSnippet]
   lazy val serviceInfo: ServiceInfo = wire[ServiceInfo]
   lazy val sidebar: Sidebar = wire[Sidebar]

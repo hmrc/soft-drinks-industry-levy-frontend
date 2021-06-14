@@ -18,7 +18,6 @@ package sdil
 
 import play.api.libs.json.{Json, OFormat}
 import sdil.models.{ReturnPeriod, SdilReturn, SmallProducer}
-import ltbs.play.scaffold.SdilComponents.longTupleFormatter
 import sdil.models.variations.ReturnVariationData
 
 package object connectors {

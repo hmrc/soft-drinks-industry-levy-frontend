@@ -50,6 +50,7 @@ import sdil.models.variations.ReturnVariationData
 import sdil.uniform.ShowTitle
 import sdil.uniform.ShowTitle.instance
 import views.uniform.Uniform
+import I18nSupport._
 
 trait SdilWMController extends WebMonadController with Modulus23Check {
 
@@ -108,7 +109,6 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
     subscription: RetrievedSubscription,
     isSmallProducer: Boolean,
     variation: Option[ReturnsVariation] = None,
-    alternativeRoutes: PartialFunction[String, WebMonad[Unit]] = Map.empty,
     originalReturn: Option[SdilReturn] = None
   )(implicit extraMessages: ExtraMessages, showBackLink: ShowBackLink): WebMonad[Unit] = {
 
@@ -169,7 +169,6 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
     id: String,
     possValues: List[A],
     default: Option[A] = None,
-    configOverride: JourneyConfig => JourneyConfig = identity,
     helpText: Option[Html] = None
   )(implicit extraMessages: ExtraMessages): WebMonad[A] = {
     val valueMap: Map[String, A] =
@@ -408,7 +407,6 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
           Ok(
             uniformHelpers.journeyEnd(
               id,
-              path,
               now,
               subheading,
               whatHappensNext,

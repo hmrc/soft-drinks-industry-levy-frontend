@@ -18,20 +18,19 @@ package sdil.actions
 
 import play.api.mvc.Results._
 import play.api.mvc._
-import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegisteredAction(
   val authConnector: AuthConnector,
   sdilConnector: SoftDrinksIndustryLevyConnector,
-  mcc: MessagesControllerComponents)(implicit config: AppConfig, val executionContext: ExecutionContext)
+  mcc: MessagesControllerComponents)(implicit val executionContext: ExecutionContext)
     extends ActionRefiner[Request, RegisteredRequest] with ActionBuilder[RegisteredRequest, AnyContent]
     with AuthorisedFunctions with ActionHelpers {
 
@@ -39,7 +38,7 @@ class RegisteredAction(
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, RegisteredRequest[A]]] = {
     implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
       (getSdilEnrolment(enrolments), getUtr(enrolments)) match {

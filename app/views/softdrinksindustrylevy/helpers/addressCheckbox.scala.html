@@ -14,11 +14,9 @@
  * limitations under the License.
  *@
 
-@import sdil.config.AppConfig
 @import sdil.models.Address
 
-@(name: String, address: Address, checked: Boolean = false)(implicit request: Request[_], messages: Messages, config:
-AppConfig)
+@(name: String, address: Address, checked: Boolean = false)
 
 <div class="multiple-choice">
     <input type="checkbox"

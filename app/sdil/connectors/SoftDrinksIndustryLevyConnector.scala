@@ -17,7 +17,7 @@
 package sdil.connectors
 
 import play.api.libs.json.JsObject
-import play.api.{Configuration, Environment}
+import play.api.Configuration
 import sdil.config.SDILSessionCache
 import sdil.models._
 import sdil.models.backend.Subscription
@@ -26,12 +26,12 @@ import sdil.models.variations.{ReturnVariationData, VariationsSubmission}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.http.HttpReads.Implicits.{readRaw, readFromJson, _}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class SoftDrinksIndustryLevyConnector(
   http: HttpClient,
-  environment: Environment,
   val configuration: Configuration,
   val shortLiveCache: ShortLivedHttpCaching,
   val sessionCache: SDILSessionCache
@@ -51,7 +51,7 @@ class SoftDrinksIndustryLevyConnector(
 
   def checkPendingQueue(utr: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](s"$sdilUrl/check-enrolment-status/$utr") recover {
-      case _: NotFoundException => HttpResponse(404)
+      case _: NotFoundException => HttpResponse(404, "")
     }
 
   def checkDirectDebitStatus(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] =

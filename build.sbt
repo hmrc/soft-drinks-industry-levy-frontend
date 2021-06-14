@@ -4,10 +4,7 @@
 
 enablePlugins(
   play.sbt.PlayScala,
-  SbtAutoBuildPlugin,
-  SbtGitVersioning,
-  SbtDistributablesPlugin,
-  SbtArtifactory
+  SbtDistributablesPlugin
 )
 
 // ================================================================================
@@ -26,13 +23,15 @@ Concat.groups := Seq(
 )
 
 // force asset pipeline to operate in dev rather than only prod
-pipelineStages in Assets := Seq(concat)
+import com.typesafe.sbt.web.Import.pipelineStages
+Assets / pipelineStages := Seq(concat)
 
 // ================================================================================
 // Testing
 // ================================================================================
 import scoverage.ScoverageKeys._
-import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
+import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport.{scalafmtOnCompile, _}
+import sbt.Keys.initialCommands
 coverageExcludedPackages := Seq(
   "app.*",
   "views.*",
@@ -55,56 +54,50 @@ coverageExcludedPackages := Seq(
 ).mkString(";")
 coverageExcludedFiles := "<empty>;.*BuildInfo.*;.*Routes.*;.*GDS.*;.*GdsComponents.*;.*WebMonadPersistence.*;" +
   ".*SiteRef.*;.*ShowTitle.*;.*MoneyFormat.*;.*MappingWithExtraConstraint.*;.*AuthenticationController.*;"
-coverageMinimum := 80
+coverageMinimumStmtTotal := 80
 coverageFailOnMinimum := false
 coverageHighlighting := true
-scalafmtOnCompile in Compile := true
-scalafmtOnCompile in Test := true
+Compile / scalafmtOnCompile := true
+Test / scalafmtOnCompile := true
 
 libraryDependencies ++= Seq(
-  "org.scalatest"          %% "scalatest"          % "3.0.8",
-  "org.pegdown"            % "pegdown"             % "1.6.0",
-  "org.jsoup"              % "jsoup"               % "1.13.1",
-  "com.typesafe.play"      %% "play-test"          % play.core.PlayVersion.current,
-  "org.mockito"            % "mockito-core"        % "3.4.6",
-  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3",
-  "org.scalacheck"         %% "scalacheck"         % "1.14.3"
+  "org.scalatest"          %% "scalatest"           % "3.0.9",
+  "org.pegdown"            %  "pegdown"             % "1.6.0",
+  "org.jsoup"              %  "jsoup"               % "1.13.1",
+  "com.typesafe.play"      %% "play-test"           % play.core.PlayVersion.current,
+  "org.mockito"            %  "mockito-core"        % "3.4.6",
+  "org.scalatestplus.play" %% "scalatestplus-play"  % "3.1.3",
+  "org.scalacheck"         %% "scalacheck"          % "1.14.3"
 ).map(_ % "test")
 
 // ================================================================================
 // Dependencies
 // ================================================================================
 
-scalaVersion := "2.12.11"
+scalaVersion := "2.12.13"
 
 libraryDependencies ++= Seq(
-  compilerPlugin("com.github.ghik" % "silencer-plugin" % "1.7.1" cross CrossVersion.full),
-  "com.github.ghik" % "silencer-lib" % "1.7.1" % Provided cross CrossVersion.full
+  compilerPlugin("com.github.ghik" % "silencer-plugin" % "1.7.5" cross CrossVersion.full),
+  "com.github.ghik" % "silencer-lib" % "1.7.5" % Provided cross CrossVersion.full
 )
 
 libraryDependencies ++= Seq(
   ws,
-  "uk.gov.hmrc"               %% "bootstrap-frontend-play-26"     % "2.24.0",
-  "uk.gov.hmrc"               %% "domain"                         % "5.9.0-play-26",
-  "uk.gov.hmrc"               %% "govuk-template"                 % "5.63.0-play-26",
-  "uk.gov.hmrc"               %% "play-ui"                        % "8.15.0-play-26",
-  "uk.gov.hmrc"               %% "play-partials"                  % "6.11.0-play-26",
-  "com.typesafe.play"         %% "play-json"                      % "2.6.14",
+  "uk.gov.hmrc"               %% "bootstrap-frontend-play-26"     % "5.3.0",
+  "uk.gov.hmrc"               %% "domain"                         % "5.11.0-play-26",
+  "uk.gov.hmrc"               %% "govuk-template"                 % "5.66.0-play-26",
+  "uk.gov.hmrc"               %% "play-ui"                        % "9.4.0-play-26",
+  "uk.gov.hmrc"               %% "play-partials"                  % "8.1.0-play-26",
+  "com.typesafe.play"         %% "play-json"                      % "2.9.2",
   "org.scalactic"             %% "scalactic"                      % "3.0.8",
-  "uk.gov.hmrc"               %% "auth-client"                    % "3.0.0-play-26",
-  "uk.gov.hmrc"               %% "http-caching-client"            % "9.1.0-play-26",
-  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "1.3.0-play-26",
+  "uk.gov.hmrc"               %% "http-caching-client"            % "9.5.0-play-26",
+  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "1.9.0-play-26",
   "com.softwaremill.macwire"  %% "macros"                         % "2.3.7" % "provided",
   "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.7" % "provided",
   "com.softwaremill.macwire"  %% "util"                           % "2.3.7",
   "com.softwaremill.macwire"  %% "proxy"                          % "2.3.7",
-  "org.typelevel"             %% "cats-core"                      % "2.1.1",
+  "org.typelevel"             %% "cats-core"                      % "2.4.0",
   "uk.gov.hmrc"               %% "uniform"                        % "0.1.9" exclude("com.typesafe.play", "play-logback")
-)
-
-resolvers ++= Seq(
-  Resolver.bintrayRepo("hmrc", "releases"),
-  Resolver.jcenterRepo
 )
 
 // ================================================================================
@@ -150,8 +143,8 @@ scalacOptions ++= Seq(
 // Misc
 // ================================================================================
 disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
-initialCommands in console := "import cats.implicits._"
+console / initialCommands := "import cats.implicits._"
 
-majorVersion := 0
+majorVersion := 1
 
 uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
