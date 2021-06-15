@@ -79,27 +79,6 @@ class AuthorisedActionSpec extends ControllerSpec {
       status(res) mustBe SEE_OTHER
       redirectLocation(res).value mustBe sdil.controllers.routes.ServicePageController.show().url
     }
-// TODO commented out test until re-registration behaviour is fixed
-//    "show the 'already registered' error page if the user is already registered in SDIL" in {
-//      val utr = "1111111111"
-//      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
-//      val saEnrolment = EnrolmentIdentifier("UTR", utr)
-//      val enrolments = Enrolments(Set(
-//        new Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"),
-//        new Enrolment("IR-SA", Seq(saEnrolment), "Active")
-//      ))
-//
-//      when(mockSdilConnector.getRosmRegistration(anyString())(any()))
-//        .thenReturn(Future.successful(Some(
-//          RosmRegistration("safeId", Some(OrganisationDetails("orgName")), None, Address("", "", "", "", ""))))
-//        )
-//
-//      stubAuthResult(new ~(enrolments, Some(User)))
-//
-//      val res = testAction(FakeRequest())
-//      status(res) mustBe FORBIDDEN
-//      contentAsString(res) must include (Messages("sdil.already-enrolled.heading"))
-//    }
 
     "show the 'invalid affinity group' error page if the user is an agent" in {
       when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())) thenReturn {
@@ -140,7 +119,7 @@ class AuthorisedActionSpec extends ControllerSpec {
       val someOtherEtmpEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "NotSDIL")
       val enrolments = Enrolments(Set(new Enrolment("HMRC-OBTDS-ORG", Seq(someOtherEtmpEnrolment), "Active")))
 
-      stubAuthResult(new ~(enrolments, Some(Admin)))
+      stubAuthResult(new ~(enrolments, Some(User)))
       val res = testAction(FakeRequest())
 
       status(res) mustBe OK
@@ -154,7 +133,7 @@ class AuthorisedActionSpec extends ControllerSpec {
         Future.successful(Some(aSubscription))
       }
 
-      stubAuthResult(new ~(enrolments, Some(Admin)))
+      stubAuthResult(new ~(enrolments, Some(User)))
       val res = testAction(FakeRequest())
 
       status(res) mustBe OK

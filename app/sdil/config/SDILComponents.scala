@@ -69,6 +69,6 @@ class SDILComponents(context: Context)
 
   override lazy val metrics: Metrics = wire[MetricsImpl]
 
-  override def httpFilters: Seq[EssentialFilter] = ???
+  override def httpFilters: Seq[EssentialFilter] = Nil
 
 }

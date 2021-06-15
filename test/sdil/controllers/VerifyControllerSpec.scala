@@ -86,5 +86,8 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   lazy val testController = wire[VerifyController]
 
-  override protected def beforeEach(): Unit = stubFilledInForm
+  override protected def beforeEach(): Unit = {
+    stubFilledInForm
+    ()
+  }
 }

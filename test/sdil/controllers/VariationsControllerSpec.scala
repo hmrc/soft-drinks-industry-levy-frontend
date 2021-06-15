@@ -89,44 +89,6 @@ class VariationsControllerSpec extends ControllerSpec {
       Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
       None
     )
-    val voluntarySubscription = RetrievedSubscription(
-      "0000000022",
-      "XKSDIL000000022",
-      "Super Lemonade Plc",
-      UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-      RetrievedActivity(false, true, false, false, true),
-      LocalDate.of(2018, 4, 19),
-      List(
-        Site(
-          UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-          Some("88"),
-          Some("Wild Lemonade Group"),
-          Some(LocalDate.of(2018, 2, 26))),
-        Site(
-          UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
-          Some("87"),
-          Some("Highly Addictive Drinks Plc"),
-          Some(LocalDate.now().plusDays(3))),
-        Site(
-          UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
-          Some("94"),
-          Some("Monster Bottle Ltd"),
-          Some(LocalDate.of(2017, 9, 23))),
-        Site(
-          UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
-          Some("27"),
-          Some("Super Lemonade Group"),
-          Some(LocalDate.of(2017, 4, 23))),
-        Site(
-          UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
-          Some("96"),
-          Some("Star Products Ltd"),
-          Some(LocalDate.of(2017, 2, 11)))
-      ),
-      List(),
-      Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-      None
-    )
 
     val variableReturns = List(ReturnPeriod(2018, 1))
     val returnPeriods = List(ReturnPeriod(2018, 1))
@@ -426,9 +388,6 @@ class VariationsControllerSpec extends ControllerSpec {
     }
   }
 
-  private lazy val changeRegisteredDetailsAll: (String, JsArray) = "change-registered-details" -> JsArray(
-    List("Sites", "ContactPerson", "ContactAddress").map(JsString))
-
   //Deregester journey values
   private lazy val selectChangeDeregister: (String, JsString) = "select-change"                                -> JsString("Deregister")
   private lazy val cancelRegistrationReason: (String, JsString) = "cancel-registration-reason"                 -> JsString("Done")
@@ -436,10 +395,9 @@ class VariationsControllerSpec extends ControllerSpec {
   private lazy val fileReturnBeforeDeregistration: (String, JsNull.type) = "file-return-before-deregistration" -> JsNull
 
   //Activity journey values
-  private lazy val selectChangeActivity: (String, JsString) = "select-change"         -> JsString("Activity")
-  private lazy val amountProduced: (String, JsString) = "amount-produced"             -> JsString("Large")
-  private lazy val thirdPartyPackagers: (String, JsBoolean) = "third-party-packagers" -> JsBoolean(true)
-  private lazy val packagingSite: (String, JsObject) = "packaging-site"               -> Json.obj("lower" -> 123, "higher" -> 234)
+  private lazy val selectChangeActivity: (String, JsString) = "select-change" -> JsString("Activity")
+  private lazy val amountProduced: (String, JsString) = "amount-produced"     -> JsString("Large")
+  private lazy val packagingSite: (String, JsObject) = "packaging-site"       -> Json.obj("lower" -> 123, "higher" -> 234)
   private lazy val contractPacking: (String, JsObject) = "contract-packing" -> Json
     .obj("lower" -> 2345, "higher" -> 435657)
   private lazy val imports: (String, JsObject) = "imports"                               -> Json.obj("lower" -> 12345, "higher" -> 34668)

@@ -216,8 +216,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
   lazy val mockAuthConnector: AuthConnector = {
     val m = mock[AuthConnector]
     when(m.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
-      Future.successful(
-        new ~(new ~(new ~(Enrolments(Set.empty), Some(Admin)), Some("internal id")), Some(Organisation)))
+      Future.successful(new ~(new ~(new ~(Enrolments(Set.empty), Some(User)), Some("internal id")), Some(Organisation)))
     }
     m
   }

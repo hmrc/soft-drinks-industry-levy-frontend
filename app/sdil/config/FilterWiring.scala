@@ -25,7 +25,6 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.mvc.DefaultSessionCookieBaker
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
-import sdil.filters.VariationsFilter
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.{ControllerConfigs, DefaultHttpAuditEvent, HttpAuditEvent}
@@ -51,7 +50,6 @@ trait FilterWiring extends CommonWiring {
   val uuid: UUID = UUID.randomUUID()
   lazy val sessionIdFilter: SessionIdFilter = wire[SessionIdFilter]
   lazy val mdcFilter: MDCFilter = wire[MDCFilter]
-  lazy val variationsFilter: VariationsFilter = wire[VariationsFilter]
   lazy val loggingFilter: LoggingFilter = wire[DefaultLoggingFilter]
   lazy val headersFilter: HeadersFilter = wire[HeadersFilter]
   lazy val frontendAuditFilter: FrontendAuditFilter = wire[DefaultFrontendAuditFilter]
