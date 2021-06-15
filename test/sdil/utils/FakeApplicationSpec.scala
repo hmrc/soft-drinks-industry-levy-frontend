@@ -56,7 +56,7 @@ import views.uniform.Uniform
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicationFactory with MockitoSugar { // TestWiring {
+trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicationFactory with MockitoSugar {
   override def fakeApplication: Application = {
     val context = ApplicationLoader.Context(
       environment = env,
@@ -136,11 +136,8 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
   }
 
   lazy val env: Environment = Environment.simple(new File("."))
-  //scala will not compile implicit conversion from Boolean → AnyRef
   lazy val configuration: Configuration = Configuration.load(env, Map("metrics.enabled" -> false.asInstanceOf[AnyRef]))
 
-  // val returnsMock = mock[mockSdilConnector.returns.type]
-  //when(mockSdilConnector.returns).thenReturn(returnsMock)
   val aSubscription = RetrievedSubscription(
     "0000000022",
     "XKSDIL000000022",
@@ -208,15 +205,6 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
 
   lazy val mockRegistrationFormDataCache = {}
 
-  //  lazy val mockSubscription: Subscription.type = {
-  //    val m = mock[Subscription]
-  //    when(m.desify(defaultSubscription)) thenReturn defaultSubscription
-  //    m
-  //  }
-  //  lazy val mockCachedFuture: OngoingStubbing[Future[Nothing] => WebMonad[Nothing]] = {
-  //    val m = mock[webmonad.type]
-  //    when(m.cachedFuture(any())) thenReturn WebMonad[]
-  //  }
   lazy val mockSdilWMController: SdilWMController = {
     val m = mock[SdilWMController]
     when(m.isSmallProducer(any(), any(), any())(any())) thenReturn Future.successful(false)

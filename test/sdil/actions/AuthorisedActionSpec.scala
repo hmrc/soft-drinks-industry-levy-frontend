@@ -17,7 +17,6 @@
 package sdil.actions
 
 import java.time.LocalDate
-
 import com.softwaremill.macwire._
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._

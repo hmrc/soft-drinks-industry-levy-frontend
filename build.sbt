@@ -65,9 +65,9 @@ libraryDependencies ++= Seq(
   "org.pegdown"            %  "pegdown"             % "1.6.0",
   "org.jsoup"              %  "jsoup"               % "1.13.1",
   "com.typesafe.play"      %% "play-test"           % play.core.PlayVersion.current,
-  "org.mockito"            %  "mockito-core"        % "3.4.6",
+  "org.mockito"            %  "mockito-core"        % "3.10.0",
   "org.scalatestplus.play" %% "scalatestplus-play"  % "3.1.3",
-  "org.scalacheck"         %% "scalacheck"          % "1.14.3"
+  "org.scalacheck"         %% "scalacheck"          % "1.15.4"
 ).map(_ % "test")
 
 // ================================================================================
@@ -145,6 +145,6 @@ scalacOptions ++= Seq(
 disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
 console / initialCommands := "import cats.implicits._"
 
-majorVersion := 1
+majorVersion := 0
 
 uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
