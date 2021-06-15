@@ -112,7 +112,6 @@ trait CommonWiring {
   lazy val loginStatus: LoginStatus = wire[LoginStatus]
   lazy val mainContent: MainContent = wire[MainContent]
   lazy val mainContentHeader: MainContentHeader = wire[MainContentHeader]
-  lazy val optimizelySnippet: OptimizelySnippet = wire[OptimizelySnippet]
   lazy val gtmSnippet: GTMSnippet = wire[GTMSnippet]
   lazy val serviceInfo: ServiceInfo = wire[ServiceInfo]
   lazy val sidebar: Sidebar = wire[Sidebar]
