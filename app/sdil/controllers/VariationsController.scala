@@ -406,7 +406,7 @@ class VariationsController(
         base.original.orgName,
         base.original.address,
         "")
-      _ <- getPath
+
       broughtForward <- if (config.balanceAllEnabled)
                          execute(sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
                            extractTotal(listItemsWithTotal(x))
