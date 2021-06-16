@@ -148,3 +148,5 @@ console / initialCommands := "import cats.implicits._"
 majorVersion := 0
 
 uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
+
+Global / lintUnusedKeysOnLoad := false

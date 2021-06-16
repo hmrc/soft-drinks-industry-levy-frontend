@@ -29,7 +29,9 @@ import play.api.mvc._
 import play.api.{BuiltInComponentsFromContext, Configuration, DefaultApplication}
 import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
+import sdil.filters.SdilFilters
 import uk.gov.hmrc.play.bootstrap.config.Base64ConfigDecoder
+import uk.gov.hmrc.play.bootstrap.frontend.filters.AllowlistFilter
 import uk.gov.hmrc.play.config.{AccessibilityStatementConfig, AssetsConfig, GTMConfig, OptimizelyConfig}
 
 import scala.concurrent.ExecutionContext
@@ -39,6 +41,9 @@ class SDILComponents(context: Context)
     with SecurityHeadersComponents with CSRFComponents with AhcWSComponents with RoutesWiring with FilterWiring
     with ConnectorWiring with ConfigWiring {
 
+  lazy val allowlistFilter: AllowlistFilter = wire[AllowlistFilter]
+
+  override lazy val httpFilters = wire[SdilFilters].filters
   override lazy val application: DefaultApplication = wire[DefaultApplication]
   override lazy val applicationLifecycle: ApplicationLifecycle = wire[DefaultApplicationLifecycle]
 
@@ -68,7 +73,4 @@ class SDILComponents(context: Context)
   override val appName = configuration.get[String]("appName")
 
   override lazy val metrics: Metrics = wire[MetricsImpl]
-
-  override def httpFilters: Seq[EssentialFilter] = Nil
-
 }
