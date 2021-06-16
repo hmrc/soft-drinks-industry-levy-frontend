@@ -40,7 +40,7 @@ import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import uk.gov.hmrc.uniform.webmonad._
@@ -394,8 +394,12 @@ class VariationsController(
 
       origReturn <- execute(connector.returns_get(base.original.utr, returnPeriod))
                      .map(
-                       _.getOrElse(throw new NotFoundException(
-                         s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
+                       _.getOrElse(
+                         throw UpstreamErrorResponse(
+                           s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}",
+                           404
+                         )
+                       ))
 
       newReturn <- askReturn(base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
 

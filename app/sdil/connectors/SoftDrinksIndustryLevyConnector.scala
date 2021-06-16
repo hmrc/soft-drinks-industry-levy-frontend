@@ -24,7 +24,7 @@ import sdil.models.backend.Subscription
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{ReturnVariationData, VariationsSubmission}
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, NotFoundException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpReads.Implicits.{readRaw, readFromJson, _}
 
@@ -51,7 +51,7 @@ class SoftDrinksIndustryLevyConnector(
 
   def checkPendingQueue(utr: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](s"$sdilUrl/check-enrolment-status/$utr") recover {
-      case _: NotFoundException => HttpResponse(404, "")
+      case e: UpstreamErrorResponse if e.statusCode == 404 => HttpResponse(404, "")
     }
 
   def checkDirectDebitStatus(sdilRef: String)(implicit hc: HeaderCarrier): Future[Boolean] =
