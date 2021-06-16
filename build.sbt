@@ -83,7 +83,7 @@ libraryDependencies ++= Seq(
 
 libraryDependencies ++= Seq(
   ws,
-  "uk.gov.hmrc"               %% "bootstrap-frontend-play-26"     % "5.3.0",
+  "uk.gov.hmrc"               %% "bootstrap-frontend-play-26"     % "5.4.0",
   "uk.gov.hmrc"               %% "domain"                         % "5.11.0-play-26",
   "uk.gov.hmrc"               %% "govuk-template"                 % "5.66.0-play-26",
   "uk.gov.hmrc"               %% "play-ui"                        % "9.4.0-play-26",
