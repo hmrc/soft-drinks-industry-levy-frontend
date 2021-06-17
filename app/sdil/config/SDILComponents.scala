@@ -29,7 +29,7 @@ import play.api.mvc._
 import play.api.{BuiltInComponentsFromContext, Configuration, DefaultApplication}
 import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
-import sdil.filters.SdilFilters
+import sdil.filters.{SdilFilters, VariationsFilter}
 import uk.gov.hmrc.play.bootstrap.config.Base64ConfigDecoder
 import uk.gov.hmrc.play.bootstrap.frontend.filters.AllowlistFilter
 import uk.gov.hmrc.play.config.{AccessibilityStatementConfig, AssetsConfig, GTMConfig, OptimizelyConfig}
@@ -41,6 +41,7 @@ class SDILComponents(context: Context)
     with SecurityHeadersComponents with CSRFComponents with AhcWSComponents with RoutesWiring with FilterWiring
     with ConnectorWiring with ConfigWiring {
 
+  lazy val variationsFilter: VariationsFilter = wire[VariationsFilter]
   lazy val allowlistFilter: AllowlistFilter = wire[AllowlistFilter]
 
   override lazy val httpFilters = wire[SdilFilters].filters
@@ -58,11 +59,11 @@ class SDILComponents(context: Context)
   lazy val optimizelyConfig: OptimizelyConfig = new OptimizelyConfig(configuration)
   lazy val assetConfig: AssetsConfig = new AssetsConfig(configuration)
   lazy val gtmConfig: GTMConfig = new GTMConfig(configuration)
-  lazy val accessibilityStatementConfig: AccessibilityStatementConfig =
-    new AccessibilityStatementConfig((configuration))
+  lazy val accessibilityStatementConfig: AccessibilityStatementConfig = new AccessibilityStatementConfig(
+    (configuration))
 
-  lazy val customInjector: Injector =
-    new SimpleInjector(injector) + templateController + wsClient + assetConfig + gtmConfig
+  lazy val customInjector
+    : Injector = new SimpleInjector(injector) + templateController + wsClient + optimizelyConfig + assetConfig + gtmConfig
 
   lazy val messagesActionBuilder = new DefaultMessagesActionBuilderImpl(
     controllerComponents.parsers.defaultBodyParser,

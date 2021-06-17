@@ -39,7 +39,8 @@ class SdilFilters(
   cacheControlFilter: CacheControlFilter,
   mdcFilter: MDCFilter,
   allowlistFilter: AllowlistFilter,
-  sessionIdFilter: SessionIdFilter)
+  sessionIdFilter: SessionIdFilter,
+  variationsFilter: VariationsFilter)
     extends FrontendFilters(
       configuration: Configuration,
       loggingFilter: LoggingFilter,
