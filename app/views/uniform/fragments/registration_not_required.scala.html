@@ -14,9 +14,13 @@
  * limitations under the License.
  *@
 
-@()(implicit messages: Messages)
+@import sdil.config.AppConfig
+
+@()(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 <p>@Messages("sdil.registration-not-required.p1")</p>
+
+
 
 <ul class="list-bullet">
     @for(msg <- Messages.many("sdil.registration-not-required.li")) {

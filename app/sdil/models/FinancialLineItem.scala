@@ -26,7 +26,7 @@ import uk.gov.hmrc.uniform.playutil._
 sealed trait FinancialLineItem {
   def date: Date
   def amount: BigDecimal
-  def description(implicit messages: Messages): String = Messages(getClass.toString)
+  def description(implicit messages: Messages): String = getClass.toString
 }
 
 sealed trait Interest

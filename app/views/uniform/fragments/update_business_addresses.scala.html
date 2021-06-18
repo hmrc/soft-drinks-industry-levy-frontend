@@ -23,7 +23,7 @@
 
 @this(main: main_template)
 
-@(key: String, breadcrumbs: List[String], subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(key: String, form: Form[Unit], breadcrumbs: List[String], subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main(Messages("sdil.updateBusinessAddresses.heading"), noArticle = true) {
     @backlink(breadcrumbs)
@@ -70,7 +70,7 @@
             </button>
 
             @if(subscription.productionSites.nonEmpty) {
-                @service_sites("packaging", subscription.productionSites)
+                @service_sites("packaging", subscription.productionSites, "packaging")
 
                 <button name="edit-packaging-sites" value="@key" class="link-button change-address-button">
                     @Messages("sdil.updateBusinessAddresses.link.3")
@@ -78,7 +78,7 @@
             }
 
             @if(subscription.warehouseSites.nonEmpty) {
-                @service_sites("warehouses", subscription.warehouseSites)
+                @service_sites("warehouses", subscription.warehouseSites, "warehouse")
                 
                 <button name="edit-warehouses" value="@key" class="link-button change-address-button">
                     @Messages("sdil.updateBusinessAddresses.link.4")

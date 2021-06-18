@@ -17,6 +17,7 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import java.time.format.DateTimeFormatter
 @import java.time.LocalDate
+@import sdil.config.AppConfig
 
 @import sdil.models.RegistrationFormData
 @import sdil.models.backend.Site
@@ -34,7 +35,8 @@
         warehouses: List[Site],
         packagingSites: List[Site],
         contactDetails: ContactDetails
-)(implicit messages: Messages)
+)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
 
     @declaration_description_list("service-page", "business-details.title") {
         @declaration_description_term("verify", "utr", None, formData.utr)
@@ -73,16 +75,15 @@
             @if(useCopacker.nonEmpty) {
                 @declaration_description_term("registerDeclaration", "third-party",
                     Some(sdil.controllers.routes.RegistrationController.index("copacked")),
-                    Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}")
-                )
+                    Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
             }
-            @producer.map { _ =>
+            @producer.map { isProducer =>
                 @declaration_description_term(
                     "registerDeclaration",
                     "packaging",
                     Some(sdil.controllers.routes.RegistrationController.index("package-own-uk")),
-                    Messages(s"sdil.registerDeclaration.${packageOwn.fold(false)(_ => true)}")
-                )
+                    Messages(s"sdil.registerDeclaration.${packageOwn.fold(false)(_ => true)}"),
+                    '_colspan -> "2")
             }
             @if(packageOwn.fold(false)(_ => true)) {
                 @declaration_description_litres(
@@ -97,6 +98,7 @@
             "customers",
             Some(sdil.controllers.routes.RegistrationController.index("package-copack")),
             Messages(s"sdil.registerDeclaration.${copacks.fold(false)(_ => true)}"),
+            '_colspan -> "2"
         )
 
         @if(copacks.fold(false)(_ => true)) {
@@ -109,8 +111,7 @@
 
         @declaration_description_term("registerDeclaration", "import",
             Some(sdil.controllers.routes.RegistrationController.index("import")),
-            Messages(s"sdil.registerDeclaration.${imports.fold(false)(_ => true)}")
-        )
+            Messages(s"sdil.registerDeclaration.${imports.fold(false)(_ => true)}"), '_colspan -> "2")
 
         @if(imports.fold(false)(_ => true)) {
             @declaration_description_litres(

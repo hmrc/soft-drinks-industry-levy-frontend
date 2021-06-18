@@ -25,6 +25,7 @@
   contentHeader: Option[Html] = None,
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
+  scriptElem: Option[Html] = None,
   noArticle: Boolean = false,
   form: Option[Form[_]] = None)(mainContent: Html)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
@@ -44,5 +45,6 @@
                contentHeader = contentHeader,
                mainContent = if(noArticle) mainContent else viewHelpers.article(mainContent),
                serviceInfoContent = serviceInfoContent,
+               scriptElem = scriptElem,
                form = form
 )

@@ -14,10 +14,12 @@
  * limitations under the License.
  *@
 
+@import sdil.config.AppConfig
+
 @(form: Form[_],
         fieldName: String,
         labelKey: String
-)(expandHtml: Html)(implicit messages: Messages)
+)(expandHtml: Html)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 <div class="multiple-choice" data-target="@{fieldName}_expand">
     <input type="checkbox"

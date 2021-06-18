@@ -20,10 +20,10 @@ import com.kenshoo.play.metrics.MetricsFilter
 import play.api.Configuration
 import play.filters.csrf.CSRFFilter
 import play.filters.headers.SecurityHeadersFilter
-import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, LoggingFilter, MDCFilter}
+import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, LoggingFilter, MDCFilter, WhitelistFilter}
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCryptoFilter
 import uk.gov.hmrc.play.bootstrap.frontend.filters.deviceid.DeviceIdFilter
-import uk.gov.hmrc.play.bootstrap.frontend.filters.{AllowlistFilter, FrontendAuditFilter, FrontendFilters, HeadersFilter, SessionIdFilter, SessionTimeoutFilter}
+import uk.gov.hmrc.play.bootstrap.frontend.filters.{FrontendAuditFilter, FrontendFilters, HeadersFilter, SessionIdFilter, SessionTimeoutFilter}
 
 class SdilFilters(
   configuration: Configuration,
@@ -38,7 +38,7 @@ class SdilFilters(
   sessionTimeoutFilter: SessionTimeoutFilter,
   cacheControlFilter: CacheControlFilter,
   mdcFilter: MDCFilter,
-  allowlistFilter: AllowlistFilter,
+  allowlistFilter: WhitelistFilter,
   sessionIdFilter: SessionIdFilter,
   variationsFilter: VariationsFilter)
     extends FrontendFilters(
@@ -54,6 +54,6 @@ class SdilFilters(
       sessionTimeoutFilter: SessionTimeoutFilter,
       cacheControlFilter: CacheControlFilter,
       mdcFilter: MDCFilter,
-      allowlistFilter: AllowlistFilter,
+      allowlistFilter: WhitelistFilter,
       sessionIdFilter: SessionIdFilter
     ) {}

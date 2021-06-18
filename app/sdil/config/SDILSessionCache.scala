@@ -16,12 +16,12 @@
 
 package sdil.config
 
-import play.api.Configuration
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class SDILSessionCache(val http: HttpClient, val configuration: Configuration)
+class SDILSessionCache(val http: HttpClient, val configuration: Configuration, environment: Environment)
     extends ServicesConfig(configuration) with SessionCache {
 
   override def defaultSource: String = configuration.get[String]("appName")

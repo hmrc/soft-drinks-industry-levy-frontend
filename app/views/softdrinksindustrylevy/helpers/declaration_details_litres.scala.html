@@ -16,7 +16,7 @@
 
 @import sdil.models.Litreage
 
-@(questionKey: String, changeRoute: Call, rowData: Litreage)(implicit messages: Messages)
+@(questionKey: String, changeRoute: Call, rowData: Litreage)(implicit messages: Messages, request: Request[_])
 
 <tr>
     <td rowspan="2">@Messages(s"sdil.registerDeclaration.$questionKey")</td>

@@ -19,7 +19,7 @@ package sdil.actions
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc._
-import sdil.config.RegistrationFormDataCache
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.controllers.routes
 import sdil.models.RegistrationFormData
 import uk.gov.hmrc.auth.core.Enrolments
@@ -32,7 +32,7 @@ class FormAction(
   val messagesApi: MessagesApi,
   cache: RegistrationFormDataCache,
   authorisedAction: AuthorisedAction,
-  mcc: MessagesControllerComponents)(implicit val executionContext: ExecutionContext)
+  mcc: MessagesControllerComponents)(implicit config: AppConfig, val executionContext: ExecutionContext)
     extends ActionBuilder[RegistrationFormRequest, AnyContent] with I18nSupport {
 
   val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser

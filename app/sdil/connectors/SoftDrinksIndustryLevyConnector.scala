@@ -17,7 +17,7 @@
 package sdil.connectors
 
 import play.api.libs.json.JsObject
-import play.api.Configuration
+import play.api.{Configuration, Environment}
 import sdil.config.SDILSessionCache
 import sdil.models._
 import sdil.models.backend.Subscription
@@ -32,6 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SoftDrinksIndustryLevyConnector(
   http: HttpClient,
+  environment: Environment,
   val configuration: Configuration,
   val shortLiveCache: ShortLivedHttpCaching,
   val sessionCache: SDILSessionCache

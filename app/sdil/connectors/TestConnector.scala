@@ -35,7 +35,7 @@ class TestConnector(http: HttpClient, environment: Environment, ws: WSClient, va
   def reset(url: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](s"$testUrl/test-only/$url")
 
-  def getFile(envelopeId: String, fileName: String): Future[ByteString] =
+  def getFile(envelopeId: String, fileName: String)(implicit hc: HeaderCarrier): Future[ByteString] =
     ws.url(s"$testUrl/test-only/get-file/$envelopeId/$fileName").get().map(_.bodyAsBytes)
 
   def getVariationHtml(sdilRef: String)(implicit hc: HeaderCarrier): Future[Option[Html]] =

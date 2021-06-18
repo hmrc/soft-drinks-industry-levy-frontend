@@ -70,7 +70,9 @@ class VariationsController(
     case object Deregister extends ChangeType
   }
 
-  private def contactUpdate(data: RegistrationVariationData): WebMonad[RegistrationVariationData] = {
+  private def contactUpdate(
+    data: RegistrationVariationData
+  )(implicit extraMessages: ExtraMessages): WebMonad[RegistrationVariationData] = {
 
     sealed trait ContactChangeType extends EnumEntry
     object ContactChangeType extends Enum[ContactChangeType] {
@@ -157,7 +159,7 @@ class VariationsController(
     data: RegistrationVariationData,
     subscription: RetrievedSubscription,
     returnPeriods: List[ReturnPeriod]
-  ): WebMonad[RegistrationVariationData] =
+  )(implicit request: Request[_]): WebMonad[RegistrationVariationData] =
     for {
       packLarge <- askOneOf("amount-produced", ProducerType.values.toList) map {
                     case Large => Some(true)
@@ -260,9 +262,9 @@ class VariationsController(
   }
   private def fileReturnsBeforeDereg[A](returnPeriods: List[ReturnPeriod], data: RegistrationVariationData) =
     for {
-      _ <- tell(
-            "file-return-before-deregistration",
-            uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods))
+      sendToReturns <- tell(
+                        "file-return-before-deregistration",
+                        uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods))
       _ <- clear
       _ <- resultToWebMonad[A](Redirect(routes.ServicePageController.show()))
     } yield data
@@ -410,7 +412,7 @@ class VariationsController(
         base.original.orgName,
         base.original.address,
         "")
-
+      path <- getPath
       broughtForward <- if (config.balanceAllEnabled)
                          execute(sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
                            extractTotal(listItemsWithTotal(x))
@@ -522,7 +524,7 @@ class VariationsController(
   private def changeBusinessAddressTemplate(
     id: String,
     subscription: RetrievedSubscription
-  ): WebMonad[Unit] = {
+  )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
 
     val unitMapping: Mapping[Unit] = Forms.of[Unit](new Formatter[Unit] {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Unit] = Right(())
@@ -530,11 +532,11 @@ class VariationsController(
       override def unbind(key: String, value: Unit): Map[String, String] = Map.empty
     })
 
-    formPage(id)(unitMapping, none[Unit]) { (path, _, r) =>
+    formPage(id)(unitMapping, none[Unit]) { (path, form, r) =>
       implicit val request: Request[AnyContent] = r
 
       uniformHelpers
-        .updateBusinessAddresses(id, path, subscription, Address.fromUkAddress(subscription.address))
+        .updateBusinessAddresses(id, form, path, subscription, Address.fromUkAddress(subscription.address))
     }
   }
 
@@ -608,7 +610,7 @@ class VariationsController(
   private def changeActorStatusJourney(
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
+  )(implicit hc: HeaderCarrier, request: Request[_]): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
 
     for {
