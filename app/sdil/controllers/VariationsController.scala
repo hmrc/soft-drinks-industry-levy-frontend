@@ -72,7 +72,7 @@ class VariationsController(
 
   private def contactUpdate(
     data: RegistrationVariationData
-  )(implicit extraMessages: ExtraMessages): WebMonad[RegistrationVariationData] = {
+  ): WebMonad[RegistrationVariationData] = {
 
     sealed trait ContactChangeType extends EnumEntry
     object ContactChangeType extends Enum[ContactChangeType] {
@@ -159,7 +159,7 @@ class VariationsController(
     data: RegistrationVariationData,
     subscription: RetrievedSubscription,
     returnPeriods: List[ReturnPeriod]
-  )(implicit request: Request[_]): WebMonad[RegistrationVariationData] =
+  ): WebMonad[RegistrationVariationData] =
     for {
       packLarge <- askOneOf("amount-produced", ProducerType.values.toList) map {
                     case Large => Some(true)
@@ -524,7 +524,7 @@ class VariationsController(
   private def changeBusinessAddressTemplate(
     id: String,
     subscription: RetrievedSubscription
-  )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
+  ): WebMonad[Unit] = {
 
     val unitMapping: Mapping[Unit] = Forms.of[Unit](new Formatter[Unit] {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Unit] = Right(())
@@ -610,7 +610,7 @@ class VariationsController(
   private def changeActorStatusJourney(
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier, request: Request[_]): WebMonad[Result] = {
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
 
     for {

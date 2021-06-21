@@ -18,7 +18,7 @@
     form: Form[_],
     fieldName: String,
     labelKey: String
-)(expandHtml: Html)(implicit request: Request[_], messages: Messages)
+)(expandHtml: Html)(implicit messages: Messages)
 
 <div class="multiple-choice" data-target="@{fieldName}_expand">
     <input type="checkbox"

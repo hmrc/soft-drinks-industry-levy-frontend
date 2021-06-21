@@ -18,7 +18,7 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.models._
 
-@(key: String, form: Form[ContactDetails])(implicit messages: Messages, extraMessages: ExtraMessages)
+@(key: String, form: Form[ContactDetails])(implicit messages: Messages)
 
 @inputText(
     form(s"$key.fullName"),
