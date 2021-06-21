@@ -77,7 +77,7 @@
                     Some(sdil.controllers.routes.RegistrationController.index("copacked")),
                     Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
             }
-            @producer.map { isProducer =>
+            @producer.map { _ =>
                 @declaration_description_term(
                     "registerDeclaration",
                     "packaging",

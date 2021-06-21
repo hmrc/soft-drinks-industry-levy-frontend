@@ -262,9 +262,9 @@ class VariationsController(
   }
   private def fileReturnsBeforeDereg[A](returnPeriods: List[ReturnPeriod], data: RegistrationVariationData) =
     for {
-      sendToReturns <- tell(
-                        "file-return-before-deregistration",
-                        uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods))
+      _ <- tell(
+            "file-return-before-deregistration",
+            uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods))
       _ <- clear
       _ <- resultToWebMonad[A](Redirect(routes.ServicePageController.show()))
     } yield data
@@ -412,7 +412,7 @@ class VariationsController(
         base.original.orgName,
         base.original.address,
         "")
-      path <- getPath
+
       broughtForward <- if (config.balanceAllEnabled)
                          execute(sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
                            extractTotal(listItemsWithTotal(x))

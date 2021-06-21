@@ -28,7 +28,7 @@ import play.api.i18n._
 import play.api.libs.json.Format
 import play.api.mvc._
 import play.twirl.api.Html
-import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
+import sdil.actions.{AuthorisedAction, AuthorisedRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.backend._
@@ -47,7 +47,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class RegistrationController(
   authorisedAction: AuthorisedAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,
-  registeredAction: RegisteredAction,
   cache: RegistrationFormDataCache,
   mcc: MessagesControllerComponents,
   override val uniformHelpers: Uniform)(implicit val config: AppConfig, val ec: ExecutionContext)
