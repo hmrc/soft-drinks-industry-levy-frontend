@@ -532,11 +532,11 @@ class VariationsController(
       override def unbind(key: String, value: Unit): Map[String, String] = Map.empty
     })
 
-    formPage(id)(unitMapping, none[Unit]) { (path, form, r) =>
+    formPage(id)(unitMapping, none[Unit]) { (path, _, r) =>
       implicit val request: Request[AnyContent] = r
 
       uniformHelpers
-        .updateBusinessAddresses(id, form, path, subscription, Address.fromUkAddress(subscription.address))
+        .updateBusinessAddresses(id, path, subscription, Address.fromUkAddress(subscription.address))
     }
   }
 

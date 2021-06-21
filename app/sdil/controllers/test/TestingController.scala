@@ -30,7 +30,7 @@ class TestingController(testConnector: TestConnector, mcc: MessagesControllerCom
     }
   }
 
-  def getFile(envelopeId: String, fileId: String): Action[AnyContent] = Action.async { implicit request =>
+  def getFile(envelopeId: String, fileId: String): Action[AnyContent] = Action.async {
     val contentType = fileId match {
       case "pdf" => "application/pdf"
       case "xml" => "application/xml"

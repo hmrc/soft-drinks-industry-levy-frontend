@@ -20,14 +20,15 @@
 @this(govukWrapper: govuk_wrapper,
       viewHelpers: ViewHelpers)
 
-@(title: String,
-  sidebarLinks: Option[Html] = None,
-  contentHeader: Option[Html] = None,
-  bodyClasses: Option[String] = None,
-  mainClass: Option[String] = None,
-  scriptElem: Option[Html] = None,
-  noArticle: Boolean = false,
-  form: Option[Form[_]] = None)(mainContent: Html)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(
+    title: String,
+    sidebarLinks: Option[Html] = None,
+    contentHeader: Option[Html] = None,
+    bodyClasses: Option[String] = None,
+    mainClass: Option[String] = None,
+    noArticle: Boolean = false,
+    form: Option[Form[_]] = None
+)(mainContent: Html)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @serviceInfoContent = {}
 
@@ -37,14 +38,14 @@
     }
 }
 
-@govukWrapper(appConfig = config,
-               title = title ++ " - Soft Drinks Industry Levy - GOV.UK",
-               mainClass = mainClass,
-               bodyClasses = bodyClasses,
-               sidebar = sidebar,
-               contentHeader = contentHeader,
-               mainContent = if(noArticle) mainContent else viewHelpers.article(mainContent),
-               serviceInfoContent = serviceInfoContent,
-               scriptElem = scriptElem,
-               form = form
+@govukWrapper(
+    appConfig = config,
+    title = title ++ " - Soft Drinks Industry Levy - GOV.UK",
+    mainClass = mainClass,
+    bodyClasses = bodyClasses,
+    sidebar = sidebar,
+    contentHeader = contentHeader,
+    mainContent = if(noArticle) mainContent else viewHelpers.article(mainContent),
+    serviceInfoContent = serviceInfoContent,
+    form = form
 )
