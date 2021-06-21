@@ -17,7 +17,6 @@
 package sdil.models
 
 import sdil.actions.RegistrationFormRequest
-import sdil.config.AppConfig
 
 object Journey {
   private val pages: List[Page] = List(
@@ -47,7 +46,7 @@ object Journey {
     }
   }
 
-  def nextPage(page: Page, formData: RegistrationFormData)(implicit config: AppConfig): Page = {
+  def nextPage(page: Page, formData: RegistrationFormData): Page = {
     implicit val fd: RegistrationFormData = formData
     pages.dropWhile(_ != page).tail.find(p => p.isVisible).getOrElse(pages.last)
   }

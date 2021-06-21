@@ -18,7 +18,6 @@ package sdil.actions
 
 import play.api.mvc.Results._
 import play.api.mvc._
-import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
@@ -31,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RegisteredAction(
   val authConnector: AuthConnector,
   sdilConnector: SoftDrinksIndustryLevyConnector,
-  mcc: MessagesControllerComponents)(implicit config: AppConfig, val executionContext: ExecutionContext)
+  mcc: MessagesControllerComponents)(implicit val executionContext: ExecutionContext)
     extends ActionRefiner[Request, RegisteredRequest] with ActionBuilder[RegisteredRequest, AnyContent]
     with AuthorisedFunctions with ActionHelpers {
 

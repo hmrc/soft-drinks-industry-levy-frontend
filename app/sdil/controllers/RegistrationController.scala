@@ -103,7 +103,7 @@ class RegistrationController(
       imports <- askOption(litreagePair.nonEmpty, "import")(approxLitreageForm, implicitly, implicitly, implicitly)
       noUkActivity = (copacks, imports).isEmpty
       smallProducerWithNoCopacker = packLarge.forall(_ == false) && useCopacker.forall(_ == false)
-      noReg = uniform.fragments.registration_not_required()(request, implicitly, implicitly)
+      noReg = uniform.fragments.registration_not_required()(request, implicitly)
       _ <- if (noUkActivity && smallProducerWithNoCopacker) {
             end("do-not-register", noReg)
           } else (()).pure[WebMonad]
@@ -167,7 +167,7 @@ class RegistrationController(
         warehouses,
         packSites,
         contactDetails
-      )(request, implicitly, implicitly)
+      )(request, implicitly)
       _ <- tell("declaration", declaration)(implicitly, ltbs.play.scaffold.SdilComponents.extraMessages)
       _ <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
       _ <- execute(cache.clear(request.internalId))

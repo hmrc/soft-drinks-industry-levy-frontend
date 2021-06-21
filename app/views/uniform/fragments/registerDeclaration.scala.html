@@ -17,7 +17,6 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import java.time.format.DateTimeFormatter
 @import java.time.LocalDate
-@import sdil.config.AppConfig
 
 @import sdil.models.RegistrationFormData
 @import sdil.models.backend.Site
@@ -35,7 +34,7 @@
         warehouses: List[Site],
         packagingSites: List[Site],
         contactDetails: ContactDetails
-)(implicit request: Request[_], messages: Messages, config: AppConfig)
+)(implicit request: Request[_], messages: Messages)
 
 
     @declaration_description_list("service-page", "business-details.title") {

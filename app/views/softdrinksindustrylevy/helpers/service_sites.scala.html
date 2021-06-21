@@ -16,9 +16,8 @@
 
 @import sdil.models.backend.Site
 @import java.time.LocalDate
-@import sdil.config.AppConfig
 
-@(key: String, sites: List[Site], siteType: String)(implicit messages: Messages,config: AppConfig)
+@(key: String, sites: List[Site], siteType: String)(implicit messages: Messages)
 
 @if(openSites.nonEmpty) {
         <table>
