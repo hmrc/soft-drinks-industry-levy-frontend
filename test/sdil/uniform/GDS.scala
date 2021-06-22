@@ -26,6 +26,7 @@ class GDS extends FlatSpec with Matchers {
     val litreageMappingVal = GdsComponents.litreage("")
 
     1 shouldBe 1
+    litreageMappingVal.key shouldBe ""
 
   }
 

@@ -40,7 +40,7 @@ import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistence
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import uk.gov.hmrc.uniform.webmonad._
@@ -72,7 +72,7 @@ class VariationsController(
 
   private def contactUpdate(
     data: RegistrationVariationData
-  )(implicit extraMessages: ExtraMessages): WebMonad[RegistrationVariationData] = {
+  ): WebMonad[RegistrationVariationData] = {
 
     sealed trait ContactChangeType extends EnumEntry
     object ContactChangeType extends Enum[ContactChangeType] {
@@ -159,7 +159,7 @@ class VariationsController(
     data: RegistrationVariationData,
     subscription: RetrievedSubscription,
     returnPeriods: List[ReturnPeriod]
-  )(implicit request: Request[_]): WebMonad[RegistrationVariationData] =
+  ): WebMonad[RegistrationVariationData] =
     for {
       packLarge <- askOneOf("amount-produced", ProducerType.values.toList) map {
                     case Large => Some(true)
@@ -262,9 +262,9 @@ class VariationsController(
   }
   private def fileReturnsBeforeDereg[A](returnPeriods: List[ReturnPeriod], data: RegistrationVariationData) =
     for {
-      sendToReturns <- tell(
-                        "file-return-before-deregistration",
-                        uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods))
+      _ <- tell(
+            "file-return-before-deregistration",
+            uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods))
       _ <- clear
       _ <- resultToWebMonad[A](Redirect(routes.ServicePageController.show()))
     } yield data
@@ -396,8 +396,12 @@ class VariationsController(
 
       origReturn <- execute(connector.returns_get(base.original.utr, returnPeriod))
                      .map(
-                       _.getOrElse(throw new NotFoundException(
-                         s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}")))
+                       _.getOrElse(
+                         throw UpstreamErrorResponse(
+                           s"No return for ${returnPeriod.year} quarter ${returnPeriod.quarter}",
+                           404
+                         )
+                       ))
 
       newReturn <- askReturn(base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
 
@@ -408,7 +412,7 @@ class VariationsController(
         base.original.orgName,
         base.original.address,
         "")
-      path <- getPath
+
       broughtForward <- if (config.balanceAllEnabled)
                          execute(sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
                            extractTotal(listItemsWithTotal(x))
@@ -520,7 +524,7 @@ class VariationsController(
   private def changeBusinessAddressTemplate(
     id: String,
     subscription: RetrievedSubscription
-  )(implicit extraMessages: ExtraMessages): WebMonad[Unit] = {
+  ): WebMonad[Unit] = {
 
     val unitMapping: Mapping[Unit] = Forms.of[Unit](new Formatter[Unit] {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Unit] = Right(())
@@ -528,11 +532,11 @@ class VariationsController(
       override def unbind(key: String, value: Unit): Map[String, String] = Map.empty
     })
 
-    formPage(id)(unitMapping, none[Unit]) { (path, form, r) =>
+    formPage(id)(unitMapping, none[Unit]) { (path, _, r) =>
       implicit val request: Request[AnyContent] = r
 
       uniformHelpers
-        .updateBusinessAddresses(id, form, path, subscription, Address.fromUkAddress(subscription.address))
+        .updateBusinessAddresses(id, path, subscription, Address.fromUkAddress(subscription.address))
     }
   }
 
@@ -606,7 +610,7 @@ class VariationsController(
   private def changeActorStatusJourney(
     subscription: RetrievedSubscription,
     sdilRef: String
-  )(implicit hc: HeaderCarrier, request: Request[_]): WebMonad[Result] = {
+  )(implicit hc: HeaderCarrier): WebMonad[Result] = {
     val base = RegistrationVariationData(subscription)
 
     for {

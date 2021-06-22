@@ -23,7 +23,7 @@ import play.filters.headers.SecurityHeadersFilter
 import uk.gov.hmrc.play.bootstrap.filters.{CacheControlFilter, LoggingFilter, MDCFilter}
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCryptoFilter
 import uk.gov.hmrc.play.bootstrap.frontend.filters.deviceid.DeviceIdFilter
-import uk.gov.hmrc.play.bootstrap.frontend.filters.{FrontendAuditFilter, FrontendFilters, HeadersFilter, SessionIdFilter, SessionTimeoutFilter, WhitelistFilter}
+import uk.gov.hmrc.play.bootstrap.frontend.filters.{AllowlistFilter, FrontendAuditFilter, FrontendFilters, HeadersFilter, SessionIdFilter, SessionTimeoutFilter}
 
 class SdilFilters(
   configuration: Configuration,
@@ -38,7 +38,7 @@ class SdilFilters(
   sessionTimeoutFilter: SessionTimeoutFilter,
   cacheControlFilter: CacheControlFilter,
   mdcFilter: MDCFilter,
-  allowlistFilter: WhitelistFilter,
+  allowlistFilter: AllowlistFilter,
   sessionIdFilter: SessionIdFilter,
   variationsFilter: VariationsFilter)
     extends FrontendFilters(
@@ -54,6 +54,6 @@ class SdilFilters(
       sessionTimeoutFilter: SessionTimeoutFilter,
       cacheControlFilter: CacheControlFilter,
       mdcFilter: MDCFilter,
-      allowlistFilter: WhitelistFilter,
+      allowlistFilter: AllowlistFilter,
       sessionIdFilter: SessionIdFilter
     ) {}

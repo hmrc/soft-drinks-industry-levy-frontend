@@ -119,7 +119,7 @@ class ReturnsController(
     journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
   }
 
-  private def askNewWarehouses()(implicit hc: HeaderCarrier): WebMonad[List[Site]] =
+  private def askNewWarehouses(): WebMonad[List[Site]] =
     for {
       addWarehouses <- ask(bool(), "ask-secondary-warehouses-in-return")
       firstWarehouse <- ask(warehouseSiteMapping, "first-warehouse")(
@@ -132,7 +132,7 @@ class ReturnsController(
                      addWarehouses
     } yield warehouses
 
-  private def askNewPackingSites(subscription: Subscription)(implicit hc: HeaderCarrier): WebMonad[List[Site]] = {
+  private def askNewPackingSites(subscription: Subscription): WebMonad[List[Site]] = {
     implicit val extraMessages = ExtraMessages(
       messages = Map(
         "pack-at-business-address-in-return.lead" -> s"${Address.fromUkAddress(subscription.address).nonEmptyLines.mkString("<br/>")}")

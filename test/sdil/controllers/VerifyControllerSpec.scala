@@ -31,7 +31,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /verify" should {
     "always return 200 Ok and the verify page when submission isn't pending" in {
-      when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(NOT_FOUND))
+      when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(NOT_FOUND, ""))
       val res = testController.show()(FakeRequest())
 
       status(res) mustBe OK
@@ -39,7 +39,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "always return 303 Redirect and the pending page when submission is pending" in {
-      when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(ACCEPTED))
+      when(mockSdilConnector.checkPendingQueue(any())(any())).thenReturn(HttpResponse(ACCEPTED, "202"))
       val res = testController.show()(FakeRequest())
 
       status(res) mustBe OK
@@ -86,5 +86,8 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   lazy val testController = wire[VerifyController]
 
-  override protected def beforeEach(): Unit = stubFilledInForm
+  override protected def beforeEach(): Unit = {
+    stubFilledInForm
+    ()
+  }
 }

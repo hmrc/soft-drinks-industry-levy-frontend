@@ -20,7 +20,7 @@
 
 @this(main: main_template)
 
-@(id: String, breadcrumbs: List[String], now: LocalDate = LocalDate.now, updateTimeMessage: Option[Html] = None,
+@(id: String, now: LocalDate = LocalDate.now, updateTimeMessage: Option[Html] = None,
         whatHappensNext: Option[Html] = None, getTotal: Option[Html] = None)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages, lang: Lang)
 
 @main(title = Messages.extraMessage(s"$id.title")) {

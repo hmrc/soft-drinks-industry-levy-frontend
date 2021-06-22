@@ -28,7 +28,7 @@ import play.api.i18n._
 import play.api.libs.json.Format
 import play.api.mvc._
 import play.twirl.api.Html
-import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
+import sdil.actions.{AuthorisedAction, AuthorisedRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.backend._
@@ -47,7 +47,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class RegistrationController(
   authorisedAction: AuthorisedAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,
-  registeredAction: RegisteredAction,
   cache: RegistrationFormDataCache,
   mcc: MessagesControllerComponents,
   override val uniformHelpers: Uniform)(implicit val config: AppConfig, val ec: ExecutionContext)
@@ -104,7 +103,7 @@ class RegistrationController(
       imports <- askOption(litreagePair.nonEmpty, "import")(approxLitreageForm, implicitly, implicitly, implicitly)
       noUkActivity = (copacks, imports).isEmpty
       smallProducerWithNoCopacker = packLarge.forall(_ == false) && useCopacker.forall(_ == false)
-      noReg = uniform.fragments.registration_not_required()(request, implicitly, implicitly)
+      noReg = uniform.fragments.registration_not_required()(implicitly)
       _ <- if (noUkActivity && smallProducerWithNoCopacker) {
             end("do-not-register", noReg)
           } else (()).pure[WebMonad]
@@ -168,7 +167,7 @@ class RegistrationController(
         warehouses,
         packSites,
         contactDetails
-      )(request, implicitly, implicitly)
+      )(implicitly)
       _ <- tell("declaration", declaration)(implicitly, ltbs.play.scaffold.SdilComponents.extraMessages)
       _ <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
       _ <- execute(cache.clear(request.internalId))

@@ -16,7 +16,7 @@
 
 @import sdil.models.Litreage
 
-@(questionKey: String, changeRoute: Call, rowData: Litreage)(implicit messages: Messages, request: Request[_])
+@(questionKey: String, changeRoute: Call, rowData: Litreage)(implicit messages: Messages)
 
 @formatLitres(value: BigDecimal) = @{
     java.text.NumberFormat.getNumberInstance.format(value)

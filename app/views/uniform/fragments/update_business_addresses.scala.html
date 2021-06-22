@@ -23,7 +23,7 @@
 
 @this(main: main_template)
 
-@(key: String, form: Form[Unit], breadcrumbs: List[String], subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(key: String, breadcrumbs: List[String], subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main(Messages("sdil.updateBusinessAddresses.heading"), noArticle = true) {
     @backlink(breadcrumbs)

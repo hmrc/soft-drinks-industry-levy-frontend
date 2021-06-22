@@ -50,10 +50,9 @@ class PostcodeMappingSpec extends FormSpec with FormHelpers {
       case Right(_)   => fail(s"expected error $errorMsg for value $value, but bound successfully")
     }
 
-  private def mustBind(value: String) {
+  private def mustBind(value: String): Unit =
     postcode.bind(Map("" -> value)) match {
       case Left(errs) => fail(s"Unexpected errors $errs for value $value")
       case Right(_)   => //pass
     }
-  }
 }

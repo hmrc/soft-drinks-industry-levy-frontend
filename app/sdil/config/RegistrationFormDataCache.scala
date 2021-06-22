@@ -17,7 +17,7 @@
 package sdil.config
 
 import play.api.libs.json.JsResultException
-import play.api.{Configuration, Environment}
+import play.api.Configuration
 import sdil.models.RegistrationFormData
 import uk.gov.hmrc.crypto.CompositeSymmetricCrypto
 import uk.gov.hmrc.http.HeaderCarrier
@@ -28,8 +28,8 @@ import scala.concurrent.ExecutionContext
 
 class RegistrationFormDataCache(
   val configuration: Configuration,
-  val shortLiveCache: ShortLivedHttpCaching,
-  environment: Environment)(implicit val crypto: CompositeSymmetricCrypto, ec: ExecutionContext)
+  val shortLiveCache: ShortLivedHttpCaching
+)(implicit val crypto: CompositeSymmetricCrypto, ec: ExecutionContext)
     extends ServicesConfig(configuration) with ShortLivedCache {
 
   def cache(internalId: String, body: RegistrationFormData)(implicit hc: HeaderCarrier): Future[CacheMap] =
