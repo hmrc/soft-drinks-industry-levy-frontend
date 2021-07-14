@@ -383,6 +383,7 @@ sdil.complete.what-happens.help.link=What do you think of this service?
 sdil.complete.what-happens.help.p2= (takes 30 seconds)
 
 #Service page
+sdil.service-page.repayment.warning=You can only claim a repayment if you''ve registered for the levy and paid it directly to HMRC. Claiming credits you''re not entitled to is a criminal offence.
 sdil.service-page.title=Your Soft Drinks Industry levy details and returns
 sdil.service-page.p1=Your Soft Drinks Industry Levy reference is:
 sdil.service-page.business-details.title=Business details
