@@ -147,7 +147,7 @@
 
 
 details summary:not([tabindex]) {
-    display: list-item;
+    display: inline-block;
 }
 
 
