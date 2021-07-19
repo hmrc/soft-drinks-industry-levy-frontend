@@ -15,6 +15,18 @@
  *@
 
 @(key: String)(implicit messages: Messages)
+@if(key == "claim-credits-for-exports" || key == "claim-credits-for-lost-damaged") {
+ <legend>
+  <div class="notice" style="margin: 0px 0px;" id="single-warning">
+   <i class="icon icon-important">
+    <span class="visually-hidden">Generic warning</span>
+   </i>
+   <strong class="bold-small" id="warning" style="margin-bottom: 10px">
+    @Messages("credit-claim-warning")
+   </strong>
+  </div>
+ </legend>
+}
 
 @if(messages.isDefinedAt(s"${key}.inner-heading")) {
  <legend>
