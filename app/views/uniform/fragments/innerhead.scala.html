@@ -17,11 +17,11 @@
 @(key: String)(implicit messages: Messages)
 @if(key == "claim-credits-for-exports" || key == "claim-credits-for-lost-damaged") {
  <legend>
-  <div class="notice" style="margin: 0px 0px;" id="single-warning">
-   <i class="icon icon-important">
+  <div class="notice" id="single-warning">
+   <i class="icon icon-important warning-icon-style">
     <span class="visually-hidden">Generic warning</span>
    </i>
-   <strong class="bold-small" id="warning" style="margin-bottom: 10px">
+   <strong class="bold-small warning-text-style" id="warning">
     @Messages("credit-claim-warning")
    </strong>
   </div>

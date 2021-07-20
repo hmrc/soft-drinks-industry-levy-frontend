@@ -58,6 +58,14 @@
     margin-bottom: 1% !important;
 }
 
+.warning-text-style {
+    margin-bottom: 10px !important;
+}
+
+.warning-icon-style {
+    top: 25% !important;
+}
+
 @media (min-width: 641px) {
     body {
         overflow-x: hidden;
