@@ -1116,7 +1116,7 @@ claim-credits-for-lost-damaged.help=You can claim a credit for liable drinks tha
   <li>disposed of as waste</li><li>reprocessed</li><li>spilled and cannot be used</li></ul>\
   <p>To be able to claim this credit, you must have documentation containing information such as the details of the incident,\
    how and where it occurred, the amount of liable drink and whether it was in the low band or the high band.</p>
-credit-claim-warning=You can only claim a repayment if you have registered for the levy and paid it directly to HMRC. Claiming credits you are not entitled to is a criminal offence.
+credit-claim-warning=You can only claim a repayment if you''ve registered for the levy and paid it directly to HMRC. Claiming credits you''re not entitled to is a criminal offence.
 heading.check-your-answers=Check your answers before sending your return
 heading.check-your-answers.orgName=
 period.check-your-answers={0} to {1}
