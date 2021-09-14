@@ -25,6 +25,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCryptoFil
 import uk.gov.hmrc.play.bootstrap.frontend.filters.deviceid.DeviceIdFilter
 import uk.gov.hmrc.play.bootstrap.frontend.filters.{AllowlistFilter, FrontendAuditFilter, FrontendFilters, HeadersFilter, SessionIdFilter, SessionTimeoutFilter}
 
+import javax.inject.Singleton
+
+@Singleton
 class SdilFilters(
   configuration: Configuration,
   loggingFilter: LoggingFilter,

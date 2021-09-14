@@ -17,7 +17,6 @@
 package sdil.controllers
 
 import java.time.LocalDate
-
 import cats.{Eq, Monoid}
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
@@ -44,16 +43,17 @@ import uk.gov.hmrc.uniform.playutil._
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
 import play.api.i18n.Lang
-
+import play.api.i18n.I18nSupport
 import scala.concurrent._
 import scala.concurrent.duration._
 import cats.implicits._
 import sdil.models.variations.ReturnVariationData
 import sdil.uniform.ShowTitle
 import sdil.uniform.ShowTitle.instance
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.uniform.Uniform
 
-trait SdilWMController extends WebMonadController with Modulus23Check {
+trait SdilWMController extends WebMonadController with Modulus23Check with I18nSupport { this: FrontendController =>
 
   implicit def config: AppConfig
   implicit val messages: Messages
@@ -412,7 +412,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
               subheading,
               whatHappensNext,
               getTotal
-            )(implicitly, implicitly, implicitly, extraMessages, implicitly)
+            )(implicitly, implicitly, implicitly, extraMessages, implicitly[Lang])
           ).asLeft[Result]
         )
       }
