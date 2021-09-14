@@ -22,7 +22,7 @@ import java.time.format._
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents._
 import ltbs.play.scaffold.SdilComponents._
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n._
 import play.api.mvc.{AnyContent, _}
 import play.twirl.api.Html
@@ -52,7 +52,8 @@ class ReturnsController(
   mcc: MessagesControllerComponents,
   override val uniformHelpers: Uniform
 )(implicit val config: AppConfig, val ec: ExecutionContext)
-    extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney with I18nSupport {
+    extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney with I18nSupport
+    with Logging {
 
   override lazy val parse = mcc.parsers
   override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
@@ -241,11 +242,11 @@ class ReturnsController(
                 persistence.dataPut,
                 if (nilReturn) JourneyConfig(LeapAhead) else JourneyConfig(SingleStep))
             else
-              Redirect(routes.ServicePageController.show()).pure[Future]
+              Redirect(routes.ServicePageController.show).pure[Future]
       } yield r) recoverWith {
         case t: Throwable => {
-          Logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
-          Redirect(routes.ServicePageController.show()).pure[Future]
+          logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
+          Redirect(routes.ServicePageController.show).pure[Future]
         }
       }
   }

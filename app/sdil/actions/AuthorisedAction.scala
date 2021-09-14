@@ -63,7 +63,7 @@ class AuthorisedAction(
           case (Some(utr), None) =>
             sdilConnector.retrieveSubscription(utr, "utr") map {
               case Some(sub) if sub.deregDate.isEmpty =>
-                Left(Redirect(routes.ServicePageController.show()))
+                Left(Redirect(routes.ServicePageController.show))
               case _ =>
                 Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
             }
@@ -76,10 +76,10 @@ class AuthorisedAction(
             }
           case (None, Some(sdilEnrolment)) =>
             sdilConnector.retrieveSubscription(sdilEnrolment.value).map {
-              case Some(sub) if sub.deregDate.isEmpty => Left(Redirect(routes.ServicePageController.show()))
+              case Some(sub) if sub.deregDate.isEmpty => Left(Redirect(routes.ServicePageController.show))
               case Some(sub) if sub.deregDate.nonEmpty =>
                 Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
-              case _ => Left(Redirect(routes.ServicePageController.show()))
+              case _ => Left(Redirect(routes.ServicePageController.show))
             }
           case _ if error.nonEmpty =>
             Future.successful(Left(error.get))

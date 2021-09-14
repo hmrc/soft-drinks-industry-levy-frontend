@@ -61,7 +61,7 @@
         <p>@Messages("variationDone.what-happens-next")</p>
     }
 
-    @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
+    @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show))
 
     @if(path.contains("cancel-registration-date") || path.contains("cancel-registration-reason")) {
         @dereg_variations_cya(showChangeLinks = false, v)
@@ -92,6 +92,6 @@
 
 @a.map { a =>
     <p>@Messages("return.check-return-changes.what-happens-next")</p>
-    @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
+    @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show))
     @returnVariationDifferences("check-return-changes", a, showChangeLinks = false, broughtForward)
 }

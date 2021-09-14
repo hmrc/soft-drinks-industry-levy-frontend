@@ -29,6 +29,7 @@ import play.api.data.{Form, Mapping, _}
 import play.api.i18n._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
+import play.api.mvc.Results._
 import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -42,6 +43,7 @@ import uk.gov.hmrc.uniform._
 import uk.gov.hmrc.uniform.playutil._
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
+import play.api.i18n.Lang
 
 import scala.concurrent._
 import scala.concurrent.duration._

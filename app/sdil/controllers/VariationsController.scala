@@ -266,7 +266,7 @@ class VariationsController(
             "file-return-before-deregistration",
             uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods))
       _ <- clear
-      _ <- resultToWebMonad[A](Redirect(routes.ServicePageController.show()))
+      _ <- resultToWebMonad[A](Redirect(routes.ServicePageController.show))
     } yield data
 
   private[controllers] def program(

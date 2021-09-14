@@ -61,12 +61,11 @@ Compile / scalafmtOnCompile := true
 Test / scalafmtOnCompile := true
 
 libraryDependencies ++= Seq(
-  "org.scalatest"          %% "scalatest"           % "3.0.9",
-  "org.pegdown"            %  "pegdown"             % "1.6.0",
+  "org.scalatest"          %% "scalatest"           % "3.2.9",
   "org.jsoup"              %  "jsoup"               % "1.13.1",
   "com.typesafe.play"      %% "play-test"           % play.core.PlayVersion.current,
   "org.mockito"            %  "mockito-core"        % "3.10.0",
-  "org.scalatestplus.play" %% "scalatestplus-play"  % "3.1.3",
+  "org.scalatestplus.play" %% "scalatestplus-play"  % "5.1.0",
   "org.scalacheck"         %% "scalacheck"          % "1.15.4"
 ).map(_ % "test")
 
@@ -81,17 +80,19 @@ libraryDependencies ++= Seq(
   "com.github.ghik" % "silencer-lib" % "1.7.5" % Provided cross CrossVersion.full
 )
 
+val playVersion = "play-28"
+
 libraryDependencies ++= Seq(
   ws,
-  "uk.gov.hmrc"               %% "bootstrap-frontend-play-26"     % "5.4.0",
-  "uk.gov.hmrc"               %% "domain"                         % "5.11.0-play-26",
-  "uk.gov.hmrc"               %% "govuk-template"                 % "5.68.0-play-26",
-  "uk.gov.hmrc"               %% "play-ui"                        % "9.4.0-play-26",
-  "uk.gov.hmrc"               %% "play-partials"                  % "8.1.0-play-26",
+  "uk.gov.hmrc"               %% s"bootstrap-frontend-$playVersion"     % "5.12.0",
+  "uk.gov.hmrc"               %% "domain"                         % s"6.1.0-$playVersion",
+  "uk.gov.hmrc"               %% "govuk-template"                 % s"5.69.0-$playVersion",
+  "uk.gov.hmrc"               %% "play-ui"                        % s"9.6.0-$playVersion",
+  "uk.gov.hmrc"               %% "play-partials"                  % s"8.2.0-$playVersion",
   "com.typesafe.play"         %% "play-json"                      % "2.9.2",
   "org.scalactic"             %% "scalactic"                      % "3.0.8",
-  "uk.gov.hmrc"               %% "http-caching-client"            % "9.5.0-play-26",
-  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % "1.9.0-play-26",
+  "uk.gov.hmrc"               %% "http-caching-client"            % s"9.5.0-$playVersion",
+  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % s"1.9.0-$playVersion",
   "com.softwaremill.macwire"  %% "macros"                         % "2.3.7" % "provided",
   "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.7" % "provided",
   "com.softwaremill.macwire"  %% "util"                           % "2.3.7",

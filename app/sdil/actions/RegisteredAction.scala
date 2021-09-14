@@ -48,9 +48,9 @@ class RegisteredAction(
             case Some(subscription) =>
               Right(RegisteredRequest(EnrolmentIdentifier("sdil", subscription.sdilRef), request))
             case None =>
-              Left(Redirect(sdil.controllers.routes.IdentifyController.start()))
+              Left(Redirect(sdil.controllers.routes.IdentifyController.start))
           }
-        case _ => Future.successful(Left(Redirect(sdil.controllers.routes.IdentifyController.start())))
+        case _ => Future.successful(Left(Redirect(sdil.controllers.routes.IdentifyController.start)))
       }
 
     } recover {
