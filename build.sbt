@@ -84,21 +84,17 @@ val playVersion = "play-28"
 
 libraryDependencies ++= Seq(
   ws,
-  "uk.gov.hmrc"               %% s"bootstrap-frontend-$playVersion"     % "5.12.0",
-  "uk.gov.hmrc"               %% "domain"                         % s"6.1.0-$playVersion",
-  "uk.gov.hmrc"               %% "govuk-template"                 % s"5.69.0-$playVersion",
-  "uk.gov.hmrc"               %% "play-ui"                        % s"9.6.0-$playVersion",
-  "uk.gov.hmrc"               %% "play-partials"                  % s"8.2.0-$playVersion",
-  "com.typesafe.play"         %% "play-json"                      % "2.9.2",
-  "org.scalactic"             %% "scalactic"                      % "3.0.8",
-  "uk.gov.hmrc"               %% "http-caching-client"            % s"9.5.0-$playVersion",
-  "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % s"1.9.0-$playVersion",
-  "com.softwaremill.macwire"  %% "macros"                         % "2.3.7" % "provided",
-  "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.7" % "provided",
-  "com.softwaremill.macwire"  %% "util"                           % "2.3.7",
-  "com.softwaremill.macwire"  %% "proxy"                          % "2.3.7",
-  "org.typelevel"             %% "cats-core"                      % "2.4.0",
-  "uk.gov.hmrc"               %% "uniform"                        % "0.1.9" exclude("com.typesafe.play", "play-logback")
+  "uk.gov.hmrc"               %% s"bootstrap-frontend-$playVersion"     % "5.14.0",
+  "uk.gov.hmrc"               %% "domain"                               % s"6.2.0-$playVersion",
+  "uk.gov.hmrc"               %% "govuk-template"                       % s"5.70.0-$playVersion",
+  "uk.gov.hmrc"               %% "play-ui"                              % s"9.7.0-$playVersion",
+  "uk.gov.hmrc"               %% "play-partials"                        % s"8.2.0-$playVersion",
+  "com.typesafe.play"         %% "play-json"                            % "2.9.2",
+  "org.scalactic"             %% "scalactic"                            % "3.0.8",
+  "uk.gov.hmrc"               %% "http-caching-client"                  % s"9.5.0-$playVersion",
+  "uk.gov.hmrc"               %% "play-conditional-form-mapping"        % s"1.9.0-$playVersion",
+  "org.typelevel"             %% "cats-core"                            % "2.4.0",
+  "uk.gov.hmrc"               %% "uniform"                              % "0.1.9" exclude("com.typesafe.play", "play-logback")
 )
 
 // ================================================================================

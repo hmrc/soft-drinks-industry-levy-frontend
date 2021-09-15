@@ -17,6 +17,7 @@
 package sdil.controllers
 
 import java.time.LocalDate
+
 import cats.{Eq, Monoid}
 import enumeratum._
 import ltbs.play.scaffold.GdsComponents._
@@ -28,6 +29,7 @@ import play.api.data.{Form, Mapping, _}
 import play.api.i18n._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, Result}
+import play.api.mvc.Results._
 import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
@@ -41,7 +43,6 @@ import uk.gov.hmrc.uniform._
 import uk.gov.hmrc.uniform.playutil._
 import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
-import play.api.i18n.I18nSupport
 
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -49,10 +50,9 @@ import cats.implicits._
 import sdil.models.variations.ReturnVariationData
 import sdil.uniform.ShowTitle
 import sdil.uniform.ShowTitle.instance
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.uniform.Uniform
 
-trait SdilWMController extends WebMonadController with FrontendBaseController with Modulus23Check with I18nSupport {
+trait SdilWMController extends WebMonadController with Modulus23Check {
 
   implicit def config: AppConfig
   implicit val messages: Messages

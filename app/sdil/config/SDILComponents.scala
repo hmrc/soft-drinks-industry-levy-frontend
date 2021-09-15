@@ -17,7 +17,6 @@
 package sdil.config
 
 import com.kenshoo.play.metrics.{Metrics, MetricsImpl}
-import com.softwaremill.macwire._
 import controllers.template.Template
 import controllers.{AssetsConfiguration, AssetsMetadata, DefaultAssetsMetadata}
 import play.api.ApplicationLoader.Context
@@ -44,13 +43,14 @@ class SDILComponents @Inject()(context: Context)(
   defaultApplication: DefaultApplication,
   metadata: DefaultAssetsMetadata,
   messagesControllerComponents: DefaultMessagesControllerComponents,
-  metricsImpl: MetricsImpl)
-    extends BuiltInComponentsFromContext(context) with Base64ConfigDecoder with I18nComponents
+  metricsImpl: MetricsImpl,
+  defaultApplicationLifecycle: DefaultApplicationLifecycle
+) extends BuiltInComponentsFromContext(context) with Base64ConfigDecoder with I18nComponents
     with SecurityHeadersComponents with CSRFComponents with AhcWSComponents {
 
   override lazy val httpFilters = sdilFilters.filters
   override lazy val application: DefaultApplication = defaultApplication
-  override lazy val applicationLifecycle: ApplicationLifecycle = wire[DefaultApplicationLifecycle]
+  override lazy val applicationLifecycle: ApplicationLifecycle = defaultApplicationLifecycle
 
   implicit lazy val ec: ExecutionContext = actorSystem.dispatcher
 
