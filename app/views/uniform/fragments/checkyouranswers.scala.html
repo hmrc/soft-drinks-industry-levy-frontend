@@ -19,10 +19,10 @@
 @data.map{ case (title, html, linkOpt) =>
   <dl class="govuk-check-your-answers cya-questions-short">
     <div>
-      <dt class="cya-question">@Messages(title)</dt>
+      <dt class="cya-question">messages(title)</dt>
       <dd class="cya-answer">@html</dd>
       @linkOpt.map { link =>
-        <dd class="cya-change"><a href="@link">@Messages("Change")</a></dd>
+        <dd class="cya-change"><a href="@link">messages("Change")</a></dd>
       }
     </div>
   </dl>

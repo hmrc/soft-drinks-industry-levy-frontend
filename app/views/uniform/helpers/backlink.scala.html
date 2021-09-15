@@ -20,8 +20,8 @@
 
 @if(showBackLink.show) {
  @breadcrumbs.headOption.fold {
-  <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
+  <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">messages("sdil.common.back")</a>
  } { x =>
-  <a class="link-back" href="./@x">@Messages("sdil.common.back")</a>
+  <a class="link-back" href="./@x">messages("sdil.common.back")</a>
  }
 }

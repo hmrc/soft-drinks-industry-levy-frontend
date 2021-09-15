@@ -29,25 +29,25 @@
 
 @multiTitle(items: List[(Html, String)]) = {
     @if(items.isEmpty){
-        @Messages(s"heading.$key")
+        messages(s"heading.$key")
     } else {
-        @Messages(s"heading.multi.$key", items.length, singular(items).toString)
+        messages(s"heading.multi.$key", items.length, singular(items).toString)
     }
 }
 
 @multiLead(items: List[(Html, String)]) = {
-@if(items.isEmpty){
-    @Messages(s"$key.lead")
-} else {
-    @Messages(s"$key.multi.lead", items.length, singular(items).toString)
-}
+    @if(items.isEmpty){
+        messages(s"$key.lead")
+    } else {
+        messages(s"$key.multi.lead", items.length, singular(items).toString)
+    }
 }
 
 @main(
     if(items.isEmpty) {
-        Messages(Seq(s"heading.$key", "sdil.variations.title"))
+        messages(Seq(s"heading.$key", "sdil.variations.title"))
     } else {
-    Messages(s"heading.multi.$key", items.length, singular(items).toString)
+        messages(s"heading.multi.$key", items.length, singular(items).toString)
     }, form = Some(form)) {
     @backlink(breadcrumbs)
     @error_summary(form)
@@ -59,15 +59,15 @@
     }
 
     @if(messages.isDefinedAt(s"$key.paragraph")) {
-        <p>@Messages(s"$key.paragraph")</p>
+        <p>messages(s"$key.paragraph")</p>
     }
 
     @if(messages.isDefinedAt(s"$key.paragraph.lead")) {
-        <p class="lede">@Messages(s"$key.paragraph.lead")</p>
+        <p class="lede">messages(s"$key.paragraph.lead")</p>
     }
 
     @if(messages.isDefinedAt(s"$key.paragraph.nonEmpty") && items.nonEmpty) {
-        <p>@Messages(s"$key.paragraph.nonEmpty")</p>
+        <p>messages(s"$key.paragraph.nonEmpty")</p>
     }
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
@@ -84,10 +84,10 @@
                             <td class="@if(showEdit) {align-centre} else {align-right}">
                                 <button name="@key" value="Delete.@id" class="link-button no-shadow">
                                     <span aria-hidden="true">
-                                        @Messages(Seq(s"$key.delete", "Remove"))
+                                        messages(Seq(s"$key.delete", "Remove"))
                                     </span>
                                     <span class="visually-hidden">
-                                        @Messages("sdil.remove.site.button", itemTitle.replace("</br>", ", "))
+                                        messages("sdil.remove.site.button", itemTitle.replace("</br>", ", "))
                                     </span>
                                 </button>
                             </td>
@@ -97,10 +97,10 @@
                             <td class="align-right">
                                 <button name="@key" value="Edit.@id" class="link-button no-shadow" >
                                     <span aria-hidden="true">
-                                        @Messages(Seq(s"$key.edit", "Edit"))
+                                        messages(Seq(s"$key.edit", "Edit"))
                                     </span>
                                     <span class="visually-hidden">
-                                        @Messages("sdil.edit.site.button", itemTitle.replace("</br>", ", "))
+                                        messages("sdil.edit.site.button", itemTitle.replace("</br>", ", "))
                                     </span>
                                 </button>
                             </td>

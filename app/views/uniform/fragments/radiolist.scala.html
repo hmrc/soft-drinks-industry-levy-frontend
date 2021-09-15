@@ -17,10 +17,10 @@
 @import helper.{inputRadioGroup => _}
 @import views.html.softdrinksindustrylevy.helpers._
 
-@(key: String, form: Form[String], possibleValues: List[String])(implicit messages: Messages, extraMessages: ExtraMessages, lang: Lang)
+@(key: String, form: Form[String], possibleValues: List[String])(implicit messages: Messages, extraMessages: ExtraMessages)
 @inputRadioGroup(
     form(key),
-    possibleValues.map{v => (v, Messages.extraMessages(Seq(key + ".option." + v.toLowerCase, v)))},
+    possibleValues.map{v => (v, messages(Seq(key + ".option." + v.toLowerCase, v)))},
     '_labelClass -> "block-label less-padding",
     '_labelAfter -> true,
     '_groupClass -> "form-field-group",

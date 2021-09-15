@@ -20,25 +20,25 @@
 
 <table class="check-your-answers">
     <caption>
-        <h2>@Messages("variations.cya.contact.address")</h2>
+        <h2>@messages("variations.cya.contact.address")</h2>
     </caption>
     <tbody>
 
         <tr>
             <td class="cya-question table-header-bold">
-            @Messages("variations.cya.contact.address.sub")
+            @messages("variations.cya.contact.address.sub")
             </td>
             <td>
                 @v.updatedBusinessAddress.nonEmptyLines.head
                 @for(line <- v.updatedBusinessAddress.nonEmptyLines.tail) {
-                    <br/>
-            @line
-            }
+                  <br/>
+                  @line
+                }
             </td>
             @if(showChangeLinks) {
                 <td class="cya-change">
                     <a href="business-address">
-                        <p class="edit-change-link">@Html(Messages("variations.cya.contact.change.address"))</p>
+                        <p class="edit-change-link">@Html(messages("variations.cya.contact.change.address"))</p>
                     </a>
                 </td>
             }

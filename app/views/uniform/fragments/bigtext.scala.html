@@ -16,14 +16,14 @@
 
 @import helper.{inputText => _}
 
-@(key: String, form: Form[String])(implicit messages: Messages, extraMessages: ExtraMessages, lang: Lang)
+@(key: String, form: Form[String])(implicit messages: Messages, extraMessages: ExtraMessages)
 
 <div class="form-group @if(form.hasErrors) {form-group-error}">
     <label for="@key">
-        <span class="form-label">@Messages.extraMessage(s"${key}.label")</span>
+        <span class="form-label">@messages(s"${key}.label")</span>
         @form.errors.map { error =>
             <span class="error-message" data-journey="search-page:error:@key">
-            @Messages(error.message, error.args: _*)
+            messages(error.message, error.args: _*)
             </span>
         }
     </label>

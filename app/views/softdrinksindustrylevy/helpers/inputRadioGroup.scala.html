@@ -41,7 +41,7 @@
         </legend>
     }
 
-    @elements.errors.map{error => <span class="error-message">@Messages(error.split("[|]"))</span>}
+    @elements.errors.map{error => <span class="error-message">messages(error.split("[|]"))</span>}
 
     @radioOptions.map { case (value, label) =>
         @defining(s"${elements.field.name}-${value.toLowerCase.replace(" ","_")}")  { inputId =>

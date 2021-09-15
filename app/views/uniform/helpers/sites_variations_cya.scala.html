@@ -28,18 +28,18 @@
 @if(newPackingSites.nonEmpty) {
 
     <table class="check-your-answers">
-        <caption><h2>@Messages("variations.cya.packsites.add")</h2></caption>
+        <caption><h2>@messages("variations.cya.packsites.add")</h2></caption>
 
         <thead>
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    @Messages("variations.cya.packsites.address")
+                    @messages("variations.cya.packsites.address")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    @Messages("variations.cya.postcode")
+                    @messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -67,7 +67,7 @@
                         } else {
                             packaging-site-details
                         }">
-                        <p class="edit-change-link">@Html(Messages("variations.cya.packsites.change.add"))</p>
+                        <p class="edit-change-link">@Html(messages("variations.cya.packsites.change.add"))</p>
                         </a>
                     </td>
                 }
@@ -81,17 +81,17 @@
 
 
     <table class="check-your-answers">
-        <caption><h2>@Messages("variations.cya.packsites.remove")</h2></caption>
+        <caption><h2>@messages("variations.cya.packsites.remove")</h2></caption>
         <thead>
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    @Messages("variations.cya.packsites.address")
+                    @messages("variations.cya.packsites.address")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    @Messages("variations.cya.postcode")
+                    @messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -119,7 +119,7 @@
                         } else {
                             packaging-site-details
                         }">
-                        <p class="edit-change-link"> @Html(Messages("variations.cya.packsites.change.remove"))</p>
+                        <p class="edit-change-link"> @Html(messages("variations.cya.packsites.change.remove"))</p>
                         </a>
                     </td>
                 }
@@ -131,20 +131,20 @@
 
 @if(path.contains("change-packaging-sites") && newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
     <table class="check-your-answers">
-        <caption><h2>@Messages("variations.cya.packsites.same")</h2></caption>
+        <caption><h2>@messages("variations.cya.packsites.same")</h2></caption>
         <tbody>
             <tr>
                 <th class="table-header-bold">
-                @Messages("variations.cya.packsites.addOrRemove")
+                @messages("variations.cya.packsites.addOrRemove")
                 </th>
                 <th>
-                @Messages("variations.cya.false")
+                @messages("variations.cya.false")
                 </th>
                 @if(showChangeLinks) {
                 <th>
                     <td class="change-answer">
                         <a href="change-packaging-sites">
-                            <p class="edit-change-link"> @Html(Messages("variations.cya.packsites.change"))</p>
+                            <p class="edit-change-link"> @Html(messages("variations.cya.packsites.change"))</p>
                         </a>
                     </td>
                 </th>
@@ -156,18 +156,18 @@
 
 @if(newWarehouseSites.nonEmpty) {
     <table class="check-your-answers">
-        <caption><h2>@Messages("variations.cya.warehouses.add")</h2></caption>
+        <caption><h2>messages("variations.cya.warehouses.add")</h2></caption>
 
         <thead>
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    @Messages("variations.cya.warehouses")
+                    messages("variations.cya.warehouses")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    @Messages("variations.cya.postcode")
+                    messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -197,7 +197,7 @@
                         } else {
                             warehouse-details
                         }">
-                        <p class="edit-change-link">@Html(Messages("variations.cya.warehouses.change.add"))</p>
+                        <p class="edit-change-link">@Html(messages("variations.cya.warehouses.change.add"))</p>
                         </a>
                     </td>
                 }
@@ -209,17 +209,17 @@
 
 @if(closedWarehouses.nonEmpty) {
     <table class="check-your-answers">
-            <caption><h2>@Messages("variations.cya.warehouses.remove")</h2></caption>
+            <caption><h2>messages("variations.cya.warehouses.remove")</h2></caption>
         <thead>
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    @Messages("variations.cya.warehouses")
+                    messages("variations.cya.warehouses")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    @Messages("variations.cya.postcode")
+                    messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -249,7 +249,7 @@
                         } else {
                             warehouse-details
                         }">
-                        <p class="edit-change-link">@Html(Messages("variations.cya.warehouses.change.remove"))</p>
+                        <p class="edit-change-link">@Html(messages("variations.cya.warehouses.change.remove"))</p>
                         </a>
                     </td>
                 }
@@ -263,20 +263,20 @@
 
 
     <table class="check-your-answers">
-        <caption><h2>@Messages("variations.cya.warehouses.same")</h2></caption>
+        <caption><h2>messages("variations.cya.warehouses.same")</h2></caption>
         <tbody>
             <tr>
                 <th class="table-header-bold">
-                @Messages("variations.cya.warehouses.addOrRemove")
+                messages("variations.cya.warehouses.addOrRemove")
                 </th>
                 <td>
-                @Messages("variations.cya.false")
+                messages("variations.cya.false")
                 </td>
                 @if(showChangeLinks) {
                     <th>
                         <td class="change-answer">
                             <a href="change-warehouses">
-                              <p class="edit-change-link">@Html(Messages("variations.cya.warehouses.change"))</p>
+                              <p class="edit-change-link">@Html(messages("variations.cya.warehouses.change"))</p>
                             </a>
                         </td>
                     </th>

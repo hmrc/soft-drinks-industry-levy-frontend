@@ -20,19 +20,19 @@
 
 @this(main: main_template)
 
-@(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages, lang: Lang)
+@(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages)
 
 @main(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
   @backlink(breadcrumbs)
 
   @if(messages.isDefinedAt(s"heading.$key.orgName")) {
     <span class="govuk-caption-xl service-comp-name">
-        @Messages.extraMessage(s"heading.$key.orgName")
+        messages(s"heading.$key.orgName")
     </span>
   }
 
   <h1 class="heading-large @if(messages.isDefinedAt(s"heading.$key.orgName")){service-header}">
-    @Messages.extraMessages(Seq(s"heading.$key", "sdil.declaration.heading"))
+    @messages(Seq(s"heading.$key", "sdil.declaration.heading"))
   </h1>
     @helper.form(action = play.api.mvc.Call("post", key)) {
         <div class="form-group">
@@ -40,7 +40,7 @@
         @tell
         </div>
         <button class="button" type="submit" name="@key" id="@key" value="Next" formmethod="post">
-            @Messages(Seq(s"$key.continue", "sdil.declaration.continue"))
+            messages(Seq(s"$key.continue", "sdil.declaration.continue"))
         </button>
     }
 }

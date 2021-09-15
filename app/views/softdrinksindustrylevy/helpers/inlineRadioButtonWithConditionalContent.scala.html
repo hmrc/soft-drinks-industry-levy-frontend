@@ -38,7 +38,7 @@
                 @elements.args.get('_legend)
             </legend>
         }
-        @elements.errors.map{error => <span class="error-message">@Messages(error)</span>}
+        @elements.errors.map{error => <span class="error-message">messages(error)</span>}
 
         @radioOptions.map { case (value, (label, targ)) =>
 

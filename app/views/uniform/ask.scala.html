@@ -23,9 +23,9 @@
 
 @this(main: main_template)
 
-@(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String], helpText: Option[Html] = None)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: ShowBackLink, lang: Lang)
+@(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String], helpText: Option[Html] = None)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: ShowBackLink)
 
-@main(Messages.extraMessages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
+@main(messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
@@ -36,11 +36,11 @@
         <legend>
             @if(messages.isDefinedAt(s"heading.$key.orgName")) {
                 <span class="govuk-caption-xl service-comp-name">
-                    @Messages.extraMessage(s"heading.$key.orgName")
+                    messages.extraMessage(s"heading.$key.orgName")
                 </span>
             }
             <h1 class="heading-large  @if(messages.isDefinedAt(s"heading.$key.orgName")){service-header}">
-                @Messages.extraMessage(s"heading.$key")
+                @messages(s"heading.$key")
             </h1>
         </legend>
     @for(msg <- Messages.many(s"$key.paragraph")) {
@@ -49,12 +49,12 @@
         </div>
     }
     @if(messages.isDefinedAt(s"$key.lead") || extraMessages.messages.get(s"$key.lead").nonEmpty) {
-        <p tabindex="-1" class="lede">@Html(Messages.extraMessage(s"$key.lead"))</p>
+        <p tabindex="-1" class="lede">@Html(messages(s"$key.lead"))</p>
     }
 
         @if(messages.isDefinedAt(s"$key.hint")) {
-            <span class="form-hint">@Messages.extraMessage(s"$key.hint")</span>
-            }
+            <span class="form-hint">messages.extraMessage(s"$key.hint")</span>
+        }
 
         @htmlForm
 
@@ -68,7 +68,7 @@
     </fieldset>
 
         <button class="button" type="submit" id="continue-button">
-        @Messages(Seq(s"$key.continue","sdil.common.save-continue"))
+            messages(Seq(s"$key.continue","sdil.common.save-continue"))
         </button>
     }
 }

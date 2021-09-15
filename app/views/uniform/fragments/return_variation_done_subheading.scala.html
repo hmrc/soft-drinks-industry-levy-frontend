@@ -23,7 +23,7 @@
 @(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod)(implicit messages: Messages)
 
 <p>
-    @Messages(
+    @messages(
         "returnVariationDone.corrected.return",
         returnPeriod.start.format(ofPattern("MMMM")),
         returnPeriod.end.format(ofPattern("MMMM yyyy")),
@@ -35,11 +35,11 @@
 
 <div class="notice">
     <i class="icon icon-important icon-image">
-        <span class="visually-hidden">@Messages("warning")</span>
+        <span class="visually-hidden">@messages("warning")</span>
     </i>
     <p>
         <strong class="bold-small">
-            @Messages("returnVariationDone.payments.notice")
+            @messages("returnVariationDone.payments.notice")
         </strong>
     </p>
 </div>

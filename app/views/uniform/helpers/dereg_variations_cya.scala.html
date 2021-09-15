@@ -19,7 +19,7 @@
 @(showChangeLinks : Boolean, v: sdil.models.variations.RegistrationVariationData)(implicit messages: Messages)
 
 <h2 class="heading-medium">
-    @Messages("variations.cya.deregistration")
+    @messages("variations.cya.deregistration")
 </h2>
 
 <table class="check-your-answers">
@@ -27,7 +27,7 @@
         @v.reason.map{ reason =>
             <tr>
                 <td class="cya-question table-header-bold">
-                    @Messages("variations.cya.deregistration.reason")
+                    @messages("variations.cya.deregistration.reason")
                 </td>
                 <td>
                 @reason
@@ -35,7 +35,7 @@
                 @if(showChangeLinks) {
                     <td class="cya-change">
                         <a href="cancel-registration-reason">
-                            <p class="edit-change-link">@Html(Messages("variations.cya.deregistration.change.reason"))</p>
+                            <p class="edit-change-link">@Html(messages("variations.cya.deregistration.change.reason"))</p>
                         </a>
                     </td>
                 }
@@ -45,7 +45,7 @@
         @v.deregDate.map{ date =>
             <tr>
                 <td class="cya-question table-header-bold">
-                    @Messages("variations.cya.deregistration.date")
+                    messages("variations.cya.deregistration.date")
                 </td>
                 <td>
                 @{date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}
@@ -53,7 +53,7 @@
                 @if(showChangeLinks) {
                     <td class="cya-change">
                         <a href="cancel-registration-date">
-                            <p class="edit-change-link">@Html(Messages("variations.cya.deregistration.change.date"))</p>
+                            <p class="edit-change-link">@Html(messages("variations.cya.deregistration.change.date"))</p>
                         </a>
                     </td>
                 }

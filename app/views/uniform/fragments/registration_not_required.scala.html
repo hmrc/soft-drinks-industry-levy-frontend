@@ -16,7 +16,7 @@
 
 @()(implicit messages: Messages)
 
-<p>@Messages("sdil.registration-not-required.p1")</p>
+<p>@messages("sdil.registration-not-required.p1")</p>
 
 <ul class="list-bullet">
     @for(msg <- Messages.many("sdil.registration-not-required.li")) {
@@ -24,4 +24,4 @@
     }
 </ul>
 
-<p>@Html(Messages("sdil.registration-not-required.p3", sdil.controllers.routes.RegistrationController.index("producer")))</p>
+<p>@Html(messages("sdil.registration-not-required.p3", sdil.controllers.routes.RegistrationController.index("producer")))</p>

@@ -21,11 +21,11 @@
 
 @innerSection={ 
   @if(messages.isDefinedAt(s"${key}.inner-heading")) {
-    <h2 class="heading-medium">@Messages(s"${key}.inner-heading")</h2>
+    <h2 class="heading-medium">messages(s"${key}.inner-heading")</h2>
   }
   @if(messages.isDefinedAt(s"${key}.inner-paragraph")) {
     <div class="panel-border-narrow panel">
-        <p>@Messages(s"${key}.inner-paragraph")</p>
+        <p>messages(s"${key}.inner-paragraph")</p>
     </div>
   }
   @inner
@@ -34,7 +34,7 @@
 @inlineRadioButtonWithConditionalContent(
     form(s"${key}.outer"),
     Seq(
-        "true" -> ((Messages(Seq(s"option.$key.true","sdil.common.yes")), Some("hiddenTarget"))),
+        "true" -> ((messages(Seq(s"option.$key.true","sdil.common.yes")), Some("hiddenTarget"))),
         "false" -> ((messages(Seq(s"option.$key.false", "sdil.common.no")), None))
     ),
     Some(innerSection),

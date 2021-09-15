@@ -43,13 +43,13 @@
 
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-            @Messages("sdil.verify.address")
+                messages("sdil.verify.address")
             </dt>
             <dd class="govuk-summary-list__value">
                 @formData.primaryAddress.nonEmptyLines.map { l =>
                     <div>@l</div>
                 }
-                <div>@Messages("sdil.declaration.uk")</div>
+                <div>messages("sdil.declaration.uk")</div>
             </dd>
         </div>
     }
@@ -58,7 +58,7 @@
             "registerDeclaration",
             "producer",
             Some(sdil.controllers.routes.RegistrationController.index("producer")),
-            Messages(s"sdil.registerDeclaration.producer.${producer.getOrElse(None)}")
+            messages(s"sdil.registerDeclaration.producer.${producer.getOrElse(None)}")
         )
         @if(producer.nonEmpty) {
             @declaration_description_term(
@@ -66,22 +66,22 @@
                 "isLargeProducer",
                 Some(sdil.controllers.routes.RegistrationController.index("producer")),
                 if(producer.getOrElse(false)) {
-                    Messages("sdil.declaration.largeProducer")
+                    messages("sdil.declaration.largeProducer")
                 } else {
-                    Messages("sdil.declaration.smallProducer")
+                    messages("sdil.declaration.smallProducer")
                 }
             )
             @if(useCopacker.nonEmpty) {
                 @declaration_description_term("registerDeclaration", "third-party",
                     Some(sdil.controllers.routes.RegistrationController.index("copacked")),
-                    Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
+                messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
             }
             @producer.map { _ =>
                 @declaration_description_term(
                     "registerDeclaration",
                     "packaging",
                     Some(sdil.controllers.routes.RegistrationController.index("package-own-uk")),
-                    Messages(s"sdil.registerDeclaration.${packageOwn.fold(false)(_ => true)}"),
+                    messages(s"sdil.registerDeclaration.${packageOwn.fold(false)(_ => true)}"),
                     '_colspan -> "2")
             }
             @if(packageOwn.fold(false)(_ => true)) {
@@ -96,7 +96,7 @@
             "registerDeclaration",
             "customers",
             Some(sdil.controllers.routes.RegistrationController.index("package-copack")),
-            Messages(s"sdil.registerDeclaration.${copacks.fold(false)(_ => true)}"),
+            messages(s"sdil.registerDeclaration.${copacks.fold(false)(_ => true)}"),
             '_colspan -> "2"
         )
 
@@ -110,7 +110,7 @@
 
         @declaration_description_term("registerDeclaration", "import",
             Some(sdil.controllers.routes.RegistrationController.index("import")),
-            Messages(s"sdil.registerDeclaration.${imports.fold(false)(_ => true)}"), '_colspan -> "2")
+            messages(s"sdil.registerDeclaration.${imports.fold(false)(_ => true)}"), '_colspan -> "2")
 
         @if(imports.fold(false)(_ => true)) {
             @declaration_description_litres(
@@ -163,6 +163,6 @@
     }
 
     <p class="print-link-padding">
-        <a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a>
+        <a href="javascript:window.print()" class="print-link">@messages("sdil.common.print")</a>
     </p>
 

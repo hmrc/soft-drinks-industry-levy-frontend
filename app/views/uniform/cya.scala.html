@@ -22,7 +22,7 @@
 
 @this(main: main_template)
 
-@(key: String, form: Form[String], breadcrumbs: List[String], mainContent: Html)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: ShowBackLink, lang: Lang)
+@(key: String, form: Form[String], breadcrumbs: List[String], mainContent: Html)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: ShowBackLink)
 
 @main(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
@@ -31,19 +31,19 @@
     @error_summary(form)
     @if(messages.isDefinedAt(s"heading.$key.orgName")) {
         <span class="govuk-caption-xl service-comp-name">
-            @Messages.extraMessage(s"heading.$key.orgName")
+            messages.extraMessage(s"heading.$key.orgName")
         </span>
     }
 
     <h1 class="heading-large @if(messages.isDefinedAt(s"heading.$key.orgName")) {service-header}" >
-        @Messages.extraMessage(s"heading.$key")
+        @messages(s"heading.$key")
     </h1>
 
     @helper.form(action = play.api.mvc.Call("post", key)) {
         @CSRF.formField
         @mainContent
         <button name="@key" value="DONE" id="continue-button" class="button">
-            @Messages(Seq(s"$key.continue","sdil.common.save-continue"))
+            messages(Seq(s"$key.continue","sdil.common.save-continue"))
         </button>
     }
 

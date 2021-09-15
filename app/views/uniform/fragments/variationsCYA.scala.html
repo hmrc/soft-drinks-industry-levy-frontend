@@ -18,13 +18,13 @@
 @import views.html.uniform.helpers._
 
 @(
-        v: sdil.models.variations.RegistrationVariationData,
-        newPackingSites: List[Site],
-        closedPackagingSites: List[Site],
-        newWarehouseSites: List[Site],
-        closedWarehouses: List[Site],
-        path: List[String])(implicit m: Messages
-)
+    v: sdil.models.variations.RegistrationVariationData,
+    newPackingSites: List[Site],
+    closedPackagingSites: List[Site],
+    newWarehouseSites: List[Site],
+    closedWarehouses: List[Site],
+    path: List[String]
+)(implicit messages: Messages)
 
 @if(path.contains("amount-produced") && !path.contains("cancel-registration-date")) {
     @activty_variations_cya(showChangeLinks = true, v)
@@ -52,4 +52,4 @@
     @dereg_variations_cya(showChangeLinks = true, v)
 }
 
-<p class="print-link-padding"><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
+<p class="print-link-padding"><a href="javascript:window.print()" class="print-link">@messages("sdil.common.print")</a></p>
