@@ -95,10 +95,10 @@ libraryDependencies ++= Seq(
   "uk.gov.hmrc"               %% "play-conditional-form-mapping"        % s"1.9.0-$playVersion",
   "org.typelevel"             %% "cats-core"                            % "2.4.0",
   //"uk.gov.hmrc"               %% "uniform"                              % "0.1.9" exclude("com.typesafe.play", "play-logback")
-  "com.luketebbs.uniform"     %% "core"                                 % "5.0.0-RC1"
+  "com.luketebbs.uniform"     %% "core"                                 % "5.0.0-RC1",
+  //"com.luketebbs.uniform"     %% "common-web"                                 % "5.0.0-RC1"
+  "com.luketebbs.uniform" %% "interpreter-play28" % "5.0.0-RC1"
 )
-
-//libraryDependencies += "com.luketebbs.uniform" %% "core" % "5.0.0"
 
 // ================================================================================
 // Compiler flags
