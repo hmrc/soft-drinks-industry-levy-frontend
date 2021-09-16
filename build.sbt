@@ -90,12 +90,15 @@ libraryDependencies ++= Seq(
   "uk.gov.hmrc"               %% "play-ui"                              % s"9.7.0-$playVersion",
   "uk.gov.hmrc"               %% "play-partials"                        % s"8.2.0-$playVersion",
   "com.typesafe.play"         %% "play-json"                            % "2.9.2",
-  "org.scalactic"             %% "scalactic"                            % "3.0.8",
+  "org.scalactic"             %% "scalactic"                            % "3.2.9",
   "uk.gov.hmrc"               %% "http-caching-client"                  % s"9.5.0-$playVersion",
   "uk.gov.hmrc"               %% "play-conditional-form-mapping"        % s"1.9.0-$playVersion",
   "org.typelevel"             %% "cats-core"                            % "2.4.0",
-  "uk.gov.hmrc"               %% "uniform"                              % "0.1.9" exclude("com.typesafe.play", "play-logback")
+  //"uk.gov.hmrc"               %% "uniform"                              % "0.1.9" exclude("com.typesafe.play", "play-logback")
+  "com.luketebbs.uniform"     %% "core"                                 % "5.0.0-RC1"
 )
+
+//libraryDependencies += "com.luketebbs.uniform" %% "core" % "5.0.0"
 
 // ================================================================================
 // Compiler flags
