@@ -323,6 +323,15 @@ object SdilComponents extends FormHelpers {
     case object unincorporatedBody extends OrganisationType
   }
 
+  sealed trait OrganisationTypeSoleless extends EnumEntry
+  object OrganisationTypeSoleless extends Enum[OrganisationTypeSoleless] {
+    val values = findValues
+    case object limitedCompany extends OrganisationTypeSoleless
+    case object limitedLiabilityPartnership extends OrganisationTypeSoleless
+    case object partnership extends OrganisationTypeSoleless
+    case object unincorporatedBody extends OrganisationTypeSoleless
+  }
+
   sealed trait ProducerType extends EnumEntry
   object ProducerType extends Enum[ProducerType] {
     val values = findValues
