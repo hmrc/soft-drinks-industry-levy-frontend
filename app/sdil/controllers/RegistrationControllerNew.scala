@@ -21,6 +21,8 @@ import java.time.LocalDate
 import cats.implicits._
 import ltbs.play.scaffold.GdsComponents.litreagePair
 import ltbs.play.scaffold.SdilComponents.{OrganisationType, OrganisationTypeSoleless, ProducerType}
+import scala.language.higherKinds
+
 import ltbs.uniform._
 import ltbs.uniform.common.web.{PageIn, PageOut, WebInteraction, WebMonad, WebTell}
 import ltbs.uniform.interpreters.playframework._
@@ -29,7 +31,7 @@ import play.api.i18n._
 import play.api.mvc.{request, _}
 import play.twirl.api.Html
 import sdil.config.AppConfig
-import sdil.models.SmallProducer
+import sdil.models.backend.Site
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.uniform.HtmlShow
 
@@ -79,12 +81,14 @@ object RegistrationControllerNew {
       askPackingSites = (packLarge.contains(true) && packageOwn.flatten.nonEmpty) || copacks.isDefined
       useBusinessAddress <- ask[Boolean]("pack-at-business-address") when askPackingSites
 
-
-
-      _                  <- ask[LocalDate]("firstpage")
-      _                  <- interact[SmallProducer]("sndpage", Html("test"))
-      _                  <- ask[Either[Boolean, Int]]("thirdpage")
-      _                  <- ask[Int]("simple")
+      _ <- ask[LocalDate]("firstpage")
+      _ <- askList[Site]("sites") {
+            case (index: Option[Int], existing: List[Site]) =>
+              ask[Site]("site", default = index.map(existing))
+          }
+//      _                  <- interact[SmallProducer]("sndpage", Html("test"))
+      _ <- ask[Either[Boolean, Int]]("thirdpage")
+      _ <- ask[Int]("simple")
     } yield ()
 
 }
