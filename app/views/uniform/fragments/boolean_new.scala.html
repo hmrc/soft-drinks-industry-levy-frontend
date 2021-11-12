@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package views.uniform
-import javax.inject.Inject
+@import helper.{inputRadioGroup => _, _}
+@import views.html.softdrinksindustrylevy.helpers._
+@import views.html.helper.options
 
-class Uniform @Inject()(
-  val updateBusinessAddresses: views.html.uniform.fragments.update_business_addresses,
-  val ask: views.html.uniform.ask,
-  val cya: views.html.uniform.cya,
-  val end: views.html.uniform.end,
-  val journeyEnd: views.html.uniform.journeyEnd,
-  val many: views.html.uniform.many,
-  val tell: views.html.uniform.tell,
-  val base: views.html.uniform.base
-) {}
+@(key: String, existing: Option[Boolean])(implicit messages: UniformMessages[Html])
+
+@inputRadioGroup_new(
+    key,
+    options(
+        true.toString -> Messages(Seq(s"option.$key.true","sdil.common.yes")),
+        false.toString -> Messages(Seq(s"option.$key.false", "sdil.common.no"))
+    ),
+    existing.map(_.toString)
+)

@@ -78,6 +78,9 @@ trait CommonWiring {
   lazy val main: main_template = wire[main_template]
   lazy val govUkWrapper: govuk_wrapper = wire[govuk_wrapper]
 
+  // UF5 changes
+  lazy val base: views.html.uniform.base = wire[views.html.uniform.base]
+
   //copied from uk.gov.hmrc.play.views.html.helpers
   lazy val address: Address = wire[Address]
   lazy val dateFields: DateFields = wire[DateFields]

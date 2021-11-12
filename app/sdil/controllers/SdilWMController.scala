@@ -469,6 +469,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
         }.imap(outf)(inf)
     }(wm)
   }
+
   implicit val showText = instance[Site] { _.getLines.mkString("</br>") }
   implicit val showProd = instance[SmallProducer] { _.getNameAndRef }
 
