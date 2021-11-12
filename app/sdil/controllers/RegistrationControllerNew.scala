@@ -16,13 +16,15 @@
 
 package sdil.controllers
 
+import scala.language.higherKinds
+
 import ltbs.uniform._
 import ltbs.uniform.interpreters.playframework._
 import play.api.i18n._
 import play.api.mvc._
 import play.twirl.api.Html
 import sdil.config.AppConfig
-import sdil.models.SmallProducer
+import sdil.models.backend.Site
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,9 +49,14 @@ class RegistrationControllerNew(
 
 object RegistrationControllerNew {
 
+  import ltbs.uniform._
+
   val journey = for {
     _ <- ask[java.time.LocalDate]("firstpage")
-    _ <- interact[SmallProducer]("sndpage", Html("test"))
+    _ <- askList[Site]("sites") {
+          case (index: Option[Int], existing: List[Site]) =>
+            ask[Site]("site", default = index.map(existing))
+        }
     _ <- ask[Either[Boolean, Int]]("thirdpage")
     _ <- ask[Int]("simple")
   } yield ()

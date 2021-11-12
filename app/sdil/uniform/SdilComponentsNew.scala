@@ -176,24 +176,24 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
       }
     }
 
-  implicit val addressForm = new FormHtml[Address] {
+  // implicit val addressForm = new FormHtml[Address] {
 
-    def decode(out: Input): Either[ErrorTree, Address] = ???
-    def encode(in: Address): Input = ???
+  //   def decode(out: Input): Either[ErrorTree, Address] = ???
+  //   def encode(in: Address): Input = ???
 
-    def render(
-      pageKey: List[String],
-      fieldKey: List[String],
-      tell: Option[Html],
-      breadcrumbs: Breadcrumbs,
-      data: Input,
-      errors: ErrorTree,
-      messages: UniformMessages[Html]
-    ): Option[Html] = ???
+  //   def render(
+  //     pageKey: List[String],
+  //     fieldKey: List[String],
+  //     tell: Option[Html],
+  //     breadcrumbs: Breadcrumbs,
+  //     data: Input,
+  //     errors: ErrorTree,
+  //     messages: UniformMessages[Html]
+  //   ): Option[Html] = ???
 
-    def asHtmlForm(key: String, form: Form[Address])(implicit messages: Messages): Html =
-      uniform.fragments.address(key, form)
-  }
+  //   def asHtmlForm(key: String, form: Form[Address])(implicit messages: Messages): Html =
+  //     uniform.fragments.address(key, form)
+  // }
   /*
   implicit val smallProducerForm = new FormHtml[SmallProducer] {
 
@@ -234,24 +234,24 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
       uniform.fragments.litreage(key, form, approximate = true)
   }*/
 
-  implicit val siteForm = new FormHtml[Site] {
+  // implicit val siteForm = new FormHtml[Site] {
 
-    def decode(out: Input): Either[ErrorTree, Site] = ???
-    def encode(in: Site): Input = ???
+  //   def decode(out: Input): Either[ErrorTree, Site] = ???
+  //   def encode(in: Site): Input = ???
 
-    def render(
-      pageKey: List[String],
-      fieldKey: List[String],
-      tell: Option[Html],
-      breadcrumbs: Breadcrumbs,
-      data: Input,
-      errors: ErrorTree,
-      messages: UniformMessages[Html]
-    ): Option[Html] = ???
+  //   def render(
+  //     pageKey: List[String],
+  //     fieldKey: List[String],
+  //     tell: Option[Html],
+  //     breadcrumbs: Breadcrumbs,
+  //     data: Input,
+  //     errors: ErrorTree,
+  //     messages: UniformMessages[Html]
+  //   ): Option[Html] = ???
 
-    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html =
-      uniform.fragments.site(key, form)
-  }
+  //   def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html =
+  //     uniform.fragments.site(key, form)
+  // }
 
 //  implicit val siteProgressiveRevealHtml: HtmlShow[Site] = {
 //
@@ -298,6 +298,9 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
       uniform.fragments.contactdetails(key, form)
   }
 
+  implicit def askUkAddress(implicit underlying: FormHtml[Address]): FormHtml[backend.UkAddress] =
+    underlying.simap(backend.UkAddress.fromAddress(_).asRight)(Address.fromUkAddress)
+
 //  implicit val addressHtml: HtmlShow[Address] =
 //    HtmlShow.instance { address =>
 //      val lines = address.nonEmptyLines.mkString("<br />")
@@ -314,5 +317,21 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
 //        )
 //    }
 //  }
+
+  implicit val tellListFam = new WebTell[Html, WebAskList.ListingTable[Site]] {
+    def render(
+      in: WebAskList.ListingTable[Site],
+      key: String,
+      messages: UniformMessages[Html]
+    ): Option[Html] = Some(
+      views.html.softdrinksindustrylevy.helpers.listing_table(
+        key,
+        in.value.map { x =>
+          Html(x.toString)
+        },
+        messages
+      )
+    )
+  }
 
 }
