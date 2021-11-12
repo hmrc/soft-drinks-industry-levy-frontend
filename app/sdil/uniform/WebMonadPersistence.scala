@@ -16,9 +16,13 @@
 
 package sdil.uniform
 
+import ltbs.uniform.interpreters.playframework.{DB, PersistenceEngine}
 import play.api.libs.json._
+import play.api.mvc.{AnyContent, Result}
+import sdil.actions.AuthorisedRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
+
 import scala.concurrent._
 import uk.gov.hmrc.uniform._
 
@@ -60,5 +64,63 @@ case class SaveForLaterPersistence(
     shortLiveCache.cache(userId, journeyName, dataIn)
     ()
   }
+
+}
+
+object DbFormat {
+
+  val dbFormatter: Format[DB] = new Format[DB] {
+    val mapFormatter: Format[Map[String, String]] = implicitly[Format[Map[String, String]]]
+    override def writes(o: DB): JsValue =
+      mapFormatter.writes(o.map {
+        case (Nil, v)      => ("[]", v)
+        case (List(""), v) => ("", v)
+        case (k, v)        => (k.mkString("/"), v)
+      })
+    override def reads(json: JsValue): JsResult[DB] =
+      mapFormatter.reads(json).map {
+        _.map {
+          case ("[]", v) => (List.empty[String], v)
+          case ("", v)   => (List(""), v)
+          case (k, v)    => ((k.replace("/", " /") + " ").split(" /").toList.map(_.trim), v)
+        }
+      }
+  }
+
+}
+
+case class SaveForLaterPersistenceNew(
+  journeyName: String,
+  userId: String,
+  shortLiveCache: ShortLivedHttpCaching
+)(
+  implicit
+  ec: ExecutionContext,
+  hc: HeaderCarrier)
+    extends PersistenceEngine[AuthorisedRequest[AnyContent]] {
+
+  implicit val dbFormatter: Format[DB] = DbFormat.dbFormatter
+
+  override def apply(request: AuthorisedRequest[AnyContent])(f: DB ⇒ Future[(DB, Result)]): Future[Result] = {
+
+    val userId = request.internalId
+
+    for {
+      db              <- dataGet(userId)
+      (newDb, result) <- f(db)
+      _               <- dataPut(userId, newDb)
+    } yield result
+
+  }
+
+  def dataGet(session: String): Future[DB] =
+    shortLiveCache.fetchAndGetEntry[DB](userId, journeyName).map {
+      _.getOrElse(Map.empty[List[String], String])
+    }
+
+  def dataPut(session: String, dataIn: DB): Future[Unit] =
+    shortLiveCache.cache(userId, journeyName, dataIn).map { _ =>
+      (())
+    }
 
 }
