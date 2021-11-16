@@ -25,12 +25,12 @@
 
 @this(main: main_template)
 
-@(key: List[String], errors: ErrorTree, html: Option[Html], breadcrumbs: List[String], csrf: String)(implicit messages: UniformMessages[Html], request: Request[_], config: AppConfig)
+@(key: List[String], errors: ErrorTree, html: Option[Html], breadcrumbs: List[String], csrf: String, defaultBackLink: String)(implicit messages: UniformMessages[Html], request: Request[_], config: AppConfig)
 @keyDots = @{key.mkString(".")}
 
 @main(messages(s"heading.$keyDots").toString, form = None) {
 
-    @for(back <- breadcrumbs.drop(1).headOption) {
+    @for(back <- (breadcrumbs:+defaultBackLink).drop(1).headOption) {
         <a href="@back">@messages("back")</a>
     }
 

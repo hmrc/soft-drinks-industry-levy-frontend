@@ -51,6 +51,8 @@ class RegistrationControllerNew(
   implicit val ec: ExecutionContext
 ) extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
 
+  override def defaultBackLink = "/soft-drinks-industry-levy"
+
   implicit lazy val persistence =
     SaveForLaterPersistenceNew[AuthorisedRequest[AnyContent]](_.internalId)("registration", cache.shortLiveCache)
 
@@ -84,7 +86,6 @@ class RegistrationControllerNew(
   }
 
   def completed(): Action[AnyContent] = authorisedAction.async { implicit request =>
-
     completedPersistence.get().map {
       case None               => NotFound("No subscription pending")
       case Some(subscription) => Ok(subscription.toString)
@@ -103,17 +104,17 @@ object RegistrationControllerNew {
 
       orgType <- if (hasCTEnrolment) ask[OrganisationTypeSoleless]("organisation-type")
                 else ask[OrganisationType]("organisation-type")
-      _ <- end("partnerships") when (orgType.entryName == OrganisationType.partnership.entryName)
+      _            <- end("partnerships") when (orgType.entryName == OrganisationType.partnership.entryName)
       producerType <- ask[ProducerType]("producer")
       packLarge = producerType match {
-                    case ProducerType.Large => Some(true)
-                    case ProducerType.Small => Some(false)
-                    case _                  => None
-                  }
+        case ProducerType.Large => Some(true)
+        case ProducerType.Small => Some(false)
+        case _                  => None
+      }
       useCopacker <- ask[Boolean]("copacked") when producerType == ProducerType.Small
-      packageOwn  <- ask[(Long, Long)]("package-own-uk") emptyUnless packLarge.nonEmpty
-      copacks     <- ask[(Long, Long)]("package-copack")
-      imports     <- ask[(Long, Long)]("import")
+      packageOwn  <- askEmptyOption[(Long, Long)]("package-own-uk") emptyUnless packLarge.nonEmpty
+      copacks     <- askEmptyOption[(Long, Long)]("package-copack")
+      imports     <- askEmptyOption[(Long, Long)]("import")
       noUkActivity = (copacks, imports).isEmpty
       smallProducerWithNoCopacker = packLarge.forall(_ == false) && useCopacker.forall(_ == false)
       _ <- end("do-not-register") when (noUkActivity && smallProducerWithNoCopacker)
