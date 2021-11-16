@@ -50,6 +50,7 @@ import sdil.models.variations.ReturnVariationData
 import sdil.uniform.ShowTitle
 import sdil.uniform.ShowTitle.instance
 import views.uniform.Uniform
+import ltbs.uniform.common.web.WebTell
 
 trait SdilWMController extends WebMonadController with Modulus23Check {
 
@@ -569,5 +570,7 @@ trait SdilWMController extends WebMonadController with Modulus23Check {
     def asHtmlForm(key: String, form: Form[(Long, Long)])(implicit messages: Messages): Html =
       uniform.fragments.litreage(key, form, false)(messages)
   }
+
+  implicit def showCya[A: CheckYourAnswers]: WebTell[Html, A] = ???
 
 }

@@ -16,15 +16,21 @@
 
 package sdil.uniform
 
-import ltbs.uniform.interpreters.playframework.{DB, PersistenceEngine}
+import scala.language.implicitConversions
+
+import ltbs.uniform._
+import ltbs.uniform.common.web._
+import ltbs.uniform.interpreters.playframework._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Result}
+import play.twirl.api.Html
+import scala.concurrent._
 import sdil.actions.AuthorisedRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-
-import scala.concurrent._
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.uniform._
+
 
 case class SessionCachePersistence(
   journeyName: String,
@@ -89,37 +95,38 @@ object DbFormat {
 
 }
 
-case class SaveForLaterPersistenceNew(
+case class SaveForLaterPersistenceNew[REQ <: play.api.mvc.Request[AnyContent]](
+  idFunc: REQ => String
+)(
   journeyName: String,
-  userId: String,
   shortLiveCache: ShortLivedHttpCaching
 )(
   implicit
-  ec: ExecutionContext,
-  hc: HeaderCarrier)
-    extends PersistenceEngine[AuthorisedRequest[AnyContent]] {
+  ec: ExecutionContext)
+    extends PersistenceEngine[REQ] {
 
   implicit val dbFormatter: Format[DB] = DbFormat.dbFormatter
 
-  override def apply(request: AuthorisedRequest[AnyContent])(f: DB ⇒ Future[(DB, Result)]): Future[Result] = {
+  private implicit def requestToHc(implicit req: REQ) = HeaderCarrierConverter.fromRequest(req)
 
-    val userId = request.internalId
-
+  override def apply(request: REQ)(f: DB ⇒ Future[(DB, Result)]): Future[Result] = 
     for {
-      db              <- dataGet(userId)
+      db              <- dataGet()(request)
       (newDb, result) <- f(db)
-      _               <- dataPut(userId, newDb)
+      _               <- dataPut(newDb)(request)
     } yield result
 
-  }
-
-  def dataGet(session: String): Future[DB] =
-    shortLiveCache.fetchAndGetEntry[DB](userId, journeyName).map {
+  def dataGet()(
+    implicit req: REQ
+  ): Future[DB] = 
+    shortLiveCache.fetchAndGetEntry[DB](idFunc(req), journeyName).map {
       _.getOrElse(Map.empty[List[String], String])
     }
 
-  def dataPut(session: String, dataIn: DB): Future[Unit] =
-    shortLiveCache.cache(userId, journeyName, dataIn).map { _ =>
+  def dataPut(dataIn: DB)(
+    implicit req: REQ
+  ): Future[Unit] = 
+    shortLiveCache.cache(idFunc(req), journeyName, dataIn).map { _ =>
       (())
     }
 

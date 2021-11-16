@@ -279,24 +279,24 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
 //    }
 //  }
 
-  implicit val contactDetailsForm = new FormHtml[ContactDetails] {
+  // implicit val contactDetailsForm = new FormHtml[ContactDetails] {
 
-    def decode(out: Input): Either[ErrorTree, ContactDetails] = ???
-    def encode(in: ContactDetails): Input = ???
+  //   def decode(out: Input): Either[ErrorTree, ContactDetails] = ???
+  //   def encode(in: ContactDetails): Input = ???
 
-    def render(
-      pageKey: List[String],
-      fieldKey: List[String],
-      tell: Option[Html],
-      breadcrumbs: Breadcrumbs,
-      data: Input,
-      errors: ErrorTree,
-      messages: UniformMessages[Html]
-    ): Option[Html] = ???
+  //   def render(
+  //     pageKey: List[String],
+  //     fieldKey: List[String],
+  //     tell: Option[Html],
+  //     breadcrumbs: Breadcrumbs,
+  //     data: Input,
+  //     errors: ErrorTree,
+  //     messages: UniformMessages[Html]
+  //   ): Option[Html] = ???
 
-    def asHtmlForm(key: String, form: Form[ContactDetails])(implicit messages: Messages): Html =
-      uniform.fragments.contactdetails(key, form)
-  }
+  //   def asHtmlForm(key: String, form: Form[ContactDetails])(implicit messages: Messages): Html =
+  //     uniform.fragments.contactdetails(key, form)
+  // }
 
   implicit def askUkAddress(implicit underlying: FormHtml[Address]): FormHtml[backend.UkAddress] =
     underlying.simap(backend.UkAddress.fromAddress(_).asRight)(Address.fromUkAddress)
@@ -318,7 +318,7 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
 //    }
 //  }
 
-  implicit val tellListFam = new WebTell[Html, WebAskList.ListingTable[Site]] {
+  implicit val tellListSite = new WebTell[Html, WebAskList.ListingTable[Site]] {
     def render(
       in: WebAskList.ListingTable[Site],
       key: String,
@@ -333,5 +333,22 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
       )
     )
   }
+
+  implicit val tellListSmallProducer = new WebTell[Html, WebAskList.ListingTable[SmallProducer]] {
+    def render(
+      in: WebAskList.ListingTable[SmallProducer],
+      key: String,
+      messages: UniformMessages[Html]
+    ): Option[Html] = Some(
+      views.html.softdrinksindustrylevy.helpers.listing_table(
+        key,
+        in.value.map { x =>
+          Html(x.toString)
+        },
+        messages
+      )
+    )
+  }
+
 
 }
