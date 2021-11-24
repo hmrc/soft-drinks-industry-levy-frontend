@@ -53,6 +53,8 @@ class RegistrationControllerNew(
   implicit val ec: ExecutionContext
 ) extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
 
+  override def defaultBackLink = "/soft-drinks-industry-levy"
+
   implicit lazy val persistence =
     SaveForLaterPersistenceNew[AuthorisedRequest[AnyContent]](_.internalId)("registration", cache.shortLiveCache)
 
@@ -74,7 +76,6 @@ class RegistrationControllerNew(
         NotFound("").pure[Future]
     }
   }
-
 }
 
 object RegistrationControllerNew {

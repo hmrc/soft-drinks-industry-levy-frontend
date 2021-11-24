@@ -50,6 +50,8 @@ class VariationsControllerNew(
 
   import VariationsControllerNew._
 
+  override def defaultBackLink = "/soft-drinks-industry-levy"
+
   implicit lazy val persistence =
     SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)("variations", cache.shortLiveCache)
 

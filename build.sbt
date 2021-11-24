@@ -159,4 +159,4 @@ uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 Global / lintUnusedKeysOnLoad := false
 
-ThisBuild / evictionErrorLevel := Level.Info
+// ThisBuild / evictionErrorLevel := Level.Info

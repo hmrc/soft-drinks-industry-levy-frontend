@@ -31,7 +31,6 @@ import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.uniform._
 
-
 case class SessionCachePersistence(
   journeyName: String,
   keystore: uk.gov.hmrc.http.cache.client.SessionCache
@@ -109,7 +108,7 @@ case class SaveForLaterPersistenceNew[REQ <: play.api.mvc.Request[AnyContent]](
 
   private implicit def requestToHc(implicit req: REQ) = HeaderCarrierConverter.fromRequest(req)
 
-  override def apply(request: REQ)(f: DB ⇒ Future[(DB, Result)]): Future[Result] = 
+  override def apply(request: REQ)(f: DB ⇒ Future[(DB, Result)]): Future[Result] =
     for {
       db              <- dataGet()(request)
       (newDb, result) <- f(db)
@@ -118,14 +117,14 @@ case class SaveForLaterPersistenceNew[REQ <: play.api.mvc.Request[AnyContent]](
 
   def dataGet()(
     implicit req: REQ
-  ): Future[DB] = 
+  ): Future[DB] =
     shortLiveCache.fetchAndGetEntry[DB](idFunc(req), journeyName).map {
       _.getOrElse(Map.empty[List[String], String])
     }
 
   def dataPut(dataIn: DB)(
     implicit req: REQ
-  ): Future[Unit] = 
+  ): Future[Unit] =
     shortLiveCache.cache(idFunc(req), journeyName, dataIn).map { _ =>
       (())
     }

@@ -31,5 +31,5 @@ object CheckYourAnswers {
   implicit val returnsCya: CheckYourAnswers[ReturnsVariation] = new CheckYourAnswers[ReturnsVariation] {
     def cyaRows(value: ReturnsVariation, messages: UniformMessages[Html]): List[(String, Html, String)] = Nil
   }
-  
+
 }

@@ -33,6 +33,7 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
   val config: AppConfig
   def messagesApi: MessagesApi
   def ufViews: views.uniform.Uniform
+  def defaultBackLink: String
 
   lazy private val futureAdapter = FutureAdapter.rerunOnStateChange[Html](Duration.Inf)
   implicit protected def futAdapt[A: Codec] = futureAdapter.apply[A]
@@ -55,7 +56,7 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
     import play.filters.csrf._
     import play.filters.csrf.CSRF.Token
     val Token(_, csrf: String) = CSRF.getToken(request).get
-    ufViews.base(key, errors, html, breadcrumbs, csrf)(messages, request, config)
+    ufViews.base(key, errors, html, breadcrumbs, csrf, defaultBackLink)(messages, request, config)
   }
 
   def renderAnd[T](

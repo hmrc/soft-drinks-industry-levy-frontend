@@ -16,6 +16,10 @@
 
 package sdil
 
+import cats.implicits.none
+import izumi.reflect.Tag
+import ltbs.uniform.ask
+
 import scala.concurrent.Future
 import scala.language.implicitConversions
 import izumi.reflect.Tag
@@ -36,10 +40,9 @@ package object controllers {
 
   def askEmptyOption[A: Tag](id: String, default: Option[A] = None)(implicit mon: cats.Monoid[A]) = {
     val newDefault = default.map {
-      case e if e == mon.empty => None
+      case e if e == mon.empty => none[A]
       case x                   => Some(x)
     }
-
     ask[Option[A]](id, newDefault).map(_.getOrElse(mon.empty))
   }
 

@@ -16,8 +16,16 @@
 
 @(key: String, tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html])(inner: Html*)
 
-<div class = "govuk-form-group">
-     @tell
-
-     @inner
+<div class = "form-group">
+  @tell
+  @inner
 </div>
+
+@for((h,t) <- messages.list(key+".summarydetailHeader").zip(messages.list(key+".summarydetail"))){
+  <details>
+    <summary><span class="summary">@h</span></summary>
+    <div class="panel panel-border-narrow">
+      @t
+    </div>
+  </details>
+}

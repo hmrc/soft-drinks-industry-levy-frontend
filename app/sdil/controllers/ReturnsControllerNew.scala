@@ -49,6 +49,7 @@ class ReturnsControllerNew(
     extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
 
   val logger: Logger = Logger(this.getClass())
+  override def defaultBackLink = "/soft-drinks-industry-levy"
 
   def index(year: Int, quarter: Int, nilReturn: Boolean, id: String): Action[AnyContent] = registeredAction.async {
     implicit request =>
@@ -74,6 +75,7 @@ class ReturnsControllerNew(
                           x // the given sdilRef matches a customer that was a small producer at some point in the quarter
                         case None => false
                       }
+
         r <- if (pendingReturns.contains(period)) {
               def submitReturn(sdilReturn: SdilReturn): Future[Unit] =
                 sdilConnector.returns_update(subscription.utr, period, sdilReturn)
@@ -89,9 +91,7 @@ class ReturnsControllerNew(
           Redirect(routes.ServicePageController.show()).pure[Future]
         }
       }
-
   }
-
 }
 
 object ReturnsControllerNew {
