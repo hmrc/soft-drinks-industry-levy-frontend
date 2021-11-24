@@ -104,7 +104,7 @@ libraryDependencies ++= Seq(
   "com.softwaremill.macwire"  %% "proxy"                          % "2.3.7",
   "org.typelevel"             %% "cats-core"                      % "2.6.1",
   "uk.gov.hmrc"               %% "uniform"                        % "0.1.9" exclude("com.typesafe.play", "play-logback"),
-  "com.luketebbs.uniform"     %% "interpreter-play26"             % "5.0.0-RC2"
+  "com.luketebbs.uniform"     %% "interpreter-play26"             % "5.0.0-RC3"
 )
 
 // ================================================================================
@@ -158,3 +158,5 @@ majorVersion := 0
 uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 Global / lintUnusedKeysOnLoad := false
+
+ThisBuild / evictionErrorLevel := Level.Info

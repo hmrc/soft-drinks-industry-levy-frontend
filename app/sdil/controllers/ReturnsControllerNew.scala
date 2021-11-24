@@ -36,6 +36,7 @@ import sdil.config.RegistrationFormDataCache
 import ltbs.uniform.interpreters.playframework.PersistenceEngine
 import sdil.actions.AuthorisedRequest
 import sdil.actions.RegisteredRequest
+import play.twirl.api.Html
 
 class ReturnsControllerNew(
   mcc: MessagesControllerComponents,
@@ -43,39 +44,44 @@ class ReturnsControllerNew(
   val ufViews: views.uniform.Uniform,
   registeredAction: RegisteredAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,
-  cache: RegistrationFormDataCache  
-)(implicit ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
+  cache: RegistrationFormDataCache
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
 
   val logger: Logger = Logger(this.getClass())
 
-  implicit lazy val persistence =
-    SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)("returns", cache.shortLiveCache)
+  def index(year: Int, quarter: Int, nilReturn: Boolean, id: String): Action[AnyContent] = registeredAction.async {
+    implicit request =>
+      implicit lazy val persistence =
+        SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
+          s"returns-$year-$quarter",
+          cache.shortLiveCache)
 
-  def index(year: Int, quarter: Int, nilReturn: Boolean, id: String): Action[AnyContent] = registeredAction.async { implicit request => 
+      import CheckYourAnswers._
 
-    import CheckYourAnswers._
-
-    val sdilRef = request.sdilEnrolment.value
-    val period = ReturnPeriod(year, quarter)
+      val sdilRef = request.sdilEnrolment.value
+      val period = ReturnPeriod(year, quarter)
 
       (for {
         subscription   <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
         pendingReturns <- sdilConnector.returns_pending(subscription.utr)
         broughtForward <- if (config.balanceAllEnabled)
-                         sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
-                           extractTotal(listItemsWithTotal(x))
-                         }
-                       else sdilConnector.balance(sdilRef, withAssessment = false)
+                           sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+                             extractTotal(listItemsWithTotal(x))
+                           } else sdilConnector.balance(sdilRef, withAssessment = false)
         isSmallProd <- sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
-          case Some(x) => x // the given sdilRef matches a customer that was a small producer at some point in the quarter
-          case None    => false
-        }
-        r <- if (pendingReturns.contains(period))
-        interpret(ReturnsControllerNew.journey(None, subscription, broughtForward, isSmallProd)).run(id){ case (a: SdilReturn,b: ReturnsVariation) =>
-          // do some logic
-          Future.successful(Ok(???))
-        }
-        else
+                        case Some(x) =>
+                          x // the given sdilRef matches a customer that was a small producer at some point in the quarter
+                        case None => false
+                      }
+        r <- if (pendingReturns.contains(period)) {
+              def submitReturn(sdilReturn: SdilReturn): Future[Unit] =
+                sdilConnector.returns_update(subscription.utr, period, sdilReturn)
+              interpret(ReturnsControllerNew.journey(None, subscription, broughtForward, isSmallProd, submitReturn))
+                .run(id) { _ =>
+                  Redirect(routes.ServicePageController.show())
+                }
+            } else
               Redirect(routes.ServicePageController.show()).pure[Future]
       } yield r) recoverWith {
         case t: Throwable => {
@@ -84,8 +90,8 @@ class ReturnsControllerNew(
         }
       }
 
-    Future.successful(Ok("!"))
   }
+
 }
 
 object ReturnsControllerNew {
@@ -98,18 +104,11 @@ object ReturnsControllerNew {
     default: Option[SdilReturn] = None,
     subscription: RetrievedSubscription,
     broughtForward: BigDecimal,
-    isSmallProd: Boolean
+    isSmallProd: Boolean,
+    submitReturn: SdilReturn => Future[Unit]
   ) = {
 
     case object ChangeRegistration
-
-    def askEmptyOption[A: Tag](id: String, default: Option[A] = None)(implicit mon: cats.Monoid[A]) = {
-      val newDefault = default.map {
-        case e if e == mon.empty => none[A]
-        case x                   => Some(x)
-      }
-      ask[Option[A]](id, newDefault).map(_.getOrElse(mon.empty))
-    }
 
     for {
       ownBrands <- askEmptyOption[(Long, Long)](
@@ -119,14 +118,11 @@ object ReturnsControllerNew {
       contractPacked <- askEmptyOption[(Long, Long)](
                          "packaged-as-a-contract-packer"
                        ) emptyUnless !subscription.activity.smallProducer
-      smallProds <- askList(
+      smallProds <- askListSimple[SmallProducer](
                      "small-producer-details",
                      validation = Rule.nonEmpty[List[SmallProducer]],
                      default = default.map { _.packSmall }
-                   ) {
-                     case (index: Option[Int], existing: List[SmallProducer]) =>
-                       ask[SmallProducer]("small-producer", default = index.map(existing))
-                   } emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
+                   ) emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
                      _.packSmall.nonEmpty
                    })
       imports <- askEmptyOption[(Long, Long)]("brought-into-uk", default.map { _.importLarge })
@@ -138,34 +134,28 @@ object ReturnsControllerNew {
       sdilReturn = SdilReturn(ownBrands, contractPacked, smallProds, imports, importsSmall, exportCredits, wastage)
       isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
       isNewPacker = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
-//      _               <- tell("return-change-registration", ChangeRegistration) when isNewImporter || isNewPacker
+      //      _               <- tell("return-change-registration", ChangeRegistration) when isNewImporter || isNewPacker
       newPackingSites <- (
-                              for {
-                                firstPackingSite <- ask[Boolean]("pack-at-business-address-in-return") flatMap {
-                                                     case true  => pure(Site.fromAddress(Address.fromUkAddress(subscription.address)))
-                                                     case false => ask[Site]("first-production-site")
-                                                   }
-                                packingSites <- askList[Site](
-                                                 "production-site-details",
-                                                 default = Some(firstPackingSite :: Nil),
-                                                 validation = Rule.nonEmpty[List[Site]]
-                                               ) {
-                                                 case (index: Option[Int], existing: List[Site]) =>
-                                                   ask[Site]("site", default = index.map(existing))
+                          for {
+                            firstPackingSite <- ask[Boolean]("pack-at-business-address-in-return") flatMap {
+                                                 case true =>
+                                                   pure(Site.fromAddress(Address.fromUkAddress(subscription.address)))
+                                                 case false => ask[Site]("first-production-site")
                                                }
-                              } yield packingSites
-                         ) when isNewPacker && subscription.productionSites.isEmpty
-      newWarehouses   <- (for {
-                                addWarehouses <- ask[Boolean]("ask-secondary-warehouses-in-return")
-                                warehouses <- askList[Site](
-                                  "secondary-warehouse-details",
-                                   validation = Rule.nonEmpty[List[Site]]
-                                ) {
-                                  case (index: Option[Int], existing: List[Site]) =>
-                                    ask[Site]("site", default = index.map(existing))
-                                } emptyUnless addWarehouses
-                              } yield warehouses
-                         ) when isNewImporter && subscription.warehouseSites.isEmpty
+                            packingSites <- askListSimple[Site](
+                                             "production-site-details",
+                                             default = Some(firstPackingSite :: Nil),
+                                             validation = Rule.nonEmpty[List[Site]]
+                                           )
+                          } yield packingSites
+                        ) when isNewPacker && subscription.productionSites.isEmpty
+      newWarehouses <- (for {
+                        addWarehouses <- ask[Boolean]("ask-secondary-warehouses-in-return")
+                        warehouses <- askListSimple[Site](
+                                       "secondary-warehouse-details",
+                                       validation = Rule.nonEmpty[List[Site]]
+                                     ) emptyUnless addWarehouses
+                      } yield warehouses) when isNewImporter && subscription.warehouseSites.isEmpty
       variation = ReturnsVariation(
         orgName = subscription.orgName,
         ppobAddress = subscription.address,
@@ -177,7 +167,10 @@ object ReturnsControllerNew {
         email = subscription.contact.email,
         taxEstimation = taxEstimation(sdilReturn)
       )
-     // _ <- tell("cya", variation)
+      _ <- tell("cya", Html("TODO - cya"))
+      _ <- convertWithKey(s"return-submission")(submitReturn(sdilReturn)) // sdilConnector.returns_update(subscription.utr, period, sdilReturn))
+      _ <- nonReturn("return-complete")
+      _ <- tell("confirmation", Html("TODO - confirmation"))
     } yield (sdilReturn, variation)
   }
 
