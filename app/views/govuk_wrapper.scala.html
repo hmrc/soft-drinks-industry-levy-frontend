@@ -19,8 +19,6 @@
 @import views.ViewHelpers
 @import views.html.layouts.GovUkTemplate
 
-@this(viewHelpers: ViewHelpers, govUkTemplate: GovUkTemplate)
-
 @(
     appConfig: AppConfig,
     title: String,
@@ -33,6 +31,8 @@
     serviceInfoContent: Html = HtmlFormat.empty,
     form: Option[Form[_]] = None)(implicit request: Request[_], messages: Messages
 )
+
+@viewHelpers = @{new ViewHelpers(appConfig.configuration)}
 
 @head = {
 @viewHelpers.headWithTrackingConsent(
@@ -125,4 +125,4 @@
     if(form.exists(_.hasErrors)) s"${Messages("sdil.common.error")}: $title" else title
 }
 
-@govUkTemplate(Some(tabTitle), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(viewHelpers.footerLinks()), true)(content)
+@{new GovUkTemplate()}(Some(tabTitle), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(viewHelpers.footerLinks()), true)(content)

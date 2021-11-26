@@ -20,11 +20,11 @@
 @import helper.{inputRadioGroup => _, _}
 @import sdil.controllers.ShowBackLink
 
-@this(main: main_template)
+@this()
 
 @(key: String, form: Form[String], breadcrumbs: List[String], mainContent: Html)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: ShowBackLink, lang: Lang)
 
-@main(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
+@main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
     @backlink(breadcrumbs)
 

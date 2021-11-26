@@ -18,11 +18,11 @@
 @import sdil.config.AppConfig
 @import views.html.uniform.helpers._
 
-@this(main: main_template)
+@this()
 
 @(key: String, form: Form[Unit], breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages, lang: Lang)
 
-@main(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
+@main_template(Messages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
   @backlink(breadcrumbs)
 
   @if(messages.isDefinedAt(s"heading.$key.orgName")) {

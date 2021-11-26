@@ -25,11 +25,11 @@
 @import sdil.models.ReturnPeriod
 @import sdil.models.SdilReturn
 
-@this(main: main_template)
+@this()
 
 @(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, interest: BigDecimal = 0, hasExistingDD: Option[Boolean])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main(Messages("sdil.service-page.title"), noArticle = true) {
+@main_template(Messages("sdil.service-page.title"), noArticle = true) {
     <div class="grid-row">
         <div class="column-two-thirds">
             <span class="govuk-caption-xl service-comp-name">

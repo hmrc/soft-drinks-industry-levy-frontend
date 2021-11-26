@@ -21,11 +21,11 @@
 @import helper.{inputRadioGroup => _, _}
 @import sdil.config.AppConfig
 
-@this(main: main_template)
+@this()
 
 @(key: String, breadcrumbs: List[String], subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main(Messages("sdil.updateBusinessAddresses.heading"), noArticle = true) {
+@main_template(Messages("sdil.updateBusinessAddresses.heading"), noArticle = true) {
     @backlink(breadcrumbs)
 
     @helper.form(action = play.api.mvc.Call("post", key)) {

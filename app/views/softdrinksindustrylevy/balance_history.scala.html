@@ -18,11 +18,11 @@
 @import sdil.config.AppConfig
 @import java.time.format.DateTimeFormatter
 
-@this(main: main_template)
+@this()
 
 @(orgName: String, lineItems: List[(FinancialLineItem, BigDecimal)])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main(Messages("balance.history"), noArticle = true) {
+@main_template(Messages("balance.history"), noArticle = true) {
 
     <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
 

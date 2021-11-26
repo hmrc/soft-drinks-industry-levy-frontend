@@ -19,9 +19,11 @@
 @import sdil.models.Address
 @import views.ViewHelpers
 
-@this(main: main_template, viewHelpers: ViewHelpers)
+@this()
 
 @(verifyForm: Form[_], utr: String, organisation: String, address: Address, alreadyRegistered: Boolean = false)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@viewHelpers = @{new ViewHelpers(config.configuration)}
 
 @verifyTitle = @{
     if(!alreadyRegistered) {
@@ -50,7 +52,7 @@
         </dl>
 }
 
-@main(title = verifyTitle, form = Some(verifyForm)) {
+@main_template(title = verifyTitle, form = Some(verifyForm)) {
     @if(!alreadyRegistered) {
     @error_summary(verifyForm)
     @viewHelpers.form(sdil.controllers.routes.VerifyController.submit()) {

@@ -30,6 +30,8 @@ trait AppConfig {
   val appName: String
   val balanceAllEnabled: Boolean
   val directDebitEnabled: Boolean
+
+  val configuration: Configuration
 }
 
 class FrontendAppConfig(val configuration: Configuration) extends ServicesConfig(configuration) with AppConfig {

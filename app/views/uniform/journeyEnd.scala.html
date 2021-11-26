@@ -18,12 +18,12 @@
 @import java.time.{LocalDate, LocalTime, ZoneId}
 @import java.time.format.DateTimeFormatter
 
-@this(main: main_template)
+@this()
 
 @(id: String, now: LocalDate = LocalDate.now, updateTimeMessage: Option[Html] = None,
         whatHappensNext: Option[Html] = None, getTotal: Option[Html] = None)(implicit messages: Messages, request: Request[_], config: AppConfig, extraMessages: ExtraMessages, lang: Lang)
 
-@main(title = Messages.extraMessage(s"$id.title")) {
+@main_template(title = Messages.extraMessage(s"$id.title")) {
 
     <div class="govuk-box-highlight">
         <h1 class="heading-xlarge">@Messages.extraMessage(s"$id.title")</h1>

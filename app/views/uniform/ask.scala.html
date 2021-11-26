@@ -21,11 +21,11 @@
 @import views.html.uniform.helpers._
 @import sdil.controllers.ShowBackLink
 
-@this(main: main_template)
+@this()
 
 @(key: String, form: Form[_], htmlForm: Html, breadcrumbs: List[String], helpText: Option[Html] = None)(implicit messages: Messages, request: Request[_], appConfig: AppConfig, extraMessages: ExtraMessages, showBackLink: ShowBackLink, lang: Lang)
 
-@main(Messages.extraMessages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
+@main_template(Messages.extraMessages(Seq(s"heading.$key", "sdil.variations.title")), form = Some(form)) {
 
     @backlink(breadcrumbs)
 
