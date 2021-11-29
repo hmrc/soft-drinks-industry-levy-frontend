@@ -26,6 +26,7 @@ import views.html.uniform
 import sdil.config.AppConfig
 import cats.implicits._
 import sdil.uniform.SdilComponentsNew
+import scala.concurrent.duration.Duration
 
 trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew with InferWebAsk[Html] {
 
@@ -33,6 +34,9 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
   def messagesApi: MessagesApi
   def ufViews: views.uniform.Uniform
   def defaultBackLink: String
+
+  lazy private val futureAdapter = FutureAdapter.rerunOnStateChange[Html](Duration.Inf)
+  implicit protected def futAdapt[A: Codec] = futureAdapter.apply[A]
 
   implicit def messages(
     implicit request: Request[AnyContent]
@@ -55,48 +59,47 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
     ufViews.base(key, errors, html, breadcrumbs, csrf, defaultBackLink)(messages, request, config)
   }
 
-  def renderAnd(
-    pageKey: List[String],
-    fieldKey: List[String],
-    tell: Option[Html],
-    breadcrumbs: Breadcrumbs,
-    data: Input,
-    errors: ErrorTree,
-    messages: UniformMessages[Html],
+  def renderAnd[T](
+    pageIn: PageIn[Html],
+    stepDetails: StepDetails[Html, T],
     members: Seq[(String, Html)]
   ): Html = members.toList match {
     case (_, sole) :: Nil => sole
     case many =>
       views.html.softdrinksindustrylevy.helpers.surround(
-        fieldKey,
-        tell,
-        errors,
-        messages
+        stepDetails.fieldKey,
+        stepDetails.tell,
+        stepDetails.errors,
+        pageIn.messages
       )(many.map(_._2): _*)
   }
 
   /** allows using progressive reveal for options, eithers or other sealed trait hierarchies
-    *  Not currently used in SDIL, if you wish to enable this you will need to include the relevant
-    *  JS libraries in the page chrome (see DST for an example of usage)
     *  */
-  def renderOr(
-    pageKey: List[String],
-    fieldKey: List[String],
-    tell: Option[Html],
-    breadcrumbs: Breadcrumbs,
-    data: Input,
-    errors: ErrorTree,
-    messages: UniformMessages[Html],
+  def renderOr[T](
+    pageIn: PageIn[Html],
+    stepDetails: StepDetails[Html, T],
     alternatives: Seq[(String, Option[Html])],
     selected: Option[String]
-  ): Html = views.html.softdrinksindustrylevy.helpers.radios(
-    fieldKey,
-    tell,
-    alternatives.map(_._1),
-    selected,
-    errors,
-    messages,
-    alternatives.collect { case (k, Some(v)) => (k, v) }.toMap
-  )
+  ): Html = {
+
+    // in some cases we might want options to appear in a sequence other than their natural order,
+    // alternatively we could implement an implicit `WebAsk[Html, Option[A]]` (for example)
+    // but this reduces the amount of logic needed
+    val reordered = alternatives.map(_._1).toList match {
+      case "None" :: "Some" :: Nil => alternatives.reverse
+      case _                       => alternatives
+    }
+
+    views.html.softdrinksindustrylevy.helpers.radios(
+      stepDetails.fieldKey,
+      stepDetails.tell,
+      reordered.map(_._1),
+      selected,
+      stepDetails.errors,
+      pageIn.messages,
+      reordered.collect { case (k, Some(v)) => (k, v) }.toMap
+    )
+  }
 
 }

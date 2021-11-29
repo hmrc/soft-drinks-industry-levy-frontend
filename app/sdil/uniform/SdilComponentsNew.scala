@@ -30,7 +30,7 @@ import uk.gov.hmrc.uniform._
 import views.html.uniform
 import sdil.uniform.AdaptMessages.ufMessagesToPlayMessages
 import views.html.uniform.fragments.date_new
-
+import enumeratum._
 import java.time.LocalDate
 
 trait SdilComponentsNew /*extends FormHelpers*/ {
@@ -53,21 +53,16 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
     def encode(in: Boolean): Input = Input.one(List(in.toString))
 
     def render(
-      pageKey: List[String],
-      fieldKey: List[String],
-      tell: Option[Html],
-      breadcrumbs: Breadcrumbs,
-      data: Input,
-      errors: ErrorTree,
-      messages: UniformMessages[Html]
+      pageIn: PageIn[Html],
+      stepDetails: StepDetails[Html, Boolean]
     ): Option[Html] = Some(
       views.html.softdrinksindustrylevy.helpers.radios(
-        fieldKey,
-        tell,
+        stepDetails.fieldKey,
+        stepDetails.tell,
         radioOptions = true.toString :: false.toString :: Nil,
-        existing = decode(data).toOption.map(_.toString),
-        errors,
-        messages
+        existing = decode(stepDetails.data).toOption.map(_.toString),
+        stepDetails.errors,
+        pageIn.messages
       )
     )
   }
@@ -80,16 +75,12 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
     def encode(in: String): Input = Input.one(List(in))
 
     def render(
-      pageKey: List[String],
-      fieldKey: List[String],
-      tell: Option[Html],
-      path: Breadcrumbs,
-      data: Input,
-      errors: ErrorTree,
-      messages: UniformMessages[Html]
+      pageIn: PageIn[Html],
+      stepDetails: StepDetails[Html, String]
     ): Option[Html] = Some {
+      import stepDetails._
       val value = decode(data).toOption.getOrElse("")
-      views.html.softdrinksindustrylevy.helpers.inputText_new(fieldKey, value, errors)(messages)
+      views.html.softdrinksindustrylevy.helpers.inputText_new(fieldKey, value, errors)(pageIn.messages)
     }
   }
 
@@ -164,15 +155,10 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
         ).mapValues(_.toString.pure[List])
 
       def render(
-        pageKey: List[String],
-        fieldKey: List[String],
-        tell: Option[Html],
-        path: Breadcrumbs,
-        data: Input,
-        errors: ErrorTree,
-        messages: UniformMessages[Html]
+        pageIn: PageIn[Html],
+        stepDetails: StepDetails[Html, LocalDate]
       ): Option[Html] = Some {
-        date_new(pageKey, data, errors, messages)
+        date_new(stepDetails.stepKey, stepDetails.data, stepDetails.errors, pageIn.messages)
       }
     }
 
@@ -301,6 +287,32 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
   implicit def askUkAddress(implicit underlying: FormHtml[Address]): FormHtml[backend.UkAddress] =
     underlying.simap(backend.UkAddress.fromAddress(_).asRight)(Address.fromUkAddress)
 
+  implicit def askSetEnum[E <: EnumEntry](implicit enum: Enum[E]): FormHtml[Set[E]] = new FormHtml[Set[E]] {
+
+    def decode(out: Input): Either[ErrorTree, Set[E]] = {
+      val strings = out.valueAtRoot.getOrElse(Nil)
+      Right(strings.flatMap(enum.withNameOption).toSet)
+    }
+
+    def encode(in: Set[E]): Input =
+      Map(List.empty -> in.map(_.entryName).toList)
+
+    def render(
+      pageIn: PageIn[Html],
+      stepDetails: StepDetails[Html, Set[E]]
+    ): Option[Html] = Some {
+      val existing = decode(stepDetails.data).toOption.getOrElse(Set.empty)
+      views.html.softdrinksindustrylevy.helpers.checkboxes(
+        stepDetails.fieldKey,
+        stepDetails.tell,
+        enum.values.map(e => e.entryName -> existing.contains(e)),
+        stepDetails.errors,
+        pageIn.messages
+      )
+    }
+
+  }
+
 //  implicit val addressHtml: HtmlShow[Address] =
 //    HtmlShow.instance { address =>
 //      val lines = address.nonEmptyLines.mkString("<br />")
@@ -349,5 +361,4 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
       )
     )
   }
-
 }

@@ -23,12 +23,13 @@ import java.time.LocalDate
 import ltbs.play.scaffold.GdsComponents.bool
 import ltbs.play.scaffold.SdilComponents._
 import ltbs.uniform._, validation._
+import ltbs.uniform.common.web.{FutureAdapter, WebMonad}
 import ltbs.uniform.interpreters.playframework._
 import play.api.i18n._
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future, duration}, duration._
 import scala.language.higherKinds
 import sdil.actions.{AuthorisedAction, AuthorisedRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
@@ -40,6 +41,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.uniform.playutil.ExtraMessages
 import uk.gov.hmrc.uniform.webmonad.clear
 import views.html.uniform
+import play.api.Logger
 
 class RegistrationControllerNew(
   authorisedAction: AuthorisedAction,
@@ -56,49 +58,32 @@ class RegistrationControllerNew(
   implicit lazy val persistence =
     SaveForLaterPersistenceNew[AuthorisedRequest[AnyContent]](_.internalId)("registration", cache.shortLiveCache)
 
-  object completedPersistence {
-    /// TODO Crude implementation - replace with proper persistence
-    private var state: Map[String, JsValue] = Map.empty
-
-    def get[A: Reads]()(implicit req: AuthorisedRequest[AnyContent]): Future[Option[A]] =
-      Future.successful(state.get(req.internalId).map(_.as[A]))
-
-    def set[A: Writes](value: A)(implicit req: AuthorisedRequest[AnyContent]): Future[Unit] = {
-      state = state + (req.internalId -> Json.toJson(value))
-      Future.successful(())
-    }
-  }
+  lazy val logger = Logger(this.getClass())
 
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
     val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
+
     cache.get(request.internalId) flatMap {
       case Some(fd) =>
-        interpret(RegistrationControllerNew.journey(hasCTEnrolment, fd)).run(id) { subscription =>
-          for {
-            _ <- sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId)
-            _ <- completedPersistence.set(subscription)
-          } yield Redirect(routes.RegistrationControllerNew.completed)
+        def backendCall(s: Subscription): Future[Unit] =
+          sdilConnector.submit(Subscription.desify(s), fd.rosmData.safeId)
+
+        interpret(RegistrationControllerNew.journey(hasCTEnrolment, fd, backendCall)).run(id) { _ =>
+          Redirect(routes.ServicePageController.show())
         }
       case None =>
-        println("nothing in cache") // TODO we should set the cache and redirect
+        logger.warn("nothing in cache") // TODO we should set the cache and redirect
         NotFound("").pure[Future]
     }
   }
-
-  def completed(): Action[AnyContent] = authorisedAction.async { implicit request =>
-    completedPersistence.get().map {
-      case None               => NotFound("No subscription pending")
-      case Some(subscription) => Ok(subscription.toString)
-    }
-  }
-
 }
 
 object RegistrationControllerNew {
 
   def journey(
     hasCTEnrolment: Boolean,
-    fd: RegistrationFormData
+    fd: RegistrationFormData,
+    backendCall: Subscription => Future[Unit]
   ) =
     for {
 
@@ -106,53 +91,39 @@ object RegistrationControllerNew {
                 else ask[OrganisationType]("organisation-type")
       _            <- end("partnerships") when (orgType.entryName == OrganisationType.partnership.entryName)
       producerType <- ask[ProducerType]("producer")
-      packLarge = producerType match {
-        case ProducerType.Large => Some(true)
-        case ProducerType.Small => Some(false)
-        case _                  => None
-      }
-      useCopacker <- ask[Boolean]("copacked") when producerType == ProducerType.Small
-      packageOwn  <- askEmptyOption[(Long, Long)]("package-own-uk") emptyUnless packLarge.nonEmpty
-      copacks     <- askEmptyOption[(Long, Long)]("package-copack")
-      imports     <- askEmptyOption[(Long, Long)]("import")
+      useCopacker  <- ask[Boolean]("copacked") when producerType == ProducerType.Small
+      packageOwn   <- ask[(Long, Long)]("package-own-uk") emptyUnless producerType != ProducerType.Not
+      copacks      <- ask[(Long, Long)]("package-copack")
+      imports      <- ask[(Long, Long)]("import")
       noUkActivity = (copacks, imports).isEmpty
-      smallProducerWithNoCopacker = packLarge.forall(_ == false) && useCopacker.forall(_ == false)
+      smallProducerWithNoCopacker = producerType != ProducerType.Large && useCopacker.forall(_ == false)
       _ <- end("do-not-register") when (noUkActivity && smallProducerWithNoCopacker)
-      isVoluntary = packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
+      isVoluntary = producerType == ProducerType.Small && useCopacker.contains(true) && (copacks, imports).isEmpty
       regDate <- ask[LocalDate]("start-date") unless isVoluntary
-      askPackingSites = (packLarge.contains(true) && packageOwn.nonEmpty) || copacks.nonEmpty
+      askPackingSites = (producerType == ProducerType.Large && packageOwn.nonEmpty) || copacks.nonEmpty
       useBusinessAddress <- ask[Boolean]("pack-at-business-address") when askPackingSites
       packingSites = if (useBusinessAddress.getOrElse(false)) {
         List(Site.fromAddress(fd.rosmData.address))
       } else {
         List.empty[Site]
       }
-      packSites <- askList[Site]("production-site-details") {
-                    case (index: Option[Int], existing: List[Site]) =>
-                      ask[Site]("site", default = index.map(existing))
-                  } emptyUnless askPackingSites
-      _ <- askList[Site]("sites") {
-            case (index: Option[Int], existing: List[Site]) =>
-              ask[Site]("site", default = index.map(existing))
-          }
+      packSites <- askListSimple[Site]("production-site-details") emptyUnless askPackingSites
+      _         <- askListSimple[Site]("sites") // not used?
       addWarehouses <- isVoluntary match {
                         case true  => ask[Boolean]("ask-secondary-warehouses")
                         case false => pure(false)
                       }
-      warehouses <- askList[Site](
+      warehouses <- askListSimple[Site](
                      "warehouses",
                      validation = Rule.nonEmpty
-                   ) {
-                     case (index: Option[Int], existing: List[Site]) =>
-                       ask[Site]("site", default = index.map(existing))
-                   } emptyUnless addWarehouses
+                   ) emptyUnless addWarehouses
       contactDetails <- ask[ContactDetails]("contact-details")
       activity = Activity(
         longTupToLitreage(packageOwn),
         longTupToLitreage(imports),
         longTupToLitreage(copacks),
         useCopacker.collect { case true => Litreage(1, 1) }, // TODO - why (1,1) ?
-        packLarge.getOrElse(false)
+        producerType == ProducerType.Large
       )
       declaration = Html("TODO declaration") // uniform.fragments.registerDeclarationNew(
       //   fd,
@@ -169,8 +140,8 @@ object RegistrationControllerNew {
       //   implicitly[UniformMessages[Html]]
       // )
       _ <- tell("declaration", declaration)
-    } yield
-      Subscription(
+
+      subscription = Subscription(
         fd.utr,
         fd.rosmData.organisationName,
         orgType.toString,
@@ -186,5 +157,9 @@ object RegistrationControllerNew {
           email = contactDetails.email
         )
       )
+      _ <- convertWithKey("submission")(backendCall(subscription))
+      _ <- nonReturn("reg-complete")
+      _ <- tell("confirmation", Html("TODO: confirmation-page"))
+    } yield subscription
 
 }

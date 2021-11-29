@@ -22,6 +22,8 @@ import ltbs.uniform.ask
 
 import scala.concurrent.Future
 import scala.language.implicitConversions
+import izumi.reflect.Tag
+import ltbs.uniform._, validation.Rule
 
 package object controllers {
   implicit def future[A](a: A): Future[A] = Future.successful(a)
@@ -42,6 +44,15 @@ package object controllers {
       case x                   => Some(x)
     }
     ask[Option[A]](id, newDefault).map(_.getOrElse(mon.empty))
+  }
+
+  def askListSimple[A: izumi.reflect.Tag](
+    key: String,
+    default: Option[List[A]] = None,
+    validation: Rule[List[A]] = Rule.alwaysPass[List[A]]
+  ) = askList[A](key, default, validation) {
+    case (index: Option[Int], existing: List[A]) =>
+      ask[A]("element", default = index.map(existing))
   }
 
 }
