@@ -19,12 +19,19 @@
 @keyDash=@{fieldKey.mkString("-")}
 @keyDots=@{fieldKey.mkString(".")}
 
-<div class="form-group @if(errors.nonEmpty){govuk-form-group--error}">
-
-    <label class="govuk-label" for="@keyDash">
-        @messages.decompose(keyDots)
-    </label>
-
-    @contents
-
+<div class="form-group">
+  <label class="govuk-label" for="@keyDash">
+    @messages.decompose(keyDots)
+  </label>
+  @contents
 </div>
+
+@for((h,t) <- messages.list(fieldKey.head+".subfieldDetailHeader").zip(messages.list(fieldKey.head+".subfieldDetailBody"))){
+  <details class="padding-bottom-10 govuk-details">
+    <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
+    <div class="panel panel-border-narrow margin-bottom-1">
+      @t
+    </div>
+  </details>
+}
+

@@ -20,37 +20,34 @@
 @keyDots=@{fieldKey.mkString(".")}
 
 @surround(fieldKey, tell, errors, messages) {
-
-    <div class="govuk-radios">
+  <div class="form-group @if(errors.nonEmpty){form-group-error}">
     @radioOptions.zipWithIndex.map{ case (opt,num) =>
+      <div class="multiple-choice govuk-radios__item" data-target="tg-@{keyDash}-@num">
+        <input type="radio"             
+          id="@{keyDash}-@num"
+          name="@keyDots"
+          value="@opt"
+          @if(Some(opt) == existing){checked="checked"}
 
-        <div class="multiple-choice govuk-radios__item" data-target="tg-@{keyDash}-@num">
-            <input type="radio"
-                   
-                   id="@{keyDash}-@num"
-                   name="@keyDots"
-                   value="@opt"
-                   @if(Some(opt) == existing){checked="checked"}
-
-                   @if(conditional.isDefinedAt(opt)) {
-                       aria-controls="tg-@{keyDash}-@num"
-                       @if(Some(opt) == existing){aria-expanded="true"} else {aria-expanded="false"}
-                   }
-            />
-            <label for="@{keyDash}-@num">@{messages.decompose({fieldKey :+ opt}.mkString("."))}</label>
-            
-
-        </div>
-        @for(cond <- conditional.lift(opt)) {
-            <div
-            id="tg-@{keyDash}-@num"
-            class="panel panel-border-narrow js-hidden"
-            tabindex="-1"
-            @if(Some(opt) == existing){aria-hidden="false"} else {aria-hidden="true"}>@cond
-        </div>
-        }
-
+          @if(conditional.isDefinedAt(opt)) {
+            aria-controls="tg-@{keyDash}-@num"
+            @if(Some(opt) == existing){aria-expanded="true"} else {aria-expanded="false"}
+          }
+        />
+        <label for="@{keyDash}-@num">@{messages.decompose({fieldKey :+ opt}.mkString("."))}</label>    
+      </div>
     }
-    </div>
+  </div>
 
+  @radioOptions.zipWithIndex.map{ case (opt,num) =>
+    @for(cond <- conditional.lift(opt)) {
+      <div
+        id="tg-@{keyDash}-@num"
+        class="panel panel-border-narrow js-hidden"
+        tabindex="-1"
+        @if(Some(opt) == existing){aria-hidden="false"} else {aria-hidden="true"}>
+        @cond
+      </div>
+    }
+  }
 }

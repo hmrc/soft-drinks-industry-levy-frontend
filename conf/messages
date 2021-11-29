@@ -17,6 +17,9 @@ sdil.hint.optional=Optional
 sdil.common.error=Error
 sdil.common.cancel=Cancel
 
+Some=Yes
+None=No
+
 error.sdilref.invalid=Small producer reference number must be 6 letters and 9 numbers
 error.sdilref.notSmall=Small producer reference number does not match a business that is currently registered as a \
   small producer. Check and try again.
@@ -79,11 +82,11 @@ confirm-address.paragraph=
 
 #Organisation Type
 sdil.organisation-type.heading=Which of these best describes your business?
-sdil.organisation-type.limited-company=Limited company
-sdil.organisation-type.llp=Limited liability partnership (LLP)
-sdil.organisation-type.partnership=Partnership
+organisation-type.limitedCompany=Limited company
+organisation-type.limitedLiabilityPartnership=Limited liability partnership (LLP)
+organisation-type.partnership=Partnership
 sdil.organisation-type.sole-trader=Sole trader
-sdil.organisation-type.unincorporated-body=Unincorporated body
+organisation-type.unincorporatedBody=Unincorporated body
 
 #Partnership page
 sdil.partnership.heading=You cannot register online as a partnership
@@ -109,6 +112,13 @@ error.packaging.none-selected=Choose at least one option
 
 #Copacking page
 sdil.packageCopack.heading=Do you operate any packaging sites in the UK to package liable drinks for your customers as a third party?
+package-own-uk.Some.value=<h2 class="heading-medium">How many litres will you package in the next 12 months?</h2>
+package-own-uk.Some.value._1=Litres in the low band
+package-own-uk.Some.value._2=Litres in the high band
+package-own-uk.subfieldDetailHeader=What are the bands?
+package-own-uk.subfieldDetailBody= <p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
+package-own-uk.subfieldDetailHeader.1=I do not know how many litres
+package-own-uk.subfieldDetailBody.2=If you do not have the exact volumes you can enter an estimate.
 
 #Package copack small page
 error.copack-small.lower-greater-than-total-lower=Litres for small producers must be less than total litres for customers
@@ -136,8 +146,10 @@ sdil.litreage.rates.content.p2=The high band applies where the liable drink cont
 sdil.litreage.volumes.help=I do not know how many litres
 sdil.litreage.volumes.content.p1=If you do not have the exact volumes you can enter an estimate.
 
-error.litreage.required.lower=Enter the number of litres in the low band
-error.litreage.required.higher=Enter the number of litres in the high band
+### error.litreage.required.lower=Enter the number of litres in the low band
+package-own-uk.Some.value._1.required=Enter the number of litres in the low band
+### error.litreage.required.higher=Enter the number of litres in the high band
+package-own-uk.Some.value._2.required=Enter the number of litres in the high band
 error.litreage.numeric=Number of litres must be a whole number
 error.litreage.max.lower=Number of litres in the low band must be less than 100,000,000,000,000
 error.litreage.max.higher=Number of litres in the high band must be less than 100,000,000,000,000
@@ -531,24 +543,42 @@ error.radio-form.choose-option.continue=Select an option to continue
 error.radio-form.choose-option.select-change=Select what you need to do
 error.radio-form.choose-option.select-return=Select which return you need to correct
 error.radio-form.choose-option.repayment-method=Select how you want the credit to be repaid
-error.radio-form.choose-option.organisation-type=Select the option that best describes your business
-error.radio-form.choose-option.producer=Select how many litres of your own brands of liable drinks have been \
-  packaged globally in the past 12 months
+### error.radio-form.choose-option.organisation-type=Select the option that best describes your business
+organisation-type.required=Select the option that best describes your business
+### error.radio-form.choose-option.producer=Select how many litres of your own brands of liable drinks have been \
+###  packaged globally in the past 12 months
+producer.required=Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months
 error.radio-form.choose-option.amount-produced=Select how many litres of your own brands of liable drinks have been \
   packaged globally in the past 12 months
 error.radio-form.choose-option.copacked=Select yes if you use any third parties in the UK to package liable drinks on \
   your behalf
 error.radio-form.choose-option.third-party-packagers=Select yes if you use any third parties in the UK to package liable drinks on \
   your behalf
-error.radio-form.choose-option.package-own-uk=Select yes if you operate any packaging sites in the UK to package \
+### error.radio-form.choose-option.package-own-uk=Select yes if you operate any packaging sites in the UK to package \
+###  liable drinks for brands you own
+package-own-uk.required=Select yes if you operate any packaging sites in the UK to package \
   liable drinks for brands you own
 error.radio-form.choose-option.packaging-site=Select yes if you operate any packaging sites in the UK to package \
   liable drinks for brands you own
-error.radio-form.choose-option.package-copack=Select yes if you operate any packaging sites in the UK to package \
+### error.radio-form.choose-option.package-copack=Select yes if you operate any packaging sites in the UK to package \
+###  liable drinks as a third party or contract packer
+package-copack.Some.value._1=Litres in the low band
+package-copack.Some.value._2=Litres in the high band
+package-copack.required=Select yes if you operate any packaging sites in the UK to package \
   liable drinks as a third party or contract packer
+package-copack.Some.value._1.required=Enter the number of litres in the low band
+package-copack.Some.value._2.required=Enter the number of litres in the high band
+package-copack.summarydetailHeader=What are the bands?
+package-copack.summarydetail=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p> \
+  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
+package-copack.summarydetailHeader.1=I do not know how many litres
+package-copack.summarydetail.1=If you do not have the exact volumes you can enter an estimate.
 error.radio-form.choose-option.contract-packing=Select yes if you operate any packaging sites in the UK to package \
   liable drinks as a third party or contract packer
-error.radio-form.choose-option.import=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
+### error.radio-form.choose-option.import=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
+import.required=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
+import.Some.value._1.required=Enter the number of litres in the low band
+import.Some.value._2.required=Enter the number of litres in the high band
 error.radio-form.choose-option.imports=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
 error.radio-form.choose-option.pack-at-business-address=Select yes if your registered business address is a UK\
    packaging site that you operate to produce liable drinks
@@ -670,7 +700,7 @@ heading.package-own-uk=Do you operate any packaging sites in the UK to package l
 package-own-uk.inner-heading=How many litres will you package in the next 12 months?
 
 heading.package-copack=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
-package-copack.inner-heading=How many litres will you package in the next 12 months?
+package-copack.Some.value=<h2 class="heading-medium">How many litres will you package in the next 12 months?</h2>
 
 heading.import=Do you bring liable drinks into the UK from anywhere outside of the UK?
 import.inner-heading=How many litres will you bring into the UK in the next 12 months?
