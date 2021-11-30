@@ -90,10 +90,7 @@ class VerifyController(
           case detailsCorrect =>
             val updated = request.formData.copy(verify = Some(detailsCorrect))
             cache.cache(request.internalId, updated) map { _ =>
-              if (true) { // TESTING UNIFORM UPGRADE
-                Redirect(routes.RegistrationControllerNew.index("organisation-type"))
-              } else
-                Redirect(routes.RegistrationController.index("organisation-type"))
+              Redirect(routes.RegistrationControllerNew.index("organisation-type"))
             }
         }
       )

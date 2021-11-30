@@ -11,7 +11,6 @@ enablePlugins(
 // Play configuration
 // ================================================================================
 TwirlKeys.templateImports ++= Seq(
-  "uk.gov.hmrc.uniform.playutil._",
   "sdil.utility._",
   "sdil.uniform.AdaptMessages.ufMessagesToPlayMessages",
   "ltbs.uniform._"
@@ -103,8 +102,8 @@ libraryDependencies ++= Seq(
   "com.softwaremill.macwire"  %% "util"                           % "2.3.7",
   "com.softwaremill.macwire"  %% "proxy"                          % "2.3.7",
   "org.typelevel"             %% "cats-core"                      % "2.6.1",
-  "uk.gov.hmrc"               %% "uniform"                        % "0.1.9" exclude("com.typesafe.play", "play-logback"),
-  "com.luketebbs.uniform"     %% "interpreter-play26"             % "5.0.0-RC3"
+  "com.luketebbs.uniform"     %% "interpreter-play26"             % "5.0.0-RC3",
+  "com.beachape"              %% "enumeratum"                     % "1.7.0"  
 )
 
 // ================================================================================

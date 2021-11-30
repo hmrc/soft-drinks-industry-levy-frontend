@@ -16,7 +16,7 @@
 
 package sdil
 
-import cats.implicits.none
+import cats.implicits._
 import izumi.reflect.Tag
 import ltbs.uniform.ask
 
@@ -24,6 +24,7 @@ import scala.concurrent.Future
 import scala.language.implicitConversions
 import izumi.reflect.Tag
 import ltbs.uniform._, validation.Rule
+import sdil.models.Litreage
 
 package object controllers {
   implicit def future[A](a: A): Future[A] = Future.successful(a)
@@ -54,5 +55,8 @@ package object controllers {
     case (index: Option[Int], existing: List[A]) =>
       ask[A]("element", default = index.map(existing))
   }
+
+  def longTupToLitreage(in: (Long, Long)): Option[Litreage] =
+    if (in.isEmpty) None else Litreage(in._1, in._2).some
 
 }

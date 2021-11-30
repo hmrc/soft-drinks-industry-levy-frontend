@@ -66,12 +66,12 @@ trait CommonWiring {
 
   lazy val updateBusinessAddresses: views.html.uniform.fragments.update_business_addresses =
     wire[views.html.uniform.fragments.update_business_addresses]
-  lazy val ask: views.html.uniform.ask = wire[views.html.uniform.ask]
-  lazy val cya: views.html.uniform.cya = wire[views.html.uniform.cya]
-  lazy val end: views.html.uniform.end = wire[views.html.uniform.end]
-  lazy val journeyEnd: views.html.uniform.journeyEnd = wire[views.html.uniform.journeyEnd]
-  lazy val many: views.html.uniform.many = wire[views.html.uniform.many]
-  lazy val tell: views.html.uniform.tell = wire[views.html.uniform.tell]
+  // lazy val ask: views.html.uniform.ask = wire[views.html.uniform.ask]
+  // lazy val cya: views.html.uniform.cya = wire[views.html.uniform.cya]
+  // lazy val end: views.html.uniform.end = wire[views.html.uniform.end]
+  // lazy val journeyEnd: views.html.uniform.journeyEnd = wire[views.html.uniform.journeyEnd]
+  // lazy val many: views.html.uniform.many = wire[views.html.uniform.many]
+  // lazy val tell: views.html.uniform.tell = wire[views.html.uniform.tell]
 
   // UF5 changes
   lazy val base: views.html.uniform.base = wire[views.html.uniform.base]

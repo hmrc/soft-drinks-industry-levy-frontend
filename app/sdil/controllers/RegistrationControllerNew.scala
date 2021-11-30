@@ -21,7 +21,6 @@ import scala.language.higherKinds
 import cats.implicits._
 import java.time.LocalDate
 import ltbs.play.scaffold.GdsComponents.bool
-import ltbs.play.scaffold.SdilComponents._
 import ltbs.uniform._, validation._
 import ltbs.uniform.common.web.{FutureAdapter, WebMonad}
 import ltbs.uniform.interpreters.playframework._
@@ -36,10 +35,8 @@ import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
 import sdil.models.backend._
-import sdil.uniform.SaveForLaterPersistenceNew
+import sdil.uniform._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.uniform.playutil.ExtraMessages
-import uk.gov.hmrc.uniform.webmonad.clear
 import views.html.uniform
 import play.api.Logger
 

@@ -19,11 +19,11 @@ import javax.inject.Inject
 
 class Uniform @Inject()(
   val updateBusinessAddresses: views.html.uniform.fragments.update_business_addresses,
-  val ask: views.html.uniform.ask,
-  val cya: views.html.uniform.cya,
-  val end: views.html.uniform.end,
-  val journeyEnd: views.html.uniform.journeyEnd,
-  val many: views.html.uniform.many,
-  val tell: views.html.uniform.tell,
+  // val ask: views.html.uniform.ask,
+  // val cya: views.html.uniform.cya,
+  // val end: views.html.uniform.end,
+  // val journeyEnd: views.html.uniform.journeyEnd,
+  // val many: views.html.uniform.many,
+  // val tell: views.html.uniform.tell,
   val base: views.html.uniform.base
 ) {}

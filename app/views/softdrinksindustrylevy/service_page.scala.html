@@ -45,7 +45,7 @@
                     <p>@Html(
                          Messages(
                              "sdil.service-page.p3.voluntary-only",
-                             sdil.controllers.routes.VariationsController.changeActorStatus("")
+                             sdil.controllers.routes.VariationsControllerNew.changeActorStatus("")
                          )
                         )
                     </p>
@@ -129,7 +129,7 @@
         }
         </div>
         <div class="margin-bottom-25 return-button-padding">
-            <a href='@sdil.controllers.routes.ReturnsController.index(
+            <a href='@sdil.controllers.routes.ReturnsControllerNew.index(
                 period.year,
                 period.quarter,
                 nilReturn = false,
@@ -143,7 +143,7 @@
             </a>
         </div>
         <div>
-            <a href='@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, true, "nil-return")'>
+            <a href='@sdil.controllers.routes.ReturnsControllerNew.index(period.year, period.quarter, true, "nil-return")'>
                 @Messages("return.file.nil")
             </a>
         </div>
@@ -226,7 +226,7 @@
         <div class="grid-row">
             <div class="column-one-half">
                 <h3 class="heading-small">
-                    <a href='@sdil.controllers.routes.VariationsController.index("changeType")'>
+                    <a href='@sdil.controllers.routes.VariationsControllerNew.index("changeType")'>
                     @Messages("sdil.service-page.variations.subtitle.3")
                     </a>
                 </h3>
@@ -240,7 +240,7 @@
             </div>
             <div class="column-one-half">
                 <h3 class="heading-small">
-                    <a href="@sdil.controllers.routes.VariationsController.changeBusinessAddress("")">
+                    <a href="@sdil.controllers.routes.VariationsControllerNew.changeBusinessAddress("")">
                     @Messages("sdil.service-page.variations.subtitle.2")
                     </a>
                 </h3>

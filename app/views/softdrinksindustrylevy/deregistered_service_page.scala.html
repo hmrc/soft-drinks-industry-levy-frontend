@@ -75,7 +75,7 @@
                             }
                             </div>
                             <div class="margin-bottom-25 return-button-padding">
-                                <a href='@sdil.controllers.routes.ReturnsController.index(
+                                <a href='@sdil.controllers.routes.ReturnsControllerNew.index(
                                     ReturnPeriod(deregDate).year,
                                     ReturnPeriod(deregDate).quarter,
                                     nilReturn = false,
@@ -85,7 +85,7 @@
                                 </a>
                             </div>
                             <div>
-                                <a href='@sdil.controllers.routes.ReturnsController.index(
+                                <a href='@sdil.controllers.routes.ReturnsControllerNew.index(
                                     ReturnPeriod(deregDate).year,
                                     ReturnPeriod(deregDate).quarter,
                                     nilReturn = true,
@@ -186,7 +186,7 @@
                 <div class="grid-row">
                     <div class="column-one-half">
                         <h3 class="heading-small">
-                            <a href='@sdil.controllers.routes.VariationsController.index("changeType")'>
+                            <a href='@sdil.controllers.routes.VariationsControllerNew.index("changeType")'>
                                 @Messages("sdil.service-page.deregistered.variations.subtitle.3")
                             </a>
                         </h3>

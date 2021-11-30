@@ -21,7 +21,6 @@ import scala.language.higherKinds
 import cats.implicits._
 import enumeratum._
 import java.time.LocalDate
-import ltbs.play.scaffold.SdilComponents, SdilComponents.ProducerType
 import ltbs.uniform._, validation._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -37,6 +36,7 @@ import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistenceNew
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import sdil.uniform.ProducerType
 
 class VariationsControllerNew(
   mcc: MessagesControllerComponents,
@@ -73,6 +73,15 @@ class VariationsControllerNew(
       case None => Future.successful(NotFound(""))
     }
   }
+
+  def changeActorStatus(id: String): Action[AnyContent] = registeredAction.async { implicit req =>
+    Future.successful(Ok("test"))
+  }
+
+  def changeBusinessAddress(id: String): Action[AnyContent] = registeredAction.async { implicit req =>
+    Future.successful(Ok("test"))
+  }
+
 }
 
 object VariationsControllerNew {
@@ -116,9 +125,6 @@ object VariationsControllerNew {
           deregDate = deregDate.some
         )
       )
-
-  private def longTupToLitreage(in: (Long, Long)): Option[Litreage] =
-    if (in.isEmpty) None else Litreage(in._1, in._2).some
 
   sealed trait ContactChangeType extends EnumEntry
   object ContactChangeType extends Enum[ContactChangeType] {
@@ -183,7 +189,7 @@ object VariationsControllerNew {
     returnPeriods: List[ReturnPeriod]
   ) =
     for {
-      producerType <- ask[SdilComponents.ProducerType]("amount-produced")
+      producerType <- ask[ProducerType]("amount-produced")
       useCopacker  <- if (producerType == ProducerType.Small) ask[Boolean]("third-party-packagers") else pure(false)
       packageOwn   <- askEmptyOption[(Long, Long)]("packaging-site")
       copacks      <- askEmptyOption[(Long, Long)]("contract-packing")

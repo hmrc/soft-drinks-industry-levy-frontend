@@ -21,7 +21,7 @@ import java.time.{LocalDate => Date}
 
 import play.api.i18n.Messages
 import play.api.libs.json._
-import uk.gov.hmrc.uniform.playutil._
+import sdil.utility.stringToFormatter
 
 sealed trait FinancialLineItem {
   def date: Date

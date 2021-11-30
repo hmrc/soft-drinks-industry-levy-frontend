@@ -26,14 +26,13 @@ import play.api.i18n.Messages
 import play.twirl.api.Html
 import sdil.models._
 import sdil.models.backend.Site
-import uk.gov.hmrc.uniform._
 import views.html.uniform
 import sdil.uniform.AdaptMessages.ufMessagesToPlayMessages
 import views.html.uniform.fragments.date_new
 import enumeratum._
 import java.time.LocalDate
 
-trait SdilComponentsNew /*extends FormHelpers*/ {
+trait SdilComponentsNew {
 
   def ufViews: views.uniform.Uniform
 
@@ -162,128 +161,6 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
       }
     }
 
-  // implicit val addressForm = new FormHtml[Address] {
-
-  //   def decode(out: Input): Either[ErrorTree, Address] = ???
-  //   def encode(in: Address): Input = ???
-
-  //   def render(
-  //     pageKey: List[String],
-  //     fieldKey: List[String],
-  //     tell: Option[Html],
-  //     breadcrumbs: Breadcrumbs,
-  //     data: Input,
-  //     errors: ErrorTree,
-  //     messages: UniformMessages[Html]
-  //   ): Option[Html] = ???
-
-  //   def asHtmlForm(key: String, form: Form[Address])(implicit messages: Messages): Html =
-  //     uniform.fragments.address(key, form)
-  // }
-  /*
-  implicit val smallProducerForm = new FormHtml[SmallProducer] {
-
-    def decode(out: Input): Either[ErrorTree, SmallProducer] = ???
-    def encode(in: SmallProducer): Input = ???
-
-    def render(
-      pageKey: List[String],
-      fieldKey: List[String],
-      tell: Option[Html],
-      breadcrumbs: Breadcrumbs,
-      data: Input,
-      errors: ErrorTree,
-      messages: UniformMessages[Html]
-    ): Option[Html] = ???
-
-    def asHtmlForm(key: String, form: Form[SmallProducer])(implicit messages: Messages): Html =
-      uniform.fragments.smallProducer(key, form)
-  }
-   */
-  /*
-  implicit val litreageForm = new FormHtml[(Long, Long)] {
-
-    def decode(out: Input): Either[ErrorTree, (Long, Long)] = ???
-    def encode(in: (Long, Long)): Input = ???
-
-    def render(
-      pageKey: List[String],
-      fieldKey: List[String],
-      tell: Option[Html],
-      breadcrumbs: Breadcrumbs,
-      data: Input,
-      errors: ErrorTree,
-      messages: UniformMessages[Html]
-    ): Option[Html] = ???
-
-    def asHtmlForm(key: String, form: Form[(Long, Long)])(implicit messages: Messages): Html =
-      uniform.fragments.litreage(key, form, approximate = true)
-  }*/
-
-  // implicit val siteForm = new FormHtml[Site] {
-
-  //   def decode(out: Input): Either[ErrorTree, Site] = ???
-  //   def encode(in: Site): Input = ???
-
-  //   def render(
-  //     pageKey: List[String],
-  //     fieldKey: List[String],
-  //     tell: Option[Html],
-  //     breadcrumbs: Breadcrumbs,
-  //     data: Input,
-  //     errors: ErrorTree,
-  //     messages: UniformMessages[Html]
-  //   ): Option[Html] = ???
-
-  //   def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html =
-  //     uniform.fragments.site(key, form)
-  // }
-
-//  implicit val siteProgressiveRevealHtml: HtmlShow[Site] = {
-//
-//    def lines(s: Site): String = {
-//      val lines = s.tradingName.fold(s.address.lines.tail)(_ => s.address.lines)
-//      lines.map { line =>
-//        s"""<div class="address progressive-reveal">$line</div>"""
-//      }
-//    }.mkString
-//
-//    def visibleText(s: Site): String =
-//      s.tradingName.fold(s.address.lines.head)(x => x)
-//
-//    HtmlShow.instance { site =>
-//      Html(
-//        s"""<details role="group">
-//
-//        <summary aria-controls="details-content-1" aria-expanded="false">
-//          <span class="summary">${visibleText(site)}, ${site.address.postCode}</span>
-//        </summary>""" +
-//          lines(site) +
-//          s"""<div class="address postal-code progressive-reveal">${site.address.postCode}</div>
-//        </details>"""
-//      )
-//    }
-//  }
-
-  // implicit val contactDetailsForm = new FormHtml[ContactDetails] {
-
-  //   def decode(out: Input): Either[ErrorTree, ContactDetails] = ???
-  //   def encode(in: ContactDetails): Input = ???
-
-  //   def render(
-  //     pageKey: List[String],
-  //     fieldKey: List[String],
-  //     tell: Option[Html],
-  //     breadcrumbs: Breadcrumbs,
-  //     data: Input,
-  //     errors: ErrorTree,
-  //     messages: UniformMessages[Html]
-  //   ): Option[Html] = ???
-
-  //   def asHtmlForm(key: String, form: Form[ContactDetails])(implicit messages: Messages): Html =
-  //     uniform.fragments.contactdetails(key, form)
-  // }
-
   implicit def askUkAddress(implicit underlying: FormHtml[Address]): FormHtml[backend.UkAddress] =
     underlying.simap(backend.UkAddress.fromAddress(_).asRight)(Address.fromUkAddress)
 
@@ -312,23 +189,6 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
     }
 
   }
-
-//  implicit val addressHtml: HtmlShow[Address] =
-//    HtmlShow.instance { address =>
-//      val lines = address.nonEmptyLines.mkString("<br />")
-//      Html(s"<div>$lines</div>")
-//    }
-//
-//  implicit def showLitreage(implicit messages: Messages): HtmlShow[Litreage] = new HtmlShow[Litreage] {
-//    def showHtml(l: Litreage): Html = l match {
-//      case Litreage(lower, higher) =>
-//        Html(
-//          Messages("sdil.declaration.low-band") + f": $lower%,.0f" +
-//            "<br>" +
-//            Messages("sdil.declaration.high-band") + f": $higher%,.0f"
-//        )
-//    }
-//  }
 
   implicit val tellListSite = new WebTell[Html, WebAskList.ListingTable[Site]] {
     def render(
@@ -361,4 +221,32 @@ trait SdilComponentsNew /*extends FormHelpers*/ {
       )
     )
   }
+
+}
+
+sealed trait OrganisationType extends EnumEntry
+object OrganisationType extends Enum[OrganisationType] {
+  val values = findValues
+  case object limitedCompany extends OrganisationType
+  case object limitedLiabilityPartnership extends OrganisationType
+  case object partnership extends OrganisationType
+  case object soleTrader extends OrganisationType
+  case object unincorporatedBody extends OrganisationType
+}
+
+sealed trait OrganisationTypeSoleless extends EnumEntry
+object OrganisationTypeSoleless extends Enum[OrganisationTypeSoleless] {
+  val values = findValues
+  case object limitedCompany extends OrganisationTypeSoleless
+  case object limitedLiabilityPartnership extends OrganisationTypeSoleless
+  case object partnership extends OrganisationTypeSoleless
+  case object unincorporatedBody extends OrganisationTypeSoleless
+}
+
+sealed trait ProducerType extends EnumEntry
+object ProducerType extends Enum[ProducerType] {
+  val values = findValues
+  case object Large extends ProducerType
+  case object Small extends ProducerType
+  case object Not extends ProducerType
 }

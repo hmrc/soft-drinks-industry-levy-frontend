@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
-@()(implicit messages: Messages)
+@()(implicit messages: UniformMessages[Html])
 
-<p>@Messages("sdil.registration-not-required.p1")</p>
+<p>@messages("sdil.registration-not-required.p1")</p>
 
 <ul class="list-bullet">
-    @for(msg <- Messages.many("sdil.registration-not-required.li")) {
+    @for(msg <- messages.list("sdil.registration-not-required.li")) {
         <li>@msg</li>
     }
 </ul>
 
-<p>@Html(Messages("sdil.registration-not-required.p3", sdil.controllers.routes.RegistrationController.index("producer")))</p>
+<p>@messages("sdil.registration-not-required.p3", sdil.controllers.routes.RegistrationControllerNew.index("producer"))</p>

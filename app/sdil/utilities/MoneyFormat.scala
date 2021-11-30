@@ -16,8 +16,13 @@
 
 package sdil
 
+import java.time.format.DateTimeFormatter
+
 object utility {
   implicit class MoneyFormat(in: BigDecimal) {
     def pounds: String = f"£$in%,.2f".replace("£-", "-£")
   }
+
+  implicit def stringToFormatter(in: String): DateTimeFormatter =
+    DateTimeFormatter.ofPattern(in)
 }

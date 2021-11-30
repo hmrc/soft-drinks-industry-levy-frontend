@@ -16,8 +16,6 @@
 
 package ltbs.play.scaffold
 
-import uk.gov.hmrc.uniform._
-
 import cats.Monoid
 import java.time.LocalDate
 
@@ -68,29 +66,6 @@ object GdsComponents {
   // These implicits tell uniform how to render a form for a given mapping, later on I intend to
   // have these produced directly from the views via an SBT plugin, but this will only be possible
   // once uniform is moved to a separate library
-
-  implicit val booleanForm = new FormHtml[Boolean] {
-    def asHtmlForm(key: String, form: Form[Boolean])(implicit messages: Messages): Html =
-      uniform.fragments.boolean(key, form)
-  }
-
-  implicit val stringForm = new FormHtml[String] {
-    def asHtmlForm(key: String, form: Form[String])(implicit messages: Messages): Html =
-      uniform.fragments.string(key, form)
-  }
-
-  implicit val dateForm = new FormHtml[LocalDate] {
-    def asHtmlForm(key: String, form: Form[LocalDate])(implicit messages: Messages): Html =
-      uniform.fragments.date(key, form)
-  }
-
-  implicit val htmlShowHtml = new HtmlShow[Html] {
-    def showHtml(in: Html): Html = in
-  }
-
-  implicit val dateShow = new HtmlShow[LocalDate] {
-    def showHtml(in: LocalDate): Html = Html(in.toString) // ISO YYYY-MM-DD
-  }
 
   def oneOf(
     options: Seq[String],
