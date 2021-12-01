@@ -35,4 +35,6 @@ private[views] case class ViewHelpers(config: Configuration) {
   lazy val serviceInfo = new ServiceInfo
   lazy val sidebar = new Sidebar
   lazy val assetsConfig = new AssetsConfig(config)
+  lazy val footerLinks = new FooterLinks(accessibilityConfig)
+  lazy val accessibilityConfig = new AccessibilityStatementConfig(config)
 }

@@ -37,6 +37,7 @@ import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistenceNew
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import sdil.uniform.ProducerType
+import ltbs.uniform.interpreters.playframework.SessionPersistence
 
 class VariationsControllerNew(
   mcc: MessagesControllerComponents,
@@ -74,8 +75,15 @@ class VariationsControllerNew(
     }
   }
 
-  def changeActorStatus(id: String): Action[AnyContent] = registeredAction.async { implicit req =>
-    Future.successful(Ok("test"))
+  def changeActorStatus(id: String): Action[AnyContent] = Action.async { implicit req =>
+    implicit val persistence = new SessionPersistence("test")
+
+    val simpleJourney = ask[LocalDate]("test")
+    val wm = interpret(simpleJourney)
+    wm.run(id) { date =>
+      Future.successful(Ok(date.toString))
+    }
+
   }
 
   def changeBusinessAddress(id: String): Action[AnyContent] = registeredAction.async { implicit req =>
