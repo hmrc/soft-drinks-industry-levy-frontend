@@ -579,6 +579,14 @@ error.radio-form.choose-option.contract-packing=Select yes if you operate any pa
 import.required=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
 import.Some.value._1.required=Enter the number of litres in the low band
 import.Some.value._2.required=Enter the number of litres in the high band
+import.Some.value=<h2 class="heading-medium">How many litres will you bring into the UK in the next 12 months?</h2>
+import.Some.value._1=Litres in the low band
+import.Some.value._2=Litres in the high band
+import.subfieldDetailHeader=What are the bands?
+import.subfieldDetailBody=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p> \
+  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
+import.subfieldDetailHeader.1=I do not know how many litres
+import.subfieldDetailBody.1=If you do not have the exact volumes you can enter an estimate.
 error.radio-form.choose-option.imports=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
 error.radio-form.choose-option.pack-at-business-address=Select yes if your registered business address is a UK\
    packaging site that you operate to produce liable drinks
@@ -823,6 +831,10 @@ heading.pack-at-business-address-in-return=Is this address a UK packaging site y
 pack-at-business-address-in-return.help.header=Why we need these details
 pack-at-business-address-in-return.help=Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate
 
+
+pack-at-business-address.true=Yes
+pack-at-business-address.false=No
+
 heading.packaging-site=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
 packaging-site.inner-heading=How many litres will you package in the next 12 months?
 
@@ -844,13 +856,15 @@ heading.packaging-site-details=Change your UK packaging site details
 heading.multi.packaging-site-details=Change your UK packaging site details
 heading.production-site-details=Your packaging sites
 heading.multi.production-site-details=Your packaging sites
-production-site-details.lead=Tell us about the packaging sites you operate in the UK to package liable drinks.
+# production-site-details.lead=Tell us about the packaging sites you operate in the UK to package liable drinks.
 production-site-details.multi.lead=You have added {0} packaging site{1}.
 production-site-details.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
   drinks. You must have at least one registered packaging site.
 production-site-details.list-control.heading=Do you need to add another packaging site?
 packaging-site-details.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
   drinks. You must have at least one registered packaging site.
+production-site-details.Add=Yes
+production-site-details.Continue=No
 heading.edit-production-site-details=Enter your UK packaging site details
 edit-production-site-details.paragraph=Only add the addresses of UK packaging sites you operate.
 packaging-site-details.list-control.heading=Do you want to add another packaging site?
@@ -1066,6 +1080,10 @@ error.empty=Number of litres must be 1 or more
 heading.own-brands-packaged-at-own-sites=Are you reporting your own brands of liable drink you have packaged at UK sites you operate?
 own-brands-packaged-at-own-sites.lead=This includes brands you own or have the rights to manufacture.
 own-brands-packaged-at-own-sites.inner-heading=How many litres do you need to report?
+own-brands-packaged-at-own-sites.subfieldDetailHeader=What are the bands?
+own-brands-packaged-at-own-sites.subfieldDetailBody=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per \
+  100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
+  millilitres.</p>
 heading.packaged-as-a-contract-packer=Are you reporting liable drink you have packaged as a third party or contract packer at UK sites you operate?
 packaged-as-a-contract-packer.inner-heading=How many litres do you need to report?
 packaged-as-a-contract-packer.paragraph=Do not include liable drinks you have packaged for registered small producers.
@@ -1507,3 +1525,6 @@ producer.summarydetail=A liable drink is packaged if it is bottled, canned or ot
 producer.summarydetailHeader.1=What is a liable drink?
 producer.summarydetail.1=<h2>Liable drinks</h2><p>A drink is liable if it meets all the following conditions:</p><ul class="list list-bullet"><li>it has a content of 1.2% alcohol by volume or less</li><li>it is either ready to drink, or to be drunk it must be diluted with water, mixed with   crushed ice or processed to make crushed ice, mixed with carbon dioxide or a combination of these</li><li>it is packaged ready for sale</li><li>it has had sugar added during production, including pure cane sugars like sucrose and   glucose as well as substances (other than fruit juice, vegetable juice and milk) that contain sugar, such as honey</li><li>it contains at least 5 grams (g) of sugar per 100 millilitres (ml) in its ready to   drink or diluted form</li></ul><h2>Exempt drinks</h2><p>A drink is exempt if it meets one of the following conditions:</p><ul class="list list-bullet"><li>it contains at least 75% milk</li><li>it is a milk-substitute which contains at least 120 milligrams of calcium per 100ml,   for example soya or almond milk</li><li>it is an alcohol replacement drink, for example de-alcoholised beer or wine</li><li>it is infant formula, follow-on formula, baby foods, formulated food intended as a   total diet replacement or dietary food used for special medical purposes</li></ul>
 
+Some.value=<h2 class="heading-medium">How many litres do you need to report?</h2>
+Some.value._1=Litres in the low band
+Some.value._2=Litres in the high band
