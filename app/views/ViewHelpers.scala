@@ -27,8 +27,12 @@ private[views] case class ViewHelpers(config: Configuration) {
   lazy val reportAProblemLink = new ReportAProblemLink
   lazy val article = new Article
   lazy val footer = new Footer(assetsConfig)
-  lazy val headWithTrackingConsent =
-    new HeadWithTrackingConsent(trackingConsentSnippet, assetsConfig)
+  lazy val headWithTrackingConsent = {
+    val trackingConfig = new TrackingConsentConfig(config)
+    val optimiselyConfig = new OptimizelyConfig(config)
+    val snippet = new TrackingConsentSnippet(trackingConfig, optimiselyConfig)
+    new HeadWithTrackingConsent(snippet, assetsConfig)
+  }
   lazy val headerNav = new HeaderNav
   lazy val mainContent = new MainContent
   lazy val mainContentHeader = new MainContentHeader
