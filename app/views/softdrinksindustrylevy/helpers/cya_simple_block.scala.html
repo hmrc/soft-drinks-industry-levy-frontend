@@ -1,0 +1,17 @@
+@(key: List[String], breadcrumbs: List[List[String]], messages: UniformMessages[Html])(lines: (List[String], Html)*)
+@keyDots = @{key.mkString(".")}
+@keyDash = @{key.mkString("-")}
+
+<table class="check-your-answers">
+@for((ref,representation) <- lines) {
+  <tr>
+    <td>@messages.decompose((key.last :: ref).mkString("."))</td>
+    <td>@representation</td>
+    @if(breadcrumbs.contains(ref)) {
+      <td><a href="@{ltbs.uniform.common.web.relativePath(key, ref)}">@messages.decompose((key ++ ref :+ "edit").mkString("."))</a></td>
+    } else {
+      <td>&nbsp;</td>
+    }
+  </tr>
+}
+</table>

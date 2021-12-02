@@ -31,6 +31,7 @@ import sdil.uniform.AdaptMessages.ufMessagesToPlayMessages
 import views.html.uniform.fragments.date_new
 import enumeratum._
 import java.time.LocalDate
+import sdil.controllers.Subset
 
 trait SdilComponentsNew {
 
@@ -79,7 +80,25 @@ trait SdilComponentsNew {
     ): Option[Html] = Some {
       import stepDetails._
       val value = decode(data).toOption.getOrElse("")
-      views.html.softdrinksindustrylevy.helpers.inputText_new(fieldKey, value, errors)(pageIn.messages)
+
+      val max = validation.subRules
+        .collect {
+          case Rule.MaxLength(h, _)     => Some(h)
+          case Rule.LengthBetween(_, h) => Some(h)
+        }
+        .foldLeft(none[Int]) {
+          case (None, x)          => x
+          case (Some(a), Some(b)) => Some(Math.min(a, b))
+          case _                  => None
+        }
+
+      max match {
+        case Some(x) if x >= 255 =>
+          views.html.softdrinksindustrylevy.helpers.textArea_new(fieldKey, value, errors)(pageIn.messages)
+        case _ =>
+          views.html.softdrinksindustrylevy.helpers.inputText_new(fieldKey, value, errors)(pageIn.messages)
+      }
+
     }
   }
 
@@ -178,11 +197,21 @@ trait SdilComponentsNew {
       pageIn: PageIn[Html],
       stepDetails: StepDetails[Html, Set[E]]
     ): Option[Html] = Some {
+
+      // work out what the available options are - if a subset rule is
+      // defined only show the options they're allowed to select
+      // otherwise show the full enum.values
+      val options = stepDetails.validation.subRules
+        .collectFirst {
+          case Subset(opts) => opts.toList
+        }
+        .getOrElse(enum.values)
+
       val existing = decode(stepDetails.data).toOption.getOrElse(Set.empty)
       views.html.softdrinksindustrylevy.helpers.checkboxes(
         stepDetails.fieldKey,
         stepDetails.tell,
-        enum.values.map(e => e.entryName -> existing.contains(e)),
+        options.map(e => e.entryName -> existing.contains(e)),
         stepDetails.errors,
         pageIn.messages
       )
@@ -193,15 +222,15 @@ trait SdilComponentsNew {
   implicit val tellListSite = new WebTell[Html, WebAskList.ListingTable[Site]] {
     def render(
       in: WebAskList.ListingTable[Site],
-      key: String,
-      messages: UniformMessages[Html]
+      key: List[String],
+      pageIn: PageIn[Html]
     ): Option[Html] = Some(
       views.html.softdrinksindustrylevy.helpers.listing_table(
-        key,
+        key.last,
         in.value.map { x =>
           Html(x.toString)
         },
-        messages
+        pageIn.messages
       )
     )
   }
@@ -209,15 +238,15 @@ trait SdilComponentsNew {
   implicit val tellListSmallProducer = new WebTell[Html, WebAskList.ListingTable[SmallProducer]] {
     def render(
       in: WebAskList.ListingTable[SmallProducer],
-      key: String,
-      messages: UniformMessages[Html]
+      key: List[String],
+      pageIn: PageIn[Html]
     ): Option[Html] = Some(
       views.html.softdrinksindustrylevy.helpers.listing_table(
-        key,
+        key.last,
         in.value.map { x =>
           Html(x.toString)
         },
-        messages
+        pageIn.messages
       )
     )
   }

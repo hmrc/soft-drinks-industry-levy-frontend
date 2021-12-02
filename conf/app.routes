@@ -54,3 +54,12 @@ POST        /uregistrations/*id                                sdil.controllers.
 
 GET         /pay-now                                           sdil.controllers.PaymentController.payNow()
 GET         /start-direct-debit-journey                        sdil.controllers.DirectDebitController.startDirectDebitJourney()
+
+
+
+
+# For testing widgets - Delete when done
+GET         /widgets/                          sdil.controllers.WidgetTestController.index(id = "")
+GET         /widgets/*id                       sdil.controllers.WidgetTestController.index(id: String)
+POST        /widgets/                          sdil.controllers.WidgetTestController.index(id = "")
+POST        /widgets/*id                       sdil.controllers.WidgetTestController.index(id: String)
