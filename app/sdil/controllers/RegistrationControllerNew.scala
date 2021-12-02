@@ -89,9 +89,9 @@ object RegistrationControllerNew {
       _            <- end("partnerships") when (orgType.entryName == OrganisationType.partnership.entryName)
       producerType <- ask[ProducerType]("producer")
       useCopacker  <- ask[Boolean]("copacked") when producerType == ProducerType.Small
-      packageOwn   <- ask[(Long, Long)]("package-own-uk") emptyUnless producerType != ProducerType.Not
-      copacks      <- ask[(Long, Long)]("package-copack")
-      imports      <- ask[(Long, Long)]("import")
+      packageOwn   <- askEmptyOption[(Long, Long)]("package-own-uk") emptyUnless producerType != ProducerType.Not
+      copacks      <- askEmptyOption[(Long, Long)]("package-copack")
+      imports      <- askEmptyOption[(Long, Long)]("import")
       noUkActivity = (copacks, imports).isEmpty
       smallProducerWithNoCopacker = producerType != ProducerType.Large && useCopacker.forall(_ == false)
       _ <- end("do-not-register") when (noUkActivity && smallProducerWithNoCopacker)

@@ -25,7 +25,7 @@
         </span>
     }
     <label for="@keyDots">
-        <span class="form-label">@messages(keyDots)</span>
+        <span class="form-label">@messages.decompose(keyDots)</span>
     @*    @errors.map { error =>
             <span class="error-message" data-journey="search-page:error:@keyDots">
             @messages(error.message, error.args: _*)
