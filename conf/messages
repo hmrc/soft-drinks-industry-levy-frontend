@@ -17,8 +17,15 @@ sdil.hint.optional=Optional
 sdil.common.error=Error
 sdil.common.cancel=Cancel
 
+generic.warning=Generic warning
+
 Some=Yes
 None=No
+true=Yes
+false=No
+
+g.subfieldDetailHeader=What are the bands?
+g.subfieldDetailBody=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
 
 error.sdilref.invalid=Small producer reference number must be 6 letters and 9 numbers
 error.sdilref.notSmall=Small producer reference number does not match a business that is currently registered as a \
@@ -116,7 +123,7 @@ package-own-uk.Some.value=<h2 class="heading-medium">How many litres will you pa
 package-own-uk.Some.value._1=Litres in the low band
 package-own-uk.Some.value._2=Litres in the high band
 package-own-uk.subfieldDetailHeader=What are the bands?
-package-own-uk.subfieldDetailBody= <p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
+package-own-uk.subfieldDetailBody=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
 package-own-uk.subfieldDetailHeader.1=I do not know how many litres
 package-own-uk.subfieldDetailBody.2=If you do not have the exact volumes you can enter an estimate.
 
@@ -1095,6 +1102,8 @@ packaged-as-a-contract-packer.help=A business is a small producer if it:\
   <li>has had less than 1 million litres of its own brands of liable drink packaged globally in the past 12 months</li>\
   <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
   </ul>
+packaged-as-a-contract-packer.subfieldDetailHeader=What are the bands?
+packaged-as-a-contract-packer.subfieldDetailBody=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
 exemptions-for-small-producers.help.header=What is a small producer?
 exemptions-for-small-producers.help=A business is a small producer if it:\
   <ul class="list list-bullet">\
@@ -1152,12 +1161,18 @@ brought-into-uk-from-small-producers.help=<p>If you are a registered small produ
   <li>contact details, EU VAT number (if they have one) and website of the business</li>\
   <li>amount of litres of liable drink packaged globally for brands the business owns in the past 12 months</li> \
   <li>signature of someone from the business, their position and the date of the signature</li></ul>
+brought-into-uk-from-small-producers.Some.value=<h2 class="heading-medium">How many litres?</h2>
+brought-into-uk.subfieldDetailHeader=What are the bands?
+brought-into-uk.subfieldDetailBody=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p> \
+  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
 heading.claim-credits-for-exports=Do you want to claim a credit for liable drink that has been exported?
 claim-credits-for-exports.help.header=What can I claim a credit for?
 claim-credits-for-exports.help=You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: \
   <ul class="list list-bullet"><li>brand of the liable drinks</li><li>supplier or consigner</li><li>customer and destination the liable drinks are supplied to</li><li>method of delivery</li></ul> \
   <p>If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.</p>
 claim-credits-for-exports.inner-heading=How many litres are you claiming a credit for?
+claim-credits-for-exports.Some.value=<h2 class="heading-medium">How many litres are you claiming a credit for?</h2>
+claim-credits-for-exports.repayment.warning=You can only claim credit if you''ve registered for the levy and paid it directly to HMRC. Claiming credits you''re not entitled to is a criminal offence.
 heading.claim-credits-for-lost-damaged=Do you want to claim a credit for any liable drink which have been lost or destroyed?
 claim-credits-for-lost-damaged.inner-heading=How many litres are you claiming a credit for?
 claim-credits-for-exports.lead.volMan=You can only claim a levy credit for drinks that you have paid the levy on \
@@ -1167,6 +1182,8 @@ claim-credits-for-lost-damaged.help=You can claim a credit for liable drinks tha
   <li>disposed of as waste</li><li>reprocessed</li><li>spilled and cannot be used</li></ul>\
   <p>To be able to claim this credit, you must have documentation containing information such as the details of the incident,\
    how and where it occurred, the amount of liable drink and whether it was in the low band or the high band.</p>
+claim-credits-for-lost-damaged.repayment.warning=You can only claim credit if you''ve registered for the levy and paid it directly to HMRC. Claiming credits you''re not entitled to is a criminal offence.
+claim-credits-for-lost-damaged.Some.value=<h2 class="heading-medium">How many litres are you claiming a credit for?</h2>
 heading.check-your-answers=Check your answers before sending your return
 heading.check-your-answers.orgName=
 period.check-your-answers={0} to {1}

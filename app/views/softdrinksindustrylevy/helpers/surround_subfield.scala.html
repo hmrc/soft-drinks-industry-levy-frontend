@@ -19,6 +19,17 @@
 @keyDash=@{fieldKey.mkString("-")}
 @keyDots=@{fieldKey.mkString(".")}
 
+@for((h) <- messages.list(fieldKey.head+".repayment.warning")){
+  <div class="notice" id="single-warning">
+    <i class="icon icon-important warning-icon-style">
+      <span class="visually-hidden">@messages("generic.warning")</span>
+    </i>
+    <strong class="bold-small warning-text-style" id="warning">
+      @h
+    </strong>
+  </div>
+}
+
 <div class="form-group">
   <label class="govuk-label" for="@keyDash">
     @messages.decompose(keyDots)
@@ -26,12 +37,23 @@
   @contents
 </div>
 
-@for((h,t) <- messages.list(fieldKey.head+".subfieldDetailHeader").zip(messages.list(fieldKey.head+".subfieldDetailBody"))){
-  <details class="padding-bottom-10 govuk-details">
-    <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
-    <div class="panel panel-border-narrow margin-bottom-1">
-      @t
-    </div>
-  </details>
+@if(messages.get(fieldKey.head+".subfieldDetailHeader").isDefined) {
+  @for((h,t) <- messages.list(fieldKey.head+".subfieldDetailHeader").zip(messages.list(fieldKey.head+".subfieldDetailBody"))){
+    <details class="padding-bottom-10 govuk-details">
+      <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
+      <div class="panel panel-border-narrow margin-bottom-1">
+        @t
+      </div>
+    </details>
+  }
+} else {
+  @for((h,t) <- messages.list("g.subfieldDetailHeader").zip(messages.list("g.subfieldDetailBody"))){
+    <details class="padding-bottom-10 govuk-details">
+      <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
+      <div class="panel panel-border-narrow margin-bottom-1">
+        @t
+      </div>
+    </details>
+  }
 }
 

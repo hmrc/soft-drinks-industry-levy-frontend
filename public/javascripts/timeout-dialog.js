@@ -1,7 +1,7 @@
 
 if(window.location.pathname !== "/soft-drinks-industry-levy/time-out") {
 $.timeoutDialog({
-    timeout: 900,
+    timeout: 9000000,
     countdown: 120,
     keep_alive_url: window.location.href,
     restart_on_yes: true,

@@ -19,12 +19,12 @@
 @tell
 @inner
 
-  @for((h,t) <- messages.list(key+".summarydetailHeader").zip(messages.list(key+".summarydetail"))){
-    <details>
-      <summary><span class="summary">@h</span></summary>
-      <div class="panel panel-border-narrow">
-        @t
-      </div>
-    </details>
-  }
+@for((h,t) <- messages.list(key+".help.header").zip(messages.list(key+".help"))){
+  <details>
+    <summary><span class="summary">@h</span></summary>
+    <div class="panel panel-border-narrow">
+      @t
+    </div>
+  </details>
+}
 
