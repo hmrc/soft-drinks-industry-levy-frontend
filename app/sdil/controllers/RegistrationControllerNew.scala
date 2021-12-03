@@ -86,7 +86,7 @@ object RegistrationControllerNew {
 
       orgType <- if (hasCTEnrolment) ask[OrganisationTypeSoleless]("organisation-type")
                 else ask[OrganisationType]("organisation-type")
-      _            <- end("partnerships") when (orgType.entryName == OrganisationType.partnership.entryName)
+      _            <- end("partnerships", uniform.fragments.partnerships()(_: Messages)) when (orgType.entryName == OrganisationType.partnership.entryName)
       producerType <- ask[ProducerType]("producer")
       useCopacker  <- ask[Boolean]("copacked") when producerType == ProducerType.Small
       packageOwn   <- askEmptyOption[(Long, Long)]("package-own-uk") emptyUnless producerType != ProducerType.Not
@@ -104,8 +104,7 @@ object RegistrationControllerNew {
       } else {
         List.empty[Site]
       }
-      packSites <- askListSimple[Site]("production-site-details") emptyUnless askPackingSites
-      _         <- askListSimple[Site]("sites") // not used?
+      packSites <- askListSimple[Site]("production-sites") emptyUnless askPackingSites
       addWarehouses <- isVoluntary match {
                         case true  => ask[Boolean]("ask-secondary-warehouses")
                         case false => pure(false)
@@ -122,22 +121,25 @@ object RegistrationControllerNew {
         useCopacker.collect { case true => Litreage(1, 1) }, // TODO - why (1,1) ?
         producerType == ProducerType.Large
       )
-      declaration = Html("TODO declaration") // uniform.fragments.registerDeclarationNew(
-      //   fd,
-      //   packLarge,
-      //   useCopacker,
-      //   activity.ProducedOwnBrand,
-      //   activity.CopackerAll,
-      //   activity.Imported,
-      //   isVoluntary,
-      //   regDate,
-      //   warehouses,
-      //   packSites,
-      //   contactDetails,
-      //   implicitly[UniformMessages[Html]]
-      // )
+      declaration = uniform.fragments.registerDeclaration(
+        fd,
+        producerType match {
+          // old packLarge field - consider template refactor
+          case ProducerType.Large => Some(true)
+          case ProducerType.Small => Some(false)
+          case _                  => None
+        },
+        useCopacker,
+        activity.ProducedOwnBrand,
+        activity.CopackerAll,
+        activity.Imported,
+        isVoluntary,
+        regDate,
+        warehouses,
+        packSites,
+        contactDetails
+      )(_: Messages)
       _ <- tell("declaration", declaration)
-
       subscription = Subscription(
         fd.utr,
         fd.rosmData.organisationName,
@@ -156,7 +158,13 @@ object RegistrationControllerNew {
       )
       _ <- convertWithKey("submission")(backendCall(subscription))
       _ <- nonReturn("reg-complete")
-      _ <- tell("confirmation", Html("TODO: confirmation-page"))
+      _ <- tell(
+            "confirmation", { (msg: Messages) =>
+              val complete = uniform.fragments.registrationComplete(subscription.contact.email)(msg).some
+              val subheading = Html(msg("complete.subheading", subscription.orgName)).some
+              views.html.uniform.journeyEndNew("complete", whatHappensNext = complete, getTotal = subheading)(msg)
+            }
+          )
     } yield subscription
 
 }

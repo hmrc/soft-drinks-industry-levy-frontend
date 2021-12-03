@@ -8,7 +8,7 @@
     <td>@messages.decompose((key.last :: ref).mkString("."))</td>
     <td>@representation</td>
     @if(breadcrumbs.contains(ref)) {
-      <td><a href="@{ltbs.uniform.common.web.relativePath(key, ref)}">@messages.decompose((key ++ ref :+ "edit").mkString("."))</a></td>
+      <td><a href="@{ltbs.uniform.common.web.relativePath(key, ref)}?leap-to=@keyDots">@messages.decompose((key ++ ref :+ "edit").mkString("."))</a></td>
     } else {
       <td>&nbsp;</td>
     }

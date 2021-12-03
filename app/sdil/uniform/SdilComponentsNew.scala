@@ -57,6 +57,7 @@ trait SdilComponentsNew {
       stepDetails: StepDetails[Html, Boolean]
     ): Option[Html] = Some(
       views.html.softdrinksindustrylevy.helpers.radios(
+        stepDetails.stepKey,
         stepDetails.fieldKey,
         stepDetails.tell,
         radioOptions = true.toString :: false.toString :: Nil,
@@ -92,12 +93,14 @@ trait SdilComponentsNew {
           case _                  => None
         }
 
-      max match {
+      val control = max match {
         case Some(x) if x >= 255 =>
           views.html.softdrinksindustrylevy.helpers.textArea_new(fieldKey, value, errors)(pageIn.messages)
         case _ =>
           views.html.softdrinksindustrylevy.helpers.inputText_new(fieldKey, value, errors)(pageIn.messages)
       }
+
+      views.html.softdrinksindustrylevy.helpers.surround(stepKey, fieldKey, tell, errors, pageIn.messages)(control)
 
     }
   }
@@ -197,7 +200,6 @@ trait SdilComponentsNew {
       pageIn: PageIn[Html],
       stepDetails: StepDetails[Html, Set[E]]
     ): Option[Html] = Some {
-
       // work out what the available options are - if a subset rule is
       // defined only show the options they're allowed to select
       // otherwise show the full enum.values
@@ -209,6 +211,7 @@ trait SdilComponentsNew {
 
       val existing = decode(stepDetails.data).toOption.getOrElse(Set.empty)
       views.html.softdrinksindustrylevy.helpers.checkboxes(
+        stepDetails.stepKey,
         stepDetails.fieldKey,
         stepDetails.tell,
         options.map(e => e.entryName -> existing.contains(e)),
@@ -248,6 +251,16 @@ trait SdilComponentsNew {
         },
         pageIn.messages
       )
+    )
+  }
+
+  implicit val tellOldTemplates = new WebTell[Html, Messages => Html] {
+    def render(
+      in: Messages => Html,
+      key: List[String],
+      pageIn: PageIn[Html]
+    ): Option[Html] = Some(
+      in(AdaptMessages.ufMessagesToPlayMessages(pageIn.messages))
     )
   }
 

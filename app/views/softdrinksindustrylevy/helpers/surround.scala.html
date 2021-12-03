@@ -14,10 +14,10 @@
  * limitations under the License.
  *@
 
-@(fieldKey: List[String], tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html])(contents: Html*)
+@(pageKey: List[String], fieldKey: List[String], tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html])(contents: Html*)
 
 @if(fieldKey.size == 1) {
-    @surround_top(fieldKey.head, tell, errors, messages)(contents:_*)
+    @surround_top(pageKey, fieldKey.head, tell, errors, messages)(contents:_*)
 } else {
     @surround_subfield(fieldKey, errors, messages)(contents:_*)
 }

@@ -67,6 +67,7 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
     case (_, sole) :: Nil => sole
     case many =>
       views.html.softdrinksindustrylevy.helpers.surround(
+        stepDetails.stepKey,
         stepDetails.fieldKey,
         stepDetails.tell,
         stepDetails.errors,
@@ -92,6 +93,7 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
     }
 
     views.html.softdrinksindustrylevy.helpers.radios(
+      stepDetails.stepKey,
       stepDetails.fieldKey,
       stepDetails.tell,
       reordered.map(_._1),
@@ -99,6 +101,41 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
       stepDetails.errors,
       pageIn.messages,
       reordered.collect { case (k, Some(v)) => (k, v) }.toMap
+    )
+  }
+
+  implicit override def unitField = new WebAsk[Html, Unit] {
+    def decode(out: Input): Either[ltbs.uniform.ErrorTree, Unit] = Right(())
+    def encode(in: Unit): Input = Input.empty
+    def render(
+      pageIn: PageIn[Html],
+      stepDetails: StepDetails[Html, Unit]
+    ): Option[Html] = Some {
+      views.html.softdrinksindustrylevy.helpers
+        .surround(stepDetails.stepKey, stepDetails.fieldKey, stepDetails.tell, stepDetails.errors, pageIn.messages)(
+          Html(s"""<input type="hidden" name="${stepDetails.fieldKey.mkString(".")}" value="()" />"""))
+    }
+  }
+
+  implicit override def nothingField = new WebAsk[Html, Nothing] {
+    def decode(out: Input): Either[ltbs.uniform.ErrorTree, Nothing] =
+      Left(ErrorMsg("tried to decode to nothing").toTree)
+
+    def encode(in: Nothing): Input =
+      sys.error("encoding nothing is not possible!")
+
+    def render(
+      pageIn: PageIn[Html],
+      stepDetails: StepDetails[Html, Nothing]
+    ): Option[Html] = Some(
+      views.html.softdrinksindustrylevy.helpers
+        .surround_top(
+          stepDetails.stepKey,
+          stepDetails.fieldKey.head,
+          stepDetails.tell,
+          stepDetails.errors,
+          pageIn.messages,
+          true)()
     )
   }
 

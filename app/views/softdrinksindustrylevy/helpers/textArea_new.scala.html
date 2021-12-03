@@ -18,17 +18,8 @@
 @keyDots = @{key.mkString(".")}
 @keyDash = @{key.mkString("-")}
 
-<div class="form-group form-@keyDash @if(errors.nonEmpty) {form-group-error}">
-    @errors.valueAtRootList.map { error =>
-        <span id="@key-error" class="error-message">
-            <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(key).render(messages)
-        </span>
-    }
-    <label for="@keyDots">
-        <span class="form-label">@messages(keyDots)</span>
-    </label>
     <textarea class="form-control outline
         @if(errors.nonEmpty) {form-control-error}"
         id="@keyDash"
         name="@keyDots">@value</textarea>
-</div>
+

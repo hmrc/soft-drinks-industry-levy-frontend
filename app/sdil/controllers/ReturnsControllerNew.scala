@@ -37,6 +37,9 @@ import ltbs.uniform.interpreters.playframework.PersistenceEngine
 import sdil.actions.AuthorisedRequest
 import sdil.actions.RegisteredRequest
 import play.twirl.api.Html
+import java.time._
+import java.time.format._
+import sdil.utility.stringToFormatter
 
 class ReturnsControllerNew(
   mcc: MessagesControllerComponents,
@@ -79,7 +82,9 @@ class ReturnsControllerNew(
         r <- if (pendingReturns.contains(period)) {
               def submitReturn(sdilReturn: SdilReturn): Future[Unit] =
                 sdilConnector.returns_update(subscription.utr, period, sdilReturn)
-              interpret(ReturnsControllerNew.journey(None, subscription, broughtForward, isSmallProd, submitReturn))
+              interpret(
+                ReturnsControllerNew
+                  .journey(sdilRef, period, None, subscription, broughtForward, isSmallProd, submitReturn))
                 .run(id) { _ =>
                   Redirect(routes.ServicePageController.show())
                 }
@@ -101,6 +106,8 @@ object ReturnsControllerNew {
   val costHigher = BigDecimal("0.24")
 
   private[controllers] def journey(
+    sdilRef: String,
+    period: ReturnPeriod,
     default: Option[SdilReturn] = None,
     subscription: RetrievedSubscription,
     broughtForward: BigDecimal,
@@ -170,7 +177,78 @@ object ReturnsControllerNew {
       _ <- tell("cya", Html("TODO - cya"))
       _ <- convertWithKey(s"return-submission")(submitReturn(sdilReturn)) // sdilConnector.returns_update(subscription.utr, period, sdilReturn))
       _ <- nonReturn("return-complete")
-      _ <- tell("confirmation", Html("TODO - confirmation"))
+      _ <- tell(
+            "return-sent", { msg: Messages =>
+              val now = LocalDate.now
+              val data = {
+                // previously in SdilWMController.returnAmount
+                val ra = List(
+                  ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
+                  ("exemptions-for-small-producers", sdilReturn.packSmall.map { _.litreage }.combineAll, 0),
+                  ("brought-into-uk", sdilReturn.importLarge, 1),
+                  ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
+                  ("claim-credits-for-exports", sdilReturn.export, -1),
+                  ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
+                )
+                if (!isSmallProd)
+                  ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
+                else
+                  ra
+              }
+
+              // previously in SdilWMController.calculateSubtotal
+              val subtotal: BigDecimal =
+                data.map { case (_, (l, h), m) => costLower * l * m + costHigher * h * m }.sum
+
+              val returnDate = msg(
+                "return-sent.returnsDoneMessage",
+                period.start.format("MMMM"),
+                period.end.format("MMMM"),
+                period.start.getYear.toString,
+                subscription.orgName,
+                LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
+                now.format("dd MMMM yyyy")
+              )
+              val total = subtotal - broughtForward
+              val formatTotal =
+                if (total < 0)
+                  f"-£${total.abs}%,.2f"
+                else
+                  f"£$total%,.2f"
+
+              val prettyPeriod =
+                msg(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))
+
+              val getTotal =
+                if (total <= 0)
+                  msg("return-sent.subheading.nil-return")
+                else {
+                  msg(
+                    "return-sent.subheading",
+                    prettyPeriod,
+                    subscription.orgName
+                  )
+                }
+
+              val whatHappensNext = views.html.uniform.fragments
+                .returnsPaymentsBlurb(
+                  subscription,
+                  period,
+                  sdilRef,
+                  total,
+                  formatTotal,
+                  variation,
+                  data,
+                  costLower,
+                  costHigher,
+                  subtotal,
+                  broughtForward)(msg)
+                .some
+
+              views.html.uniform
+                .journeyEndNew("return-sent", now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)(msg)
+            }
+          )
     } yield (sdilReturn, variation)
   }
 

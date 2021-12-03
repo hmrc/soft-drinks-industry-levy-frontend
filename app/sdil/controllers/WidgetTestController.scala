@@ -77,6 +77,7 @@ class WidgetTestController(
 
   implicit def tellCyaTestThing = new WebTell[Html, CYATestThing] {
     def render(in: CYATestThing, key: List[String], pageIn: PageIn[Html]): Option[Html] = Some {
+
       views.html.softdrinksindustrylevy.helpers.cya_simple_block(
         key,
         pageIn.breadcrumbs,
@@ -96,14 +97,16 @@ class WidgetTestController(
              "checkboxes-test",
              validation = Subset(Nat.One, Nat.Two, Nat.Three) // FiveThousandAndSix shouldn't have a checkbox
            )
+      _     <- tell("a-tell", Html("hiya"))
       anInt <- ask[Int]("an-int") when ns.contains(Nat.One) // only ask the user if they picked Nat.One
       _     <- ask[String]("textfield-test", validation = Rule.maxLength(254)) // should render a normal textfield
       ta    <- ask[String]("text-area-test", validation = Rule.maxLength(255)) // should render a textarea on account of the length
       _     <- tell("check-your-answers-test", CYATestThing(ns, anInt.getOrElse(0), ta))
+      _     <- end("an-end", Html("hiya!")) when ns.contains(Nat.Three)
     } yield ()
 
     val wm = interpret(simpleJourney)
-    wm.run(id) { date =>
+    wm.run(id, config = JourneyConfig(leapAhead = true)) { date =>
       Future.successful(Ok(date.toString))
     }
 

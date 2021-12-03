@@ -14,12 +14,45 @@
  * limitations under the License.
  *@
 
-@(key: String, tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html])(inner: Html*)
+@(pageKey: List[String], fieldKey: String, tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html], end: Boolean = false)(inner: Html*)
+
+@keyDots = @{pageKey.mkString(".")}
+    <fieldset class="form-field-group  @if(errors.nonEmpty){after-error-summary}">
+        <legend>
+            @for(m <- messages.get(s"heading.$keyDots.orgName")) {
+                <span class="govuk-caption-xl service-comp-name">@m</span>
+            }
+            <h1 class="heading-large  @{messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")}">
+                @messages(s"heading.$keyDots")
+            </h1>
+        </legend>
+    @for(msg <- messages.list(s"$keyDots.paragraph")) {
+        <div class="lede">
+            <p tabindex="-1">@msg</p>
+        </div>
+    }
+    @for(m <- messages.get(s"$keyDots.lead")) {
+        <p tabindex="-1" class="lede">@m</p>
+    }
+
+        @for(m <- messages.get(s"$keyDots.hint")) {
+            <span class="form-hint">@m</span>
+            }
+
+        @errors.valueAtRootList.map { error =>
+            <span id="@fieldKey-error" class="error-message">
+                <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(pageKey).render(messages)
+              </span>
+        }
+
 
 @tell
 @inner
 
-  @for((h,t) <- messages.list(key+".summarydetailHeader").zip(messages.list(key+".summarydetail"))){
+    </fieldset>
+
+
+  @for((h,t) <- messages.list(keyDots+".summarydetailHeader").zip(messages.list(keyDots+".summarydetail"))){
     <details>
       <summary><span class="summary">@h</span></summary>
       <div class="panel panel-border-narrow">
@@ -28,3 +61,8 @@
     </details>
   }
 
+@if(!end){
+  <button class="button" type="submit" id="continue-button">
+    @messages(List(s"$keyDots.continue","sdil.common.save-continue"))
+  </button>
+}

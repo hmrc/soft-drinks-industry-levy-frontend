@@ -68,7 +68,7 @@ class VariationsControllerNew(
           returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
           response <- interpret(VariationsControllerNew.journey(subscription, sdilRef, variableReturns, returnPeriods))
                        .run(id) { output =>
-                         Future.successful(Ok("!"))
+                         Future.successful(Ok("!")) // TODO some action
                        }
         } yield response
       case None => Future.successful(NotFound(""))
@@ -114,6 +114,26 @@ object VariationsControllerNew {
   import cats.Order
   implicit val ldOrder: Order[LocalDate] = Order.by(_.toEpochDay)
 
+  def changeBusinessAddressJourney(
+    subscription: RetrievedSubscription,
+    sdilRef: String
+  ) = {
+
+    def htmlMessage: Html =
+      Html(
+        "TODO - on the old version the content is constructed from update_business_addresses.scala.html, " +
+          "but this also contains the form, button, etc which is unneeded with the new version")
+
+    val base = RegistrationVariationData(subscription)
+
+    for {
+      _         <- tell("change-business-address", htmlMessage)
+      variation <- contactUpdate(base)
+      _         <- tell("checkyouranswers", variation)
+    } yield ()
+
+  }
+
   private def deregisterUpdate(
     data: RegistrationVariationData
   ) =
@@ -148,29 +168,30 @@ object VariationsControllerNew {
 
     import ContactChangeType._
 
+    // which things are they allowed to change?
+    val changeOptions =
+      if (data.isVoluntary)
+        ContactChangeType.values.filter(_ != ContactChangeType.Sites)
+      else
+        ContactChangeType.values
+
     for {
+
+      // give them a multiple-choice list of things to change
       change <- ask[Set[ContactChangeType]](
                  "change-registered-details",
-                 validation = Rule
-                   .nonEmpty[Set[ContactChangeType]] alongWith (if (data.isVoluntary) {
-                                                                  Rule.in(
-                                                                    ContactChangeType.values
-                                                                      .filter(_ != ContactChangeType.Sites)
-                                                                      .map(Set(_)))
-                                                                } else Rule.alwaysPass)
+                 validation = Rule.nonEmpty[Set[ContactChangeType]] alongWith Subset(changeOptions: _*)
                )
 
-      packSites <- if (change.contains(Sites)) {
-                    askListSimple[Site](
-                      "packaging-site-details",
-                      validation = Rule.nonEmpty[List[Site]],
-                      default = data.updatedProductionSites.toList.some
-                    ) emptyUnless (data.producer.isLarge.contains(true) || data.copackForOthers)
-                  } else pure(data.updatedProductionSites.toList)
+      packSites <- askListSimple[Site](
+                    "packaging-site-details",
+                    validation = Rule.nonEmpty[List[Site]],
+                    default = data.updatedProductionSites.toList.some
+                  ) emptyUnless ((data.producer.isLarge.contains(true) || data.copackForOthers) && change.contains(
+                    Sites))
 
-      warehouses <- if (change.contains(Sites)) {
-                     askListSimple[Site]("warehouse-details", default = data.updatedWarehouseSites.toList.some)
-                   } else pure(data.updatedWarehouseSites.toList)
+      warehouses <- askListSimple[Site]("warehouse-details", default = data.updatedWarehouseSites.toList.some) emptyUnless change
+                     .contains(Sites)
 
       contact <- if (change.contains(ContactPerson)) {
                   ask[ContactDetails]("contact-details", default = data.updatedContactDetails.some)
@@ -274,6 +295,8 @@ object VariationsControllerNew {
                          convertWithKey("balance")(balanceFunction())
                        }
       newReturn <- ReturnsControllerNew.journey(
+                    subscription.sdilRef,
+                    returnPeriod,
                     origReturn.some,
                     subscription,
                     broughtForward,
