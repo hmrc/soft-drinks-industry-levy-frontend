@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(errors: ltbs.uniform.ErrorTree, messages: UniformMessages[Html])
+@(errors: ltbs.uniform.ErrorTree, key: List[String], messages: UniformMessages[Html])
 
 @* the play-ui version uses the wrong classes *@
 @if(errors.nonEmpty) {
@@ -28,10 +28,10 @@
             @for((path, pathErrors) <- errors) {
                 @for(error <- pathErrors.toList) {
                 <li>
-                    <a href="#@{path.toList.mkString("-")}"
-                    id="@{path.toList.mkString("-")}-error-summary"
-                    data-focuses="@{path.toList.mkString("-")}">
-                    @{error.render(messages)}
+                    <a href="#@{(key ++ path.head).mkString("_")}-0"
+                    id="@{key.mkString("-")}-error-summary"
+                    data-focuses="#@{(key ++ path.head).mkString("_")}-0">
+                    @error.prefixWith(key ++ path.head).render(messages)
                     </a>
                 </li>
                 }

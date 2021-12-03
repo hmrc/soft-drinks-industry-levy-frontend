@@ -35,7 +35,7 @@
 
     @helper.form(action = play.api.mvc.Call("post", "")) {
     <input type="hidden" name="csrfToken" value="@csrf" />
-    @error_summary_new(errors, messages)
+    @error_summary_new(errors, key, messages)
     <fieldset class="form-field-group  @if(errors.nonEmpty){after-error-summary}">
         <legend>
             @for(m <- messages.get(s"heading.$keyDots.orgName")) {
@@ -61,9 +61,9 @@
         @errors.valueAtRootList.map { error =>
             <span id="@key-error" class="error-message">
                 <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(key).render(messages)
-              </span>
+            </span>
         }
-        
+
   
 
         @html

@@ -21,11 +21,12 @@ import common.web._
 import interpreters.playframework._
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Request}
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import views.html.uniform
 import sdil.config.AppConfig
 import cats.implicits._
 import sdil.uniform.SdilComponentsNew
+
 import scala.concurrent.duration.Duration
 
 trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew with InferWebAsk[Html] {
@@ -44,6 +45,7 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
     messagesApi.preferred(request).convertMessages() |+|
       UniformMessages.bestGuess
   }.map { Html(_) }
+//    UniformMessages.attentionSeeker.map(HtmlFormat.escape)
 
   def pageChrome(
     key: List[String],
