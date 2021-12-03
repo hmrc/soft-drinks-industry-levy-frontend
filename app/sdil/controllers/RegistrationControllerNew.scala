@@ -65,8 +65,9 @@ class RegistrationControllerNew(
         def backendCall(s: Subscription): Future[Unit] =
           sdilConnector.submit(Subscription.desify(s), fd.rosmData.safeId)
 
-        interpret(RegistrationControllerNew.journey(hasCTEnrolment, fd, backendCall)).run(id) { _ =>
-          Redirect(routes.ServicePageController.show())
+        interpret(RegistrationControllerNew.journey(hasCTEnrolment, fd, backendCall)).run(id, config = journeyConfig) {
+          _ =>
+            Redirect(routes.ServicePageController.show())
         }
       case None =>
         logger.warn("nothing in cache") // TODO we should set the cache and redirect

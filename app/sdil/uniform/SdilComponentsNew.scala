@@ -37,6 +37,8 @@ trait SdilComponentsNew {
 
   def ufViews: views.uniform.Uniform
 
+  def journeyConfig = JourneyConfig(askFirstListItem = true)
+
   type FormHtml[A] = WebAsk[Html, A]
 
   implicit val booleanForm: WebAsk[Html, Boolean] = new WebAsk[Html, Boolean] {
@@ -179,7 +181,10 @@ trait SdilComponentsNew {
         pageIn: PageIn[Html],
         stepDetails: StepDetails[Html, LocalDate]
       ): Option[Html] = Some {
-        date_new(stepDetails.stepKey, stepDetails.data, stepDetails.errors, pageIn.messages)
+        val control = date_new(stepDetails.stepKey, stepDetails.data, stepDetails.errors, pageIn.messages)
+        views.html.softdrinksindustrylevy.helpers
+          .surround(stepDetails.stepKey, stepDetails.fieldKey, stepDetails.tell, stepDetails.errors, pageIn.messages)(
+            control)
       }
     }
 

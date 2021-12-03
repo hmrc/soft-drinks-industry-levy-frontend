@@ -33,7 +33,7 @@ import sdil.actions._
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend.Site
+import sdil.models.backend.{Site, Subscription}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
 import sdil.uniform._
@@ -105,8 +105,26 @@ class WidgetTestController(
       _     <- end("an-end", Html("hiya!")) when ns.contains(Nat.Three)
     } yield ()
 
-    val wm = interpret(simpleJourney)
-    wm.run(id, config = JourneyConfig(leapAhead = true)) { date =>
+    // test simple controls
+    //    val wm = interpret(simpleJourney)
+
+    // test reg journey inside a session (rather than mongo) and bypassing auth, etc
+    val wm = interpret(
+      RegistrationControllerNew.journey(
+        true,
+        new RegistrationFormData(
+          new RosmRegistration(
+            "safe",
+            None,
+            None,
+            Address("12 The Street", "Genericford", "Blandshire", "", "AB12 3CD")),
+          "0123456789"
+        ), { _: Subscription =>
+          Future.successful(())
+        }
+      ))
+
+    wm.run(id, config = journeyConfig) { date =>
       Future.successful(Ok(date.toString))
     }
 

@@ -67,7 +67,7 @@ class VariationsControllerNew(
           variableReturns <- sdilConnector.returns_variable(base.original.utr)
           returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
           response <- interpret(VariationsControllerNew.journey(subscription, sdilRef, variableReturns, returnPeriods))
-                       .run(id) { output =>
+                       .run(id, config = journeyConfig) { output =>
                          Future.successful(Ok("!")) // TODO some action
                        }
         } yield response
@@ -80,7 +80,7 @@ class VariationsControllerNew(
 
     val simpleJourney = ask[LocalDate]("test")
     val wm = interpret(simpleJourney)
-    wm.run(id) { date =>
+    wm.run(id, config = journeyConfig) { date =>
       Future.successful(Ok(date.toString))
     }
 

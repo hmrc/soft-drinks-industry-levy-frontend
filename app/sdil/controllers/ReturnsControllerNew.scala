@@ -85,7 +85,7 @@ class ReturnsControllerNew(
               interpret(
                 ReturnsControllerNew
                   .journey(sdilRef, period, None, subscription, broughtForward, isSmallProd, submitReturn))
-                .run(id) { _ =>
+                .run(id, config = journeyConfig) { _ =>
                   Redirect(routes.ServicePageController.show())
                 }
             } else
