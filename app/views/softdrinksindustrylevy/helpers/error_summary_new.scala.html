@@ -29,29 +29,29 @@
         <ul class="error-summary-list">
             @for((path, pathErrors) <- errors) {
 
-                @defining(
-                    (key ++ path.head).mkString("_") match {
-                        case "package-own-uk_Some_value__1" => {
-                            s"""${(key ++ path.head).mkString("-")}"""
-                        }
-                        case _ => {
-                            s"""${(key ++ path.head).mkString("-")}"""
-                        }
-                    }
-                ) { case (errorSummaryRef) =>
+@*                @defining(*@
+@*                    (key ++ path.head).mkString("_") match {*@
+@*                        case "package-own-uk_Some_value__1" => {*@
+@*                            s"""${(key ++ path.head).mkString("-")}"""*@
+@*                        }*@
+@*                        case _ => {*@
+@*                            s"""${(key ++ path.head).mkString("-")}"""*@
+@*                        }*@
+@*                    }*@
+@*                ) { case (errorSummaryRef) =>*@
 
                     @for(error <- pathErrors.toList) {
                         <li>
-                            <a href="#@errorSummaryRef"
+                            <a href="#@{(key ++ path.head).mkString("-")}"
                             id="@{
                                 key.mkString("-")
                             }-error-summary"
-                            data-focuses="@errorSummaryRef">
+                            data-focuses="@{(key ++ path.head).mkString("-")}">
                             @error.prefixWith(key ++ path.head).render(messages)
                             </a>
                         </li>
                     }
-                }
+@*//                }*@
             }
         </ul>
     </div>

@@ -22,7 +22,6 @@
 @keyDots=@{fieldKey.mkString(".")}
 
 @surround(fieldKey, tell, errors, messages) {
-    @errors
   <div class="form-group @if(errors.valueAtRootList.nonEmpty){form-group-error}">
 
     @radioOptions.zipWithIndex.map{ case (opt,num) =>

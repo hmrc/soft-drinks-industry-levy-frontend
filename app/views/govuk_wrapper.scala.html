@@ -121,8 +121,4 @@
     sidebar = sidebar)
 }
 
-@tabTitle = @{
-    if(form.exists(_.hasErrors)) s"${Messages("sdil.common.error")}: $title" else title
-}
-
-@{(new GovUkTemplate()).apply(Some(tabTitle), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(viewHelpers.footerLinks()), true)(content)}
+@{(new GovUkTemplate()).apply(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(viewHelpers.footerLinks()), true)(content)}

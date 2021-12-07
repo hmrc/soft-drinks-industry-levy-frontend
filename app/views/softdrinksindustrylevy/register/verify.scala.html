@@ -52,7 +52,10 @@
         </dl>
 }
 
-@main_template(title = verifyTitle, form = Some(verifyForm)) {
+@main_template(
+    title = if(verifyForm.hasErrors) s"${Messages("sdil.common.error")}: $verifyTitle" else verifyTitle,
+    form = Some(verifyForm)
+) {
     @if(!alreadyRegistered) {
     @error_summary(verifyForm)
     @viewHelpers.form(sdil.controllers.routes.VerifyController.submit()) {
