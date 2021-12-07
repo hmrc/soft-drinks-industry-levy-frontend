@@ -16,6 +16,8 @@
 
 @(errors: ltbs.uniform.ErrorTree, key: List[String], messages: UniformMessages[Html])
 
+
+
 @* the play-ui version uses the wrong classes *@
 @if(errors.nonEmpty) {
     <div class="error-summary"
@@ -26,14 +28,29 @@
         <h2 id="error-summary-heading" class="heading-medium error-summary-heading">@messages("sdil.common.errorSummary")</h2>
         <ul class="error-summary-list">
             @for((path, pathErrors) <- errors) {
-                @for(error <- pathErrors.toList) {
-                <li>
-                    <a href="#@{(key ++ path.head).mkString("_")}-0"
-                    id="@{key.mkString("-")}-error-summary"
-                    data-focuses="#@{(key ++ path.head).mkString("_")}-0">
-                    @error.prefixWith(key ++ path.head).render(messages)
-                    </a>
-                </li>
+
+                @defining(
+                    (key ++ path.head).mkString("_") match {
+                        case "package-own-uk_Some_value__1" => {
+                            s"""${(key ++ path.head).mkString("-")}"""
+                        }
+                        case _ => {
+                            s"""${(key ++ path.head).mkString("-")}"""
+                        }
+                    }
+                ) { case (errorSummaryRef) =>
+
+                    @for(error <- pathErrors.toList) {
+                        <li>
+                            <a href="#@errorSummaryRef"
+                            id="@{
+                                key.mkString("-")
+                            }-error-summary"
+                            data-focuses="@errorSummaryRef">
+                            @error.prefixWith(key ++ path.head).render(messages)
+                            </a>
+                        </li>
+                    }
                 }
             }
         </ul>
