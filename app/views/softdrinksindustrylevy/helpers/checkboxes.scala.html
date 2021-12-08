@@ -14,12 +14,12 @@
  * limitations under the License.
  *@
 
-@(fieldKey: List[String], tell: Option[Html], checkboxes: Seq[(String, Boolean)], errors: ErrorTree, messages: UniformMessages[Html], conditional: PartialFunction[String,Html] = PartialFunction.empty)
+@(pageKey: List[String], fieldKey: List[String], tell: Option[Html], checkboxes: Seq[(String, Boolean)], errors: ErrorTree, messages: UniformMessages[Html], conditional: PartialFunction[String,Html] = PartialFunction.empty)
 
 @keyDash=@{fieldKey.mkString("-")}
 @keyDots=@{fieldKey.mkString(".")}
 
-@surround(fieldKey, tell, errors, messages) {
+@surround(pageKey, fieldKey, tell, errors, messages) {
 
     <div class="govuk-checkboxes">
     @checkboxes.zipWithIndex.map{ case ((opt, ticked),num) =>

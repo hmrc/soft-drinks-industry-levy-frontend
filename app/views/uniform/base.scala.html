@@ -36,49 +36,9 @@
     }
 
     @helper.form(action = play.api.mvc.Call("post", "")) {
-    <input type="hidden" name="csrfToken" value="@csrf" />
-    @error_summary_new(errors, key, messages)
-    <fieldset class="form-field-group  @if(errors.nonEmpty){after-error-summary}">
-        <legend>
-            @for(m <- messages.get(s"heading.$keyDots.orgName")) {
-                <span class="govuk-caption-xl service-comp-name">@m</span>
-            }
-            <h1 class="heading-large  @{messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")}">
-                @messages(s"heading.$keyDots")
-            </h1>
-        </legend>
-    @for(msg <- messages.list(s"$keyDots.paragraph")) {
-        <div class="lede">
-            <p tabindex="-1">@msg</p>
-        </div>
-    }
-    @for(m <- messages.get(s"$keyDots.lead")) {
-        <p tabindex="-1" class="lede">@m</p>
-    }
+        <input type="hidden" name="csrfToken" value="@csrf" />
 
-        @for(m <- messages.get(s"$keyDots.hint")) {
-            <span class="form-hint">@m</span>
-            }
-        
-        @errors.valueAtRootList.map { error =>
-            <span id="@key-error" class="error-message">
-                <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(key).render(messages)
-            </span>
-        }
-
-  
-
+        @error_summary_new(errors, key, messages)
         @html
-
-@*        @for((help,title) <- messages.list(s"$keyDots.help") zip messages.list(s"$keyDots.help.header")) {
-            @details(title.toString) {
-                <div>@help</div>
-            }
-        } *@
-    </fieldset>
-
-        <button class="button" type="submit" id="continue-button">
-        @messages(List(s"$keyDots.continue","sdil.common.save-continue"))
-        </button>
     }
 }

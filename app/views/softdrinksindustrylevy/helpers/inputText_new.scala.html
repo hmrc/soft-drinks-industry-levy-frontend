@@ -14,27 +14,13 @@
  * limitations under the License.
  *@
 
-@(key: List[String], value: String, errors: ErrorTree)(implicit messages: UniformMessages[Html])
-@keyDots = @{key.mkString(".")}
-@keyDash = @{key.mkString("-")}
+@(fieldKey: List[String], value: String, errors: ErrorTree)(implicit messages: UniformMessages[Html])
+@keyDots = @{fieldKey.mkString(".")}
+@keyDash = @{fieldKey.mkString("-")}
 
-<div class="form-group form-@keyDash @if(errors.nonEmpty) {form-group-error}">
-    @errors.valueAtRootList.map { error =>
-        <span id="@key-error" class="error-message">
-            <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(key).render(messages)
-        </span>
-    }
-    <label for="@keyDots">
-        <span class="form-label">@messages.decompose(keyDots)</span>
-    @*    @errors.map { error =>
-            <span class="error-message" data-journey="search-page:error:@keyDots">
-            @messages(error.message, error.args: _*)
-            </span>
-        }  *@
-    </label>
     <input class="form-control outline
         @if(errors.nonEmpty) {form-control-error}"
         id="@keyDash"
         name="@keyDots"
-        value="@value">
-</div>
+        value="@value" />
+

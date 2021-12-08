@@ -1,0 +1,65 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import sdil.config.AppConfig
+@import java.time.{LocalDate, LocalTime, ZoneId}
+@import java.time.format.DateTimeFormatter
+
+@(id: String, now: LocalDate = LocalDate.now, updateTimeMessage: Option[Html] = None,
+  whatHappensNext: Option[Html] = None, getTotal: Option[Html] = None)(implicit messages: Messages)
+
+<div class="govuk-box-highlight">
+    <h1 class="heading-xlarge">@Messages(s"$id.title")</h1>
+
+    <p class="font-large">@{getTotal.getOrElse{Html(Messages(s"$id.subheading"))}}</p>
+</div>
+
+<p><a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a></p>
+
+@if(updateTimeMessage.nonEmpty) {
+    @updateTimeMessage.map { updatedTimeMessage =>
+        <p>@updatedTimeMessage</p>
+    }
+} else {
+    @if(Messages.isDefinedAt(s"$id.your.updates")) {
+        <p>
+        @Messages(
+            s"$id.your.updates",
+            now.format("d MMMM yyyy"),
+            LocalTime.now(
+                ZoneId.of("Europe/London"))
+                    .format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
+        )
+        </p>
+    }
+}
+
+@if(id == "complete") {
+    <p>@Messages(s"$id.extraParagraph")</p>
+}
+<h2 class="heading-medium">
+    @Messages(Seq(s"$id.what-happens-next-heading", "sdil.complete.what-happens.title"))
+</h2>
+
+@if(whatHappensNext.nonEmpty) {
+    @whatHappensNext.map { whatHappensNext =>
+        @whatHappensNext
+    }
+} else {
+    @if(Messages.isDefinedAt(s"$id.what-happens-next")) {
+        <p>@Html(Messages(s"$id.what-happens-next"))</p>
+    }
+}

@@ -16,13 +16,16 @@
 
 @import views.html.helper.FieldElements
 @import views.html.helper.form
-@(fieldKey: List[String], tell: Option[Html], radioOptions: Seq[String], existing: Option[String], errors: ErrorTree, messages: UniformMessages[Html], conditional: PartialFunction[String,Html] = PartialFunction.empty)
+
+@(pageKey: List[String], fieldKey: List[String], tell: Option[Html], radioOptions: Seq[String], existing: Option[String], errors: ErrorTree, messages: UniformMessages[Html], conditional: PartialFunction[String,Html] = PartialFunction.empty)
 
 @keyDash=@{fieldKey.mkString("-")}
 @keyDots=@{fieldKey.mkString(".")}
 
-@surround(fieldKey, tell, errors, messages) {
-  <div class="form-group @if(errors.valueAtRootList.nonEmpty){form-group-error}">
+@surround(pageKey, fieldKey, tell, errors, messages) {
+
+@*<div class="form-group @if(errors.valueAtRootList.nonEmpty){form-group-error}"> TODO: Check me*@
+  <div class="form-group @if(errors.nonEmpty){form-group-error}">
 
     @radioOptions.zipWithIndex.map{ case (opt,num) =>
       <div class="multiple-choice govuk-radios__item" data-target="tg-@{keyDash}-@num">
