@@ -23,8 +23,11 @@ import ltbs.uniform.ask
 import scala.concurrent.Future
 import scala.language.implicitConversions
 import izumi.reflect.Tag
-import ltbs.uniform._, validation.Rule
+import ltbs.uniform._
+import validation.Rule
 import sdil.models.Litreage
+
+import java.time.LocalDate
 
 package object controllers {
   implicit def future[A](a: A): Future[A] = Future.successful(a)
@@ -62,4 +65,7 @@ package object controllers {
   def longTupToLitreage(in: (Long, Long)): Option[Litreage] =
     if (in.isEmpty) None else Litreage(in._1, in._2).some
 
+  implicit val orderDate = new cats.Order[LocalDate] {
+    def compare(x: LocalDate, y: LocalDate): Int = x.compareTo(y)
+  }
 }

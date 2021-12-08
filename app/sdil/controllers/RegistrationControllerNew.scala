@@ -109,7 +109,12 @@ object RegistrationControllerNew {
       smallProducerWithNoCopacker = producerType != ProducerType.Large && useCopacker.forall(_ == false)
       _ <- end("do-not-register") when (noUkActivity && smallProducerWithNoCopacker)
       isVoluntary = producerType == ProducerType.Small && useCopacker.contains(true) && (copacks, imports).isEmpty
-      regDate <- ask[LocalDate]("start-date") unless isVoluntary
+      regDate <- ask[LocalDate](
+                  "start-date",
+                  validation =
+                    Rule.min(LocalDate.of(2018, 4, 6), "minimum-date") followedBy
+                      Rule.max(LocalDate.now, "maximum-date")
+                ) unless isVoluntary
       askPackingSites = (producerType == ProducerType.Large && packageOwn.nonEmpty) || copacks.nonEmpty
       useBusinessAddress <- ask[Boolean]("pack-at-business-address") when askPackingSites
       packingSites = if (useBusinessAddress.getOrElse(false)) {

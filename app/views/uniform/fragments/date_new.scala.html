@@ -20,32 +20,15 @@
 @keyDots = @{key.mkString(".")}
 @keyDash = @{key.mkString("-")}
 
-<div class="form-group @if(errors.nonEmpty) {form-group-error}">
-    <span class="form-hint">@messages("start-date.example")</span>
-    <div class="form-date">
-        @for(field <- List("day", "month", "year")) {
-          <div class="form-group form-group-@{field}">
-            <label class="form-label" for="@keyDots.@field">@messages(keyDots + "." + field)</label>
-            <input class="form-control @if(errors./(field).nonEmpty) {form-control-error}"
-                   id="@{keyDash}-@{field}"
-                   name="@{keyDots}.@{field}"
-                   value="@{input.valueAt(field).flatMap(_.headOption.map(_.trim)).getOrElse("")}"
-            >
-          </div>
-        }
-    </div>
+<div class="form-date">
+    @for(field <- List("day", "month", "year")) {
+      <div class="form-group form-group-@{field}">
+        <label class="form-label" for="@keyDots.@field">@messages(keyDots + "." + field)</label>
+        <input class="form-control @if(errors./(field).nonEmpty) {form-control-error}"
+               id="@{keyDash}-@{field}"
+               name="@{keyDots}.@{field}"
+               value="@{input.valueAt(field).flatMap(_.headOption.map(_.trim)).getOrElse("")}"
+        >
+      </div>
+    }
 </div>
-
-@for((h,t) <- messages.list(key.head+".subfieldDetailHeader").zip(messages.list(key.head+".subfieldDetailBody"))){
-    <details class="padding-bottom-10 govuk-details">
-        <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
-        <div class="panel panel-border-narrow margin-bottom-1">
-            <p>@t</p>
-            <ul class="list list-bullet">
-                @for(x <- messages.list(key.head+".subfieldDetailBody").tail){
-                    <li>@x</li>
-                }
-            </ul>
-        </div>
-    </details>
-}

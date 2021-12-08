@@ -218,18 +218,18 @@ sdil.small-prod-confirm.continue=Accept and continue
 #Start date
 heading.start-date=What date did you become liable to register for the Soft Drinks Industry Levy?
 start-date.heading=What date did you become liable to register for the Soft Drinks Industry Levy?
-start-date.example=For example, 6 4 2018
+start-date.error.hint=For example, 6 4 2018
 start-date.day=Day
 start-date.month=Month
 start-date.year=Year
-start-date.subfieldDetailHeader=How do I know when I became liable?
-start-date.subfieldDetailBody=The date you became liable is the date that you first:
-start-date.subfieldDetailBody.2=produced more than 1 million litres of liable drink over the past 12 months
-start-date.subfieldDetailBody.3=knew you would produce more than 1 million litres of liable drink in the next 30 days
-start-date.subfieldDetailBody.4=packaged liable drinks for someone else
-start-date.subfieldDetailBody.5=knew you were going to package liable drinks for someone else
-start-date.subfieldDetailBody.6=brought liable drinks into the UK
-start-date.subfieldDetailBody.7=knew you were going to bring liable drinks into the UK
+start-date.list.help.header=How do I know when I became liable?
+start-date.list.help=The date you became liable is the date that you first:
+start-date.list.help.2=produced more than 1 million litres of liable drink over the past 12 months
+start-date.list.help.3=knew you would produce more than 1 million litres of liable drink in the next 30 days
+start-date.list.help.4=packaged liable drinks for someone else
+start-date.list.help.5=knew you were going to package liable drinks for someone else
+start-date.list.help.6=brought liable drinks into the UK
+start-date.list.help.7=knew you were going to bring liable drinks into the UK
 
 #TODO Add in as custom content
 #start-date.help.header.1=What is my liability start date?
@@ -241,26 +241,33 @@ start-date.subfieldDetailBody.7=knew you were going to bring liable drinks into 
 #start-date.help.importer.li1=end of the month in which you packaged liable drinks for someone else
 #start-date.help.importer.li2=date you know you will package liable drinks for someone else
 
+start-date.day.empty=The date you became liable to register must include a day
+start-date.month.empty=The date you became liable to register must include a month
+start-date.year.empty=The date you became liable to register must include a year
+start-date.day-and-month.empty=The date you became liable to register must include a day and month
+start-date.day-and-year.empty=The date you became liable to register must include a day and year
+start-date.month-and-year.empty=The date you became liable to register must include a month and year
+start-date.day-and-month-and-year.empty=Enter the date you became liable to register
 
-error.day.required=Enter a day
-error.month.required=Enter a month
-error.year.required=Enter a year
-error.day.number=Day must only include numbers
-error.month.number=Month must only include numbers
-error.year.number=Year must only include numbers
-error.start-day.invalid=Enter a real day
-error.start-month.invalid=Enter a real month
-error.start-year.invalid=Enter a real year
-error.start-date.before-tax-start=The date you became liable to register must be after 5 April 2018
-error.start-date.in-future=The date you became liable to register must be today or in the past
-error.date.invalid=Enter a real date
-error.date.emptyfields=Enter the date you became liable to register for the Soft Drinks Industry Levy
-error.start-date.missing=The date you became liable to register must include a day
-error.start-month.missing=The date you became liable to register must include a month
-error.start-year.missing=The date you became liable to register must include a year
-error.start-day-and-month.missing=The date you became liable to register must include a day and month
-error.start-month-and-year.missing=The date you became liable to register must include a month and year
-error.start-day-and-year.missing=The date you became liable to register must include a day and year
+start-date.day.nan=Day must only include numbers
+start-date.month.nan=Month must only include numbers
+start-date.year.nan=Year must only include numbers
+start-date.day-and-month.nan=The day and month must be in numbers
+start-date.day-and-year.nan=The day and year must be in numbers
+start-date.month-and-year.nan=The month and year must be in numbers
+start-date.day-and-month-and-year.nan=The date you became liable to register must be a real date, like  31 7 2020
+
+start-date.day.invalid=Enter a real day
+start-date.month.invalid=Enter a real month
+start-date.year.invalid=Enter a real year
+start-date.day-and-month.invalid=The day and month must be part of a real date, like  31 7 2020
+start-date.day-and-year.invalid=The day and year must be part of a real date, like  31 7 2020
+start-date.month-and-year.invalid=The month and year must be part of a real date, like  31 7 2020
+start-date.day-and-month-and-year.invalid=The date you became liable to register must be a real date, like  31 7 2020
+
+start-date.minimum-date=The date you became liable to register must be after 5 April 2018
+start-date.maximum-date=The date you became liable to register must be today or in the past
+start-date.not-a-date=Enter a real date
 
 #Contact details
 

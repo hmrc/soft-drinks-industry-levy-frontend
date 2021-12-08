@@ -38,7 +38,11 @@
 @for(m <- messages.get(s"$keyDots.hint")) {
     <span class="form-hint">@m</span>
     }
+
 <div class="form-group @if(errors.valueAtRootList.nonEmpty){form-group-error}">
+    @for(m <- messages.get(s"$keyDots.error.hint")) {
+        <span class="form-hint">@m</span>
+    }
     @errors.valueAtRootList.map { error =>
         <span id="@fieldKey-error" class="error-message">
             <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(pageKey).render(messages)
@@ -55,6 +59,20 @@
       <div class="panel panel-border-narrow">
         @t
       </div>
+    </details>
+}
+
+@for((h,t) <- messages.list(keyDots+".list.help.header").zip(messages.list(keyDots+".list.help"))) {
+    <details class="padding-bottom-10 govuk-details">
+        <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
+        <div class="panel panel-border-narrow margin-bottom-1">
+            <p>@t</p>
+            <ul class="list list-bullet">
+            @for(x <- messages.list(keyDots+".list.help").tail) {
+                <li>@x</li>
+            }
+            </ul>
+        </div>
     </details>
 }
 
