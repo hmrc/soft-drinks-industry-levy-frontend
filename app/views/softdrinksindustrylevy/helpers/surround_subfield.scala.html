@@ -14,12 +14,12 @@
  * limitations under the License.
  *@
 
-@(fieldKey: List[String], errors: ErrorTree, messages: UniformMessages[Html])(contents: Html*)
+@(pageKey: List[String], fieldKey: List[String], errors: ErrorTree, messages: UniformMessages[Html])(contents: Html*)
 
 @keyDash=@{fieldKey.mkString("-")}
 @keyDots=@{fieldKey.mkString(".")}
 
-@for((h) <- messages.list(fieldKey.head+".repayment.warning")){
+@for((h) <- messages.list(keyDots+".repayment.warning")){
   <div class="notice" id="single-warning">
     <i class="icon icon-important warning-icon-style">
       <span class="visually-hidden">@messages("generic.warning")</span>
@@ -30,30 +30,35 @@
   </div>
 }
 
-<div class="form-group">
+<div class="form-group @if(errors.valueAtRootList.nonEmpty){form-group-error}">
   <label class="govuk-label" for="@keyDash">
     @messages.decompose(keyDots)
   </label>
+    @errors.valueAtRootList.map { error =>
+        <span id="@keyDash-error" class="error-message">
+            <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(fieldKey).render(messages)
+        </span>
+    }
   @contents
 </div>
 
-@if(messages.get(fieldKey.head+".subfieldDetailHeader").isDefined) {
-  @for((h,t) <- messages.list(fieldKey.head+".subfieldDetailHeader").zip(messages.list(fieldKey.head+".subfieldDetailBody"))){
+@for((h, t) <- messages.list(keyDots + ".subfield.help.header").zip(messages.list(keyDots + ".subfield.help"))) {
     <details class="padding-bottom-10 govuk-details">
-      <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
-      <div class="panel panel-border-narrow margin-bottom-1">
+        <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
+        <div class="panel panel-border-narrow margin-bottom-1">
         @t
-      </div>
+        </div>
     </details>
-  }
-} else {
-  @for((h,t) <- messages.list("g.subfieldDetailHeader").zip(messages.list("g.subfieldDetailBody"))){
-    <details class="padding-bottom-10 govuk-details">
-      <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
-      <div class="panel panel-border-narrow margin-bottom-1">
-        @t
-      </div>
-    </details>
-  }
 }
+
+@*    else {*@
+@*  @for((h,t) <- messages.list("g.subfieldDetailHeader").zip(messages.list("g.subfieldDetailBody"))){*@
+@*    <details class="padding-bottom-10 govuk-details">*@
+@*      <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>*@
+@*      <div class="panel panel-border-narrow margin-bottom-1">*@
+@*        @t*@
+@*      </div>*@
+@*    </details>*@
+@*  }*@
+@*}*@
 

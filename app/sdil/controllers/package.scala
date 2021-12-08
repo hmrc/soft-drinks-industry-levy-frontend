@@ -39,12 +39,15 @@ package object controllers {
     "claim-credits-for-lost-damaged"
   )
 
-  def askEmptyOption[A: Tag](id: String, default: Option[A] = None)(implicit mon: cats.Monoid[A]) = {
+  def askEmptyOption[A: Tag](
+    id: String,
+    default: Option[A] = None,
+    validation: Rule[Option[A]] = Rule.alwaysPass[Option[A]])(implicit mon: cats.Monoid[A]) = {
     val newDefault = default.map {
       case e if e == mon.empty => none[A]
       case x                   => Some(x)
     }
-    ask[Option[A]](id, newDefault).map(_.getOrElse(mon.empty))
+    ask[Option[A]](id, newDefault, validation).map(_.getOrElse(mon.empty))
   }
 
   def askListSimple[A: izumi.reflect.Tag](

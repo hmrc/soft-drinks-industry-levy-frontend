@@ -102,7 +102,8 @@ trait SdilComponentsNew {
           views.html.softdrinksindustrylevy.helpers.inputText_new(fieldKey, value, errors)(pageIn.messages)
       }
 
-      views.html.softdrinksindustrylevy.helpers.surround(stepKey, fieldKey, tell, errors, pageIn.messages)(control)
+      views.html.softdrinksindustrylevy.helpers
+        .surround(stepKey, fieldKey, tell, errors, pageIn.messages)(control)
 
     }
   }
@@ -116,7 +117,8 @@ trait SdilComponentsNew {
   implicit val longField: WebAsk[Html, Long] =
     stringField.simap(x => {
       Rule.nonEmpty[String].apply(x) andThen
-        Transformation.catchOnly[NumberFormatException]("not-a-number")(_.toLong)
+        Transformation.catchOnly[NumberFormatException]("not-a-number")(_.replace(",", "").toLong) andThen
+        Rule.cond(_.toString.length <= 15, "max")
     }.toEither)(_.toString)
 
   implicit val twirlDateField: WebAsk[Html, LocalDate] =

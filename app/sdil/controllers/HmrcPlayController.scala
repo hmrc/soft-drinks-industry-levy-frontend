@@ -46,7 +46,6 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
       UniformMessages.bestGuess
   }.map { Html(_) }
 //    UniformMessages.attentionSeeker.map(HtmlFormat.escape)
-
   def pageChrome(
     key: List[String],
     errors: ErrorTree,
@@ -94,6 +93,11 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
       case _                       => alternatives
     }
 
+    val condContent = views.html.softdrinksindustrylevy.helpers
+      .conditional_content(stepDetails.fieldKey, reordered.map(_._1), selected, reordered.collect {
+        case (k, Some(v)) => (k, v)
+      }.toMap)
+
     views.html.softdrinksindustrylevy.helpers.radios(
       stepDetails.stepKey,
       stepDetails.fieldKey,
@@ -102,7 +106,8 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
       selected,
       stepDetails.errors,
       pageIn.messages,
-      reordered.collect { case (k, Some(v)) => (k, v) }.toMap
+      reordered.collect { case (k, Some(v)) => (k, v) }.toMap,
+      condContent.some
     )
   }
 

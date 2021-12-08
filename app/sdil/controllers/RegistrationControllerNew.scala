@@ -90,9 +90,21 @@ object RegistrationControllerNew {
       _            <- end("partnerships", uniform.fragments.partnerships()(_: Messages)) when (orgType.entryName == OrganisationType.partnership.entryName)
       producerType <- ask[ProducerType]("producer")
       useCopacker  <- ask[Boolean]("copacked") when producerType == ProducerType.Small
-      packageOwn   <- askEmptyOption[(Long, Long)]("package-own-uk") emptyUnless producerType != ProducerType.Not
-      copacks      <- askEmptyOption[(Long, Long)]("package-copack")
-      imports      <- askEmptyOption[(Long, Long)]("import")
+      packageOwn <- askEmptyOption[(Long, Long)](
+                     "package-own-uk",
+                     validation =
+                       Rule.condAtPath("Some", "value", "_1")(x => x.fold(true)(y => (y._1 + y._2) >= 1L), "min")
+                   ) emptyUnless producerType != ProducerType.Not
+      copacks <- askEmptyOption[(Long, Long)](
+                  "package-copack",
+                  validation =
+                    Rule.condAtPath("Some", "value", "_1")(x => x.fold(true)(y => (y._1 + y._2) >= 1L), "min")
+                )
+      imports <- askEmptyOption[(Long, Long)](
+                  "import",
+                  validation =
+                    Rule.condAtPath("Some", "value", "_1")(x => x.fold(true)(y => (y._1 + y._2) >= 1L), "min")
+                )
       noUkActivity = (copacks, imports).isEmpty
       smallProducerWithNoCopacker = producerType != ProducerType.Large && useCopacker.forall(_ == false)
       _ <- end("do-not-register") when (noUkActivity && smallProducerWithNoCopacker)

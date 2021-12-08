@@ -17,16 +17,13 @@
 @import views.html.helper.FieldElements
 @import views.html.helper.form
 
-@(pageKey: List[String], fieldKey: List[String], tell: Option[Html], radioOptions: Seq[String], existing: Option[String], errors: ErrorTree, messages: UniformMessages[Html], conditional: PartialFunction[String,Html] = PartialFunction.empty)
+@(pageKey: List[String], fieldKey: List[String], tell: Option[Html], radioOptions: Seq[String], existing: Option[String], errors: ErrorTree, messages: UniformMessages[Html], conditional: PartialFunction[String,Html] = PartialFunction.empty, cond: Option[Html] = None)
 
 @keyDash=@{fieldKey.mkString("-")}
 @keyDots=@{fieldKey.mkString(".")}
 
-@surround(pageKey, fieldKey, tell, errors, messages) {
-
-@*<div class="form-group @if(errors.valueAtRootList.nonEmpty){form-group-error}"> TODO: Check me*@
-  <div class="form-group @if(errors.nonEmpty){form-group-error}">
-
+@surround(pageKey, fieldKey, tell, errors, messages, cond) {
+  <div class="@if(radioOptions.length <= 2){inline}">
     @radioOptions.zipWithIndex.map{ case (opt,num) =>
       <div class="multiple-choice govuk-radios__item" data-target="tg-@{keyDash}-@num">
         <input type="radio"             
@@ -45,15 +42,4 @@
     }
   </div>
 
-  @radioOptions.zipWithIndex.map{ case (opt,num) =>
-    @for(cond <- conditional.lift(opt)) {
-      <div
-        id="tg-@{keyDash}-@num"
-        class="panel panel-border-narrow js-hidden"
-        tabindex="-1"
-        @if(Some(opt) == existing){aria-hidden="false"} else {aria-hidden="true"}>
-        @cond
-      </div>
-    }
-  }
 }
