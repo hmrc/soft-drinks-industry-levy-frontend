@@ -17,9 +17,11 @@
 @(fieldKey: List[String], value: String, errors: ErrorTree)(implicit messages: UniformMessages[Html])
 @keyDots = @{fieldKey.mkString(".")}
 @keyDash = @{fieldKey.mkString("-")}
+@litreageKeys = @{List("package-own-uk", "package-copack", "import").contains(fieldKey.head)}
 
     <input class="form-control outline
-        @if(errors.nonEmpty) {form-control-error}"
+        @if(errors.nonEmpty) {form-control-error}
+        @if(litreageKeys) {volume}"
         id="@keyDash"
         name="@keyDots"
         value="@value" />
