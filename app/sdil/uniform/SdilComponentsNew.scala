@@ -245,6 +245,20 @@ trait SdilComponentsNew {
     )
   }
 
+  implicit val tellListAddress = new WebTell[Html, WebAskList.ListingTable[Address]] {
+    def render(
+      in: WebAskList.ListingTable[Address],
+      key: List[String],
+      pageIn: PageIn[Html]
+    ): Option[Html] = Some(
+      views.html.softdrinksindustrylevy.helpers.site_table_row(
+        key.last,
+        in.value,
+        pageIn.messages
+      )
+    )
+  }
+
   implicit val tellListSmallProducer = new WebTell[Html, WebAskList.ListingTable[SmallProducer]] {
     def render(
       in: WebAskList.ListingTable[SmallProducer],
@@ -258,6 +272,16 @@ trait SdilComponentsNew {
         },
         pageIn.messages
       )
+    )
+  }
+
+  implicit val tellAddress = new WebTell[Html, Address] {
+    def render(
+      in: Address,
+      key: List[String],
+      pageIn: PageIn[Html]
+    ): Option[Html] = Some(
+      Html(s"<p tabindex='-1' class='lede'>Registered address: ${in.nonEmptyLines.mkString(", ")}")
     )
   }
 

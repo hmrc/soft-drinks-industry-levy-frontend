@@ -78,6 +78,11 @@ class RegistrationControllerNew(
 
 object RegistrationControllerNew {
 
+  private def message(key: String, args: String*) = {
+    import play.twirl.api.HtmlFormat.escape
+    Map(key -> Tuple2(key, args.toList.map { escape(_).toString }))
+  }
+
   def journey(
     hasCTEnrolment: Boolean,
     fd: RegistrationFormData,
@@ -116,13 +121,22 @@ object RegistrationControllerNew {
                       Rule.max(LocalDate.now, "maximum-date")
                 ) unless isVoluntary
       askPackingSites = (producerType == ProducerType.Large && packageOwn.nonEmpty) || copacks.nonEmpty
-      useBusinessAddress <- ask[Boolean]("pack-at-business-address") when askPackingSites
+      useBusinessAddress <- interact[Boolean](
+                             "pack-at-business-address",
+                             fd.rosmData.address
+                           ) when askPackingSites
       packingSites = if (useBusinessAddress.getOrElse(false)) {
-        List(Site.fromAddress(fd.rosmData.address))
+        List(fd.rosmData.address)
       } else {
-        List.empty[Site]
+        List.empty[Address]
       }
-      packSites <- askListSimple[Site]("production-sites") emptyUnless askPackingSites
+      packSites <- askListSimple[Address](
+                    "production-sites",
+                    default = packingSites.some,
+                    validation = Rule.minLength(1)
+                  ).map { x =>
+                    x.map(y => Site.fromAddress(y))
+                  } emptyUnless askPackingSites
       addWarehouses <- isVoluntary match {
                         case true  => ask[Boolean]("ask-secondary-warehouses")
                         case false => pure(false)
