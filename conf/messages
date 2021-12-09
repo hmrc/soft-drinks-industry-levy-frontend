@@ -23,6 +23,8 @@ Some=Yes
 None=No
 true=Yes
 false=No
+Add=Yes
+Continue=No
 
 g.subfieldDetailHeader=What are the bands?
 g.subfieldDetailBody=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
@@ -34,6 +36,11 @@ error.sdilref.same=​Small producer reference number must be different to your 
 error.sdilref.alreadyexists=Small producer reference number must be different to a small producer reference number you have already added
 
 #Address lines
+line1=Address line 1
+line2=Address line 2
+line3=Address line 3 (optional)
+line4=Address line 4 (optional)
+postcode=Postcode
 sdil.address.line1=Address line 1
 sdil.address.line2=Address line 2
 sdil.address.line3=Address line 3 (optional)
@@ -785,10 +792,10 @@ heading.remove-secondary-warehouse-details=Are you sure you want to remove this 
 remove-secondary-warehouse-details.continue=Save and continue
 error.radio-form.choose-option.remove-secondary-warehouse-details=Select yes if you want to remove this warehouse
 heading.add-packaging-site-details=Enter your packaging site details
-heading.add-production-site-details=Enter your UK packaging site details
+heading.element=Enter your UK packaging site details
 heading.first-production-site=Enter your UK packaging site details
 first-production-site.paragraph=Only add the addresses of the packaging sites you operate
-add-packaging-site.paragraph=Only add the addresses of the packaging sites you operate
+element.paragraph=Only add the addresses of the packaging sites you operate
 add-production-site-details.paragraph=Only add the addresses of the packaging sites you operate
 heading.remove-packaging-site-details=Are you sure you want to remove this packaging site?
 remove-packaging-site-details.continue=Save and continue

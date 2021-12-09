@@ -4,32 +4,42 @@
 <table class="margin-bottom-30">
     <tbody>
         @for((row, index) <- rows.zipWithIndex) {
+
+
+
             <tr>
                 <td>
                     <details role="group">
                         <summary aria-controls="details-content-1" aria-expanded="false">
-                            <span class="summary">@row</span>
+                            <span class="summary">@row.line1, @row.postcode</span>
                         </summary>
                         <div class="address progressive-reveal" id="details-content-1">
-                    The Street
+                            @row.line1
                         </div>
-                        <div class="address progressive-reveal">
-                    mssreofqsyvctjptpa
-                        </div>
-                        <div class="address postal-code progressive-reveal">
-                    DD61 1XX
-                        </div>
+
+                        @row.nonEmptyLines.tail.map { line =>
+                            <div class="address progressive-reveal">@line</div>
+                        }
+
                     </details>
                 </td>
 
+                @if(rows.length > 1) {
+                    <td class="align-centre">
+                        <button name="production-site-details" value="Delete.0" class="link-button no-shadow">
+                            <span aria-hidden="true">Remove</span>
+                            <span class="visually-hidden">Remove // TODO MAPPING HERE TO OUTPUT THE ADDRESS in format: Line 1, Line 2, Line 3, Line 4, Postcode</span>
+                        </button>
+                    </td>
+                }
 
                 <td class="align-right">
                     <button name="production-site-details" value="Edit.0" class="link-button no-shadow">
                         <span aria-hidden="true">
-                    Edit
+                            Edit
                         </span>
                         <span class="visually-hidden">
-                    Edit 50, The Street, mssreofqsyvctjptpa, DD61 1XX.
+                            Edit // TODO MAPPING HERE TO OUTPUT THE ADDRESS in format: Line 1, Line 2, Line 3, Line 4, Postcode
                         </span>
                     </button>
                 </td>
