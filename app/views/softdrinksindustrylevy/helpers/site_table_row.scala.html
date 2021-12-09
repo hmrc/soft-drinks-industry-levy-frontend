@@ -27,8 +27,12 @@
                 @if(rows.length > 1) {
                     <td class="align-centre">
                         <button name="production-site-details" value="Delete.0" class="link-button no-shadow">
-                            <span aria-hidden="true">Remove</span>
-                            <span class="visually-hidden">Remove // TODO MAPPING HERE TO OUTPUT THE ADDRESS in format: Line 1, Line 2, Line 3, Line 4, Postcode</span>
+                            <span aria-hidden="true">@messages("common.remove")</span>
+                            <span class="visually-hidden">@messages("common.remove")
+                                @for((line, index) <- row.nonEmptyLines.zipWithIndex) {
+                                    @line@if(index + 1 != row.nonEmptyLines.length) {,}
+                                }
+                            </span>
                         </button>
                     </td>
                 }
@@ -36,10 +40,13 @@
                 <td class="align-right">
                     <button name="production-site-details" value="Edit.0" class="link-button no-shadow">
                         <span aria-hidden="true">
-                            Edit
+                        @messages("common.edit")
                         </span>
                         <span class="visually-hidden">
-                            Edit // TODO MAPPING HERE TO OUTPUT THE ADDRESS in format: Line 1, Line 2, Line 3, Line 4, Postcode
+                            @messages("common.edit")
+                            @for((line, index) <- row.nonEmptyLines.zipWithIndex) {
+                                @line@if(index + 1 != row.nonEmptyLines.length) {,}
+                            }
                         </span>
                     </button>
                 </td>
