@@ -130,21 +130,21 @@ object RegistrationControllerNew {
       } else {
         List.empty[Address]
       }
+      //TODO: Add validation to Address inout strings, not sure to do this here, create a new WebAsk or bring in ValidatedTypes
+      //TODO: Need to add correct hrefs to edit and delete links on the listing page.
       packSites <- askListSimple[Address](
                     "production-sites",
                     default = packingSites.some,
-                    validation = Rule.minLength(1)
-                  ).map { x =>
-                    x.map(y => Site.fromAddress(y))
-                  } emptyUnless askPackingSites
-      addWarehouses <- isVoluntary match {
-                        case true  => ask[Boolean]("ask-secondary-warehouses")
-                        case false => pure(false)
-                      }
-      warehouses <- askListSimple[Site](
-                     "warehouses",
-                     validation = Rule.nonEmpty
-                   ) emptyUnless addWarehouses
+                    validation = Rule.nonEmpty
+                  ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
+      addWarehouses <- if (!isVoluntary) { ask[Boolean]("ask-secondary-warehouses") } else { pure(false) }
+      //TODO: warehouses is still being asked even if addWarehouses is false
+      //TODO: we want the add page of the warehouses journey to show first, this isn't working currently as there isn't a Rule.nonEmpty
+      //TODO: all add pages have the key of "element", we need to add they pageKey infornt of this e.g "warehouses.element"
+      warehouses <- askListSimple[Warehouse](
+                     "warehouses"
+                   ).map(_.map(Site.fromWarehouse)) emptyUnless addWarehouses
+      //TODO: add validation to individual fields of ContactDetails
       contactDetails <- ask[ContactDetails]("contact-details")
       activity = Activity(
         longTupToLitreage(packageOwn),

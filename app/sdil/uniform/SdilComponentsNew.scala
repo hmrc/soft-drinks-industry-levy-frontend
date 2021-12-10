@@ -245,13 +245,29 @@ trait SdilComponentsNew {
     )
   }
 
+  implicit val tellListWarehouse = new WebTell[Html, WebAskList.ListingTable[Warehouse]] {
+    def render(
+      in: WebAskList.ListingTable[Warehouse],
+      key: List[String],
+      pageIn: PageIn[Html]
+    ): Option[Html] = Some(
+      views.html.softdrinksindustrylevy.helpers.listing_table(
+        key.last,
+        in.value.map { x =>
+          Html(x.toString)
+        },
+        pageIn.messages
+      )
+    )
+  }
+
   implicit val tellListAddress = new WebTell[Html, WebAskList.ListingTable[Address]] {
     def render(
       in: WebAskList.ListingTable[Address],
       key: List[String],
       pageIn: PageIn[Html]
     ): Option[Html] = Some(
-      views.html.softdrinksindustrylevy.helpers.site_table_row(
+      views.html.softdrinksindustrylevy.helpers.site_table(
         key.last,
         in.value,
         pageIn.messages

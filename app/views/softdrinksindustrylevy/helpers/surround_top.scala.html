@@ -17,66 +17,130 @@
 @(pageKey: List[String], fieldKey: String, tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html], end: Boolean = false, cond: Option[Html] = None)(inner: Html*)
 
 @keyDots = @{pageKey.mkString(".")}
-<fieldset class="form-field-group  @if(errors.nonEmpty){after-error-summary}">
-    <legend>
-        @for(m <- messages.get(s"heading.$keyDots.orgName")) {
-            <span class="govuk-caption-xl service-comp-name">@m</span>
-        }
-        <h1 class="heading-large  @{messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")}">
-            @messages(s"heading.$keyDots")
-        </h1>
-    </legend>
-@for(msg <- messages.list(s"$keyDots.paragraph")) {
-    <div class="lede">
-        <p tabindex="-1">@msg</p>
-    </div>
-}
-@for(m <- messages.get(s"$keyDots.lead")) {
-    <p tabindex="-1" class="lede">@m</p>
-}
+@isListingPage= @{List("production-sites").contains(pageKey.head)}
 
-@for(m <- messages.get(s"$keyDots.hint")) {
-    <span class="form-hint">@m</span>
+@if(isListingPage){
+    @for(m <- messages.get(s"heading.$keyDots.orgName")) {
+        <span class="govuk-caption-xl service-comp-name">@m</span>
+    }
+    <h1 class="heading-large  @{messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")}">
+        @messages(s"heading.$keyDots")
+    </h1>
+
+    @for(msg <- messages.list(s"$keyDots.paragraph")) {
+        <div class="lede">
+            <p tabindex="-1">@msg</p>
+        </div>
     }
 
-<div class="form-group @if(errors.valueAtRootList.nonEmpty){form-group-error}">
-    @for(m <- messages.get(s"$keyDots.error.hint")) {
+    @for(msg <- messages.list(s"$keyDots.paragraph.small")) {
+        <p tabindex="-1">@msg</p>
+    }
+
+    @for(m <- messages.get(s"$keyDots.lead")) {
+        <p tabindex="-1" class="lede">@m</p>
+    }
+
+    @for(m <- messages.get(s"$keyDots.hint")) {
         <span class="form-hint">@m</span>
     }
-    @errors.valueAtRootList.map { error =>
-        <span id="@fieldKey-error" class="error-message">
-            <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(pageKey).render(messages)
-          </span>
-    }
+        @tell
 
-    @tell
-    @inner
-</div>
+
+
+        @for(m <- messages.get(s"$keyDots.error.hint")) {
+            <span class="form-hint">@m</span>
+        }
+    <fieldset class="form-field-group">
+        <legend>
+            <h2 class="heading-small add-to-list">@messages(s"$keyDots.listing.heading")</h2>
+        </legend>
+        <div class="form-group @if(errors.valueAtRootList.nonEmpty){form-group-error}">
+            @errors.valueAtRootList.map { error =>
+                <span id="@fieldKey-error" class="error-message">
+                    <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(pageKey).render(messages)
+                </span>
+            }
+            @inner
+        </div>
+} else {
+
+    <fieldset class="form-field-group  @if(errors.nonEmpty) {after-error-summary}">
+        <legend>
+
+            @for(m <- messages.get(s"heading.$keyDots.orgName")) {
+                <span class="govuk-caption-xl service-comp-name">@m</span>
+            }
+            <h1 class="heading-large  @{
+                messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")
+            }">
+            @messages(s"heading.$keyDots")
+            </h1>
+
+        </legend>
+
+        @for(msg <- messages.list(s"$keyDots.paragraph")) {
+            <div class="lede">
+                <p tabindex="-1">@msg</p>
+            </div>
+        }
+
+        @for(msg <- messages.list(s"$keyDots.paragraph.small")) {
+            <p tabindex="-1">@msg</p>
+        }
+
+        @for(m <- messages.get(s"$keyDots.lead")) {
+            <p tabindex="-1" class="lede">@m</p>
+        }
+
+        @for(m <- messages.get(s"$keyDots.hint")) {
+            <span class="form-hint">@m</span>
+        }
+        <div class="form-group @if(errors.valueAtRootList.nonEmpty) {form-group-error}">
+            @for(m <- messages.get(s"$keyDots.error.hint")) {
+                <span class="form-hint">@m</span>
+            }
+
+            @errors.valueAtRootList.map { error =>
+                <span id="@fieldKey-error" class="error-message">
+                    <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(pageKey).render(messages)
+                </span>
+            }
+
+            @tell
+            @inner
+
+        </legend>
+
+        </div>
+}
+
 @cond.getOrElse(Html(""))
+
 @for((h,t) <- messages.list(keyDots+".help.header").zip(messages.list(keyDots+".help"))){
-    <details>
-      <summary><span class="summary">@h</span></summary>
-      <div class="panel panel-border-narrow">
-        @t
-      </div>
-    </details>
+        <details>
+          <summary><span class="summary">@h</span></summary>
+          <div class="panel panel-border-narrow">
+            @t
+          </div>
+        </details>
 }
 
 @for((h,t) <- messages.list(keyDots+".list.help.header").zip(messages.list(keyDots+".list.help"))) {
-    <details class="padding-bottom-10 govuk-details">
-        <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
-        <div class="panel panel-border-narrow margin-bottom-1">
-            <p>@t</p>
-            <ul class="list list-bullet">
-            @for(x <- messages.list(keyDots+".list.help").tail) {
-                <li>@x</li>
-            }
-            </ul>
-        </div>
-    </details>
+        <details class="padding-bottom-10 govuk-details">
+            <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
+            <div class="panel panel-border-narrow margin-bottom-1">
+                <p>@t</p>
+                <ul class="list list-bullet">
+                @for(x <- messages.list(keyDots+".list.help").tail) {
+                    <li>@x</li>
+                }
+                </ul>
+            </div>
+        </details>
 }
 
-</fieldset>
+   </fieldset>
 
 @if(!end){
   <button class="button" type="submit" id="continue-button">

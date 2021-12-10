@@ -17,9 +17,8 @@
 package sdil.models.backend
 
 import java.time.LocalDate
-
 import play.api.libs.json.{Format, Json}
-import sdil.models.Address
+import sdil.models.{Address, Warehouse}
 
 case class Site(
   address: UkAddress,
@@ -38,4 +37,7 @@ object Site {
 
   def fromAddress(address: Address): Site =
     Site(UkAddress.fromAddress(address), None, None, None)
+
+  def fromWarehouse(warehouse: Warehouse): Site =
+    Site(warehouse.address, None, Some(warehouse.tradingName), None)
 }

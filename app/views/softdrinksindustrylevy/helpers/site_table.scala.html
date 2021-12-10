@@ -5,41 +5,35 @@
     <tbody>
         @for((row, index) <- rows.zipWithIndex) {
 
-
-
             <tr>
                 <td>
                     <details role="group">
                         <summary aria-controls="details-content-1" aria-expanded="false">
                             <span class="summary">@row.line1, @row.postcode</span>
                         </summary>
-                        <div class="address progressive-reveal" id="details-content-1">
-                            @row.line1
-                        </div>
 
                         @row.nonEmptyLines.tail.map { line =>
                             <div class="address progressive-reveal">@line</div>
                         }
-
                     </details>
                 </td>
 
                 @if(rows.length > 1) {
                     <td class="align-centre">
-                        <button name="production-site-details" value="Delete.0" class="link-button no-shadow">
-                            <span aria-hidden="true">Remove</span>
-                            <span class="visually-hidden">Remove // TODO MAPPING HERE TO OUTPUT THE ADDRESS in format: Line 1, Line 2, Line 3, Line 4, Postcode</span>
+                        <button name="production-site-details" value=s"Delete.@{index}" class="link-button no-shadow">
+                            <span aria-hidden="true">@messages(s"$key.remove")</span>
+                            <span class="visually-hidden">
+                              @messages(s"$key.remove.hidden", row.nonEmptyLines.mkString(", "))
+                            </span>
                         </button>
                     </td>
                 }
 
                 <td class="align-right">
-                    <button name="production-site-details" value="Edit.0" class="link-button no-shadow">
-                        <span aria-hidden="true">
-                            Edit
-                        </span>
+                    <button name="production-site-details" value=s"Edit.@{index}" class="link-button no-shadow">
+                        <span aria-hidden="true">@messages(s"$key.edit")</span>
                         <span class="visually-hidden">
-                            Edit // TODO MAPPING HERE TO OUTPUT THE ADDRESS in format: Line 1, Line 2, Line 3, Line 4, Postcode
+                          @messages(s"$key.edit.hidden", row.nonEmptyLines.mkString(", "))
                         </span>
                     </button>
                 </td>
