@@ -26,6 +26,9 @@ false=No
 Add=Yes
 Continue=No
 
+common.remove=Remove
+common.edit=Edit
+
 g.subfieldDetailHeader=What are the bands?
 g.subfieldDetailBody=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
 
