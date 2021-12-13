@@ -132,6 +132,7 @@ object RegistrationControllerNew {
       }
       //TODO: Add validation to Address inout strings, not sure to do this here, create a new WebAsk or bring in ValidatedTypes
       //TODO: Need to add correct hrefs to edit and delete links on the listing page.
+      //TODO: We need to pass in the number of Sites that the user has added with custom content, can't seem to work that now as customContent is not a argument on askList method.
       packSites <- askListSimple[Address](
                     "production-sites",
                     default = packingSites.some,
@@ -140,7 +141,7 @@ object RegistrationControllerNew {
       addWarehouses <- if (!isVoluntary) { ask[Boolean]("ask-secondary-warehouses") } else { pure(false) }
       //TODO: warehouses is still being asked even if addWarehouses is false
       //TODO: we want the add page of the warehouses journey to show first, this isn't working currently as there isn't a Rule.nonEmpty
-      //TODO: all add pages have the key of "element", we need to add they pageKey infornt of this e.g "warehouses.element"
+      //TODO: all add pages have the key of "element", we need to add the pageKey infront of this e.g "warehouses.element"
       warehouses <- askListSimple[Warehouse](
                      "warehouses"
                    ).map(_.map(Site.fromWarehouse)) emptyUnless addWarehouses
