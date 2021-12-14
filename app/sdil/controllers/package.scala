@@ -59,7 +59,7 @@ package object controllers {
     validation: Rule[List[A]] = Rule.alwaysPass[List[A]]
   ) = askList[A](key, default, validation) {
     case (index: Option[Int], existing: List[A]) =>
-      ask[A]("element", default = index.map(existing))
+      ask[A](s"$key.element", default = index.map(existing))
   }
 
   def longTupToLitreage(in: (Long, Long)): Option[Litreage] =

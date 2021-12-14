@@ -19,7 +19,7 @@
 @import java.time.format.DateTimeFormatter
 
 @(id: String, now: LocalDate = LocalDate.now, updateTimeMessage: Option[Html] = None,
-  whatHappensNext: Option[Html] = None, getTotal: Option[Html] = None)(implicit messages: Messages)
+  whatHappensNext: Option[Html] = None, getTotal: Option[Html] = None, email :Option[String] = None)(implicit messages: Messages)
 
 <div class="govuk-box-highlight">
     <h1 class="heading-xlarge">@Messages(s"$id.title")</h1>
@@ -47,11 +47,11 @@
     }
 }
 
-@if(id == "complete") {
-    <p>@Messages(s"$id.extraParagraph")</p>
+@if(id == "registration-confirmation") {
+    <p>@Messages(s"$id.extraParagraph", email.getOrElse(""))</p>
 }
 <h2 class="heading-medium">
-    @Messages(Seq(s"$id.what-happens-next-heading", "sdil.complete.what-happens.title"))
+    @Messages(Seq(s"$id.what-happens-next-heading", "registration-confirmation.what-happens.title"))
 </h2>
 
 @if(whatHappensNext.nonEmpty) {

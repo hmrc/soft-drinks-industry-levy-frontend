@@ -39,5 +39,5 @@ object Site {
     Site(UkAddress.fromAddress(address), None, None, None)
 
   def fromWarehouse(warehouse: Warehouse): Site =
-    Site(warehouse.address, None, Some(warehouse.tradingName), None)
+    Site(UkAddress.fromAddress(warehouse.address), None, Some(warehouse.tradingName), None)
 }

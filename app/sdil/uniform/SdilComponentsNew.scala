@@ -19,7 +19,7 @@ package sdil.uniform
 import cats.syntax.all._
 import cats.data.Validated
 import ltbs.uniform._
-import validation._
+import validation.{Rule, _}
 import ltbs.uniform.common.web._
 import play.api.data._
 import play.api.i18n.Messages
@@ -30,8 +30,10 @@ import views.html.uniform
 import sdil.uniform.AdaptMessages.ufMessagesToPlayMessages
 import views.html.uniform.fragments.date_new
 import enumeratum._
+
 import java.time.LocalDate
 import sdil.controllers.Subset
+import sdil.uniform.WebAskValidation.myAskAddress
 
 trait SdilComponentsNew {
 
@@ -229,6 +231,10 @@ trait SdilComponentsNew {
 
   }
 
+//Already added the WebAskValidation object with val myAskAddress: WebAsk[Html, Address] = implicitly[WebAsk[Html, Address]]
+//TODO: Add in validation here for Address from lazy val addressMapping - ln 291 of SdilComponents.scala
+//  implicit val askAddress = myAskAddress.simap(x => x)()
+
   implicit val tellListSite = new WebTell[Html, WebAskList.ListingTable[Site]] {
     def render(
       in: WebAskList.ListingTable[Site],
@@ -251,11 +257,9 @@ trait SdilComponentsNew {
       key: List[String],
       pageIn: PageIn[Html]
     ): Option[Html] = Some(
-      views.html.softdrinksindustrylevy.helpers.listing_table(
+      views.html.softdrinksindustrylevy.helpers.warehouse_table(
         key.last,
-        in.value.map { x =>
-          Html(x.toString)
-        },
+        in.value,
         pageIn.messages
       )
     )
@@ -267,7 +271,7 @@ trait SdilComponentsNew {
       key: List[String],
       pageIn: PageIn[Html]
     ): Option[Html] = Some(
-      views.html.softdrinksindustrylevy.helpers.site_table(
+      views.html.softdrinksindustrylevy.helpers.address_table(
         key.last,
         in.value,
         pageIn.messages

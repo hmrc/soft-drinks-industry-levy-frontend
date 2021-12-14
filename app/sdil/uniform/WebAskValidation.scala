@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package sdil.models
+package sdil.uniform
 
-import play.api.libs.json.{Format, Json}
-import sdil.models.backend.{Site, UkAddress}
+import ltbs.uniform.common.web.WebAsk
+import play.api.i18n.MessagesApi
+import play.twirl.api.Html
+import sdil.config.AppConfig
+import sdil.models.Address
+import sdil.controllers.HmrcPlayInterpreter
+import views.uniform.Uniform
+import scala.language.higherKinds
 
-case class Warehouse(
-  tradingName: String,
-  address: Address
-) {
-  def nonEmptyLines: Seq[String] =
-    Seq(tradingName, address.line1, address.line2, address.line3, address.line4, address.postcode).filter(_.nonEmpty)
-}
+object WebAskValidation extends HmrcPlayInterpreter {
+  val myAskAddress: WebAsk[Html, Address] = implicitly[WebAsk[Html, Address]]
+  override val config: AppConfig = ???
 
-object Warehouse {
-  implicit val format: Format[Warehouse] = Json.format[Warehouse]
+  override def messagesApi: MessagesApi = ???
+
+  override def ufViews: Uniform = ???
+
+  override def defaultBackLink: String = ???
 }

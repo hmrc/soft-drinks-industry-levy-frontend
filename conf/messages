@@ -170,7 +170,8 @@ production-sites.paragraph.small=You must tell us about all of the UK packaging 
 production-sites.required=Select yes if you need to add another packaging site
 production-sites.listing.heading=Do you need to add another packaging site?
 
-
+heading.production-sites.element=Enter your UK packaging site details
+production-sites.element.paragraph=Only add the addresses of the packaging sites you operate
 
 sdil.production-sites.select-applicable=Select all that apply
 label.production-sites.add=I need to add another packaging site
@@ -183,12 +184,17 @@ sdil.production-site.help.p1=You need to tell us the addresses of all of the pac
 sdil.production-site.help.p2=If you have got more packaging sites you can add them next.
 
 #Secondary warehouse
-sdil.warehouse.heading=Do you want to register any of the UK warehouses you use to store liable drinks?
+heading.warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+warehouses.help.header=Why should I register a warehouse?
+warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
+warehouses.help.1=You do not need to register an address as a warehouse if you have already registered it as a packaging site.
+warehouses.listing.heading=Do you want to register another UK warehouse?
+warehouses.required=Select yes if you want to register another warehouse
+heading.warehouses.element=Enter the UK warehouse details
+warehouses.element.address=
+warehouses.element.tradingName=Trading name (optional)
+
 label.warehouse-sites.add=I want to register another warehouse
-sdil.warehouse.register.help=Why should I register a warehouse?
-sdil.warehouse.register.help.content-1=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
-sdil.warehouse.register.help.content-2=You do not need to register an address as a warehouse if you have already registered it as a packaging site.
-sdil.warehouse.add.heading=Do you want to register another UK warehouse?
 sdil.warehouse-site.add.heading=Enter a warehouse site
 sdil.warehouse-site.add.hint=You can enter more sites after if you need to
 sdil.warehouse-site.add.legend=A warehouse site address
@@ -417,15 +423,19 @@ sdil.remove.site.button=Remove {0}.
 sdil.edit.site.button=Edit {0}.
 
 #Complete
-sdil.complete.what-happens.title=What happens next
-sdil.complete.what-happens.p1=You do not need to do anything else at this time.
-sdil.complete.what-happens.p2=We will send your Soft Drinks Industry Levy reference number to {0} within 24 hours.
-sdil.complete.what-happens.help.title=Help using this service
-sdil.complete.what-happens.help.p1=Call the Soft Drinks Industry Helpline on 0300 200 3700 if you:
-sdil.complete.what-happens.help.ul1=do not receive your reference number
-sdil.complete.what-happens.help.ul2=need to make a change to your application
-sdil.complete.what-happens.help.link=What do you think of this service?
-sdil.complete.what-happens.help.p2= (takes 30 seconds)
+registration-confirmation.title=Application complete
+registration-confirmation.subheading=We have received your application to register {0} for the Soft Drinks Industry Levy
+registration-confirmation.your.updates=Your application to register for the Soft Drinks Industry Levy was sent on {0} at {1}.
+registration-confirmation.extraParagraph=We have sent a confirmation email to {0}.
+registration-confirmation.what-happens.title=What happens next
+registration-confirmation.what-happens.p1=You do not need to do anything else at this time.
+registration-confirmation.what-happens.p2=We will send your Soft Drinks Industry Levy reference number to {0} within 24 hours.
+registration-confirmation.what-happens.help.title=Help using this service
+registration-confirmation.what-happens.help.p1=Call the Soft Drinks Industry Helpline on 0300 200 3700 if you:
+registration-confirmation.what-happens.help.ul1=do not receive your reference number
+registration-confirmation.what-happens.help.ul2=need to make a change to your application
+registration-confirmation.what-happens.help.link=What do you think of this service?
+registration-confirmation.what-happens.help.p2= (takes 30 seconds)
 
 #Service page
 sdil.service-page.repayment.warning=You can only claim credit if you''ve registered for the levy and paid it directly to HMRC. Claiming credits you''re not entitled to is a criminal offence.
@@ -761,10 +771,6 @@ contact-details.email=Email address
 
 sdil.declaration.package-own-uk=Litres in next 12 months
 
-complete.title=Application complete
-complete.subheading=We have received your application to register {0} for the Soft Drinks Industry Levy
-complete.your.updates=Your application to register for the Soft Drinks Industry Levy was sent on {0} at {1}.
-
 # Uniform variation process
 heading.select-change=What do you need to do?
 select-change.option.sites=Update contact, packaging site or warehouse details
@@ -801,10 +807,10 @@ heading.remove-secondary-warehouse-details=Are you sure you want to remove this 
 remove-secondary-warehouse-details.continue=Save and continue
 error.radio-form.choose-option.remove-secondary-warehouse-details=Select yes if you want to remove this warehouse
 heading.add-packaging-site-details=Enter your packaging site details
-heading.element=Enter your UK packaging site details
+heading.production-sites.element=Enter your UK packaging site details
 heading.first-production-site=Enter your UK packaging site details
 first-production-site.paragraph=Only add the addresses of the packaging sites you operate
-element.paragraph=Only add the addresses of the packaging sites you operate
+production-sites.element.paragraph=Only add the addresses of the packaging sites you operate
 add-production-site-details.paragraph=Only add the addresses of the packaging sites you operate
 heading.remove-packaging-site-details=Are you sure you want to remove this packaging site?
 remove-packaging-site-details.continue=Save and continue
@@ -902,7 +908,7 @@ packaging-site-details.option.add=Yes
 packaging-site-details.option.done=No
 heading.edit-packaging-site-details=Enter your UK packaging site details
 
-heading.secondary-warehouse-details=Do you want to register any of the UK warehouses you use to store liable drinks? 
+heading.secondary-warehouse-details=Do you want to register any of the UK warehouses you use to store liable drinks?
 heading.multi.secondary-warehouse-details=Your registered UK warehouses
 secondary-warehouse-details.lead=
 secondary-warehouse-details.multi.lead=You have added {0} warehouse{1}.

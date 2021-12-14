@@ -130,20 +130,18 @@ object RegistrationControllerNew {
       } else {
         List.empty[Address]
       }
-      //TODO: Add validation to Address inout strings, not sure to do this here, create a new WebAsk or bring in ValidatedTypes
-      //TODO: Need to add correct hrefs to edit and delete links on the listing page.
+      //TODO: add validation to individual fields of Addresses
       //TODO: We need to pass in the number of Sites that the user has added with custom content, can't seem to work that now as customContent is not a argument on askList method.
       packSites <- askListSimple[Address](
                     "production-sites",
                     default = packingSites.some,
                     validation = Rule.nonEmpty
                   ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
+      //TODO: add validation to individual fields of Warehouses
       addWarehouses <- if (!isVoluntary) { ask[Boolean]("ask-secondary-warehouses") } else { pure(false) }
-      //TODO: warehouses is still being asked even if addWarehouses is false
-      //TODO: we want the add page of the warehouses journey to show first, this isn't working currently as there isn't a Rule.nonEmpty
-      //TODO: all add pages have the key of "element", we need to add the pageKey infront of this e.g "warehouses.element"
       warehouses <- askListSimple[Warehouse](
-                     "warehouses"
+                     "warehouses",
+                     validation = Rule.nonEmpty
                    ).map(_.map(Site.fromWarehouse)) emptyUnless addWarehouses
       //TODO: add validation to individual fields of ContactDetails
       contactDetails <- ask[ContactDetails]("contact-details")
@@ -151,7 +149,7 @@ object RegistrationControllerNew {
         longTupToLitreage(packageOwn),
         longTupToLitreage(imports),
         longTupToLitreage(copacks),
-        useCopacker.collect { case true => Litreage(1, 1) }, // TODO - why (1,1) ?
+        useCopacker.collect { case true => Litreage(1, 1) },
         producerType == ProducerType.Large
       )
       declaration = uniform.fragments.registerDeclaration(
@@ -191,11 +189,15 @@ object RegistrationControllerNew {
       )
       _ <- convertWithKey("submission")(backendCall(subscription))
       _ <- nonReturn("reg-complete")
-      _ <- tell(
-            "confirmation", { (msg: Messages) =>
+      _ <- end(
+            "registration-confirmation", { (msg: Messages) =>
               val complete = uniform.fragments.registrationComplete(subscription.contact.email)(msg).some
-              val subheading = Html(msg("complete.subheading", subscription.orgName)).some
-              views.html.uniform.journeyEndNew("complete", whatHappensNext = complete, getTotal = subheading)(msg)
+              val subheading = Html(msg("registration-confirmation.subheading", subscription.orgName)).some
+              views.html.uniform.journeyEndNew(
+                "registration-confirmation",
+                whatHappensNext = complete,
+                getTotal = subheading,
+                email = contactDetails.email.some)(msg)
             }
           )
     } yield subscription

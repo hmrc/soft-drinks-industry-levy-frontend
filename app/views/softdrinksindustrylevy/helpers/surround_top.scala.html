@@ -14,10 +14,10 @@
  * limitations under the License.
  *@
 
-@(pageKey: List[String], fieldKey: String, tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html], end: Boolean = false, cond: Option[Html] = None)(inner: Html*)
+@(pageKey: List[String], fieldKey: String, tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html], cond: Option[Html] = None)(inner: Html*)
 
 @keyDots = @{pageKey.mkString(".")}
-@isListingPage= @{List("production-sites").contains(pageKey.head)}
+@isListingPage= @{List("production-sites", "warehouses").contains(pageKey.head)}
 
 @if(isListingPage){
     @for(m <- messages.get(s"heading.$keyDots.orgName")) {
@@ -142,8 +142,7 @@
 
    </fieldset>
 
-@if(!end){
-  <button class="button" type="submit" id="continue-button">
+    <button class="button" type="submit" id="continue-button">
     @messages(List(s"$keyDots.continue","sdil.common.save-continue"))
-  </button>
-}
+    </button>
+

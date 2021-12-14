@@ -26,8 +26,7 @@ import views.html.uniform
 import sdil.config.AppConfig
 import cats.implicits._
 import sdil.uniform.SdilComponentsNew
-
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 
 trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew with InferWebAsk[Html] {
 
@@ -36,7 +35,7 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
   def ufViews: views.uniform.Uniform
   def defaultBackLink: String
 
-  lazy private val futureAdapter = FutureAdapter.rerunOnStateChange[Html](Duration.Inf)
+  lazy private val futureAdapter = FutureAdapter.rerunOnStateChange[Html](15.minutes)
   implicit protected def futAdapt[A: Codec] = futureAdapter.apply[A]
 
   implicit def messages(
@@ -134,16 +133,16 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
     def render(
       pageIn: PageIn[Html],
       stepDetails: StepDetails[Html, Nothing]
-    ): Option[Html] = Some(
-      views.html.softdrinksindustrylevy.helpers
-        .surround_top(
-          stepDetails.stepKey,
-          stepDetails.fieldKey.head,
-          stepDetails.tell,
-          stepDetails.errors,
-          pageIn.messages,
-          true)()
-    )
+    ): Option[Html] = stepDetails.tell
+//      Some(
+//        views.html.softdrinksindustrylevy.helpers
+//          .end_surround(
+//            stepDetails.stepKey,
+//            stepDetails.fieldKey.head,
+//            stepDetails.tell,
+//            stepDetails.errors,
+//            pageIn.messages)()
+//      )
   }
 
 }

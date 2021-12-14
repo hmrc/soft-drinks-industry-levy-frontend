@@ -27,12 +27,16 @@
 @(key: List[String], errors: ErrorTree, html: Option[Html], breadcrumbs: List[String], csrf: String, defaultBackLink: String)(implicit messages: UniformMessages[Html], request: Request[_], config: AppConfig)
 @keyDots = @{key.mkString(".")}
 @title = @{messages(s"heading.$keyDots").toString}
+@noBackLink= @{List("registration-confirmation").contains(keyDots)}
+
 @main_template(
     if(errors.nonEmpty) s"${Messages("sdil.common.error")}: $title" else title,
     form = None
 ){
-    @for(back <- (breadcrumbs:+defaultBackLink).drop(1).headOption) {
-        <a class="link-back" href="@back">@messages("back")</a>
+    @if(!noBackLink) {
+        @for(back <- (breadcrumbs :+ defaultBackLink).drop(1).headOption) {
+            <a class="link-back" href="@back">@messages("back")</a>
+        }
     }
 
     @helper.form(action = play.api.mvc.Call("post", "")) {
