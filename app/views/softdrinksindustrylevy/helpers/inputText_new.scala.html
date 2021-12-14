@@ -17,8 +17,18 @@
 @(fieldKey: List[String], value: String, errors: ErrorTree)(implicit messages: UniformMessages[Html])
 @keyDots = @{fieldKey.mkString(".")}
 @keyDash = @{fieldKey.mkString("-")}
-@litreageKeys = @{List("package-own-uk", "package-copack", "import").contains(fieldKey.head)}
-
+@litreageKeys = @{List(
+    "package-own-uk", 
+    "package-copack", 
+    "import", 
+    "own-brands-packaged-at-own-sites",
+    "packaged-as-a-contract-packer",
+    "brought-into-uk",
+    "brought-into-uk-from-small-producers",
+    "claim-credits-for-exports",
+    "claim-credits-for-lost-damaged"
+).contains(fieldKey.head)}
+    
     <input class="form-control outline
         @if(errors.nonEmpty) {form-control-error}
         @if(litreageKeys) {volume}"
