@@ -119,8 +119,8 @@ trait SdilComponentsNew {
   implicit val longField: WebAsk[Html, Long] =
     stringField.simap(x => {
       Rule.nonEmpty[String].apply(x) andThen
-        Transformation.catchOnly[NumberFormatException]("not-a-number")(_.replace(",", "").toLong) andThen
-        Rule.cond(_.toString.length <= 15, "max")
+        Rule.cond(_.length <= 15, "max") andThen
+        Transformation.catchOnly[NumberFormatException]("not-a-number")(_.replace(",", "").toLong)
     }.toEither)(_.toString)
 
   implicit val twirlDateField: WebAsk[Html, LocalDate] =
