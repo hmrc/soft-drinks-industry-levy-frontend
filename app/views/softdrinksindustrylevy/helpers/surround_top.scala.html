@@ -118,9 +118,9 @@
 @cond.getOrElse(Html(""))
 
 @for((h,t) <- messages.list(keyDots+".help.header").zip(messages.list(keyDots+".help"))){
-        <details>
-          <summary><span class="summary">@h</span></summary>
-          <div class="panel panel-border-narrow">
+        <details class="padding-bottom-10 govuk-details">
+          <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
+          <div class="panel panel-border-narrow margin-bottom-1">
             @t
           </div>
         </details>

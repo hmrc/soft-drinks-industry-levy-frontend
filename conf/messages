@@ -1241,6 +1241,11 @@ claim-credits-for-lost-damaged.Some.value.subfield.help=<p tabindex="-1">The low
 claim-credits-for-lost-damaged.required=Select yes if you want to claim a credit for any liable drink that has been lost or destroyed
 claim-credits-for-lost-damaged.Some.value._1.required=Enter the number of litres in the low band
 claim-credits-for-lost-damaged.Some.value._2.required=Enter the number of litres in the high band
+claim-credits-for-lost-damaged.Some.value._1.not-a-number=Number of litres must be a whole number=Enter the number of litres in the low band
+claim-credits-for-lost-damaged.Some.value._2.not-a-number=Number of litres must be a whole number=Enter the number of litres in the high band
+claim-credits-for-lost-damaged.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+claim-credits-for-lost-damaged.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+
 heading.check-your-answers=Check your answers before sending your return
 heading.check-your-answers.orgName=
 period.check-your-answers={0} to {1}
