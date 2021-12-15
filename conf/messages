@@ -1126,6 +1126,10 @@ own-brands-packaged-at-own-sites.Some.value.subfield.help=<p tabindex="-1">The l
 own-brands-packaged-at-own-sites.required=Select yes if you are reporting your own brands of liable drink you have packaged at UK sites you operate
 own-brands-packaged-at-own-sites.Some.value._1.required=Enter the number of litres in the low band
 own-brands-packaged-at-own-sites.Some.value._2.required=Enter the number of litres in the high band
+own-brands-packaged-at-own-sites.Some.value._1.not-a-number=Number of litres must be a whole number
+own-brands-packaged-at-own-sites.Some.value._2.not-a-number=Number of litres must be a whole number
+own-brands-packaged-at-own-sites.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+own-brands-packaged-at-own-sites.Some.value._2.max=Number of litres in the low band must be less than 100,000,000,000,000
 heading.packaged-as-a-contract-packer=Are you reporting liable drink you have packaged as a third party or contract packer at UK sites you operate?
 packaged-as-a-contract-packer.inner-heading=How many litres do you need to report?
 packaged-as-a-contract-packer.paragraph=Do not include liable drinks you have packaged for registered small producers.
@@ -1141,6 +1145,10 @@ packaged-as-a-contract-packer.Some.value.subfield.help=<p tabindex="-1">The low 
 packaged-as-a-contract-packer.required=Select yes if you are reporting liable drink you have packaged as a third party or contract packer at UK sites you operate
 packaged-as-a-contract-packer.Some.value._1.required=Enter the number of litres in the low band
 packaged-as-a-contract-packer.Some.value._2.required=Enter the number of litres in the high band
+packaged-as-a-contract-packer.Some.value._1.not-a-number=Number of litres must be a whole number
+packaged-as-a-contract-packer.Some.value._2.not-a-number=Number of litres must be a whole number
+packaged-as-a-contract-packer.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+packaged-as-a-contract-packer.Some.value._2.max=Number of litres in the low band must be less than 100,000,000,000,000
 exemptions-for-small-producers.help.header=What is a small producer?
 exemptions-for-small-producers.help=A business is a small producer if it:\
   <ul class="list list-bullet">\
@@ -1190,6 +1198,10 @@ brought-into-uk.help=A business is a small producer if it:\
 brought-into-uk.required=Select yes if you are reporting liable drink you have brought into the UK from anywhere outside of the UK
 brought-into-uk.Some.value._1.required=Enter the number of litres in the low band
 brought-into-uk.Some.value._2.required=Enter the number of litres in the high band
+brought-into-uk.Some.value._1.not-a-number=Number of litres must be a whole number
+brought-into-uk.Some.value._2.not-a-number=Number of litres must be a whole number
+brought-into-uk.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+brought-into-uk.Some.value._2.max=Number of litres in the low band must be less than 100,000,000,000,000
 heading.brought-into-uk-from-small-producers=Are you reporting any liable drink you have brought into the UK from small producers?
 brought-into-uk-from-small-producers.lead.volMan=Include your own brands of liable drink produced outside of the UK.
 brought-into-uk-from-small-producers.inner-heading=How many litres?
@@ -1212,6 +1224,10 @@ brought-into-uk-from-small-producers.Some.value.subfield.help=<p tabindex="-1">T
 brought-into-uk-from-small-producers.required=Select yes if you are reporting any liable drink you have brought into the UK from small producers
 brought-into-uk-from-small-producers.Some.value._1.required=Enter the number of litres in the low band
 brought-into-uk-from-small-producers.Some.value._2.required=Enter the number of litres in the high band
+brought-into-uk-from-small-producers.Some.value._1.not-a-number=Number of litres must be a whole number
+brought-into-uk-from-small-producers.Some.value._2.not-a-number=Number of litres must be a whole number
+brought-into-uk-from-small-producers.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+brought-into-uk-from-small-producers.Some.value._2.max=Number of litres in the low band must be less than 100,000,000,000,000
 heading.claim-credits-for-exports=Do you want to claim a credit for liable drink that has been exported?
 claim-credits-for-exports.help.header=What can I claim a credit for?
 claim-credits-for-exports.help=You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: \
@@ -1229,6 +1245,10 @@ claim-credits-for-exports.lead.volMan=You can only claim a levy credit for drink
 claim-credits-for-exports.required=Select yes if you want to claim a credit for liable drink that has been exported
 claim-credits-for-exports.Some.value._1.required=Enter the number of litres in the low band
 claim-credits-for-exports.Some.value._2.required=Enter the number of litres in the high band
+claim-credits-for-exports.Some.value._1.not-a-number=Number of litres must be a whole number
+claim-credits-for-exports.Some.value._2.not-a-number=Number of litres must be a whole number
+claim-credits-for-exports.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+claim-credits-for-exports.Some.value._2.max=Number of litres in the low band must be less than 100,000,000,000,000
 claim-credits-for-lost-damaged.help.header=What can I claim credit for?
 claim-credits-for-lost-damaged.help=You can claim a credit for liable drinks that have been:<ul class="list list-bullet"><li>lost</li><li>destroyed</li>\
   <li>disposed of as waste</li><li>reprocessed</li><li>spilled and cannot be used</li></ul>\
@@ -1241,8 +1261,8 @@ claim-credits-for-lost-damaged.Some.value.subfield.help=<p tabindex="-1">The low
 claim-credits-for-lost-damaged.required=Select yes if you want to claim a credit for any liable drink that has been lost or destroyed
 claim-credits-for-lost-damaged.Some.value._1.required=Enter the number of litres in the low band
 claim-credits-for-lost-damaged.Some.value._2.required=Enter the number of litres in the high band
-claim-credits-for-lost-damaged.Some.value._1.not-a-number=Number of litres must be a whole number=Enter the number of litres in the low band
-claim-credits-for-lost-damaged.Some.value._2.not-a-number=Number of litres must be a whole number=Enter the number of litres in the high band
+claim-credits-for-lost-damaged.Some.value._1.not-a-number=Number of litres must be a whole number
+claim-credits-for-lost-damaged.Some.value._2.not-a-number=Number of litres must be a whole number
 claim-credits-for-lost-damaged.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
 claim-credits-for-lost-damaged.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
 
