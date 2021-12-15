@@ -1,6 +1,14 @@
 @import sdil.models.Warehouse
 @(key: String, rows: List[Warehouse], messages: UniformMessages[Html])
 
+@pluralKey =@{if(rows.length >= 2) {s"$key.table.paragraph.plural"} else ({s"$key.table.paragraph.singular"})}
+
+@messages.get(pluralKey, rows.length).map { msg =>
+    <div class="lede">
+        <p tabindex="-1">@msg</p>
+    </div>
+}
+
 <table class="margin-bottom-30">
     <tbody>
         @for((row, index) <- rows.zipWithIndex) {

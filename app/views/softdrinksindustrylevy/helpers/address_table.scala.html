@@ -1,6 +1,18 @@
 @import sdil.models.Address
 @(key: String, rows: List[Address], messages: UniformMessages[Html])
 
+@pluralKey =@{if(rows.length >= 2) {s"$key.table.paragraph.plural"} else ({s"$key.table.paragraph.singular"})}
+
+@messages.get(pluralKey, rows.length).map { msg =>
+    <div class="lede">
+        <p tabindex="-1">@msg</p>
+    </div>
+}
+
+@for(m <- messages.get(s"$key.table.paragraph.small")) {
+    <p tabindex="-1">@m</p>
+}
+
 <table class="margin-bottom-30">
     <tbody>
         @for((row, index) <- rows.zipWithIndex) {

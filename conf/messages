@@ -165,8 +165,9 @@ sdil.litreage.volumes.content.p1=If you do not have the exact volumes you can en
 
 #Production sites
 heading.production-sites=Your packaging sites
-production-sites.paragraph=You have added {0} packaging site.
-production-sites.paragraph.small=You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+production-sites.table.paragraph.singular=You have added {0} packaging site.
+production-sites.table.paragraph.plural=You have added {0} packaging sites.
+production-sites.table.paragraph.small=You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
 production-sites.required=Select yes if you need to add another packaging site
 production-sites.listing.heading=Do you need to add another packaging site?
 
@@ -185,6 +186,8 @@ sdil.production-site.help.p2=If you have got more packaging sites you can add th
 
 #Secondary warehouse
 heading.warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+warehouses.table.paragraph.singular=You have added {0} warehouse.
+warehouses.table.paragraph.plural=You have added {0} warehouses.
 warehouses.help.header=Why should I register a warehouse?
 warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
 warehouses.help.1=You do not need to register an address as a warehouse if you have already registered it as a packaging site.
