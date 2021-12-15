@@ -170,8 +170,8 @@ production-sites.paragraph.small=You must tell us about all of the UK packaging 
 production-sites.required=Select yes if you need to add another packaging site
 production-sites.listing.heading=Do you need to add another packaging site?
 
-heading.production-sites.element=Enter your UK packaging site details
-production-sites.element.paragraph=Only add the addresses of the packaging sites you operate
+heading.p-site=Enter your UK packaging site details
+p-site.paragraph=Only add the addresses of the packaging sites you operate
 
 sdil.production-sites.select-applicable=Select all that apply
 label.production-sites.add=I need to add another packaging site
@@ -190,9 +190,9 @@ warehouses.help=You can delay the point you will have to report liable drinks in
 warehouses.help.1=You do not need to register an address as a warehouse if you have already registered it as a packaging site.
 warehouses.listing.heading=Do you want to register another UK warehouse?
 warehouses.required=Select yes if you want to register another warehouse
-heading.warehouses.element=Enter the UK warehouse details
-warehouses.element.address=
-warehouses.element.tradingName=Trading name (optional)
+heading.w-house=Enter the UK warehouse details
+w-house.address=
+w-house.tradingName=Trading name (optional)
 
 label.warehouse-sites.add=I want to register another warehouse
 sdil.warehouse-site.add.heading=Enter a warehouse site

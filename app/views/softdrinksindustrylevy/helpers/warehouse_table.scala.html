@@ -13,14 +13,8 @@
                                 @if(row.tradingName.isEmpty){@row.address.line1} else {@row.tradingName}, @row.address.postcode
                             </span>
                         </summary>
-                        @if(row.tradingName.isEmpty) {
-                            @row.nonEmptyLines.tail.tail.map { line =>
-                                <div class="address progressive-reveal">@line</div>
-                            }
-                        } else {
-                            @row.nonEmptyLines.tail.map { line =>
-                                <div class="address progressive-reveal">@line</div>
-                            }
+                        @row.nonEmptyLines.tail.map { line =>
+                            <div class="address progressive-reveal">@line</div>
                         }
                     </details>
                 </td>

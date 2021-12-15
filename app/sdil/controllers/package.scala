@@ -55,11 +55,12 @@ package object controllers {
 
   def askListSimple[A: izumi.reflect.Tag](
     key: String,
+    subKey: String = "subKey",
     default: Option[List[A]] = None,
     validation: Rule[List[A]] = Rule.alwaysPass[List[A]]
   ) = askList[A](key, default, validation) {
     case (index: Option[Int], existing: List[A]) =>
-      ask[A](s"$key.element", default = index.map(existing))
+      ask[A](s"$subKey", default = index.map(existing))
   }
 
   def longTupToLitreage(in: (Long, Long)): Option[Litreage] =

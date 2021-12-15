@@ -134,6 +134,7 @@ object RegistrationControllerNew {
       //TODO: We need to pass in the number of Sites that the user has added with custom content, can't seem to work that now as customContent is not a argument on askList method.
       packSites <- askListSimple[Address](
                     "production-sites",
+                    "p-site",
                     default = packingSites.some,
                     validation = Rule.nonEmpty
                   ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
@@ -141,6 +142,7 @@ object RegistrationControllerNew {
       addWarehouses <- if (!isVoluntary) { ask[Boolean]("ask-secondary-warehouses") } else { pure(false) }
       warehouses <- askListSimple[Warehouse](
                      "warehouses",
+                     "w-house",
                      validation = Rule.nonEmpty
                    ).map(_.map(Site.fromWarehouse)) emptyUnless addWarehouses
       //TODO: add validation to individual fields of ContactDetails
