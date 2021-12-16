@@ -135,6 +135,11 @@ object ReturnsControllerNew {
         ra
     }
 
+    def taxEstimation(r: SdilReturn): BigDecimal = {
+      val t = r.packLarge |+| r.importLarge |+| r.ownBrand
+      (t._1 * costLower |+| t._2 * costHigher) * 4
+    }
+
     for {
       ownBrands <- askEmptyOption[(Long, Long)](
                     "own-brands-packaged-at-own-sites",
@@ -258,7 +263,8 @@ object ReturnsControllerNew {
                   costLower = costLower,
                   costHigher = costHigher,
                   subtotal = subtotal,
-                  broughtForward = broughtForward)(msg)
+                  broughtForward = broughtForward
+                )(msg)
                 .some
 
               views.html.uniform
@@ -267,10 +273,4 @@ object ReturnsControllerNew {
           )
     } yield (sdilReturn, variation)
   }
-
-  def taxEstimation(r: SdilReturn): BigDecimal = {
-    val t = r.packLarge |+| r.importLarge |+| r.ownBrand
-    (t._1 * costLower |+| t._2 * costHigher) * 4
-  }
-
 }
