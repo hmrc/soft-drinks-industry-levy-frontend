@@ -22,9 +22,9 @@
 @(subscription: RetrievedSubscription, paymentDate: ReturnPeriod, sdilRef: String, total: BigDecimal, formattedTotal: String, variation: ReturnsVariation, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal)(implicit messages: Messages)
 
 @if(total > 0) {
-    <p>@messages("return-sent.paymentsBlurb.payby", formattedTotal, paymentDate.deadline.format("dd MMMM yyyy"))</p>
+    <p>@Html(messages("return-sent.paymentsBlurb.payby", formattedTotal, paymentDate.deadline.format("dd MMMM yyyy")))</p>
 
-    <p>@messages("return-sent.paymentsBlurb.payusing", sdilRef)</p>
+    <p>@Html(messages("return-sent.paymentsBlurb.payusing", sdilRef))</p>
 }
 
 @if(total == 0) {
@@ -49,7 +49,7 @@
 }
 
 <h2 class="heading-medium">@messages("return-sent.paymentsBlurb.help-heading")</h2>
-<p>@messages("return-sent.paymentsBlurb.help-subheading", sdil.controllers.routes.ServicePageController.show())</p>
+<p>@Html(messages("return-sent.paymentsBlurb.help-subheading", sdil.controllers.routes.ServicePageController.show()))</p>
 
     <ul class="list list-bullet">
         <li>@messages("return-sent.paymentsBlurb.payDetails.1")</li>
