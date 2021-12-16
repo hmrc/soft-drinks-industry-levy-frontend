@@ -25,7 +25,7 @@ import scala.language.implicitConversions
 import izumi.reflect.Tag
 import ltbs.uniform._
 import validation.Rule
-import sdil.models.Litreage
+import sdil.models.{Litreage, SdilReturn}
 
 import java.time.LocalDate
 

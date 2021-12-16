@@ -1157,24 +1157,29 @@ heading.edit-small-producer-details=Enter the registered small producer’s deta
 small-producer-details.option.add=Yes
 small-producer-details.option.done=No
 
-heading.add-small-producer-details=Enter the registered small producer’s details
-heading.first-small-producer-details=Enter the registered small producer’s details
-add-small-producer-details.help.header=What are the bands?
-first-small-producer-details.help.header=What are the bands?
-add-small-producer-details.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per \
-  100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
-  millilitres.</p>
-first-small-producer-details.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per \
-  100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
-  millilitres.</p>
+small-producer-details.table.heading.singular=You have added {0} small producer
+small-producer-details.table.heading.plural=You have added {0} small producers
+heading.add-small-producer=Enter the registered small producer’s details
+add-small-producer.alias=Small producer name (optional)
+add-small-producer.sdilRef=Soft Drinks Industry Levy reference number
+add-small-producer.litreage=
+add-small-producer.litreage._1=Litres in the low band for this quarter
+add-small-producer.litreage._2=Litres in the high band for this quarter
+add-small-producer.help.header=What are the bands?
+add-small-producer.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per \
+                          100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
+                          millilitres.</p>
+small-producer-details.listing.heading=Do you want to add another small producer?
+small-producer-details.required=Select yes if you need to add another small producer
 small-producer-details.name=Name: {0}
 small-producer-details.refNumber=Reference number: {0}
 small-producer-details.lowBand=Low band: {0} litres
 small-producer-details.highBand=High band: {0} litres
-sdil.alias=Small producer name (optional)
-sdil.sdilRef=Soft Drinks Industry Levy reference number
-sdil.litreage.highRate.smallProducer=Litres in the high band for this quarter
-sdil.litreage.lowRate.smallProducer=Litres in the low band for this quarter
+small-producer-details.remove=Remove
+small-producer-details.remove.hidden=Remove {0}, {1}
+small-producer-details.edit=Edit
+small-producer-details.edit.hidden=Edit {0}, {1}
+
 heading.remove-small-producer-details=Are you sure you want to remove this small producer?
 remove-small-producer-details.continue=Save and continue
 error.radio-form.choose-option.remove-small-producer-details=Select yes if you want to remove this small producer

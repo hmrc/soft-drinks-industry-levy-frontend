@@ -257,21 +257,7 @@ trait SdilComponentsNew {
       key: List[String],
       pageIn: PageIn[Html]
     ): Option[Html] = Some(
-      views.html.softdrinksindustrylevy.helpers.warehouse_table(
-        key.last,
-        in.value,
-        pageIn.messages
-      )
-    )
-  }
-
-  implicit val tellListAddress = new WebTell[Html, WebAskList.ListingTable[Address]] {
-    def render(
-      in: WebAskList.ListingTable[Address],
-      key: List[String],
-      pageIn: PageIn[Html]
-    ): Option[Html] = Some(
-      views.html.softdrinksindustrylevy.helpers.address_table(
+      views.html.uniform.fragments.warehouse_table(
         key.last,
         in.value,
         pageIn.messages
@@ -285,11 +271,23 @@ trait SdilComponentsNew {
       key: List[String],
       pageIn: PageIn[Html]
     ): Option[Html] = Some(
-      views.html.softdrinksindustrylevy.helpers.listing_table(
+      views.html.uniform.fragments.small_producer_table(
         key.last,
-        in.value.map { x =>
-          Html(x.toString)
-        },
+        in.value,
+        pageIn.messages
+      )
+    )
+  }
+
+  implicit val tellListAddress = new WebTell[Html, WebAskList.ListingTable[Address]] {
+    def render(
+      in: WebAskList.ListingTable[Address],
+      key: List[String],
+      pageIn: PageIn[Html]
+    ): Option[Html] = Some(
+      views.html.uniform.fragments.address_table(
+        key.last,
+        in.value,
         pageIn.messages
       )
     )

@@ -40,6 +40,7 @@ import play.twirl.api.Html
 import java.time._
 import java.time.format._
 import sdil.utility.stringToFormatter
+import views.html.uniform
 
 class ReturnsControllerNew(
   mcc: MessagesControllerComponents,
@@ -101,10 +102,6 @@ class ReturnsControllerNew(
 
 object ReturnsControllerNew {
 
-  // TODO: Move to config file
-  val costLower = BigDecimal("0.18")
-  val costHigher = BigDecimal("0.24")
-
   private[controllers] def journey(
     sdilRef: String,
     period: ReturnPeriod,
@@ -117,6 +114,27 @@ object ReturnsControllerNew {
 
     case object ChangeRegistration
 
+    val costLower = BigDecimal("0.18")
+    val costHigher = BigDecimal("0.24")
+
+    def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal =
+      d.map { case (_, (l, h), m) => costLower * l * m + costHigher * h * m }.sum
+
+    def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
+      val ra = List(
+        ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
+        ("exemptions-for-small-producers", sdilReturn.packSmall.map { _.litreage }.combineAll, 0),
+        ("brought-into-uk", sdilReturn.importLarge, 1),
+        ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
+        ("claim-credits-for-exports", sdilReturn.export, -1),
+        ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
+      )
+      if (!isSmallProducer)
+        ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
+      else
+        ra
+    }
+
     for {
       ownBrands <- askEmptyOption[(Long, Long)](
                     "own-brands-packaged-at-own-sites",
@@ -127,6 +145,7 @@ object ReturnsControllerNew {
                        ) emptyUnless !subscription.activity.smallProducer
       smallProds <- askListSimple[SmallProducer](
                      "small-producer-details",
+                     "add-small-producer",
                      validation = Rule.nonEmpty[List[SmallProducer]],
                      default = default.map { _.packSmall }
                    ) emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
@@ -174,32 +193,29 @@ object ReturnsControllerNew {
         email = subscription.contact.email,
         taxEstimation = taxEstimation(sdilReturn)
       )
-      _ <- tell("cya", Html("TODO - cya"))
+      data = returnAmount(sdilReturn, isSmallProd)
+      subtotal = calculateSubtotal(data)
+      total = subtotal - broughtForward
+      _ <- tell(
+            "check-your-answers",
+            uniform.fragments.returnsCYA(
+              key = "check-your-answers",
+              lineItems = data,
+              costLower = costLower,
+              costHigher = costHigher,
+              subtotal = subtotal,
+              broughtForward = broughtForward,
+              total = total,
+              variation = variation.some,
+              subscription = subscription,
+              originalReturn = None
+            )(_: Messages)
+          )
       _ <- convertWithKey(s"return-submission")(submitReturn(sdilReturn)) // sdilConnector.returns_update(subscription.utr, period, sdilReturn))
       _ <- nonReturn("return-complete")
-      _ <- tell(
+      _ <- end(
             "return-sent", { msg: Messages =>
               val now = LocalDate.now
-              val data = {
-                // previously in SdilWMController.returnAmount
-                val ra = List(
-                  ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
-                  ("exemptions-for-small-producers", sdilReturn.packSmall.map { _.litreage }.combineAll, 0),
-                  ("brought-into-uk", sdilReturn.importLarge, 1),
-                  ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
-                  ("claim-credits-for-exports", sdilReturn.export, -1),
-                  ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
-                )
-                if (!isSmallProd)
-                  ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
-                else
-                  ra
-              }
-
-              // previously in SdilWMController.calculateSubtotal
-              val subtotal: BigDecimal =
-                data.map { case (_, (l, h), m) => costLower * l * m + costHigher * h * m }.sum
-
               val returnDate = msg(
                 "return-sent.returnsDoneMessage",
                 period.start.format("MMMM"),
@@ -209,7 +225,7 @@ object ReturnsControllerNew {
                 LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
                 now.format("dd MMMM yyyy")
               )
-              val total = subtotal - broughtForward
+
               val formatTotal =
                 if (total < 0)
                   f"-£${total.abs}%,.2f"
@@ -232,17 +248,17 @@ object ReturnsControllerNew {
 
               val whatHappensNext = views.html.uniform.fragments
                 .returnsPaymentsBlurb(
-                  subscription,
-                  period,
-                  sdilRef,
-                  total,
-                  formatTotal,
-                  variation,
-                  data,
-                  costLower,
-                  costHigher,
-                  subtotal,
-                  broughtForward)(msg)
+                  subscription = subscription,
+                  paymentDate = period,
+                  sdilRef = sdilRef,
+                  total = total,
+                  formattedTotal = formatTotal,
+                  variation = variation,
+                  lineItems = data,
+                  costLower = costLower,
+                  costHigher = costHigher,
+                  subtotal = subtotal,
+                  broughtForward = broughtForward)(msg)
                 .some
 
               views.html.uniform
