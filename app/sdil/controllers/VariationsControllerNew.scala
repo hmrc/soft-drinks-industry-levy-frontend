@@ -17,15 +17,18 @@
 package sdil.controllers
 
 import scala.language.higherKinds
-
 import cats.implicits._
 import enumeratum._
+
 import java.time.LocalDate
-import ltbs.uniform._, validation._
+import ltbs.uniform._
+import validation._
+import play.api.i18n._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
+
 import scala.concurrent._
 import sdil.actions._
 import sdil.config._
@@ -38,6 +41,7 @@ import sdil.uniform.SaveForLaterPersistenceNew
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import sdil.uniform.ProducerType
 import ltbs.uniform.interpreters.playframework.SessionPersistence
+import views.html.uniform
 
 class VariationsControllerNew(
   mcc: MessagesControllerComponents,
@@ -218,20 +222,24 @@ object VariationsControllerNew {
     returnPeriods: List[ReturnPeriod]
   ) =
     for {
+      //Ask Luke how to re-order enums
       producerType <- ask[ProducerType]("amount-produced")
       useCopacker  <- if (producerType == ProducerType.Small) ask[Boolean]("third-party-packagers") else pure(false)
       packageOwn   <- askEmptyOption[(Long, Long)]("packaging-site")
       copacks      <- askEmptyOption[(Long, Long)]("contract-packing")
       imports      <- askEmptyOption[(Long, Long)]("imports")
       noUkActivity = (copacks, imports).isEmpty
-      smallProducerWithNoCopacker = producerType != ProducerType.Large && useCopacker == false
+      smallProducerWithNoCopacker = producerType != ProducerType.Large && !useCopacker
       shouldDereg = noUkActivity && smallProducerWithNoCopacker
       packer = (producerType == ProducerType.Large && packageOwn.nonEmpty) || copacks.nonEmpty
       isVoluntary = subscription.activity.voluntaryRegistration
       variation <- if (shouldDereg) {
                     if (returnPeriods.isEmpty || isVoluntary) {
                       for {
-                        _ <- tell("suggest-deregistration", Html("optional-back-to amount-produced"))
+                        _ <- end(
+                              "suggest-deregistration",
+                              uniform.confirmOrGoBackTo("suggest-deregistration", "amount-produced")(_: Messages)
+                            )
                         x <- deregisterUpdate(data)
                       } yield x
                     } else {

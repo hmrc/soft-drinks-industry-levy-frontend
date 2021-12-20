@@ -115,8 +115,8 @@ sdil.producer.heading=In the past 12 months, have you packaged or had packaged o
 sdil.producer.hidden-heading=How many litres worldwide?
 
 producer.Large=1 million litres or more
-producer.Not=Less than 1 million litres
-producer.Small=None
+producer.Small=Less than 1 million litres
+producer.Not=None
 
 #Package
 sdil.package.heading=Will you package liable drinks at a packaging site you operate?
@@ -584,7 +584,7 @@ error.email=Enter a real email address, like name@example.com
 error.radio-form.choose-option=Choose an option
 error.radio-form.choose-option.=Choose an option
 error.radio-form.choose-option.continue=Select an option to continue
-error.radio-form.choose-option.select-change=Select what you need to do
+select-change.required=Select what you need to do
 error.radio-form.choose-option.select-return=Select which return you need to correct
 error.radio-form.choose-option.repayment-method=Select how you want the credit to be repaid
 
@@ -776,9 +776,10 @@ sdil.declaration.package-own-uk=Litres in next 12 months
 
 # Uniform variation process
 heading.select-change=What do you need to do?
-select-change.option.sites=Update contact, packaging site or warehouse details
-select-change.option.activity=Change business activity
-select-change.option.deregister=Cancel Soft Drinks Industry Levy registration
+select-change.Sites=Update contact, packaging site or warehouse details
+select-change.Activity=Change business activity
+select-change.Deregister=Cancel Soft Drinks Industry Levy registration
+select-change.Returns=Correct an error in a previous return
 select-change.continue=Continue
 
 heading.change-registered-details=What do you need to change?
@@ -827,10 +828,11 @@ remove-production-site-details.continue=Save and continue
 error.radio-form.choose-option.remove-production-site-details=Select yes if you want to remove this packaging site
 
 heading.amount-produced=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
+amount-produced.required=Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months
 amount-produced.lead=This includes brands you own or have the rights to manufacture.
-amount-produced.option.large=1 million litres or more
-amount-produced.option.small=Less than 1 million litres
-amount-produced.option.not=None
+amount-produced.Large=1 million litres or more
+amount-produced.Small=Less than 1 million litres
+amount-produced.Not=None
 amount-produced.help.header.1=What does ‘packaged’ mean?
 amount-produced.help.1=A liable drink is packaged if it is bottled, canned or otherwise packaged so it is ready to either drink or dilute.
 amount-produced.help.header.2=What is a liable drink?
@@ -880,7 +882,14 @@ pack-at-business-address.true=Yes
 pack-at-business-address.false=No
 
 heading.packaging-site=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
-packaging-site.inner-heading=How many litres will you package in the next 12 months?
+packaging-site.Some.value=<h2 class="heading-medium">How many litres will you package in the next 12 months?</h2>
+packaging-site.required=Select yes if you operate any packaging sites in the UK to package liable drinks for brands you own
+packaging-site.Some.value._1.required=Enter the number of litres in the low band
+packaging-site.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+packaging-site.Some.value._2.required=Enter the number of litres in the high band
+packaging-site.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+packaging-site.Some.value.subfield.help.header.1=I do not know how many litres
+packaging-site.Some.value.subfield.help.1=If you do not have the exact volumes you can enter an estimate.
 
 heading.packQty=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
 packQty.inner-heading=How many litres will you package in the next 12 months?
@@ -889,12 +898,27 @@ packQty.lower=Litres in the low band
 packQty.higher=Litres in the high band
 
 heading.contract-packing=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
-contract-packing.inner-heading=How many litres will you package in the next 12 months?
+contract-packing.Some.value=<h2 class="heading-medium">How many litres will you package in the next 12 months?</h2>
+contract-packing.required=Select yes if you operate any packaging sites in the UK to package liable drinks as a third party or contract packer
+contract-packing.Some.value._1.required=Enter the number of litres in the low band
+contract-packing.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+contract-packing.Some.value._2.required=Enter the number of litres in the high band
+contract-packing.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+contract-packing.Some.value.subfield.help.header.1=I do not know how many litres
+contract-packing.Some.value.subfield.help.1=If you do not have the exact volumes you can enter an estimate.
 
 heading.imports=Do you bring liable drinks into the UK from anywhere outside of the UK?
-imports.inner-heading=How many litres will you bring into the UK in the next 12 months?
+imports.Some.value=<h2 class="heading-medium">How many litres will you bring into the UK in the next 12 months?</h2>
+imports.required=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
+imports.Some.value._1.required=Enter the number of litres in the low band
+imports.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+imports.Some.value._2.required=Enter the number of litres in the high band
+imports.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+imports.Some.value.subfield.help.header.1=I do not know how many litres
+imports.Some.value.subfield.help.1=If you do not have the exact volumes you can enter an estimate.
 
 heading.third-party-packagers=Do you use any third parties in the UK to package liable drinks on your behalf?
+third-party-packagers.required=Select yes if you use any third parties in the UK to package liable drinks on your behalf
 
 production-site-details.table.paragraph.singular=You have added {0} packaging site.
 production-site-details.table.paragraph.plural=You have added {0} packaging sites.

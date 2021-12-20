@@ -233,7 +233,33 @@ trait SdilComponentsNew {
 
 //Already added the WebAskValidation object with val myAskAddress: WebAsk[Html, Address] = implicitly[WebAsk[Html, Address]]
 //TODO: Add in validation here for Address from lazy val addressMapping - ln 291 of SdilComponents.scala
-//  implicit val askAddress = myAskAddress.simap(x => x)()
+
+//  implicit val longField: WebAsk[Html, Long] =
+//    stringField.simap(x => {
+//      Rule.nonEmpty[String].apply(x) andThen
+//        Rule.cond(_.length <= 15, "max") andThen
+//        Transformation.catchOnly[NumberFormatException]("not-a-number")(_.replace(",", "").toLong)
+//    }.toEither)(y => y.toString)
+//
+//  implicit val askAddress: WebAsk[Address, Html] = myAskAddress.simap(x => x match{
+//    case Address(line1, line2, line3, line4, postCode)=>
+//      Rule.nonEmpty[String].apply(line1) andThen
+//      Rule.nonEmpty[String].apply(line2) andThen
+//      Transformation.catchOnly[NumberFormatException]("not-a-number")(Address(_))
+//  }.toEither)()
+
+  implicit val twirlUKAddressField: WebAsk[Html, Address] = new WebAsk[Html, Address] {
+    import scala.language.higherKinds
+//    implicit val a: Codec[Postcode] = postcodeField
+//    implicit val b: Codec[AddressLine] = mandatoryAddressField
+//    implicit val c: Codec[Option[AddressLine]] = optAddressField
+
+    override val codec: Codec[Address] = common.web.InferCodec.gen[Address]
+    def decode(out: Input): Either[ErrorTree, Address] = codec.decode(out)
+    def encode(in: Address): Input = codec.encode(in)
+
+    override def render(pageIn: PageIn[Html], stepDetails: StepDetails[Html, Address]): Option[Html] = Html("hey").some
+  }
 
   implicit val tellListSite = new WebTell[Html, WebAskList.ListingTable[Site]] {
     def render(
