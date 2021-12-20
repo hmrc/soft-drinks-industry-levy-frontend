@@ -17,7 +17,7 @@
 @(pageKey: List[String], fieldKey: String, tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html], cond: Option[Html] = None)(inner: Html*)
 
 @keyDots = @{pageKey.mkString(".")}
-@isListingPage= @{List("production-sites", "warehouses", "small-producer-details").contains(pageKey.head)}
+@isListingPage= @{List("production-sites", "warehouses", "small-producer-details", "production-site-details", "secondary-warehouse-details").contains(pageKey.head)}
 @noShowHeader= @{List("small-producer-details").contains(pageKey.head)}
 @if(isListingPage){
     @for(m <- messages.get(s"heading.$keyDots.orgName")) {
