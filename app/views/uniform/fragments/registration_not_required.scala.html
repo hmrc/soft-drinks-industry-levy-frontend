@@ -16,12 +16,11 @@
 
 @()(implicit messages: UniformMessages[Html])
 
-<p>@messages("sdil.registration-not-required.p1")</p>
+<h1>@messages("sdil.registration-not-required.heading")</h1>
 
 <ul class="list-bullet">
-    @for(msg <- messages.list("sdil.registration-not-required.li")) {
+    @for(msg <- messages.list("sdil.registration-not-required.li").reverse.tail.reverse) {
         <li>@msg</li>
     }
 </ul>
-
 <p>@messages("sdil.registration-not-required.p3", sdil.controllers.routes.RegistrationControllerNew.index("producer"))</p>

@@ -87,7 +87,7 @@ object RegistrationControllerNew {
     hasCTEnrolment: Boolean,
     fd: RegistrationFormData,
     backendCall: Subscription => Future[Unit]
-  ) =
+  )(implicit ufMessages: UniformMessages[Html]) =
     for {
 
       orgType <- if (hasCTEnrolment) ask[OrganisationTypeSoleless]("organisation-type")
@@ -112,7 +112,8 @@ object RegistrationControllerNew {
                 )
       noUkActivity = (copacks, imports).isEmpty
       smallProducerWithNoCopacker = producerType != ProducerType.Large && useCopacker.forall(_ == false)
-      _ <- end("do-not-register") when (noUkActivity && smallProducerWithNoCopacker)
+      noReg = uniform.fragments.registration_not_required()
+      _ <- end("do-not-register", noReg) when (noUkActivity && smallProducerWithNoCopacker)
       isVoluntary = producerType == ProducerType.Small && useCopacker.contains(true) && (copacks, imports).isEmpty
       regDate <- ask[LocalDate](
                   "start-date",
@@ -139,7 +140,11 @@ object RegistrationControllerNew {
                     validation = Rule.nonEmpty
                   ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
       //TODO: add validation to individual fields of Warehouses
-      addWarehouses <- if (!isVoluntary) { ask[Boolean]("ask-secondary-warehouses") } else { pure(false) }
+      addWarehouses <- if (!isVoluntary) {
+                        ask[Boolean]("ask-secondary-warehouses")
+                      } else {
+                        pure(false)
+                      }
       warehouses <- askListSimple[Warehouse](
                      "warehouses",
                      "w-house",

@@ -223,14 +223,14 @@ sdil.import.heading=Do you bring liable drinks into the UK from anywhere outside
 
 sdil.registration-not-required.heading=You do not need to register
 sdil.registration-not-required.p1=Based on your answers you do not need to register. You will need to register within 30 days of the:
-sdil.registration-not-required.li.1=end of the month if you have produced over 1 million litres of liable drinks in the \
+sdil.registration-not-required.li=end of the month if you have produced over 1 million litres of liable drinks in the \
   past 12 months
-sdil.registration-not-required.li.2=date you know that you will produce over 1 million litres of liable drinks in the \
+sdil.registration-not-required.li.1=date you know that you will produce over 1 million litres of liable drinks in the \
   next 30 days
-sdil.registration-not-required.li.3=end of the month in which you packaged liable drinks for someone else
-sdil.registration-not-required.li.4=date you know you are going to package liable drinks for someone else
-sdil.registration-not-required.li.5=end of the month in which you brought liable drinks into the UK
-sdil.registration-not-required.li.6=date you know you are going to bring liable drinks into the UK
+sdil.registration-not-required.li.2=end of the month in which you packaged liable drinks for someone else
+sdil.registration-not-required.li.3=date you know you are going to package liable drinks for someone else
+sdil.registration-not-required.li.4=end of the month in which you brought liable drinks into the UK
+sdil.registration-not-required.li.5=date you know you are going to bring liable drinks into the UK
 sdil.registration-not-required.p3=If this is not right you need to <a href="{0}">go back and change your answers.</a>
 
 #Small Producer Confrim
@@ -1014,13 +1014,40 @@ sdil.variation.anotherChangeLink=go back and start again
 
 #dereg
 heading.deregister.cancel-registration-reason=Why are you deregistering from the Soft Drinks Industry Levy?
-heading.cancel-registration-reason.orgName=
 deregister.cancel-registration-reason.label=Reason for deregistering
-error.cancel-registration-reason.empty=Enter why you need to cancel your registration
+cancel-registration-reason.required=Enter why you need to cancel your registration
+cancel-registration-reason.maxLength=The reason you are deregistering must be 255 characters or less
+
 heading.cancel-registration-date=What date are you cancelling your registration from?
-heading.cancel-registration-date.orgName=
-error.cancel-registration-date.nopast=The date you are cancelling your registration must be today or in the future
-error.cancel-registration-date.nofuture=The date you are cancelling your registration from cannot be more than 14 days in the future
+
+cancel-registration-date.day.empty=The date you are cancelling your registration must include a day
+cancel-registration-date.month.empty=The date you are cancelling your registration must include a month
+cancel-registration-date.year.empty=The date you are cancelling your registration must include a year
+cancel-registration-date.day-and-month.empty=The date you are cancelling your registration must include a day and month
+cancel-registration-date.day-and-year.empty=The date you are cancelling your registration must include a day and year
+cancel-registration-date.month-and-year.empty=The date you are cancelling your registration must include a month and year
+cancel-registration-date.day-and-month-and-year.empty=Enter The date you are cancelling your registration
+
+cancel-registration-date.day.nan=Day must only include numbers
+cancel-registration-date.month.nan=Month must only include numbers
+cancel-registration-date.year.nan=Year must only include numbers
+cancel-registration-date.day-and-month.nan=The day and month must be in numbers
+cancel-registration-date.day-and-year.nan=The day and year must be in numbers
+cancel-registration-date.month-and-year.nan=The month and year must be in numbers
+cancel-registration-date.day-and-month-and-year.nan=The date you are cancelling your registration must be a real date, like  31 7 2020
+
+cancel-registration-date.day.invalid=Enter a real day
+cancel-registration-date.month.invalid=Enter a real month
+cancel-registration-date.year.invalid=Enter a real year
+cancel-registration-date.day-and-month.invalid=The day and month must be part of a real date, like  31 7 2020
+cancel-registration-date.day-and-year.invalid=The day and year must be part of a real date, like  31 7 2020
+cancel-registration-date.month-and-year.invalid=The month and year must be part of a real date, like  31 7 2020
+cancel-registration-date.day-and-month-and-year.invalid=The date you are cancelling your registration must be a real date, like  31 7 2020
+
+cancel-registration-date.not-a-date=Enter a real date
+cancel-registration-date.min=The date you are cancelling your registration must be today or in the future
+cancel-registration-date.max=The date you are cancelling your registration from cannot be more than 14 days in the future
+
 
 error.cancel-registration-date.emptyfields=Enter the date you are cancelling your registration from
 error.cancel-registration-date-day.missing=The date you are cancelling your registration from must include a day

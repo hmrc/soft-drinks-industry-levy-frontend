@@ -20,8 +20,9 @@ import scala.language.higherKinds
 import cats.implicits._
 import enumeratum._
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalTime, ZoneId}
 import ltbs.uniform._
+import ltbs.uniform.common.web.WebMonad
 import validation._
 import play.api.i18n._
 import play.api.Logger
@@ -34,14 +35,19 @@ import sdil.actions._
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend.Site
+import sdil.models.backend.{Site, Subscription}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistenceNew
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import sdil.uniform.ProducerType
 import ltbs.uniform.interpreters.playframework.SessionPersistence
+import sdil.controllers.VariationsControllerNew.Change.{Activity, Contacts, Deregister, Returns}
 import views.html.uniform
+import views.html.uniform.helpers.dereg_variations_cya
+
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ofPattern
 
 class VariationsControllerNew(
   mcc: MessagesControllerComponents,
@@ -63,6 +69,11 @@ class VariationsControllerNew(
   val logger: Logger = Logger(this.getClass())
 
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    def submitVariation(
+      variationSubmission: VariationsSubmission,
+      sdilRef: String
+    ) = sdilConnector.submitVariation(variationSubmission, sdilRef)
+
     val sdilRef = request.sdilEnrolment.value
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(subscription) =>
@@ -70,9 +81,16 @@ class VariationsControllerNew(
         for {
           variableReturns <- sdilConnector.returns_variable(base.original.utr)
           returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
-          response <- interpret(VariationsControllerNew.journey(subscription, sdilRef, variableReturns, returnPeriods))
-                       .run(id, config = journeyConfig) { output =>
-                         Future.successful(Ok("!")) // TODO some action
+          response <- interpret(
+                       VariationsControllerNew.journey(
+                         subscription,
+                         sdilRef,
+                         variableReturns,
+                         returnPeriods,
+                         submitVariation
+                       ))
+                       .run(id, purgeStateUponCompletion = true, config = journeyConfig) { _ =>
+                         Future.successful(Redirect(routes.ServicePageController.show())) // TODO some action
                        }
         } yield response
       case None => Future.successful(NotFound(""))
@@ -133,7 +151,7 @@ object VariationsControllerNew {
     for {
       _         <- tell("change-business-address", htmlMessage)
       variation <- contactUpdate(base)
-      _         <- tell("checkyouranswers", variation)
+      _         <- tell("check-answers", variation)
     } yield ()
 
   }
@@ -144,7 +162,7 @@ object VariationsControllerNew {
     for {
       reason <- ask[String](
                  "cancel-registration-reason",
-                 validation = Rule.maxLength[String](255)
+                 validation = Rule.nonEmpty[String] followedBy Rule.maxLength[String](255)
                )
       deregDate <- ask[LocalDate](
                     "cancel-registration-date",
@@ -233,54 +251,54 @@ object VariationsControllerNew {
       shouldDereg = noUkActivity && smallProducerWithNoCopacker
       packer = (producerType == ProducerType.Large && packageOwn.nonEmpty) || copacks.nonEmpty
       isVoluntary = subscription.activity.voluntaryRegistration
-      variation <- if (shouldDereg) {
-                    if (returnPeriods.isEmpty || isVoluntary) {
-                      for {
-                        _ <- end(
-                              "suggest-deregistration",
-                              uniform.confirmOrGoBackTo("suggest-deregistration", "amount-produced")(_: Messages)
-                            )
-                        x <- deregisterUpdate(data)
-                      } yield x
-                    } else {
-                      end("file-returns-before-dereg")
-                    }
-                  } else {
-                    for {
-                      usePPOBAddress <- (
-                                         ask[Boolean]("pack-at-business-address")
-                                           when packer && data.original.productionSites.isEmpty
-                                       ).map(_.getOrElse(false))
-                      pSites = if (usePPOBAddress) {
-                        List(Site.fromAddress(Address.fromUkAddress(data.original.address)))
-                      } else {
-                        data.updatedProductionSites.toList
-                      }
-                      packSites <- askListSimple[Site]("pack-sites", validation = Rule.nonEmpty[List[Site]]) emptyUnless packer
-                      isVoluntary = producerType == ProducerType.Small && useCopacker && (copacks, imports).isEmpty
-                      warehouses <- askListSimple[Site]("warehouses") emptyUnless !isVoluntary
-                    } yield
-                      Change.Activity(
-                        data.copy(
-                          producer =
-                            Producer(producerType != ProducerType.Not, (producerType == ProducerType.Large).some),
-                          usesCopacker = useCopacker.some,
-                          packageOwn = packageOwn.nonEmpty.some,
-                          packageOwnVol = longTupToLitreage(packageOwn),
-                          copackForOthers = copacks.nonEmpty,
-                          copackForOthersVol = longTupToLitreage(copacks),
-                          imports = imports.nonEmpty,
-                          importsVol = longTupToLitreage(imports),
-                          updatedProductionSites = packSites,
-                          updatedWarehouseSites = warehouses
-                        ))
-                  }
+
+      variation = if (shouldDereg) {
+        if (returnPeriods.isEmpty || isVoluntary) {
+          val deregHtml =
+            uniform.confirmOrGoBackTo("suggest-deregistration", "amount-produced")(_: Messages)
+          for {
+            _              <- tell("suggest-deregistration", deregHtml)
+            deregVariation <- deregisterUpdate(data)
+            _              <- tell("check-answers", dereg_variations_cya(showChangeLinks = true, data)(_: Messages))
+          } yield deregVariation
+        } else {
+          end("file-returns-before-dereg")
+        }
+      } else {
+        for {
+          usePPOBAddress <- (
+                             ask[Boolean]("pack-at-business-address")
+                               when packer && data.original.productionSites.isEmpty
+                           ).map(_.getOrElse(false))
+          pSites = if (usePPOBAddress) {
+            List(Site.fromAddress(Address.fromUkAddress(data.original.address)))
+          } else {
+            data.updatedProductionSites.toList
+          }
+          packSites <- askListSimple[Site]("pack-sites", validation = Rule.nonEmpty[List[Site]]) emptyUnless packer
+          isVoluntary = producerType == ProducerType.Small && useCopacker && (copacks, imports).isEmpty
+          warehouses <- askListSimple[Site]("warehouses") emptyUnless !isVoluntary
+        } yield
+          Change.Activity(
+            data.copy(
+              producer = Producer(producerType != ProducerType.Not, (producerType == ProducerType.Large).some),
+              usesCopacker = useCopacker.some,
+              packageOwn = packageOwn.nonEmpty.some,
+              packageOwnVol = longTupToLitreage(packageOwn),
+              copackForOthers = copacks.nonEmpty,
+              copackForOthersVol = longTupToLitreage(copacks),
+              imports = imports.nonEmpty,
+              importsVol = longTupToLitreage(imports),
+              updatedProductionSites = packSites,
+              updatedWarehouseSites = warehouses
+            ))
+      }
     } yield variation
 
   private def adjust(
     subscription: RetrievedSubscription,
-    sdilRef: String,
-    connector: SoftDrinksIndustryLevyConnector,
+//    sdilRef: String,
+//    connector: SoftDrinksIndustryLevyConnector,
     returnPeriod: ReturnPeriod,
     lookupFunction: ReturnPeriod => Future[SdilReturn],
     balanceHistoryFunction: () => Future[List[FinancialLineItem]],
@@ -351,12 +369,52 @@ object VariationsControllerNew {
     } yield Change.Returns(variation.copy(reason = reason, repaymentMethod = repayment))
   }
 
+  def closedWarehouseSites(variation: RegistrationVariationData): List[Site] =
+    closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
+
+  def closedPackagingSites(variation: RegistrationVariationData): List[Site] =
+    closedSites(variation.original.productionSites, Convert(variation).closeSites.map(x => x.siteReference))
+
+  def newPackagingSites(variation: RegistrationVariationData): List[Site] =
+    variation.updatedProductionSites.diff(variation.original.productionSites).toList
+
+  def newWarehouseSites(variation: RegistrationVariationData): List[Site] =
+    variation.updatedWarehouseSites.diff(variation.original.warehouseSites).toList
+
+  private def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
+    sites
+      .filter { x =>
+        x.closureDate.fold(true) {
+          _.isAfter(LocalDate.now)
+        }
+      }
+      .filter(x => closedSites.contains(x.ref.getOrElse("")))
+  def checkYourRegAnswers(key: String, v: RegistrationVariationData, path: List[String])(
+    ) = {
+
+    val inner = uniform.fragments.variationsCYA(
+      v,
+      newPackagingSites(v),
+      closedPackagingSites(v),
+      newWarehouseSites(v),
+      closedWarehouseSites(v),
+      path
+    )(_: Messages)
+    tell(key, inner)
+  }
+
   def journey(
     subscription: RetrievedSubscription,
     sdilRef: String,
     variableReturns: List[ReturnPeriod],
-    pendingReturns: List[ReturnPeriod]
-  )(implicit ec: ExecutionContext) = {
+    pendingReturns: List[ReturnPeriod],
+    submitVariation: (VariationsSubmission, String) => Future[Unit]
+//    lookupFunction: ReturnPeriod => Future[SdilReturn],
+//    balanceHistoryFunction: () => Future[List[FinancialLineItem]],
+//    balanceFunction: () => Future[BigDecimal],
+//    smallProducerCheckFunction: ReturnPeriod => Future[Boolean],
+//    config: AppConfig
+  )(implicit ec: ExecutionContext, ufMessages: UniformMessages[Html]) = {
     val base = RegistrationVariationData(subscription)
     val onlyReturns = subscription.deregDate.nonEmpty
     val changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
@@ -365,17 +423,82 @@ object VariationsControllerNew {
     for {
       changeType <- ask[ChangeType]("select-change", validation = Rule.in(changeTypes))
       variation <- changeType match {
-                    case ChangeType.Returns =>
+//                    case ChangeType.Returns => contactUpdate(base)
+//                      for {
+//                        period <- ask[ReturnPeriod]("select-return", validation = Rule.in(variableReturns))
+//                        ///  original journey redirected from here to adjust()
+//                      } yield {
+
+//                        adjust(
+//                          subscription,
+//                          period,
+//                          lookupFunction,
+//                          balanceHistoryFunction,
+//                          balanceFunction,
+//                          smallProducerCheckFunction,
+//                          config
+//                        )
+//                      }
+//                    case ChangeType.Activity =>
+//                      for {
+//                        foo <- activityUpdateJourney(base, subscription, pendingReturns)
+//                      } yield foo.data
+
+                    case ChangeType.Sites =>
                       for {
-                        period <- ask[ReturnPeriod]("select-return", validation = Rule.in(variableReturns))
-                        ///  original journey redirected from here to adjust()
-                      } yield Change.Returns
-                    case ChangeType.Sites                                               => contactUpdate(base)
-                    case ChangeType.Activity                                            => activityUpdateJourney(base, subscription, pendingReturns)
-                    case ChangeType.Deregister if pendingReturns.isEmpty || isVoluntary => deregisterUpdate(base)
-                    case ChangeType.Deregister =>
-                      end("file-returns-before-dereg")
+                        contacts <- contactUpdate(base)
+                      } yield contacts.data
+                    case ChangeType.Deregister if pendingReturns.isEmpty || isVoluntary =>
+                      for {
+                        dereg <- deregisterUpdate(base)
+                      } yield dereg.data
+//                    case ChangeType.Deregister => end("file-returns-before-dereg")
                   }
+      submission = Convert(variation)
+      _ <- convertWithKey("submission")(submitVariation(submission, subscription.sdilRef))
+//      _ <- nonReturn("variation-complete")
+      path = changeType match {
+        case ChangeType.Deregister => List("cancel-registration")
+        case _                     => Nil
+      }
+      whnKey = variation match {
+        case v if v.manToVol => "manToVol".some
+        case v if v.volToMan => "volToMan".some
+        case _               => None
+      }
+      whn = uniform.fragments.variationsWHN(
+        path,
+        newPackagingSites(variation),
+        closedPackagingSites(variation),
+        newWarehouseSites(variation),
+        closedWarehouseSites(variation),
+        variation.some,
+        None,
+        whnKey
+      )
+      _ <- end(
+            "variationDone", { (msg: Messages) =>
+              val varySubheading = Html(
+                msg(
+                  if (variation.deregDate.nonEmpty) {
+                    "variationDone.your.request"
+                  } else {
+                    "returnVariationDone.your.updates"
+                  },
+                  subscription.orgName,
+                  LocalDate.now.format(ofPattern("d MMMM yyyy")),
+                  LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
+                )).some
+
+              views.html.uniform
+                .journeyEndNew(
+                  "variationDone",
+                  whatHappensNext = whn.some,
+                  updateTimeMessage = varySubheading,
+                  email = subscription.contact.email.some
+                )(msg)
+            }
+          )
     } yield variation
   }
 

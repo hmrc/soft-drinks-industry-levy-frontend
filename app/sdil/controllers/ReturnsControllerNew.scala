@@ -146,6 +146,7 @@ object ReturnsControllerNew {
       contractPacked <- askEmptyOption[(Long, Long)](
                          "packaged-as-a-contract-packer"
                        ) emptyUnless !subscription.activity.smallProducer
+      //TODO validation for SmallProducer
       smallProds <- askListSimple[SmallProducer](
                      "small-producer-details",
                      "add-small-producer",
@@ -174,6 +175,7 @@ object ReturnsControllerNew {
                                                    pure(Address.fromUkAddress(subscription.address))
                                                  case false => ask[Address]("first-production-site")
                                                }
+                            //TODO: validation for Address
                             packingSites <- askListSimple[Address](
                                              "production-site-details",
                                              "site-in-return",
@@ -184,6 +186,7 @@ object ReturnsControllerNew {
                         ) when isNewPacker && subscription.productionSites.isEmpty
       newWarehouses <- (for {
                         addWarehouses <- ask[Boolean]("ask-secondary-warehouses-in-return")
+                        //TODO: validation for Warehouse
                         warehouses <- askListSimple[Warehouse](
                                        "secondary-warehouse-details",
                                        "warehouse-in-return",

@@ -25,7 +25,9 @@ import play.twirl.api.{Html, HtmlFormat}
 import views.html.uniform
 import sdil.config.AppConfig
 import cats.implicits._
+import sdil.models.Address
 import sdil.uniform.SdilComponentsNew
+
 import scala.concurrent.duration._
 
 trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew with InferWebAsk[Html] {
@@ -144,5 +146,11 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
 //            pageIn.messages)()
 //      )
   }
+
+  implicit val askAddress: WebAsk[Html, Address] = gen[Address].simap {
+    case Address(line1, _, _, _, _) if line1.isEmpty => Left(ErrorTree.oneErr(ErrorMsg("required")))
+    case other                                       => other.asRight
+    case _                                           => Right(Address("", "", "", "", ""))
+  }(identity)
 
 }

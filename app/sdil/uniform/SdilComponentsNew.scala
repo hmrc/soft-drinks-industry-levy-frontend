@@ -248,18 +248,18 @@ trait SdilComponentsNew {
 //      Transformation.catchOnly[NumberFormatException]("not-a-number")(Address(_))
 //  }.toEither)()
 
-  implicit val twirlUKAddressField: WebAsk[Html, Address] = new WebAsk[Html, Address] {
-    import scala.language.higherKinds
-//    implicit val a: Codec[Postcode] = postcodeField
-//    implicit val b: Codec[AddressLine] = mandatoryAddressField
-//    implicit val c: Codec[Option[AddressLine]] = optAddressField
-
-    override val codec: Codec[Address] = common.web.InferCodec.gen[Address]
-    def decode(out: Input): Either[ErrorTree, Address] = codec.decode(out)
-    def encode(in: Address): Input = codec.encode(in)
-
-    override def render(pageIn: PageIn[Html], stepDetails: StepDetails[Html, Address]): Option[Html] = Html("hey").some
-  }
+//  implicit val twirlUKAddressField: WebAsk[Html, Address] = new WebAsk[Html, Address] {
+//    import scala.language.higherKinds
+////    implicit val a: Codec[Postcode] = postcodeField
+////    implicit val b: Codec[AddressLine] = mandatoryAddressField
+////    implicit val c: Codec[Option[AddressLine]] = optAddressField
+//
+//    override val codec: Codec[Address] = common.web.InferCodec.gen[Address]
+//    def decode(out: Input): Either[ErrorTree, Address] = codec.decode(out)
+//    def encode(in: Address): Input = codec.encode(in)
+//
+//    override def render(pageIn: PageIn[Html], stepDetails: StepDetails[Html, Address]): Option[Html] = Html("hey").some
+//  }
 
   implicit val tellListSite = new WebTell[Html, WebAskList.ListingTable[Site]] {
     def render(
