@@ -196,6 +196,7 @@ warehouses.required=Select yes if you want to register another warehouse
 heading.w-house=Enter the UK warehouse details
 w-house.address=
 w-house.tradingName=Trading name (optional)
+w-house.tradingName.required=Hey there
 
 label.warehouse-sites.add=I want to register another warehouse
 sdil.warehouse-site.add.heading=Enter a warehouse site

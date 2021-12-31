@@ -25,10 +25,11 @@ import play.twirl.api.{Html, HtmlFormat}
 import views.html.uniform
 import sdil.config.AppConfig
 import cats.implicits._
-import sdil.models.Address
+import sdil.models.{Address, Warehouse}
 import sdil.uniform.SdilComponentsNew
 
 import scala.concurrent.duration._
+import scala.language.{higherKinds, postfixOps}
 
 trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew with InferWebAsk[Html] {
 
@@ -146,11 +147,21 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
 //            pageIn.messages)()
 //      )
   }
+// Validations starts here
+  //TODO implicits are needed for Address, Warehouse, ContactDetails, SmallProducer
+  //Copy the validation from app.sdil.uniform.SdilComponents
 
   implicit val askAddress: WebAsk[Html, Address] = gen[Address].simap {
-    case Address(line1, _, _, _, _) if line1.isEmpty => Left(ErrorTree.oneErr(ErrorMsg("required")))
-    case other                                       => other.asRight
-    case _                                           => Right(Address("", "", "", "", ""))
+    case Address(line1, _, _, _, _) if line1.isEmpty     => Left(ErrorTree.oneErr(ErrorMsg("line1.required")))
+    case Address(line1, _, _, _, _) if line1.length > 30 => Left(ErrorTree.oneErr(ErrorMsg("line1.max")))
+    case Address(line1, _, _, _, _) if !line1.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
+      Left(ErrorTree.oneErr(ErrorMsg("invalid")))
+    case other => other.asRight
+  }(identity)
+
+  implicit val askWarehouse: WebAsk[Html, Warehouse] = gen[Warehouse].simap {
+    case Warehouse(tradingName, _) if tradingName.isEmpty => Left(ErrorTree.oneErr(ErrorMsg("tradingName.required")))
+    case other                                            => other.asRight
   }(identity)
 
 }
