@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package sdil.controllers
 
-import scala.language.higherKinds
+import scala.language.{higherKinds, postfixOps}
 import cats.implicits._
 import enumeratum._
 
@@ -43,6 +43,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import sdil.uniform.ProducerType
 import ltbs.uniform.interpreters.playframework.SessionPersistence
 import sdil.controllers.VariationsControllerNew.Change.{Activity, Contacts, Deregister, Returns}
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.uniform
 import views.html.uniform.helpers.dereg_variations_cya
 
@@ -69,11 +70,6 @@ class VariationsControllerNew(
   val logger: Logger = Logger(this.getClass())
 
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    def submitVariation(
-      variationSubmission: VariationsSubmission,
-      sdilRef: String
-    ) = sdilConnector.submitVariation(variationSubmission, sdilRef)
-
     val sdilRef = request.sdilEnrolment.value
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(subscription) =>
@@ -87,10 +83,11 @@ class VariationsControllerNew(
                          sdilRef,
                          variableReturns,
                          returnPeriods,
-                         submitVariation
+                         sdilConnector,
+                         config
                        ))
                        .run(id, purgeStateUponCompletion = true, config = journeyConfig) { _ =>
-                         Future.successful(Redirect(routes.ServicePageController.show())) // TODO some action
+                         Future.successful(Redirect(routes.ServicePageController.show()))
                        }
         } yield response
       case None => Future.successful(NotFound(""))
@@ -240,7 +237,7 @@ object VariationsControllerNew {
     returnPeriods: List[ReturnPeriod]
   ) =
     for {
-      //Ask Luke how to re-order enums
+      //TODO: Ask Luke how to re-order enums
       producerType <- ask[ProducerType]("amount-produced")
       useCopacker  <- if (producerType == ProducerType.Small) ask[Boolean]("third-party-packagers") else pure(false)
       packageOwn   <- askEmptyOption[(Long, Long)]("packaging-site")
@@ -297,42 +294,38 @@ object VariationsControllerNew {
 
   private def adjust(
     subscription: RetrievedSubscription,
-//    sdilRef: String,
-//    connector: SoftDrinksIndustryLevyConnector,
+    sdilRef: String,
+    connector: SoftDrinksIndustryLevyConnector,
     returnPeriod: ReturnPeriod,
-    lookupFunction: ReturnPeriod => Future[SdilReturn],
-    balanceHistoryFunction: () => Future[List[FinancialLineItem]],
-    balanceFunction: () => Future[BigDecimal],
-    smallProducerCheckFunction: ReturnPeriod => Future[Boolean],
     config: AppConfig
-  )(implicit ec: ExecutionContext) = {
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier) = {
     val base = RegistrationVariationData(subscription)
     implicit val showBackLink: ShowBackLink = ShowBackLink(false)
     for {
-      isSmallProd <- convertWithKey("is-small-producer")(smallProducerCheckFunction(returnPeriod))
-      origReturn  <- convertWithKey("return-lookup")(lookupFunction(returnPeriod))
+      isSmallProd <- convertWithKey("is-small-producer")(connector.checkSmallProducerStatus(sdilRef, returnPeriod))
+      origReturn  <- convertWithKey("return-lookup")(connector.returns_get(subscription.utr, returnPeriod))
       broughtForward <- if (config.balanceAllEnabled) {
                          convertWithKey("balance-history") {
-                           balanceHistoryFunction().map { x =>
+                           connector.balanceHistory(sdilRef, withAssessment = false).map { x =>
                              extractTotal(listItemsWithTotal(x))
                            }
                          }
                        } else {
-                         convertWithKey("balance")(balanceFunction())
+                         convertWithKey("balance")(connector.balance(sdilRef, withAssessment = false))
                        }
       newReturn <- ReturnsControllerNew.journey(
                     subscription.sdilRef,
                     returnPeriod,
-                    origReturn.some,
+                    origReturn,
                     subscription,
                     broughtForward,
-                    isSmallProd, { _ =>
+                    isSmallProd.getOrElse(false), { _ =>
                       Future.successful(())
                     }
                   ) // , base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
-
+      emptyReturn = SdilReturn((0, 0), (0, 0), Nil, (0, 0), (0, 0), (0, 0), (0, 0), None)
       variation = ReturnVariationData(
-        origReturn,
+        origReturn.getOrElse(emptyReturn),
         newReturn._1,
         returnPeriod,
         base.original.orgName,
@@ -408,13 +401,9 @@ object VariationsControllerNew {
     sdilRef: String,
     variableReturns: List[ReturnPeriod],
     pendingReturns: List[ReturnPeriod],
-    submitVariation: (VariationsSubmission, String) => Future[Unit]
-//    lookupFunction: ReturnPeriod => Future[SdilReturn],
-//    balanceHistoryFunction: () => Future[List[FinancialLineItem]],
-//    balanceFunction: () => Future[BigDecimal],
-//    smallProducerCheckFunction: ReturnPeriod => Future[Boolean],
-//    config: AppConfig
-  )(implicit ec: ExecutionContext, ufMessages: UniformMessages[Html]) = {
+    sdilConnector: SoftDrinksIndustryLevyConnector,
+    appConfig: AppConfig
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) = {
     val base = RegistrationVariationData(subscription)
     val onlyReturns = subscription.deregDate.nonEmpty
     val changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
@@ -423,40 +412,30 @@ object VariationsControllerNew {
     for {
       changeType <- ask[ChangeType]("select-change", validation = Rule.in(changeTypes))
       variation <- changeType match {
-//                    case ChangeType.Returns => contactUpdate(base)
-//                      for {
-//                        period <- ask[ReturnPeriod]("select-return", validation = Rule.in(variableReturns))
-//                        ///  original journey redirected from here to adjust()
-//                      } yield {
-
-//                        adjust(
-//                          subscription,
-//                          period,
-//                          lookupFunction,
-//                          balanceHistoryFunction,
-//                          balanceFunction,
-//                          smallProducerCheckFunction,
-//                          config
-//                        )
-//                      }
-//                    case ChangeType.Activity =>
-//                      for {
-//                        foo <- activityUpdateJourney(base, subscription, pendingReturns)
-//                      } yield foo.data
+                    case ChangeType.Returns =>
+                      for {
+                        period <- ask[ReturnPeriod]("select-return", validation = Rule.in(variableReturns))
+                        ///  original journey redirected from here to adjust()
+                        adjustedReturn <- adjust(subscription, sdilRef, sdilConnector, period, appConfig)
+                      } yield {
+                        adjustedReturn: Change
+                      }
+                    case ChangeType.Activity =>
+                      activityUpdateJourney(base, subscription, pendingReturns): Change
 
                     case ChangeType.Sites =>
                       for {
                         contacts <- contactUpdate(base)
-                      } yield contacts.data
+                      } yield { contacts: Change }
                     case ChangeType.Deregister if pendingReturns.isEmpty || isVoluntary =>
                       for {
                         dereg <- deregisterUpdate(base)
-                      } yield dereg.data
-//                    case ChangeType.Deregister => end("file-returns-before-dereg")
+                      } yield { dereg: Change }
+                    case ChangeType.Deregister => end("file-returns-before-dereg")
                   }
       submission = Convert(variation)
-      _ <- convertWithKey("submission")(submitVariation(submission, subscription.sdilRef))
-//      _ <- nonReturn("variation-complete")
+      _ <- convertWithKey("submission")(sdilConnector.submitVariation(submission, subscription.sdilRef))
+      _ <- nonReturn("variation-complete")
       path = changeType match {
         case ChangeType.Deregister => List("cancel-registration")
         case _                     => Nil

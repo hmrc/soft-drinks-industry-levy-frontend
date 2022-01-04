@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,17 +141,17 @@ class SoftDrinksIndustryLevyConnector(
     }
 
   def balance(
-    sdil: String,
+    sdilRef: String,
     withAssessment: Boolean
   )(implicit hc: HeaderCarrier): Future[BigDecimal] =
-    http.GET[BigDecimal](s"$sdilUrl/balance/$sdil/$withAssessment")
+    http.GET[BigDecimal](s"$sdilUrl/balance/$sdilRef/$withAssessment")
 
   def balanceHistory(
-    sdil: String,
+    sdilRef: String,
     withAssessment: Boolean
   )(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
     import FinancialLineItem.formatter
-    http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdil/history/all/$withAssessment")
+    http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
   }
 
 }
