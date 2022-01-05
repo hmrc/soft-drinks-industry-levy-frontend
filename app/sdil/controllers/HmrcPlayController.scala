@@ -25,7 +25,7 @@ import play.twirl.api.{Html, HtmlFormat}
 import views.html.uniform
 import sdil.config.AppConfig
 import cats.implicits._
-import sdil.models.{Address, Warehouse}
+import sdil.models.{Address, ContactDetails, SmallProducer, Warehouse}
 import sdil.uniform.SdilComponentsNew
 
 import scala.concurrent.duration._
@@ -47,7 +47,7 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
     messagesApi.preferred(request).convertMessages() |+|
       UniformMessages.bestGuess
   }.map { Html(_) }
-//    UniformMessages.attentionSeeker.map(HtmlFormat.escape)
+  //    UniformMessages.attentionSeeker.map(HtmlFormat.escape)
   def pageChrome(
     key: List[String],
     errors: ErrorTree,
@@ -137,31 +137,102 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
       pageIn: PageIn[Html],
       stepDetails: StepDetails[Html, Nothing]
     ): Option[Html] = stepDetails.tell
-//      Some(
-//        views.html.softdrinksindustrylevy.helpers
-//          .end_surround(
-//            stepDetails.stepKey,
-//            stepDetails.fieldKey.head,
-//            stepDetails.tell,
-//            stepDetails.errors,
-//            pageIn.messages)()
-//      )
+    //      Some(
+    //        views.html.softdrinksindustrylevy.helpers
+    //          .end_surround(
+    //            stepDetails.stepKey,
+    //            stepDetails.fieldKey.head,
+    //            stepDetails.tell,
+    //            stepDetails.errors,
+    //            pageIn.messages)()
+    //      )
   }
-// Validations starts here
+  // Validations starts here
   //TODO implicits are needed for Address, Warehouse, ContactDetails, SmallProducer
   //Copy the validation from app.sdil.uniform.SdilComponents
 
+  // Address validation logic
   implicit val askAddress: WebAsk[Html, Address] = gen[Address].simap {
-    case Address(line1, _, _, _, _) if line1.isEmpty     => Left(ErrorMsg("required").toTree.prefixWith("line1"))
-    case Address(line1, _, _, _, _) if line1.length > 30 => Left(ErrorMsg("max").toTree.prefixWith("line1"))
+    case Address(line1, line2, _, _, _) if line1.isEmpty && line2.isEmpty =>
+      Left(ErrorMsg("required").toTree.prefixWith("line1") ++ ErrorMsg("required").toTree.prefixWith("line2"))
+    case Address(line1, _, _, _, _) if line1.length > 35 => Left(ErrorMsg("max").toTree.prefixWith("line1"))
     case Address(line1, _, _, _, _) if !line1.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
       Left(ErrorMsg("invalid").toTree.prefixWith("line1"))
+    case Address(_, line2, _, _, _) if line2.isEmpty     => Left(ErrorMsg("required").toTree.prefixWith("line2"))
+    case Address(_, line2, _, _, _) if line2.length > 35 => Left(ErrorMsg("max").toTree.prefixWith("line2"))
+    case Address(_, line2, _, _, _) if !line2.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("line2"))
+    case Address(_, _, line3, _, _) if line3.length > 35 => Left(ErrorMsg("max").toTree.prefixWith("line3"))
+    case Address(_, _, line3, _, _) if !line3.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("line3"))
+    case Address(_, _, _, line4, _) if line4.length > 35 => Left(ErrorMsg("max").toTree.prefixWith("line4"))
+    case Address(_, _, _, line4, _) if !line4.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("line2"))
+    case Address(_, _, _, _, postcode) if postcode.isEmpty => Left(ErrorMsg("required").toTree.prefixWith("postcode"))
+    case Address(_, _, _, _, postcode)
+        if !postcode.matches("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$") =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("postcode"))
+    case Address(_, _, _, _, postcode) if !postcode.matches("""^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$""") =>
+      Left(ErrorMsg("special").toTree.prefixWith("postcode"))
     case other => other.asRight
   }(identity)
 
+  // Warehouse validation logic
   implicit val askWarehouse: WebAsk[Html, Warehouse] = gen[Warehouse].simap {
-    case Warehouse(tradingName, _) if tradingName.isEmpty => Left(ErrorTree.oneErr(ErrorMsg("tradingName.required")))
-    case other                                            => other.asRight
+    case Warehouse(tradingName, _) if tradingName.length > 160 => Left(ErrorMsg("max").toTree.prefixWith("tradingName"))
+    case Warehouse(tradingName, _) if !tradingName.matches("""^[a-zA-Z0-9 '.&\\/]*$""") =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("tradingName"))
+    case other => other.asRight
+  }(identity)
+
+  private val emailRegex =
+    """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"""
+
+  // ContactDetails validation logic
+  implicit val askContactDetails: WebAsk[Html, ContactDetails] = gen[ContactDetails].simap {
+    case ContactDetails(fullName, _, _, _) if fullName.isEmpty =>
+      Left(ErrorMsg("required").toTree.prefixWith("fullName"))
+    case ContactDetails(fullName, _, _, _) if fullName.length > 40 =>
+      Left(ErrorMsg("max").toTree.prefixWith("fullName"))
+    case ContactDetails(fullName, _, _, _) if !fullName.matches("^[a-zA-Z &`\\-\\'\\.^]{1,40}$") =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("fullName"))
+    case ContactDetails(_, position, _, _) if position.isEmpty =>
+      Left(ErrorMsg("required").toTree.prefixWith("position"))
+    case ContactDetails(_, position, _, _) if position.length > 155 =>
+      Left(ErrorMsg("max").toTree.prefixWith("position"))
+    case ContactDetails(_, position, _, _) if !position.matches("^[a-zA-Z &`\\-\\'\\.^]{1,155}$") =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("position"))
+    case ContactDetails(_, _, phoneNumber, _) if phoneNumber.isEmpty =>
+      Left(ErrorMsg("required").toTree.prefixWith("phoneNumber"))
+    case ContactDetails(_, _, phoneNumber, _) if phoneNumber.length > 24 =>
+      Left(ErrorMsg("max").toTree.prefixWith("phoneNumber"))
+    case ContactDetails(_, _, phoneNumber, _) if !phoneNumber.matches("^[A-Z0-9 )/(\\-*#+]{1,24}$") =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("phoneNumber"))
+    case ContactDetails(_, _, _, email) if email.isEmpty      => Left(ErrorMsg("required").toTree.prefixWith("email"))
+    case ContactDetails(_, _, _, email) if email.length > 132 => Left(ErrorMsg("max").toTree.prefixWith("email"))
+    case ContactDetails(_, _, _, email) if !email.matches(emailRegex) =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("email"))
+    case other => other.asRight
+  }(identity)
+//
+//  // SmallProducer validation logic
+  implicit val askSmallProducer: WebAsk[Html, SmallProducer] = gen[SmallProducer].simap {
+    case SmallProducer(alias, _, _) if alias.length > 160 => Left(ErrorMsg("max").toTree.prefixWith("alias"))
+    case SmallProducer(_, sdilRef, _) if sdilRef.isEmpty  => Left(ErrorMsg("required").toTree.prefixWith("sdilRef"))
+    case SmallProducer(_, sdilRef, _) if !sdilRef.matches("^X[A-Z]SDIL000[0-9]{6}$") =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("sdilRef"))
+    //TODO - how to do this validation logic
+    /*
+				case b if b == origSdilRef                      => Invalid("error.sdilref.same")
+				case d if !isCheckCorrect(d, 1)                 => Invalid("error.sdilref.invalid")
+				case e
+						if (id
+							.equalsIgnoreCase("add-small-producer-details") && smallProducerList.map(x => x.sdilRef).contains(e)) =>
+					Invalid("error.sdilref.alreadyexists")
+				case _ if !Await.result(isSmallProducer(x, sdilConnector, period), 20.seconds) =>
+					Invalid("error.sdilref.notSmall")
+		 */
+    case other => other.asRight
   }(identity)
 
 }

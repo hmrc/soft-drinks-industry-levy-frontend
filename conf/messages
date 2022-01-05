@@ -196,16 +196,15 @@ warehouses.required=Select yes if you want to register another warehouse
 heading.w-house=Enter the UK warehouse details
 w-house.address=
 w-house.tradingName=Trading name (optional)
-w-house.tradingName.required=Hey there
 
 label.warehouse-sites.add=I want to register another warehouse
 sdil.warehouse-site.add.heading=Enter a warehouse site
 sdil.warehouse-site.add.hint=You can enter more sites after if you need to
 sdil.warehouse-site.add.legend=A warehouse site address
 sdil.warehouse-site.add=Add address to list
-error.tradingName.required=Enter a trading name
-error.tradingName.length=Trading name must be 160 characters or less
-error.tradingName.invalid=Trading name must only include letters a to z, numbers, spaces, apostrophes, ampersands and full stops
+tradingName.required=Enter a trading name
+tradingName.max=Trading name must be 160 characters or less
+tradingName.invalid=Trading name must only include letters a to z, numbers, spaces, apostrophes, ampersands and full stops
 
 #Package Copack Small
 sdil.packageCopackSmall.heading=Do you expect to claim a small producer exemption for any of your customers?
@@ -297,15 +296,17 @@ start-date.not-a-date=Enter a real date
 
 #Contact details
 
-error.fullName.required=Enter your contact person’s full name
-error.fullName.over=Name must be 40 characters or less
-error.position.required=Enter your contact person’s job title
-error.position.over=Job title must be 155 characters or less
-error.phoneNumber.required=Enter your contact person’s telephone number
-error.phoneNumber.over=Telephone number must be 24 characters or less
-error.email.required=Enter your contact person’s email address
-error.email.over=Email address must be 132 characters or less
-error.phoneNumber.invalid=Enter a telephone number, like 01632 960999 or 07700 900999
+fullName.invalid=Full name must only include letters a to z, apostrophes, hyphens and spaces
+fullName.required=Enter your contact person’s full name
+fullName.max=Full name must be 40 characters or less
+position.required=Enter your contact person’s job title
+position.max=Job title must be 155 characters or less
+position.invalid=Job title must only include letters a to z, apostrophes, dashes, hyphens and spaces
+phoneNumber.required=Enter your contact person’s telephone number
+phoneNumber.max=Telephone number must be 24 characters or less
+phoneNumber.invalid=Enter a telephone number, like 01632 960999 or 07700 900999
+email.required=Enter your contact person’s email address
+email.max=Email address must be 132 characters or less
 
 # Declaration
 sdil.declaration.heading=Check your answers
@@ -509,7 +510,7 @@ sdil.service-page.reregister.title=Register again for the Soft Drinks Industry L
 sdil.service-page.reregister.p1=If you become liable for the levy again, you will need to <a href="{0}">register.</a>
 sdil.service-page.reregister.p2=Check the guidance to \
   <a href="https://www.gov.uk/guidance/check-if-you-need-to-register-for-the-soft-drinks-industry-levy"> \
-  find out if you need to register.</a> 
+  find out if you need to register.</a>
 
 #service page when deregistered
 sdil.service-page.deregistered.pending.title=Your request to cancel your registration is on hold
@@ -561,27 +562,25 @@ financiallineitem.officerasstinterest=Interest on Officers Assessment
 financiallineitem.paymentonaccount=Payment on account
 
 #Common errors
-error.line1.required=Enter address line 1
-error.line2.required=Enter address line 2
-error.line1.invalid=Address line 1 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
-error.line2.invalid=Address line 2 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
-error.line3.invalid=Address line 3 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
-error.line4.invalid=Address line 4 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
-error.line1.over=Address line 1 must be 35 characters or less
-error.line2.over=Address line 2 must be 35 characters or less
-error.line3.over=Address line 3 must be 35 characters or less
-error.line4.over=Address line 4 must be 35 characters or less
-error.address-line.length=This must be no more than 35 characters
-error.postcode.required=Enter a postcode
-error.postcode.empty=Enter a postcode
-error.postcode.invalid=Enter a real postcode
-error.postcode.special=Enter a real postcode
-error.number.negative=Must be greater than or equal to 0
-error.full-name.invalid=Enter a name
-error.fullName.invalid=Full name must only include letters a to z, apostrophes, hyphens and spaces
-error.position.invalid=Job title must only include letters a to z, apostrophes, dashes, hyphens and spaces
-error.phone-number.invalid=Enter a valid telephone number
-error.email=Enter a real email address, like name@example.com
+line1.required=Enter address line 1
+line2.required=Enter address line 2
+line1.invalid=Address line 1 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
+line2.invalid=Address line 2 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
+line3.invalid=Address line 3 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
+line4.invalid=Address line 4 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
+line1.max=Address line 1 must be 35 characters or less
+line2.max=Address line 2 must be 35 characters or less
+line3.max=Address line 3 must be 35 characters or less
+line4.max=Address line 4 must be 35 characters or less
+address-line.length=This must be no more than 35 characters
+postcode.required=Enter a postcode
+postcode.empty=Enter a postcode
+postcode.invalid=Enter a real postcode
+postcode.special=Enter a real postcode
+tradingName.max=Trading name must be 160 characters or less
+number.negative=Must be greater than or equal to 0
+
+email.invalid=Enter a real email address, like name@example.com
 error.radio-form.choose-option=Choose an option
 error.radio-form.choose-option.=Choose an option
 error.radio-form.choose-option.continue=Select an option to continue
@@ -785,10 +784,12 @@ select-change.continue=Continue
 
 heading.change-registered-details=What do you need to change?
 change-registered-details.hint=Select all that apply
-change-registered-details.option.Sites=Add or remove packaging sites or warehouse addresses
-change-registered-details.option.ContactPerson=Update your contact person for the Soft Drinks Industry Levy
-change-registered-details.option.ContactAddress=Update your registered business address for the Soft Drinks Industry Levy
+change-registered-details.Sites=Add or remove packaging sites or warehouse addresses
+change-registered-details.ContactPerson=Update your contact person for the Soft Drinks Industry Levy
+change-registered-details.ContactAddress=Update your registered business address for the Soft Drinks Industry Levy
 change-registered-details.continue=Continue
+change-registered-details.button.paragraph=Changes can take up to 15 working days to process.
+change-registered-details.required=Select at least one option to continue
 
 heading.ask-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
 heading.ask-secondary-warehouses-in-return=Do you want to register any UK warehouses you use to store liable drinks?
@@ -927,15 +928,11 @@ production-site-details.table.paragraph.small=You must tell us about all of the 
 production-site-details.required=Select yes if you need to add another packaging site
 production-site-details.listing.heading=Do you need to add another packaging site?
 
-heading.packaging-site-details=Change your UK packaging site details
-heading.multi.packaging-site-details=Change your UK packaging site details
 heading.production-site-details=Your packaging sites
 production-site-details.multi.lead=You have added {0} packaging site{1}.
-production-site-details.list-control.heading=Do you need to add another packaging site?
-packaging-site-details.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
-  drinks. You must have at least one registered packaging site.
 production-site-details.Add=Yes
 production-site-details.Continue=No
+
 heading.site-in-return=Enter your UK packaging site details
 edit-production-site-details.paragraph=Only add the addresses of UK packaging sites you operate.
 packaging-site-details.list-control.heading=Do you want to add another packaging site?
@@ -1219,7 +1216,7 @@ exemptions-for-small-producers.help=A business is a small producer if it:\
   </ul>
 exemptions-for-small-producers.required=Select yes if you need to claim an exemption for any of the liable drink you have packaged for registered small producers
 heading.small-producer-details=Your small producer exemptions
-error.alias.tooLong=Small producer name must be 160 characters or less
+error.alias.max=Small producer name must be 160 characters or less
 heading.multi.small-producer-details=You have added {0} small producer{1}
 small-producer-details.list-control.heading=Do you want to add another small producer?
 heading.edit-small-producer-details=Enter the registered small producer’s details
@@ -1459,7 +1456,7 @@ return.file.nil=I have no activity to report for this quarter
 heading.return-change-registration=You changed your soft drinks business activity
 return-change-registration.continue=Update registration
 returns.variation.new-importer-explanation=You have declared in this return that you have brought liable drinks into the UK.
-returns.variation.new-packer-explanation=You have declared in this return that you have packaged liable drinks in the UK. 
+returns.variation.new-packer-explanation=You have declared in this return that you have packaged liable drinks in the UK.
 returns.variation.new-packer-and-importer-explanation=You have declared in this return that that you have brought liable drinks into the UK and that you have packaged liable drinks in the UK.
 returns.variation.update-reg=This is different to your registered business activity, so we will update your registration.
 returns.variation.change-answers=If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
@@ -1625,7 +1622,7 @@ check-return-changes.net.adjusted.positive=Net adjusted amount excluding interes
 check-return-changes.net.adjusted.negative=Net adjusted amount
 
 check-return-changes.submit.heading=Send your correction
-check-return-changes.submit.p=By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct. 
+check-return-changes.submit.p=By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct.
 
 check-return-changes.correction.title=Correction
 check-return-changes.band.title=Band
@@ -1672,7 +1669,7 @@ file-return-before-deregistration.one-return=Before you can cancel your registra
 file-return-before-deregistration.many-returns=Before you can cancel your registration, you must send {0} returns and make any payments due.
 file-return-before-deregistration.continue=Go to your account
 
-error.sdilref.empty=Enter the small producer’s reference number
+sdilref.required=Enter the small producer’s reference number
 change.latency=<p>Changes can take up to 15 working days to process.</p>
 heading.package-own-uk.inner=How many litres will you package in the next 12 months?
 heading.package-copack.inner=How many litres will you package in the next 12 months?

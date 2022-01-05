@@ -103,7 +103,7 @@ class VariationsControllerNew(
                          config
                        ))
                        .run(id, purgeStateUponCompletion = true, config = journeyConfig) { _ =>
-                         Future.successful(Redirect(routes.ServicePageController.show()))
+                         Redirect(routes.ServicePageController.show())
                        }
         } yield response
       case None => Future.successful(NotFound(""))
@@ -286,13 +286,17 @@ object VariationsControllerNew {
                         data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address))
                       }
                       packSites <- askListSimple[Address](
-                                    "pack-sites",
+                                    "production-site-details",
                                     "p-site",
                                     default = pSites.some,
                                     validation = Rule.nonEmpty[List[Address]]
                                   ).map(_.map(Site.fromAddress)) emptyUnless packer
                       isVoluntary = producerType == ProducerType.Small && useCopacker && (copacks, imports).isEmpty
-                      warehouses <- askListSimple[Site]("warehouses") emptyUnless !isVoluntary
+                      warehouses <- askListSimple[Warehouse](
+                                     "warehouses",
+                                     "w-house",
+                                     default = data.updatedWarehouseSites.toList.map(Warehouse.fromSite).some
+                                   ).map(_.map(Site.fromWarehouse)) emptyUnless !isVoluntary
                     } yield
                       Change.RegChange(
                         data.copy(
@@ -436,9 +440,8 @@ object VariationsControllerNew {
                         period <- ask[ReturnPeriod]("select-return", validation = Rule.in(variableReturns))
                         ///  original journey redirected from here to adjust()
                         adjustedReturn <- adjust(subscription, sdilRef, sdilConnector, period, appConfig)
-                      } yield {
-                        adjustedReturn: Change
-                      }
+                      } yield { adjustedReturn: Change }
+
                     case ChangeType.Activity =>
                       activityUpdateJourney(base, subscription, pendingReturns)
 
@@ -446,10 +449,12 @@ object VariationsControllerNew {
                       for {
                         contacts <- contactUpdate(base)
                       } yield { contacts: Change }
+
                     case ChangeType.Deregister if pendingReturns.isEmpty || isVoluntary =>
                       for {
                         dereg <- deregisterUpdate(base)
                       } yield { dereg: Change }
+
                     case ChangeType.Deregister => end("file-returns-before-dereg")
                   }
       path = changeType match {
@@ -480,7 +485,7 @@ object VariationsControllerNew {
           case _ => ???
         }
       }
-      _ <- nonReturn("variation-complete")
+//      _ <- nonReturn("variation-complete")
       _ <- end(
             "variationDone", { (msg: Messages) =>
               val varySubheading = Html(

@@ -28,5 +28,9 @@ case class Warehouse(
 }
 
 object Warehouse {
+
+  def fromSite(site: Site): Warehouse =
+    Warehouse(site.tradingName.getOrElse(""), Address.fromUkAddress(site.address))
+
   implicit val format: Format[Warehouse] = Json.format[Warehouse]
 }

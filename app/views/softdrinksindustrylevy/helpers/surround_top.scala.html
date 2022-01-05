@@ -143,6 +143,10 @@
 
    </fieldset>
 
+    @messages.get(keyDots+".button.paragraph").map{ p =>
+      <p>@p</p>
+    }
+
     <button class="button" type="submit" id="continue-button">
     @messages(List(s"$keyDots.continue","sdil.common.save-continue"))
     </button>

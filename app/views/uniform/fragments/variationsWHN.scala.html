@@ -31,7 +31,7 @@
         key: Option[String] = None,
         broughtForward: Option[BigDecimal] = None)(implicit messages: UniformMessages[Html]
 )
-<h2>@path.toString</h2>
+
 @v.map { v =>
     @v.deregDate.map { deregDate =>
         <p>
