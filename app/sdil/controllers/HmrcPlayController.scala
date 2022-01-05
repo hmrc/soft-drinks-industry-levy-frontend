@@ -152,10 +152,10 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
   //Copy the validation from app.sdil.uniform.SdilComponents
 
   implicit val askAddress: WebAsk[Html, Address] = gen[Address].simap {
-    case Address(line1, _, _, _, _) if line1.isEmpty     => Left(ErrorTree.oneErr(ErrorMsg("line1.required")))
-    case Address(line1, _, _, _, _) if line1.length > 30 => Left(ErrorTree.oneErr(ErrorMsg("line1.max")))
+    case Address(line1, _, _, _, _) if line1.isEmpty     => Left(ErrorMsg("required").toTree.prefixWith("line1"))
+    case Address(line1, _, _, _, _) if line1.length > 30 => Left(ErrorMsg("max").toTree.prefixWith("line1"))
     case Address(line1, _, _, _, _) if !line1.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
-      Left(ErrorTree.oneErr(ErrorMsg("invalid")))
+      Left(ErrorMsg("invalid").toTree.prefixWith("line1"))
     case other => other.asRight
   }(identity)
 
