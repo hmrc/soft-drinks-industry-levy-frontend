@@ -38,11 +38,11 @@ import sdil.models._
 import sdil.models.backend.{Site, Subscription}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
-import sdil.uniform.SaveForLaterPersistenceNew
+import sdil.uniform.{ProducerType, SaveForLaterPersistenceNew}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import sdil.uniform.ProducerType
 import ltbs.uniform.interpreters.playframework.SessionPersistence
 import sdil.controllers.VariationsControllerNew.Change._
+import sdil.controllers.VariationsControllerNew.ChangeTypeWithReturns
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.uniform
 import views.html.uniform.helpers.dereg_variations_cya
@@ -128,6 +128,15 @@ class VariationsControllerNew(
 }
 
 object VariationsControllerNew {
+
+  sealed trait ChangeTypeWithReturns extends EnumEntry
+  object ChangeTypeReturns extends Enum[ChangeTypeWithReturns] {
+    val values = findValues
+//    case object Returns extends ChangeType
+    case object Sites extends ChangeTypeWithReturns
+    case object Activity extends ChangeTypeWithReturns
+    case object Deregister extends ChangeTypeWithReturns
+  }
 
   sealed trait ChangeType extends EnumEntry
   object ChangeType extends Enum[ChangeType] {
@@ -216,21 +225,26 @@ object VariationsControllerNew {
                  validation = Rule.nonEmpty[Set[ContactChangeType]] alongWith Subset(changeOptions: _*)
                )
 
-      packSites <- askListSimple[Site](
-                    "packaging-site-details",
-                    validation = Rule.nonEmpty[List[Site]],
-                    default = data.updatedProductionSites.toList.some
-                  ) emptyUnless ((data.producer.isLarge.contains(true) || data.copackForOthers) && change.contains(
-                    Sites))
+      packSites <- askListSimple[Address](
+                    "production-site-details",
+                    "p-site",
+                    validation = Rule.nonEmpty[List[Address]],
+                    default = data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some
+                  ).map(_.map(Site.fromAddress)) emptyUnless (
+                    (data.producer.isLarge.contains(true) || data.copackForOthers) && change.contains(Sites)
+                  )
 
-      warehouses <- askListSimple[Site]("warehouse-details", default = data.updatedWarehouseSites.toList.some) emptyUnless change
-                     .contains(Sites)
+      warehouses <- askListSimple[Warehouse](
+                     "warehouses",
+                     "w-house",
+                     default = data.updatedWarehouseSites.toList.map(Warehouse.fromSite).some
+                   ).map(_.map(Site.fromWarehouse)) emptyUnless change.contains(Sites)
 
       contact <- if (change.contains(ContactPerson)) {
                   ask[ContactDetails]("contact-details", default = data.updatedContactDetails.some)
                 } else pure(data.updatedContactDetails)
 
-      businessAddress <- if (change.contains(ContactPerson)) {
+      businessAddress <- if (change.contains(ContactAddress)) {
                           ask[Address]("business-address", default = data.updatedBusinessAddress.some)
                         } else pure(data.updatedBusinessAddress)
 
@@ -342,9 +356,8 @@ object VariationsControllerNew {
                     origReturn,
                     subscription,
                     broughtForward,
-                    isSmallProd.getOrElse(false), { _ =>
-                      Future.successful(())
-                    }
+                    isSmallProd.getOrElse(false),
+                    connector
                   ) // , base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
       emptyReturn = SdilReturn((0, 0), (0, 0), Nil, (0, 0), (0, 0), (0, 0), (0, 0), None)
       variation = ReturnVariationData(
@@ -405,19 +418,19 @@ object VariationsControllerNew {
         }
       }
       .filter(x => closedSites.contains(x.ref.getOrElse("")))
-  def checkYourRegAnswers(key: String, v: RegistrationVariationData, path: List[String])(
-    ) = {
-
-    val inner = uniform.fragments.variationsCYA(
-      v,
-      newPackagingSites(v),
-      closedPackagingSites(v),
-      newWarehouseSites(v),
-      closedWarehouseSites(v),
-      path
-    )(_: Messages)
-    tell(key, inner)
-  }
+//  def checkYourRegAnswers(key: String, v: RegistrationVariationData, path: List[String])(
+//    ) = {
+//
+//    val inner = uniform.fragments.variationsCYA(
+//      v,
+//      newPackagingSites(v),
+//      closedPackagingSites(v),
+//      newWarehouseSites(v),
+//      closedWarehouseSites(v),
+//      path
+//    )(_: Messages)
+//    tell(key, inner)
+//  }
 
   def journey(
     subscription: RetrievedSubscription,
@@ -433,7 +446,9 @@ object VariationsControllerNew {
     val isVoluntary = subscription.activity.voluntaryRegistration
 
     for {
-      changeType <- ask[ChangeType]("select-change", validation = Rule.in(changeTypes))
+      changeType <- if (variableReturns.nonEmpty) {
+                     ask[ChangeTypeWithReturns]("select-change")
+                   } else ask[ChangeType]("select-change")
       variation <- changeType match {
                     case ChangeType.Returns =>
                       for {
@@ -459,13 +474,30 @@ object VariationsControllerNew {
                   }
       path = changeType match {
         case ChangeType.Deregister => List("cancel-registration")
-        case _                     => Nil
+        case ChangeType.Sites      => List("contact-details", "business-address")
+        case ChangeType.Activity   => List("amount-produced")
+        //TODO Add in business-address case
+        case _ => Nil
       }
+      inner = variation match {
+        case Change.RegChange(v) =>
+          uniform.fragments.variationsCYA(
+            v,
+            newPackagingSites(v),
+            closedPackagingSites(v),
+            newWarehouseSites(v),
+            closedWarehouseSites(v),
+            path
+          )
+        case _ => ???
+      }
+      _ <- tell("check-answers", inner)
       whnKey = variation match {
         case Change.RegChange(v) if v.manToVol => "manToVol".some
         case Change.RegChange(v) if v.volToMan => "volToMan".some
         case _                                 => None
       }
+
       whn <- {
         variation match {
           case Change.RegChange(regChange) =>

@@ -65,10 +65,10 @@ class RegistrationControllerNew(
         def backendCall(s: Subscription): Future[Unit] =
           sdilConnector.submit(Subscription.desify(s), fd.rosmData.safeId)
 
-        interpret(RegistrationControllerNew.journey(hasCTEnrolment, fd, backendCall)).run(id, config = journeyConfig) {
-          _ =>
+        interpret(RegistrationControllerNew.journey(hasCTEnrolment, fd, backendCall))
+          .run(id, purgeStateUponCompletion = true, config = journeyConfig) { _ =>
             Redirect(routes.ServicePageController.show())
-        }
+          }
       case None =>
         logger.warn("nothing in cache") // TODO we should set the cache and redirect
         NotFound("").pure[Future]
@@ -131,15 +131,12 @@ object RegistrationControllerNew {
       } else {
         List.empty[Address]
       }
-      //TODO: add validation to individual fields of Addresses
-      //TODO: We need to pass in the number of Sites that the user has added with custom content, can't seem to work that now as customContent is not a argument on askList method.
       packSites <- askListSimple[Address](
                     "production-sites",
                     "p-site",
                     default = packingSites.some,
                     validation = Rule.nonEmpty
                   ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
-      //TODO: add validation to individual fields of Warehouses
       addWarehouses <- if (!isVoluntary) {
                         ask[Boolean]("ask-secondary-warehouses")
                       } else {
@@ -150,7 +147,6 @@ object RegistrationControllerNew {
                      "w-house",
                      validation = Rule.nonEmpty
                    ).map(_.map(Site.fromWarehouse)) emptyUnless addWarehouses
-      //TODO: add validation to individual fields of ContactDetails
       contactDetails <- ask[ContactDetails]("contact-details")
       activity = Activity(
         longTupToLitreage(packageOwn),

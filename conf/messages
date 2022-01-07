@@ -1216,7 +1216,9 @@ exemptions-for-small-producers.help=A business is a small producer if it:\
   </ul>
 exemptions-for-small-producers.required=Select yes if you need to claim an exemption for any of the liable drink you have packaged for registered small producers
 heading.small-producer-details=Your small producer exemptions
-error.alias.max=Small producer name must be 160 characters or less
+alias.max=Small producer name must be 160 characters or less
+add-small-producer.litreage._1.required=Enter the number of litres in the low band
+add-small-producer.litreage._2.required=Enter the number of litres in the high band
 heading.multi.small-producer-details=You have added {0} small producer{1}
 small-producer-details.list-control.heading=Do you want to add another small producer?
 heading.edit-small-producer-details=Enter the registered small producer’s details
@@ -1669,7 +1671,7 @@ file-return-before-deregistration.one-return=Before you can cancel your registra
 file-return-before-deregistration.many-returns=Before you can cancel your registration, you must send {0} returns and make any payments due.
 file-return-before-deregistration.continue=Go to your account
 
-sdilref.required=Enter the small producer’s reference number
+sdilRef.required=Enter the small producer’s reference number
 change.latency=<p>Changes can take up to 15 working days to process.</p>
 heading.package-own-uk.inner=How many litres will you package in the next 12 months?
 heading.package-copack.inner=How many litres will you package in the next 12 months?

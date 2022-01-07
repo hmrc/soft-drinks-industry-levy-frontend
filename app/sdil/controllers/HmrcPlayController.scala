@@ -153,8 +153,15 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
 
   // Address validation logic
   implicit val askAddress: WebAsk[Html, Address] = gen[Address].simap {
+    case Address(line1, line2, _, _, postcode) if line1.isEmpty && line2.isEmpty && postcode.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("line1") ++
+          ErrorMsg("required").toTree.prefixWith("line2") ++
+          ErrorMsg("required").toTree.prefixWith("postcode")
+      )
     case Address(line1, line2, _, _, _) if line1.isEmpty && line2.isEmpty =>
       Left(ErrorMsg("required").toTree.prefixWith("line1") ++ ErrorMsg("required").toTree.prefixWith("line2"))
+    case Address(line1, _, _, _, _) if line1.isEmpty     => Left(ErrorMsg("required").toTree.prefixWith("line1"))
     case Address(line1, _, _, _, _) if line1.length > 35 => Left(ErrorMsg("max").toTree.prefixWith("line1"))
     case Address(line1, _, _, _, _) if !line1.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
       Left(ErrorMsg("invalid").toTree.prefixWith("line1"))

@@ -17,9 +17,11 @@
 package sdil.controllers
 
 import scala.language.higherKinds
-
-import ltbs.uniform._, validation.Rule
-import sdil.models._, backend._, retrieved._
+import ltbs.uniform._
+import validation.Rule
+import sdil.models._
+import backend._
+import retrieved._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import cats.implicits._
 import izumi.reflect.Tag
@@ -27,9 +29,11 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.mvc._
 import play.api.i18n._
 import sdil.config.AppConfig
+
 import scala.concurrent.Future
 import sdil.actions.RegisteredAction
 import play.api.Logger
+
 import scala.concurrent.ExecutionContext
 import sdil.uniform.SaveForLaterPersistenceNew
 import sdil.config.RegistrationFormDataCache
@@ -37,9 +41,11 @@ import ltbs.uniform.interpreters.playframework.PersistenceEngine
 import sdil.actions.AuthorisedRequest
 import sdil.actions.RegisteredRequest
 import play.twirl.api.Html
+
 import java.time._
 import java.time.format._
 import sdil.utility.stringToFormatter
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.uniform
 
 class ReturnsControllerNew(
@@ -85,8 +91,8 @@ class ReturnsControllerNew(
                 sdilConnector.returns_update(subscription.utr, period, sdilReturn)
               interpret(
                 ReturnsControllerNew
-                  .journey(sdilRef, period, None, subscription, broughtForward, isSmallProd, submitReturn))
-                .run(id, config = journeyConfig) { _ =>
+                  .journey(sdilRef, period, None, subscription, broughtForward, isSmallProd, sdilConnector))
+                .run(id, purgeStateUponCompletion = true, config = journeyConfig) { _ =>
                   Redirect(routes.ServicePageController.show())
                 }
             } else
@@ -109,8 +115,10 @@ object ReturnsControllerNew {
     subscription: RetrievedSubscription,
     broughtForward: BigDecimal,
     isSmallProd: Boolean,
-    submitReturn: SdilReturn => Future[Unit]
-  ) = {
+    sdilConnector: SoftDrinksIndustryLevyConnector
+    //added in conector directly to see if that was the 400 issue
+//    submitReturn: SdilReturn => Future[Unit]
+  )(implicit hc: HeaderCarrier) = {
 
     val costLower = BigDecimal("0.18")
     val costHigher = BigDecimal("0.24")
@@ -146,7 +154,6 @@ object ReturnsControllerNew {
       contractPacked <- askEmptyOption[(Long, Long)](
                          "packaged-as-a-contract-packer"
                        ) emptyUnless !subscription.activity.smallProducer
-      //TODO validation for SmallProducer
       smallProds <- askListSimple[SmallProducer](
                      "small-producer-details",
                      "add-small-producer",
@@ -175,7 +182,6 @@ object ReturnsControllerNew {
                                                    pure(Address.fromUkAddress(subscription.address))
                                                  case false => ask[Address]("first-production-site")
                                                }
-                            //TODO: validation for Address
                             packingSites <- askListSimple[Address](
                                              "production-site-details",
                                              "site-in-return",
@@ -186,7 +192,6 @@ object ReturnsControllerNew {
                         ) when isNewPacker && subscription.productionSites.isEmpty
       newWarehouses <- (for {
                         addWarehouses <- ask[Boolean]("ask-secondary-warehouses-in-return")
-                        //TODO: validation for Warehouse
                         warehouses <- askListSimple[Warehouse](
                                        "secondary-warehouse-details",
                                        "warehouse-in-return",
@@ -222,7 +227,7 @@ object ReturnsControllerNew {
               originalReturn = None
             )(_: Messages)
           )
-      _ <- convertWithKey(s"return-submission")(submitReturn(sdilReturn)) // sdilConnector.returns_update(subscription.utr, period, sdilReturn))
+      _ <- convertWithKey(s"return-submission")(sdilConnector.returns_update(subscription.utr, period, sdilReturn)) // sdilConnector.returns_update(subscription.utr, period, sdilReturn))
       _ <- nonReturn("return-complete")
       _ <- end(
             "return-sent", { msg: Messages =>
