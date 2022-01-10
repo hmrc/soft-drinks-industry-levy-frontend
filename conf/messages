@@ -1104,8 +1104,8 @@ variations.cya.deregistration.change.reason=Change <span class="visually-hidden"
 variations.cya.deregistration.date=Date of cancellation
 variations.cya.deregistration.change.date=Change <span class="visually-hidden">effective date of cancellation</span>
 
-error.deregReason.tooLong=Deregistration reason must be 255 characters or less
-error.return-correction-reason.tooLong=Reason for correcting the return must be 255 characters or less
+deregReason.max=Deregistration reason must be 255 characters or less
+return-correction-reason.maxLength=Reason for correcting the return must be 255 characters or less
 day=Day
 month=Month
 year=Year
@@ -1638,7 +1638,7 @@ check-return-changes.continue=Confirm details and send correction
 
 heading.return-correction-reason=Why do you need to correct this return?
 return-correction-reason.lead=Make sure you provide as much detail as you can. We may get in touch with your contact person to discuss this.
-error.return-correction-reason.empty=Enter a reason for correcting your return
+return-correction-reason.required=Enter a reason for correcting your return
 sdil.check-return-changes.reason.return-correction-reason.subheading=Correction details
 return-correction-reason.label=Reason for correction
 return-correction-reason.hint=Enter up to 255 characters
@@ -1666,7 +1666,7 @@ bankPayment=Paid into the bank account for this business
 bankPayment.short=Paid into the bank account for this business
 return-variation-repayments.label=Repayment method
 
-heading.file-return-before-deregistration=You cannot cancel your registration while you have returns to send
+file-return-before-deregistration.heading=You cannot cancel your registration while you have returns to send
 file-return-before-deregistration.one-return=Before you can cancel your registration, you must send a return for {0} to {1} and make any payments due.
 file-return-before-deregistration.many-returns=Before you can cancel your registration, you must send {0} returns and make any payments due.
 file-return-before-deregistration.continue=Go to your account

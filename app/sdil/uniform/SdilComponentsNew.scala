@@ -33,6 +33,8 @@ import enumeratum._
 
 import java.time.LocalDate
 import sdil.controllers.Subset
+import sdil.controllers.VariationsControllerNew.Change
+import sdil.models.variations.{Convert, RegistrationVariationData}
 import sdil.uniform.WebAskValidation.myAskAddress
 
 trait SdilComponentsNew {
@@ -128,6 +130,47 @@ trait SdilComponentsNew {
         Rule.cond(_.length <= 15, "max") andThen
         Transformation.catchOnly[NumberFormatException]("not-a-number")(_.replace(",", "").toLong)
     }.toEither)(_.toString)
+
+  implicit val returnPeriodAsk = new WebAsk[Html, ReturnPeriod] {
+    override def render(pageIn: PageIn[Html], stepDetails: StepDetails[Html, ReturnPeriod]): Option[Html] = {
+      val ret = stepDetails.validation.subRules.collectFirst {
+        case Rule.In(allowed, _) =>
+          println(s"$allowed ZZZZZZZZZ")
+          views.html.softdrinksindustrylevy.helpers
+            .radios(
+              stepDetails.stepKey,
+              stepDetails.fieldKey,
+              stepDetails.tell,
+              radioOptions = allowed.map(in => in.year + "." + in.quarter),
+              existing = decode(stepDetails.data).toOption.map(_.toString),
+              stepDetails.errors,
+              pageIn.messages
+            )
+      }
+      if (ret.isEmpty) {
+        throw new NotImplementedError("No adjustable returns found")
+      } else {
+        ret
+      }
+    }
+
+    override def encode(in: ReturnPeriod): Input = Input.one(List(in.year + "." + in.quarter))
+
+    override def decode(out: Input): Either[ErrorTree, ReturnPeriod] =
+      out
+        .toStringField()
+        .toEither
+        .flatMap(
+          x =>
+            Either
+              .catchOnly[NumberFormatException](x.split(".").toList.map(_.toInt))
+              .leftMap(_ => ErrorMsg("Int transformation failed").toTree)
+        )
+        .flatMap {
+          case year :: quarter :: Nil => Right(ReturnPeriod(year, quarter))
+          case _                      => Left(ErrorMsg("returnPeriod cannot be converted to Int").toTree)
+        }
+  }
 
   implicit val twirlDateField: WebAsk[Html, LocalDate] =
     new WebAsk[Html, LocalDate] {
@@ -235,6 +278,51 @@ trait SdilComponentsNew {
       )
     }
 
+  }
+
+  implicit val tellCYAVariations = new WebTell[Html, CYA[Change]] {
+    def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
+      sites
+        .filter { x =>
+          x.closureDate.fold(true) {
+            _.isAfter(LocalDate.now)
+          }
+        }
+        .filter(x => closedSites.contains(x.ref.getOrElse("")))
+
+    def closedWarehouseSites(variation: RegistrationVariationData): List[Site] =
+      closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
+
+    def closedPackagingSites(variation: RegistrationVariationData): List[Site] =
+      closedSites(variation.original.productionSites, Convert(variation).closeSites.map(x => x.siteReference))
+
+    def newPackagingSites(variation: RegistrationVariationData): List[Site] =
+      variation.updatedProductionSites.diff(variation.original.productionSites).toList
+
+    def newWarehouseSites(variation: RegistrationVariationData): List[Site] =
+      variation.updatedWarehouseSites.diff(variation.original.warehouseSites).toList
+
+    override def render(
+      in: CYA[Change],
+      key: List[String],
+      pageIn: PageIn[Html]
+    ): Option[Html] = {
+      implicit val msg = pageIn.messages
+      in.value match {
+        case Change.RegChange(data) =>
+          uniform.fragments
+            .variationsCYA(
+              data,
+              newPackagingSites(data),
+              closedPackagingSites(data),
+              newWarehouseSites(data),
+              closedWarehouseSites(data),
+              pageIn.breadcrumbs.map(_.mkString("/"))
+            )
+            .some
+        case _ => ???
+      }
+    }
   }
 
   implicit val tellListSite = new WebTell[Html, WebAskList.ListingTable[Site]] {

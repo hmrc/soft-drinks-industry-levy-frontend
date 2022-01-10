@@ -129,22 +129,20 @@ class VariationsControllerNew(
 
 object VariationsControllerNew {
 
-  sealed trait ChangeTypeWithReturns extends EnumEntry
-  object ChangeTypeReturns extends Enum[ChangeTypeWithReturns] {
-    val values = findValues
-//    case object Returns extends ChangeType
-    case object Sites extends ChangeTypeWithReturns
-    case object Activity extends ChangeTypeWithReturns
-    case object Deregister extends ChangeTypeWithReturns
-  }
+  sealed trait AbstractChangeType extends EnumEntry
 
-  sealed trait ChangeType extends EnumEntry
+  sealed trait ChangeType extends AbstractChangeType
   object ChangeType extends Enum[ChangeType] {
     val values = findValues
-    case object Returns extends ChangeType
+
     case object Sites extends ChangeType
     case object Activity extends ChangeType
     case object Deregister extends ChangeType
+  }
+  sealed trait ChangeTypeWithReturns extends AbstractChangeType
+  object ChangeTypeWithReturns extends Enum[ChangeTypeWithReturns] {
+    val values = findValues
+    case object Returns extends ChangeTypeWithReturns
   }
 
   sealed trait Change
@@ -350,19 +348,19 @@ object VariationsControllerNew {
                        } else {
                          convertWithKey("balance")(connector.balance(sdilRef, withAssessment = false))
                        }
-      newReturn <- ReturnsControllerNew.journey(
-                    subscription.sdilRef,
-                    returnPeriod,
-                    origReturn,
-                    subscription,
-                    broughtForward,
-                    isSmallProd.getOrElse(false),
-                    connector
-                  ) // , base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
+//      newReturn <- ReturnsControllerNew.journey(
+//                    subscription.sdilRef,
+//                    returnPeriod,
+//                    origReturn,
+//                    subscription,
+//                    broughtForward,
+//                    isSmallProd.getOrElse(false),
+//                    connector
+//                  ) // , base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
       emptyReturn = SdilReturn((0, 0), (0, 0), Nil, (0, 0), (0, 0), (0, 0), (0, 0), None)
       variation = ReturnVariationData(
         origReturn.getOrElse(emptyReturn),
-        newReturn._1,
+        emptyReturn,
         returnPeriod,
         base.original.orgName,
         base.original.address,
@@ -381,7 +379,7 @@ object VariationsControllerNew {
       //   )
       // )
 
-      _ <- tell("return-details", Html("TODO-CYA"))
+//      _ <- tell("return-details", Html("TODO-CYA"))
       // _ <- checkYourReturnAnswers(
       //       "return-details",
       //       variation.revised,
@@ -390,47 +388,15 @@ object VariationsControllerNew {
       //       isSmallProd,
       //       originalReturn = variation.original.some)(extraMessages, implicitly)
 
-      reason <- ask[String]("return-correction-reason", validation = Rule.maxLength(255))
+      reason <- ask[String](
+                 "return-correction-reason",
+                 validation = Rule.nonEmpty[String]("required") followedBy Rule.maxLength(255))
       repayment <- ask[String]("repayment-method", validation = Rule.in(List("credit", "bankPayment"))) when
                     (variation.revised.total - variation.original.total < 0)
       _ <- tell("check-return-changes", Html("TODO-CYA"))
 
     } yield Change.Returns(variation.copy(reason = reason, repaymentMethod = repayment))
   }
-
-  def closedWarehouseSites(variation: RegistrationVariationData): List[Site] =
-    closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
-
-  def closedPackagingSites(variation: RegistrationVariationData): List[Site] =
-    closedSites(variation.original.productionSites, Convert(variation).closeSites.map(x => x.siteReference))
-
-  def newPackagingSites(variation: RegistrationVariationData): List[Site] =
-    variation.updatedProductionSites.diff(variation.original.productionSites).toList
-
-  def newWarehouseSites(variation: RegistrationVariationData): List[Site] =
-    variation.updatedWarehouseSites.diff(variation.original.warehouseSites).toList
-
-  private def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
-    sites
-      .filter { x =>
-        x.closureDate.fold(true) {
-          _.isAfter(LocalDate.now)
-        }
-      }
-      .filter(x => closedSites.contains(x.ref.getOrElse("")))
-//  def checkYourRegAnswers(key: String, v: RegistrationVariationData, path: List[String])(
-//    ) = {
-//
-//    val inner = uniform.fragments.variationsCYA(
-//      v,
-//      newPackagingSites(v),
-//      closedPackagingSites(v),
-//      newWarehouseSites(v),
-//      closedWarehouseSites(v),
-//      path
-//    )(_: Messages)
-//    tell(key, inner)
-//  }
 
   def journey(
     subscription: RetrievedSubscription,
@@ -442,17 +408,20 @@ object VariationsControllerNew {
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) = {
     val base = RegistrationVariationData(subscription)
     val onlyReturns = subscription.deregDate.nonEmpty
-    val changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
+//    val changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
     val isVoluntary = subscription.activity.voluntaryRegistration
 
     for {
       changeType <- if (variableReturns.nonEmpty) {
-                     ask[ChangeTypeWithReturns]("select-change")
+                     ask[AbstractChangeType]("select-change")
                    } else ask[ChangeType]("select-change")
       variation <- changeType match {
-                    case ChangeType.Returns =>
+                    case ChangeTypeWithReturns.Returns =>
                       for {
-                        period <- ask[ReturnPeriod]("select-return", validation = Rule.in(variableReturns))
+                        period <- ask[ReturnPeriod](
+                                   "select-return",
+                                   validation = Rule.in(variableReturns)
+                                 )
                         ///  original journey redirected from here to adjust()
                         adjustedReturn <- adjust(subscription, sdilRef, sdilConnector, period, appConfig)
                       } yield { adjustedReturn: Change }
@@ -470,28 +439,14 @@ object VariationsControllerNew {
                         dereg <- deregisterUpdate(base)
                       } yield { dereg: Change }
 
-                    case ChangeType.Deregister => end("file-returns-before-dereg")
+                    case ChangeType.Deregister =>
+                      end(
+                        "file-returns-before-dereg",
+                        uniform.fragments.return_before_dereg("file-return-before-deregistration", pendingReturns)
+                      )
                   }
-      path = changeType match {
-        case ChangeType.Deregister => List("cancel-registration")
-        case ChangeType.Sites      => List("contact-details", "business-address")
-        case ChangeType.Activity   => List("amount-produced")
-        //TODO Add in business-address case
-        case _ => Nil
-      }
-      inner = variation match {
-        case Change.RegChange(v) =>
-          uniform.fragments.variationsCYA(
-            v,
-            newPackagingSites(v),
-            closedPackagingSites(v),
-            newWarehouseSites(v),
-            closedWarehouseSites(v),
-            path
-          )
-        case _ => ???
-      }
-      _ <- tell("check-answers", inner)
+
+      _ <- tell("check-answers", CYA(variation))
       whnKey = variation match {
         case Change.RegChange(v) if v.manToVol => "manToVol".some
         case Change.RegChange(v) if v.volToMan => "volToMan".some
@@ -503,21 +458,23 @@ object VariationsControllerNew {
           case Change.RegChange(regChange) =>
             convertWithKey("submission")(sdilConnector.submitVariation(Convert(regChange), subscription.sdilRef)).map {
               _ =>
-                uniform.fragments.variationsWHN(
-                  path,
-                  newPackagingSites(regChange),
-                  closedPackagingSites(regChange),
-                  newWarehouseSites(regChange),
-                  closedWarehouseSites(regChange),
-                  regChange.some,
-                  None,
-                  whnKey
-                )
+                Html("Move variationsWHN into seperate method")
+//                uniform.fragments.variationsWHN(
+//                  path,
+//                  newPackagingSites(regChange),
+//                  closedPackagingSites(regChange),
+//                  newWarehouseSites(regChange),
+//                  closedWarehouseSites(regChange),
+//                  regChange.some,
+//                  None,
+//                  whnKey
+//                )
             }
           case _ => ???
         }
       }
 //      _ <- nonReturn("variation-complete")
+      // TODO: Implement the complete page in a seperate method, with either the page's html put and retireved from the DB, or in some form of case class
       _ <- end(
             "variationDone", { (msg: Messages) =>
               val varySubheading = Html(

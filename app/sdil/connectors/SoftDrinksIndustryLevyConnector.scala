@@ -27,6 +27,7 @@ import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpReads.Implicits.{readRaw, readFromJson, _}
+import ltbs.play.scaffold.SdilComponents.longTupleFormatter
 
 import scala.concurrent.{ExecutionContext, Future}
 
