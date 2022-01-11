@@ -30,8 +30,9 @@
     "packaging-site",
     "contract-packing",
     "imports"
-).contains(fieldKey.head)}
-    
+).contains(fieldKey.head) || {keyDash.contains("litreage")}
+}
+
     <input class="form-control outline
         @if(errors.nonEmpty) {form-control-error}
         @if(litreageKeys) {volume}"

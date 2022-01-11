@@ -16,37 +16,20 @@
 
 package sdil.controllers
 
-import scala.language.higherKinds
-import ltbs.uniform._
-import validation.Rule
-import sdil.models._
-import backend._
-import retrieved._
-import sdil.connectors.SoftDrinksIndustryLevyConnector
 import cats.implicits._
-import izumi.reflect.Tag
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import play.api.mvc._
-import play.api.i18n._
-import sdil.config.AppConfig
-
-import scala.concurrent.Future
-import sdil.actions.RegisteredAction
 import play.api.Logger
-
-import scala.concurrent.ExecutionContext
+import play.api.i18n._
+import play.api.mvc._
+import sdil.actions.{RegisteredAction, RegisteredRequest}
+import sdil.config.{AppConfig, RegistrationFormDataCache}
+import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.journeys.ReturnsJourney
+import sdil.models._
 import sdil.uniform.SaveForLaterPersistenceNew
-import sdil.config.RegistrationFormDataCache
-import ltbs.uniform.interpreters.playframework.PersistenceEngine
-import sdil.actions.AuthorisedRequest
-import sdil.actions.RegisteredRequest
-import play.twirl.api.Html
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import java.time._
-import java.time.format._
-import sdil.utility.stringToFormatter
-import uk.gov.hmrc.http.HeaderCarrier
-import views.html.uniform
+import scala.concurrent.{ExecutionContext, Future}
+import scala.language.higherKinds
 
 class ReturnsControllerNew(
   mcc: MessagesControllerComponents,
@@ -66,12 +49,12 @@ class ReturnsControllerNew(
       implicit lazy val persistence =
         SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
           s"returns-$year-$quarter",
-          cache.shortLiveCache)
-
-      import CheckYourAnswers._
+          cache.shortLiveCache
+        )
 
       val sdilRef = request.sdilEnrolment.value
       val period = ReturnPeriod(year, quarter)
+      val emptyReturn = SdilReturn((0, 0), (0, 0), Nil, (0, 0), (0, 0), (0, 0), (0, 0), None)
 
       (for {
         subscription   <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
@@ -89,12 +72,24 @@ class ReturnsControllerNew(
         r <- if (pendingReturns.contains(period)) {
               def submitReturn(sdilReturn: SdilReturn): Future[Unit] =
                 sdilConnector.returns_update(subscription.utr, period, sdilReturn)
+              def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
+                sdilConnector.checkSmallProducerStatus(sdilRef, period)
+
               interpret(
-                ReturnsControllerNew
-                  .journey(sdilRef, period, None, subscription, broughtForward, isSmallProd, sdilConnector))
-                .run(id, purgeStateUponCompletion = true, config = journeyConfig) { _ =>
-                  Redirect(routes.ServicePageController.show())
-                }
+                ReturnsJourney
+                  .journey(
+                    sdilRef,
+                    period,
+                    if (nilReturn) emptyReturn.some else None,
+                    subscription,
+                    broughtForward,
+                    isSmallProd,
+                    submitReturn,
+                    checkSmallProducerStatus
+                  )
+              ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { _ =>
+                Redirect(routes.ServicePageController.show())
+              }
             } else
               Redirect(routes.ServicePageController.show()).pure[Future]
       } yield r) recoverWith {
@@ -104,188 +99,18 @@ class ReturnsControllerNew(
         }
       }
   }
-}
 
-object ReturnsControllerNew {
-
-  private[controllers] def journey(
-    sdilRef: String,
-    period: ReturnPeriod,
-    default: Option[SdilReturn] = None,
-    subscription: RetrievedSubscription,
-    broughtForward: BigDecimal,
-    isSmallProd: Boolean,
-    sdilConnector: SoftDrinksIndustryLevyConnector
-    //added in conector directly to see if that was the 400 issue
-//    submitReturn: SdilReturn => Future[Unit]
-  )(implicit hc: HeaderCarrier) = {
-
-    val costLower = BigDecimal("0.18")
-    val costHigher = BigDecimal("0.24")
-
-    def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal =
-      d.map { case (_, (l, h), m) => costLower * l * m + costHigher * h * m }.sum
-
-    def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
-      val ra = List(
-        ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
-        ("exemptions-for-small-producers", sdilReturn.packSmall.map { _.litreage }.combineAll, 0),
-        ("brought-into-uk", sdilReturn.importLarge, 1),
-        ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
-        ("claim-credits-for-exports", sdilReturn.export, -1),
-        ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
+  def returnComplete(year: Int, quarter: Int) = registeredAction.async { implicit request =>
+    lazy val persistence = {
+      SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
+        s"returns-$year-$quarter",
+        cache.shortLiveCache
       )
-      if (!isSmallProducer)
-        ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
-      else
-        ra
     }
-
-    def taxEstimation(r: SdilReturn): BigDecimal = {
-      val t = r.packLarge |+| r.importLarge |+| r.ownBrand
-      (t._1 * costLower |+| t._2 * costHigher) * 4
-    }
-
     for {
-      ownBrands <- askEmptyOption[(Long, Long)](
-                    "own-brands-packaged-at-own-sites",
-                    default = default.map { _.packLarge }
-                  ) emptyUnless !subscription.activity.smallProducer
-      contractPacked <- askEmptyOption[(Long, Long)](
-                         "packaged-as-a-contract-packer"
-                       ) emptyUnless !subscription.activity.smallProducer
-      smallProds <- askListSimple[SmallProducer](
-                     "small-producer-details",
-                     "add-small-producer",
-                     validation = Rule.nonEmpty[List[SmallProducer]],
-                     default = default.map { _.packSmall }
-                   ) emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
-                     _.packSmall.nonEmpty
-                   })
-      imports <- askEmptyOption[(Long, Long)]("brought-into-uk", default.map { _.importLarge })
-      importsSmall <- askEmptyOption[(Long, Long)]("brought-into-uk-from-small-producers", default.map {
-                       _.importSmall
-                     })
-      exportCredits <- askEmptyOption[(Long, Long)]("claim-credits-for-exports", default.map { _.export })
-      wastage       <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged", default.map { _.wastage })
-      sdilReturn = SdilReturn(ownBrands, contractPacked, smallProds, imports, importsSmall, exportCredits, wastage)
-      isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
-      isNewPacker = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
-      inner = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)(_: Messages)
-      _ <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
-      newPackingSites <- (
-                          for {
-                            firstPackingSite <- interact[Boolean](
-                                                 "pack-at-business-address-in-return",
-                                                 Address.fromUkAddress(subscription.address)) flatMap {
-                                                 case true =>
-                                                   pure(Address.fromUkAddress(subscription.address))
-                                                 case false => ask[Address]("first-production-site")
-                                               }
-                            packingSites <- askListSimple[Address](
-                                             "production-site-details",
-                                             "site-in-return",
-                                             default = Some(firstPackingSite :: Nil),
-                                             validation = Rule.nonEmpty[List[Address]]
-                                           ).map(_.map(Site.fromAddress))
-                          } yield packingSites
-                        ) when isNewPacker && subscription.productionSites.isEmpty
-      newWarehouses <- (for {
-                        addWarehouses <- ask[Boolean]("ask-secondary-warehouses-in-return")
-                        warehouses <- askListSimple[Warehouse](
-                                       "secondary-warehouse-details",
-                                       "warehouse-in-return",
-                                       validation = Rule.nonEmpty[List[Warehouse]]
-                                     ) map (_.map(Site.fromWarehouse)) emptyUnless addWarehouses
-                      } yield warehouses) when isNewImporter //&& subscription.warehouseSites.isEmpty
-      variation = ReturnsVariation(
-        orgName = subscription.orgName,
-        ppobAddress = subscription.address,
-        importer = (isNewImporter, (sdilReturn.totalImported).combineN(4)),
-        packer = (isNewPacker, (sdilReturn.totalPacked).combineN(4)),
-        warehouses = newWarehouses.getOrElse(List.empty[Site]),
-        packingSites = newPackingSites.getOrElse(List.empty[Site]),
-        phoneNumber = subscription.contact.phoneNumber,
-        email = subscription.contact.email,
-        taxEstimation = taxEstimation(sdilReturn)
-      )
-      data = returnAmount(sdilReturn, isSmallProd)
-      subtotal = calculateSubtotal(data)
-      total = subtotal - broughtForward
-      _ <- tell(
-            "check-your-answers",
-            uniform.fragments.returnsCYA(
-              key = "check-your-answers",
-              lineItems = data,
-              costLower = costLower,
-              costHigher = costHigher,
-              subtotal = subtotal,
-              broughtForward = broughtForward,
-              total = total,
-              variation = variation.some,
-              subscription = subscription,
-              originalReturn = None
-            )(_: Messages)
-          )
-      _ <- convertWithKey(s"return-submission")(sdilConnector.returns_update(subscription.utr, period, sdilReturn)) // sdilConnector.returns_update(subscription.utr, period, sdilReturn))
-      _ <- nonReturn("return-complete")
-      _ <- end(
-            "return-sent", { msg: Messages =>
-              val now = LocalDate.now
-              val returnDate = msg(
-                "return-sent.returnsDoneMessage",
-                period.start.format("MMMM"),
-                period.end.format("MMMM"),
-                period.start.getYear.toString,
-                subscription.orgName,
-                LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
-                now.format("dd MMMM yyyy")
-              )
+      db <- persistence.dataGet()
+    } yield db
+    Future.successful(Ok("???"))
 
-              val formatTotal =
-                if (total < 0)
-                  f"-£${total.abs}%,.2f"
-                else
-                  f"£$total%,.2f"
-
-              val prettyPeriod =
-                msg(
-                  s"period.check-your-answers",
-                  period.start.format("MMMM"),
-                  period.end.format("MMMM yyyy")
-                )
-
-              val getTotal =
-                if (total <= 0)
-                  msg("return-sent.subheading.nil-return")
-                else {
-                  msg(
-                    "return-sent.subheading",
-                    prettyPeriod,
-                    subscription.orgName
-                  )
-                }
-
-              val whatHappensNext = views.html.uniform.fragments
-                .returnsPaymentsBlurb(
-                  subscription = subscription,
-                  paymentDate = period,
-                  sdilRef = sdilRef,
-                  total = total,
-                  formattedTotal = formatTotal,
-                  variation = variation,
-                  lineItems = data,
-                  costLower = costLower,
-                  costHigher = costHigher,
-                  subtotal = subtotal,
-                  broughtForward = broughtForward
-                )(msg)
-                .some
-
-              views.html.uniform
-                .journeyEndNew("return-sent", now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)(msg)
-            }
-          )
-    } yield (sdilReturn, variation)
   }
 }

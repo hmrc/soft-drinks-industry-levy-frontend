@@ -27,11 +27,13 @@ import sdil.config.AppConfig
 import cats.implicits._
 import sdil.models.{Address, ContactDetails, SmallProducer, Warehouse}
 import sdil.uniform.SdilComponentsNew
+import uk.gov.hmrc.domain.Modulus23Check
 
 import scala.concurrent.duration._
 import scala.language.{higherKinds, postfixOps}
 
-trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew with InferWebAsk[Html] {
+trait HmrcPlayInterpreter
+    extends PlayInterpreter[Html] with SdilComponentsNew with InferWebAsk[Html] with Modulus23Check {
 
   val config: AppConfig
   def messagesApi: MessagesApi
@@ -222,24 +224,50 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponentsNew w
     case other => other.asRight
   }(identity)
 //
-//  // SmallProducer validation logic
+////  // SmallProducer validation logic
+//  implicit val askSmallProducer: WebAsk[Html, SmallProducer] = gen[SmallProducer].simap {
+//    case SmallProducer(alias, _, _) if alias.length > 160 => Left(ErrorMsg("max").toTree.prefixWith("alias"))
+//    case SmallProducer(_, sdilRef, _) if sdilRef.isEmpty  => Left(ErrorMsg("required").toTree.prefixWith("sdilRef"))
+//    case SmallProducer(_, sdilRef, _) if !sdilRef.matches("^X[A-Z]SDIL000[0-9]{6}$") =>
+//      Left(ErrorMsg("invalid").toTree.prefixWith("sdilRef"))
+//    //TODO - how to do this validation logic
+//    /*
+//				case b if b == origSdilRef                      => Invalid("error.sdilref.same")
+//				case d if !isCheckCorrect(d, 1)                 => Invalid("error.sdilref.invalid")
+//				case e
+//						if (id
+//							.equalsIgnoreCase("add-small-producer-details") && smallProducerList.map(x => x.sdilRef).contains(e)) =>
+//					Invalid("error.sdilref.alreadyexists")
+//				case _ if !Await.result(isSmallProducer(x, sdilConnector, period), 20.seconds) =>
+//					Invalid("error.sdilref.notSmall")
+//		 */
+//    case other => other.asRight
+//  }(identity)
+
   implicit val askSmallProducer: WebAsk[Html, SmallProducer] = gen[SmallProducer].simap {
+    case SmallProducer(_, sdilRef, litreage) if sdilRef.isEmpty && litreage._1.isEmpty && litreage._2.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("sdilRef") ++
+          ErrorMsg("required").toTree.prefixWith("litreage._1") ++
+          ErrorMsg("required").toTree.prefixWith("litreage._2")
+      )
+    case SmallProducer(_, sdilRef, litreage) if sdilRef.isEmpty && litreage._1.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("sdilRef") ++
+          ErrorMsg("required").toTree.prefixWith("litreage._1")
+      )
+    case SmallProducer(_, sdilRef, litreage) if sdilRef.isEmpty && litreage._2.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("sdilRef") ++
+          ErrorMsg("required").toTree.prefixWith("litreage._2")
+      )
     case SmallProducer(alias, _, _) if alias.length > 160 => Left(ErrorMsg("max").toTree.prefixWith("alias"))
     case SmallProducer(_, sdilRef, _) if sdilRef.isEmpty  => Left(ErrorMsg("required").toTree.prefixWith("sdilRef"))
-    case SmallProducer(_, sdilRef, _) if !sdilRef.matches("^X[A-Z]SDIL000[0-9]{6}$") =>
-      Left(ErrorMsg("invalid").toTree.prefixWith("sdilRef"))
-    //TODO - how to do this validation logic
-    /*
-				case b if b == origSdilRef                      => Invalid("error.sdilref.same")
-				case d if !isCheckCorrect(d, 1)                 => Invalid("error.sdilref.invalid")
-				case e
-						if (id
-							.equalsIgnoreCase("add-small-producer-details") && smallProducerList.map(x => x.sdilRef).contains(e)) =>
-					Invalid("error.sdilref.alreadyexists")
-				case _ if !Await.result(isSmallProducer(x, sdilConnector, period), 20.seconds) =>
-					Invalid("error.sdilref.notSmall")
-		 */
+    //TODO: Uncomment validation for prod
+//    case SmallProducer(_, sdilRef, _) if !isCheckCorrect(sdilRef, 1) =>
+//      Left(ErrorMsg("invalid").toTree.prefixWith("sdilRef"))
+//    case SmallProducer(_, sdilRef, _) if !sdilRef.matches("^X[A-Z]SDIL000[0-9]{6}$") =>
+//      Left(ErrorMsg("invalid").toTree.prefixWith("sdilRef"))
     case other => other.asRight
   }(identity)
-
 }

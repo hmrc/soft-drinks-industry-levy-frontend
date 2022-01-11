@@ -35,13 +35,12 @@ import java.time.LocalDate
 import sdil.controllers.Subset
 import sdil.controllers.VariationsControllerNew.Change
 import sdil.models.variations.{Convert, RegistrationVariationData}
-import sdil.uniform.WebAskValidation.myAskAddress
 
 trait SdilComponentsNew {
 
   def ufViews: views.uniform.Uniform
 
-  def journeyConfig = JourneyConfig(askFirstListItem = true)
+  def journeyConfig: JourneyConfig = JourneyConfig(askFirstListItem = true, leapAhead = true)
 
   type FormHtml[A] = WebAsk[Html, A]
 

@@ -226,7 +226,7 @@ object VariationsControllerNew {
       packSites <- askListSimple[Address](
                     "production-site-details",
                     "p-site",
-                    validation = Rule.nonEmpty[List[Address]],
+                    listValidation = Rule.nonEmpty[List[Address]],
                     default = data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some
                   ).map(_.map(Site.fromAddress)) emptyUnless (
                     (data.producer.isLarge.contains(true) || data.copackForOthers) && change.contains(Sites)
@@ -301,7 +301,7 @@ object VariationsControllerNew {
                                     "production-site-details",
                                     "p-site",
                                     default = pSites.some,
-                                    validation = Rule.nonEmpty[List[Address]]
+                                    listValidation = Rule.nonEmpty[List[Address]]
                                   ).map(_.map(Site.fromAddress)) emptyUnless packer
                       isVoluntary = producerType == ProducerType.Small && useCopacker && (copacks, imports).isEmpty
                       warehouses <- askListSimple[Warehouse](

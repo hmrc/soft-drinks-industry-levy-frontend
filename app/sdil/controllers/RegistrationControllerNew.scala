@@ -135,7 +135,7 @@ object RegistrationControllerNew {
                     "production-sites",
                     "p-site",
                     default = packingSites.some,
-                    validation = Rule.nonEmpty
+                    listValidation = Rule.nonEmpty
                   ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
       addWarehouses <- if (!isVoluntary) {
                         ask[Boolean]("ask-secondary-warehouses")
@@ -145,7 +145,7 @@ object RegistrationControllerNew {
       warehouses <- askListSimple[Warehouse](
                      "warehouses",
                      "w-house",
-                     validation = Rule.nonEmpty
+                     listValidation = Rule.nonEmpty
                    ).map(_.map(Site.fromWarehouse)) emptyUnless addWarehouses
       contactDetails <- ask[ContactDetails]("contact-details")
       activity = Activity(

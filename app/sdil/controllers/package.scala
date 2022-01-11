@@ -57,10 +57,11 @@ package object controllers {
     key: String,
     subKey: String = "subKey",
     default: Option[List[A]] = None,
-    validation: Rule[List[A]] = Rule.alwaysPass[List[A]]
-  ) = askList[A](key, default, validation) {
+    listValidation: Rule[List[A]] = Rule.alwaysPass[List[A]],
+    elementValidation: Rule[A] = Rule.alwaysPass[A]
+  ) = askList[A](key, default, listValidation) {
     case (index: Option[Int], existing: List[A]) =>
-      ask[A](s"$subKey", default = index.map(existing))
+      ask[A](s"$subKey", default = index.map(existing), validation = elementValidation)
   }
 
   def longTupToLitreage(in: (Long, Long)): Option[Litreage] =

@@ -143,7 +143,12 @@
             </a>
         </div>
         <div>
-            <a href='@sdil.controllers.routes.ReturnsControllerNew.index(period.year, period.quarter, true, "nil-return")'>
+            <a href='@sdil.controllers.routes.ReturnsControllerNew.index(
+                period.year,
+                period.quarter,
+                nilReturn = true,
+                "nil-return"
+            )'>
                 @Messages("return.file.nil")
             </a>
         </div>

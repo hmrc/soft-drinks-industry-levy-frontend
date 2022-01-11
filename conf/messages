@@ -32,11 +32,6 @@ common.edit=Edit
 g.subfieldDetailHeader=What are the bands?
 g.subfieldDetailBody=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
 
-error.sdilref.invalid=Small producer reference number must be 6 letters and 9 numbers
-error.sdilref.notSmall=Small producer reference number does not match a business that is currently registered as a \
-  small producer. Check and try again.
-error.sdilref.same=​Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
-error.sdilref.alreadyexists=Small producer reference number must be different to a small producer reference number you have already added
 
 #Address lines
 line1=Address line 1
@@ -1219,12 +1214,17 @@ heading.small-producer-details=Your small producer exemptions
 alias.max=Small producer name must be 160 characters or less
 add-small-producer.litreage._1.required=Enter the number of litres in the low band
 add-small-producer.litreage._2.required=Enter the number of litres in the high band
+add-small-producer.litreage._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+add-small-producer.litreage._2.max=Number of litres in the low band must be less than 100,000,000,000,000
+add-small-producer.sdilRef.same=Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
+add-small-producer.sdilRef.alreadyexists=Small producer reference number must be different to a small producer reference number you have already added
+add-small-producer.sdilRef.invalid=Small producer reference number must be 6 letters and 9 numbers
+add-small-producer.sdilRef.invalid=Small producer reference number must be 6 letters and 9 numbers
+add-small-producer.sdilRef.notSmall=Small producer reference number does not match a business that is currently registered as a \
+small producer. Check and try again.
 heading.multi.small-producer-details=You have added {0} small producer{1}
 small-producer-details.list-control.heading=Do you want to add another small producer?
 heading.edit-small-producer-details=Enter the registered small producer’s details
-
-small-producer-details.option.add=Yes
-small-producer-details.option.done=No
 
 small-producer-details.table.heading.singular=You have added {0} small producer
 small-producer-details.table.heading.plural=You have added {0} small producers
