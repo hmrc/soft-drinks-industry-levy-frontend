@@ -16,60 +16,30 @@
 
 package sdil.journeys
 
-import ltbs.uniform._
-import validation._
 import cats.implicits._
-import ltbs.uniform.{ask, convertWithKey, end, interact, nonReturn, pure, tell}
-import ltbs.uniform.validation.Rule
+import ltbs.uniform.validation.{Rule, _}
+import ltbs.uniform._
 import play.api.i18n.Messages
-import play.twirl.api.Html
 import sdil.controllers.{askEmptyOption, askListSimple}
-import sdil.models.{Address, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
-import sdil.utility.stringToFormatter
-import uk.gov.hmrc.http.HeaderCarrier
+import sdil.models.{Address, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
 import views.html.uniform
-import uk.gov.hmrc.domain._
 
-import java.time.{LocalDate, LocalTime, ZoneId}
-import java.time.format.DateTimeFormatter
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
 object ReturnsJourney {
 
   def journey(
-    sdilRef: String,
     period: ReturnPeriod,
     default: Option[SdilReturn] = None,
     subscription: RetrievedSubscription,
-    broughtForward: BigDecimal,
-    isSmallProd: Boolean,
-    submitReturn: SdilReturn => Future[Unit],
     checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]]
   ) = {
 
     val costLower = BigDecimal("0.18")
     val costHigher = BigDecimal("0.24")
-
-    def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal =
-      d.map { case (_, (l, h), m) => costLower * l * m + costHigher * h * m }.sum
-
-    def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
-      val ra = List(
-        ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
-        ("exemptions-for-small-producers", sdilReturn.packSmall.map { _.litreage }.combineAll, 0),
-        ("brought-into-uk", sdilReturn.importLarge, 1),
-        ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
-        ("claim-credits-for-exports", sdilReturn.export, -1),
-        ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
-      )
-      if (!isSmallProducer)
-        ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
-      else
-        ra
-    }
 
     def taxEstimation(r: SdilReturn): BigDecimal = {
       val t = r.packLarge |+| r.importLarge |+| r.ownBrand
@@ -158,83 +128,6 @@ object ReturnsJourney {
         email = subscription.contact.email,
         taxEstimation = taxEstimation(sdilReturn)
       )
-      data = returnAmount(sdilReturn, isSmallProd)
-      subtotal = calculateSubtotal(data)
-      total = subtotal - broughtForward
-      _ <- tell(
-            "check-your-answers",
-            uniform.fragments.returnsCYA(
-              key = "check-your-answers",
-              lineItems = data,
-              costLower = costLower,
-              costHigher = costHigher,
-              subtotal = subtotal,
-              broughtForward = broughtForward,
-              total = total,
-              variation = variation.some,
-              subscription = subscription,
-              originalReturn = None
-            )(_: Messages)
-          )
-      _ <- convertWithKey(s"return-submission")((submitReturn(sdilReturn))) // sdilConnector.returns_update(subscription.utr, period, sdilReturn))
-      _ <- nonReturn("return-complete")
-      _ <- end(
-            "return-sent", { msg: Messages =>
-              val now = LocalDate.now
-              val returnDate = msg(
-                "return-sent.returnsDoneMessage",
-                period.start.format("MMMM"),
-                period.end.format("MMMM"),
-                period.start.getYear.toString,
-                subscription.orgName,
-                LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
-                now.format("dd MMMM yyyy")
-              )
-
-              val formatTotal =
-                if (total < 0)
-                  f"-£${total.abs}%,.2f"
-                else
-                  f"£$total%,.2f"
-
-              val prettyPeriod =
-                msg(
-                  s"period.check-your-answers",
-                  period.start.format("MMMM"),
-                  period.end.format("MMMM yyyy")
-                )
-
-              val getTotal =
-                if (total <= 0)
-                  msg("return-sent.subheading.nil-return")
-                else {
-                  msg(
-                    "return-sent.subheading",
-                    prettyPeriod,
-                    subscription.orgName
-                  )
-                }
-
-              val whatHappensNext = views.html.uniform.fragments
-                .returnsPaymentsBlurb(
-                  subscription = subscription,
-                  paymentDate = period,
-                  sdilRef = sdilRef,
-                  total = total,
-                  formattedTotal = formatTotal,
-                  variation = variation,
-                  lineItems = data,
-                  costLower = costLower,
-                  costHigher = costHigher,
-                  subtotal = subtotal,
-                  broughtForward = broughtForward
-                )(msg)
-                .some
-
-              views.html.uniform
-                .journeyEndNew("return-sent", now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)(msg)
-            }
-          )
     } yield (sdilReturn, variation)
   }
 }

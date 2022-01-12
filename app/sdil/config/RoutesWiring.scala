@@ -38,6 +38,7 @@ trait RoutesWiring extends CommonWiring {
   val httpClient: HttpClient
   val authConnector: AuthConnector
   val cache: RegistrationFormDataCache
+  val returnsCache: ReturnsFormDataCache
   val shortLivedCaching: ShortLivedHttpCaching
   val sdilConnector: SoftDrinksIndustryLevyConnector
   val payApiConnector: PayApiConnector

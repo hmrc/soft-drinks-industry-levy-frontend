@@ -103,7 +103,7 @@ libraryDependencies ++= Seq(
   "com.softwaremill.macwire"  %% "proxy"                          % "2.3.7",
   "org.typelevel"             %% "cats-core"                      % "2.6.1",
   "com.luketebbs.uniform"     %% "interpreter-play26"             % "5.0.0-RC5",
-  "com.beachape"              %% "enumeratum"                     % "1.7.0"  
+  "com.beachape"              %% "enumeratum"                     % "1.7.0"
 )
 
 // ================================================================================

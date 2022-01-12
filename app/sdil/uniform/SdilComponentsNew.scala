@@ -36,6 +36,8 @@ import sdil.controllers.Subset
 import sdil.controllers.VariationsControllerNew.Change
 import sdil.models.variations.{Convert, RegistrationVariationData}
 
+import scala.language.postfixOps
+
 trait SdilComponentsNew {
 
   def ufViews: views.uniform.Uniform
@@ -134,7 +136,6 @@ trait SdilComponentsNew {
     override def render(pageIn: PageIn[Html], stepDetails: StepDetails[Html, ReturnPeriod]): Option[Html] = {
       val ret = stepDetails.validation.subRules.collectFirst {
         case Rule.In(allowed, _) =>
-          println(s"$allowed ZZZZZZZZZ")
           views.html.softdrinksindustrylevy.helpers
             .radios(
               stepDetails.stepKey,

@@ -20,14 +20,19 @@ import cats.implicits._
 import play.api.Logger
 import play.api.i18n._
 import play.api.mvc._
+import play.twirl.api.Html
 import sdil.actions.{RegisteredAction, RegisteredRequest}
-import sdil.config.{AppConfig, RegistrationFormDataCache}
+import sdil.config.{AppConfig, RegistrationFormDataCache, ReturnsFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.journeys.ReturnsJourney
 import sdil.models._
 import sdil.uniform.SaveForLaterPersistenceNew
+import sdil.utility.stringToFormatter
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.main_template
 
+import java.time.{LocalDate, LocalTime, ZoneId}
+import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.higherKinds
 
@@ -37,7 +42,8 @@ class ReturnsControllerNew(
   val ufViews: views.uniform.Uniform,
   registeredAction: RegisteredAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,
-  cache: RegistrationFormDataCache
+  cache: RegistrationFormDataCache,
+  returnsCache: ReturnsFormDataCache
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
 
@@ -59,15 +65,6 @@ class ReturnsControllerNew(
       (for {
         subscription   <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
         pendingReturns <- sdilConnector.returns_pending(subscription.utr)
-        broughtForward <- if (config.balanceAllEnabled)
-                           sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
-                             extractTotal(listItemsWithTotal(x))
-                           } else sdilConnector.balance(sdilRef, withAssessment = false)
-        isSmallProd <- sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
-                        case Some(x) =>
-                          x // the given sdilRef matches a customer that was a small producer at some point in the quarter
-                        case None => false
-                      }
 
         r <- if (pendingReturns.contains(period)) {
               def submitReturn(sdilReturn: SdilReturn): Future[Unit] =
@@ -78,17 +75,17 @@ class ReturnsControllerNew(
               interpret(
                 ReturnsJourney
                   .journey(
-                    sdilRef,
                     period,
                     if (nilReturn) emptyReturn.some else None,
                     subscription,
-                    broughtForward,
-                    isSmallProd,
-                    submitReturn,
                     checkSmallProducerStatus
                   )
-              ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { _ =>
-                Redirect(routes.ServicePageController.show())
+              ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
+                submitReturn(ret._1).flatMap { _ =>
+                  returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
+                    Redirect(routes.ReturnsControllerNew.showReturnComplete(year, quarter))
+                  }
+                }
               }
             } else
               Redirect(routes.ServicePageController.show()).pure[Future]
@@ -100,17 +97,115 @@ class ReturnsControllerNew(
       }
   }
 
-  def returnComplete(year: Int, quarter: Int) = registeredAction.async { implicit request =>
-    lazy val persistence = {
-      SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
-        s"returns-$year-$quarter",
-        cache.shortLiveCache
-      )
-    }
+  def showReturnComplete(year: Int, quarter: Int): Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    val period = ReturnPeriod(year, quarter)
+
     for {
-      db <- persistence.dataGet()
-    } yield db
-    Future.successful(Ok("???"))
+      subscription <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
+      isSmallProd <- sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
+                      case Some(x) =>
+                        x // the given sdilRef matches a customer that was a small producer at some point in the quarter
+                      case None => false
+                    }
+      broughtForward <- if (config.balanceAllEnabled)
+                         sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+                           extractTotal(listItemsWithTotal(x))
+                         } else sdilConnector.balance(sdilRef, withAssessment = false)
+      cache <- returnsCache.get(sdilRef)
+    } yield {
+      cache match {
+        case Some(rd) =>
+          val now = LocalDate.now
+          val returnDate = Messages(
+            "return-sent.returnsDoneMessage",
+            period.start.format("MMMM"),
+            period.end.format("MMMM"),
+            period.start.getYear.toString,
+            subscription.orgName,
+            LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
+            now.format("dd MMMM yyyy")
+          )
+
+          def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
+            val ra = List(
+              ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
+              ("exemptions-for-small-producers", sdilReturn.packSmall.map { _.litreage }.combineAll, 0),
+              ("brought-into-uk", sdilReturn.importLarge, 1),
+              ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
+              ("claim-credits-for-exports", sdilReturn.export, -1),
+              ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
+            )
+            if (!isSmallProducer)
+              ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
+            else
+              ra
+          }
+
+          val costLower = BigDecimal("0.18")
+          val costHigher = BigDecimal("0.24")
+
+          def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal =
+            d.map { case (_, (l, h), m) => costLower * l * m + costHigher * h * m }.sum
+
+          val data = returnAmount(rd.sdilReturn, isSmallProd)
+          val subtotal = calculateSubtotal(data)
+          val total = subtotal - broughtForward
+
+          val formatTotal =
+            if (total < 0)
+              f"-£${total.abs}%,.2f"
+            else
+              f"£$total%,.2f"
+
+          val prettyPeriod =
+            Messages(
+              s"period.check-your-answers",
+              period.start.format("MMMM"),
+              period.end.format("MMMM yyyy")
+            )
+
+          val getTotal =
+            if (total <= 0)
+              Messages("return-sent.subheading.nil-return")
+            else {
+              Messages(
+                "return-sent.subheading",
+                prettyPeriod,
+                subscription.orgName
+              )
+            }
+
+          val whatHappensNext = views.html.uniform.fragments
+            .returnsPaymentsBlurb(
+              subscription = subscription,
+              paymentDate = period,
+              sdilRef = sdilRef,
+              total = total,
+              formattedTotal = formatTotal,
+              variation = rd.variation,
+              lineItems = data,
+              costLower = costLower,
+              costHigher = costHigher,
+              subtotal = calculateSubtotal(data),
+              broughtForward = broughtForward
+            )
+            .some
+
+          Ok(
+            main_template(
+              Messages("return-sent.title")
+            )(
+              views.html.uniform
+                .journeyEndNew("return-sent", now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
+            )(implicitly, implicitly, config)
+          )
+
+        case None =>
+          logger.warn("nothing in ReturnsFormDataCache, redirecting user to ServicePage")
+          Redirect(routes.ServicePageController.show())
+      }
+    }
 
   }
 }

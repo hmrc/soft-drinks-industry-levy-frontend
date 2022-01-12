@@ -198,7 +198,72 @@ trait HmrcPlayInterpreter
     """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"""
 
   // ContactDetails validation logic
+  // ContactDetails validation logic
   implicit val askContactDetails: WebAsk[Html, ContactDetails] = gen[ContactDetails].simap {
+    case ContactDetails(fullName, position, phoneNumber, email)
+        if fullName.isEmpty && position.isEmpty && phoneNumber.isEmpty && email.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("fullName") ++
+          ErrorMsg("required").toTree.prefixWith("position") ++
+          ErrorMsg("required").toTree.prefixWith("phoneNumber") ++
+          ErrorMsg("required").toTree.prefixWith("email")
+      )
+    case ContactDetails(fullName, position, phoneNumber, _)
+        if fullName.isEmpty && position.isEmpty && phoneNumber.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("fullName") ++
+          ErrorMsg("required").toTree.prefixWith("position") ++
+          ErrorMsg("required").toTree.prefixWith("phoneNumber")
+      )
+    case ContactDetails(fullName, position, _, email) if fullName.isEmpty && position.isEmpty && email.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("fullName") ++
+          ErrorMsg("required").toTree.prefixWith("position") ++
+          ErrorMsg("required").toTree.prefixWith("email")
+      )
+    case ContactDetails(fullName, _, phoneNumber, email) if fullName.isEmpty && phoneNumber.isEmpty && email.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("fullName") ++
+          ErrorMsg("required").toTree.prefixWith("phoneNumber") ++
+          ErrorMsg("required").toTree.prefixWith("email")
+      )
+    case ContactDetails(_, position, phoneNumber, email) if position.isEmpty && phoneNumber.isEmpty && email.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("position") ++
+          ErrorMsg("required").toTree.prefixWith("phoneNumber") ++
+          ErrorMsg("required").toTree.prefixWith("email")
+      )
+    case ContactDetails(fullName, position, _, _) if fullName.isEmpty && position.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("fullName") ++
+          ErrorMsg("required").toTree.prefixWith("position")
+      )
+    case ContactDetails(fullName, _, phoneNumber, _) if fullName.isEmpty && phoneNumber.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("fullName") ++
+          ErrorMsg("required").toTree.prefixWith("phoneNumber")
+      )
+    case ContactDetails(fullName, _, _, email) if fullName.isEmpty && email.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("fullName") ++
+          ErrorMsg("required").toTree.prefixWith("email")
+      )
+    case ContactDetails(_, position, phoneNumber, _) if position.isEmpty && phoneNumber.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("position") ++
+          ErrorMsg("required").toTree.prefixWith("phoneNumber")
+      )
+    case ContactDetails(_, position, _, email) if position.isEmpty && email.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("position") ++
+          ErrorMsg("required").toTree.prefixWith("email")
+      )
+    case ContactDetails(_, _, phoneNumber, email) if phoneNumber.isEmpty && email.isEmpty =>
+      Left(
+        ErrorMsg("required").toTree.prefixWith("phoneNumber") ++
+          ErrorMsg("required").toTree.prefixWith("email")
+      )
+
     case ContactDetails(fullName, _, _, _) if fullName.isEmpty =>
       Left(ErrorMsg("required").toTree.prefixWith("fullName"))
     case ContactDetails(fullName, _, _, _) if fullName.length > 40 =>
@@ -223,26 +288,6 @@ trait HmrcPlayInterpreter
       Left(ErrorMsg("invalid").toTree.prefixWith("email"))
     case other => other.asRight
   }(identity)
-//
-////  // SmallProducer validation logic
-//  implicit val askSmallProducer: WebAsk[Html, SmallProducer] = gen[SmallProducer].simap {
-//    case SmallProducer(alias, _, _) if alias.length > 160 => Left(ErrorMsg("max").toTree.prefixWith("alias"))
-//    case SmallProducer(_, sdilRef, _) if sdilRef.isEmpty  => Left(ErrorMsg("required").toTree.prefixWith("sdilRef"))
-//    case SmallProducer(_, sdilRef, _) if !sdilRef.matches("^X[A-Z]SDIL000[0-9]{6}$") =>
-//      Left(ErrorMsg("invalid").toTree.prefixWith("sdilRef"))
-//    //TODO - how to do this validation logic
-//    /*
-//				case b if b == origSdilRef                      => Invalid("error.sdilref.same")
-//				case d if !isCheckCorrect(d, 1)                 => Invalid("error.sdilref.invalid")
-//				case e
-//						if (id
-//							.equalsIgnoreCase("add-small-producer-details") && smallProducerList.map(x => x.sdilRef).contains(e)) =>
-//					Invalid("error.sdilref.alreadyexists")
-//				case _ if !Await.result(isSmallProducer(x, sdilConnector, period), 20.seconds) =>
-//					Invalid("error.sdilref.notSmall")
-//		 */
-//    case other => other.asRight
-//  }(identity)
 
   implicit val askSmallProducer: WebAsk[Html, SmallProducer] = gen[SmallProducer].simap {
     case SmallProducer(_, sdilRef, litreage) if sdilRef.isEmpty && litreage._1.isEmpty && litreage._2.isEmpty =>

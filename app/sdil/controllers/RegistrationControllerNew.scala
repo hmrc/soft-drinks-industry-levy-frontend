@@ -121,7 +121,7 @@ object RegistrationControllerNew {
                     Rule.min(LocalDate.of(2018, 4, 6), "minimum-date") followedBy
                       Rule.max(LocalDate.now, "maximum-date")
                 ) unless isVoluntary
-      askPackingSites = (producerType == ProducerType.Large && packageOwn.nonEmpty) || copacks.nonEmpty
+      askPackingSites = (producerType == ProducerType.Large && packageOwn > Tuple2(0L, 0L)) || copacks > Tuple2(0L, 0L)
       useBusinessAddress <- interact[Boolean](
                              "pack-at-business-address",
                              fd.rosmData.address

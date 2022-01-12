@@ -24,6 +24,7 @@ GET         /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/   
 GET         /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/*id     sdil.controllers.ReturnsControllerNew.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
 POST        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/        sdil.controllers.ReturnsControllerNew.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
 POST        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/*id     sdil.controllers.ReturnsControllerNew.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
+GET         /submit-return/year/:year/quarter/:quarter/return-sent                   sdil.controllers.ReturnsControllerNew.showReturnComplete(year: Int, quarter: Int)
 
 GET         /ufvariations/                                     sdil.controllers.VariationsControllerNew.index(id = "")
 GET         /ufvariations/*id                                  sdil.controllers.VariationsControllerNew.index(id: String)
