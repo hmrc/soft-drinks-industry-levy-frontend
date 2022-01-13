@@ -26,27 +26,22 @@ POST        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/   
 POST        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/*id     sdil.controllers.ReturnsControllerNew.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
 GET         /submit-return/year/:year/quarter/:quarter/return-sent                   sdil.controllers.ReturnsControllerNew.showReturnComplete(year: Int, quarter: Int)
 
+GET         /ufvariations/variationDone                        sdil.controllers.VariationsControllerNew.showVariationsComplete()
+
 GET         /ufvariations/                                     sdil.controllers.VariationsControllerNew.index(id = "")
 GET         /ufvariations/*id                                  sdil.controllers.VariationsControllerNew.index(id: String)
 POST        /ufvariations/                                     sdil.controllers.VariationsControllerNew.index(id = "")
 POST        /ufvariations/*id                                  sdil.controllers.VariationsControllerNew.index(id: String)
 
-GET         /change-business-address/                          sdil.controllers.VariationsControllerNew.changeBusinessAddress(id = "")
-GET         /change-business-address/*id                       sdil.controllers.VariationsControllerNew.changeBusinessAddress(id: String)
-POST        /change-business-address/                          sdil.controllers.VariationsControllerNew.changeBusinessAddress(id = "")
-POST        /change-business-address/*id                       sdil.controllers.VariationsControllerNew.changeBusinessAddress(id: String)
-
+#GET         /change-business-address/                          sdil.controllers.VariationsControllerNew.changeBusinessAddress(id = "")
+#GET         /change-business-address/*id                       sdil.controllers.VariationsControllerNew.changeBusinessAddress(id: String)
+#POST        /change-business-address/                          sdil.controllers.VariationsControllerNew.changeBusinessAddress(id = "")
+#POST        /change-business-address/*id                       sdil.controllers.VariationsControllerNew.changeBusinessAddress(id: String)
+#
 GET         /change-actor-status/                          sdil.controllers.VariationsControllerNew.changeActorStatus(id = "")
 GET         /change-actor-status/*id                       sdil.controllers.VariationsControllerNew.changeActorStatus(id: String)
 POST        /change-actor-status/                          sdil.controllers.VariationsControllerNew.changeActorStatus(id = "")
 POST        /change-actor-status/*id                       sdil.controllers.VariationsControllerNew.changeActorStatus(id: String)
-
-
-GET         /ufvariations/                                     sdil.controllers.VariationsControllerNew.index(id = "")
-GET         /ufvariations/*id                                  sdil.controllers.VariationsControllerNew.index(id: String)
-POST        /ufvariations/                                     sdil.controllers.VariationsControllerNew.index(id = "")
-POST        /ufvariations/*id                                  sdil.controllers.VariationsControllerNew.index(id: String)
-
 
 GET         /uregistrations/                                   sdil.controllers.RegistrationControllerNew.index(id = "")
 GET         /uregistrations/*id                                sdil.controllers.RegistrationControllerNew.index(id: String)

@@ -31,21 +31,43 @@ import scala.concurrent.{Await, Future}
 
 object ReturnsJourney {
 
+  val costLower = BigDecimal("0.18")
+  val costHigher = BigDecimal("0.24")
+
+  def taxEstimation(r: SdilReturn): BigDecimal = {
+    val t = r.packLarge |+| r.importLarge |+| r.ownBrand
+    (t._1 * costLower |+| t._2 * costHigher) * 4
+  }
+  def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
+    val ra = List(
+      ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
+      ("exemptions-for-small-producers", sdilReturn.packSmall.map { _.litreage }.combineAll, 0),
+      ("brought-into-uk", sdilReturn.importLarge, 1),
+      ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
+      ("claim-credits-for-exports", sdilReturn.export, -1),
+      ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
+    )
+    if (!isSmallProducer)
+      ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
+    else
+      ra
+  }
+  def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal =
+    d.map { case (_, (l, h), m) => costLower * l * m + costHigher * h * m }.sum
+
+  def message(key: String, args: String*) = {
+    import play.twirl.api.HtmlFormat.escape
+    Map(key -> Tuple2(key, args.toList.map { escape(_).toString }))
+  }
+
   def journey(
     period: ReturnPeriod,
     default: Option[SdilReturn] = None,
     subscription: RetrievedSubscription,
-    checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]]
-  ) = {
-
-    val costLower = BigDecimal("0.18")
-    val costHigher = BigDecimal("0.24")
-
-    def taxEstimation(r: SdilReturn): BigDecimal = {
-      val t = r.packLarge |+| r.importLarge |+| r.ownBrand
-      (t._1 * costLower |+| t._2 * costHigher) * 4
-    }
-
+    checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
+    broughtForward: BigDecimal,
+    isSmallProd: Boolean
+  ) =
     for {
       ownBrands <- askEmptyOption[(Long, Long)](
                     "own-brands-packaged-at-own-sites",
@@ -117,6 +139,9 @@ object ReturnsJourney {
                                        listValidation = Rule.nonEmpty[List[Warehouse]]
                                      ) map (_.map(Site.fromWarehouse)) emptyUnless addWarehouses
                       } yield warehouses) when isNewImporter //&& subscription.warehouseSites.isEmpty
+      data = returnAmount(sdilReturn, isSmallProd)
+      subtotal = calculateSubtotal(data)
+      total = subtotal - broughtForward
       variation = ReturnsVariation(
         orgName = subscription.orgName,
         ppobAddress = subscription.address,
@@ -128,6 +153,22 @@ object ReturnsJourney {
         email = subscription.contact.email,
         taxEstimation = taxEstimation(sdilReturn)
       )
+      _ <- tell(
+            "check-your-answers",
+            uniform.fragments.returnsCYA(
+              key = "check-your-answers",
+              lineItems = data,
+              costLower = costLower,
+              costHigher = costHigher,
+              subtotal = subtotal,
+              broughtForward = broughtForward,
+              total = total,
+              variation = variation.some,
+              subscription = subscription,
+              originalReturn = None
+            )(_: Messages)
+            //TODO: Custom Content doesn't appear to be working
+//        , customContent = message("heading.check-your-answers.orgName", subscription.orgName)
+          )
     } yield (sdilReturn, variation)
-  }
 }

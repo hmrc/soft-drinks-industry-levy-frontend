@@ -65,6 +65,15 @@ class ReturnsControllerNew(
       (for {
         subscription   <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
         pendingReturns <- sdilConnector.returns_pending(subscription.utr)
+        broughtForward <- if (config.balanceAllEnabled)
+                           sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+                             extractTotal(listItemsWithTotal(x))
+                           } else sdilConnector.balance(sdilRef, withAssessment = false)
+        isSmallProd <- sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
+                        case Some(x) =>
+                          x // the given sdilRef matches a customer that was a small producer at some point in the quarter
+                        case None => false
+                      }
 
         r <- if (pendingReturns.contains(period)) {
               def submitReturn(sdilReturn: SdilReturn): Future[Unit] =
@@ -78,7 +87,9 @@ class ReturnsControllerNew(
                     period,
                     if (nilReturn) emptyReturn.some else None,
                     subscription,
-                    checkSmallProducerStatus
+                    checkSmallProducerStatus,
+                    broughtForward,
+                    isSmallProd
                   )
               ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
                 submitReturn(ret._1).flatMap { _ =>
@@ -127,29 +138,8 @@ class ReturnsControllerNew(
             now.format("dd MMMM yyyy")
           )
 
-          def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
-            val ra = List(
-              ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
-              ("exemptions-for-small-producers", sdilReturn.packSmall.map { _.litreage }.combineAll, 0),
-              ("brought-into-uk", sdilReturn.importLarge, 1),
-              ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
-              ("claim-credits-for-exports", sdilReturn.export, -1),
-              ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
-            )
-            if (!isSmallProducer)
-              ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
-            else
-              ra
-          }
-
-          val costLower = BigDecimal("0.18")
-          val costHigher = BigDecimal("0.24")
-
-          def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal =
-            d.map { case (_, (l, h), m) => costLower * l * m + costHigher * h * m }.sum
-
-          val data = returnAmount(rd.sdilReturn, isSmallProd)
-          val subtotal = calculateSubtotal(data)
+          val data = ReturnsJourney.returnAmount(rd.sdilReturn, isSmallProd)
+          val subtotal = ReturnsJourney.calculateSubtotal(data)
           val total = subtotal - broughtForward
 
           val formatTotal =
@@ -185,9 +175,9 @@ class ReturnsControllerNew(
               formattedTotal = formatTotal,
               variation = rd.variation,
               lineItems = data,
-              costLower = costLower,
-              costHigher = costHigher,
-              subtotal = calculateSubtotal(data),
+              costLower = ReturnsJourney.costLower,
+              costHigher = ReturnsJourney.costHigher,
+              subtotal = ReturnsJourney.calculateSubtotal(data),
               broughtForward = broughtForward
             )
             .some

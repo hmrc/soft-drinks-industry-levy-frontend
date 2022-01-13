@@ -26,5 +26,6 @@ trait ConfigWiring extends CommonWiring {
   private implicit lazy val crypto: CompositeSymmetricCrypto = applicationCrypto.JsonCrypto
   lazy val cache: RegistrationFormDataCache = wire[RegistrationFormDataCache]
   lazy val returnsCache: ReturnsFormDataCache = wire[ReturnsFormDataCache]
+  lazy val regVariationCache: RegistrationVariationFormDataCache = wire[RegistrationVariationFormDataCache]
   lazy val errorHandler: FrontendErrorHandler = wire[SDILErrorHandler]
 }

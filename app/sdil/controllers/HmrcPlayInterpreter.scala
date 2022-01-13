@@ -149,9 +149,6 @@ trait HmrcPlayInterpreter
     //            pageIn.messages)()
     //      )
   }
-  // Validations starts here
-  //TODO implicits are needed for Address, Warehouse, ContactDetails, SmallProducer
-  //Copy the validation from app.sdil.uniform.SdilComponents
 
   // Address validation logic
   implicit val askAddress: WebAsk[Html, Address] = gen[Address].simap {

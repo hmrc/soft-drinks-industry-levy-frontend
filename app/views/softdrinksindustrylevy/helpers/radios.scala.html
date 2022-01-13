@@ -21,10 +21,13 @@
 
 @keyDash=@{fieldKey.mkString("-")}
 @keyDots=@{fieldKey.mkString(".")}
+@sortValues=@{pageKey.contains("select-return")}
+@ro=@{if(sortValues){radioOptions.sorted} else radioOptions}
 
 @surround(pageKey, fieldKey, tell, errors, messages, cond) {
   <div class="@if(radioOptions.length <= 2){inline}">
-    @radioOptions.zipWithIndex.map{ case (opt,num) =>
+
+    @ro.zipWithIndex.map{ case (opt,num) =>
       <div class="multiple-choice govuk-radios__item" data-target="tg-@{keyDash}-@num">
         <input type="radio"             
           id="@{keyDash}-@num"

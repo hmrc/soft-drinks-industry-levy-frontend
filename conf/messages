@@ -580,7 +580,7 @@ error.radio-form.choose-option=Choose an option
 error.radio-form.choose-option.=Choose an option
 error.radio-form.choose-option.continue=Select an option to continue
 select-change.required=Select what you need to do
-error.radio-form.choose-option.select-return=Select which return you need to correct
+select-return.required=Select which return you need to correct
 error.radio-form.choose-option.repayment-method=Select how you want the credit to be repaid
 
 organisation-type.required=Select the option that best describes your business
@@ -874,6 +874,8 @@ pack-at-business-address-in-return.required=Select yes if this address is a UK p
 pack-at-business-address-in-return.help.header=Why we need these details
 pack-at-business-address-in-return.help=Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate
 
+start-date.day-and-month-and-year.empty=Enter the date you became liable to register for the Soft Drinks Industry Levy
+select-change.button.paragraph=Changes can take up to 15 working days to process.
 
 pack-at-business-address.true=Yes
 pack-at-business-address.false=No
@@ -1521,6 +1523,7 @@ how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs pa
 
 select-change.option.returns=Correct an error in a previous return
 heading.select-return=Which return do you need to correct?
+
 select-return.help.header=I cannot find the return I’m looking for
 select-return.help=<p>If you did not send a return, then it will not be listed here.</p>\
   <p>You can correct returns up to 4 years after the end of the tax year the return is in.</p>\

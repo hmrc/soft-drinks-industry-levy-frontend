@@ -16,26 +16,23 @@
 
 package sdil.uniform
 
-import cats.syntax.all._
 import cats.data.Validated
+import cats.syntax.all._
+import enumeratum._
 import ltbs.uniform._
-import validation.{Rule, _}
 import ltbs.uniform.common.web._
-import play.api.data._
+import ltbs.uniform.validation.{Rule, _}
 import play.api.i18n.Messages
 import play.twirl.api.Html
+import sdil.controllers.Subset
+import sdil.journeys.VariationsJourney.Change
 import sdil.models._
 import sdil.models.backend.Site
+import sdil.models.variations.{Convert, RegistrationVariationData}
 import views.html.uniform
-import sdil.uniform.AdaptMessages.ufMessagesToPlayMessages
 import views.html.uniform.fragments.date_new
-import enumeratum._
 
 import java.time.LocalDate
-import sdil.controllers.Subset
-import sdil.controllers.VariationsControllerNew.Change
-import sdil.models.variations.{Convert, RegistrationVariationData}
-
 import scala.language.postfixOps
 
 trait SdilComponentsNew {
@@ -163,12 +160,12 @@ trait SdilComponentsNew {
         .flatMap(
           x =>
             Either
-              .catchOnly[NumberFormatException](x.split(".").toList.map(_.toInt))
-              .leftMap(_ => ErrorMsg("Int transformation failed").toTree)
+              .catchOnly[NumberFormatException](x.split("\\.").toList.map(_.toInt))
+              .leftMap(_ => ErrorMsg("required").toTree)
         )
         .flatMap {
           case year :: quarter :: Nil => Right(ReturnPeriod(year, quarter))
-          case _                      => Left(ErrorMsg("returnPeriod cannot be converted to Int").toTree)
+          case _                      => Left(ErrorMsg(s"returnPeriod cannot be converted to Int").toTree)
         }
   }
 
