@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,15 +64,6 @@ trait ControllerSpec extends FakeApplicationSpec {
     retrievedSubscription: RetrievedSubscription): OngoingStubbing[Future[Option[RetrievedSubscription]]] =
     when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), any())(any()))
       .thenReturn(Future.successful(Some(retrievedSubscription)))
-
-  def checkSmallProdStatus(isSmall: Boolean): OngoingStubbing[Future[Boolean]] =
-    when(
-      mockSdilWMController.isSmallProducer(
-        matching("XPSDIL000000205"),
-        matching(mockSdilConnector),
-        matching(ReturnPeriod(2018, 3))
-      )(any())
-    ) thenReturn Future.successful(isSmall)
 
   def fetchAndGet(smallProd: JsValue): OngoingStubbing[Future[Option[JsValue]]] = {
     when(mockSdilConnector.shortLiveCache) thenReturn cacheMock

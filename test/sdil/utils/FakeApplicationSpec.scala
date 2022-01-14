@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,8 @@ import play.api.{Application, ApplicationLoader, Configuration, Environment}
 import play.core.DefaultWebCommands
 import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
-import sdil.config.{RegistrationFormDataCache, SDILApplicationLoader}
+import sdil.config.{RegistrationFormDataCache, ReturnsFormDataCache, SDILApplicationLoader}
 import sdil.connectors.{DirectDebitBackendConnector, GaConnector, PayApiConnector, SoftDrinksIndustryLevyConnector}
-import sdil.controllers.SdilWMController
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.{ReturnPeriod, SdilReturn}
@@ -114,6 +113,12 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     m
   }
 
+  val mockReturnsCache: ReturnsFormDataCache = {
+    val m = mock[ReturnsFormDataCache]
+    // when...
+    m
+  }
+
   val mockKeystore: SessionCache = {
     val m = mock[SessionCache]
     when(m.cache(anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
@@ -127,7 +132,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     m
   }
 
-  implicit lazy val testConfig: TestConfig = new TestConfig
+  implicit lazy val testConfig: TestConfig = new TestConfig(configuration)
 
   lazy val mockErrorHandler = {
     val m = mock[FrontendErrorHandler]
@@ -205,12 +210,6 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
 
   lazy val mockRegistrationFormDataCache = {}
 
-  lazy val mockSdilWMController: SdilWMController = {
-    val m = mock[SdilWMController]
-    when(m.isSmallProducer(any(), any(), any())(any())) thenReturn Future.successful(false)
-    m
-  }
-
   type Retrieval = Enrolments ~ Option[CredentialRole] ~ Option[String] ~ Option[AffinityGroup]
 
   lazy val mockAuthConnector: AuthConnector = {
@@ -235,8 +234,9 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
 
   lazy val errors: Errors = wire[Errors]
   lazy val Views: Views = wire[Views]
+  lazy val baseFoo = wire[views.html.uniform.base]
   lazy val uniformHelpers: Uniform = wire[Uniform]
-  lazy val viewHelpers: ViewHelpers = wire[ViewHelpers]
+//  lazy val viewHelpers: ViewHelpers = wire[ViewHelpers]
   lazy val govukTemplate: views.html.layouts.GovUkTemplate = wire[views.html.layouts.GovUkTemplate]
 
   lazy val alreadyRegistered: already_registered = wire[already_registered]
@@ -255,15 +255,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
 
   lazy val updateBusinessAddresses: views.html.uniform.fragments.update_business_addresses =
     wire[views.html.uniform.fragments.update_business_addresses]
-  lazy val ask: views.html.uniform.ask = wire[views.html.uniform.ask]
-  lazy val cya: views.html.uniform.cya = wire[views.html.uniform.cya]
   lazy val end: views.html.uniform.end = wire[views.html.uniform.end]
-  lazy val journeyEnd: views.html.uniform.journeyEnd = wire[views.html.uniform.journeyEnd]
-  lazy val many: views.html.uniform.many = wire[views.html.uniform.many]
-  lazy val tell: views.html.uniform.tell = wire[views.html.uniform.tell]
-
-  lazy val main: main_template = wire[main_template]
-  lazy val govUkWrapper: govuk_wrapper = wire[govuk_wrapper]
 
   //copied from uk.gov.hmrc.play.views.html.helpers
   lazy val addressView: uk.gov.hmrc.play.views.html.helpers.Address = wire[uk.gov.hmrc.play.views.html.helpers.Address]

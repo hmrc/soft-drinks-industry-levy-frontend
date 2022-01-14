@@ -72,7 +72,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.play"      %% "play-test"           % play.core.PlayVersion.current,
   "org.mockito"            %  "mockito-core"        % "3.10.0",
   "org.scalatestplus.play" %% "scalatestplus-play"  % "3.1.3",
-  "org.scalacheck"         %% "scalacheck"          % "1.15.4"
+  "org.scalacheck"         %% "scalacheck"          % "1.15.4",
+  "com.luketebbs.uniform"  %% "interpreter-logictable"  % "5.0.0-RC5"
 ).map(_ % "test")
 
 // ================================================================================
