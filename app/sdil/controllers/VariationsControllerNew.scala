@@ -57,7 +57,8 @@ class VariationsControllerNew(
   registeredAction: RegisteredAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   regCache: RegistrationFormDataCache,
-  regVariationsCache: RegistrationVariationFormDataCache
+  regVariationsCache: RegistrationVariationFormDataCache,
+  returnsVariationsCache: ReturnVariationFormDataCache
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
 
@@ -91,12 +92,14 @@ class VariationsControllerNew(
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(subscription) =>
         val base = RegistrationVariationData(subscription)
-        def submitReturn(sdilReturn: SdilReturn, period: ReturnPeriod): Future[Unit] =
-          sdilConnector.returns_update(subscription.utr, period, sdilReturn)
         def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] =
           sdilConnector.returns_get(subscription.utr, period)
         def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
           sdilConnector.checkSmallProducerStatus(sdilRef, period)
+        def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
+          sdilConnector.returns_variation(rvd, sdilRef)
+        def submitAdjustment(rvd: ReturnVariationData) =
+          sdilConnector.returns_vary(sdilRef, rvd)
         for {
           variableReturns <- sdilConnector.returns_variable(base.original.utr)
           returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
@@ -109,13 +112,21 @@ class VariationsControllerNew(
                          sdilConnector,
                          checkSmallProducerStatus,
                          getReturn,
+                         submitReturnVariation,
                          config
                        ))
                        .run(id, purgeStateUponCompletion = true, config = journeyConfig) {
-                         case Left(ret) => ???
+                         case Left(ret) =>
+                           submitAdjustment(ret).flatMap { _ =>
+                             returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
+                               logger.info("adjustment of Return is complete")
+                               Redirect(routes.VariationsControllerNew.showVariationsComplete())
+                             }
+                           }
                          case Right(reg) =>
                            sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
                              regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
+                               logger.info("variation of Registration is complete")
                                Redirect(routes.VariationsControllerNew.showVariationsComplete())
                              }
                            }
@@ -148,11 +159,16 @@ class VariationsControllerNew(
   def showVariationsComplete() = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     for {
-      db           <- regVariationsCache.get(sdilRef)
-      subscription <- sdilConnector.retrieveSubscription(sdilRef)
+      regDB        <- regVariationsCache.get(sdilRef)
+      retDB        <- returnsVariationsCache.get(sdilRef)
+      subscription <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
+      broughtForward <- if (config.balanceAllEnabled)
+                         sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+                           extractTotal(listItemsWithTotal(x))
+                         } else sdilConnector.balance(sdilRef, withAssessment = false)
     } yield {
-      db match {
-        case Some(regVar) =>
+      (regDB, retDB) match {
+        case (Some(regVar), _) =>
           val whnKey = regVar match {
             case rv if rv.manToVol => "manToVol".some
             case rv if rv.volToMan => "volToMan".some
@@ -174,7 +190,7 @@ class VariationsControllerNew(
               if (regVar.deregDate.nonEmpty) { "variationDone.your.request" } else {
                 "returnVariationDone.your.updates"
               },
-              subscription.get.orgName,
+              subscription.orgName,
               LocalDate.now.format(ofPattern("d MMMM yyyy")),
               LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
             )).some
@@ -188,11 +204,27 @@ class VariationsControllerNew(
                   "variationDone",
                   whatHappensNext = whn.some,
                   updateTimeMessage = varySubheading,
-                  email = subscription.get.contact.email.some
+                  email = subscription.contact.email.some
                 )
             )(implicitly, implicitly, config))
 
-        case None => ???
+        case (_, Some(retVar)) =>
+          val whn = uniform.fragments
+            .variationsWHN(a = retVar.some, key = Some("return"), broughtForward = broughtForward.some)
+
+          val retSubheading = uniform.fragments.return_variation_done_subheading(subscription, retVar.period).some
+          Ok(
+            main_template(
+              Messages("return-sent.title")
+            )(
+              views.html.uniform
+                .journeyEndNew(
+                  "returnVariationDone",
+                  whatHappensNext = whn.some,
+                  updateTimeMessage = retSubheading
+                )
+            )(implicitly, implicitly, config))
+
       }
 
     }

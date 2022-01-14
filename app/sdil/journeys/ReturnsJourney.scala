@@ -65,6 +65,7 @@ object ReturnsJourney {
     default: Option[SdilReturn] = None,
     subscription: RetrievedSubscription,
     checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
+    submitReturnVariation: ReturnsVariation => Future[Unit],
     broughtForward: BigDecimal,
     isSmallProd: Boolean
   ) =
@@ -153,6 +154,7 @@ object ReturnsJourney {
         email = subscription.contact.email,
         taxEstimation = taxEstimation(sdilReturn)
       )
+      _ <- convertWithKey("vary-in-return")(submitReturnVariation(variation))
       _ <- tell(
             "check-your-answers",
             uniform.fragments.returnsCYA(

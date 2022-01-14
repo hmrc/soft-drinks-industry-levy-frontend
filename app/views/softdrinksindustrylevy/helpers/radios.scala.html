@@ -23,9 +23,10 @@
 @keyDots=@{fieldKey.mkString(".")}
 @sortValues=@{pageKey.contains("select-return")}
 @ro=@{if(sortValues){radioOptions.sorted} else radioOptions}
+@restrictInlineKeys=@{List("select-return", "repayment-method").contains(pageKey.head)}
 
 @surround(pageKey, fieldKey, tell, errors, messages, cond) {
-  <div class="@if(radioOptions.length <= 2){inline}">
+  <div class="@if(radioOptions.length <= 2 && !restrictInlineKeys){inline}">
 
     @ro.zipWithIndex.map{ case (opt,num) =>
       <div class="multiple-choice govuk-radios__item" data-target="tg-@{keyDash}-@num">

@@ -26,6 +26,7 @@ import sdil.config.{AppConfig, RegistrationFormDataCache, ReturnsFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.journeys.ReturnsJourney
 import sdil.models._
+import sdil.models.variations.ReturnVariationData
 import sdil.uniform.SaveForLaterPersistenceNew
 import sdil.utility.stringToFormatter
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -80,6 +81,8 @@ class ReturnsControllerNew(
                 sdilConnector.returns_update(subscription.utr, period, sdilReturn)
               def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
                 sdilConnector.checkSmallProducerStatus(sdilRef, period)
+              def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
+                sdilConnector.returns_variation(rvd, sdilRef)
 
               interpret(
                 ReturnsJourney
@@ -88,6 +91,7 @@ class ReturnsControllerNew(
                     if (nilReturn) emptyReturn.some else None,
                     subscription,
                     checkSmallProducerStatus,
+                    submitReturnVariation,
                     broughtForward,
                     isSmallProd
                   )

@@ -27,5 +27,6 @@ trait ConfigWiring extends CommonWiring {
   lazy val cache: RegistrationFormDataCache = wire[RegistrationFormDataCache]
   lazy val returnsCache: ReturnsFormDataCache = wire[ReturnsFormDataCache]
   lazy val regVariationCache: RegistrationVariationFormDataCache = wire[RegistrationVariationFormDataCache]
+  lazy val retVariationCache: ReturnVariationFormDataCache = wire[ReturnVariationFormDataCache]
   lazy val errorHandler: FrontendErrorHandler = wire[SDILErrorHandler]
 }

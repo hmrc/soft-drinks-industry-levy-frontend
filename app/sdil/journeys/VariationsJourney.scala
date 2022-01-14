@@ -25,10 +25,11 @@ import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.{ShowBackLink, Subset, askEmptyOption, askListSimple, longTupToLitreage}
+import sdil.journeys.VariationsJourney.RepaymentMethod.Credit
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData}
-import sdil.models.{Address, CYA, ContactDetails, Producer, ReturnPeriod, SdilReturn, Warehouse, extractTotal, listItemsWithTotal}
+import sdil.models.{Address, CYA, ContactDetails, Producer, ReturnPeriod, ReturnsVariation, SdilReturn, Warehouse, extractTotal, listItemsWithTotal}
 import sdil.uniform.ProducerType
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.uniform
@@ -69,6 +70,13 @@ object VariationsJourney {
     case object Sites extends ContactChangeType
     case object ContactPerson extends ContactChangeType
     case object ContactAddress extends ContactChangeType
+  }
+
+  sealed trait RepaymentMethod extends EnumEntry
+  object RepaymentMethod extends Enum[RepaymentMethod] {
+    val values = findValues
+    case object Credit extends RepaymentMethod
+    case object BankPayment extends RepaymentMethod
   }
 
   import cats.Order
@@ -246,6 +254,7 @@ object VariationsJourney {
     returnPeriod: ReturnPeriod,
     checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
     getReturn: ReturnPeriod => Future[Option[SdilReturn]],
+    submitReturnVariation: ReturnsVariation => Future[Unit],
     config: AppConfig
   )(implicit ec: ExecutionContext, hc: HeaderCarrier) = {
     val base = RegistrationVariationData(subscription)
@@ -267,6 +276,7 @@ object VariationsJourney {
                     origReturn,
                     subscription,
                     checkSmallProducerStatus,
+                    submitReturnVariation,
                     broughtForward,
                     isSmallProd.getOrElse(false),
                   ) // , base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
@@ -292,23 +302,28 @@ object VariationsJourney {
       //   )
       // )
 
-      //      _ <- tell("return-details", Html("TODO-CYA"))
-      // _ <- checkYourReturnAnswers(
-      //       "return-details",
-      //       variation.revised,
-      //       broughtForward,
-      //       base.original,
-      //       isSmallProd,
-      //       originalReturn = variation.original.some)(extraMessages, implicitly)
-
       reason <- ask[String](
                  "return-correction-reason",
                  validation = Rule.nonEmpty[String]("required") followedBy Rule.maxLength(255))
-      repayment <- ask[String]("repayment-method", validation = Rule.in(List("credit", "bankPayment"))) when
+      repayment <- ask[RepaymentMethod]("repayment-method") when
                     (variation.revised.total - variation.original.total < 0)
-      _ <- tell("check-return-changes", Html("TODO-CYA"))
+      repaymentString = repayment match {
+        case Some(RepaymentMethod.Credit)      => "credit".some
+        case Some(RepaymentMethod.BankPayment) => "bankPayment".some
+        case None                              => None
+      }
+      payMethodAndReason = variation.copy(reason = reason, repaymentMethod = repaymentString)
+      _ <- tell(
+            "check-return-changes",
+            uniform.fragments.returnVariationDifferences(
+              "check-return-changes",
+              payMethodAndReason,
+              showChangeLinks = true,
+              broughtForward.some
+            )(_: Messages)
+          )
 
-    } yield Change.Returns(variation.copy(reason = reason, repaymentMethod = repayment))
+    } yield Change.Returns(payMethodAndReason)
   }
 
   def journey(
@@ -319,11 +334,10 @@ object VariationsJourney {
     sdilConnector: SoftDrinksIndustryLevyConnector,
     checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
     getReturn: ReturnPeriod => Future[Option[SdilReturn]],
+    submitReturnVariation: ReturnsVariation => Future[Unit],
     appConfig: AppConfig
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) = {
     val base = RegistrationVariationData(subscription)
-    val onlyReturns = subscription.deregDate.nonEmpty
-    //    val changeTypes = ChangeType.values.toList.filter(x => variableReturns.nonEmpty || x != ChangeType.Returns)
     val isVoluntary = subscription.activity.voluntaryRegistration
 
     for {
@@ -345,6 +359,7 @@ object VariationsJourney {
                                            period,
                                            checkSmallProducerStatus,
                                            getReturn,
+                                           submitReturnVariation,
                                            appConfig)
                       } yield { adjustedReturn: Change }
 
@@ -368,59 +383,8 @@ object VariationsJourney {
                       )
                   }
 
-      _ <- tell("check-answers", CYA(variation))
-//      whnKey = variation match {
-//        case Change.RegChange(v) if v.manToVol => "manToVol".some
-//        case Change.RegChange(v) if v.volToMan => "volToMan".some
-//        case _                                 => None
-//      }
-//
-//      whn <- {
-//        variation match {
-//          case Change.RegChange(regChange) =>
-//            convertWithKey("submission")(sdilConnector.submitVariation(Convert(regChange), subscription.sdilRef)).map {
-//              _ =>
-//                Html("Move variationsWHN into seperate method")
-//                uniform.fragments.variationsWHN(
-//                  path,
-//                  newPackagingSites(regChange),
-//                  closedPackagingSites(regChange),
-//                  newWarehouseSites(regChange),
-//                  closedWarehouseSites(regChange),
-//                  regChange.some,
-//                  None,
-//                  whnKey
-//                )
-//            }
-//          case _ => ???
-//        }
-//      }
-//      //      _ <- nonReturn("variation-complete")
-//      // TODO: Implement the complete page in a seperate method, with either the page's html put and retireved from the DB, or in some form of case class
-//      _ <- end(
-//            "variationDone", { (msg: Messages) =>
-//              val varySubheading = Html(
-//                msg(
-//                  variation match {
-//                    case Change.RegChange(regChange) if (regChange.deregDate.nonEmpty) =>
-//                      "variationDone.your.request"
-//                    case _ =>
-//                      "returnVariationDone.your.updates"
-//                  },
-//                  subscription.orgName,
-//                  LocalDate.now.format(ofPattern("d MMMM yyyy")),
-//                  LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
-//                )).some
-//
-//              views.html.uniform
-//                .journeyEndNew(
-//                  "variationDone",
-//                  whatHappensNext = whn.some,
-//                  updateTimeMessage = varySubheading,
-//                  email = subscription.contact.email.some
-//                )(msg)
-//            }
-//          )
+      _ <- tell("check-answers", CYA(variation)) when (changeType != ChangeTypeWithReturns.Returns)
+
     } yield {
       variation match {
         case Change.RegChange(regChange) => Right(regChange)

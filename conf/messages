@@ -1719,9 +1719,9 @@ return.check-return-changes.what-happens-next=We may get in touch with your cont
 
 heading.repayment-method=How do you want the credit to be repaid?
 repayment-method.lead=Repayment is not guaranteed. We may wish to discuss the claim with you before deciding whether to make a repayment.
-credit=Credited to our Soft Drinks Industry Levy account
+repayment-method.Credit=Credited to our Soft Drinks Industry Levy account
 credit.short=Credited to our Soft Drinks Industry Levy account
-bankPayment=Paid into the bank account for this business
+repayment-method.BankPayment=Paid into the bank account for this business
 bankPayment.short=Paid into the bank account for this business
 return-variation-repayments.label=Repayment method
 
