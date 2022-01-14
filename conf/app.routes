@@ -33,11 +33,11 @@ GET         /ufvariations/*id                                  sdil.controllers.
 POST        /ufvariations/                                     sdil.controllers.VariationsControllerNew.index(id = "")
 POST        /ufvariations/*id                                  sdil.controllers.VariationsControllerNew.index(id: String)
 
-#GET         /change-business-address/                          sdil.controllers.VariationsControllerNew.changeBusinessAddress(id = "")
-#GET         /change-business-address/*id                       sdil.controllers.VariationsControllerNew.changeBusinessAddress(id: String)
-#POST        /change-business-address/                          sdil.controllers.VariationsControllerNew.changeBusinessAddress(id = "")
-#POST        /change-business-address/*id                       sdil.controllers.VariationsControllerNew.changeBusinessAddress(id: String)
-#
+GET         /ufvariations/change-address-and-contact/          sdil.controllers.VariationsController.changeAddressAndContact(id = "")
+GET         /ufvariations/change-address-and-contact/*id       sdil.controllers.VariationsController.changeAddressAndContact(id: String)
+POST        /ufvariations/change-address-and-contact/          sdil.controllers.VariationsController.changeAddressAndContact(id = "")
+POST        /ufvariations/change-address-and-contact/*id       sdil.controllers.VariationsController.changeAddressAndContact(id: String)
+
 GET         /change-actor-status/                          sdil.controllers.VariationsControllerNew.changeActorStatus(id = "")
 GET         /change-actor-status/*id                       sdil.controllers.VariationsControllerNew.changeActorStatus(id: String)
 POST        /change-actor-status/                          sdil.controllers.VariationsControllerNew.changeActorStatus(id = "")

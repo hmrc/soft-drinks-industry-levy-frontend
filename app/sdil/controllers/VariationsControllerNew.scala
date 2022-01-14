@@ -80,6 +80,29 @@ class VariationsControllerNew(
     common.web.InferCodec.gen[Option[SdilReturn]]
   }
 
+  //TODO: This redirecting to the start of the variations journey
+  def changeAddressAndContact(id: String) = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(subscription) =>
+        interpret(
+          VariationsJourney.changeBusinessAddressJourney(subscription, sdilRef)
+        ).run(id, purgeStateUponCompletion = true, config = journeyConfig) {
+          case Change.RegChange(reg) =>
+            sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
+              regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
+                logger.info("variation of Address and Contact  is complete")
+                Redirect(routes.VariationsController.showVariationsComplete())
+              }
+            }
+          case _ =>
+            logger.warn("registrationVariation for address and contact subJourney has failed")
+            Redirect(routes.ServicePageController.show())
+        }
+      case None => Future.successful(NotFound(""))
+    }
+  }
+
   implicit lazy val persistence =
     SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
       "variations",

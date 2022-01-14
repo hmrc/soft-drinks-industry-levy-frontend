@@ -97,8 +97,8 @@ object VariationsJourney {
     for {
       _         <- tell("change-business-address", htmlMessage)
       variation <- contactUpdate(base)
-      _         <- tell("check-answers", variation)
-    } yield ()
+      _         <- tell("check-answers", Html(s"$variation"))
+    } yield (variation)
 
   }
 
