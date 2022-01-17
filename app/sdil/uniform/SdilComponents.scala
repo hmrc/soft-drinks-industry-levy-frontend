@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,94 +31,13 @@ import sdil.controllers.ShowBackLink
 import sdil.forms.FormHelpers
 import sdil.models._
 import sdil.models.backend.{Site, UkAddress}
-import uk.gov.hmrc.uniform._
-import uk.gov.hmrc.uniform.playutil._
 import views.html.uniform
 
 import scala.util.Try
 
 object SdilComponents extends FormHelpers {
 
-  implicit val addressForm = new FormHtml[Address] {
-    def asHtmlForm(key: String, form: Form[Address])(implicit messages: Messages): Html =
-      uniform.fragments.address(key, form)
-  }
-
-  implicit val smallProducerForm = new FormHtml[SmallProducer] {
-    def asHtmlForm(key: String, form: Form[SmallProducer])(implicit messages: Messages): Html =
-      uniform.fragments.smallProducer(key, form)
-  }
-
-  implicit val litreageForm = new FormHtml[(Long, Long)] {
-    def asHtmlForm(key: String, form: Form[(Long, Long)])(implicit messages: Messages): Html =
-      uniform.fragments.litreage(key, form, approximate = true)
-  }
-
-  implicit val siteForm = new FormHtml[Site] {
-    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html =
-      uniform.fragments.site(key, form)
-  }
-
-  val packagingSiteForm = new FormHtml[Site] {
-    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html =
-      uniform.fragments.packagingSite(key, form)
-  }
-
-  val warehouseSiteForm = new FormHtml[Site] {
-    def asHtmlForm(key: String, form: Form[Site])(implicit messages: Messages): Html =
-      uniform.fragments.warehouseSite(key, form)
-  }
-
-  implicit val extraMessages: ExtraMessages = ExtraMessages(messages = Map.empty[String, String])
   implicit val showBackLink: ShowBackLink = ShowBackLink(true)
-
-  implicit val siteProgressiveRevealHtml: HtmlShow[Site] = {
-
-    def lines(s: Site): String = {
-      val lines = s.tradingName.fold(s.address.lines.tail)(_ => s.address.lines)
-      lines.map { line =>
-        s"""<div class="address progressive-reveal">$line</div>"""
-      }
-    }.mkString
-
-    def visibleText(s: Site): String =
-      s.tradingName.fold(s.address.lines.head)(x => x)
-
-    HtmlShow.instance { site =>
-      Html(
-        s"""<details role="group">
-
-        <summary aria-controls="details-content-1" aria-expanded="false">
-          <span class="summary">${visibleText(site)}, ${site.address.postCode}</span>
-        </summary>""" +
-          lines(site) +
-          s"""<div class="address postal-code progressive-reveal">${site.address.postCode}</div>
-        </details>"""
-      )
-    }
-  }
-
-  implicit val contactDetailsForm = new FormHtml[ContactDetails] {
-    def asHtmlForm(key: String, form: Form[ContactDetails])(implicit messages: Messages): Html =
-      uniform.fragments.contactdetails(key, form)
-  }
-
-  implicit val addressHtml: HtmlShow[Address] =
-    HtmlShow.instance { address =>
-      val lines = address.nonEmptyLines.mkString("<br />")
-      Html(s"<div>$lines</div>")
-    }
-
-  implicit def showLitreage(implicit messages: Messages): HtmlShow[Litreage] = new HtmlShow[Litreage] {
-    def showHtml(l: Litreage): Html = l match {
-      case Litreage(lower, higher) =>
-        Html(
-          Messages("sdil.declaration.low-band") + f": $lower%,.0f" +
-            "<br>" +
-            Messages("sdil.declaration.high-band") + f": $higher%,.0f"
-        )
-    }
-  }
 
   implicit val longTupleFormatter: Format[(Long, Long)] = (
     (JsPath \ "lower").format[Long] and
@@ -321,6 +240,15 @@ object SdilComponents extends FormHelpers {
     case object partnership extends OrganisationType
     case object soleTrader extends OrganisationType
     case object unincorporatedBody extends OrganisationType
+  }
+
+  sealed trait OrganisationTypeSoleless extends EnumEntry
+  object OrganisationTypeSoleless extends Enum[OrganisationTypeSoleless] {
+    val values = findValues
+    case object limitedCompany extends OrganisationTypeSoleless
+    case object limitedLiabilityPartnership extends OrganisationTypeSoleless
+    case object partnership extends OrganisationTypeSoleless
+    case object unincorporatedBody extends OrganisationTypeSoleless
   }
 
   sealed trait ProducerType extends EnumEntry

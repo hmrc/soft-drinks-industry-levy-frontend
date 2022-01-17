@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@
 package sdil.models.backend
 
 import java.time.LocalDate
-
 import play.api.libs.json.{Format, Json}
-import sdil.models.Address
+import sdil.models.{Address, Warehouse}
 
 case class Site(
   address: UkAddress,
@@ -38,4 +37,7 @@ object Site {
 
   def fromAddress(address: Address): Site =
     Site(UkAddress.fromAddress(address), None, None, None)
+
+  def fromWarehouse(warehouse: Warehouse): Site =
+    Site(UkAddress.fromAddress(warehouse.address), None, Some(warehouse.tradingName), None)
 }

@@ -1,0 +1,48 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helper.{inputRadioGroup => _, _}
+@import sdil.config.AppConfig
+@import views.html.softdrinksindustrylevy.helpers._
+@import views.html.uniform.helpers._
+@import sdil.controllers.ShowBackLink
+@import ltbs.uniform._
+@import sdil.uniform.AdaptMessages.ufMessagesToPlayMessages
+
+@this()
+
+@(key: List[String], errors: ErrorTree, html: Option[Html], breadcrumbs: List[String], csrf: String, defaultBackLink: String)(implicit messages: UniformMessages[Html], request: Request[_], config: AppConfig)
+@keyDots = @{key.mkString(".")}
+@title = @{messages(s"heading.$keyDots").toString}
+@noBackLink= @{List("registration-confirmation").contains(keyDots)}
+
+@main_template(
+    if(errors.nonEmpty) s"${Messages("sdil.common.error")}: $title" else title,
+    form = None
+){
+    @if(!noBackLink) {
+        @for(back <- (breadcrumbs :+ defaultBackLink).drop(1).headOption) {
+            <a class="link-back" href="@back">@messages("back")</a>
+        }
+    }
+
+    @helper.form(action = play.api.mvc.Call("post", "")) {
+        <input type="hidden" name="csrfToken" value="@csrf" />
+
+        @error_summary_new(errors, key, messages)
+        @html
+    }
+}

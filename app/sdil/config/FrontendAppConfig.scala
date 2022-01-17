@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ trait AppConfig {
   val appName: String
   val balanceAllEnabled: Boolean
   val directDebitEnabled: Boolean
+
+  val configuration: Configuration
 }
 
 class FrontendAppConfig(val configuration: Configuration) extends ServicesConfig(configuration) with AppConfig {

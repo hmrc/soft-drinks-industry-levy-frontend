@@ -16,11 +16,11 @@
 
 @import sdil.config.AppConfig
 
-@this(main: main_template)
+@this()
 
 @()(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main(Messages("sdil.invalid-affinity.title")) {
+@main_template(Messages("sdil.invalid-affinity.title")) {
     <h1 class="heading-large">@Messages("sdil.invalid-affinity.title")</h1>
 
     <p id="registration-status">@Messages("sdil.invalid-affinity.p1")</p>

@@ -49,22 +49,20 @@
                 <td>@Messages(s"$key.low")</td>
                 <td class="numeric">@{f"${litres._1}%,d"}</td>
                 <td class="no-minus-wrapping numeric">@format_money(costLower * litres._1 * multiplier)</td>
-                <td>
-                    <button name="@key" value="@lineKey" class="link-button">
-                        <span aria-hidden="true" class="edit-change-link">@Messages(s"$key.change")</span>
-                        <span class="visually-hidden">@Messages(s"$key.change.$lineKey.low")</span>
-                    </button>
+                <td class="change-answer">
+                    <a href='@lineKey'>
+                    @Messages(s"$key.change")
+                    </a>
                 </td>
             </tr>
             <tr>
                 <td>@Messages(s"$key.high")</td>
                 <td class="numeric">@{f"${litres._2}%,d"}</td>
                 <td class="no-minus-wrapping numeric"> @format_money(costHigher * litres._2 * multiplier)</td>
-                <td>
-                    <button name="@key" value="@lineKey" class="link-button">
-                        <span aria-hidden="true" class="edit-change-link">@Messages(s"$key.change")</span>
-                        <span class="visually-hidden">@Messages(s"$key.change.$lineKey.high")</span>
-                    </button>
+                <td class="change-answer">
+                    <a href='@lineKey'>
+                    @Messages(s"$key.change")
+                    </a>
                 </td>
             </tr>
         }

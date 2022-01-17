@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package sdil
 
 import play.api.libs.json.{Json, OFormat}
 import sdil.models.{ReturnPeriod, SdilReturn, SmallProducer}
-import ltbs.play.scaffold.SdilComponents.longTupleFormatter
 import sdil.models.variations.ReturnVariationData
+import ltbs.play.scaffold.SdilComponents.longTupleFormatter
 
 package object connectors {
 

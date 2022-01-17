@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,7 @@ package sdil.controllers
 
 import cats.data.OptionT
 import cats.implicits._
-import ltbs.play.scaffold.SdilComponents._
-import play.api.data.Form
+import play.api.data.{Form, Mapping}
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -91,6 +90,23 @@ class IdentifyController(
 }
 
 object IdentifyController extends FormHelpers {
+
+  def postcode: Mapping[String] = {
+    val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$"
+    val specialRegex = """^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"""
+
+    text
+      .transform[String](_.toUpperCase.trim, identity)
+      .verifying(Constraint { x: String =>
+        x match {
+          case ""                               => Invalid("error.postcode.empty")
+          case pc if !pc.matches(specialRegex)  => Invalid("error.postcode.special")
+          case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
+          case _                                => Valid
+        }
+      })
+  }
+
   val form: Form[Identification] = Form(
     mapping(
       "utr" -> text.verifying(Constraint { x: String =>

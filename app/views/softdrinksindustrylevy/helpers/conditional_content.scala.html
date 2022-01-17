@@ -1,0 +1,15 @@
+@(fieldKey: List[String], radioOptions: Seq[String], existing: Option[String], conditional: PartialFunction[String,Html] = PartialFunction.empty)
+
+@keyDash=@{fieldKey.mkString("-")}
+
+@radioOptions.zipWithIndex.map{ case (opt,num) =>
+    @for(cond <- conditional.lift(opt)) {
+        <div
+        id="tg-@{keyDash}-@num"
+        class="panel panel-border-narrow js-hidden"
+        tabindex="-1"
+            @if(existing.contains(opt)){aria-hidden="false"} else {aria-hidden="true"}>
+        @cond
+        </div>
+    }
+}

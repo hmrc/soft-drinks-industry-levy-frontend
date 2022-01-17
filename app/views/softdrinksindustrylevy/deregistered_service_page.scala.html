@@ -25,11 +25,11 @@
 @import java.time.ZoneId
 @import java.time.format.DateTimeFormatter._
 
-@this(main: main_template)
+@this()
 
 @(address: Address, subscription: RetrievedSubscription, lastReturn: Option[SdilReturn], balance: BigDecimal, pendingDereg: Option[SdilReturn], variableReturns: List[ReturnPeriod])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main(Messages("sdil.service-page.title"), noArticle = true) {
+@main_template(Messages("sdil.service-page.title"), noArticle = true) {
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-large">@Messages("sdil.service-page.title")</h1>
@@ -75,7 +75,7 @@
                             }
                             </div>
                             <div class="margin-bottom-25 return-button-padding">
-                                <a href='@sdil.controllers.routes.ReturnsController.index(
+                                <a href='@sdil.controllers.routes.ReturnsControllerNew.index(
                                     ReturnPeriod(deregDate).year,
                                     ReturnPeriod(deregDate).quarter,
                                     nilReturn = false,
@@ -85,7 +85,7 @@
                                 </a>
                             </div>
                             <div>
-                                <a href='@sdil.controllers.routes.ReturnsController.index(
+                                <a href='@sdil.controllers.routes.ReturnsControllerNew.index(
                                     ReturnPeriod(deregDate).year,
                                     ReturnPeriod(deregDate).quarter,
                                     nilReturn = true,
@@ -186,7 +186,7 @@
                 <div class="grid-row">
                     <div class="column-one-half">
                         <h3 class="heading-small">
-                            <a href='@sdil.controllers.routes.VariationsController.index("changeType")'>
+                            <a href='@sdil.controllers.routes.VariationsControllerNew.index("changeType")'>
                                 @Messages("sdil.service-page.deregistered.variations.subtitle.3")
                             </a>
                         </h3>

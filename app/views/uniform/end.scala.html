@@ -18,11 +18,11 @@
 @import sdil.config.AppConfig
 @import views.html.uniform.helpers._
 
-@this(main: main_template)
+@this()
 
 @(key: String, breadcrumbs: List[String], tell: Html)(implicit messages: Messages, request: Request[_], config: AppConfig)
 
-@main(Messages(Seq(s"heading.$key", "sdil.variations.title"))) {
+@main_template(Messages(Seq(s"heading.$key", "sdil.variations.title"))) {
   @backlink(breadcrumbs)
 
   <h1 class="heading-large">

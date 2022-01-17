@@ -10,7 +10,12 @@ enablePlugins(
 // ================================================================================
 // Play configuration
 // ================================================================================
-TwirlKeys.templateImports ++= Seq("uk.gov.hmrc.uniform.playutil._", "sdil.utility._")
+TwirlKeys.templateImports ++= Seq(
+  "sdil.utility._",
+  "sdil.uniform.AdaptMessages.ufMessagesToPlayMessages",
+  "ltbs.uniform._"
+)
+
 PlayKeys.playDefaultPort := 8700
 // concatenate js
 Concat.groups := Seq(
@@ -67,14 +72,15 @@ libraryDependencies ++= Seq(
   "com.typesafe.play"      %% "play-test"           % play.core.PlayVersion.current,
   "org.mockito"            %  "mockito-core"        % "3.10.0",
   "org.scalatestplus.play" %% "scalatestplus-play"  % "3.1.3",
-  "org.scalacheck"         %% "scalacheck"          % "1.15.4"
+  "org.scalacheck"         %% "scalacheck"          % "1.15.4",
+  "com.luketebbs.uniform"  %% "interpreter-logictable"  % "5.0.0-RC5"
 ).map(_ % "test")
 
 // ================================================================================
 // Dependencies
 // ================================================================================
 
-scalaVersion := "2.12.13"
+scalaVersion := "2.12.14"
 
 libraryDependencies ++= Seq(
   compilerPlugin("com.github.ghik" % "silencer-plugin" % "1.7.5" cross CrossVersion.full),
@@ -96,8 +102,9 @@ libraryDependencies ++= Seq(
   "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.7" % "provided",
   "com.softwaremill.macwire"  %% "util"                           % "2.3.7",
   "com.softwaremill.macwire"  %% "proxy"                          % "2.3.7",
-  "org.typelevel"             %% "cats-core"                      % "2.4.0",
-  "uk.gov.hmrc"               %% "uniform"                        % "0.1.9" exclude("com.typesafe.play", "play-logback")
+  "org.typelevel"             %% "cats-core"                      % "2.6.1",
+  "com.luketebbs.uniform"     %% "interpreter-play26"             % "5.0.0-RC5",
+  "com.beachape"              %% "enumeratum"                     % "1.7.0"
 )
 
 // ================================================================================
@@ -136,7 +143,8 @@ scalacOptions ++= Seq(
   "-Ywarn-numeric-widen",              // Warn when numerics are widened.
   "-Ywarn-unused",                     // Warn if an import selector is not referenced.
   "-P:silencer:lineContentFilters=^\\w",// Avoid '^\\w' warnings for Twirl template
-  "-Ywarn-value-discard"               // Warn when non-Unit expression results are unused.
+  "-Ywarn-value-discard",               // Warn when non-Unit expression results are unused.
+  "-Ypartial-unification"               // needed for cats
 )
 
 // ================================================================================
@@ -150,3 +158,5 @@ majorVersion := 0
 uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 Global / lintUnusedKeysOnLoad := false
+
+// ThisBuild / evictionErrorLevel := Level.Info

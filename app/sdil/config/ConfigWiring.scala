@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,5 +25,8 @@ trait ConfigWiring extends CommonWiring {
   private lazy val applicationCrypto: ApplicationCrypto = new ApplicationCrypto(configuration.underlying)
   private implicit lazy val crypto: CompositeSymmetricCrypto = applicationCrypto.JsonCrypto
   lazy val cache: RegistrationFormDataCache = wire[RegistrationFormDataCache]
+  lazy val returnsCache: ReturnsFormDataCache = wire[ReturnsFormDataCache]
+  lazy val regVariationCache: RegistrationVariationFormDataCache = wire[RegistrationVariationFormDataCache]
+  lazy val retVariationCache: ReturnVariationFormDataCache = wire[ReturnVariationFormDataCache]
   lazy val errorHandler: FrontendErrorHandler = wire[SDILErrorHandler]
 }

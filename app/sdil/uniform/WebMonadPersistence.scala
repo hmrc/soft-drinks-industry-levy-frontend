@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,49 +16,75 @@
 
 package sdil.uniform
 
+import scala.language.implicitConversions
+
+import ltbs.uniform._
+import ltbs.uniform.common.web._
+import ltbs.uniform.interpreters.playframework._
 import play.api.libs.json._
+import play.api.mvc.{AnyContent, Result}
+import play.twirl.api.Html
+import scala.concurrent._
+import sdil.actions.AuthorisedRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-import scala.concurrent._
-import uk.gov.hmrc.uniform._
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-case class SessionCachePersistence(
-  journeyName: String,
-  keystore: uk.gov.hmrc.http.cache.client.SessionCache
-)(
-  implicit
-  ec: ExecutionContext,
-  hc: HeaderCarrier)
-    extends Persistence {
-  def dataGet(session: String): Future[Map[String, JsValue]] =
-    keystore.fetchAndGetEntry[Map[String, JsValue]](journeyName).map {
-      _.getOrElse(Map.empty)
-    }
+object DbFormat {
 
-  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit = {
-    keystore.cache(journeyName, dataIn)
-    ()
+  val dbFormatter: Format[DB] = new Format[DB] {
+    val mapFormatter: Format[Map[String, String]] = implicitly[Format[Map[String, String]]]
+    override def writes(o: DB): JsValue =
+      mapFormatter.writes(o.map {
+        case (Nil, v)      => ("[]", v)
+        case (List(""), v) => ("", v)
+        case (k, v)        => (k.mkString("/"), v)
+      })
+    override def reads(json: JsValue): JsResult[DB] =
+      mapFormatter.reads(json).map {
+        _.map {
+          case ("[]", v) => (List.empty[String], v)
+          case ("", v)   => (List(""), v)
+          case (k, v)    => ((k.replace("/", " /") + " ").split(" /").toList.map(_.trim), v)
+        }
+      }
   }
 
 }
 
-case class SaveForLaterPersistence(
+case class SaveForLaterPersistenceNew[REQ <: play.api.mvc.Request[AnyContent]](
+  idFunc: REQ => String
+)(
   journeyName: String,
-  userId: String,
   shortLiveCache: ShortLivedHttpCaching
 )(
   implicit
-  ec: ExecutionContext,
-  hc: HeaderCarrier)
-    extends Persistence {
-  def dataGet(session: String): Future[Map[String, JsValue]] =
-    shortLiveCache.fetchAndGetEntry[Map[String, JsValue]](userId, journeyName).map {
-      _.getOrElse(Map.empty)
+  ec: ExecutionContext)
+    extends PersistenceEngine[REQ] {
+
+  implicit val dbFormatter: Format[DB] = DbFormat.dbFormatter
+
+  private implicit def requestToHc(implicit req: REQ) = HeaderCarrierConverter.fromRequest(req)
+
+  override def apply(request: REQ)(f: DB ⇒ Future[(DB, Result)]): Future[Result] =
+    for {
+      db              <- dataGet()(request)
+      (newDb, result) <- f(db)
+      _               <- dataPut(newDb)(request)
+    } yield result
+
+  def dataGet()(
+    implicit req: REQ
+  ): Future[DB] =
+    shortLiveCache.fetchAndGetEntry[DB](idFunc(req), journeyName).map {
+      _.getOrElse(Map.empty[List[String], String])
     }
 
-  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit = {
-    shortLiveCache.cache(userId, journeyName, dataIn)
-    ()
-  }
+  def dataPut(dataIn: DB)(
+    implicit req: REQ
+  ): Future[Unit] =
+    shortLiveCache.cache(idFunc(req), journeyName, dataIn).map { _ =>
+      (())
+    }
 
 }

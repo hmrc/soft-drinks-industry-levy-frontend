@@ -1,0 +1,9 @@
+@(key: String, messages: UniformMessages[Html], sections: Seq[(String, Html)])
+
+@for((caption, section) <- sections) {
+  <table class="check-your-answers">
+    <caption><h2>@messages.decompose(key + ".cya.caption." + caption)</h2></caption>
+
+    @section
+  </table>
+}

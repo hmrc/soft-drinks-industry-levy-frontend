@@ -29,7 +29,7 @@
         v: Option[RegistrationVariationData] = None,
         a: Option[ReturnVariationData] = None,
         key: Option[String] = None,
-        broughtForward: Option[BigDecimal] = None)(implicit messages: Messages
+        broughtForward: Option[BigDecimal] = None)(implicit messages: UniformMessages[Html]
 )
 
 @v.map { v =>
@@ -63,31 +63,31 @@
 
     @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
 
-    @if(path.contains("cancel-registration-date") || path.contains("cancel-registration-reason")) {
+    @v.deregDate.map { _ =>
         @dereg_variations_cya(showChangeLinks = false, v)
     }
 
-    @if(path.contains("amount-produced") && !path.contains("cancel-registration-date")) {
-        @activty_variations_cya(showChangeLinks = false, v)
-    }
-
-    @sites_variations_cya(
-        showChangeLinks = false,
-        v,
-        newPackingSites,
-        closedPackagingSites,
-        newWarehouseSites,
-        closedWarehouses,
-        path
-    )
-
-    @if(path.contains("contact-details")) {
-        @contact_details_variations_cya(showChangeLinks = false, v)
-    }
-
-    @if(path.contains("business-address")) {
-        @bus_addr_variations_cya(showChangeLinks = false, v)
-    }
+@*//    @if(path.contains("amount-produced") && !path.contains("cancel-registration")) {*@
+@*//        @activty_variations_cya(showChangeLinks = false, v)*@
+@*//    }*@
+@*//*@
+@*//    @sites_variations_cya(*@
+@*//        showChangeLinks = false,*@
+@*//        v,*@
+@*//        newPackingSites,*@
+@*//        closedPackagingSites,*@
+@*//        newWarehouseSites,*@
+@*//        closedWarehouses,*@
+@*//        path*@
+@*//    )*@
+@*//*@
+@*//    @if(v.updatedContactDetails.) {*@
+@*//        @contact_details_variations_cya(showChangeLinks = false, v)*@
+@*//    }*@
+@*//*@
+@*//    @if(path.contains("business-address")) {*@
+@*//        @bus_addr_variations_cya(showChangeLinks = false, v)*@
+@*//    }*@
 }
 
 @a.map { a =>
