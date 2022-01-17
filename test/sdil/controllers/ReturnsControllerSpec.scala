@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class ReturnsControllerSpec extends ControllerSpec {
 
-  val controller = new ReturnsControllerNew(
+  val controller = new ReturnsController(
     stubMessagesControllerComponents,
     testConfig,
     uniformHelpers,

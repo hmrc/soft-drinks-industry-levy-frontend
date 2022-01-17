@@ -40,7 +40,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.uniform
 import play.api.Logger
 
-class RegistrationControllerNew(
+class RegistrationController(
   authorisedAction: AuthorisedAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   cache: RegistrationFormDataCache,
@@ -65,7 +65,7 @@ class RegistrationControllerNew(
         def backendCall(s: Subscription): Future[Unit] =
           sdilConnector.submit(Subscription.desify(s), fd.rosmData.safeId)
 
-        interpret(RegistrationControllerNew.journey(hasCTEnrolment, fd, backendCall))
+        interpret(RegistrationController.journey(hasCTEnrolment, fd, backendCall))
           .run(id, purgeStateUponCompletion = true, config = journeyConfig) { _ =>
             Redirect(routes.ServicePageController.show())
           }
@@ -76,7 +76,7 @@ class RegistrationControllerNew(
   }
 }
 
-object RegistrationControllerNew {
+object RegistrationController {
 
   private def message(key: String, args: String*) = {
     import play.twirl.api.HtmlFormat.escape

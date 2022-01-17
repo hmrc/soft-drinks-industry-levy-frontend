@@ -65,9 +65,9 @@ trait RoutesWiring extends CommonWiring {
 
   lazy val widgetTestController: WidgetTestController = wire[WidgetTestController]
 
-  lazy val returnsController2: ReturnsControllerNew = wire[ReturnsControllerNew]
-  lazy val variationsController: VariationsControllerNew = wire[VariationsControllerNew]
-  lazy val uniformRegistrationsController2: RegistrationControllerNew = wire[RegistrationControllerNew]
+  lazy val returnsController2: ReturnsController = wire[ReturnsController]
+  lazy val variationsController: VariationsController = wire[VariationsController]
+  lazy val uniformRegistrationsController2: RegistrationController = wire[RegistrationController]
 
   private lazy val appRoutes: app.Routes = wire[app.Routes]
   private lazy val healthRoutes = wire[health.Routes]

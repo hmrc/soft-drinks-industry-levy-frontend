@@ -110,7 +110,7 @@ class WidgetTestController(
 
     // test reg journey inside a session (rather than mongo) and bypassing auth, etc
     val wm = interpret(
-      RegistrationControllerNew.journey(
+      RegistrationController.journey(
         true,
         new RegistrationFormData(
           new RosmRegistration(

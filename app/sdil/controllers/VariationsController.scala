@@ -50,7 +50,7 @@ import views.html.uniform.helpers.dereg_variations_cya
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
 
-class VariationsControllerNew(
+class VariationsController(
   mcc: MessagesControllerComponents,
   val config: AppConfig,
   val ufViews: views.uniform.Uniform,
@@ -80,6 +80,11 @@ class VariationsControllerNew(
     common.web.InferCodec.gen[Option[SdilReturn]]
   }
 
+  implicit lazy val persistence =
+    SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
+      "variations",
+      regCache.shortLiveCache)
+
   //TODO: This redirecting to the start of the variations journey
   def changeAddressAndContact(id: String) = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
@@ -102,11 +107,6 @@ class VariationsControllerNew(
       case None => Future.successful(NotFound(""))
     }
   }
-
-  implicit lazy val persistence =
-    SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
-      "variations",
-      regCache.shortLiveCache)
 
   val logger: Logger = Logger(this.getClass())
 
@@ -143,14 +143,14 @@ class VariationsControllerNew(
                            submitAdjustment(ret).flatMap { _ =>
                              returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
                                logger.info("adjustment of Return is complete")
-                               Redirect(routes.VariationsControllerNew.showVariationsComplete())
+                               Redirect(routes.VariationsController.showVariationsComplete())
                              }
                            }
                          case Right(reg) =>
                            sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
                              regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
                                logger.info("variation of Registration is complete")
-                               Redirect(routes.VariationsControllerNew.showVariationsComplete())
+                               Redirect(routes.VariationsController.showVariationsComplete())
                              }
                            }
                        }

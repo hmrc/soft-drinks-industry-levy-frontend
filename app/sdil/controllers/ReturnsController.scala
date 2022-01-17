@@ -37,7 +37,7 @@ import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.higherKinds
 
-class ReturnsControllerNew(
+class ReturnsController(
   mcc: MessagesControllerComponents,
   val config: AppConfig,
   val ufViews: views.uniform.Uniform,
@@ -98,7 +98,7 @@ class ReturnsControllerNew(
               ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
                 submitReturn(ret._1).flatMap { _ =>
                   returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
-                    Redirect(routes.ReturnsControllerNew.showReturnComplete(year, quarter))
+                    Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
                   }
                 }
               }
