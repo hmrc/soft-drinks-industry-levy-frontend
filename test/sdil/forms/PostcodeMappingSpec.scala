@@ -16,7 +16,7 @@
 
 package sdil.forms
 
-import ltbs.play.scaffold.SdilComponents._
+import sdil.uniform.SdilComponents._
 
 class PostcodeMappingSpec extends FormSpec with FormHelpers {
 

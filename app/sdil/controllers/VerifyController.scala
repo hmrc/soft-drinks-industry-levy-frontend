@@ -17,7 +17,6 @@
 package sdil.controllers
 
 import ltbs.play.scaffold.GdsComponents.oneOf
-import ltbs.play.scaffold.SdilComponents.addressMapping
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -26,7 +25,7 @@ import sdil.actions.FormAction
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.forms.FormHelpers
-import sdil.models.{DetailsCorrect, Journey, VerifyPage}
+import sdil.models.{Address, DetailsCorrect, Journey, VerifyPage}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 import views.Views
@@ -41,7 +40,8 @@ class VerifyController(
   sdilConnector: SoftDrinksIndustryLevyConnector,
   mcc: MessagesControllerComponents,
   errors: Errors,
-  views: Views)(implicit config: AppConfig, ec: ExecutionContext)
+  views: Views
+)(implicit config: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   import VerifyController._
@@ -104,5 +104,44 @@ object VerifyController extends FormHelpers {
       "alternativeAddress" -> mandatoryIf(isEqual("detailsCorrect", "differentAddress"), addressMapping)
     )(DetailsCorrect.apply)(DetailsCorrect.unapply)
   )
+
+  import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
+  import play.api.data.Forms._
+  import play.api.data._
+  lazy val addressMapping: Mapping[Address] = mapping(
+    "line1"    -> mandatoryAddressLine("line1"),
+    "line2"    -> mandatoryAddressLine("line2"),
+    "line3"    -> optionalAddressLine("line3"),
+    "line4"    -> optionalAddressLine("line4"),
+    "postcode" -> postcode
+  )(Address.apply)(Address.unapply)
+
+  private def mandatoryAddressLine(key: String): Mapping[String] =
+    text.transform[String](_.trim, s => s).verifying(combine(required(key), optionalAddressLineConstraint(key)))
+
+  private def optionalAddressLine(key: String): Mapping[String] =
+    text.transform[String](_.trim, s => s).verifying(optionalAddressLineConstraint(key))
+
+  private def optionalAddressLineConstraint(key: String): Constraint[String] = Constraint {
+    case a if !a.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") => Invalid(s"error.$key.invalid")
+    case b if b.length > 35                             => Invalid(s"error.$key.over")
+    case _                                              => Valid
+  }
+
+  def postcode: Mapping[String] = {
+    val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$"
+    val specialRegex = """^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"""
+
+    text
+      .transform[String](_.toUpperCase.trim, identity)
+      .verifying(Constraint { x: String =>
+        x match {
+          case ""                               => Invalid("error.postcode.empty")
+          case pc if !pc.matches(specialRegex)  => Invalid("error.postcode.special")
+          case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
+          case _                                => Valid
+        }
+      })
+  }
 
 }

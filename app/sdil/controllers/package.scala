@@ -17,7 +17,6 @@
 package sdil
 
 import cats.implicits._
-import izumi.reflect.Tag
 import ltbs.uniform.ask
 
 import scala.concurrent.Future
@@ -25,7 +24,7 @@ import scala.language.implicitConversions
 import izumi.reflect.Tag
 import ltbs.uniform._
 import validation.Rule
-import sdil.models.{Litreage, SdilReturn}
+import sdil.models.Litreage
 
 import java.time.LocalDate
 

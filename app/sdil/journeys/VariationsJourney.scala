@@ -30,7 +30,7 @@ import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData}
 import sdil.models.{Address, CYA, ContactDetails, Producer, ReturnPeriod, ReturnsVariation, SdilReturn, Warehouse, extractTotal, listItemsWithTotal}
-import sdil.uniform.ProducerType
+import sdil.uniform.SdilComponents.ProducerType
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.uniform
 import views.html.uniform.helpers.dereg_variations_cya

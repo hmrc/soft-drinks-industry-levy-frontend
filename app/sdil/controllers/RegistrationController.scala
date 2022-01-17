@@ -20,12 +20,8 @@ import scala.language.higherKinds
 
 import cats.implicits._
 import java.time.LocalDate
-import ltbs.play.scaffold.GdsComponents.bool
 import ltbs.uniform._, validation._
-import ltbs.uniform.common.web.{FutureAdapter, WebMonad}
-import ltbs.uniform.interpreters.playframework._
 import play.api.i18n._
-import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future, duration}, duration._
@@ -39,6 +35,7 @@ import sdil.uniform._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.uniform
 import play.api.Logger
+import sdil.uniform.SdilComponents.{OrganisationType, OrganisationTypeSoleless, ProducerType}
 
 class RegistrationController(
   authorisedAction: AuthorisedAction,

@@ -30,7 +30,6 @@ case class ReturnsVariation(
   email: String,
   taxEstimation: BigDecimal)
 object ReturnsVariation {
-  import ltbs.play.scaffold.SdilComponents.longTupleFormatter
   implicit val bllFormat: Format[(Boolean, (Long, Long))] = Json.format[(Boolean, (Long, Long))]
   implicit val format: Format[ReturnsVariation] = Json.format[ReturnsVariation]
 }

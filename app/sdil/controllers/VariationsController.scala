@@ -38,7 +38,8 @@ import sdil.models._
 import sdil.models.backend.{Site, Subscription}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
-import sdil.uniform.{ProducerType, SaveForLaterPersistenceNew}
+import sdil.uniform.SdilComponents.ProducerType
+import sdil.uniform.SaveForLaterPersistenceNew
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import ltbs.uniform.interpreters.playframework.SessionPersistence
 import sdil.journeys.VariationsJourney

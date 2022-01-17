@@ -26,14 +26,13 @@ import views.html.uniform
 import sdil.config.AppConfig
 import cats.implicits._
 import sdil.models.{Address, ContactDetails, SmallProducer, Warehouse}
-import sdil.uniform.SdilComponentsNew
+import sdil.uniform.SdilComponents
 import uk.gov.hmrc.domain.Modulus23Check
 
 import scala.concurrent.duration._
 import scala.language.{higherKinds, postfixOps}
 
-trait HmrcPlayInterpreter
-    extends PlayInterpreter[Html] with SdilComponentsNew with InferWebAsk[Html] with Modulus23Check {
+trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponents with InferWebAsk[Html] with Modulus23Check {
 
   val config: AppConfig
   def messagesApi: MessagesApi
@@ -49,6 +48,7 @@ trait HmrcPlayInterpreter
     messagesApi.preferred(request).convertMessages() |+|
       UniformMessages.bestGuess
   }.map { Html(_) }
+  // DO NOT REMOVE IT
   //    UniformMessages.attentionSeeker.map(HtmlFormat.escape)
   def pageChrome(
     key: List[String],
@@ -194,7 +194,6 @@ trait HmrcPlayInterpreter
   private val emailRegex =
     """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"""
 
-  // ContactDetails validation logic
   // ContactDetails validation logic
   implicit val askContactDetails: WebAsk[Html, ContactDetails] = gen[ContactDetails].simap {
     case ContactDetails(fullName, position, phoneNumber, email)
