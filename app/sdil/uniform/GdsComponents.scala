@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ltbs.play.scaffold
+package sidl.uniform
 
 import cats.Monoid
 import java.time.LocalDate

@@ -33,6 +33,7 @@ import views.html.uniform
 import views.html.uniform.fragments.date_new
 import play.api.libs.json._
 import play.api.libs.functional.syntax.{unlift, _}
+import sdil.controllers.VerifyController.{combine, required}
 
 import java.time.LocalDate
 import scala.language.postfixOps
@@ -445,6 +446,45 @@ object SdilComponents {
     case object Small extends ProducerType
 
     case object Not extends ProducerType
+  }
+
+  import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
+  import play.api.data.Forms._
+  import play.api.data._
+  lazy val addressMapping: Mapping[Address] = mapping(
+    "line1"    -> mandatoryAddressLine("line1"),
+    "line2"    -> mandatoryAddressLine("line2"),
+    "line3"    -> optionalAddressLine("line3"),
+    "line4"    -> optionalAddressLine("line4"),
+    "postcode" -> postcode
+  )(Address.apply)(Address.unapply)
+
+  private def mandatoryAddressLine(key: String): Mapping[String] =
+    text.transform[String](_.trim, s => s).verifying(combine(required(key), optionalAddressLineConstraint(key)))
+
+  private def optionalAddressLine(key: String): Mapping[String] =
+    text.transform[String](_.trim, s => s).verifying(optionalAddressLineConstraint(key))
+
+  private def optionalAddressLineConstraint(key: String): Constraint[String] = Constraint {
+    case a if !a.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") => Invalid(s"error.$key.invalid")
+    case b if b.length > 35                             => Invalid(s"error.$key.over")
+    case _                                              => Valid
+  }
+
+  def postcode: Mapping[String] = {
+    val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$"
+    val specialRegex = """^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"""
+
+    text
+      .transform[String](_.toUpperCase.trim, identity)
+      .verifying(Constraint { x: String =>
+        x match {
+          case ""                               => Invalid("error.postcode.empty")
+          case pc if !pc.matches(specialRegex)  => Invalid("error.postcode.special")
+          case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
+          case _                                => Valid
+        }
+      })
   }
 
 }

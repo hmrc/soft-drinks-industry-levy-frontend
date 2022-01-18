@@ -16,8 +16,8 @@
 
 package sdil.uniform
 
-import sdil.uniform.GdsComponents
 import org.scalatest.{FlatSpec, Matchers}
+import sidl.uniform.GdsComponents
 
 class GDS extends FlatSpec with Matchers {
 
