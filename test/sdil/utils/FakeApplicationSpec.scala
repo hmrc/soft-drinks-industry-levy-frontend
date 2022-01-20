@@ -85,8 +85,6 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     )
   }
 
-
-
   val messagesApi: MessagesApi = stubMessagesControllerComponents.messagesApi
   implicit val defaultMessages: Messages = messagesApi.preferred(Seq.empty)
   implicit val ec: ExecutionContext = defaultContext
@@ -220,7 +218,8 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     when(m.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(0)))
     when(m.shortLiveCache) thenReturn cacheMock
     when(cacheMock.fetchAndGetEntry[Any](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
-    when(cacheMock.cache(anyString(), anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("jakeAndIan", Map())))
+    when(cacheMock.cache(anyString(), anyString(), any())(any(), any(), any()))
+      .thenReturn(Future.successful(CacheMap("jakeAndIan", Map())))
     when(m.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
     when(m.submit(any(), any())(any())) thenReturn Future.successful(())
     m

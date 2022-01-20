@@ -116,19 +116,17 @@ class VariationsController(
     val x = sdilConnector.retrieveSubscription(sdilRef)
     println(s"@@@@@@@@@@@@@@ id: $id")
 
-      x flatMap {
+    x flatMap {
       case Some(subscription) =>
         val base = RegistrationVariationData(subscription)
-        def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] = {
+        def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] =
           sdilConnector.returns_get(subscription.utr, period)
-        }
         def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
           sdilConnector.checkSmallProducerStatus(sdilRef, period)
         def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
           sdilConnector.returns_variation(rvd, sdilRef)
-        def submitAdjustment(rvd: ReturnVariationData) = {
+        def submitAdjustment(rvd: ReturnVariationData) =
           sdilConnector.returns_vary(sdilRef, rvd)
-        }
         println(s"subscription: $subscription")
         println(s"sdilRef: $sdilRef")
         println(s"variableReturns: ${sdilConnector.returns_variable(base.original.utr)}")

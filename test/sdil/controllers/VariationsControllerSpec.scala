@@ -14,42 +14,17 @@
  * limitations under the License.
  */
 
-///*
-// * Copyright 2022 HM Revenue & Customs
-// *
-// * Licensed under the Apache License, Version 2.0 (the "License");
-// * you may not use this file except in compliance with the License.
-// * You may obtain a copy of the License at
-// *
-// *     http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
-//
 package sdil.controllers
 
-
-import ltbs.uniform.common.web.JourneyConfig
 import org.mockito.ArgumentMatchers.{any, eq => matching, _}
 import org.mockito.Mockito._
-import play.api.libs.json._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models._
-import sdil.models.backend._
-import sdil.models.retrieved._
 import sdil.models.variations.RegistrationVariationData
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-import uk.gov.hmrc.http.{CoreDelete, CoreGet, CorePut, HeaderCarrier}
 
-import scala.concurrent.Future
-import java.util.NoSuchElementException
 import scala.concurrent.Future
 
 class VariationsControllerSpec extends ControllerSpec {
@@ -71,7 +46,6 @@ class VariationsControllerSpec extends ControllerSpec {
 
       val base = RegistrationVariationData(aSubscription)
 
-
       when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
         Future.successful(Some(aSubscription))
       }
@@ -89,23 +63,22 @@ class VariationsControllerSpec extends ControllerSpec {
         Future.successful(returnPeriods)
       }
 
-      when(mockSdilConnector.checkSmallProducerStatus(matching("0000000022"), matching(ReturnPeriod(2018, 1)))(any())).thenReturn {
-        Future.successful(Some(true))
-      }
+      when(mockSdilConnector.checkSmallProducerStatus(matching("0000000022"), matching(ReturnPeriod(2018, 1)))(any()))
+        .thenReturn {
+          Future.successful(Some(true))
+        }
 
       when(mockSdilConnector.returns_get(matching("0000000022"), matching(ReturnPeriod(2018, 1)))(any())).thenReturn {
         Future.successful(Some(sdilReturn))
       }
 
-      val result = controller.index("idvalue").apply(FakeRequest().withFormUrlEncodedBody("purgeStateUponCompletion" -> "true"))
+      val result =
+        controller.index("idvalue").apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
-      //      redirectLocation(result) mustEqual Some(value = routes.VariationsController.showVariationsComplete().url)
+      redirectLocation(result) mustEqual Some(value = routes.VariationsController.showVariationsComplete().url)
     }
   }
 }
-
-
-
 //    "redirect to not found page when subscrition doesn't exist" in {
 //      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
 //        Future.successful(None)
