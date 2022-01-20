@@ -112,6 +112,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     when(m.cache(anyString(), any())(any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
     when(m.get(anyString())(any())).thenReturn(Future.successful(None))
     when(m.clear(anyString())(any())).thenReturn(Future.successful(()))
+    when(m.shortLiveCache) thenReturn cacheMock
     m
   }
 
@@ -219,6 +220,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     when(m.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(0)))
     when(m.shortLiveCache) thenReturn cacheMock
     when(cacheMock.fetchAndGetEntry[Any](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+    when(cacheMock.cache(anyString(), anyString(), any())(any(), any(), any())).thenReturn(Future.successful(CacheMap("jakeAndIan", Map())))
     when(m.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
     when(m.submit(any(), any())(any())) thenReturn Future.successful(())
     m
