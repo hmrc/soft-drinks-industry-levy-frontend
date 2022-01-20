@@ -18,7 +18,6 @@ package sdil.utils
 
 import java.io.File
 import java.time.LocalDate
-
 import com.softwaremill.macwire.wire
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
@@ -33,11 +32,11 @@ import play.api.{Application, ApplicationLoader, Configuration, Environment}
 import play.core.DefaultWebCommands
 import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
-import sdil.config.{RegistrationFormDataCache, ReturnsFormDataCache, SDILApplicationLoader}
+import sdil.config.{RegistrationFormDataCache, RegistrationVariationFormDataCache, ReturnVariationFormDataCache, ReturnsFormDataCache, SDILApplicationLoader}
 import sdil.connectors.{DirectDebitBackendConnector, GaConnector, PayApiConnector, SoftDrinksIndustryLevyConnector}
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.{ReturnPeriod, SdilReturn}
+import sdil.models.{ReturnPeriod, ReturnsVariation, SdilReturn}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -85,10 +84,13 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
       stub.executionContext
     )
   }
+
+
+
   val messagesApi: MessagesApi = stubMessagesControllerComponents.messagesApi
   implicit val defaultMessages: Messages = messagesApi.preferred(Seq.empty)
   implicit val ec: ExecutionContext = defaultContext
-
+  val returnPeriod = ReturnPeriod(2018, 1)
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
   val returnPeriods2 = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1), ReturnPeriod(2019, 2), ReturnPeriod(2019, 3))
   val defaultSubscription: Subscription = {
@@ -116,6 +118,20 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
   val mockReturnsCache: ReturnsFormDataCache = {
     val m = mock[ReturnsFormDataCache]
     // when...
+    m
+  }
+
+  val mockRegVariationsCache: RegistrationVariationFormDataCache = {
+    val m = mock[RegistrationVariationFormDataCache]
+    when(m.get(anyString())(any())).thenReturn(Future.successful(None))
+    when(m.clear(anyString())(any())).thenReturn(Future.successful(()))
+    m
+  }
+
+  val mockRetVariationsCache: ReturnVariationFormDataCache = {
+    val m = mock[ReturnVariationFormDataCache]
+    when(m.get(anyString())(any())).thenReturn(Future.successful(None))
+    when(m.clear(anyString())(any())).thenReturn(Future.successful(()))
     m
   }
 

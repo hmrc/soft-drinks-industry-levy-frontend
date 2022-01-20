@@ -113,17 +113,29 @@ class VariationsController(
 
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
-    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+    val x = sdilConnector.retrieveSubscription(sdilRef)
+    println(s"@@@@@@@@@@@@@@ id: $id")
+
+      x flatMap {
       case Some(subscription) =>
         val base = RegistrationVariationData(subscription)
-        def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] =
+        def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] = {
           sdilConnector.returns_get(subscription.utr, period)
+        }
         def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
           sdilConnector.checkSmallProducerStatus(sdilRef, period)
         def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
           sdilConnector.returns_variation(rvd, sdilRef)
-        def submitAdjustment(rvd: ReturnVariationData) =
+        def submitAdjustment(rvd: ReturnVariationData) = {
           sdilConnector.returns_vary(sdilRef, rvd)
+        }
+        println(s"subscription: $subscription")
+        println(s"sdilRef: $sdilRef")
+        println(s"variableReturns: ${sdilConnector.returns_variable(base.original.utr)}")
+        println(s"returnPeriods: ${sdilConnector.returns_pending(subscription.utr)}")
+        println(s"sdilConnector: $sdilConnector")
+        println(s"config: $config")
+        println(s"@@@@@@@@@@@@@ journeyConfig: $journeyConfig")
         for {
           variableReturns <- sdilConnector.returns_variable(base.original.utr)
           returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
@@ -141,6 +153,7 @@ class VariationsController(
                        ))
                        .run(id, purgeStateUponCompletion = true, config = journeyConfig) {
                          case Left(ret) =>
+                           println(".run executed successful")
                            submitAdjustment(ret).flatMap { _ =>
                              returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
                                logger.info("adjustment of Return is complete")
@@ -148,6 +161,7 @@ class VariationsController(
                              }
                            }
                          case Right(reg) =>
+                           println(".run executed successful")
                            sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
                              regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
                                logger.info("variation of Registration is complete")
