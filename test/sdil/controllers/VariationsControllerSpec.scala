@@ -16,6 +16,7 @@
 
 package sdil.controllers
 
+import ltbs.uniform.common.web.WebMonad
 import org.mockito.ArgumentMatchers.{any, eq => matching, _}
 import org.mockito.Mockito._
 import play.api.test.FakeRequest
@@ -40,45 +41,65 @@ class VariationsControllerSpec extends ControllerSpec {
     mockRetVariationsCache
   )
 
+  def testJourney(program: WebMonad[Result])(answers: (String, JsValue)*)(
+    implicit ec: ExecutionContext): Future[Result] = {
+
+    val sessionUUID = java.util.UUID.randomUUID.toString
+    val persistence = SharedSessionPersistence(answers: _*)
+
+    val request: Request[AnyContent] = FakeRequest()
+      .withFormUrlEncodedBody("utr" -> "")
+      .withSession { ("uuid" -> sessionUUID) }
+
+    controller.runInner(request)(program)(
+      "XXXX"
+    )(persistence.dataGet, persistence.dataPut)
+  }
+
   "VariationsController" should {
 
-    "redirect to show variations complete page when valid subscription and RegistrationVariationData is given" in {
-
-      val base = RegistrationVariationData(aSubscription)
-
-      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
-        Future.successful(Some(aSubscription))
-      }
-
+    "When a user is  enrolled they are " in {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.returns_variable(matching(base.original.utr))(any())).thenReturn {
-        Future.successful(returnPeriods)
+      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenThrow {
+        new NoSuchElementException("Exception occurred while retrieving pendingReturns")
       }
 
-      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn {
-        Future.successful(returnPeriods)
-      }
-
-      when(mockSdilConnector.checkSmallProducerStatus(matching("0000000022"), matching(ReturnPeriod(2018, 1)))(any()))
-        .thenReturn {
-          Future.successful(Some(true))
-        }
-
-      when(mockSdilConnector.returns_get(matching("0000000022"), matching(ReturnPeriod(2018, 1)))(any())).thenReturn {
-        Future.successful(Some(sdilReturn))
-      }
-
-      val result =
-        controller.index("idvalue").apply(FakeRequest())
+      val result = controller.index("idvalue").apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(value = routes.VariationsController.showVariationsComplete().url)
+      redirectLocation(result) mustEqual Some("select-change")
+
     }
+
   }
-}
+
+  "When a user is not enrolled they are taken to the start of the registration" in {
+
+    val sdilEnrolment = EnrolmentIdentifier("", "")
+    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+    }
+
+    val result = controller.index("idvalue").apply(FakeRequest())
+    status(result) mustEqual SEE_OTHER
+    redirectLocation(result) mustEqual Some("/soft-drinks-industry-levy/register/start")
+  }
+
+  "When a user is enrolled" in {
+
+    val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+    }
+
+    val result = controller.index("idvalue").apply(FakeRequest())
+    status(result) mustEqual SEE_OTHER
+    redirectLocation(result) mustEqual Some("select-change")
+  }
+
 //    "redirect to not found page when subscrition doesn't exist" in {
 //      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
 //        Future.successful(None)
@@ -213,7 +234,7 @@ class VariationsControllerSpec extends ControllerSpec {
 //    }
 //
 //    "execute the variations journey for change type value Returns" in {
-//
+
 //      //TODO Fix this test so it traverses through the returns journey
 //      val program = controller.programInner(
 //        aSubscription,
@@ -272,23 +293,23 @@ class VariationsControllerSpec extends ControllerSpec {
 //      status(output) mustBe SEE_OTHER
 //    }
 //
-//    "execute the contact details journey" in {
-//      val program = controller.programInner(
-//        aSubscription,
-//        aSubscription.sdilRef,
-//        variableReturns,
-//        returnPeriods
-//      )
-//
-//      val output = controllerTester.testJourney(program)(
-//        selectChangeSites,
-//        changeRegisteredDetailsContactPerson,
-//        contactDetails,
-//        checkAnswers
-//      )
-//
-//      status(output) mustBe OK
-//    }
+    "execute the contact details journey" in {
+      val program = controller.programInner(
+        aSubscription,
+        aSubscription.sdilRef,
+        variableReturns,
+        returnPeriods
+      )
+
+      val output = controllerTester.testJourney(program)(
+        selectChangeSites,
+        changeRegisteredDetailsContactPerson,
+        contactDetails,
+        checkAnswers
+      )
+
+      status(output) mustBe OK
+    }
 //
 //    "execute the Sites journey for " in {
 //      val program = controller.programInner(
