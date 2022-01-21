@@ -445,7 +445,7 @@ object SdilComponents {
 
     case object Small extends ProducerType
 
-    case object Not extends ProducerType
+    case object XNot extends ProducerType
   }
 
   import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}

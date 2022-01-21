@@ -15,10 +15,12 @@
  */
 
 package sdil.journeys
+
 import cats.implicits._
 import cats.~>
 import ltbs.uniform.interpreters.logictable._
 import org.scalatest.{Matchers, _}
+import org.scalatestplus.mockito.MockitoSugar.mock
 import sdil.models.backend.{Contact, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.{Address, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
@@ -86,6 +88,7 @@ class ReturnJourneySpec extends WordSpec with Matchers {
   }
 
   "returns journey" should {
+
     "construct SdilReturn and ReturnsVariation for a small producer becoming a copacker" in {
       implicit val sampleListQtyAddress = SampleListQty[Address](10)
       implicit val sampleListQtySmallProducer = SampleListQty[SmallProducer](5)
@@ -103,6 +106,8 @@ class ReturnJourneySpec extends WordSpec with Matchers {
         .value
         .run
         .asOutcome(true)
+      // true: To enable logging in unit tests output.
+      // false: Please set it to false before merging into github to disablle logging in unit tests output.
 
       val sdilReturn: SdilReturn = outcome._1
       val returnsVariation: ReturnsVariation = outcome._2
@@ -110,6 +115,37 @@ class ReturnJourneySpec extends WordSpec with Matchers {
       sdilReturn.totalPacked shouldBe ((15L, 20L))
       returnsVariation.packingSites.length shouldBe 10
     }
+
+    "construct SdilReturn and ReturnsVariation for a given small producer" in {
+      implicit val sampleListQtyAddress = SampleListQty[Address](10)
+      val sampleSmallProducer = SmallProducer("small prod", validSdilRef, (13L, 14L))
+      implicit val sampleSmallProducerAsk = instances[SmallProducer](sampleSmallProducer)
+
+      val outcome: (SdilReturn, ReturnsVariation) = LogicTableInterpreter
+        .interpret(
+          ReturnsJourney.journey(
+            samplePeriod,
+            sampleReturn,
+            volManSub,
+            sampleCheckSmallProducerStatus,
+            submitReturnVariation,
+            broughtForward,
+            true
+          ))
+        .value
+        .run
+        .asOutcome(false)
+      // true: To enable logging in unit tests output.
+      // false: Please set it to false before merging into github to disablle logging in unit tests output.
+
+      val sdilReturn: SdilReturn = outcome._1
+      val returnsVariation: ReturnsVariation = outcome._2
+
+      sdilReturn.totalPacked shouldBe ((13L, 14L))
+      returnsVariation.packingSites.length shouldBe 10
+      returnsVariation.importer._2 shouldBe ((8L, 16L))
+    }
+
   }
 
 }

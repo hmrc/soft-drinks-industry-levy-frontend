@@ -96,7 +96,7 @@ object RegistrationController {
                      "package-own-uk",
                      validation =
                        Rule.condAtPath("Some", "value", "_1")(x => x.fold(true)(y => (y._1 + y._2) >= 1L), "min")
-                   ) emptyUnless producerType != ProducerType.Not
+                   ) emptyUnless producerType != ProducerType.XNot
       copacks <- askEmptyOption[(Long, Long)](
                   "package-copack",
                   validation =

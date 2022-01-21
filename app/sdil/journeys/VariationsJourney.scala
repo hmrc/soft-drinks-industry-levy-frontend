@@ -233,7 +233,7 @@ object VariationsJourney {
                       Change.RegChange(
                         data.copy(
                           producer =
-                            Producer(producerType != ProducerType.Not, (producerType == ProducerType.Large).some),
+                            Producer(producerType != ProducerType.XNot, (producerType == ProducerType.Large).some),
                           usesCopacker = useCopacker.some,
                           packageOwn = packageOwn.nonEmpty.some,
                           packageOwnVol = longTupToLitreage(packageOwn),
