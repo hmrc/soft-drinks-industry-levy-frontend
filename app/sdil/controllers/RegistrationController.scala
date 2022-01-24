@@ -129,7 +129,7 @@ object RegistrationController {
         List.empty[Address]
       }
       packSites <- askListSimple[Address](
-                    "production-sites",
+                    "production-site-details",
                     "p-site",
                     default = packingSites.some,
                     listValidation = Rule.nonEmpty

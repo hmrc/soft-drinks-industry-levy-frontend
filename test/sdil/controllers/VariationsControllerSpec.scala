@@ -157,24 +157,23 @@ class VariationsControllerSpec extends ControllerSpec {
     redirectLocation(result) mustEqual Some("select-change")
   }
 
-      "redirect to not found page when subscrition doesn't exist" ignore{
+  "redirect to not found page when subscrition doesn't exist" ignore {
 
-        val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
-        when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
-          Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
-        }
+    val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+    }
 
-        when(mockSdilConnector.retrieveSubscription(matching(""), anyString())(any())).thenReturn {
-          Future.successful(None)
-        }
+    when(mockSdilConnector.retrieveSubscription(matching(""), anyString())(any())).thenReturn {
+      Future.successful(None)
+    }
 
-        val result = controller.index("").apply(FakeRequest())
-        status(result) mustEqual NOT_FOUND
-        redirectLocation(result) mustEqual Some("select-change")
-      }
+    val result = controller.index("").apply(FakeRequest())
+    status(result) mustEqual NOT_FOUND
+    redirectLocation(result) mustEqual Some("select-change")
+  }
 
-
-  "redirect to " in{
+  "redirect to " in {
 
     val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
     when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {

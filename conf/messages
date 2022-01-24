@@ -159,12 +159,17 @@ sdil.litreage.volumes.help=I do not know how many litres
 sdil.litreage.volumes.content.p1=If you do not have the exact volumes you can enter an estimate.
 
 #Production sites
-heading.production-sites=Your packaging sites
-production-sites.table.paragraph.singular=You have added {0} packaging site.
-production-sites.table.paragraph.plural=You have added {0} packaging sites.
-production-sites.table.paragraph.small=You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
-production-sites.required=Select yes if you need to add another packaging site
-production-sites.listing.heading=Do you need to add another packaging site?
+heading.production-site-details=Your packaging sites
+production-site-details.table.paragraph.singular=You have added {0} packaging site.
+production-site-details.table.paragraph.plural=You have added {0} packaging sites.
+production-site-details.table.paragraph.small=You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+production-site-details.required=Select yes if you need to add another packaging site
+production-site-details.listing.heading=Do you need to add another packaging site?
+
+production-site-details.remove=Remove
+production-site-details.remove.hidden=Remove {0}
+production-site-details.edit=Edit
+production-site-details.edit.hidden=Edit {0}
 
 heading.p-site=Enter your UK packaging site details
 p-site.paragraph=Only add the addresses of the packaging sites you operate
@@ -571,6 +576,7 @@ address-line.length=This must be no more than 35 characters
 postcode.required=Enter a postcode
 postcode.empty=Enter a postcode
 postcode.invalid=Enter a real postcode
+error.postcode.invalid=Enter a real postcode
 postcode.special=Enter a real postcode
 tradingName.max=Trading name must be 160 characters or less
 number.negative=Must be greater than or equal to 0
