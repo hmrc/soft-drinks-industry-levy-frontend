@@ -91,6 +91,7 @@ class VariationsController(
     val sdilRef = request.sdilEnrolment.value
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(subscription) =>
+        println(s"Subscription: $subscription")
         interpret(
           VariationsJourney.changeBusinessAddressJourney(subscription, sdilRef)
         ).run(id, purgeStateUponCompletion = true, config = journeyConfig) {
