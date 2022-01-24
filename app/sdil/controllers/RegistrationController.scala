@@ -43,9 +43,9 @@ class RegistrationController(
   cache: RegistrationFormDataCache,
   mcc: MessagesControllerComponents,
   val config: AppConfig,
-  val ufViews: views.uniform.Uniform,
-  implicit val ec: ExecutionContext
-) extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
+  val ufViews: views.uniform.Uniform
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
 
   override def defaultBackLink = "/soft-drinks-industry-levy"
 

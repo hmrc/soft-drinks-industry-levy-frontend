@@ -115,78 +115,64 @@ class VariationsControllerSpec extends ControllerSpec {
       redirectLocation(result) mustEqual Some("change-business-address")
     }
 
-    "When a user is  enrolled they are " in {
+    //TODO
+    "When a user has enrolled with a subscription and has finished the journey" ignore {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+      val result = controller.changeAddressAndContact("idvalue").apply(FakeRequest())
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some("/variationDone")
+    }
+
+    "When a user is not enrolled they are taken to the start of the registration" in {
+
+      val sdilEnrolment = EnrolmentIdentifier("", "")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+
+      val result = controller.index("idvalue").apply(FakeRequest())
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some("/soft-drinks-industry-levy/register/start")
+    }
+
+    "redirect to not found page when subscrition doesn't exist" in {
+
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XCSDIL000000002")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+
+      val result = controller.index("idvalue").apply(FakeRequest())
+      status(result) mustEqual NOT_FOUND
+    }
+
+    "When a user is enrolled with subscription they are taken to first page within the variations journey" in {
+
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenThrow {
-        new NoSuchElementException("Exception occurred while retrieving pendingReturns")
-      }
-
       val result = controller.index("idvalue").apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
       redirectLocation(result) mustEqual Some("select-change")
-
     }
 
-  }
+    //TODO
+    "redirect to " in {
 
-  "When a user is not enrolled they are taken to the start of the registration" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
 
-    val sdilEnrolment = EnrolmentIdentifier("", "")
-    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
-      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      val result = controller.index("").apply(FakeRequest())
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some("/select-change")
     }
-
-    val result = controller.index("idvalue").apply(FakeRequest())
-    status(result) mustEqual SEE_OTHER
-    redirectLocation(result) mustEqual Some("/soft-drinks-industry-levy/register/start")
-  }
-
-  "When a user is enrolled" in {
-
-    val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
-    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
-      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
-    }
-
-    val result = controller.index("idvalue").apply(FakeRequest())
-    status(result) mustEqual SEE_OTHER
-    redirectLocation(result) mustEqual Some("select-change")
-  }
-
-  "redirect to not found page when subscrition doesn't exist" ignore {
-
-    val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
-    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
-      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
-    }
-
-    when(mockSdilConnector.retrieveSubscription(matching(""), anyString())(any())).thenReturn {
-      Future.successful(None)
-    }
-
-    val result = controller.index("").apply(FakeRequest())
-    status(result) mustEqual NOT_FOUND
-    redirectLocation(result) mustEqual Some("select-change")
-  }
-
-  "redirect to " in {
-
-    val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
-    when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
-      Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
-    }
-
-    when(mockSdilConnector.retrieveSubscription(matching(""), anyString())(any())).thenReturn {
-      Future.successful(Some(aSubscription))
-    }
-
-    val result = controller.index("").apply(FakeRequest())
-    status(result) mustEqual SEE_OTHER
-    redirectLocation(result) mustEqual Some("select-change")
   }
   //
   //
