@@ -22,12 +22,12 @@ class PostcodeMappingSpec extends FormSpec with FormHelpers {
 
   "The postcode mapping" should {
     "require the postcode to be non-empty" in {
-      expectError("", "error.postcode.empty")
+      expectError("", "postcode.empty")
     }
 
     "require the postcode to be valid" in {
       Seq("AA11", "A11A 1AA", "not a postcode") map { pc =>
-        expectError(pc, "error.postcode.invalid")
+        expectError(pc, "postcode.invalid")
       }
     }
 

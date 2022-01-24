@@ -145,7 +145,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       val res = testController.submit()(request)
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include(Messages("error.utr.no-record"))
+      contentAsString(res) must include(Messages("utr.no-record"))
     }
 
     "return 400 - Bad Request and the identify page if the postcode does not match ROSM's business partner record" in {
@@ -158,7 +158,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       val res = testController.submit()(request)
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include(Messages("error.utr.no-record"))
+      contentAsString(res) must include(Messages("utr.no-record"))
     }
 
     "redirect to the verify page if the form data is valid" in {

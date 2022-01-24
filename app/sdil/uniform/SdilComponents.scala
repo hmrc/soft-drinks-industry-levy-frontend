@@ -479,9 +479,9 @@ object SdilComponents {
       .transform[String](_.toUpperCase.trim, identity)
       .verifying(Constraint { x: String =>
         x match {
-          case ""                               => Invalid("error.postcode.empty")
-          case pc if !pc.matches(specialRegex)  => Invalid("error.postcode.special")
-          case pc if !pc.matches(postcodeRegex) => Invalid("error.postcode.invalid")
+          case ""                               => Invalid("postcode.empty")
+          case pc if !pc.matches(specialRegex)  => Invalid("postcode.special")
+          case pc if !pc.matches(postcodeRegex) => Invalid("postcode.invalid")
           case _                                => Valid
         }
       })

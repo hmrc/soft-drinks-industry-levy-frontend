@@ -33,11 +33,11 @@ trait FormSpec extends PlaySpec {
       s"Unexpected errors when $fieldName = ${f(fieldName).value}\nErrors: ${f(fieldName).errors}")
 
   def mustValidateAddress(form: Form[_], prefix: String, data: Map[String, String]) = {
-    mustRequire(s"$prefix.line1")(form, data, requiredError = "error.line1.required")
-    mustRequire(s"$prefix.line2")(form, data, requiredError = "error.line2.required")
+    mustRequire(s"$prefix.line1")(form, data, requiredError = "line1.required")
+    mustRequire(s"$prefix.line2")(form, data, requiredError = "line2.required")
     mustNotRequire(s"$prefix.line3")(form, data)
     mustNotRequire(s"$prefix.line4")(form, data)
-    mustRequire(s"$prefix.postcode")(form, data, requiredError = "error.postcode.empty")
+    mustRequire(s"$prefix.postcode")(form, data, requiredError = "postcode.empty")
 
     Seq("line1", "line2", "line3", "line4") map { l =>
       val line = s"$prefix.$l"
