@@ -33,18 +33,25 @@
 package sdil.controllers
 
 import com.softwaremill.macwire._
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.actions.AuthorisedRequest
+import sdil.actions.{AuthorisedRequest, RegisteredAction}
 import sdil.models._
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
+import org.mockito.ArgumentMatchers.{any, eq => matching, _}
+import play.api.mvc.Results.Ok
 
-class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
+import scala.concurrent.Future
+
+class RegistrationControllerSpec extends ControllerSpec {
   val controller = new RegistrationController(
     authorisedAction,
     mockSdilConnector,
@@ -53,6 +60,53 @@ class RegistrationControllerSpec extends ControllerSpec with MockitoSugar {
     testConfig,
     uniformHelpers,
   )
+
+  lazy val testAuthorisedAction: RegisteredAction = wire[RegisteredAction]
+  lazy val testAction: Action[AnyContent] = testAuthorisedAction(_ => Ok)
+  val fakeRequest: FakeRequest[AnyContent] = FakeRequest()
+
+  val irCtEnrolment = EnrolmentIdentifier("UTR", "1111111111")
+  val enrolments = Enrolments(Set(new Enrolment("IR-CT", Seq(irCtEnrolment), "Active")))
+
+  "RegistrationController" should {
+
+
+
+    "return NOT_FOUND when no subscription" in {
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+      val result = controller.index("idvalue").apply(FakeRequest())
+      status(result) mustEqual NOT_FOUND
+    }
+
+    "" in {
+      implicit val fakeRequest: FakeRequest[AnyContent] = FakeRequest()
+      when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any())) thenReturn {
+        Future.successful(enrolments)
+      }
+      when(mockSdilConnector.retrieveSubscription(matching(irCtEnrolment.value), anyString())(any())).thenReturn {
+        Future.successful(Some(aSubscription))
+      }
+//      when(mockSdilConnector.submit(any(), any())(any())) thenReturn Future.successful(())
+//
+//      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+//      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+//        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+//      }
+//
+//      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+//        Future.successful(Some(aSubscription))
+//      }
+//
+      val result = controller.index("idvalue").apply(FakeRequest())
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some("/soft-drinks-industry-levy/register/start")
+    }
+
+  }
+
 }
 //
 //  override lazy val stubMessages: Map[String, Map[String, String]] =
