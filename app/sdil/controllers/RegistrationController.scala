@@ -186,7 +186,7 @@ object RegistrationController {
           phoneNumber = contactDetails.phoneNumber,
           email = contactDetails.email
         )
-      )
+      )//return subscription
       _ <- convertWithKey("submission")(backendCall(subscription))
       _ <- nonReturn("reg-complete")
       _ <- end(
