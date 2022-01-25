@@ -726,7 +726,7 @@ heading.producer=How many litres of your own brands of liable drinks have been p
 producer.lead=This includes brands you own or have the rights to manufacture.
 producer.option.large=1 million litres or more
 producer.option.small=Less than 1 million litres
-producer.option.not=None
+producer.option.Xnot=None
 
 producer.help.header.1=What does ‘packaged’ mean?
 producer.help.1=A liable drink is packaged if it is bottled, canned or otherwise packaged so it is ready to either drink or dilute.
@@ -834,7 +834,7 @@ amount-produced.required=Select how many litres of your own brands of liable dri
 amount-produced.lead=This includes brands you own or have the rights to manufacture.
 amount-produced.Large=1 million litres or more
 amount-produced.Small=Less than 1 million litres
-amount-produced.Not=None
+amount-produced.XNot=None
 amount-produced.help.header.1=What does ‘packaged’ mean?
 amount-produced.help.1=A liable drink is packaged if it is bottled, canned or otherwise packaged so it is ready to either drink or dilute.
 amount-produced.help.header.2=What is a liable drink?

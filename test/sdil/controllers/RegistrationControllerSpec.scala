@@ -70,8 +70,6 @@ class RegistrationControllerSpec extends ControllerSpec {
 
   "RegistrationController" should {
 
-
-
     "return NOT_FOUND when no subscription" in {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
