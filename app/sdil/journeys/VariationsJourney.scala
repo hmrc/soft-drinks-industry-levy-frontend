@@ -185,7 +185,7 @@ object VariationsJourney {
     for {
       producerType <- ask[ProducerType]("amount-produced")
       useCopacker  <- if (producerType == ProducerType.Small) ask[Boolean]("third-party-packagers") else pure(false)
-      packageOwn   <- askEmptyOption[(Long, Long)]("packaging-site")
+      packageOwn   <- askEmptyOption[(Long, Long)]("packaging-site") when producerType != ProducerType.XNot
       copacks      <- askEmptyOption[(Long, Long)]("contract-packing")
       imports      <- askEmptyOption[(Long, Long)]("imports")
       noUkActivity = (copacks, imports).isEmpty
@@ -236,7 +236,7 @@ object VariationsJourney {
                             Producer(producerType != ProducerType.XNot, (producerType == ProducerType.Large).some),
                           usesCopacker = useCopacker.some,
                           packageOwn = packageOwn.nonEmpty.some,
-                          packageOwnVol = longTupToLitreage(packageOwn),
+                          packageOwnVol = longTupToLitreage(packageOwn.getOrElse((0, 0))),
                           copackForOthers = copacks.nonEmpty,
                           copackForOthersVol = longTupToLitreage(copacks),
                           imports = imports.nonEmpty,
