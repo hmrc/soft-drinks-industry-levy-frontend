@@ -93,8 +93,8 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
 
         override def list(key: String, args: Any*): List[Html] = List()
       }
-      def backendCall(s: Subscription): Future[Unit] =
-        Future.successful(Unit)
+      def backendCall(s: Subscription): Future[Unit] = Future.successful(Unit)
+
       val outcome: (Subscription) = LogicTableInterpreter
         .interpret(
           RegistrationController.journey(
