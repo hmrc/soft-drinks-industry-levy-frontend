@@ -145,7 +145,6 @@ class ReturnJourneySpec extends WordSpec with Matchers {
       returnsVariation.packingSites.length shouldBe 10
       returnsVariation.importer._2 shouldBe ((8L, 16L))
     }
-
   }
 
 }

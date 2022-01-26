@@ -33,25 +33,23 @@
 package sdil.controllers
 
 import com.softwaremill.macwire._
-import ltbs.uniform.UniformMessages
-import ltbs.uniform.interpreters.logictable.{LogicTableInterpreter, SampleData}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{any, eq => matching, _}
+import org.mockito.Mockito._
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.actions.RegisteredAction
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
-import org.mockito.ArgumentMatchers.{any, eq => matching, _}
+
 import play.api.mvc.Results.Ok
-import play.twirl.api.Html
-import sdil.models.backend.Subscription
+
 import sdil.actions.{AuthorisedAction, AuthorisedRequest}
 
 import scala.concurrent.Future
 
 class RegistrationControllerSpec extends ControllerSpec {
+
   val controller = new RegistrationController(
     authorisedAction,
     mockSdilConnector,
@@ -61,13 +59,20 @@ class RegistrationControllerSpec extends ControllerSpec {
     uniformHelpers,
   )
 
-
   lazy val testAuthorisedAction: RegisteredAction = wire[RegisteredAction]
   lazy val testAction: Action[AnyContent] = testAuthorisedAction(_ => Ok)
   val fakeRequest: FakeRequest[AnyContent] = FakeRequest()
 
   val irCtEnrolment = EnrolmentIdentifier("UTR", "1111111111")
   val enrolments = Enrolments(Set(new Enrolment("IR-CT", Seq(irCtEnrolment), "Active")))
+
+  def request: AuthorisedRequest[AnyContent] =
+    AuthorisedRequest[AnyContent](
+      None,
+      "",
+      Enrolments(Set.empty),
+      FakeRequest()
+        .withFormUrlEncodedBody("utr" -> ""))
 
   "RegistrationController" should {
 
@@ -82,9 +87,9 @@ class RegistrationControllerSpec extends ControllerSpec {
       status(result) mustEqual NOT_FOUND
     }
 
-    "" in {
+    "Redirect to ... when have a full cache" in {
 
-      when(mockCache.get(matching()))
+      stubCacheEntry(Some(defaultFormData))
 
       when(mockSdilConnector.retrieveSubscription(matching(irCtEnrolment.value), anyString())(any())).thenReturn {
         Future.successful(Some(aSubscription))
@@ -101,29 +106,9 @@ class RegistrationControllerSpec extends ControllerSpec {
         Future.successful(Some(aSubscription))
       }
 
-
       val result = controller.index("idvalue").apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some("/soft-drinks-industry-levy/register/start")
-    }
-  }
-//TODO
-  "Registration Journey"should{
-    "construct a subscription"ignore{
-
-      val subscription = defaultSubscription
-      val outcome: (Subscription) = LogicTableInterpreter
-        .interpret(
-          RegistrationController.journey(
-            true,
-            defaultFormData,
-            Subscription => Future[Unit]
-          )(messages))
-        .value
-        .run
-        .asOutcome(true)
-
-      val subscription:Subscription = outcome
+      redirectLocation(result) mustEqual Some("organisation-type")
     }
   }
 }

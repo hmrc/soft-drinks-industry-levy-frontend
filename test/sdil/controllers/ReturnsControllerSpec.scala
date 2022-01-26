@@ -18,12 +18,9 @@ package sdil.controllers
 
 import org.mockito.ArgumentMatchers.{any, eq => matching, _}
 import org.mockito.Mockito._
-import play.api.libs.json._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models._
-import sdil.models.backend._
-import sdil.models.retrieved._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
@@ -124,14 +121,38 @@ class ReturnsControllerSpec extends ControllerSpec {
 
     }
 
+    "execute showReturnComplete with" in {
+      when(mockReturnsCache.get(matching(""))(any()))
+        .thenReturn(Future.successful(Some(mockreturnFormData)))
+
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any()))
+        .thenReturn(Future.successful(returnPeriods))
+
+      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+        Future.successful(Some(aSubscription))
+      }
+
+      when(mockSdilConnector.checkSmallProducerStatus(matching("XZSDIL000100107"), any())(any())).thenReturn {
+        Future.successful(Some(true))
+      }
+
+      val result = controller.showReturnComplete(2018, 1).apply(FakeRequest())
+      status(result) mustEqual SEE_OTHER
+    }
+
   }
 
-  lazy val shortLivedCaching: ShortLivedHttpCaching = new ShortLivedHttpCaching {
-    override def baseUri: String = ???
-    override def domain: String = ???
-    override def defaultSource: String = ???
-    override def http: CoreGet with CorePut with CoreDelete = ???
-  }
+//  lazy val shortLivedCaching: ShortLivedHttpCaching = new ShortLivedHttpCaching {
+//    override def baseUri: String = ???
+//    override def domain: String = ???
+//    override def defaultSource: String = ???
+//    override def http: CoreGet with CorePut with CoreDelete = ???
+//  }
   lazy val hc: HeaderCarrier = HeaderCarrier()
 
   // DATA OUT:Map(claim-credits-for-exports -> {"lower":6789,"higher":2345}, packaged-as-a-contract-packer -> {"lower":1234579,"higher":2345679}, claim-credits-for-lost-damaged -> {"lower":123,"higher":234}, brought-into-uk-from-small-producers -> {"lower":1234,"higher":2345}, _editSmallProducers -> false, own-brands-packaged-at-own-sites -> {"lower":123234,"higher":2340000}, small-producer-details -> "Done", return-change-registration -> null, brought-into-uk -> {"lower":1234562,"higher":2345672}, ask-secondary-warehouses-in-return -> false, exemptions-for-small-producers -> false)

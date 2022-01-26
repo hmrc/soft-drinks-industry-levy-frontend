@@ -36,7 +36,7 @@ import sdil.config.{RegistrationFormDataCache, RegistrationVariationFormDataCach
 import sdil.connectors.{DirectDebitBackendConnector, GaConnector, PayApiConnector, SoftDrinksIndustryLevyConnector}
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.{ReturnPeriod, ReturnsVariation, SdilReturn}
+import sdil.models.{ReturnPeriod, ReturnsFormData, ReturnsVariation, SdilReturn}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -116,7 +116,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
 
   val mockReturnsCache: ReturnsFormDataCache = {
     val m = mock[ReturnsFormDataCache]
-    // when...
+    when(m.get(anyString())(any())).thenReturn(Future.successful(None))
     m
   }
 
@@ -195,6 +195,46 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     List(),
     Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     None
+  )
+
+  lazy val mockreturnFormData = ReturnsFormData(sdilReturn, mockreturnVariation)
+
+  lazy val mockreturnVariation = ReturnsVariation(
+    "Super Lemonade Plc",
+    UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+    (false, (0, 0)),
+    (false, (0, 0)),
+    List(
+      Site(
+        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+        Some("88"),
+        Some("Wild Lemonade Group"),
+        Some(LocalDate.of(2018, 2, 26))),
+      Site(
+        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
+        Some("87"),
+        Some("Highly Addictive Drinks Plc"),
+        Some(LocalDate.of(2019, 8, 19))),
+      Site(
+        UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
+        Some("94"),
+        Some("Monster Bottle Ltd"),
+        Some(LocalDate.of(2017, 9, 23))),
+      Site(
+        UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
+        Some("27"),
+        Some("Super Lemonade Group"),
+        Some(LocalDate.of(2017, 4, 23))),
+      Site(
+        UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
+        Some("96"),
+        Some("Star Products Ltd"),
+        Some(LocalDate.of(2017, 2, 11)))
+    ),
+    Nil,
+    "0000000000",
+    "Email@FakeEmail.com",
+    10000
   )
 
   val sdilReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
