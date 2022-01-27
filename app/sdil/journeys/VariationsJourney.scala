@@ -25,19 +25,16 @@ import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.{ShowBackLink, Subset, askEmptyOption, askListSimple, longTupToLitreage}
-import sdil.journeys.VariationsJourney.RepaymentMethod.Credit
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
-import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData}
+import sdil.models.variations.{RegistrationVariationData, ReturnVariationData}
 import sdil.models.{Address, CYA, ContactDetails, Producer, ReturnPeriod, ReturnsVariation, SdilReturn, Warehouse, extractTotal, listItemsWithTotal}
 import sdil.uniform.SdilComponents.ProducerType
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.uniform
 import views.html.uniform.helpers.dereg_variations_cya
 
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ofPattern
-import java.time.{LocalDate, LocalTime, ZoneId}
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 object VariationsJourney {
@@ -48,7 +45,7 @@ object VariationsJourney {
   object ChangeType extends Enum[ChangeType] {
     val values = findValues
 
-    case object Sites extends ChangeType
+    case object AASites extends ChangeType
     case object Activity extends ChangeType
     case object Deregister extends ChangeType
   }
@@ -366,7 +363,7 @@ object VariationsJourney {
                     case ChangeType.Activity =>
                       activityUpdateJourney(base, subscription, pendingReturns)
 
-                    case ChangeType.Sites =>
+                    case ChangeType.AASites =>
                       for {
                         contacts <- contactUpdate(base)
                       } yield { contacts: Change }

@@ -776,7 +776,7 @@ sdil.declaration.package-own-uk=Litres in next 12 months
 
 # Uniform variation process
 heading.select-change=What do you need to do?
-select-change.Sites=Update contact, packaging site or warehouse details
+select-change.AASites=Update contact, packaging site or warehouse details
 select-change.Activity=Change business activity
 select-change.Deregister=Cancel Soft Drinks Industry Levy registration
 select-change.Returns=Correct an error in a previous return

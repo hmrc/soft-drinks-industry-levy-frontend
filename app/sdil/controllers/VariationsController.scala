@@ -172,6 +172,7 @@ class VariationsController(
       case None => Future.successful(NotFound(""))
     }
   }
+
   def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
     sites
       .filter { x =>
