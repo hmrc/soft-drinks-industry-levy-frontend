@@ -77,7 +77,7 @@ object ReturnsJourney {
       contractPacked <- askEmptyOption[(Long, Long)](
                          "packaged-as-a-contract-packer",
                          default = default.map { _.packLarge }
-                       ) emptyUnless !subscription.activity.smallProducer
+                       )
       smallProds <- askList[SmallProducer](
                      "small-producer-details",
                      default.map { _.packSmall },
