@@ -66,14 +66,6 @@ class RegistrationControllerSpec extends ControllerSpec {
   val irCtEnrolment = EnrolmentIdentifier("UTR", "1111111111")
   val enrolments = Enrolments(Set(new Enrolment("IR-CT", Seq(irCtEnrolment), "Active")))
 
-  def request: AuthorisedRequest[AnyContent] =
-    AuthorisedRequest[AnyContent](
-      None,
-      "",
-      Enrolments(Set.empty),
-      FakeRequest()
-        .withFormUrlEncodedBody("utr" -> ""))
-
   "RegistrationController" should {
 
     "return NOT_FOUND when no subscription" in {
@@ -87,7 +79,11 @@ class RegistrationControllerSpec extends ControllerSpec {
       status(result) mustEqual NOT_FOUND
     }
 
-    "Redirect to ... when have a full cache" in {
+    "show service page when subscription is done" in {
+      //implicit val hc = new HeaderCarrier()
+
+      //when(mockCache.get("internal id")) thenReturn Some(defaultFormData)
+      //when(mockCache.get(matching("internal id"))(any())) thenReturn Some(defaultFormData)
 
       stubCacheEntry(Some(defaultFormData))
 
@@ -102,16 +98,17 @@ class RegistrationControllerSpec extends ControllerSpec {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
 
-      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+      when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), anyString())(any())).thenReturn {
         Future.successful(Some(aSubscription))
       }
 
       val result = controller.index("idvalue").apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some("organisation-type")
+      redirectLocation(result) mustEqual Some("/soft-drinks-industry-levy/register/start")
     }
   }
 }
+
 //
 //  override lazy val stubMessages: Map[String, Map[String, String]] =
 //    Map("en" -> Map("heading.partnerships" -> "someOtherValueShouldAppear"))
