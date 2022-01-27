@@ -26,7 +26,8 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.models.backend.{Contact, UkAddress}
+import sdil.journeys.VariationsJourney.Change.RegChange
+import sdil.models.backend.{Activity, Contact, Subscription, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.variations.{RegistrationVariationData, ReturnVariationData}
 import sdil.models.{Address, ContactDetails, Producer, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
@@ -44,12 +45,14 @@ class VariationsJourneySpec extends WordSpec with Matchers {
       Await.result(fa, 30 seconds).pure[Logic]
   }
 
+  val sampleCheckSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]] =
+    (_, _) => Future.successful(Some(true))
+
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockAppConfig = mock[AppConfig]
 
   val sampleAddress = Address.fromUkAddress(UkAddress(List("41", "my street", "my town", "my county"), "BN4 4GT"))
   val sampleWarehouse = Warehouse("foo", sampleAddress)
-  val sampleSmallProducer = SmallProducer("foo", validSdilRef, (3L, 4L))
   val smallProducer = Producer(true, Some(false))
   val largeProducer = Producer(true, Some(true))
 
@@ -59,11 +62,10 @@ class VariationsJourneySpec extends WordSpec with Matchers {
   val samplePeriods: List[ReturnPeriod] = List(samplePeriod)
 
   val getReturn: ReturnPeriod => Future[Option[SdilReturn]] = _ => Future.successful(Some(mock[SdilReturn]))
-
+  val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
+  val emptyreturnPeriods = List()
   val submitReturnVariation: ReturnsVariation => Future[Unit] = _ => Future.successful(())
   val broughtForward: BigDecimal = 0
-  val sampleCheckSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]] =
-    (_, _) => Future.successful(Some(true))
 
   private lazy val validSdilRef = "XCSDIL000000002"
   private lazy val updatedBusinessAddress =
@@ -111,44 +113,72 @@ class VariationsJourneySpec extends WordSpec with Matchers {
   )
 
   "Variations journey" should {
-
-    // TODO - Fix it
-    "construct either a RegistrationVariation or a " ignore {
+    /*"journey = " in {
       implicit lazy val ec: ExecutionContext = mock[ExecutionContext]
       implicit lazy val hc: HeaderCarrier = mock[HeaderCarrier]
       implicit lazy val msg: UniformMessages[Html] = mock[UniformMessages[Html]]
 
-      implicit lazy val ltiBoolean: LTInteraction[Unit, Boolean] = mock[LTInteraction[Unit, Boolean]]
-      implicit lazy val ltiString: LTInteraction[Unit, String] = mock[LTInteraction[Unit, String]]
-      implicit lazy val ltiLongLong: LTInteraction[Unit, Option[(Long, Long)]] =
-        mock[LTInteraction[Unit, Option[(Long, Long)]]]
-      implicit lazy val ltiLocalDate: LTInteraction[Unit, LocalDate] = mock[LTInteraction[Unit, LocalDate]]
-      implicit lazy val ltiContactDetails: LTInteraction[Unit, ContactDetails] =
-        mock[LTInteraction[Unit, ContactDetails]]
-      implicit lazy val ltiWarehouse: LTInteraction[Unit, Warehouse] =
-        mock[LTInteraction[Unit, Warehouse]]
       implicit lazy val ltiContactChangeType: LTInteraction[Unit, Set[VariationsJourney.ContactChangeType]] =
         mock[LTInteraction[Unit, Set[VariationsJourney.ContactChangeType]]]
-      implicit lazy val ltiProducerType: LTInteraction[Unit, ProducerType] =
-        mock[LTInteraction[Unit, ProducerType]]
-      implicit lazy val ltiRepaymentMethod: LTInteraction[Unit, RepaymentMethod] =
-        mock[LTInteraction[Unit, RepaymentMethod]]
-      implicit lazy val ltiSmallProducer: LTInteraction[Unit, SmallProducer] =
-        mock[LTInteraction[Unit, SmallProducer]]
-      implicit lazy val ltiReturnPeriod: LTInteraction[Unit, ReturnPeriod] =
-        mock[LTInteraction[Unit, ReturnPeriod]]
+
       implicit lazy val ltiChangeType: LTInteraction[Unit, ChangeType] =
         mock[LTInteraction[Unit, ChangeType]]
+
       implicit lazy val ltiAbstractChangeType: LTInteraction[Unit, AbstractChangeType] =
         mock[LTInteraction[Unit, AbstractChangeType]]
 
-      //This is the expected result from the journey:
-      implicit val sampleListQtyAddress = SampleListQty[Address](10)
-      implicit val sampleListQtyWarehouse = SampleListQty[Warehouse](10)
-      implicit val sampleListQtySmallProducer = SampleListQty[SmallProducer](5)
+      val sampleRepaymentMethod = RepaymentMethod.Credit
+      implicit val sampleRepaymentMethodAsk = instances[RepaymentMethod](sampleRepaymentMethod)
 
-      implicit lazy val ltiAddress: LTInteraction[Unit, Address] = mock[LTInteraction[Unit, Address]]
-      implicit lazy val ltiAddressBoolean: LTInteraction[Address, Boolean] = mock[LTInteraction[Address, Boolean]]
+      val sampleReturnPeriod = ReturnPeriod(2018, 1)
+      implicit val sampleReturnPeriodAsk = instances[ReturnPeriod](sampleReturnPeriod)
+
+      val sampleSmallProducer = SmallProducer("small prod", validSdilRef, (13L, 14L))
+      implicit val sampleSmallProducerAsk = instances[SmallProducer](sampleSmallProducer)
+
+      implicit val sampleListQtyAddress = SampleListQty[Address](1)
+      val sampleAddress = Address.fromUkAddress(UkAddress(List("41", "my street", "my town", "my county"), "BN4 4GT"))
+      implicit val sampleAddressAsk = instances[Address](sampleAddress)
+
+      implicit val sampleListQtyContact = SampleListQty[ContactDetails](1)
+      val sampleContact = ContactDetails("fullName", "position", "phoneNumber", "email")
+      implicit val sampleContactAsk = instances[ContactDetails](sampleContact)
+
+      implicit val sampleListQtyWarehouse = SampleListQty[Warehouse](1)
+      val sampleWarehouse =
+        Warehouse("Super Lemonade Plc", Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA"))
+      implicit val sampleWarehouseAsk = instances[Warehouse](sampleWarehouse)
+
+      implicit val sampleListQtyLocalDate = SampleListQty[LocalDate](1)
+      val sampleLocalDate =
+        LocalDate.ofYearDay(2021, 19)
+      implicit val sampleLocalDateAsk = instances[LocalDate](sampleLocalDate)
+
+      val sampleProducer = Producer(true, Some(true))
+      implicit val sampleProducerAsk = instances[Producer](sampleProducer)
+
+      val sampleProducerType = ProducerType.Large
+      implicit val sampleProducerTypeAsk = instances[ProducerType](sampleProducerType)
+
+      val sampleOrganisationType = OrganisationType.soleTrader
+      implicit val sampleOrganisationTypeAsk = instances[OrganisationType](sampleOrganisationType)
+
+      val sampleOrganisationTypeSoleless = OrganisationTypeSoleless.limitedCompany
+      implicit val sampleOrganisationTypeSolelessAsk =
+        instances[OrganisationTypeSoleless](sampleOrganisationTypeSoleless)
+
+      val sampleLongPair = Some((1L, 2L))
+      implicit val sampleLongPairAsk = instances[Option[(Long, Long)]](sampleLongPair)
+
+      implicit val sampleBooleanAsk = instancesF {
+        //    case lossKeys(_) => List(false)
+        case _ => List(true)
+      }
+
+      implicit val sampleStringAsk = instancesF {
+        //    case lossKeys(_) => List(false)
+        case _ => List("")
+      }
 
       val outcome: Either[ReturnVariationData, RegistrationVariationData] = LogicTableInterpreter
         .interpret(
@@ -167,10 +197,105 @@ class VariationsJourneySpec extends WordSpec with Matchers {
         .run
         .asOutcome(true)
 
-      //val returnsVariationData: RegistrationVariationData = outcome.right
-      //returnsVariationData.packingSites.length shouldBe 10
+      val returnsVariationData: Either[ReturnVariationData, RegistrationVariationData] = outcome
+      returnsVariationData shouldBe ???
+    }*/
+
+    //Fixed  could not find implicit value for parameter e: ltbs.uniform.interpreters.logictable.SampleListQty[sdil.models.Address]
+
+    implicit val sampleListQtyAddress = SampleListQty[Address](1)
+    val sampleAddress = Address.fromUkAddress(UkAddress(List("41", "my street", "my town", "my county"), "BN4 4GT"))
+    implicit val sampleAddressAsk = instances[Address](sampleAddress)
+    implicit val sampleWarehouseAsk = instances[Warehouse](sampleWarehouse)
+    implicit val sampleListQtyWarehouse = SampleListQty[Warehouse](1)
+
+    "activityUpdateJourney" in {
+      implicit val sampleBooleanAsk = instancesF {
+        //    case lossKeys(_) => List(false)
+        case _ => List(true)
+      }
+
+      implicit val sampleStringAsk = instancesF {
+        //    case lossKeys(_) => List(false)
+        case _ => List("")
+      }
+
+      val sampleProducerType = ProducerType.Large
+      implicit val sampleProducerTypeAsk = instances[ProducerType](sampleProducerType)
+
+      val sampleLongPair = Some((1L, 2L))
+      implicit val sampleLongPairAsk = instances[Option[(Long, Long)]](sampleLongPair)
+
+      implicit val sampleListQtyLocalDate = SampleListQty[LocalDate](1)
+      val sampleLocalDate =
+        LocalDate.ofYearDay(2021, 19)
+      implicit val sampleLocalDateAsk = instances[LocalDate](sampleLocalDate)
+
+      implicit val sampleListQtyAddress = SampleListQty[Address](10)
+      implicit val sampleListQtySmallProducer = SampleListQty[SmallProducer](5)
+
+      val outcome: RegChange = LogicTableInterpreter
+        .interpret(
+          VariationsJourney.activityUpdateJourney(
+            registeredUserInformation,
+            emptySub,
+            returnPeriods
+          ))
+        .value
+        .run
+        .asOutcome(true)
+
+      val regChange = outcome
+      regChange.data.producer shouldBe ???
     }
 
-  }
+    "changeBusinessAddressJourney" in {
+      implicit val sampleBooleanAsk = instancesF {
+        //    case lossKeys(_) => List(false)
+        case _ => List(true)
+      }
 
+      implicit val sampleStringAsk = instancesF {
+        //    case lossKeys(_) => List(false)
+        case _ => List("")
+      }
+
+      implicit val sampleListQtyContact = SampleListQty[ContactDetails](1)
+      val sampleContact = ContactDetails("fullName", "position", "phoneNumber", "email")
+      implicit val sampleContactAsk = instances[ContactDetails](sampleContact)
+
+      val sampleProducerType = ProducerType.Large
+      implicit val sampleProducerTypeAsk = instances[ProducerType](sampleProducerType)
+
+      val sampleLongPair = Some((1L, 2L))
+      implicit val sampleLongPairAsk = instances[Option[(Long, Long)]](sampleLongPair)
+
+      implicit val sampleListQtyLocalDate = SampleListQty[LocalDate](1)
+      val sampleLocalDate =
+        LocalDate.ofYearDay(2021, 19)
+      implicit val sampleLocalDateAsk = instances[LocalDate](sampleLocalDate)
+
+      implicit val sampleListQtyAddress = SampleListQty[Address](10)
+      implicit val sampleListQtySmallProducer = SampleListQty[SmallProducer](5)
+
+      val sampleContactChangeType = ContactChangeType.ContactPerson
+      implicit val SampleContactChangeTypeAsk = instances[ContactChangeType](sampleContactChangeType)
+
+      implicit lazy val ltiContactChangeType: LTInteraction[Unit, Set[VariationsJourney.ContactChangeType]] =
+        mock[LTInteraction[Unit, Set[VariationsJourney.ContactChangeType]]]
+
+      val outcome: RegChange = LogicTableInterpreter
+        .interpret(
+          VariationsJourney.changeBusinessAddressJourney(
+            sampleSub,
+            validSdilRef
+          ))
+        .value
+        .run
+        .asOutcome(true)
+
+      val regChange = outcome
+      regChange.data.producer shouldBe ???
+    }
+  }
 }

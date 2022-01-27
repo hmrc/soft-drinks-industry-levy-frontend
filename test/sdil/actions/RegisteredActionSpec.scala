@@ -40,7 +40,6 @@ class RegisteredActionSpec extends ControllerSpec with BeforeAndAfterEach {
   lazy val testAction: Action[AnyContent] = testAuthorisedAction(_ => Ok)
   val fakeRequest: FakeRequest[AnyContent] = FakeRequest()
 
-  val irCtEnrolment = EnrolmentIdentifier("UTR", "1111111111")
   val enrolments = Enrolments(Set(new Enrolment("IR-CT", Seq(irCtEnrolment), "Active")))
 
   val validRetrievedSubscription = RetrievedSubscription(

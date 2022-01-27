@@ -16,17 +16,20 @@
 
 package sdil.journeys
 
+import cats.implicits._
+import cats.~>
 import ltbs.uniform.UniformMessages
-import ltbs.uniform.interpreters.logictable.LogicTableInterpreter
+import ltbs.uniform.interpreters.logictable.{Logic, LogicTableInterpreter, SampleListQty}
 import org.scalatest.{Matchers, WordSpec}
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.twirl.api.Html
 import sdil.controllers.{ControllerSpec, RegistrationController}
-import sdil.models.{Address, ContactDetails, DetailsCorrect, Litreage, OrganisationDetails, Producer, RegistrationFormData, RosmRegistration}
-import sdil.models.backend.{Site, Subscription}
+import sdil.models.{Address, ContactDetails, DetailsCorrect, Litreage, OrganisationDetails, Producer, RegistrationFormData, RosmRegistration, Warehouse}
+import sdil.models.backend.{Site, Subscription, UkAddress}
+import sdil.uniform.SdilComponents.{OrganisationType, OrganisationTypeSoleless, ProducerType}
 
 import java.time.LocalDate
 import scala.concurrent.{Await, Future, duration}
-import duration._
 import duration._
 
 class RegistrationJourneySpec extends WordSpec with Matchers {
@@ -88,14 +91,67 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
 
   "RegistrationJourney" should {
     "construct a subscription" in {
+
       implicit val messages: UniformMessages[Html] = new UniformMessages[Html] {
-        override def get(key: String, args: Any*): Option[Html] = None
-
-        override def list(key: String, args: Any*): List[Html] = List()
+        override def get(key: String, args: Any*): Option[Html] = Some(Html("You do not need to register"))
+        override def list(key: String, args: Any*): List[Html] = List(Html("You do not need to register"))
       }
-      def backendCall(s: Subscription): Future[Unit] = Future.successful(Unit)
 
-      val outcome: (Subscription) = LogicTableInterpreter
+      def backendCall(s: Subscription): Future[Unit] = Future.successful(s)
+
+      //NO UK
+      implicit val sampleListQtyAddress = SampleListQty[Address](0)
+      val sampleAddress = Address.fromUkAddress(UkAddress(List(), ""))
+      implicit val sampleAddressAsk = instances[Address](sampleAddress)
+
+      //1 CONTACT
+      implicit val sampleListQtyContact = SampleListQty[ContactDetails](1)
+      val sampleContact = ContactDetails("fullName", "position", "phoneNumber", "email")
+      implicit val sampleContactAsk = instances[ContactDetails](sampleContact)
+
+      //GIVING 1 WAREHOUSE
+      implicit val sampleListQtyWarehouse = SampleListQty[Warehouse](1)
+      val sampleWarehouse =
+        Warehouse("Super Lemonade Plc", Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA"))
+      implicit val sampleWarehouseAsk = instances[Warehouse](sampleWarehouse)
+
+      //LOCAL DATE
+      implicit val sampleListQtyLocalDate = SampleListQty[LocalDate](1)
+      val sampleLocalDate =
+        LocalDate.ofYearDay(2021, 19)
+      implicit val sampleLocalDateAsk = instances[LocalDate](sampleLocalDate)
+
+      //isProducer: Boolean, isLarge: Option[Boolean]
+      val sampleProducer = Producer(isProducer = true, isLarge = Some(false))
+      implicit val sampleProducerAsk = instances[Producer](sampleProducer)
+
+      //sampleProducerType Large or Small
+      val sampleProducerType = ProducerType.Small
+      implicit val sampleProducerTypeAsk = instances[ProducerType](sampleProducerType)
+
+      //Oragnisation Type (SoleTrader, partnership.....)
+      val sampleOrganisationType = OrganisationType.soleTrader
+      implicit val sampleOrganisationTypeAsk = instances[OrganisationType](sampleOrganisationType)
+
+      //sampleOrganisationTypeSoleless limited company
+      val sampleOrganisationTypeSoleless = OrganisationTypeSoleless.limitedCompany
+      implicit val sampleOrganisationTypeSolelessAsk =
+        instances[OrganisationTypeSoleless](sampleOrganisationTypeSoleless)
+
+      val sampleLongPair = None
+      implicit val sampleLongPairAsk = instances[Option[(Long, Long)]](sampleLongPair)
+
+      implicit val sampleBooleanAsk = instancesF {
+        //    case lossKeys(_) => List(false)
+        case _ => List(false)
+      }
+
+      implicit val naturalTransformation = new (Future ~> Logic) {
+        override def apply[A](fa: Future[A]): Logic[A] =
+          Await.result(fa, 30 seconds).pure[Logic]
+      }
+
+      val outcome: Subscription = LogicTableInterpreter
         .interpret(
           RegistrationController.journey(
             true,
@@ -108,5 +164,143 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
       val subscription: Subscription = outcome
       subscription.utr shouldBe ("1234567890")
     }
+
+    "construct display error" in {
+
+      implicit val messages: UniformMessages[Html] = new UniformMessages[Html] {
+        override def get(key: String, args: Any*): Option[Html] = None
+        override def list(key: String, args: Any*): List[Html] = List()
+
+      }
+      def backendCall(s: Subscription): Future[Unit] = Future.successful(s)
+
+      implicit val sampleListQtyAddress = SampleListQty[Address](1)
+      val sampleAddress = Address.fromUkAddress(UkAddress(List("41", "my street", "my town", "my county"), "BN4 4GT"))
+      implicit val sampleAddressAsk = instances[Address](sampleAddress)
+
+      implicit val sampleListQtyContact = SampleListQty[ContactDetails](1)
+      val sampleContact = ContactDetails("fullName", "position", "phoneNumber", "email")
+      implicit val sampleContactAsk = instances[ContactDetails](sampleContact)
+
+      implicit val sampleListQtyWarehouse = SampleListQty[Warehouse](1)
+      val sampleWarehouse =
+        Warehouse("Super Lemonade Plc", Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA"))
+      implicit val sampleWarehouseAsk = instances[Warehouse](sampleWarehouse)
+
+      implicit val sampleListQtyLocalDate = SampleListQty[LocalDate](1)
+      val sampleLocalDate =
+        LocalDate.ofYearDay(2021, 19)
+      implicit val sampleLocalDateAsk = instances[LocalDate](sampleLocalDate)
+
+      val sampleProducer = Producer(true, Some(true))
+      implicit val sampleProducerAsk = instances[Producer](sampleProducer)
+
+      val sampleProducerType = ProducerType.Small
+      implicit val sampleProducerTypeAsk = instances[ProducerType](sampleProducerType)
+
+      val sampleOrganisationType = OrganisationType.soleTrader
+      implicit val sampleOrganisationTypeAsk = instances[OrganisationType](sampleOrganisationType)
+
+      val sampleOrganisationTypeSoleless = OrganisationTypeSoleless.limitedCompany
+      implicit val sampleOrganisationTypeSolelessAsk =
+        instances[OrganisationTypeSoleless](sampleOrganisationTypeSoleless)
+
+      val sampleLongPair = None
+      implicit val sampleLongPairAsk = instances[Option[(Long, Long)]](sampleLongPair)
+
+      implicit val sampleBooleanAsk = instancesF {
+        //    case lossKeys(_) => List(false)
+        case _ => List(true)
+      }
+
+      implicit val naturalTransformation = new (Future ~> Logic) {
+        override def apply[A](fa: Future[A]): Logic[A] =
+          Await.result(fa, 30 seconds).pure[Logic]
+      }
+
+      val outcome: Subscription = LogicTableInterpreter
+        .interpret(
+          RegistrationController.journey(
+            true,
+            defaultFormData,
+            backendCall
+          ))
+        .value
+        .run
+        .asOutcome(true)
+      val subscription: Subscription = outcome
+      subscription.utr shouldBe ("1234567890")
+    }
+
+    //TODO end("do-not-register", noReg) when (noUkActivity && smallProducerWithNoCopacker)
+
+    "construct display error 2" in {
+      implicit val messages: UniformMessages[Html] = new UniformMessages[Html] {
+        override def get(key: String, args: Any*): Option[Html] = None
+
+        override def list(key: String, args: Any*): List[Html] = List()
+      }
+      def backendCall(s: Subscription): Future[Unit] = Future.successful(s)
+
+      //Ordered Steps
+      val sampleOrganisationType = OrganisationType.soleTrader
+      implicit val sampleOrganisationTypeAsk = instances[OrganisationType](sampleOrganisationType)
+
+      val sampleProducerType = ProducerType.Small
+      implicit val sampleProducerTypeAsk = instances[ProducerType](sampleProducerType)
+
+      //Asked if producer is small
+      implicit val sampleBooleanAsk = instancesF {
+        //    case lossKeys(_) => List(false)
+        case _ => List(true)
+      }
+
+      val sampleProducer = Producer(true, Some(true))
+      implicit val sampleProducerAsk = instances[Producer](sampleProducer)
+
+      implicit val sampleListQtyAddress = SampleListQty[Address](1)
+      val sampleAddress = Address.fromUkAddress(UkAddress(List(), ""))
+      implicit val sampleAddressAsk = instances[Address](sampleAddress)
+
+      implicit val sampleListQtyContact = SampleListQty[ContactDetails](1)
+      val sampleContact = ContactDetails("fullName", "position", "phoneNumber", "email")
+      implicit val sampleContactAsk = instances[ContactDetails](sampleContact)
+
+      implicit val sampleListQtyWarehouse = SampleListQty[Warehouse](1)
+      val sampleWarehouse =
+        Warehouse("Super Lemonade Plc", Address("1 Warehouse Site St", "Warehouse Site Town", "", "", "AA11 1AA"))
+      implicit val sampleWarehouseAsk = instances[Warehouse](sampleWarehouse)
+
+      implicit val sampleListQtyLocalDate = SampleListQty[LocalDate](1)
+      val sampleLocalDate =
+        LocalDate.ofYearDay(2021, 19)
+      implicit val sampleLocalDateAsk = instances[LocalDate](sampleLocalDate)
+
+      val sampleOrganisationTypeSoleless = OrganisationTypeSoleless.limitedCompany
+      implicit val sampleOrganisationTypeSolelessAsk =
+        instances[OrganisationTypeSoleless](sampleOrganisationTypeSoleless)
+
+      val sampleLongPair = Some((1L, 2L))
+      implicit val sampleLongPairAsk = instances[Option[(Long, Long)]](sampleLongPair)
+
+      implicit val naturalTransformation = new (Future ~> Logic) {
+        override def apply[A](fa: Future[A]): Logic[A] =
+          Await.result(fa, 30 seconds).pure[Logic]
+      }
+
+      val outcome: Subscription = LogicTableInterpreter
+        .interpret(
+          RegistrationController.journey(
+            true,
+            defaultFormData,
+            backendCall
+          ))
+        .value
+        .run
+        .asOutcome(true)
+      val subscription: Subscription = outcome
+      subscription.utr shouldBe ("1234567890")
+    }
+
   }
 }
