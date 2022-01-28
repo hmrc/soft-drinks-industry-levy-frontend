@@ -190,7 +190,7 @@
                             <details role="group">
                                 <summary aria-controls="details-content-1" aria-expanded="false">
                                     <span class="summary">
-                                    @site.getLines.head
+                                    @if(site.getLines.head.nonEmpty) {@site.getLines.head} else {@site.getLines.tail.head}
                                     </span>
                                 </summary>
                                 @for(line <- site.getLines.tail.dropRight(1)) {
