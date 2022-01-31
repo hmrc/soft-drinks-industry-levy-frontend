@@ -126,7 +126,7 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
       implicit val sampleProducerAsk = instances[Producer](sampleProducer)
 
       //sampleProducerType Large or Small
-      val sampleProducerType = ProducerType.Small
+      val sampleProducerType = ProducerType.Large
       implicit val sampleProducerTypeAsk = instances[ProducerType](sampleProducerType)
 
       //Oragnisation Type (SoleTrader, partnership.....)
@@ -138,11 +138,10 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
       implicit val sampleOrganisationTypeSolelessAsk =
         instances[OrganisationTypeSoleless](sampleOrganisationTypeSoleless)
 
-      val sampleLongPair = None
+      val sampleLongPair = Some((1L, 2L))
       implicit val sampleLongPairAsk = instances[Option[(Long, Long)]](sampleLongPair)
 
       implicit val sampleBooleanAsk = instancesF {
-        //    case lossKeys(_) => List(false)
         case _ => List(false)
       }
 
@@ -162,16 +161,16 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
         .run
         .asOutcome(true)
       val subscription: Subscription = outcome
-      subscription.utr shouldBe ("1234567890")
+      subscription.utr shouldBe None
     }
 
     "construct display error" in {
 
       implicit val messages: UniformMessages[Html] = new UniformMessages[Html] {
-        override def get(key: String, args: Any*): Option[Html] = None
-        override def list(key: String, args: Any*): List[Html] = List()
-
+        override def get(key: String, args: Any*): Option[Html] = Some(Html("You do not need to register"))
+        override def list(key: String, args: Any*): List[Html] = List(Html("You do not need to register"))
       }
+
       def backendCall(s: Subscription): Future[Unit] = Future.successful(s)
 
       implicit val sampleListQtyAddress = SampleListQty[Address](1)
@@ -195,7 +194,7 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
       val sampleProducer = Producer(true, Some(true))
       implicit val sampleProducerAsk = instances[Producer](sampleProducer)
 
-      val sampleProducerType = ProducerType.Small
+      val sampleProducerType = ProducerType.Large
       implicit val sampleProducerTypeAsk = instances[ProducerType](sampleProducerType)
 
       val sampleOrganisationType = OrganisationType.soleTrader
@@ -205,7 +204,7 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
       implicit val sampleOrganisationTypeSolelessAsk =
         instances[OrganisationTypeSoleless](sampleOrganisationTypeSoleless)
 
-      val sampleLongPair = None
+      val sampleLongPair = Some((1L, 2L))
       implicit val sampleLongPairAsk = instances[Option[(Long, Long)]](sampleLongPair)
 
       implicit val sampleBooleanAsk = instancesF {
@@ -236,10 +235,10 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
 
     "construct display error 2" in {
       implicit val messages: UniformMessages[Html] = new UniformMessages[Html] {
-        override def get(key: String, args: Any*): Option[Html] = None
-
-        override def list(key: String, args: Any*): List[Html] = List()
+        override def get(key: String, args: Any*): Option[Html] = Some(Html("You do not need to register"))
+        override def list(key: String, args: Any*): List[Html] = List(Html("You do not need to register"))
       }
+
       def backendCall(s: Subscription): Future[Unit] = Future.successful(s)
 
       //Ordered Steps

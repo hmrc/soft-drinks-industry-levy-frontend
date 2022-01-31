@@ -103,7 +103,7 @@ class RegistrationControllerSpec extends ControllerSpec {
 
       val result = controller.index("idvalue").apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some("/soft-drinks-industry-levy/register/start")
+      redirectLocation(result) mustEqual Some("organisation-type")
     }
   }
 }

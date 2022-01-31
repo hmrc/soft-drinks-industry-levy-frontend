@@ -54,11 +54,11 @@ class ReturnsControllerSpec extends ControllerSpec {
 
       val result = controller.index(2018, 1, nilReturn = false, "idvalue").apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(value = routes.ServicePageController.show().url)
+      redirectLocation(result) mustEqual Some("/soft-drinks-industry-levy")
     }
 
     // TODO: Fix it
-    "execute index journey" ignore {
+    "execute index journey" in {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
@@ -71,7 +71,7 @@ class ReturnsControllerSpec extends ControllerSpec {
 
       val result = controller.index(2018, 1, nilReturn = false, "idvalue").apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(value = routes.ServicePageController.show().url)
+      redirectLocation(result) mustEqual Some("own-brands-packaged-at-own-sites")
     }
 
     "execute index journey and throw a NoSuchElementException" in {

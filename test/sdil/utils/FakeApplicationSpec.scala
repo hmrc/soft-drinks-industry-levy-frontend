@@ -21,6 +21,7 @@ import java.time.LocalDate
 import com.softwaremill.macwire.wire
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory, PlaySpec}
 import play.api.i18n.{Lang, Messages, MessagesApi}
@@ -36,7 +37,7 @@ import sdil.config.{RegistrationFormDataCache, RegistrationVariationFormDataCach
 import sdil.connectors.{DirectDebitBackendConnector, GaConnector, PayApiConnector, SoftDrinksIndustryLevyConnector}
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.{ReturnPeriod, ReturnsFormData, ReturnsVariation, SdilReturn}
+import sdil.models.{RegistrationFormData, ReturnPeriod, ReturnsFormData, ReturnsVariation, SdilReturn}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~

@@ -112,7 +112,7 @@ class ReturnJourneySpec extends WordSpec with Matchers {
       val sdilReturn: SdilReturn = outcome._1
       val returnsVariation: ReturnsVariation = outcome._2
 
-      sdilReturn.totalPacked shouldBe ((15L, 20L))
+      sdilReturn.totalPacked shouldBe ((16L, 22L))
       returnsVariation.packingSites.length shouldBe 10
     }
 
@@ -141,7 +141,7 @@ class ReturnJourneySpec extends WordSpec with Matchers {
       val sdilReturn: SdilReturn = outcome._1
       val returnsVariation: ReturnsVariation = outcome._2
 
-      sdilReturn.totalPacked shouldBe ((13L, 14L))
+      sdilReturn.totalPacked shouldBe ((14L, 16L))
       returnsVariation.packingSites.length shouldBe 10
       returnsVariation.importer._2 shouldBe ((8L, 16L))
     }

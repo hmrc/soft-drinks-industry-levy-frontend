@@ -40,6 +40,7 @@ package object journeys {
             println(s"   => $outcome")
         }
       }
+
       in.head._2 match {
         case Right(a)        => a
         case Left(errorTree) => errorTree.toThrowable
