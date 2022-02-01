@@ -188,7 +188,7 @@ object VariationsJourney {
       noUkActivity = (copacks, imports).isEmpty
       smallProducerWithNoCopacker = producerType != ProducerType.Large && !useCopacker
       shouldDereg = noUkActivity && smallProducerWithNoCopacker
-      packer = (producerType == ProducerType.Large && packageOwn.nonEmpty) || copacks.nonEmpty
+      packer = (producerType == ProducerType.Large && packageOwn.nonEmpty) || (copacks._1 > 0L || copacks._2 > 0L)
       isVoluntary = subscription.activity.voluntaryRegistration
 
       variation <- if (shouldDereg) {
@@ -222,7 +222,7 @@ object VariationsJourney {
                                   ).map(_.map(Site.fromAddress)) emptyUnless packer
                       isVoluntary = producerType == ProducerType.Small && useCopacker && (copacks, imports).isEmpty
                       warehouses <- askListSimple[Warehouse](
-                                     "warehouses",
+                                     "secondary-warehouse-details",
                                      "w-house",
                                      default = data.updatedWarehouseSites.toList.map(Warehouse.fromSite).some
                                    ).map(_.map(Site.fromWarehouse)) emptyUnless !isVoluntary
@@ -233,7 +233,7 @@ object VariationsJourney {
                             Producer(producerType != ProducerType.XNot, (producerType == ProducerType.Large).some),
                           usesCopacker = useCopacker.some,
                           packageOwn = packageOwn.nonEmpty.some,
-                          packageOwnVol = longTupToLitreage(packageOwn.getOrElse((0, 0))),
+                          packageOwnVol = longTupToLitreage(packageOwn),
                           copackForOthers = copacks.nonEmpty,
                           copackForOthersVol = longTupToLitreage(copacks),
                           imports = imports.nonEmpty,
