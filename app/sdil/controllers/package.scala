@@ -63,6 +63,12 @@ package object controllers {
       ask[A](s"$subKey", default = index.map(existing), validation = elementValidation)
   }
 
+  def longTupToLitreage(inOpt: Option[(Long, Long)]): Option[Litreage] =
+    inOpt match {
+      case Some(in) => longTupToLitreage(in)
+      case _        => None
+    }
+
   def longTupToLitreage(in: (Long, Long)): Option[Litreage] =
     if (in.isEmpty) None else Litreage(in._1, in._2).some
 
