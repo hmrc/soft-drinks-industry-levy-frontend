@@ -753,6 +753,7 @@ producer.help.2=<h2>Liable drinks</h2>\
    total diet replacement or dietary food used for special medical purposes</li></ul>
 
 heading.copacked=Do you use any third parties in the UK to package liable drinks on your behalf?
+copacked.required=Select yes if you use any third parties in the UK to package liable drinks on your behalf
 
 heading.package-own-uk=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
 package-own-uk.inner-heading=How many litres will you package in the next 12 months?
