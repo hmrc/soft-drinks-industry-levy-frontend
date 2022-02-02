@@ -23,8 +23,7 @@ import play.api.test.Helpers._
 import sdil.models._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
-import uk.gov.hmrc.http.{CoreDelete, CoreGet, CorePut, HeaderCarrier}
+import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.Future
 
 class ReturnsControllerSpec extends ControllerSpec {
@@ -146,15 +145,5 @@ class ReturnsControllerSpec extends ControllerSpec {
     }
 
   }
-
-//  lazy val shortLivedCaching: ShortLivedHttpCaching = new ShortLivedHttpCaching {
-//    override def baseUri: String = ???
-//    override def domain: String = ???
-//    override def defaultSource: String = ???
-//    override def http: CoreGet with CorePut with CoreDelete = ???
-//  }
   lazy val hc: HeaderCarrier = HeaderCarrier()
-
-  // DATA OUT:Map(claim-credits-for-exports -> {"lower":6789,"higher":2345}, packaged-as-a-contract-packer -> {"lower":1234579,"higher":2345679}, claim-credits-for-lost-damaged -> {"lower":123,"higher":234}, brought-into-uk-from-small-producers -> {"lower":1234,"higher":2345}, _editSmallProducers -> false, own-brands-packaged-at-own-sites -> {"lower":123234,"higher":2340000}, small-producer-details -> "Done", return-change-registration -> null, brought-into-uk -> {"lower":1234562,"higher":2345672}, ask-secondary-warehouses-in-return -> false, exemptions-for-small-producers -> false)
-
 }

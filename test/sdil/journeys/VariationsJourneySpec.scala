@@ -18,25 +18,21 @@ package sdil.journeys
 
 import cats.implicits._
 import cats.~>
-import ltbs.uniform.UniformMessages
 import ltbs.uniform.interpreters.logictable._
-import org.checkerframework.checker.units.qual.s
 import org.scalatest.{Matchers, _}
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.journeys.VariationsJourney.Change.RegChange
-import sdil.models.backend.{Activity, Contact, Subscription, UkAddress}
+import sdil.models.backend.{Contact, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.variations.{RegistrationVariationData, ReturnVariationData}
+import sdil.models.variations.RegistrationVariationData
 import sdil.models.{Address, ContactDetails, Producer, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
-import uk.gov.hmrc.http.HeaderCarrier
 import sdil.uniform.SdilComponents._
 import sdil.journeys.VariationsJourney._
 
 import java.time.LocalDate
-import scala.concurrent.{Await, ExecutionContext, Future, duration}
+import scala.concurrent.{Await, Future, duration}
 import duration._
 
 class VariationsJourneySpec extends WordSpec with Matchers {
@@ -120,7 +116,7 @@ class VariationsJourneySpec extends WordSpec with Matchers {
     implicit val sampleWarehouseAsk = instances[Warehouse](sampleWarehouse)
     implicit val sampleListQtyWarehouse = SampleListQty[Warehouse](1)
 
-    "activityUpdateJourney" in {
+    "activityUpdateJourney update  subscription" in {
       implicit val sampleBooleanAsk = instancesF {
         //    case lossKeys(_) => List(false)
         case _ => List(true)
@@ -160,7 +156,6 @@ class VariationsJourneySpec extends WordSpec with Matchers {
       regChange.data.original shouldBe emptySub
     }
 
-    //TODO GO TO DEREGISTER IN ACTIVITY UPDATE JOURNEY
     "activityUpdateJourney deregister" in {
       implicit val sampleBooleanAsk = instancesF {
         //    case lossKeys(_) => List(false)

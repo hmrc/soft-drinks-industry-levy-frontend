@@ -20,7 +20,6 @@ import cats.implicits._
 import cats.~>
 import ltbs.uniform.interpreters.logictable._
 import org.scalatest.{Matchers, _}
-import org.scalatestplus.mockito.MockitoSugar.mock
 import sdil.models.backend.{Contact, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.{Address, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}

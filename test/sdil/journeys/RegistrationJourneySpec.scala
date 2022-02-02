@@ -21,7 +21,6 @@ import cats.~>
 import ltbs.uniform.UniformMessages
 import ltbs.uniform.interpreters.logictable.{Logic, LogicTableInterpreter, SampleListQty}
 import org.scalatest.{Matchers, WordSpec}
-import org.scalatestplus.mockito.MockitoSugar.mock
 import play.twirl.api.Html
 import sdil.controllers.{ControllerSpec, RegistrationController}
 import sdil.models.{Address, ContactDetails, DetailsCorrect, Litreage, OrganisationDetails, Producer, RegistrationFormData, RosmRegistration, Warehouse}

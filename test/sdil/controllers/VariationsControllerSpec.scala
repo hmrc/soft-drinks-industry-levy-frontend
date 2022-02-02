@@ -19,16 +19,10 @@ import org.mockito.ArgumentMatchers.{any, eq => matching, _}
 import org.mockito.Mockito._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import sdil.journeys.instances
-import sdil.models.Address
-import sdil.models.backend.UkAddress
-import sdil.models.variations.RegistrationVariationData
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
-import uk.gov.hmrc.http.cache.client.CacheMap
 
-import java.time.LocalDate
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class VariationsControllerSpec extends ControllerSpec {
 
@@ -64,37 +58,11 @@ class VariationsControllerSpec extends ControllerSpec {
       status(result) mustEqual NOT_FOUND
     }
 
-    "When a user has enrolled with no subscirption they are directed to the first step in the change business address journey" in {
+    "When a user has enrolled with a subscirption they are directed to the first step in the change business address journey" in {
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
       when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
         Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
       }
-      val result = controller.changeAddressAndContact("idvalue").apply(FakeRequest())
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some("change-business-address")
-    }
-
-    "When a user has enrolled without a subscirption " in {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "")
-      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
-        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
-      }
-
-      when(mockSdilConnector.retrieveSubscription(matching(""), anyString())(any())).thenReturn {
-        Future.successful(None)
-      }
-
-      val result = controller.changeAddressAndContact("idvalue").apply(FakeRequest())
-      status(result) mustEqual SEE_OTHER
-    }
-
-    //TODO
-    "When a user has enrolled with a subscription and has started the journey they are taken to the change business address page" in {
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
-      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
-        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
-      }
-
       val result = controller.changeAddressAndContact("idvalue").apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
       redirectLocation(result) mustEqual Some("change-business-address")
@@ -135,20 +103,6 @@ class VariationsControllerSpec extends ControllerSpec {
       redirectLocation(result) mustEqual Some("select-change")
     }
 
-    //TODO
-    "redirect to " in {
-
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
-      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
-        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
-      }
-
-      val result = controller.index("").apply(FakeRequest())
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some("/select-change")
-    }
-
-    //TODO NOT PASSING LINE 197
     "show variations complete" in {
       val sdilRef = "XKSDIL000000040"
       val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", sdilRef)
