@@ -793,6 +793,8 @@ change-registered-details.button.paragraph=Changes can take up to 15 working day
 change-registered-details.required=Select at least one option to continue
 
 heading.ask-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+ask-secondary-warehouses.required=Select yes if you want to register any of the UK warehouses you use to store liable drinks
+
 heading.ask-secondary-warehouses-in-return=Do you want to register any UK warehouses you use to store liable drinks?
 ask-secondary-warehouses-in-return.required=Select yes if you want to register any UK warehouses you use to store liable drinks
 ask-secondary-warehouses-in-return.help.header=Why should I register a warehouse?
