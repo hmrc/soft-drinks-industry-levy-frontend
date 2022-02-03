@@ -111,7 +111,7 @@ object RegistrationController {
       smallProducerWithNoCopacker = producerType != ProducerType.Large && useCopacker.forall(_ == false)
       noReg = uniform.fragments.registration_not_required()(implicitly)
       _ <- end("do-not-register", noReg) when (smallProducerWithNoCopacker && noUkActivity == true)
-      isVoluntary = producerType == ProducerType.Small && useCopacker.contains(true) && (copacks, imports).isEmpty
+      isVoluntary = producerType == ProducerType.Small && useCopacker.contains(true) && (copacks._1 + copacks._2 == 0L && imports._1 + imports._2 == 0L)
       regDate <- ask[LocalDate](
                   "start-date",
                   validation =
