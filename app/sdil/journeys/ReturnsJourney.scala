@@ -139,7 +139,7 @@ object ReturnsJourney {
                                        "warehouse-in-return",
                                        listValidation = Rule.nonEmpty[List[Warehouse]]
                                      ) map (_.map(Site.fromWarehouse)) emptyUnless addWarehouses
-                      } yield warehouses) when isNewImporter //&& subscription.warehouseSites.isEmpty
+                      } yield warehouses) when isNewImporter && subscription.warehouseSites.isEmpty
       data = returnAmount(sdilReturn, isSmallProd)
       subtotal = calculateSubtotal(data)
       total = subtotal - broughtForward
