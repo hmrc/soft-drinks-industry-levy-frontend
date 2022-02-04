@@ -35,7 +35,8 @@ import views.html.main_template
 import java.time.{LocalDate, LocalTime, ZoneId}
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.language.higherKinds
 
 class ReturnsController @Inject()(
@@ -62,6 +63,24 @@ class ReturnsController @Inject()(
       val sdilRef = request.sdilEnrolment.value
       val period = ReturnPeriod(year, quarter)
       val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
+
+      //THIS CHECKS IF THEY HAVE MADE A PAYMENT
+      def madeClaim(): Boolean = {
+        val balanceHistory: Future[List[(FinancialLineItem, BigDecimal)]] =
+          sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+            listItemsWithTotal(x)
+          }
+        val lineItems: List[(FinancialLineItem, BigDecimal)] = Await.result(balanceHistory, 20.seconds)
+        var canClaim: Boolean = false
+        for ((item, runningTotal) <- lineItems.filter(lineItem => lineItem._1.date.getYear == year)) {
+          if (item.amount > 0) {
+            canClaim = true
+          }
+        }
+        canClaim
+      }
+
+      val canClaim: Boolean = madeClaim()
 
       (for {
         subscription   <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
@@ -112,7 +131,8 @@ class ReturnsController @Inject()(
                       checkSmallProducerStatus,
                       submitReturnVariation,
                       broughtForward,
-                      isSmallProd
+                      isSmallProd,
+                      canClaim
                     )
                 ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
                   submitReturn(ret._1).flatMap { _ =>
