@@ -86,7 +86,6 @@ object RegistrationController {
     backendCall: Subscription => Future[Unit]
   )(implicit ufMessages: UniformMessages[Html]) =
     for {
-
       orgType <- if (hasCTEnrolment) ask[OrganisationTypeSoleless]("organisation-type")
                 else ask[OrganisationType]("organisation-type")
       _            <- end("partnerships", uniform.fragments.partnerships()(_: Messages)) when (orgType.entryName == OrganisationType.partnership.entryName)
@@ -186,7 +185,7 @@ object RegistrationController {
           phoneNumber = contactDetails.phoneNumber,
           email = contactDetails.email
         )
-      ) //return subscription
+      )
       _ <- convertWithKey("submission")(backendCall(subscription))
       _ <- nonReturn("reg-complete")
       _ <- end(
@@ -201,5 +200,4 @@ object RegistrationController {
             }
           )
     } yield subscription
-
 }
