@@ -170,9 +170,8 @@ object ReturnsJourney {
               variation = variation.some,
               subscription = subscription,
               originalReturn = None
-            )(_: Messages)
-            //TODO: Custom Content doesn't appear to be working
-//        , customContent = message("heading.check-your-answers.orgName", subscription.orgName)
+            )(_: Messages),
+            customContent = message("heading.check-answers.orgName", subscription.orgName)
           )
     } yield (sdilReturn, variation)
 }
