@@ -86,20 +86,22 @@ object ReturnsJourney {
                        ask[SmallProducer](
                          s"add-small-producer",
                          default = index.map(existing),
-                         validation = Rule.condAtPath("sdilRef")(
+                         validation = Rule.condAtPath[SmallProducer]("sdilRef")(
                            sp => Await.result(checkSmallProducerStatus(sp.sdilRef, period), 20.seconds).getOrElse(true),
                            "notSmall"
+                         ) followedBy Rule.condAtPath[SmallProducer]("sdilRef")(
+                           sp =>
+                             existing
+                               .map(
+                                 existingSmallProds => sp.sdilRef =!= existingSmallProds.sdilRef
+                               )
+                               .headOption
+                               .getOrElse(true),
+                           "alreadyexists"
+                         ) followedBy Rule.condAtPath[SmallProducer]("sdilRef")(
+                           sp => !(sp.sdilRef === subscription.sdilRef),
+                           "error.sdilref.same"
                          )
-//                     TODO: Check with Luke why followedBy doesn't work here
-//                           Rule.condAtPath("sdilRef")(
-//                           sp => existing.map(
-//                             existingSmallProds => sp.sdilRef =!= existingSmallProds.sdilRef
-//                           ).headOption.getOrElse(true),
-//                           "alreadyexists"
-//                         ) followedBy Rule.condAtPath("sdilRef")(
-//                           sp => !(sp.sdilRef === subscription.sdilRef),
-//                           "error.sdilref.same"
-//                         )
                        )
                    } emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
                      _.packSmall.nonEmpty
