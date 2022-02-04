@@ -25,7 +25,9 @@ import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
 import views.html.uniform
+import views.uniform.fragments.returnsCYACantClaim
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
@@ -67,7 +69,8 @@ object ReturnsJourney {
     checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
     submitReturnVariation: ReturnsVariation => Future[Unit],
     broughtForward: BigDecimal,
-    isSmallProd: Boolean
+    isSmallProd: Boolean,
+    canClaim: Boolean = false
   ) =
     for {
       ownBrands <- askEmptyOption[(Long, Long)](
@@ -155,6 +158,7 @@ object ReturnsJourney {
         taxEstimation = taxEstimation(sdilReturn)
       )
       _ <- convertWithKey("vary-in-return")(submitReturnVariation(variation))
+
       _ <- tell(
             "check-your-answers",
             uniform.fragments.returnsCYA(
@@ -171,6 +175,23 @@ object ReturnsJourney {
             )(_: Messages)
             //TODO: Custom Content doesn't appear to be working
 //        , customContent = message("heading.check-your-answers.orgName", subscription.orgName)
-          )
+          ) when canClaim == true
+      _ <- tell(
+            "check-your-answers",
+            returnsCYACantClaim(
+              key = "check-your-answers",
+              lineItems = data,
+              costLower = costLower,
+              costHigher = costHigher,
+              subtotal = subtotal,
+              broughtForward = broughtForward,
+              total = total,
+              variation = variation.some,
+              subscription = subscription,
+              originalReturn = None
+            )(_: Messages)
+            //TODO: Custom Content doesn't appear to be working
+            //        , customContent = message("heading.check-your-answers.orgName", subscription.orgName)
+          ) when canClaim == false
     } yield (sdilReturn, variation)
 }
