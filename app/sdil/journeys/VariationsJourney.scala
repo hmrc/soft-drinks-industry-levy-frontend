@@ -220,7 +220,7 @@ object VariationsJourney {
                                     default = pSites.some,
                                     listValidation = Rule.nonEmpty[List[Address]]
                                   ).map(_.map(Site.fromAddress)) emptyUnless packer
-                      isVoluntary = producerType == ProducerType.Small && useCopacker && (copacks, imports).isEmpty
+                      isVoluntary = producerType == ProducerType.Small && useCopacker && (copacks._1 + copacks._2 + imports._1 + imports._2) == 0
                       warehouses <- askListSimple[Warehouse](
                                      "secondary-warehouse-details",
                                      "w-house",
