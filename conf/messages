@@ -616,7 +616,7 @@ package-copack.Some.value._1.min=Number of litres must be 1 or more
 package-copack.Some.value._2.min=Number of litres must be 1 or more
 package-copack.Some.value.subfield.help.header=What are the bands?
 package-copack.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p> \
-  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
+  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
 package-copack.Some.value.subfield.help.header.1=I do not know how many litres
 package-copack.Some.value.subfield.help.1=If you do not have the exact volumes you can enter an estimate.
 
@@ -632,11 +632,12 @@ import.Some.value._2.min=Number of litres must be 1 or more
 import.Some.value=<h2 class="heading-medium">How many litres will you bring into the UK in the next 12 months?</h2>
 import.Some.value._1=Litres in the low band
 import.Some.value._2=Litres in the high band
-import.subfieldDetailHeader=What are the bands?
-import.subfieldDetailBody=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p> \
-  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
-import.subfieldDetailHeader.1=I do not know how many litres
-import.subfieldDetailBody.1=If you do not have the exact volumes you can enter an estimate.
+import.Some.value.subfield.help.header=What are the bands?
+import.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p> \
+  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
+import.Some.value.subfield.help.header.1=I do not know how many litres
+import.Some.value.subfield.help.1=If you do not have the exact volumes you can enter an estimate.
+
 error.radio-form.choose-option.imports=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
 pack-at-business-address.required=Select yes if your registered business address is a UK\
    packaging site that you operate to produce liable drinks
@@ -897,7 +898,7 @@ packaging-site.Some.value._2.required=Enter the number of litres in the high ban
 packaging-site.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
 packaging-site.Some.value.subfield.help.header.1=What are the bands?
 packaging-site.Some.value.subfield.help.1=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p> \
-<p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
+<p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
 packaging-site.Some.value.subfield.help.header.2=I do not know how many litres
 packaging-site.Some.value.subfield.help.2=If you do not have the exact volumes you can enter an estimate.
 
@@ -1295,10 +1296,10 @@ brought-into-uk-from-small-producers.help=<p>If you are a registered small produ
 brought-into-uk-from-small-producers.Some.value=<h2 class="heading-medium">How many litres?</h2>
 brought-into-uk.Some.value.subfield.help.header=What are the bands?
 brought-into-uk.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p> \
-  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
+  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
 brought-into-uk-from-small-producers.Some.value.subfield.help.header=What are the bands?
 brought-into-uk-from-small-producers.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p> \
-  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
+  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
 brought-into-uk-from-small-producers.required=Select yes if you are reporting any liable drink you have brought into the UK from small producers
 brought-into-uk-from-small-producers.Some.value._1.required=Enter the number of litres in the low band
 brought-into-uk-from-small-producers.Some.value._2.required=Enter the number of litres in the high band
