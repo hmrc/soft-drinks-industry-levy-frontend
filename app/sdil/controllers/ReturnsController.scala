@@ -210,30 +210,73 @@ class ReturnsController @Inject()(
               )
             }
 
-          val whatHappensNext = views.html.uniform.fragments
-            .returnsPaymentsBlurb(
-              subscription = subscription,
-              paymentDate = period,
-              sdilRef = sdilRef,
-              total = total,
-              formattedTotal = formatTotal,
-              variation = rd.variation,
-              lineItems = data,
-              costLower = ReturnsJourney.costLower,
-              costHigher = ReturnsJourney.costHigher,
-              subtotal = ReturnsJourney.calculateSubtotal(data),
-              broughtForward = broughtForward
-            )
-            .some
+          def madeClaim(): Boolean = {
+            val balanceHistory: Future[List[(FinancialLineItem, BigDecimal)]] =
+              sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+                listItemsWithTotal(x)
+              }
+            val lineItems: List[(FinancialLineItem, BigDecimal)] = Await.result(balanceHistory, 20.seconds)
+            var canClaim: Boolean = false
+            for ((item, runningTotal) <- lineItems.filter(lineItem => lineItem._1.date.getYear == year)) {
+              if (item.amount > 0) {
+                canClaim = true
+              }
+            }
+            canClaim
+          }
 
-          Ok(
-            main_template(
-              Messages("return-sent.title")
-            )(
-              views.html.uniform
-                .journeyEndNew("return-sent", now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
-            )(implicitly, implicitly, config)
-          )
+          val canClaim: Boolean = madeClaim()
+
+          if (canClaim) {
+            val whatHappensNext = views.html.uniform.fragments
+              .returnsPaymentsBlurb(
+                subscription = subscription,
+                paymentDate = period,
+                sdilRef = sdilRef,
+                total = total,
+                formattedTotal = formatTotal,
+                variation = rd.variation,
+                lineItems = data,
+                costLower = ReturnsJourney.costLower,
+                costHigher = ReturnsJourney.costHigher,
+                subtotal = ReturnsJourney.calculateSubtotal(data),
+                broughtForward = broughtForward
+              )
+              .some
+            Ok(
+              main_template(
+                Messages("return-sent.title")
+              )(
+                views.html.uniform
+                  .journeyEndNew("return-sent", now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
+              )(implicitly, implicitly, config)
+            )
+          } else {
+            //TODO Change the fragments
+            val whatHappensNext = views.html.uniform.fragments
+              .returnsPaymentsBlurbNoClaim(
+                subscription = subscription,
+                paymentDate = period,
+                sdilRef = sdilRef,
+                total = total,
+                formattedTotal = formatTotal,
+                variation = rd.variation,
+                lineItems = data,
+                costLower = ReturnsJourney.costLower,
+                costHigher = ReturnsJourney.costHigher,
+                subtotal = ReturnsJourney.calculateSubtotal(data),
+                broughtForward = broughtForward
+              )
+              .some
+            Ok(
+              main_template(
+                Messages("return-sent.title")
+              )(
+                views.html.uniform
+                  .journeyEndNew("return-sent", now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
+              )(implicitly, implicitly, config)
+            )
+          }
 
         case None =>
           logger.warn("nothing in ReturnsFormDataCache, redirecting user to ServicePage")
