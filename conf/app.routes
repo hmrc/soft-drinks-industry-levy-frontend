@@ -33,10 +33,10 @@ GET      /ufvariations/*id                                                      
 POST     /ufvariations/                                                            sdil.controllers.VariationsController.index(id = "")
 POST     /ufvariations/*id                                                         sdil.controllers.VariationsController.index(id: String)
 
-GET      /change-address-and-contact/                                              sdil.controllers.VariationsController.changeAddressAndContact(id = "")
-GET      /change-address-and-contact/*id                                           sdil.controllers.VariationsController.changeAddressAndContact(id: String)
-POST     /change-address-and-contact/                                              sdil.controllers.VariationsController.changeAddressAndContact(id = "")
-POST     /change-address-and-contact/*id                                           sdil.controllers.VariationsController.changeAddressAndContact(id: String)
+GET      /variations/                                                              sdil.controllers.VariationsController.changeAddressAndContact(id = "")
+GET      /variations/*id                                                           sdil.controllers.VariationsController.changeAddressAndContact(id: String)
+POST     /variations/                                                              sdil.controllers.VariationsController.changeAddressAndContact(id = "")
+POST     /variations/*id                                                           sdil.controllers.VariationsController.changeAddressAndContact(id: String)
 
 GET      /change-actor-status/                                                     sdil.controllers.VariationsController.changeActorStatus(id = "")
 GET      /change-actor-status/*id                                                  sdil.controllers.VariationsController.changeActorStatus(id: String)
@@ -50,9 +50,6 @@ POST     /uregistrations/*id                                                    
 
 GET      /pay-now                                                                  sdil.controllers.PaymentController.payNow()
 GET      /start-direct-debit-journey                                               sdil.controllers.DirectDebitController.startDirectDebitJourney()
-                                                                                   
-
-
 
 # For testing widgets - Delete when done
 GET      /widgets/                                                                 sdil.controllers.WidgetTestController.index(id = "")

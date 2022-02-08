@@ -46,7 +46,6 @@ import sdil.journeys.VariationsJourney
 import sdil.journeys.VariationsJourney._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.{main_template, uniform}
-import views.html.uniform.helpers.dereg_variations_cya
 
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
@@ -93,8 +92,8 @@ class VariationsController(
       case Some(subscription) =>
         println(s"Subscription: $subscription")
         interpret(
-          VariationsJourney.changeBusinessAddressJourney(subscription, sdilRef)
-        ).run(id, purgeStateUponCompletion = true, config = journeyConfig) {
+          VariationsJourney.changeBusinessAddressJourney(id, subscription, sdilRef, ufViews)(request, config)
+        ).run(id, purgeStateUponCompletion = true) {
           case Change.RegChange(reg) =>
             sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
               regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
@@ -214,7 +213,7 @@ class VariationsController(
           }
           val whn = uniform.fragments.variationsWHN(
             //TODO: How can we see the path here?
-            Nil,
+            List("contact-details"), //Nil,
             newPackagingSites(regVar),
             closedPackagingSites(regVar),
             newWarehouseSites(regVar),

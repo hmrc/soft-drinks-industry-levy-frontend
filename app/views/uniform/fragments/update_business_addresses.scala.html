@@ -23,20 +23,13 @@
 
 @this()
 
-@(key: String, breadcrumbs: List[String], subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(key: String, subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("sdil.updateBusinessAddresses.heading"), noArticle = true) {
-    @backlink(breadcrumbs)
-
-    @helper.form(action = play.api.mvc.Call("post", key)) {
-        @CSRF.formField
+@helper.form(action = play.api.mvc.Call("post", key)) {
+   @CSRF.formField
         
     <div class="grid-row">
         <div class="column-two-thirds">
-            <span class='govuk-caption-xl service-comp-name'>@subscription.orgName</span>
-            <h1 class="service-header">
-                @Messages("sdil.updateBusinessAddresses.heading")
-            </h1>
                 @declaration_description_list("service-page", "business-details.title") {
                     @declaration_description_term("verify", "organisation", None, s"${subscription.orgName}")
                     <div class="govuk-summary-list__row">
@@ -87,5 +80,4 @@
         </div>
     </div>
 
-    }
 }
