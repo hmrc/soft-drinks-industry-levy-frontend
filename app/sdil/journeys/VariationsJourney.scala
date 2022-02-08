@@ -185,7 +185,7 @@ object VariationsJourney {
       packageOwn   <- askEmptyOption[(Long, Long)]("packaging-site") when producerType != ProducerType.XNot
       copacks      <- askEmptyOption[(Long, Long)]("contract-packing")
       imports      <- askEmptyOption[(Long, Long)]("imports")
-      noUkActivity = (copacks, imports).isEmpty
+      noUkActivity = (copacks._1 + copacks._2 + imports._1 + imports._2) == 0
       smallProducerWithNoCopacker = producerType != ProducerType.Large && !useCopacker
       shouldDereg = noUkActivity && smallProducerWithNoCopacker
       packer = (producerType == ProducerType.Large && packageOwn.nonEmpty) || (copacks._1 > 0L || copacks._2 > 0L)

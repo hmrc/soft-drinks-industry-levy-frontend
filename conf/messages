@@ -807,13 +807,13 @@ warehouse-in-return.address=
 warehouse-in-return.tradingName=Trading name (optional)
 heading.first-warehouse=Enter the UK warehouse details
 ask-secondary-warehouses.help.header=Why should I register a warehouse?
-ask-secondary-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
-  the warehouses you use to store them.
+ask-secondary-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register\
+ the warehouses you use to store them.
 heading.add-warehouse-details=Enter your warehouse details
 heading.add-secondary-warehouse-details=Enter the UK warehouse details
 secondary-warehouse-details.help.header=Why should I register a warehouse?
-secondary-warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
-  the warehouses you use to store them.
+secondary-warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register\
+ the warehouses you use to store them.
 heading.remove-warehouse-details=Are you sure you want to remove this warehouse?
 remove-warehouse-details.continue=Save and continue
 error.radio-form.choose-option.remove-warehouse-details=Select yes if you want to remove this warehouse
@@ -978,8 +978,9 @@ heading.updatedBusinessDetails_address=What address should we send correspondenc
 variationDone.title=Update sent
 variationDone.subheading=We have received the updates to your Soft Drinks Industry Levy details
 variationDone.what-happens.title=What happens next
-variationDone.what-happens-next=You do not need to do anything else. We will update your details with the information \
-you provided. We will send you confirmation that the changes have been made.
+variationDone.what-happens-next=You are now registered as a small producer who only uses a third party to package their \
+  liable drinks, which means you do not have to file returns. You will get a new reference number in the post, which \
+  you will need to give to your contract packer so they can claim an exemption for the drinks they package on your behalf.
 deregDone.title=Cancellation request sent
 deregDone.subtitle=We have received your request to cancel your Soft Drinks Industry Levy registration
 heading.check-answers.dereg=Check your answers before sending your update
@@ -1158,7 +1159,7 @@ variations.cya.reason=Reason
 variations.cya.deregDate=Date
 
 heading.cancel-registration-reason=Why do you need to cancel your registration?
-cancel-registration-reason.label=Reason for deregistering
+cancel-registration-reason.inner=Reason for deregistering
 cancel-registration-reason.hint=Enter a maximum of 255 characters
 
 heading.suggest-deregistration=You need to cancel your Soft Drinks Industry Levy registration
@@ -1173,7 +1174,7 @@ removePackSites.continue=[Remove all packing sites]
 
 heading.business-address=Update your registered business address for the Soft Drinks Industry Levy
 
-heading.check-answers=Check the updates you have made
+heading.check-answers=Check your answers before sending your update
 heading.check-answers.orgName={0}
 heading.return-details.orgName={0}
 heading.check-return-changes.orgName={0}
