@@ -521,6 +521,8 @@ sdil.service-page.deregistered.pending.p3=If you do not want to cancel your regi
 
 #Update business addresses from service page
 sdil.updateBusinessAddresses.heading=Soft Drinks Industry Levy addresses and contact details
+heading.change-registered-account-details=Soft Drinks Industry Levy addresses and contact details
+heading.change-registered-account-details.orgName={0}
 heading.updateBusinessAddresses=Soft Drinks Industry Levy addresses
 sdil.updateBusinessAddresses.link.1=Edit business address
 sdil.updateBusinessAddresses.link.2=Edit contact details

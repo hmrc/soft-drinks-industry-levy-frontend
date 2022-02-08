@@ -21,18 +21,21 @@ import enumeratum.{Enum, EnumEntry}
 import ltbs.uniform._
 import ltbs.uniform.validation.{Rule, _}
 import play.api.i18n.Messages
+import play.api.mvc.Request
 import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.{ShowBackLink, Subset, askEmptyOption, askListSimple, longTupToLitreage}
+import sdil.journeys.VariationsJourney.Change.RegChange
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
-import sdil.models.variations.{RegistrationVariationData, ReturnVariationData}
+import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData}
 import sdil.models.{Address, CYA, ContactDetails, Producer, ReturnPeriod, ReturnsVariation, SdilReturn, Warehouse, extractTotal, listItemsWithTotal}
 import sdil.uniform.SdilComponents.ProducerType
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.uniform
 import views.html.uniform.helpers.dereg_variations_cya
+import views.html.uniform.fragments.update_business_addresses
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
@@ -76,28 +79,71 @@ object VariationsJourney {
     case object BankPayment extends RepaymentMethod
   }
 
+  def message(key: String, args: String*) = {
+    import play.twirl.api.HtmlFormat.escape
+    Map(key -> Tuple2(key, args.toList.map { escape(_).toString }))
+  }
+
   import cats.Order
   implicit val ldOrder: Order[LocalDate] = Order.by(_.toEpochDay)
 
   def changeBusinessAddressJourney(
+    id: String,
     subscription: RetrievedSubscription,
-    sdilRef: String
-  ) = {
-
-    def htmlMessage: Html =
-      Html(
-        "TODO - on the old version the content is constructed from update_business_addresses.scala.html, " +
-          "but this also contains the form, button, etc which is unneeded with the new version")
+    sdilRef: String,
+    ufViews: views.uniform.Uniform
+  )(implicit request: Request[_], config: AppConfig) = {
 
     val base = RegistrationVariationData(subscription)
 
     for {
-      _         <- tell("change-business-address", htmlMessage)
+      //_         <- tell("change-business-address", htmlMessage)
+      _ <- tell(
+            key = "change-registered-account-details",
+            value = ufViews.updateBusinessAddresses(id, subscription, Address.fromUkAddress(subscription.address))(
+              implicitly,
+              _: Messages,
+              implicitly),
+            customContent = message("change-registered-account-details.caption", subscription.orgName)
+          )
       variation <- contactUpdate(base)
-      _         <- tell("check-answers", Html(s"$variation"))
+      //_         <- tell("check-answers", Html(s"$variation"))
+      _ <- tell(
+            "check-answers",
+            views.html.uniform.fragments.variations_cya(
+              variation.data,
+              newPackagingSites(variation),
+              closedPackagingSites(variation),
+              newWarehouseSites(variation),
+              closedWarehouseSites(variation),
+              List("contact-details")
+            )(_: Messages)
+          )
+
     } yield (variation)
 
   }
+
+  def closedWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] =
+    closedSites(variation.data.original.warehouseSites, Convert(variation.data).closeSites.map(x => x.siteReference))
+
+  def closedPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] =
+    closedSites(variation.data.original.productionSites, Convert(variation.data).closeSites.map(x => x.siteReference))
+
+  def newPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] =
+    variation.data.updatedProductionSites.diff(variation.data.original.productionSites).toList
+
+  def newWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] =
+    variation.data.updatedWarehouseSites.diff(variation.data.original.warehouseSites).toList
+
+  def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
+    sites
+      .filter { x =>
+        x.closureDate.fold(true) {
+          _.isAfter(LocalDate.now)
+        }
+      }
+      .filter(x => closedSites.contains(x.ref.getOrElse("")))
 
   private def deregisterUpdate(
     data: RegistrationVariationData
@@ -390,4 +436,5 @@ object VariationsJourney {
       }
     }
   }
+
 }
