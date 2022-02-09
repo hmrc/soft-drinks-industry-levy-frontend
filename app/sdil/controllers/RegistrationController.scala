@@ -94,12 +94,11 @@ object RegistrationController {
       packageOwn <- askEmptyOption[(Long, Long)](
                      "package-own-uk",
                      validation =
-                       Rule.condAtPath("Some", "value", "_1")(x => x.fold(true)(y => (y._1 + y._2) >= 1L), "min")
+                       Rule.condAtPath("Some", "value", "_1")(x => x.fold(true)(y => (y._1 + y._2) > 0L), "min")
                    ) emptyUnless producerType != ProducerType.XNot
       copacks <- askEmptyOption[(Long, Long)](
                   "package-copack",
-                  validation =
-                    Rule.condAtPath("Some", "value", "_1")(x => x.fold(true)(y => (y._1 + y._2) >= 1L), "min")
+                  validation = Rule.condAtPath("Some", "value", "_1")(x => x.fold(true)(y => (y._1 + y._2) > 0L), "min")
                 )
       imports <- askEmptyOption[(Long, Long)](
                   "import",

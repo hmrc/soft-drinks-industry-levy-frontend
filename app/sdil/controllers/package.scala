@@ -70,7 +70,7 @@ package object controllers {
     }
 
   def longTupToLitreage(in: (Long, Long)): Option[Litreage] =
-    if (in.isEmpty) None else Litreage(in._1, in._2).some
+    if (in._1 + in._2 == 0) None else Litreage(in._1, in._2).some
 
   implicit val orderDate = new cats.Order[LocalDate] {
     def compare(x: LocalDate, y: LocalDate): Int = x.compareTo(y)
