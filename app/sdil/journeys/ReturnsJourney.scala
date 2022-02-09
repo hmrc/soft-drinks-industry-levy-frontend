@@ -113,8 +113,8 @@ object ReturnsJourney {
       exportCredits <- askEmptyOption[(Long, Long)]("claim-credits-for-exports", default.map { _.export })
       wastage       <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged", default.map { _.wastage })
       sdilReturn = SdilReturn(ownBrands, contractPacked, smallProds, imports, importsSmall, exportCredits, wastage)
-      isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
-      isNewPacker = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
+      isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
+      isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
       inner = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)(_: Messages)
       _ <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
       newPackingSites <- (
