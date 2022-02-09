@@ -980,9 +980,9 @@ heading.updatedBusinessDetails_address=What address should we send correspondenc
 variationDone.title=Update sent
 variationDone.subheading=We have received the updates to your Soft Drinks Industry Levy details
 variationDone.what-happens.title=What happens next
-variationDone.what-happens-next=You are now registered as a small producer who only uses a third party to package their \
-  liable drinks, which means you do not have to file returns. You will get a new reference number in the post, which \
-  you will need to give to your contract packer so they can claim an exemption for the drinks they package on your behalf.
+variationDone.what-happens-next=You do not need to do anything else. We will update your details with the \
+information you provided. We will send you confirmation that the changes have \
+been made.
 deregDone.title=Cancellation request sent
 deregDone.subtitle=We have received your request to cancel your Soft Drinks Industry Levy registration
 heading.check-answers.dereg=Check your answers before sending your update
