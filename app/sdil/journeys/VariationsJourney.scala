@@ -280,9 +280,9 @@ object VariationsJourney {
                           usesCopacker = useCopacker.some,
                           packageOwn = packageOwn.nonEmpty.some,
                           packageOwnVol = longTupToLitreage(packageOwn),
-                          copackForOthers = copacks.nonEmpty,
+                          copackForOthers = if ((copacks._1 + copacks._2) == 0) { false } else { true },
                           copackForOthersVol = longTupToLitreage(copacks),
-                          imports = imports.nonEmpty,
+                          imports = if ((imports._1 + imports._2) == 0) { false } else { true },
                           importsVol = longTupToLitreage(imports),
                           updatedProductionSites = packSites,
                           updatedWarehouseSites = warehouses
@@ -421,11 +421,10 @@ object VariationsJourney {
 
                     case ChangeType.Deregister =>
                       end(
-                        "file-returns-before-dereg",
+                        "file-return-before-deregistration",
                         uniform.fragments.return_before_dereg("file-return-before-deregistration", pendingReturns)
                       )
                   }
-
       _ <- tell("check-answers", CYA(variation)) when (changeType != ChangeTypeWithReturns.Returns)
 
     } yield {
