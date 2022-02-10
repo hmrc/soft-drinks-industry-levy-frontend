@@ -224,7 +224,7 @@ object VariationsJourney {
     data: RegistrationVariationData,
     subscription: RetrievedSubscription,
     returnPeriods: List[ReturnPeriod]
-  ) =
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) =
     for {
       producerType <- ask[ProducerType]("amount-produced")
       useCopacker  <- if (producerType == ProducerType.Small) ask[Boolean]("third-party-packagers") else pure(false)
@@ -247,7 +247,10 @@ object VariationsJourney {
                         _              <- tell("check-answers", dereg_variations_cya(showChangeLinks = true, data)(_: Messages))
                       } yield deregVariation
                     } else {
-                      end("file-returns-before-dereg")
+                      end(
+                        "file-return-before-deregistration",
+                        uniform.fragments.return_before_dereg("file-return-before-deregistration",returnPeriods)
+                      )
                     }
                   } else {
                     for {
@@ -263,7 +266,6 @@ object VariationsJourney {
                       packSites <- askListSimple[Address](
                                     "production-site-details",
                                     "p-site",
-                                    default = pSites.some,
                                     listValidation = Rule.nonEmpty[List[Address]]
                                   ).map(_.map(Site.fromAddress)) emptyUnless packer
                       isVoluntary = producerType == ProducerType.Small && useCopacker && (copacks._1 + copacks._2 + imports._1 + imports._2) == 0
