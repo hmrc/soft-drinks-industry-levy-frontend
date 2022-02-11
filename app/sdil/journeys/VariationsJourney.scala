@@ -280,7 +280,11 @@ object VariationsJourney {
                           producer =
                             Producer(producerType != ProducerType.XNot, (producerType == ProducerType.Large).some),
                           usesCopacker = useCopacker.some,
-                          packageOwn = packageOwn.nonEmpty.some,
+                          packageOwn =
+                            if (packageOwn
+                                  .getOrElse(0) == 0) { Some(false) } else if ((packageOwn.get._1 + packageOwn.get._1) > 0) {
+                              Some(true)
+                            } else { Some(false) },
                           packageOwnVol = longTupToLitreage(packageOwn),
                           copackForOthers = if ((copacks._1 + copacks._2) == 0) { false } else { true },
                           copackForOthersVol = longTupToLitreage(copacks),
