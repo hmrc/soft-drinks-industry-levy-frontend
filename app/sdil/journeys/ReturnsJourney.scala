@@ -61,6 +61,7 @@ object ReturnsJourney {
   }
 
   def journey(
+    id: String,
     period: ReturnPeriod,
     default: Option[SdilReturn] = None,
     subscription: RetrievedSubscription,
@@ -90,17 +91,11 @@ object ReturnsJourney {
                            sp => Await.result(checkSmallProducerStatus(sp.sdilRef, period), 20.seconds).getOrElse(true),
                            "notSmall"
                          ) followedBy Rule.condAtPath[SmallProducer]("sdilRef")(
-                           sp =>
-                             existing
-                               .map(
-                                 existingSmallProds => sp.sdilRef =!= existingSmallProds.sdilRef
-                               )
-                               .headOption
-                               .getOrElse(true),
-                           "alreadyexists"
-                         ) followedBy Rule.condAtPath[SmallProducer]("sdilRef")(
                            sp => !(sp.sdilRef === subscription.sdilRef),
-                           "error.sdilref.same"
+                           "same"
+                         ) followedBy Rule.condAtPath[SmallProducer]("sdilRef")(
+                           sp => !(id.contains("/add/") && existing.map(s => s.sdilRef).contains(sp.sdilRef)),
+                           "alreadyexists"
                          )
                        )
                    } emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
@@ -174,4 +169,5 @@ object ReturnsJourney {
             customContent = message("heading.check-answers.orgName", subscription.orgName)
           )
     } yield (sdilReturn, variation)
+
 }

@@ -139,6 +139,7 @@ class VariationsController(
           returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
           response <- interpret(
                        VariationsJourney.journey(
+                         id,
                          subscription,
                          sdilRef,
                          variableReturns,

@@ -291,6 +291,7 @@ object VariationsJourney {
     } yield variation
 
   private def adjust(
+    id: String,
     subscription: RetrievedSubscription,
     sdilRef: String,
     connector: SoftDrinksIndustryLevyConnector,
@@ -315,6 +316,7 @@ object VariationsJourney {
                          convertWithKey("balance")(connector.balance(sdilRef, withAssessment = false))
                        }
       newReturn <- ReturnsJourney.journey(
+                    id,
                     returnPeriod,
                     origReturn,
                     subscription,
@@ -370,6 +372,7 @@ object VariationsJourney {
   }
 
   def journey(
+    id: String,
     subscription: RetrievedSubscription,
     sdilRef: String,
     variableReturns: List[ReturnPeriod],
@@ -396,6 +399,7 @@ object VariationsJourney {
                                  )
                         ///  original journey redirected from here to adjust()
                         adjustedReturn <- adjust(
+                                           id,
                                            subscription,
                                            sdilRef,
                                            sdilConnector,

@@ -87,6 +87,7 @@ class ReturnsController(
               interpret(
                 ReturnsJourney
                   .journey(
+                    id,
                     period,
                     if (nilReturn) emptyReturn.some else None,
                     subscription,
