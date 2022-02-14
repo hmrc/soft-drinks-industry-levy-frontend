@@ -114,7 +114,6 @@ class VariationsController(
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     val x = sdilConnector.retrieveSubscription(sdilRef)
-    println(s"@@@@@@@@@@@@@@ id: $id")
 
     x flatMap {
       case Some(subscription) =>
@@ -127,13 +126,7 @@ class VariationsController(
           sdilConnector.returns_variation(rvd, sdilRef)
         def submitAdjustment(rvd: ReturnVariationData) =
           sdilConnector.returns_vary(sdilRef, rvd)
-        println(s"subscription: $subscription")
-        println(s"sdilRef: $sdilRef")
-        println(s"variableReturns: ${sdilConnector.returns_variable(base.original.utr)}")
-        println(s"returnPeriods: ${sdilConnector.returns_pending(subscription.utr)}")
-        println(s"sdilConnector: $sdilConnector")
-        println(s"config: $config")
-        println(s"@@@@@@@@@@@@@ journeyConfig: $journeyConfig")
+
         for {
           variableReturns <- sdilConnector.returns_variable(base.original.utr)
           returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
