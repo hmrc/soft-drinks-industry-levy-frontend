@@ -254,6 +254,11 @@ object VariationsJourney {
                     }
                   } else {
                     for {
+                      warehouses <- askListSimple[Warehouse](
+                                     "secondary-warehouse-details",
+                                     "w-house",
+                                     default = data.updatedWarehouseSites.toList.map(Warehouse.fromSite).some
+                                   ).map(_.map(Site.fromWarehouse)) emptyUnless !isVoluntary
                       usePPOBAddress <- (
                                          ask[Boolean]("pack-at-business-address")
                                            when packer && data.original.productionSites.isEmpty
@@ -267,13 +272,8 @@ object VariationsJourney {
                                     "production-site-details",
                                     "p-site",
                                     listValidation = Rule.nonEmpty[List[Address]]
-                                  ).map(_.map(Site.fromAddress))
+                                  ).map(_.map(Site.fromAddress)) emptyUnless packer
                       isVoluntary = producerType == ProducerType.Small && useCopacker && (copacks._1 + copacks._2 + imports._1 + imports._2) == 0
-                      warehouses <- askListSimple[Warehouse](
-                                     "secondary-warehouse-details",
-                                     "w-house",
-                                     default = data.updatedWarehouseSites.toList.map(Warehouse.fromSite).some
-                                   ).map(_.map(Site.fromWarehouse)) emptyUnless !isVoluntary
                     } yield
                       Change.RegChange(
                         data.copy(
