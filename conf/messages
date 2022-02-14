@@ -946,7 +946,7 @@ production-site-details.Continue=No
 
 heading.site-in-return=Enter your UK packaging site details
 edit-production-site-details.paragraph=Only add the addresses of UK packaging sites you operate.
-packaging-site-details.list-control.heading=Do you want to add another packaging site?
+packaging-site-details.listing.heading=Do you want to add another packaging site?
 packaging-site-details.option.add=Yes
 packaging-site-details.option.done=No
 heading.edit-packaging-site-details=Enter your UK packaging site details
@@ -963,11 +963,14 @@ warehouse-details.help.header=Why should I register a warehouse?
 warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
   if you register the warehouses you use to store them.
 heading.edit-secondary-warehouse-details=Enter the UK warehouse details
-heading.multi.warehouse-details=Change your UK warehouse details
-heading.warehouse-details=Do you want to register any of the UK warehouses you use to store liable drinks?
-warehouse-details.list-control.heading=Do you want to add another warehouse?
+heading.warehouse-details=Change your UK warehouse details
+warehouse-details.listing.heading=Do you want to add another warehouse?
 warehouse-details.option.add=Yes
 warehouse-details.option.done=No
+
+heading.packaging-site-details=Change your UK packaging site details
+packaging-site-details.table.paragraph.small=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
+  if you register the warehouses you use to store them.
 
 heading.contact=Update your contact person for the Soft Drinks Industry Levy
 
@@ -1177,6 +1180,7 @@ removePackSites.continue=[Remove all packing sites]
 heading.business-address=Update your registered business address for the Soft Drinks Industry Levy
 
 heading.check-answers=Check your answers before sending your update
+#TODO custom message
 heading.check-answers.orgName={0}
 heading.return-details.orgName={0}
 heading.check-return-changes.orgName={0}

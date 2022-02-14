@@ -187,7 +187,7 @@ object VariationsJourney {
                )
 
       packSites <- askListSimple[Address](
-                    "production-site-details",
+                    "packaging-site-details",
                     "p-site",
                     listValidation = Rule.nonEmpty[List[Address]],
                     default = data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some
@@ -196,7 +196,7 @@ object VariationsJourney {
                   )
 
       warehouses <- askListSimple[Warehouse](
-                     "warehouses",
+                     "warehouse-details",
                      "w-house",
                      default = data.updatedWarehouseSites.toList.map(Warehouse.fromSite).some
                    ).map(_.map(Site.fromWarehouse)) emptyUnless change.contains(Sites)
@@ -249,7 +249,7 @@ object VariationsJourney {
                     } else {
                       end(
                         "file-return-before-deregistration",
-                        uniform.fragments.return_before_dereg("file-return-before-deregistration",returnPeriods)
+                        uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods)
                       )
                     }
                   } else {
