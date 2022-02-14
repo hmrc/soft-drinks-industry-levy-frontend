@@ -151,7 +151,50 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponents with
   }
 
   // Address validation logic
+  val addressRegex = """^[A-Za-z0-9 \-,.&'\/]*$"""
+  val postcodeRegex = "^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$"
   implicit val askAddress: WebAsk[Html, Address] = gen[Address].simap {
+    case Address(line1, line2, line3, line4, postcode)
+        if (!line1.matches(addressRegex)
+          && !line2.matches(addressRegex)
+          && !line3.matches(addressRegex)
+          && !line4.matches(addressRegex)
+          && !postcode.matches(postcodeRegex)) =>
+      Left(
+        ErrorMsg("invalid").toTree.prefixWith("line1") ++
+          ErrorMsg("invalid").toTree.prefixWith("line2") ++
+          ErrorMsg("invalid").toTree.prefixWith("line3") ++
+          ErrorMsg("invalid").toTree.prefixWith("line4") ++
+          ErrorMsg("invalid").toTree.prefixWith("postcode")
+      )
+
+    case Address(line1, line2, line3, _, postcode)
+        if !line1.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") &&
+          !line2.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") &&
+          !line3.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") &&
+          !postcode.matches(postcodeRegex) =>
+      Left(
+        ErrorMsg("invalid").toTree.prefixWith("line1") ++
+          ErrorMsg("invalid").toTree.prefixWith("line2") ++
+          ErrorMsg("invalid").toTree.prefixWith("line3") ++
+          ErrorMsg("invalid").toTree.prefixWith("postcode")
+      )
+
+    case Address(line1, line2, _, _, postcode)
+        if !line1.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") &&
+          !line2.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") &&
+          !postcode.matches(postcodeRegex) =>
+      Left(
+        ErrorMsg("invalid").toTree.prefixWith("line1") ++
+          ErrorMsg("invalid").toTree.prefixWith("line2") ++
+          ErrorMsg("invalid").toTree.prefixWith("postcode")
+      )
+
+    case Address(line1, _, _, _, _) if !line1.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
+      Left(
+        ErrorMsg("invalid").toTree.prefixWith("line1")
+      )
+
     case Address(line1, line2, _, _, postcode) if line1.isEmpty && line2.isEmpty && postcode.isEmpty =>
       Left(
         ErrorMsg("required").toTree.prefixWith("line1") ++
@@ -163,23 +206,23 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponents with
     case Address(line1, _, _, _, _) if line1.isEmpty     => Left(ErrorMsg("required").toTree.prefixWith("line1"))
     case Address(line1, _, _, _, _) if line1.length > 35 => Left(ErrorMsg("max").toTree.prefixWith("line1"))
     case Address(line1, _, _, _, _) if !line1.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
-      Left(ErrorMsg("invalid").toTree.prefixWith("line1"))
+      Left(ErrorMsg("invalid").toTree.prefixWith("line1") ++ ErrorMsg("invalid").toTree.prefixWith("line2"))
     case Address(_, line2, _, _, _) if line2.isEmpty     => Left(ErrorMsg("required").toTree.prefixWith("line2"))
     case Address(_, line2, _, _, _) if line2.length > 35 => Left(ErrorMsg("max").toTree.prefixWith("line2"))
     case Address(_, line2, _, _, _) if !line2.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
-      Left(ErrorMsg("invalid").toTree.prefixWith("line2"))
+      Left(ErrorMsg("invalid").toTree.prefixWith("line2") ++ ErrorMsg("invalid").toTree.prefixWith("line3"))
     case Address(_, _, line3, _, _) if line3.length > 35 => Left(ErrorMsg("max").toTree.prefixWith("line3"))
     case Address(_, _, line3, _, _) if !line3.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
-      Left(ErrorMsg("invalid").toTree.prefixWith("line3"))
+      Left(ErrorMsg("invalid").toTree.prefixWith("line3") ++ ErrorMsg("invalid").toTree.prefixWith("line4"))
     case Address(_, _, _, line4, _) if line4.length > 35 => Left(ErrorMsg("max").toTree.prefixWith("line4"))
     case Address(_, _, _, line4, _) if !line4.matches("""^[A-Za-z0-9 \-,.&'\/]*$""") =>
-      Left(ErrorMsg("invalid").toTree.prefixWith("line2"))
+      Left(ErrorMsg("invalid").toTree.prefixWith("line2") ++ ErrorMsg("invalid").toTree.prefixWith("line3"))
     case Address(_, _, _, _, postcode) if postcode.isEmpty => Left(ErrorMsg("required").toTree.prefixWith("postcode"))
     case Address(_, _, _, _, postcode)
         if !postcode.matches("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}$|BFPO\\s?[0-9]{1,5}$") =>
-      Left(ErrorMsg("invalid").toTree.prefixWith("postcode"))
+      Left(ErrorMsg("invalid").toTree.prefixWith("postcode") ++ ErrorMsg("invalid").toTree.prefixWith("postcode"))
     case Address(_, _, _, _, postcode) if !postcode.matches("""^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$""") =>
-      Left(ErrorMsg("special").toTree.prefixWith("postcode"))
+      Left(ErrorMsg("special").toTree.prefixWith("postcode") ++ ErrorMsg("invalid").toTree.prefixWith("postcode"))
     case other => other.asRight
   }(identity)
 

@@ -1243,7 +1243,7 @@ add-small-producer.sdilRef.invalid=Small producer reference number must be 6 let
 add-small-producer.sdilRef.notSmall=Small producer reference number does not match a business that is currently registered as a \
 small producer. Check and try again.
 heading.multi.small-producer-details=You have added {0} small producer{1}
-small-producer-details.list-control.heading=Do you want to add another small producer?
+small-producer-details.listing.heading=Do you want to add another small producer?
 heading.edit-small-producer-details=Enter the registered small producer’s details
 
 small-producer-details.table.heading.singular=You have added {0} small producer
