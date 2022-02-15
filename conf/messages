@@ -1182,6 +1182,7 @@ heading.business-address=Update your registered business address for the Soft Dr
 heading.check-answers=Check your answers before sending your update
 #TODO custom message
 heading.check-answers.orgName={0}
+heading.check-answers.orgDefaultName=Service-Header
 heading.return-details.orgName={0}
 heading.check-return-changes.orgName={0}
 heading.repayment-method.orgName={0}

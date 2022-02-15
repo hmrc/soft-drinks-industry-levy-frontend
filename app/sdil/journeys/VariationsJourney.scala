@@ -268,7 +268,9 @@ object VariationsJourney {
                       packSites <- askListSimple[Address](
                                     "production-site-details",
                                     "p-site",
-                                    listValidation = Rule.nonEmpty[List[Address]]
+                                    listValidation = Rule.nonEmpty[List[Address]],
+                                    default =
+                                      data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some
                                   ).map(_.map(Site.fromAddress)) emptyUnless packer
 
                       warehouses <- askListSimple[Warehouse](
