@@ -27,6 +27,7 @@ import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.{ShowBackLink, Subset, askEmptyOption, askListSimple, longTupToLitreage}
 import sdil.journeys.VariationsJourney.Change.RegChange
+import sdil.journeys.VariationsJourney.ContactChangeType.Sites
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData}
@@ -198,7 +199,9 @@ object VariationsJourney {
       warehouses <- askListSimple[Warehouse](
                      "warehouse-details",
                      "w-house",
-                     default = data.updatedWarehouseSites.toList.map(Warehouse.fromSite).some
+                     default = data.updatedProductionSites.toList
+                       .map(x => Warehouse.fromSite(Site(x.address, x.ref, x.tradingName, x.closureDate)))
+                       .some
                    ).map(_.map(Site.fromWarehouse)) emptyUnless change.contains(Sites)
 
       contact <- if (change.contains(ContactPerson)) {
@@ -234,7 +237,7 @@ object VariationsJourney {
       noUkActivity = (copacks._1 + copacks._2 + imports._1 + imports._2) == 0
       smallProducerWithNoCopacker = producerType != ProducerType.Large && !useCopacker
       shouldDereg = noUkActivity && smallProducerWithNoCopacker
-      packer = (producerType == ProducerType.Large && packageOwn.nonEmpty) || (copacks._1 > 0L || copacks._2 > 0L)
+      packer = (producerType == ProducerType.Large && (packageOwn.get._1 + packageOwn.get._2) > 0) || (copacks._1 > 0L || copacks._2 > 0L)
       isVoluntary = subscription.activity.voluntaryRegistration
 
       variation <- if (shouldDereg) {
@@ -276,7 +279,10 @@ object VariationsJourney {
                       warehouses <- askListSimple[Warehouse](
                                      "secondary-warehouse-details",
                                      "w-house",
-                                     default = data.updatedWarehouseSites.toList.map(Warehouse.fromSite).some
+                                     default = data.updatedProductionSites.toList
+                                       .map(x =>
+                                         Warehouse.fromSite(Site(x.address, x.ref, x.tradingName, x.closureDate)))
+                                       .some
                                    ).map(_.map(Site.fromWarehouse)).emptyUnless(!warehouseShow)
 
                     } yield
@@ -287,7 +293,7 @@ object VariationsJourney {
                           usesCopacker = useCopacker.some,
                           packageOwn =
                             if (packageOwn
-                                  .getOrElse(0) == 0) { Some(false) } else if ((packageOwn.get._1 + packageOwn.get._1) > 0) {
+                                  .getOrElse(0) == 0) { Some(false) } else if ((packageOwn.get._1 + packageOwn.get._2) > 0) {
                               Some(true)
                             } else { Some(false) },
                           packageOwnVol = longTupToLitreage(packageOwn),
