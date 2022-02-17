@@ -1271,8 +1271,10 @@ small-producer-details.edit=Edit
 small-producer-details.edit.hidden=Edit {0}, {1}
 
 heading.remove-small-producer-details=Are you sure you want to remove this small producer?
+remove-small-producer-details.paragraph={0}
+remove-small-producer-details.required=Select yes if you want to remove this small producer
 remove-small-producer-details.continue=Save and continue
-error.radio-form.choose-option.remove-small-producer-details=Select yes if you want to remove this small producer
+
 heading.brought-into-uk=Are you reporting liable drink you have brought into the UK from anywhere outside of the UK?
 brought-into-uk.inner-heading=How many litres do you need to report?
 brought-into-uk.paragraph=Do not include liable drink from small producers or your own brands if you are a registered small producer.
