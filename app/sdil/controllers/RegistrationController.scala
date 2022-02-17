@@ -126,22 +126,42 @@ object RegistrationController {
       } else {
         List.empty[Address]
       }
-      packSites <- askListSimple[Address](
-                    "production-site-details",
-                    "p-site",
-                    default = packingSites.some,
-                    listValidation = Rule.nonEmpty
+//      packSites <- askListSimple[Address](
+//                    "production-site-details",
+//                    "p-site",
+//                    default = packingSites.some,
+//                    listValidation = Rule.nonEmpty
+//                  ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
+      packSites <- askList[Address]("production-site-details")(
+                    // add/edit journey
+                    {
+                      case (index: Option[Int], existing: List[Address]) =>
+                        ask[Address]("p-site", default = index.map(existing))
+                    },
+                    // delete confirmation journey - defaults to pure(true)
+                    { case (index: Int, existing: List[Address]) => ask[Boolean]("remove-packaging-site-details") }
                   ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
+
       addWarehouses <- if (!isVoluntary) {
                         ask[Boolean]("ask-secondary-warehouses")
                       } else {
                         pure(false)
                       }
-      warehouses <- askListSimple[Warehouse](
-                     "warehouses",
-                     "w-house",
-                     listValidation = Rule.nonEmpty
+//      warehouses <- askListSimple[Warehouse](
+//                     "warehouses",
+//                     "w-house",
+//                     listValidation = Rule.nonEmpty
+//                   ).map(_.map(Site.fromWarehouse)) emptyUnless addWarehouses
+      warehouses <- askList[Warehouse]("warehouses")(
+                     // add/edit journey
+                     {
+                       case (index: Option[Int], existing: List[Warehouse]) =>
+                         ask[Warehouse]("w-house", default = index.map(existing))
+                     },
+                     // delete confirmation journey - defaults to pure(true)
+                     { case (index: Int, existing: List[Warehouse]) => ask[Boolean]("remove-warehouse-details") }
                    ).map(_.map(Site.fromWarehouse)) emptyUnless addWarehouses
+
       contactDetails <- ask[ContactDetails]("contact-details")
       activity = Activity(
         longTupToLitreage(packageOwn),
