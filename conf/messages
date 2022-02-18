@@ -820,7 +820,6 @@ secondary-warehouse-details.help=You can delay the point you will have to report
 heading.remove-warehouse-details=Are you sure you want to remove this warehouse?
 remove-warehouse-details.continue=Save and continue
 remove-warehouse-details.required=Select yes if you want to remove this warehouse
-remove-warehouse-details.paragraph={0}
 
 heading.remove-secondary-warehouse-details=Are you sure you want to remove this warehouse?
 remove-secondary-warehouse-details.continue=Save and continue
@@ -836,7 +835,6 @@ add-production-site-details.paragraph=Only add the addresses of the packaging si
 heading.remove-packaging-site-details=Are you sure you want to remove this packaging site?
 remove-packaging-site-details.continue=Save and continue
 remove-packaging-site-details.required=Select yes if you want to remove this packaging site
-remove-packaging-site-details.paragraph={0}
 
 heading.remove-production-site-details=Are you sure you want to remove this packaging site?
 remove-production-site-details.continue=Save and continue
@@ -1278,7 +1276,6 @@ small-producer-details.edit=Edit
 small-producer-details.edit.hidden=Edit {0}, {1}
 
 heading.remove-small-producer-details=Are you sure you want to remove this small producer?
-remove-small-producer-details.paragraph={0}
 remove-small-producer-details.required=Select yes if you want to remove this small producer
 remove-small-producer-details.continue=Save and continue
 

@@ -83,11 +83,12 @@ object ReturnsJourney {
                      "small-producer-details",
                      default.map { _.packSmall },
                      Rule.nonEmpty[List[SmallProducer]])(
+                     // add/edit journey
                      {
-                       case (index: Option[Int], existing: List[SmallProducer]) =>
+                       case (index: Option[Int], existingSmallProducers: List[SmallProducer]) =>
                          ask[SmallProducer](
                            s"add-small-producer",
-                           default = index.map(existing),
+                           default = index.map(existingSmallProducers),
                            validation = Rule.condAtPath[SmallProducer]("sdilRef")(
                              sp =>
                                Await.result(checkSmallProducerStatus(sp.sdilRef, period), 20.seconds).getOrElse(true),
@@ -96,12 +97,17 @@ object ReturnsJourney {
                              sp => !(sp.sdilRef === subscription.sdilRef),
                              "same"
                            ) followedBy Rule.condAtPath[SmallProducer]("sdilRef")(
-                             sp => !(id.contains("/add/") && existing.map(s => s.sdilRef).contains(sp.sdilRef)),
+                             sp =>
+                               !(id
+                                 .contains("/add/") && existingSmallProducers.map(s => s.sdilRef).contains(sp.sdilRef)),
                              "alreadyexists"
                            )
                          )
-                     }, {
-                       case (_: Int, _: List[SmallProducer]) => ask[Boolean]("remove-small-producer-details")
+                     },
+                     // delete confirmation journey - defaults to pure(true)
+                     {
+                       case (index: Int, existingSmallProducers: List[SmallProducer]) =>
+                         interact[Boolean]("remove-small-producer-details", existingSmallProducers(index).sdilRef)
                      }
                    ) emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
                      _.packSmall.nonEmpty

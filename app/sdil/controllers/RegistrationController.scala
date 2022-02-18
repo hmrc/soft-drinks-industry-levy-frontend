@@ -135,11 +135,14 @@ object RegistrationController {
       packSites <- askList[Address]("production-site-details")(
                     // add/edit journey
                     {
-                      case (index: Option[Int], existing: List[Address]) =>
-                        ask[Address]("p-site", default = index.map(existing))
+                      case (index: Option[Int], existingAddresses: List[Address]) =>
+                        ask[Address]("p-site", default = index.map(existingAddresses))
                     },
                     // delete confirmation journey - defaults to pure(true)
-                    { case (index: Int, existing: List[Address]) => ask[Boolean]("remove-packaging-site-details") }
+                    {
+                      case (index: Int, existingAddresses: List[Address]) =>
+                        interact[Boolean]("remove-packaging-site-details", existingAddresses(index).nonEmptyLines)
+                    }
                   ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
 
       addWarehouses <- if (!isVoluntary) {
@@ -155,11 +158,14 @@ object RegistrationController {
       warehouses <- askList[Warehouse]("warehouses")(
                      // add/edit journey
                      {
-                       case (index: Option[Int], existing: List[Warehouse]) =>
-                         ask[Warehouse]("w-house", default = index.map(existing))
+                       case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
+                         ask[Warehouse]("w-house", default = index.map(existingWarehouses))
                      },
                      // delete confirmation journey - defaults to pure(true)
-                     { case (index: Int, existing: List[Warehouse]) => ask[Boolean]("remove-warehouse-details") }
+                     {
+                       case (index: Int, existingWarehouses: List[Warehouse]) =>
+                         interact[Boolean]("remove-warehouse-details", existingWarehouses(index).nonEmptyLines)
+                     }
                    ).map(_.map(Site.fromWarehouse)) emptyUnless addWarehouses
 
       contactDetails <- ask[ContactDetails]("contact-details")

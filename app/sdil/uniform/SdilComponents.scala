@@ -393,6 +393,28 @@ trait SdilComponents {
     )
   }
 
+  implicit val tellWarehouse = new WebTell[Html, Seq[String]] {
+    def render(
+      in: Seq[String],
+      key: List[String],
+      pageIn: PageIn[Html]
+    ): Option[Html] = Some(
+      Html(s"""
+              |<p tabindex='-1' class='lede'>
+              |${in.mkString(", ")}
+              |</P>
+           """.stripMargin)
+    )
+  }
+
+  implicit val tellString = new WebTell[Html, String] {
+    def render(
+      in: String,
+      key: List[String],
+      pageIn: PageIn[Html]
+    ): Option[Html] = Some(Html(s"<p tabindex='-1' class='lede'>$in</p>"))
+  }
+
   implicit val tellOldTemplates = new WebTell[Html, Messages => Html] {
     def render(
       in: Messages => Html,
