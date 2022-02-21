@@ -16,12 +16,9 @@
 
 @(pageKey: List[String], fieldKey: String, tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html], cond: Option[Html] = None)(inner: Html*)
 @keyDots = @{pageKey.mkString(".")}
-@isListingPage= @{List("production-sites", "warehouses", "small-producer-details", "production-site-details", "secondary-warehouse-details","warehouse-details","packaging-site-details","check-answers").contains(pageKey.head)}
-@noShowHeader= @{List("small-producer-details").contains(pageKey.head)}
+@isListingPage= @{List("production-sites", "warehouses", "small-producer-details", "production-site-details", "secondary-warehouse-details","warehouse-details","packaging-site-details").contains(pageKey.head)}
+@noShowHeader= @{List("small-producer-details","check-your-answers","check-answers").contains(pageKey.head)}
 @if(isListingPage){
-    @for(m <- messages.get(s"heading.$keyDots.orgName")) {
-        <span class="govuk-caption-xl service-comp-name">@m</span>
-    }
     @if(!noShowHeader) {
         <h1 class="heading-large  @{messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")}">
             @messages(s"heading.$keyDots")
@@ -45,9 +42,6 @@
         <span class="form-hint">@m</span>
     }
         @tell
-
-
-
         @for(m <- messages.get(s"$keyDots.error.hint")) {
             <span class="form-hint">@m</span>
         }
@@ -64,20 +58,16 @@
             @inner
         </div>
 } else {
-
     <fieldset class="form-field-group  @if(errors.nonEmpty) {after-error-summary}">
+        @if(!noShowHeader){
         <legend>
-
-            @for(m <- messages.get(s"heading.$keyDots.orgName")) {
-                <span class="govuk-caption-xl service-comp-name">@m</span>
-            }
             <h1 class="heading-large  @{
                 messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")
             }">
             @messages(s"heading.$keyDots")
             </h1>
-
         </legend>
+        }
 
         @for(msg <- messages.list(s"$keyDots.paragraph")) {
             <div class="lede">

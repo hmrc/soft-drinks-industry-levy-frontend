@@ -165,8 +165,7 @@ object ReturnsJourney {
               variation = variation.some,
               subscription = subscription,
               originalReturn = None
-            )(_: Messages),
-            customContent = message("heading.check-answers.orgName", subscription.orgName)
+            )(_: Messages)
           )
     } yield (sdilReturn, variation)
 

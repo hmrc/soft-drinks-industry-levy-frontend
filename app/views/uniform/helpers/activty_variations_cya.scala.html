@@ -18,6 +18,12 @@
 
 @(showChangeLinks : Boolean, v: sdil.models.variations.RegistrationVariationData)(implicit messages: Messages)
 
+
+<legend>
+    <span class="govuk-caption-xl">@v.original.orgName</h1></span>
+    <h1 class="heading-large">Check the updates you have made</h1>
+</legend>
+
 <h2 class="heading-medium">@Messages("variations.cya.activity-change")</h2>
 <table class="check-your-answers">
     <tbody>

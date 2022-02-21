@@ -22,11 +22,16 @@
         closedPackagingSites: List[Site],
         newWarehouseSites: List[Site],
         closedWarehouses: List[Site],
-        path: List[String])(implicit messages: Messages
-)
+        path: List[String])(implicit messages: Messages)
+
+@if(path.contains("change-warehouses") && newWarehouseSites.isEmpty && closedWarehouses.isEmpty && v.deregDate.isEmpty || path.contains("change-registered-details") || path.contains("cancel-registration-reason") ){
+<legend>
+    <span class="govuk-caption-xl">@v.original.orgName</h1></span>
+    <h1 class="heading-large">Check your answers before sending your update</h1>
+</legend>
+}
 
 @if(newPackingSites.nonEmpty) {
-
     <table class="check-your-answers">
         <caption><h2>@Messages("variations.cya.packsites.add")</h2></caption>
 
@@ -78,8 +83,6 @@
 }
 
 @if(closedPackagingSites.nonEmpty) {
-
-
     <table class="check-your-answers">
         <caption><h2>@Messages("variations.cya.packsites.remove")</h2></caption>
         <thead>

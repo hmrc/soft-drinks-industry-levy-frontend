@@ -19,7 +19,11 @@
 @import sdil.models.retrieved.RetrievedSubscription
 @import views.html.softdrinksindustrylevy.helpers._
 
-@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription, originalReturn: Option[SdilReturn])(implicit m: Messages)
+@(key: String,orgNameMsg:Option[Html] = None, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription, originalReturn: Option[SdilReturn])(implicit m: Messages)
+<legend>
+    <span class="govuk-caption-xl">@subscription.orgName</span>
+    <h1 class="heading-large.service-header">@Messages(s"heading.check-answers")</h1>
+</legend>
 
 <table class="check-your-answers">
 

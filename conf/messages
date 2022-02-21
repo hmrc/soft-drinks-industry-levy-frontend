@@ -1179,14 +1179,9 @@ removePackSites.continue=[Remove all packing sites]
 
 heading.business-address=Update your registered business address for the Soft Drinks Industry Levy
 
-heading.check-answers=Check your answers before sending your update
+heading.check-answers=Check your answers before sending your return
 #TODO custom message
-heading.check-answers.orgName={0}
 heading.check-answers.orgDefaultName=Service-Header
-heading.return-details.orgName={0}
-heading.check-return-changes.orgName={0}
-heading.repayment-method.orgName={0}
-heading.return-correction-reason.orgName={0}
 check-answers.continue=Confirm updates and send
 
 # Returns

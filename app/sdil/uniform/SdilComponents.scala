@@ -84,7 +84,7 @@ trait SdilComponents {
 
     def render(
       pageIn: PageIn[Html],
-      stepDetails: StepDetails[Html, String]
+      stepDetails: StepDetails[Html, String],
     ): Option[Html] = Some {
       import stepDetails._
       val value = decode(data).toOption.getOrElse("")
@@ -109,7 +109,6 @@ trait SdilComponents {
 
       views.html.softdrinksindustrylevy.helpers
         .surround(stepKey, fieldKey, tell, errors, pageIn.messages)(control)
-
     }
   }
 
@@ -236,8 +235,13 @@ trait SdilComponents {
       ): Option[Html] = Some {
         val control = date_new(stepDetails.stepKey, stepDetails.data, stepDetails.errors, pageIn.messages)
         views.html.softdrinksindustrylevy.helpers
-          .surround(stepDetails.stepKey, stepDetails.fieldKey, stepDetails.tell, stepDetails.errors, pageIn.messages)(
-            control)
+          .surround(
+            stepDetails.stepKey,
+            stepDetails.fieldKey,
+            stepDetails.tell,
+            stepDetails.errors,
+            pageIn.messages
+          )(control)
       }
     }
 

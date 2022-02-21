@@ -28,6 +28,7 @@ import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.{ShowBackLink, Subset, askEmptyOption, askListSimple, longTupToLitreage}
 import sdil.journeys.VariationsJourney.Change.RegChange
 import sdil.journeys.VariationsJourney.ContactChangeType.Sites
+import sdil.journeys.VariationsJourney.{closedPackagingSites, closedWarehouseSites, newPackagingSites, newWarehouseSites}
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData}
@@ -227,7 +228,7 @@ object VariationsJourney {
     data: RegistrationVariationData,
     subscription: RetrievedSubscription,
     returnPeriods: List[ReturnPeriod]
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) =
+  )(implicit ec: ExecutionContext, ufMessages: UniformMessages[Html]) =
     for {
       producerType <- ask[ProducerType]("amount-produced")
       useCopacker  <- if (producerType == ProducerType.Small) ask[Boolean]("third-party-packagers") else pure(false)
@@ -319,7 +320,6 @@ object VariationsJourney {
     config: AppConfig
   )(implicit ec: ExecutionContext, hc: HeaderCarrier) = {
     val base = RegistrationVariationData(subscription)
-    implicit val showBackLink: ShowBackLink = ShowBackLink(false)
     for {
       isSmallProd <- convertWithKey("is-small-producer")(checkSmallProducerStatus(sdilRef, returnPeriod))
       origReturn  <- convertWithKey("return-lookup")(getReturn(returnPeriod))
@@ -341,7 +341,7 @@ object VariationsJourney {
                     submitReturnVariation,
                     broughtForward,
                     isSmallProd.getOrElse(false),
-                  ) // , base.original, sdilRef, sdilConnector, returnPeriod, origReturn.some)
+                  )
       emptyReturn = SdilReturn((0, 0), (0, 0), Nil, (0, 0), (0, 0), (0, 0), (0, 0), None)
       variation = ReturnVariationData(
         origReturn.getOrElse(emptyReturn),
@@ -447,7 +447,6 @@ object VariationsJourney {
                       )
                   }
       _ <- tell("check-answers", CYA(variation)) when (changeType != ChangeTypeWithReturns.Returns)
-
     } yield {
       variation match {
         case Change.RegChange(regChange) => Right(regChange)

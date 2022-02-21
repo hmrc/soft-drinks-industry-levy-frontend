@@ -47,7 +47,6 @@ class ReturnsController(
   returnsCache: ReturnsFormDataCache
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
-
   val logger: Logger = Logger(this.getClass())
   override def defaultBackLink = "/soft-drinks-industry-levy"
 
