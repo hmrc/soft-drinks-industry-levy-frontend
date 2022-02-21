@@ -17,19 +17,15 @@
 package sdil.controllers
 
 import ltbs.uniform.UniformMessages
-import sdil.models.SdilReturn
 import play.twirl.api.Html
 import sdil.models.ReturnsVariation
 
 trait CheckYourAnswers[A] {
-
   def cyaRows(value: A, messages: UniformMessages[Html]): List[(String, Html, String)]
 }
 
 object CheckYourAnswers {
-
   implicit val returnsCya: CheckYourAnswers[ReturnsVariation] = new CheckYourAnswers[ReturnsVariation] {
     def cyaRows(value: ReturnsVariation, messages: UniformMessages[Html]): List[(String, Html, String)] = Nil
   }
-
 }

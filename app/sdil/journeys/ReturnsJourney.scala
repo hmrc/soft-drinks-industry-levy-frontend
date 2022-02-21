@@ -82,25 +82,37 @@ object ReturnsJourney {
       smallProds <- askList[SmallProducer](
                      "small-producer-details",
                      default.map { _.packSmall },
-                     Rule.nonEmpty[List[SmallProducer]]) {
-                     case (index: Option[Int], existing: List[SmallProducer]) =>
-                       ask[SmallProducer](
-                         s"add-small-producer",
-                         default = index.map(existing),
-                         validation = Rule.condAtPath[SmallProducer]("sdilRef")(
-                           sp => Await.result(checkSmallProducerStatus(sp.sdilRef, period), 20.seconds).getOrElse(true),
-                           "notSmall"
-                         ) followedBy Rule.condAtPath[SmallProducer]("sdilRef")(
-                           sp => !(sp.sdilRef === subscription.sdilRef),
-                           "same"
-                         ) followedBy Rule.condAtPath[SmallProducer]("sdilRef")(
-                           sp => !(id.contains("/add/") && existing.map(s => s.sdilRef).contains(sp.sdilRef)),
-                           "alreadyexists"
+                     Rule.nonEmpty[List[SmallProducer]])(
+                     // add/edit journey
+                     {
+                       case (index: Option[Int], existingSmallProducers: List[SmallProducer]) =>
+                         ask[SmallProducer](
+                           s"add-small-producer",
+                           default = index.map(existingSmallProducers),
+                           validation = Rule.condAtPath[SmallProducer]("sdilRef")(
+                             sp =>
+                               Await.result(checkSmallProducerStatus(sp.sdilRef, period), 20.seconds).getOrElse(true),
+                             "notSmall"
+                           ) followedBy Rule.condAtPath[SmallProducer]("sdilRef")(
+                             sp => !(sp.sdilRef === subscription.sdilRef),
+                             "same"
+                           ) followedBy Rule.condAtPath[SmallProducer]("sdilRef")(
+                             sp =>
+                               !(id
+                                 .contains("/add/") && existingSmallProducers.map(s => s.sdilRef).contains(sp.sdilRef)),
+                             "alreadyexists"
+                           )
                          )
-                       )
-                   } emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
+                     },
+                     // delete confirmation journey - defaults to pure(true)
+                     {
+                       case (index: Int, existingSmallProducers: List[SmallProducer]) =>
+                         interact[Boolean]("remove-small-producer-details", existingSmallProducers(index).sdilRef)
+                     }
+                   ) emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
                      _.packSmall.nonEmpty
                    })
+
       imports <- askEmptyOption[(Long, Long)]("brought-into-uk", default.map { _.importLarge })
       importsSmall <- askEmptyOption[(Long, Long)]("brought-into-uk-from-small-producers", default.map {
                        _.importSmall

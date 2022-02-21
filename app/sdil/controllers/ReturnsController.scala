@@ -60,7 +60,7 @@ class ReturnsController(
 
       val sdilRef = request.sdilEnrolment.value
       val period = ReturnPeriod(year, quarter)
-      val emptyReturn = SdilReturn((0, 0), (0, 0), Nil, (0, 0), (0, 0), (0, 0), (0, 0), None)
+      val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
 
       (for {
         subscription   <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
