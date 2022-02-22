@@ -27,7 +27,12 @@
 
 @helper.form(action = play.api.mvc.Call("post", key)) {
    @CSRF.formField
-        
+
+<legend>
+    <span class="govuk-caption-xl">@subscription.orgName</span>
+    <h1 class="heading-large.service-header">@Messages(s"heading.check-answers")</h1>
+</legend>
+
     <div class="grid-row">
         <div class="column-two-thirds">
                 @declaration_description_list("service-page", "business-details.title") {

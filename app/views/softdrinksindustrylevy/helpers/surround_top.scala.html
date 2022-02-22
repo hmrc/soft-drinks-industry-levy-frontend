@@ -17,7 +17,7 @@
 @(pageKey: List[String], fieldKey: String, tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html], cond: Option[Html] = None)(inner: Html*)
 @keyDots = @{pageKey.mkString(".")}
 @isListingPage= @{List("production-sites", "warehouses", "small-producer-details", "production-site-details", "secondary-warehouse-details","warehouse-details","packaging-site-details").contains(pageKey.head)}
-@noShowHeader= @{List("small-producer-details","check-your-answers","check-answers").contains(pageKey.head)}
+@noShowHeader= @{List("small-producer-details","check-your-answers","check-answers","change-registered-account-details").contains(pageKey.head)}
 @if(isListingPage){
     @if(!noShowHeader) {
         <h1 class="heading-large  @{messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")}">
