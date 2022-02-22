@@ -62,6 +62,7 @@ object ReturnsJourney {
     Map(key -> Tuple2(key, args.toList.map { escape(_).toString }))
   }
 
+  val NoClaim: (Long, Long) = (0L, 0L)
   def journey(
     period: ReturnPeriod,
     default: Option[SdilReturn] = None,
@@ -111,9 +112,16 @@ object ReturnsJourney {
       importsSmall <- askEmptyOption[(Long, Long)]("brought-into-uk-from-small-producers", default.map {
                        _.importSmall
                      })
-      exportCredits <- askEmptyOption[(Long, Long)]("claim-credits-for-exports", default.map { _.export })
-      wastage       <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged", default.map { _.wastage })
-      sdilReturn = SdilReturn(ownBrands, contractPacked, smallProds, imports, importsSmall, exportCredits, wastage)
+      exportCredits <- askEmptyOption[(Long, Long)]("claim-credits-for-exports") when canClaim == true
+      wastage       <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged") when canClaim == true
+      sdilReturn = SdilReturn(
+        ownBrands,
+        contractPacked,
+        smallProds,
+        imports,
+        importsSmall,
+        exportCredits.getOrElse(NoClaim),
+        wastage.getOrElse(NoClaim))
       isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
       isNewPacker = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
       inner = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)(_: Messages)
