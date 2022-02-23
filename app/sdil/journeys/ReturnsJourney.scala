@@ -176,6 +176,7 @@ object ReturnsJourney {
               total = total,
               variation = variation.some,
               subscription = subscription,
+              period = period,
               originalReturn = None
             )(_: Messages)
           )
