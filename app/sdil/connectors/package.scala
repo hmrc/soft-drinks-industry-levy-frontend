@@ -16,14 +16,23 @@
 
 package sdil
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.json.{Format, JsPath, Json, OFormat}
 import sdil.models.{ReturnPeriod, SdilReturn, SmallProducer}
 import sdil.models.variations.ReturnVariationData
 
 package object connectors {
+  // cos coupling is bad, mkay
+  implicit val longTupleFormatter: Format[(Long, Long)] = (
+    (JsPath \ "lower").format[Long] and
+      (JsPath \ "higher").format[Long]
+  )((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
+    Tuple2.unapply(x)
+  }))
 
   implicit val returnPeriodJson: OFormat[ReturnPeriod] = Json.format[ReturnPeriod]
   implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
+
   implicit val returnJson: OFormat[SdilReturn] = Json.format[SdilReturn]
   implicit val returnVariationDataFormat: OFormat[ReturnVariationData] = Json.format[ReturnVariationData]
 
