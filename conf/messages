@@ -1447,7 +1447,7 @@ return-sent.paymentsBlurb.variation=We will send you a letter to confirm that yo
 return-sent.cya-table.header=Details of your return
 
 warning=Warning
-returnsCYA.returnsDue= {0} to {2}
+returnsCYA.returnsDue= {0} to {1}
 returnsHome.returnsDue=The return for {0} from {1} to {2} is due by {3}.
 returnsHome.returnsDueMulti=You have {0} overdue returns.
 returnsHome.returnsDueList.p1=You must send your {0} overdue returns in this order, oldest first:
