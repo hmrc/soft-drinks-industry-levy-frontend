@@ -159,7 +159,7 @@ object RegistrationController {
                      // add/edit journey
                      {
                        case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
-                         ask[Warehouse]("w-house", default = index.map(existingWarehouses)) 
+                         ask[Warehouse]("w-house", default = index.map(existingWarehouses))
                      },
                      // delete confirmation journey - defaults to pure(true)
                      {
