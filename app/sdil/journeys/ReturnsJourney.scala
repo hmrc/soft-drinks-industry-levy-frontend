@@ -112,7 +112,6 @@ object ReturnsJourney {
                    ) emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
                      _.packSmall.nonEmpty
                    })
-
       imports <- askEmptyOption[(Long, Long)]("brought-into-uk", default.map { _.importLarge })
       importsSmall <- askEmptyOption[(Long, Long)]("brought-into-uk-from-small-producers", default.map {
                        _.importSmall
@@ -181,5 +180,4 @@ object ReturnsJourney {
             )(_: Messages)
           )
     } yield (sdilReturn, variation)
-
 }

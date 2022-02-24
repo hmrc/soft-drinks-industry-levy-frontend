@@ -27,8 +27,6 @@ import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.{ShowBackLink, Subset, askEmptyOption, askListSimple, longTupToLitreage}
 import sdil.journeys.VariationsJourney.Change.RegChange
-import sdil.journeys.VariationsJourney.ContactChangeType.Sites
-import sdil.journeys.VariationsJourney.{closedPackagingSites, closedWarehouseSites, newPackagingSites, newWarehouseSites}
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData}
@@ -37,7 +35,6 @@ import sdil.uniform.SdilComponents.ProducerType
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.uniform
 import views.html.uniform.helpers.dereg_variations_cya
-import views.html.uniform.fragments.update_business_addresses
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
@@ -99,7 +96,6 @@ object VariationsJourney {
     val base = RegistrationVariationData(subscription)
 
     for {
-      //_         <- tell("change-business-address", htmlMessage)
       _ <- tell(
             key = "change-registered-account-details",
             value = ufViews.updateBusinessAddresses(id, subscription, Address.fromUkAddress(subscription.address))(
@@ -109,7 +105,6 @@ object VariationsJourney {
             customContent = message("change-registered-account-details.caption", subscription.orgName)
           )
       variation <- contactUpdate(base)
-      //_         <- tell("check-answers", Html(s"$variation"))
       _ <- tell(
             "check-answers",
             views.html.uniform.fragments.variations_cya(
@@ -146,7 +141,6 @@ object VariationsJourney {
         }
       }
       .filter(x => closedSites.contains(x.ref.getOrElse("")))
-
   private def deregisterUpdate(
     data: RegistrationVariationData
   ) =
@@ -181,34 +175,19 @@ object VariationsJourney {
         ContactChangeType.values
 
     for {
-
-      // give them a multiple-choice list of things to change
       change <- ask[Set[ContactChangeType]](
                  "change-registered-details",
                  validation = Rule.nonEmpty[Set[ContactChangeType]] alongWith Subset(changeOptions: _*)
                )
 
-//      packSites <- askListSimple[Address](
-//                    "packaging-site-details",
-//                    "p-site",
-//                    listValidation = Rule.nonEmpty[List[Address]],
-//                    default = data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some
-//                  ).map(_.map(Site.fromAddress)) emptyUnless (
-//                    (data.producer.isLarge.contains(true) || data.copackForOthers) && change.contains(Sites)
-//                  )
-
       packSites <- askList[Address]("packaging-site-details")(
-                    // add/edit journey
                     {
                       case (index: Option[Int], existingAddresses: List[Address]) =>
                         ask[Address](
                           "p-site",
-                          //validation = Rule.nonEmpty,
-                          default = index.map(existingAddresses) //data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some
+                          default = index.map(existingAddresses)
                         )
-                    },
-                    // delete confirmation journey - defaults to pure(true)
-                    {
+                    }, {
                       case (index: Int, existingAddresses: List[Address]) =>
                         interact[Boolean]("remove-packaging-site-details", existingAddresses(index).nonEmptyLines)
                     }
@@ -216,22 +195,12 @@ object VariationsJourney {
                     (data.producer.isLarge.contains(true) || data.copackForOthers) && change.contains(Sites)
                   )
 
-//      warehouses <- askListSimple[Warehouse](
-//                     "warehouse-details",
-//                     "w-house",
-//                     default = data.updatedProductionSites.toList
-//                       .map(x => Warehouse.fromSite(Site(x.address, x.ref, x.tradingName, x.closureDate)))
-//                       .some
-//                   ).map(_.map(Site.fromWarehouse)) emptyUnless change.contains(Sites)
-
       warehouses <- askList[Warehouse]("warehouse-details")(
                      // add/edit journey
                      {
                        case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
                          ask[Warehouse]("w-house", default = index.map(existingWarehouses))
-                     },
-                     // delete confirmation journey - defaults to pure(true)
-                     {
+                     }, {
                        case (index: Int, existingWarehouses: List[Warehouse]) =>
                          interact[Boolean]("remove-warehouse-details", existingWarehouses(index).nonEmptyLines)
                      }
@@ -300,24 +269,23 @@ object VariationsJourney {
                       } else {
                         data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address))
                       }
-
                       packSites <- askListSimple[Address](
                                     "production-site-details",
                                     "p-site",
                                     listValidation = Rule.nonEmpty[List[Address]],
-                                    default =
-                                      data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some
+                                    default = data.updatedProductionSites.toList
+                                      .map(x => Address.fromUkAddress(x.address))
+                                      .some
                                   ).map(_.map(Site.fromAddress)) emptyUnless packer
 
                       warehouses <- askListSimple[Warehouse](
                                      "secondary-warehouse-details",
                                      "w-house",
-                                     default = data.updatedProductionSites.toList
+                                     default = data.updatedWarehouseSites.toList
                                        .map(x =>
                                          Warehouse.fromSite(Site(x.address, x.ref, x.tradingName, x.closureDate)))
                                        .some
                                    ).map(_.map(Site.fromWarehouse)).emptyUnless(!warehouseShow)
-
                     } yield
                       Change.RegChange(
                         data.copy(
@@ -383,19 +351,6 @@ object VariationsJourney {
         base.original.address,
         "")
 
-      // extraMessages = ExtraMessages(
-      //   messages = Map(
-      //     "heading.return-details" -> s"${Messages(s"select-return.option.${variation.period.quarter}")} ${variation.period.year} return details",
-      //     "return-correction-reason.label" -> s"Reason for correcting ${Messages(
-      //       s"select-return.option.${variation.period.quarter}")} ${variation.period.year} return",
-      //     "heading.check-answers.orgName"            -> s"${subscription.orgName}",
-      //     "heading.return-details.orgName"           -> s"${subscription.orgName}",
-      //     "heading.check-return-changes.orgName"     -> s"${subscription.orgName}",
-      //     "heading.repayment-method.orgName"         -> s"${subscription.orgName}",
-      //     "heading.return-correction-reason.orgName" -> s"${subscription.orgName}"
-      //   )
-      // )
-
       reason <- ask[String](
                  "return-correction-reason",
                  validation = Rule.nonEmpty[String]("required") followedBy Rule.maxLength(255))
@@ -446,7 +401,6 @@ object VariationsJourney {
                                    "select-return",
                                    validation = Rule.in(variableReturns)
                                  )
-                        ///  original journey redirected from here to adjust()
                         adjustedReturn <- adjust(
                                            id,
                                            subscription,

@@ -18,12 +18,9 @@ package sdil.controllers
 
 import scala.language.{higherKinds, postfixOps}
 import cats.implicits._
-import enumeratum._
 
 import java.time.{LocalDate, LocalTime, ZoneId}
 import ltbs.uniform._
-import ltbs.uniform.common.web.WebMonad
-import validation._
 import play.api.i18n._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -44,7 +41,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import ltbs.uniform.interpreters.playframework.SessionPersistence
 import sdil.journeys.VariationsJourney
 import sdil.journeys.VariationsJourney._
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.{main_template, uniform}
 
 import java.time.format.DateTimeFormatter
@@ -85,7 +81,6 @@ class VariationsController(
       "variations",
       regCache.shortLiveCache)
 
-  //TODO: This redirecting to the start of the variations journey
   def changeAddressAndContact(id: String) = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
@@ -169,17 +164,19 @@ class VariationsController(
   def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
     sites
       .filter { x =>
-        x.closureDate.fold(true) {
-          _.isAfter(LocalDate.now)
-        }
+        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
       }
       .filter(x => closedSites.contains(x.ref.getOrElse("")))
 
   def closedWarehouseSites(variation: RegistrationVariationData): List[Site] =
-    closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
+    variation.original.warehouseSites
+      .filter(x => x.closureDate.forall(x => x.isAfter(LocalDate.now)))
+      .diff(Convert(variation).closeSites)
 
   def closedPackagingSites(variation: RegistrationVariationData): List[Site] =
-    closedSites(variation.original.productionSites, Convert(variation).closeSites.map(x => x.siteReference))
+    variation.original.productionSites
+      .filter(x => x.closureDate.forall(x => x.isAfter(LocalDate.now)))
+      .diff(variation.updatedProductionSites)
 
   def newPackagingSites(variation: RegistrationVariationData): List[Site] =
     variation.updatedProductionSites.diff(variation.original.productionSites).toList
@@ -207,7 +204,7 @@ class VariationsController(
           }
           val whn = uniform.fragments.variationsWHN(
             //TODO: How can we see the path here?
-            List("contact-details"), //Nil,
+            List("contact-details"),
             newPackagingSites(regVar),
             closedPackagingSites(regVar),
             newWarehouseSites(regVar),
@@ -255,9 +252,7 @@ class VariationsController(
                   updateTimeMessage = retSubheading
                 )
             )(implicitly, implicitly, config))
-
       }
-
     }
   }
 
@@ -269,11 +264,5 @@ class VariationsController(
     wm.run(id, config = journeyConfig) { date =>
       Future.successful(Ok(date.toString))
     }
-
   }
-//
-//  def changeBusinessAddress(id: String): Action[AnyContent] = registeredAction.async { implicit req =>
-//    Future.successful(Ok("test"))
-//  }
-
 }
