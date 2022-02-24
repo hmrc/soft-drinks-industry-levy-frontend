@@ -132,11 +132,11 @@ object RegistrationController {
 //                    default = packingSites.some,
 //                    listValidation = Rule.nonEmpty
 //                  ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
-      packSites <- askList[Address]("production-site-details")(
+      packSites <- askList[Address]("production-site-details", packingSites.some, Rule.nonEmpty)(
                     // add/edit journey
                     {
                       case (index: Option[Int], existingAddresses: List[Address]) =>
-                        ask[Address]("p-site", default = index.map(existingAddresses)) //, validation = Rule.nonEmpty)
+                        ask[Address]("p-site", default = index.map(existingAddresses)) 
                     },
                     // delete confirmation journey - defaults to pure(true)
                     {
@@ -159,7 +159,7 @@ object RegistrationController {
                      // add/edit journey
                      {
                        case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
-                         ask[Warehouse]("w-house", default = index.map(existingWarehouses)) //, validation = Rule.nonEmpty)
+                         ask[Warehouse]("w-house", default = index.map(existingWarehouses)) 
                      },
                      // delete confirmation journey - defaults to pure(true)
                      {
