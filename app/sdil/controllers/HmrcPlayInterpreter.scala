@@ -352,6 +352,6 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponents with
 
     case SmallProducer(alias, _, _) if alias.length > 160 => Left(ErrorMsg("max").toTree.prefixWith("alias"))
     case SmallProducer(_, sdilRef, _) if sdilRef.isEmpty  => Left(ErrorMsg("required").toTree.prefixWith("sdilRef"))
-    case other => other.asRight
+    case other                                            => other.asRight
   }(identity)
 }

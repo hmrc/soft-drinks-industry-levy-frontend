@@ -183,7 +183,10 @@
                     <details role="group">
                         <summary aria-controls="details-content-1" aria-expanded="false">
                             <span class="summary">
+                                @if((site.getLines.head).nonEmpty){
                                 @site.getLines.head
+                                }
+                                @site.address.postCode
                             </span>
                         </summary>
                         @for(line <- site.getLines.tail.dropRight(1)) {

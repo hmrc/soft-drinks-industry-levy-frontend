@@ -83,7 +83,6 @@ object ReturnsJourney {
                      "small-producer-details",
                      default.map { _.packSmall },
                      Rule.nonEmpty[List[SmallProducer]])(
-                     // add/edit journey
                      {
                        case (index: Option[Int], existingSmallProducers: List[SmallProducer]) =>
                          ask[SmallProducer](
@@ -103,9 +102,7 @@ object ReturnsJourney {
                              "alreadyexists"
                            )
                          )
-                     },
-                     // delete confirmation journey - defaults to pure(true)
-                     {
+                     }, {
                        case (index: Int, existingSmallProducers: List[SmallProducer]) =>
                          interact[Boolean]("remove-small-producer-details", existingSmallProducers(index).sdilRef)
                      }
