@@ -1240,7 +1240,7 @@ add-small-producer.litreage._2.max=Number of litres in the high band must be les
 add-small-producer.sdilRef.same=Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
 add-small-producer.sdilRef.alreadyexists=Small producer reference number must be different to a small producer reference number you have already added
 add-small-producer.sdilRef.invalid=Small producer reference number must be 6 letters and 9 numbers
-add-small-producer.sdilRef.invalid=Small producer reference number must be 6 letters and 9 numbers
+sdilRef.invalid=Small producer reference number must be 6 letters and 9 numbers
 add-small-producer.sdilRef.notSmall=Small producer reference number does not match a business that is currently registered as a \
 small producer. Check and try again.
 heading.multi.small-producer-details=You have added {0} small producer{1}

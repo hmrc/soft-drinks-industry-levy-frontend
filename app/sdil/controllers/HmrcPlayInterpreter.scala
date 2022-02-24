@@ -345,13 +345,13 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponents with
         ErrorMsg("required").toTree.prefixWith("sdilRef") ++
           ErrorMsg("required").toTree.prefixWith("litreage._2")
       )
+    case SmallProducer(_, sdilRef, _) if !sdilRef.matches("^X[A-Z]SDIL000[0-9]{6}$") =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("sdilRef"))
+    case SmallProducer(_, sdilRef, _) if !isCheckCorrect(sdilRef, 1) =>
+      Left(ErrorMsg("invalid").toTree.prefixWith("sdilRef"))
+
     case SmallProducer(alias, _, _) if alias.length > 160 => Left(ErrorMsg("max").toTree.prefixWith("alias"))
     case SmallProducer(_, sdilRef, _) if sdilRef.isEmpty  => Left(ErrorMsg("required").toTree.prefixWith("sdilRef"))
-    //TODO: Uncomment validation for prod
-//    case SmallProducer(_, sdilRef, _) if !isCheckCorrect(sdilRef, 1) =>
-//      Left(ErrorMsg("invalid").toTree.prefixWith("sdilRef"))
-//    case SmallProducer(_, sdilRef, _) if !sdilRef.matches("^X[A-Z]SDIL000[0-9]{6}$") =>
-//      Left(ErrorMsg("invalid").toTree.prefixWith("sdilRef"))
     case other => other.asRight
   }(identity)
 }
