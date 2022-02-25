@@ -141,6 +141,7 @@ object VariationsJourney {
         }
       }
       .filter(x => closedSites.contains(x.ref.getOrElse("")))
+
   private def deregisterUpdate(
     data: RegistrationVariationData
   ) =
@@ -180,14 +181,21 @@ object VariationsJourney {
                  validation = Rule.nonEmpty[Set[ContactChangeType]] alongWith Subset(changeOptions: _*)
                )
 
-      packSites <- askList[Address]("packaging-site-details")(
+      packSites <- askList[Address](
+                    "packaging-site-details",
+                    data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some,
+                    Rule.nonEmpty[List[Address]]
+                  )(
+                    // add/edit journey
                     {
                       case (index: Option[Int], existingAddresses: List[Address]) =>
                         ask[Address](
                           "p-site",
                           default = index.map(existingAddresses)
                         )
-                    }, {
+                    },
+                    // delete confirmation journey - defaults to pure(true)
+                    {
                       case (index: Int, existingAddresses: List[Address]) =>
                         interact[Boolean]("remove-packaging-site-details", existingAddresses(index).nonEmptyLines)
                     }
@@ -195,12 +203,17 @@ object VariationsJourney {
                     (data.producer.isLarge.contains(true) || data.copackForOthers) && change.contains(Sites)
                   )
 
-      warehouses <- askList[Warehouse]("warehouse-details")(
+      warehouses <- askList[Warehouse](
+                     "warehouse-details",
+                     data.updatedWarehouseSites.toList.map(Warehouse.fromSite).some
+                   )(
                      // add/edit journey
                      {
                        case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
                          ask[Warehouse]("w-house", default = index.map(existingWarehouses))
-                     }, {
+                     },
+                     // delete confirmation journey - defaults to pure(true)
+                     {
                        case (index: Int, existingWarehouses: List[Warehouse]) =>
                          interact[Boolean]("remove-warehouse-details", existingWarehouses(index).nonEmptyLines)
                      }
@@ -269,23 +282,65 @@ object VariationsJourney {
                       } else {
                         data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address))
                       }
-                      packSites <- askListSimple[Address](
+
+//                      packSites <- askListSimple[Address](
+//                                    "production-site-details",
+//                                    "p-site",
+//                                    listValidation = Rule.nonEmpty[List[Address]],
+//                                    default = data.updatedProductionSites.toList
+//                                      .map(x => Address.fromUkAddress(x.address))
+//                                      .some
+//                                  ).map(_.map(Site.fromAddress)) emptyUnless packer
+
+                      packSites <- askList[Address](
                                     "production-site-details",
-                                    "p-site",
-                                    listValidation = Rule.nonEmpty[List[Address]],
-                                    default = data.updatedProductionSites.toList
-                                      .map(x => Address.fromUkAddress(x.address))
-                                      .some
+                                    data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some,
+                                    Rule.nonEmpty[List[Address]]
+                                  )(
+                                    // add/edit journey
+                                    {
+                                      case (index: Option[Int], existingAddresses: List[Address]) =>
+                                        ask[Address]("p-site", default = index.map(existingAddresses))
+                                    },
+                                    // delete confirmation journey - defaults to pure(true)
+                                    {
+                                      case (index: Int, existingAddresses: List[Address]) =>
+                                        interact[Boolean](
+                                          "remove-production-site-details",
+                                          existingAddresses(index).nonEmptyLines)
+                                    }
                                   ).map(_.map(Site.fromAddress)) emptyUnless packer
 
-                      warehouses <- askListSimple[Warehouse](
+//                      warehouses <- askListSimple[Warehouse](
+//                                     "secondary-warehouse-details",
+//                                     "w-house",
+//                                     default = data.updatedWarehouseSites.toList
+//                                       .map(x =>
+//                                         Warehouse.fromSite(Site(x.address, x.ref, x.tradingName, x.closureDate)))
+//                                       .some
+//                                   ).map(_.map(Site.fromWarehouse)).emptyUnless(!warehouseShow)
+
+                      warehouses <- askList[Warehouse](
                                      "secondary-warehouse-details",
-                                     "w-house",
-                                     default = data.updatedWarehouseSites.toList
+                                     data.updatedWarehouseSites.toList
                                        .map(x =>
                                          Warehouse.fromSite(Site(x.address, x.ref, x.tradingName, x.closureDate)))
                                        .some
+                                   )(
+                                     // add/edit journey
+                                     {
+                                       case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
+                                         ask[Warehouse]("w-house", default = index.map(existingWarehouses))
+                                     },
+                                     // delete confirmation journey - defaults to pure(true)
+                                     {
+                                       case (index: Int, existingWarehouses: List[Warehouse]) =>
+                                         interact[Boolean](
+                                           "remove-warehouse-details",
+                                           existingWarehouses(index).nonEmptyLines)
+                                     }
                                    ).map(_.map(Site.fromWarehouse)).emptyUnless(!warehouseShow)
+
                     } yield
                       Change.RegChange(
                         data.copy(

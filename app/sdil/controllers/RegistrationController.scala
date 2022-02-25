@@ -136,7 +136,7 @@ object RegistrationController {
                     // add/edit journey
                     {
                       case (index: Option[Int], existingAddresses: List[Address]) =>
-                        ask[Address]("p-site", default = index.map(existingAddresses)) 
+                        ask[Address]("p-site", default = index.map(existingAddresses))
                     },
                     // delete confirmation journey - defaults to pure(true)
                     {
@@ -225,4 +225,5 @@ object RegistrationController {
             }
           )
     } yield subscription
+
 }

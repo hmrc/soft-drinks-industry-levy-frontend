@@ -38,6 +38,7 @@ object ReturnsJourney {
     val t = r.packLarge |+| r.importLarge |+| r.ownBrand
     (t._1 * costLower |+| t._2 * costHigher) * 4
   }
+
   def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
     val ra = List(
       ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
@@ -52,6 +53,7 @@ object ReturnsJourney {
     else
       ra
   }
+
   def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal =
     d.map { case (_, (l, h), m) => costLower * l * m + costHigher * h * m }.sum
 
@@ -177,4 +179,5 @@ object ReturnsJourney {
             )(_: Messages)
           )
     } yield (sdilReturn, variation)
+
 }
