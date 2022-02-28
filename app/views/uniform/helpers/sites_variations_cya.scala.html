@@ -185,8 +185,9 @@
                             <span class="summary">
                                 @if((site.getLines.head).nonEmpty){
                                 @site.getLines.head
+                                }else{
+                                @site.address.lines.head
                                 }
-                                @site.address.postCode
                             </span>
                         </summary>
                         @for(line <- site.getLines.tail.dropRight(1)) {
