@@ -25,8 +25,7 @@ import play.api.mvc.Request
 import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
-import sdil.controllers.{ShowBackLink, Subset, askEmptyOption, askListSimple, longTupToLitreage}
-import sdil.journeys.VariationsJourney.Change.RegChange
+import sdil.controllers.{Subset, askEmptyOption, longTupToLitreage}
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData}
@@ -167,8 +166,6 @@ object VariationsJourney {
   ) = {
 
     import ContactChangeType._
-
-    // which things are they allowed to change?
     val changeOptions =
       if (data.isVoluntary)
         ContactChangeType.values.filter(_ != ContactChangeType.Sites)
@@ -186,16 +183,13 @@ object VariationsJourney {
                     data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some,
                     Rule.nonEmpty[List[Address]]
                   )(
-                    // add/edit journey
                     {
                       case (index: Option[Int], existingAddresses: List[Address]) =>
                         ask[Address](
                           "p-site",
                           default = index.map(existingAddresses)
                         )
-                    },
-                    // delete confirmation journey - defaults to pure(true)
-                    {
+                    }, {
                       case (index: Int, existingAddresses: List[Address]) =>
                         interact[Boolean]("remove-packaging-site-details", existingAddresses(index).nonEmptyLines)
                     }
@@ -207,13 +201,10 @@ object VariationsJourney {
                      "warehouse-details",
                      data.updatedWarehouseSites.toList.map(Warehouse.fromSite).some
                    )(
-                     // add/edit journey
                      {
                        case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
                          ask[Warehouse]("w-house", default = index.map(existingWarehouses))
-                     },
-                     // delete confirmation journey - defaults to pure(true)
-                     {
+                     }, {
                        case (index: Int, existingWarehouses: List[Warehouse]) =>
                          interact[Boolean]("remove-warehouse-details", existingWarehouses(index).nonEmptyLines)
                      }
@@ -282,43 +273,21 @@ object VariationsJourney {
                       } else {
                         data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address))
                       }
-
-//                      packSites <- askListSimple[Address](
-//                                    "production-site-details",
-//                                    "p-site",
-//                                    listValidation = Rule.nonEmpty[List[Address]],
-//                                    default = data.updatedProductionSites.toList
-//                                      .map(x => Address.fromUkAddress(x.address))
-//                                      .some
-//                                  ).map(_.map(Site.fromAddress)) emptyUnless packer
-
                       packSites <- askList[Address](
                                     "production-site-details",
                                     data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some,
                                     Rule.nonEmpty[List[Address]]
                                   )(
-                                    // add/edit journey
                                     {
                                       case (index: Option[Int], existingAddresses: List[Address]) =>
                                         ask[Address]("p-site", default = index.map(existingAddresses))
-                                    },
-                                    // delete confirmation journey - defaults to pure(true)
-                                    {
+                                    }, {
                                       case (index: Int, existingAddresses: List[Address]) =>
                                         interact[Boolean](
                                           "remove-production-site-details",
                                           existingAddresses(index).nonEmptyLines)
                                     }
                                   ).map(_.map(Site.fromAddress)) emptyUnless packer
-
-//                      warehouses <- askListSimple[Warehouse](
-//                                     "secondary-warehouse-details",
-//                                     "w-house",
-//                                     default = data.updatedWarehouseSites.toList
-//                                       .map(x =>
-//                                         Warehouse.fromSite(Site(x.address, x.ref, x.tradingName, x.closureDate)))
-//                                       .some
-//                                   ).map(_.map(Site.fromWarehouse)).emptyUnless(!warehouseShow)
 
                       warehouses <- askList[Warehouse](
                                      "secondary-warehouse-details",
@@ -327,12 +296,10 @@ object VariationsJourney {
                                          Warehouse.fromSite(Site(x.address, x.ref, x.tradingName, x.closureDate)))
                                        .some
                                    )(
-                                     // add/edit journey
                                      {
                                        case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
                                          ask[Warehouse]("w-house", default = index.map(existingWarehouses))
                                      },
-                                     // delete confirmation journey - defaults to pure(true)
                                      {
                                        case (index: Int, existingWarehouses: List[Warehouse]) =>
                                          interact[Boolean](
