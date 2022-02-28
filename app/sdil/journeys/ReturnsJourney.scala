@@ -180,4 +180,54 @@ object ReturnsJourney {
           )
     } yield (sdilReturn, variation)
 
+  def cyaJourney(
+    id: String,
+    period: ReturnPeriod,
+    nilReturn: SdilReturn,
+    subscription: RetrievedSubscription,
+    checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
+    submitReturnVariation: ReturnsVariation => Future[Unit],
+    broughtForward: BigDecimal,
+    isSmallProd: Boolean
+  ) = {
+    val data = returnAmount(nilReturn, isSmallProd)
+    val subtotal = calculateSubtotal(data)
+    val total = subtotal - broughtForward
+    val isNewImporter = (nilReturn.totalImported._1 > 0L && nilReturn.totalImported._2 > 0L) && !subscription.activity.importer
+    val isNewPacker = (nilReturn.totalPacked._1 > 0L && nilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
+
+    val variation = ReturnsVariation(
+      orgName = subscription.orgName,
+      ppobAddress = subscription.address,
+      importer = (isNewImporter, (nilReturn.totalImported).combineN(4)),
+      packer = (isNewPacker, (nilReturn.totalPacked).combineN(4)),
+      warehouses = List.empty[Site], //newWarehouses.getOrElse(List.empty[Site]),
+      packingSites = List.empty[Site], //newPackingSites.getOrElse(List.empty[Site]),
+      phoneNumber = subscription.contact.phoneNumber,
+      email = subscription.contact.email,
+      taxEstimation = taxEstimation(nilReturn)
+    )
+
+    for {
+      _ <- convertWithKey("vary-in-return")(submitReturnVariation(variation))
+      _ <- tell(
+            "check-your-answers",
+            uniform.fragments.returnsCYA(
+              key = "check-your-answers",
+              lineItems = data,
+              costLower = costLower,
+              costHigher = costHigher,
+              subtotal = subtotal,
+              broughtForward = broughtForward,
+              total = total,
+              variation = variation.some,
+              subscription = subscription,
+              period = period,
+              originalReturn = None
+            )(_: Messages)
+          )
+    } yield (nilReturn, variation)
+
+  }
+
 }
