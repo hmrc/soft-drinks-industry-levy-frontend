@@ -139,15 +139,6 @@ trait HmrcPlayInterpreter extends PlayInterpreter[Html] with SdilComponents with
       pageIn: PageIn[Html],
       stepDetails: StepDetails[Html, Nothing]
     ): Option[Html] = stepDetails.tell
-    //      Some(
-    //        views.html.softdrinksindustrylevy.helpers
-    //          .end_surround(
-    //            stepDetails.stepKey,
-    //            stepDetails.fieldKey.head,
-    //            stepDetails.tell,
-    //            stepDetails.errors,
-    //            pageIn.messages)()
-    //      )
   }
 
   // Address validation logic

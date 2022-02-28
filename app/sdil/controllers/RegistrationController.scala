@@ -74,12 +74,6 @@ class RegistrationController(
 }
 
 object RegistrationController {
-
-  private def message(key: String, args: String*) = {
-    import play.twirl.api.HtmlFormat.escape
-    Map(key -> Tuple2(key, args.toList.map { escape(_).toString }))
-  }
-
   def journey(
     hasCTEnrolment: Boolean,
     fd: RegistrationFormData,

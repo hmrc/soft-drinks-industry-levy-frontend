@@ -87,7 +87,7 @@ class VariationsController(
       case Some(subscription) =>
         println(s"Subscription: $subscription")
         interpret(
-          VariationsJourney.changeBusinessAddressJourney(id, subscription, sdilRef, ufViews)(request, config)
+          VariationsJourney.changeBusinessAddressJourney(id, subscription, ufViews)(request)
         ).run(id, purgeStateUponCompletion = true) {
           case Change.RegChange(reg) =>
             sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
@@ -161,28 +161,24 @@ class VariationsController(
     }
   }
 
-  def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
-    sites
-      .filter { x =>
-        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
-      }
-      .filter(x => closedSites.contains(x.ref.getOrElse("")))
-
   def closedWarehouseSites(variation: RegistrationVariationData): List[Site] =
-    variation.original.warehouseSites
-      .filter(x => x.closureDate.forall(x => x.isAfter(LocalDate.now)))
-      .diff(Convert(variation).closeSites)
+    closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
 
   def closedPackagingSites(variation: RegistrationVariationData): List[Site] =
-    variation.original.productionSites
-      .filter(x => x.closureDate.forall(x => x.isAfter(LocalDate.now)))
-      .diff(variation.updatedProductionSites)
+    closedSites(variation.original.productionSites, Convert(variation).closeSites.map(x => x.siteReference))
 
   def newPackagingSites(variation: RegistrationVariationData): List[Site] =
     variation.updatedProductionSites.diff(variation.original.productionSites).toList
 
   def newWarehouseSites(variation: RegistrationVariationData): List[Site] =
     variation.updatedWarehouseSites.diff(variation.original.warehouseSites).toList
+
+  def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
+    sites
+      .filter { x =>
+        x.closureDate.get.isAfter(LocalDate.now)
+      }
+      .filter(x => closedSites.contains(x.ref.getOrElse("")))
 
   def showVariationsComplete() = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
@@ -203,7 +199,6 @@ class VariationsController(
             case _                 => None
           }
           val whn = uniform.fragments.variationsWHN(
-            //TODO: How can we see the path here?
             List("contact-details"),
             newPackagingSites(regVar),
             closedPackagingSites(regVar),

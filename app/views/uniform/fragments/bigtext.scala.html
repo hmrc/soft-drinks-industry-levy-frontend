@@ -16,7 +16,7 @@
 
 @import helper.{inputText => _}
 
-@(key: String, value: String, errors: ErrorTree, messages: UniformMessages[Html])
+@(key: String, value: String, errors: ErrorTree)
 
 <textarea class="form-control form-control-3-4 @if(errors.nonEmpty) {form-control-error}"
     id="@key"

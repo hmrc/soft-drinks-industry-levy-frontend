@@ -14,12 +14,9 @@
  * limitations under the License.
  *@
 
-@(key: String, radioOptions: Seq[(String, String)], selected: Option[String], conditional: PartialFunction[String,Html] = PartialFunction.empty)(implicit messages: Messages)
+@(key: String, radioOptions: Seq[(String, String)], selected: Option[String])(implicit messages: Messages)
 
 @* the inputRadioGroup template in play-ui uses the wrong classes, and doesn't add an ID for the error summary to link to *@
-
-@import play.api.i18n._
-@import views.html.helper._
 
     @radioOptions.map { case (value, label) =>
         @defining(s"${key}-${value.toLowerCase.replace(" ","_")}")  { inputId =>

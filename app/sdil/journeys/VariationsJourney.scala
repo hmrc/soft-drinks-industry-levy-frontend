@@ -88,9 +88,8 @@ object VariationsJourney {
   def changeBusinessAddressJourney(
     id: String,
     subscription: RetrievedSubscription,
-    sdilRef: String,
     ufViews: views.uniform.Uniform
-  )(implicit request: Request[_], config: AppConfig) = {
+  )(implicit request: Request[_]) = {
 
     val base = RegistrationVariationData(subscription)
 
@@ -99,8 +98,7 @@ object VariationsJourney {
             key = "change-registered-account-details",
             value = ufViews.updateBusinessAddresses(id, subscription, Address.fromUkAddress(subscription.address))(
               implicitly,
-              _: Messages,
-              implicitly),
+              _: Messages),
             customContent = message("change-registered-account-details.caption", subscription.orgName)
           )
       variation <- contactUpdate(base)
@@ -299,8 +297,7 @@ object VariationsJourney {
                                      {
                                        case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
                                          ask[Warehouse]("w-house", default = index.map(existingWarehouses))
-                                     },
-                                     {
+                                     }, {
                                        case (index: Int, existingWarehouses: List[Warehouse]) =>
                                          interact[Boolean](
                                            "remove-warehouse-details",

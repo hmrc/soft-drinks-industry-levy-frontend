@@ -102,7 +102,7 @@ trait SdilComponents {
 
       val control = max match {
         case Some(x) if x >= 255 =>
-          views.html.softdrinksindustrylevy.helpers.textArea_new(fieldKey, value, errors)(pageIn.messages)
+          views.html.softdrinksindustrylevy.helpers.textArea_new(fieldKey, value, errors)
         case _ =>
           views.html.softdrinksindustrylevy.helpers.inputText_new(fieldKey, value, errors)(pageIn.messages)
       }
@@ -339,8 +339,7 @@ trait SdilComponents {
         key.last,
         in.value.map { x =>
           Html(x.toString)
-        },
-        pageIn.messages
+        }
       )
     )
   }
@@ -474,7 +473,7 @@ object SdilComponents {
     case object XNot extends ProducerType
   }
 
-  import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
+  import play.api.data.validation.{Constraint, Invalid, Valid}
   import play.api.data.Forms._
   import play.api.data._
   lazy val addressMapping: Mapping[Address] = mapping(

@@ -17,13 +17,12 @@
 @import sdil.models.Address
 @import sdil.models.retrieved.RetrievedSubscription
 @import views.html.softdrinksindustrylevy.helpers._
-@import views.html.uniform.helpers._
 @import helper.{inputRadioGroup => _, _}
-@import sdil.config.AppConfig
+
 
 @this()
 
-@(key: String, subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(key: String, subscription: RetrievedSubscription, address: Address)(implicit request: Request[_], messages: Messages)
 
 @helper.form(action = play.api.mvc.Call("post", key)) {
    @CSRF.formField
@@ -68,7 +67,7 @@
             </button>
 
             @if(subscription.productionSites.nonEmpty) {
-                @service_sites("packaging", subscription.productionSites, "packaging")
+                @service_sites("packaging", subscription.productionSites)
 
                 <button name="edit-packaging-sites" value="@key" class="link-button change-address-button">
                     @Messages("sdil.updateBusinessAddresses.link.3")
@@ -76,7 +75,7 @@
             }
 
             @if(subscription.warehouseSites.nonEmpty) {
-                @service_sites("warehouses", subscription.warehouseSites, "warehouse")
+                @service_sites("warehouses", subscription.warehouseSites)
                 
                 <button name="edit-warehouses" value="@key" class="link-button change-address-button">
                     @Messages("sdil.updateBusinessAddresses.link.4")

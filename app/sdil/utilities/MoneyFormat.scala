@@ -17,6 +17,7 @@
 package sdil
 
 import java.time.format.DateTimeFormatter
+import scala.language.implicitConversions
 
 object utility {
   implicit class MoneyFormat(in: BigDecimal) {

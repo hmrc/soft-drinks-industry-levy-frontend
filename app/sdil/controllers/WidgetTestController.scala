@@ -92,23 +92,6 @@ class WidgetTestController(
   def index(id: String): Action[AnyContent] = Action.async { implicit req =>
     implicit val persistence = new SessionPersistence("test")
 
-    val simpleJourney = for {
-      ns <- ask[Set[Nat]](
-             "checkboxes-test",
-             validation = Subset(Nat.One, Nat.Two, Nat.Three) // FiveThousandAndSix shouldn't have a checkbox
-           )
-      _     <- tell("a-tell", Html("hiya"))
-      anInt <- ask[Int]("an-int") when ns.contains(Nat.One) // only ask the user if they picked Nat.One
-      _     <- ask[String]("textfield-test", validation = Rule.maxLength(254)) // should render a normal textfield
-      ta    <- ask[String]("text-area-test", validation = Rule.maxLength(255)) // should render a textarea on account of the length
-      _     <- tell("check-your-answers-test", CYATestThing(ns, anInt.getOrElse(0), ta))
-      _     <- end("an-end", Html("hiya!")) when ns.contains(Nat.Three)
-    } yield ()
-
-    // test simple controls
-    //    val wm = interpret(simpleJourney)
-
-    // test reg journey inside a session (rather than mongo) and bypassing auth, etc
     val wm = interpret(
       RegistrationController.journey(
         true,

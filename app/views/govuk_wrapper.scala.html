@@ -28,8 +28,7 @@
     sidebar: Html = HtmlFormat.empty,
     contentHeader: Option[Html] = None,
     mainContent: Html = HtmlFormat.empty,
-    serviceInfoContent: Html = HtmlFormat.empty,
-    form: Option[Form[_]] = None)(implicit request: Request[_], messages: Messages
+    serviceInfoContent: Html = HtmlFormat.empty)(implicit request: Request[_], messages: Messages
 )
 
 @viewHelpers = @{new ViewHelpers(appConfig.configuration)}

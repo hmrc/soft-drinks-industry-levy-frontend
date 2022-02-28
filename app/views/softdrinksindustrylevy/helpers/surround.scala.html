@@ -19,5 +19,5 @@
 @if(fieldKey.size == 1) {
     @surround_top(pageKey, fieldKey.head, tell, errors, messages, cond = cond)(contents:_*)
 } else {
-    @surround_subfield(pageKey, fieldKey, errors, messages)(contents:_*)
+    @surround_subfield(fieldKey, errors, messages)(contents:_*)
 }

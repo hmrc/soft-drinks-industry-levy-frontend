@@ -181,11 +181,9 @@ object ReturnsJourney {
     } yield (sdilReturn, variation)
 
   def cyaJourney(
-    id: String,
     period: ReturnPeriod,
     nilReturn: SdilReturn,
     subscription: RetrievedSubscription,
-    checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
     submitReturnVariation: ReturnsVariation => Future[Unit],
     broughtForward: BigDecimal,
     isSmallProd: Boolean
