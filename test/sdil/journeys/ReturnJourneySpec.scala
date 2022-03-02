@@ -30,9 +30,9 @@ class ReturnJourneySpec extends WordSpec with Matchers {
 
   val samplePeriod: ReturnPeriod = ReturnPeriod(2021, 1)
   val sampleReturn: Option[SdilReturn] = None
-  val sampleCheckSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]] =
-    (_, _) => Future.successful(Some(true))
-
+  val sampleCheckSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]] = { (_, _) =>
+    Future.successful(Some(true))
+  }
   private lazy val validReturnPeriod = ReturnPeriod(2018, 1)
   private lazy val emptySub = RetrievedSubscription(
     "0000000022",
@@ -61,6 +61,7 @@ class ReturnJourneySpec extends WordSpec with Matchers {
       voluntaryRegistration = false)
   )
 
+  val sampleId = "id"
   val sampleAddress = Address.fromUkAddress(UkAddress(List("41", "my street", "my town", "my county"), "BN4 4GT"))
   val sampleWarehouse = Warehouse("foo", sampleAddress)
   val sampleLongPair = Some((1L, 2L))
@@ -94,6 +95,7 @@ class ReturnJourneySpec extends WordSpec with Matchers {
       val outcome: (SdilReturn, ReturnsVariation) = LogicTableInterpreter
         .interpret(
           ReturnsJourney.journey(
+            sampleId,
             samplePeriod,
             sampleReturn,
             volManSub,
@@ -123,6 +125,7 @@ class ReturnJourneySpec extends WordSpec with Matchers {
       val outcome: (SdilReturn, ReturnsVariation) = LogicTableInterpreter
         .interpret(
           ReturnsJourney.journey(
+            sampleId,
             samplePeriod,
             sampleReturn,
             volManSub,

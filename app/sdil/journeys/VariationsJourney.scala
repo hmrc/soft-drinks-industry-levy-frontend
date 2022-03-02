@@ -85,6 +85,27 @@ object VariationsJourney {
   import cats.Order
   implicit val ldOrder: Order[LocalDate] = Order.by(_.toEpochDay)
 
+  def closedWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] =
+    closedSites(variation.data.original.warehouseSites, Convert(variation.data).closeSites.map(x => x.siteReference))
+
+  def closedPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] =
+    closedSites(variation.data.original.productionSites, Convert(variation.data).closeSites.map(x => x.siteReference))
+
+  def newPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] =
+    variation.data.updatedProductionSites.diff(variation.data.original.productionSites).toList
+
+  def newWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] =
+    variation.data.updatedWarehouseSites.diff(variation.data.original.warehouseSites).toList
+
+  def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
+    sites
+      .filter { x =>
+        x.closureDate.fold(true) {
+          _.isAfter(LocalDate.now)
+        }
+      }
+      .filter(x => closedSites.contains(x.ref.getOrElse("")))
+
   def changeBusinessAddressJourney(
     id: String,
     subscription: RetrievedSubscription,
@@ -117,27 +138,6 @@ object VariationsJourney {
     } yield (variation)
 
   }
-
-  def closedWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] =
-    closedSites(variation.data.original.warehouseSites, Convert(variation.data).closeSites.map(x => x.siteReference))
-
-  def closedPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] =
-    closedSites(variation.data.original.productionSites, Convert(variation.data).closeSites.map(x => x.siteReference))
-
-  def newPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] =
-    variation.data.updatedProductionSites.diff(variation.data.original.productionSites).toList
-
-  def newWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] =
-    variation.data.updatedWarehouseSites.diff(variation.data.original.warehouseSites).toList
-
-  def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
-    sites
-      .filter { x =>
-        x.closureDate.fold(true) {
-          _.isAfter(LocalDate.now)
-        }
-      }
-      .filter(x => closedSites.contains(x.ref.getOrElse("")))
 
   private def deregisterUpdate(
     data: RegistrationVariationData

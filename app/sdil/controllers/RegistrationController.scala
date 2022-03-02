@@ -17,14 +17,19 @@
 package sdil.controllers
 
 import scala.language.higherKinds
-
 import cats.implicits._
+
 import java.time.LocalDate
-import ltbs.uniform._, validation._
+import ltbs.uniform._
+import validation._
 import play.api.i18n._
 import play.api.mvc._
 import play.twirl.api.Html
-import scala.concurrent.{ExecutionContext, Future, duration}, duration._
+
+import scala.concurrent.{ExecutionContext, Future}
+import cats.instances.duration._
+import controllers.Assets.Redirect
+
 import scala.language.higherKinds
 import sdil.actions.{AuthorisedAction, AuthorisedRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
@@ -78,7 +83,7 @@ object RegistrationController {
     hasCTEnrolment: Boolean,
     fd: RegistrationFormData,
     backendCall: Subscription => Future[Unit]
-  )(implicit ufMessages: UniformMessages[Html]) =
+  )(implicit ec: ExecutionContext, ufMessages: UniformMessages[Html]) =
     for {
       orgType <- if (hasCTEnrolment) ask[OrganisationTypeSoleless]("organisation-type")
                 else ask[OrganisationType]("organisation-type")
@@ -115,52 +120,42 @@ object RegistrationController {
                              "pack-at-business-address",
                              fd.rosmData.address
                            ) when askPackingSites
+
       packingSites = if (useBusinessAddress.getOrElse(false)) {
         List(fd.rosmData.address)
       } else {
         List.empty[Address]
       }
-//      packSites <- askListSimple[Address](
-//                    "production-site-details",
-//                    "p-site",
-//                    default = packingSites.some,
-//                    listValidation = Rule.nonEmpty
-//                  ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
+
       packSites <- askList[Address]("production-site-details", packingSites.some, Rule.nonEmpty)(
-                    // add/edit journey
                     {
                       case (index: Option[Int], existingAddresses: List[Address]) =>
                         ask[Address]("p-site", default = index.map(existingAddresses))
-                    },
-                    // delete confirmation journey - defaults to pure(true)
-                    {
+                    }, {
                       case (index: Int, existingAddresses: List[Address]) =>
                         interact[Boolean]("remove-packaging-site-details", existingAddresses(index).nonEmptyLines)
                     }
                   ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
 
-      addWarehouses <- if (!isVoluntary) {
-                        ask[Boolean]("ask-secondary-warehouses")
-                      } else {
-                        pure(false)
-                      }
-//      warehouses <- askListSimple[Warehouse](
-//                     "warehouses",
-//                     "w-house",
-//                     listValidation = Rule.nonEmpty
-//                   ).map(_.map(Site.fromWarehouse)) emptyUnless addWarehouses
-      warehouses <- askList[Warehouse]("warehouses")(
-                     // add/edit journey
+      addWarehouses <- ask[Boolean](
+                        "ask-secondary-warehouses"
+                      ) when (!isVoluntary)
+
+      warehouseSites = if (addWarehouses.getOrElse(false)) {
+        List.empty[Warehouse]
+      } else {
+        List.empty[Warehouse]
+      }
+
+      warehouses <- askList[Warehouse]("warehouses", warehouseSites.some, Rule.nonEmpty)(
                      {
                        case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
                          ask[Warehouse]("w-house", default = index.map(existingWarehouses))
-                     },
-                     // delete confirmation journey - defaults to pure(true)
-                     {
+                     }, {
                        case (index: Int, existingWarehouses: List[Warehouse]) =>
                          interact[Boolean]("remove-warehouse-details", existingWarehouses(index).nonEmptyLines)
                      }
-                   ).map(_.map(Site.fromWarehouse)) emptyUnless addWarehouses
+                   ).map(_.map(Site.fromWarehouse)) emptyUnless (addWarehouses == Some(true))
 
       contactDetails <- ask[ContactDetails]("contact-details")
       activity = Activity(

@@ -30,17 +30,19 @@ import sdil.models.variations.RegistrationVariationData
 import sdil.models.{Address, ContactDetails, Producer, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
 import sdil.uniform.SdilComponents._
 import sdil.journeys.VariationsJourney._
+import sdil.utils.FakeApplicationSpec
 
 import java.time.LocalDate
 import scala.concurrent.{Await, Future, duration}
 import duration._
 
-class VariationsJourneySpec extends WordSpec with Matchers {
+class VariationsJourneySpec extends FakeApplicationSpec with Matchers {
   implicit val naturalTransformation = new (Future ~> Logic) {
     override def apply[A](fa: Future[A]): Logic[A] =
       Await.result(fa, 30 seconds).pure[Logic]
   }
 
+  implicit val ufMessages = ltbs.uniform.UniformMessages
   val sampleCheckSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]] =
     (_, _) => Future.successful(Some(true))
 
@@ -52,8 +54,8 @@ class VariationsJourneySpec extends WordSpec with Matchers {
   val smallProducer = Producer(true, Some(false))
   val largeProducer = Producer(true, Some(true))
 
+  val sampleId = "id"
   val sampleLongPair = Some((1L, 2L))
-
   val samplePeriod: ReturnPeriod = ReturnPeriod(2021, 1)
   val samplePeriods: List[ReturnPeriod] = List(samplePeriod)
 
@@ -231,9 +233,10 @@ class VariationsJourneySpec extends WordSpec with Matchers {
       val outcome: RegChange = LogicTableInterpreter
         .interpret(
           VariationsJourney.changeBusinessAddressJourney(
+            sampleId,
             sampleSub,
-            validSdilRef
-          ))
+            uniformHelpers
+          )())
         .value
         .run
         .asOutcome(true)
