@@ -285,15 +285,28 @@ trait SdilComponents {
   }
 
   implicit val tellCYAVariations = new WebTell[Html, CYA[Change]] {
-    def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
-      sites
+
+    def closedWarehouseSites(variation: RegistrationVariationData): List[Site] = {
+      val old = variation.original.warehouseSites
         .filter { x =>
           x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
         }
-        .filter(x => closedSites.contains(x.ref.getOrElse("")))
+        .map(x => x.address)
 
-    def closedWarehouseSites(variation: RegistrationVariationData): List[Site] =
-      closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
+      val newList = variation.updatedWarehouseSites
+        .filter { x =>
+          x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+        }
+        .map(x => x.address)
+
+      val diff = old diff newList
+
+      variation.updatedWarehouseSites.filter { site =>
+        diff.exists { address =>
+          compareAddress(site.address, address)
+        }
+      }
+    }.toList
 
     def closedPackagingSites(variation: RegistrationVariationData): List[UkAddress] = {
       val old = variation.original.productionSites
@@ -301,15 +314,14 @@ trait SdilComponents {
           x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
         }
         .map(x => x.address)
+
       val newlist = variation.updatedProductionSites
         .filter { x =>
           x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
         }
         .map(x => x.address)
+
       val diff = old diff newlist
-      println(s"Old = $old")
-      println(s"New = $newlist")
-      println(s"diff = $diff")
       diff.toList
     }
 
@@ -317,16 +329,23 @@ trait SdilComponents {
       val old = variation.original.productionSites.map(x => x.address)
       val updated = variation.updatedProductionSites.map(x => x.address) //This contains all the packaging sites new and old
       val matching = updated diff old
-      println(s"matching = $matching")
       matching.toList
     }
 
-    def newWarehouseSites(variation: RegistrationVariationData): List[UkAddress] = {
-      val old = variation.original.warehouseSites.map(x => x.address)
-      val updated = variation.updatedWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
-      val matching = updated diff old
-      matching.toList
-    }
+    def newWarehouseSites(variation: RegistrationVariationData): List[Site] = {
+      val oldAddress = variation.original.warehouseSites.map(x => x.address)
+      val updatedAddress = variation.updatedWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
+      val newAddress = updatedAddress diff oldAddress
+
+      variation.updatedWarehouseSites.filter { site =>
+        newAddress.exists { address =>
+          compareAddress(site.address, address)
+        }
+      }
+    }.toList
+
+    def compareAddress(a1: UkAddress, a2: UkAddress): Boolean =
+      a1.postCode.equals(a2.postCode) && a1.lines.equals(a2.lines)
 
     override def render(
       in: CYA[Change],

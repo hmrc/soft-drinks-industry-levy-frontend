@@ -85,8 +85,27 @@ object VariationsJourney {
   import cats.Order
   implicit val ldOrder: Order[LocalDate] = Order.by(_.toEpochDay)
 
-  def closedWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] =
-    closedSites(variation.data.original.warehouseSites, Convert(variation.data).closeSites.map(x => x.siteReference))
+  def closedWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] = {
+    val old = variation.data.original.warehouseSites
+      .filter { x =>
+        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+      }
+      .map(x => x.address)
+
+    val newList = variation.data.updatedWarehouseSites
+      .filter { x =>
+        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+      }
+      .map(x => x.address)
+
+    val diff = old diff newList
+
+    variation.data.updatedWarehouseSites.filter { site =>
+      diff.exists { address =>
+        compareAddress(site.address, address)
+      }
+    }
+  }.toList
 
   def closedPackagingSites(variation: VariationsJourney.Change.RegChange): List[UkAddress] = {
     val old = variation.data.original.productionSites.map(x => x.address)
@@ -105,12 +124,20 @@ object VariationsJourney {
     matching.toList
   }
 
-  def newWarehouseSites(variation: VariationsJourney.Change.RegChange): List[UkAddress] = {
-    val old = variation.data.original.warehouseSites.map(x => x.address)
-    val updated = variation.data.updatedWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
-    val matching = updated diff old
-    matching.toList
-  }
+  def newWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] = {
+    val oldAddress = variation.data.original.warehouseSites.map(x => x.address)
+    val updatedAddress = variation.data.updatedWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
+    val newAddress = updatedAddress diff oldAddress
+
+    variation.data.updatedWarehouseSites.filter { site =>
+      newAddress.exists { address =>
+        compareAddress(site.address, address)
+      }
+    }
+  }.toList
+
+  def compareAddress(a1: UkAddress, a2: UkAddress): Boolean =
+    a1.postCode.equals(a2.postCode) && a1.lines.equals(a2.lines)
 
   def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
     sites

@@ -21,7 +21,7 @@
         v: sdil.models.variations.RegistrationVariationData,
         newPackingSites: List[UkAddress],
         closedPackagingSites: List[UkAddress],
-        newWarehouseSites: List[UkAddress],
+        newWarehouseSites: List[Site],
         closedWarehouses: List[Site],
         path: List[String])(implicit messages: Messages)
 
@@ -184,20 +184,20 @@
                     <details role="group">
                         <summary aria-controls="details-content-1" aria-expanded="false">
                             <span class="summary">
-                                @if((site.lines.head).nonEmpty){
-                                @site.lines.head
+                                @if((site.getLines.head).nonEmpty){
+                                @site.getLines.head
                                 }else{
-                                @site.lines.head
+                                @site.address.lines.head
                                 }
                             </span>
                         </summary>
-                        @for(line <- site.lines.tail.dropRight(1)) {
+            @for(line <- site.getLines.tail.dropRight(1)) {
                             <div aria-hidden="true">@line</div>
                         }
-                        <div class="postal-code">@site.postCode</div>
+            <div class="postal-code">@site.address.postCode</div>
                     </details>
                 </td>
-                <td>@site.postCode</td>
+    <td>@site.address.postCode</td>
                 @if(showChangeLinks) {
                     <td class="change-answer">
                         <a href="@if(path.contains("secondary-warehouse-details")) {

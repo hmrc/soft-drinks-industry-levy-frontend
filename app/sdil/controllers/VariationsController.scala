@@ -161,8 +161,27 @@ class VariationsController(
     }
   }
 
-  def closedWarehouseSites(variation: RegistrationVariationData): List[Site] =
-    closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
+  def closedWarehouseSites(variation: RegistrationVariationData): List[Site] = {
+    val old = variation.original.warehouseSites
+      .filter { x =>
+        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+      }
+      .map(x => x.address)
+
+    val newList = variation.updatedWarehouseSites
+      .filter { x =>
+        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+      }
+      .map(x => x.address)
+
+    val diff = old diff newList
+
+    variation.updatedWarehouseSites.filter { site =>
+      diff.exists { address =>
+        compareAddress(site.address, address)
+      }
+    }
+  }.toList
 
   def closedPackagingSites(variation: RegistrationVariationData): List[UkAddress] = {
     val old = variation.original.productionSites.map(x => x.address)
@@ -184,12 +203,20 @@ class VariationsController(
     matching.toList
   }
 
-  def newWarehouseSites(variation: RegistrationVariationData): List[UkAddress] = {
-    val old = variation.original.warehouseSites.map(x => x.address)
-    val updated = variation.updatedWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
-    val matching = updated diff old
-    matching.toList
-  }
+  def newWarehouseSites(variation: RegistrationVariationData): List[Site] = {
+    val oldAddress = variation.original.warehouseSites.map(x => x.address)
+    val updatedAddress = variation.updatedWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
+    val newAddress = updatedAddress diff oldAddress
+
+    variation.updatedWarehouseSites.filter { site =>
+      newAddress.exists { address =>
+        compareAddress(site.address, address)
+      }
+    }
+  }.toList
+
+  def compareAddress(a1: UkAddress, a2: UkAddress): Boolean =
+    a1.postCode.equals(a2.postCode) && a1.lines.equals(a2.lines)
 
   def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
     sites
