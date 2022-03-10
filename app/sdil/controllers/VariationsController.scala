@@ -32,7 +32,7 @@ import sdil.actions._
 import sdil.config._
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models._
-import sdil.models.backend.{Site, Subscription}
+import sdil.models.backend.{Site, Subscription, UkAddress}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations._
 import sdil.uniform.SdilComponents.ProducerType
@@ -164,14 +164,32 @@ class VariationsController(
   def closedWarehouseSites(variation: RegistrationVariationData): List[Site] =
     closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
 
-  def closedPackagingSites(variation: RegistrationVariationData): List[Site] =
-    closedSites(variation.original.productionSites, Convert(variation).closeSites.map(x => x.siteReference))
+  def closedPackagingSites(variation: RegistrationVariationData): List[UkAddress] = {
+    val old = variation.original.productionSites.map(x => x.address)
+    val newlist = variation.updatedProductionSites.map(x => x.address)
+    val diff = old diff newlist
+    println(s"Old = $old")
+    println(s"New = $newlist")
+    println(s"diff = $diff")
+    diff
+  }
 
-  def newPackagingSites(variation: RegistrationVariationData): List[Site] =
-    variation.updatedProductionSites.diff(variation.original.productionSites).toList
+  def newPackagingSites(variation: RegistrationVariationData): List[UkAddress] = {
+    val old = variation.original.productionSites.map(x => x.address)
+    val updated = variation.updatedProductionSites.map(x => x.address) //This contains all the packaging sites new and old
+    val matching = updated diff (old)
+    val finals = updated.filter(_ != matching)
+    println(s"matching = $matching")
+    println(s"FINAL matching = $finals")
+    matching.toList
+  }
 
-  def newWarehouseSites(variation: RegistrationVariationData): List[Site] =
-    variation.updatedWarehouseSites.diff(variation.original.warehouseSites).toList
+  def newWarehouseSites(variation: RegistrationVariationData): List[UkAddress] = {
+    val old = variation.original.warehouseSites.map(x => x.address)
+    val updated = variation.updatedWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
+    val matching = updated diff old
+    matching.toList
+  }
 
   def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
     sites

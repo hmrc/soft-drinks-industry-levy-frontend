@@ -27,7 +27,7 @@ import play.twirl.api.Html
 import sdil.controllers.Subset
 import sdil.journeys.VariationsJourney.Change
 import sdil.models._
-import sdil.models.backend.Site
+import sdil.models.backend.{Site, UkAddress}
 import sdil.models.variations.{Convert, RegistrationVariationData}
 import views.html.uniform
 import views.html.uniform.fragments.date_new
@@ -288,23 +288,45 @@ trait SdilComponents {
     def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
       sites
         .filter { x =>
-          x.closureDate.fold(true) {
-            _.isAfter(LocalDate.now)
-          }
+          x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
         }
         .filter(x => closedSites.contains(x.ref.getOrElse("")))
 
     def closedWarehouseSites(variation: RegistrationVariationData): List[Site] =
       closedSites(variation.original.warehouseSites, Convert(variation).closeSites.map(x => x.siteReference))
 
-    def closedPackagingSites(variation: RegistrationVariationData): List[Site] =
-      closedSites(variation.original.productionSites, Convert(variation).closeSites.map(x => x.siteReference))
+    def closedPackagingSites(variation: RegistrationVariationData): List[UkAddress] = {
+      val old = variation.original.productionSites
+        .filter { x =>
+          x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+        }
+        .map(x => x.address)
+      val newlist = variation.updatedProductionSites
+        .filter { x =>
+          x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+        }
+        .map(x => x.address)
+      val diff = old diff newlist
+      println(s"Old = $old")
+      println(s"New = $newlist")
+      println(s"diff = $diff")
+      diff.toList
+    }
 
-    def newPackagingSites(variation: RegistrationVariationData): List[Site] =
-      variation.updatedProductionSites.diff(variation.original.productionSites).toList
+    def newPackagingSites(variation: RegistrationVariationData): List[UkAddress] = {
+      val old = variation.original.productionSites.map(x => x.address)
+      val updated = variation.updatedProductionSites.map(x => x.address) //This contains all the packaging sites new and old
+      val matching = updated diff old
+      println(s"matching = $matching")
+      matching.toList
+    }
 
-    def newWarehouseSites(variation: RegistrationVariationData): List[Site] =
-      variation.updatedWarehouseSites.diff(variation.original.warehouseSites).toList
+    def newWarehouseSites(variation: RegistrationVariationData): List[UkAddress] = {
+      val old = variation.original.warehouseSites.map(x => x.address)
+      val updated = variation.updatedWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
+      val matching = updated diff old
+      matching.toList
+    }
 
     override def render(
       in: CYA[Change],

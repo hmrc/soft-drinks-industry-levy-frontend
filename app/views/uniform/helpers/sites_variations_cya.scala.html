@@ -15,12 +15,13 @@
  *@
 
 @import sdil.models.backend.Site
+@import sdil.models.backend.UkAddress
 @(
         showChangeLinks: Boolean,
         v: sdil.models.variations.RegistrationVariationData,
-        newPackingSites: List[Site],
-        closedPackagingSites: List[Site],
-        newWarehouseSites: List[Site],
+        newPackingSites: List[UkAddress],
+        closedPackagingSites: List[UkAddress],
+        newWarehouseSites: List[UkAddress],
         closedWarehouses: List[Site],
         path: List[String])(implicit messages: Messages)
 
@@ -56,15 +57,15 @@
                 <td>
                     <details role="group">
                         <summary aria-controls="details-content-1" aria-expanded="false">
-                            <span class="summary">@site.address.lines.head</span>
+                            <span class="summary">@site.lines.head</span>
                         </summary>
-                        @for(line <- site.address.lines.tail) {
+                        @for(line <- site.lines.tail) {
                             <div aria-hidden="true">@line</div>
                         }
-                        <div class="postal-code">@site.address.postCode</div>
+                        <div class="postal-code">@site.postCode</div>
                     </details>
                 </td>
-                <td>@site.address.postCode</td>
+                <td>@site.postCode</td>
                 @if(showChangeLinks) {
                     <td class="change-answer">
                         <a href="@if(path.contains("production-site-details")) {
@@ -106,15 +107,15 @@
                 <td>
                     <details role="group">
                         <summary aria-controls="details-content-1" aria-expanded="false">
-                            <span class="summary">@site.address.lines.head</span>
+                            <span class="summary">@site.lines.head</span>
                         </summary>
-                        @for(line <- site.address.lines.tail) {
+                        @for(line <- site.lines.tail) {
                             <div aria-hidden="true">@line</div>
                         }
-                        <div class="postal-code">@site.address.postCode</div>
+                        <div class="postal-code">@site.postCode</div>
                     </details>
                 </td>
-                <td>@site.address.postCode</td>
+                <td>@site.postCode</td>
                 @if(showChangeLinks) {
                     <td class="change-answer">
                         <a href="@if(path.contains("production-site-details")) {
@@ -183,20 +184,20 @@
                     <details role="group">
                         <summary aria-controls="details-content-1" aria-expanded="false">
                             <span class="summary">
-                                @if((site.getLines.head).nonEmpty){
-                                @site.getLines.head
+                                @if((site.lines.head).nonEmpty){
+                                @site.lines.head
                                 }else{
-                                @site.address.lines.head
+                                @site.lines.head
                                 }
                             </span>
                         </summary>
-                        @for(line <- site.getLines.tail.dropRight(1)) {
+                        @for(line <- site.lines.tail.dropRight(1)) {
                             <div aria-hidden="true">@line</div>
                         }
-                        <div class="postal-code">@site.address.postCode</div>
+                        <div class="postal-code">@site.postCode</div>
                     </details>
                 </td>
-                <td>@site.address.postCode</td>
+                <td>@site.postCode</td>
                 @if(showChangeLinks) {
                     <td class="change-answer">
                         <a href="@if(path.contains("secondary-warehouse-details")) {

@@ -22,9 +22,10 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
 
-import scala.concurrent.Future
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
-class VariationsControllerSpec extends ControllerSpec {
+class VariationsControllerSpec @Inject()(implicit ec: ExecutionContext) extends ControllerSpec {
 
   val controller = new VariationsController(
     stubMessagesControllerComponents,
@@ -65,7 +66,7 @@ class VariationsControllerSpec extends ControllerSpec {
       }
       val result = controller.changeAddressAndContact("idvalue").apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some("change-business-address")
+      redirectLocation(result) mustEqual Some("change-registered-account-details")
     }
 
     "When a user is not enrolled they are taken to the start of the registration" in {
@@ -113,6 +114,7 @@ class VariationsControllerSpec extends ControllerSpec {
       when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
         Future.successful(Some(aSubscription))
       }
+
       when(mockRegVariationsCache.get(matching("XCSDIL000000002"))(any()))
         .thenReturn(Future.successful(None))
 
@@ -120,7 +122,6 @@ class VariationsControllerSpec extends ControllerSpec {
 
       when(mockSdilConnector.retrieveSubscription(matching(irCtEnrolment.value), anyString())(any())).thenReturn {
         Future.successful(Some(aSubscription))
-
       }
       when(mockSdilConnector.balanceHistory(matching("XCSDIL000000002"), any())(any()))
         .thenReturn(Future.successful(List()))

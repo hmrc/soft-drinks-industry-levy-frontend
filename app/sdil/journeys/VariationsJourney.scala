@@ -26,7 +26,7 @@ import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.{Subset, askEmptyOption, longTupToLitreage}
-import sdil.models.backend.Site
+import sdil.models.backend.{Site, UkAddress}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData}
 import sdil.models.{Address, CYA, ContactDetails, Producer, ReturnPeriod, ReturnsVariation, SdilReturn, Warehouse, extractTotal, listItemsWithTotal}
@@ -88,14 +88,29 @@ object VariationsJourney {
   def closedWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] =
     closedSites(variation.data.original.warehouseSites, Convert(variation.data).closeSites.map(x => x.siteReference))
 
-  def closedPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] =
-    closedSites(variation.data.original.productionSites, Convert(variation.data).closeSites.map(x => x.siteReference))
+  def closedPackagingSites(variation: VariationsJourney.Change.RegChange): List[UkAddress] = {
+    val old = variation.data.original.productionSites.map(x => x.address)
+    val newlist = variation.data.updatedProductionSites.map(x => x.address)
+    val diff = old diff newlist
+    diff
+  }
 
-  def newPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] =
-    variation.data.updatedProductionSites.diff(variation.data.original.productionSites).toList
+  def newPackagingSites(variation: VariationsJourney.Change.RegChange): List[UkAddress] = {
+    val old = variation.data.original.productionSites.map(x => x.address)
+    val updated = variation.data.updatedProductionSites.map(x => x.address) //This contains all the packaging sites new and old
+    val matching = updated diff (old)
+    val finals = updated.filter(_ != matching)
+    println(s"matching = $matching")
+    println(s"FINAL matching = $finals")
+    matching.toList
+  }
 
-  def newWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] =
-    variation.data.updatedWarehouseSites.diff(variation.data.original.warehouseSites).toList
+  def newWarehouseSites(variation: VariationsJourney.Change.RegChange): List[UkAddress] = {
+    val old = variation.data.original.warehouseSites.map(x => x.address)
+    val updated = variation.data.updatedWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
+    val matching = updated diff old
+    matching.toList
+  }
 
   def closedSites(sites: List[Site], closedSites: List[String]): List[Site] =
     sites
@@ -304,7 +319,6 @@ object VariationsJourney {
                                            existingWarehouses(index).nonEmptyLines)
                                      }
                                    ).map(_.map(Site.fromWarehouse)).emptyUnless(!warehouseShow)
-
                     } yield
                       Change.RegChange(
                         data.copy(
@@ -456,7 +470,6 @@ object VariationsJourney {
       variation match {
         case Change.RegChange(regChange) => Right(regChange)
         case Change.Returns(retChange)   => Left(retChange)
-
       }
     }
   }

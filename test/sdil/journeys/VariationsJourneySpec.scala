@@ -18,25 +18,27 @@ package sdil.journeys
 
 import cats.implicits._
 import cats.~>
+import com.softwaremill.macwire.wire
+import ltbs.uniform.UniformMessages
 import ltbs.uniform.interpreters.logictable._
-import org.scalatest.{Matchers, _}
-import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import play.twirl.api.Html
 import sdil.config.AppConfig
-import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.journeys.VariationsJourney.Change.RegChange
 import sdil.models.backend.{Contact, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.variations.RegistrationVariationData
 import sdil.models.{Address, ContactDetails, Producer, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
 import sdil.uniform.SdilComponents._
 import sdil.journeys.VariationsJourney._
-import sdil.utils.FakeApplicationSpec
+import views.uniform.Uniform
 
 import java.time.LocalDate
-import scala.concurrent.{Await, Future, duration}
+import scala.concurrent.{Await, ExecutionContext, Future, duration}
 import duration._
+import sdil.controllers.ControllerSpec
 
-class VariationsJourneySpec extends FakeApplicationSpec with Matchers {
+class VariationsJourneySpec extends ControllerSpec {
   implicit val naturalTransformation = new (Future ~> Logic) {
     override def apply[A](fa: Future[A]): Logic[A] =
       Await.result(fa, 30 seconds).pure[Logic]
@@ -46,12 +48,11 @@ class VariationsJourneySpec extends FakeApplicationSpec with Matchers {
   val sampleCheckSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]] =
     (_, _) => Future.successful(Some(true))
 
-  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockAppConfig = mock[AppConfig]
 
   val sampleAddress = Address.fromUkAddress(UkAddress(List("41", "my street", "my town", "my county"), "BN4 4GT"))
   val sampleWarehouse = Warehouse("foo", sampleAddress)
-  val smallProducer = Producer(true, Some(false))
+  override val smallProducer = Producer(true, Some(false))
   val largeProducer = Producer(true, Some(true))
 
   val sampleId = "id"
@@ -60,7 +61,7 @@ class VariationsJourneySpec extends FakeApplicationSpec with Matchers {
   val samplePeriods: List[ReturnPeriod] = List(samplePeriod)
 
   val getReturn: ReturnPeriod => Future[Option[SdilReturn]] = _ => Future.successful(Some(mock[SdilReturn]))
-  val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
+  override val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
   val emptyreturnPeriods: List[ReturnPeriod] = Nil
   val submitReturnVariation: ReturnsVariation => Future[Unit] = _ => Future.successful(())
   val broughtForward: BigDecimal = 0
@@ -91,23 +92,6 @@ class VariationsJourneySpec extends FakeApplicationSpec with Matchers {
       contractPacker = false,
       importer = true,
       voluntaryRegistration = false)
-  )
-
-  private lazy val registeredUserInformation = RegistrationVariationData(
-    emptySub,
-    updatedBusinessAddress,
-    smallProducer,
-    Some(false),
-    Some(false),
-    None,
-    false,
-    None,
-    false,
-    None,
-    Seq.empty,
-    Seq.empty,
-    mock[ContactDetails],
-    Seq.empty
   )
 
   "Variations journey" should {
@@ -143,22 +127,37 @@ class VariationsJourneySpec extends FakeApplicationSpec with Matchers {
       implicit val sampleListQtyAddress = SampleListQty[Address](10)
       implicit val sampleListQtySmallProducer = SampleListQty[SmallProducer](5)
 
+      implicit val messages: UniformMessages[Html] = new UniformMessages[Html] {
+        override def get(key: String, args: Any*): Option[Html] = Some(Html("You do not need to register"))
+        override def list(key: String, args: Any*): List[Html] = List(Html("You do not need to register"))
+      }
+
+      implicit val ec = ExecutionContext.global
+
       val outcome: RegChange = LogicTableInterpreter
         .interpret(
           VariationsJourney.activityUpdateJourney(
             registeredUserInformation,
             emptySub,
             returnPeriods
-          ))
+          )(ec, messages))
         .value
         .run
         .asOutcome(true)
 
       val regChange = outcome
-      regChange.data.original shouldBe emptySub
+      regChange.data.original mustEqual emptySub
     }
 
     "activityUpdateJourney deregister" in {
+
+      implicit val messages: UniformMessages[Html] = new UniformMessages[Html] {
+        override def get(key: String, args: Any*): Option[Html] = Some(Html("You do not need to register"))
+        override def list(key: String, args: Any*): List[Html] = List(Html("You do not need to register"))
+      }
+
+      implicit val ec = ExecutionContext.global
+
       implicit val sampleBooleanAsk = instancesF {
         //    case lossKeys(_) => List(false)
         case _ => List(false)
@@ -182,17 +181,18 @@ class VariationsJourneySpec extends FakeApplicationSpec with Matchers {
 
       val outcome: RegChange = LogicTableInterpreter
         .interpret(
-          VariationsJourney.activityUpdateJourney(
-            registeredUserInformation,
-            emptySub,
-            emptyreturnPeriods
-          ))
+          VariationsJourney
+            .activityUpdateJourney(
+              registeredUserInformation,
+              emptySub,
+              emptyreturnPeriods
+            )(ec, messages))
         .value
         .run
         .asOutcome(true)
 
       val regChange = outcome
-      regChange.data.original shouldBe emptySub
+      regChange.data.original mustEqual emptySub
     }
 
     "changeBusinessAddressJourney" in {
@@ -206,6 +206,7 @@ class VariationsJourneySpec extends FakeApplicationSpec with Matchers {
         case _ => List("")
       }
 
+      lazy val uniformHelpers: Uniform = wire[Uniform]
       implicit val sampleListQtyContact = SampleListQty[ContactDetails](1)
       val sampleContact = ContactDetails("fullName", "position", "phoneNumber", "email")
       implicit val sampleContactAsk = instances[ContactDetails](sampleContact)
@@ -219,10 +220,8 @@ class VariationsJourneySpec extends FakeApplicationSpec with Matchers {
       implicit val sampleListQtyLocalDate = SampleListQty[LocalDate](1)
       val sampleLocalDate =
         LocalDate.ofYearDay(2021, 19)
-      implicit val sampleLocalDateAsk = instances[LocalDate](sampleLocalDate)
 
       implicit val sampleListQtyAddress = SampleListQty[Address](10)
-      implicit val sampleListQtySmallProducer = SampleListQty[SmallProducer](5)
 
       val sampleContactChangeType = ContactChangeType.ContactPerson
       implicit val SampleContactChangeTypeAsk = instances[ContactChangeType](sampleContactChangeType)
@@ -230,19 +229,30 @@ class VariationsJourneySpec extends FakeApplicationSpec with Matchers {
       implicit lazy val ltiContactChangeType: LTInteraction[Unit, Set[VariationsJourney.ContactChangeType]] =
         mock[LTInteraction[Unit, Set[VariationsJourney.ContactChangeType]]]
 
+      implicit val ec = ExecutionContext.global
+
+      implicit val messages: UniformMessages[Html] = new UniformMessages[Html] {
+        override def get(key: String, args: Any*): Option[Html] = Some(Html("You do not need to register"))
+        override def list(key: String, args: Any*): List[Html] = List(Html("You do not need to register"))
+      }
+//      implicit val request: Request[_] = new Request[] {
+//        override def
+//      }
+      implicit val fakeRequest: FakeRequest[AnyContent] = FakeRequest()
+
       val outcome: RegChange = LogicTableInterpreter
         .interpret(
           VariationsJourney.changeBusinessAddressJourney(
             sampleId,
             sampleSub,
             uniformHelpers
-          )())
+          )(fakeRequest))
         .value
         .run
         .asOutcome(true)
 
       val regChange = outcome
-      regChange.data.original shouldBe sampleSub
+      regChange.data.original mustEqual sampleSub
     }
   }
 }

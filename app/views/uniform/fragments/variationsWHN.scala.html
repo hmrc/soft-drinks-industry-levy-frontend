@@ -17,14 +17,15 @@
 @import sdil.models.variations.RegistrationVariationData
 @import sdil.models.ReturnPeriod
 @import sdil.models.backend.Site
+@import sdil.models.backend.UkAddress
 @import views.html.uniform.helpers._
 
 @import sdil.models.variations.ReturnVariationData
 @(
         path: List[String] = List.empty,
-        newPackingSites: List[Site] = List.empty,
-        closedPackagingSites: List[Site] = List.empty,
-        newWarehouseSites: List[Site] = List.empty,
+        newPackingSites: List[UkAddress] = List.empty,
+        closedPackagingSites: List[UkAddress] = List.empty,
+        newWarehouseSites: List[UkAddress] = List.empty,
         closedWarehouses: List[Site] = List.empty,
         v: Option[RegistrationVariationData] = None,
         a: Option[ReturnVariationData] = None,

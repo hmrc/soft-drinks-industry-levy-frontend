@@ -53,6 +53,7 @@ import views.html.softdrinksindustrylevy.{balance_history, deregistered_service_
 import views.softdrinksindustrylevy.errors.Errors
 import views.uniform.Uniform
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicationFactory with MockitoSugar {

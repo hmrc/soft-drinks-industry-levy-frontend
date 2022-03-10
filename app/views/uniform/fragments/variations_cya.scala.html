@@ -15,13 +15,14 @@
  *@
 
 @import sdil.models.backend.Site
+@import sdil.models.backend.UkAddress
 @import views.html.uniform.helpers._
 
 @(
         v: sdil.models.variations.RegistrationVariationData,
-        newPackingSites: List[Site],
-        closedPackagingSites: List[Site],
-        newWarehouseSites: List[Site],
+        newPackingSites: List[UkAddress],
+        closedPackagingSites: List[UkAddress],
+        newWarehouseSites: List[UkAddress],
         closedWarehouses: List[Site],
         path: List[String]
 )(implicit messages: Messages)

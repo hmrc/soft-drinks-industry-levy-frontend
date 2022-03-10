@@ -19,14 +19,17 @@ package sdil.journeys
 import cats.implicits._
 import cats.~>
 import ltbs.uniform.interpreters.logictable._
-import org.scalatest.{Matchers, _}
+import sdil.controllers.ControllerSpec
 import sdil.models.backend.{Contact, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.{Address, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
+import ltbs.uniform.interpreters.logictable._
 
-import scala.concurrent.{Await, Future, duration}, duration._
+import javax.inject.Inject
+import scala.concurrent.{Await, ExecutionContext, Future, duration}
+import duration._
 
-class ReturnJourneySpec extends WordSpec with Matchers {
+class ReturnJourneySpec @Inject()(implicit ec: ExecutionContext) extends ControllerSpec {
 
   val samplePeriod: ReturnPeriod = ReturnPeriod(2021, 1)
   val sampleReturn: Option[SdilReturn] = None
@@ -113,8 +116,8 @@ class ReturnJourneySpec extends WordSpec with Matchers {
       val sdilReturn: SdilReturn = outcome._1
       val returnsVariation: ReturnsVariation = outcome._2
 
-      sdilReturn.totalPacked shouldBe ((16L, 22L))
-      returnsVariation.packingSites.length shouldBe 10
+      sdilReturn.totalPacked mustEqual ((16L, 22L))
+      returnsVariation.packingSites.length mustEqual 10
     }
 
     "construct SdilReturn and ReturnsVariation for a given small producer" in {
@@ -136,16 +139,16 @@ class ReturnJourneySpec extends WordSpec with Matchers {
           ))
         .value
         .run
-        .asOutcome(false)
+        .asOutcome(true)
       // true: To enable logging in unit tests output.
       // false: Please set it to false before merging into github to disablle logging in unit tests output.
 
       val sdilReturn: SdilReturn = outcome._1
       val returnsVariation: ReturnsVariation = outcome._2
 
-      sdilReturn.totalPacked shouldBe ((14L, 16L))
-      returnsVariation.packingSites.length shouldBe 10
-      returnsVariation.importer._2 shouldBe ((8L, 16L))
+      sdilReturn.totalPacked mustEqual ((14L, 16L))
+      returnsVariation.packingSites.length mustEqual 10
+      returnsVariation.importer._2 mustEqual ((8L, 16L))
     }
   }
 

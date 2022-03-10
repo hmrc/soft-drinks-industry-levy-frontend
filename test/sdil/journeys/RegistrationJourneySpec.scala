@@ -20,6 +20,7 @@ import cats.implicits._
 import cats.~>
 import ltbs.uniform.UniformMessages
 import ltbs.uniform.interpreters.logictable.{Logic, LogicTableInterpreter, SampleListQty}
+import org.mockito.Mockito.mock
 import org.scalatest.{Matchers, WordSpec}
 import play.twirl.api.Html
 import sdil.controllers.{ControllerSpec, RegistrationController}
@@ -28,8 +29,10 @@ import sdil.models.backend.{Site, Subscription, UkAddress}
 import sdil.uniform.SdilComponents.{OrganisationType, OrganisationTypeSoleless, ProducerType}
 
 import java.time.LocalDate
-import scala.concurrent.{Await, Future, duration}
+import javax.inject.Inject
+import scala.concurrent.{Await, ExecutionContext, Future, duration}
 import duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class RegistrationJourneySpec extends WordSpec with Matchers {
 
@@ -233,6 +236,7 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
     //TODO end("do-not-register", noReg) when (noUkActivity && smallProducerWithNoCopacker)
 
     "construct display error 2" in {
+
       implicit val messages: UniformMessages[Html] = new UniformMessages[Html] {
         override def get(key: String, args: Any*): Option[Html] = Some(Html("You do not need to register"))
         override def list(key: String, args: Any*): List[Html] = List(Html("You do not need to register"))
@@ -285,7 +289,6 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
         override def apply[A](fa: Future[A]): Logic[A] =
           Await.result(fa, 30 seconds).pure[Logic]
       }
-
       val outcome: Subscription = LogicTableInterpreter
         .interpret(
           RegistrationController.journey(
@@ -299,6 +302,5 @@ class RegistrationJourneySpec extends WordSpec with Matchers {
       val subscription: Subscription = outcome
       subscription.utr shouldBe ("1234567890")
     }
-
   }
 }

@@ -41,9 +41,10 @@ import play.api.test.Helpers._
 import sdil.actions.RegisteredAction
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
-
 import play.api.mvc.Results.Ok
-import scala.concurrent.Future
+
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationControllerSpec extends ControllerSpec {
 
