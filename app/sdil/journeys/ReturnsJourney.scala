@@ -118,11 +118,18 @@ object ReturnsJourney {
                      })
       exportCredits <- askEmptyOption[(Long, Long)]("claim-credits-for-exports", default.map { _.export }) when canClaim == true
 
-      exports = exportCredits.map(x => x._1 + x._2)
+      exports = (exportCredits.foldLeft(0L)(_ + _._2) * costHigher) + (exportCredits.foldLeft(0L)(_ + _._1) * costLower)
 
-      _ <- tell("overclaim-warning", overClaimHtml) when (exports.getOrElse(0L)) + Await.result(totalReturn, 20.seconds).toLong > 0
+      _ <- tell("overclaim-warning", overClaimHtml) when (exports) + Await.result(totalReturn, 20.seconds).toLong > 0
 
       wastage <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged", default.map { _.wastage }) when canClaim == true
+
+      wastages = (wastage.foldLeft(0L)(_ + _._2) * costHigher) + (wastage.foldLeft(0L)(_ + _._1) * costLower) + (exportCredits
+        .foldLeft(0L)(_ + _._2) * costHigher) + (exportCredits
+        .foldLeft(0L)(_ + _._1) * costLower)
+
+      _ <- tell("overclaim-warning", overClaimHtml) when (wastages) + Await.result(totalReturn, 20.seconds).toLong > 0
+
       sdilReturn = SdilReturn(
         ownBrands,
         contractPacked,
