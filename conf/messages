@@ -1194,6 +1194,11 @@ overclaim-warning.warning=If you continue you may be committing a criminal offen
 overclaim-warning.msg=This claim will be investigated before being approved.
 overclaim-warning.continue=Continue
 
+heading.overclaim-warning2=You may be claiming more than you are entitled to
+overclaim-warning2.warning=If you continue you may be committing a criminal offence.
+overclaim-warning2.msg=This claim will be investigated before being approved.
+overclaim-warning2.continue=Continue
+
 heading.removePackSites=[Remove your packing sites?]
 removePackSites.body=[Based on your answers, you are no longer packing any soft drinks and therefore will not be operating any packing sites. In continuing all packing sites will be removed.]
 removePackSites.continue=[Remove all packing sites]

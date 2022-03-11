@@ -39,7 +39,8 @@ package object controllers {
     "brought-into-uk",
     "brought-into-uk-from-small-producers",
     "claim-credits-for-exports",
-    "claim-credits-for-lost-damaged"
+    "claim-credits-for-lost-damaged",
+    "overclaim-warning2"
   )
 
   def askEmptyOption[A: Tag](
