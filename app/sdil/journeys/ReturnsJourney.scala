@@ -128,7 +128,7 @@ object ReturnsJourney {
         .foldLeft(0L)(_ + _._2) * costHigher) + (exportCredits
         .foldLeft(0L)(_ + _._1) * costLower)
 
-      _ <- tell("overclaim-warning", overClaimHtml) when (wastages) + Await.result(totalReturn, 20.seconds).toLong > 0
+      _ <- tell("overclaim-warning2", overClaimHtml) when (wastages) + Await.result(totalReturn, 20.seconds).toLong > 0
 
       sdilReturn = SdilReturn(
         ownBrands,
