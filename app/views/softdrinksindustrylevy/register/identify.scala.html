@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@
     <fieldset class="form-field-group">
     @error_summary(identifyForm)
      <legend>
-        <h1 class="heading-large">@Messages("sdil.identify.heading")</h1>
+        <h1 class="heading-large">messages("sdil.identify.heading")</h1>
      </legend>
-    <p class="lede">@Messages("sdil.identify.p1")</p>
+    <p class="lede">messages("sdil.identify.p1")</p>
 
         @inputText(
             identifyForm("utr"),
@@ -52,6 +52,6 @@
         )
     </fieldset>
 
-    <button class="button" type="submit"> @Messages("sdil.common.continue")</button>
+    <button class="button" type="submit"> messages("sdil.common.continue")</button>
     }
 }

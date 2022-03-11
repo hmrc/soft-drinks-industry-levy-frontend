@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,13 +43,13 @@
 
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-            @Messages("sdil.verify.address")
+            messages("sdil.verify.address")
             </dt>
             <dd class="govuk-summary-list__value">
                 @formData.primaryAddress.nonEmptyLines.map { l =>
                     <div>@l</div>
                 }
-                <div>@Messages("sdil.declaration.uk")</div>
+                <div>messages("sdil.declaration.uk")</div>
             </dd>
         </div>
     }
@@ -161,6 +161,6 @@
     }
 
     <p class="print-link-padding">
-        <a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a>
+        <a href="javascript:window.print()" class="print-link">messages("sdil.common.print")</a>
     </p>
 

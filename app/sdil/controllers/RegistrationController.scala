@@ -28,7 +28,6 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import cats.instances.duration._
-import controllers.Assets.Redirect
 
 import scala.language.higherKinds
 import sdil.actions.{AuthorisedAction, AuthorisedRequest}
@@ -69,7 +68,7 @@ class RegistrationController(
 
         interpret(RegistrationController.journey(hasCTEnrolment, fd, backendCall))
           .run(id, purgeStateUponCompletion = true, config = journeyConfig) { _ =>
-            Redirect(routes.ServicePageController.show())
+            Redirect(routes.ServicePageController.show)
           }
       case None =>
         logger.warn("nothing in cache") // TODO we should set the cache and redirect

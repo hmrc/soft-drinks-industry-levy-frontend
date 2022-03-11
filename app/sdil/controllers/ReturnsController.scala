@@ -122,11 +122,11 @@ class ReturnsController(
                 }
 
             } else
-              Redirect(routes.ServicePageController.show()).pure[Future]
+              Redirect(routes.ServicePageController.show).pure[Future]
       } yield r) recoverWith {
         case t: Throwable => {
           logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
-          Redirect(routes.ServicePageController.show()).pure[Future]
+          Redirect(routes.ServicePageController.show).pure[Future]
         }
       }
   }
@@ -216,7 +216,7 @@ class ReturnsController(
 
         case None =>
           logger.warn("nothing in ReturnsFormDataCache, redirecting user to ServicePage")
-          Redirect(routes.ServicePageController.show())
+          Redirect(routes.ServicePageController.show)
       }
     }
   }

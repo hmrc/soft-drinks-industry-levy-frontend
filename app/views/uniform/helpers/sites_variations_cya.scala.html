@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,18 +34,18 @@
 
 @if(newPackingSites.nonEmpty) {
     <table class="check-your-answers">
-        <caption><h2>@Messages("variations.cya.packsites.add")</h2></caption>
+        <caption><h2>messages("variations.cya.packsites.add")</h2></caption>
 
         <thead>
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    @Messages("variations.cya.packsites.address")
+                    messages("variations.cya.packsites.address")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    @Messages("variations.cya.postcode")
+                    messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -85,17 +85,17 @@
 
 @if(closedPackagingSites.nonEmpty) {
     <table class="check-your-answers">
-        <caption><h2>@Messages("variations.cya.packsites.remove")</h2></caption>
+        <caption><h2>messages("variations.cya.packsites.remove")</h2></caption>
         <thead>
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    @Messages("variations.cya.packsites.address")
+                    messages("variations.cya.packsites.address")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    @Messages("variations.cya.postcode")
+                    messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -135,14 +135,14 @@
 
 @if(path.contains("change-packaging-sites") && newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
     <table class="check-your-answers">
-        <caption><h2>@Messages("variations.cya.packsites.same")</h2></caption>
+        <caption><h2>messages("variations.cya.packsites.same")</h2></caption>
         <tbody>
             <tr>
                 <th class="table-header-bold">
-                @Messages("variations.cya.packsites.addOrRemove")
+                messages("variations.cya.packsites.addOrRemove")
                 </th>
                 <th>
-                @Messages("variations.cya.false")
+                messages("variations.cya.false")
                 </th>
                 @if(showChangeLinks) {
                 <th>
@@ -160,18 +160,18 @@
 
 @if(newWarehouseSites.nonEmpty) {
     <table class="check-your-answers">
-        <caption><h2>@Messages("variations.cya.warehouses.add")</h2></caption>
+        <caption><h2>messages("variations.cya.warehouses.add")</h2></caption>
 
         <thead>
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    @Messages("variations.cya.warehouses")
+                    messages("variations.cya.warehouses")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    @Messages("variations.cya.postcode")
+                    messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -217,17 +217,17 @@
 
 @if(closedWarehouses.nonEmpty) {
     <table class="check-your-answers">
-            <caption><h2>@Messages("variations.cya.warehouses.remove")</h2></caption>
+            <caption><h2>messages("variations.cya.warehouses.remove")</h2></caption>
         <thead>
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    @Messages("variations.cya.warehouses")
+                    messages("variations.cya.warehouses")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    @Messages("variations.cya.postcode")
+                    messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -271,14 +271,14 @@
 
 
     <table class="check-your-answers">
-        <caption><h2>@Messages("variations.cya.warehouses.same")</h2></caption>
+        <caption><h2>messages("variations.cya.warehouses.same")</h2></caption>
         <tbody>
             <tr>
                 <th class="table-header-bold">
-                @Messages("variations.cya.warehouses.addOrRemove")
+                messages("variations.cya.warehouses.addOrRemove")
                 </th>
                 <td>
-                @Messages("variations.cya.false")
+                messages("variations.cya.false")
                 </td>
                 @if(showChangeLinks) {
                     <th>

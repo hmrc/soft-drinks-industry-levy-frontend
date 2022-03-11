@@ -33,6 +33,7 @@ object AdaptMessages {
       def apply(keys: Seq[String], args: Any*): String = ufMessages.apply(keys.toList, args: _*).toString
       def translate(key: String, args: Seq[Any]): Option[String] = ufMessages.get(key, args: _*).map { _.toString }
       def isDefinedAt(key: String): Boolean = ufMessages.get(key).isDefined
+      def asJava: play.i18n.Messages = messages.asJava
     }
 
 }

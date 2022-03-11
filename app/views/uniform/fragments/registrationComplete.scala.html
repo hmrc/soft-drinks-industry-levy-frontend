@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,21 @@
 
 @(email: String)(implicit messages: Messages)
 
-<p>@Messages("registration-confirmation.what-happens.p1")</p>
-<p>@Messages("registration-confirmation.what-happens.p2", email)</p>
+<p>messages("registration-confirmation.what-happens.p1")</p>
+<p>messages("registration-confirmation.what-happens.p2", email)</p>
 
-<h2 class="heading-medium">@Messages("registration-confirmation.what-happens.help.title")</h2>
+<h2 class="heading-medium">messages("registration-confirmation.what-happens.help.title")</h2>
 
-<p>@Messages("registration-confirmation.what-happens.help.p1")</p>
+<p>messages("registration-confirmation.what-happens.help.p1")</p>
 
 <ul class="list list-bullet">
-    <li>@Messages("registration-confirmation.what-happens.help.ul1")</li>
-    <li>@Messages("registration-confirmation.what-happens.help.ul2")</li>
+    <li>messages("registration-confirmation.what-happens.help.ul1")</li>
+    <li>messages("registration-confirmation.what-happens.help.ul2")</li>
 </ul>
 
 <p>
     <a href="@sdil.controllers.routes.AuthenticationController.signOut()">
-        @Messages("registration-confirmation.what-happens.help.link")
+        messages("registration-confirmation.what-happens.help.link")
     </a>
-    @Messages("registration-confirmation.what-happens.help.p2")
+    messages("registration-confirmation.what-happens.help.p2")
 </p>

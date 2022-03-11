@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,13 @@
 
 @main_template(Messages("balance.history"), noArticle = true) {
 
-    <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
+    <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">messages("sdil.common.back")</a>
 
     <span class="govuk-caption-xl service-comp-name">
         @orgName
     </span>
     <h1 class="heading-large service-header">
-        @Messages("balance.table.title")
+        messages("balance.table.title")
     </h1>
 
     @if(lineItems.nonEmpty) {
@@ -45,14 +45,14 @@
             @for(year <- lineItems.map(_._1.date.getYear).distinct) {
                 <section class="govuk-tabs__panel @if(year != lineItems.head._1.date.getYear){govuk-tabs__panel--hidden}" role="tabpanel" id="year-tab-@year" aria-labelledby="tab_year-tab-@year">
                     <table>
-                        <caption class="visually-hidden">@Messages("balance.table.caption")</caption>
+                        <caption class="visually-hidden">messages("balance.table.caption")</caption>
                         <thead>
                             <tr>
-                                <th scope="col">@Messages("date.time")</th>
-                                <th scope="col">@Messages("transaction")</th>
-                                <th scope="col" class="numeric">@Messages("pound.credits")</th>
-                                <th scope="col" class="numeric">@Messages("pound.debits")</th>
-                                <th scope="col" class="numeric">@Messages("pound.balance")</th>
+                                <th scope="col">messages("date.time")</th>
+                                <th scope="col">messages("transaction")</th>
+                                <th scope="col" class="numeric">messages("pound.credits")</th>
+                                <th scope="col" class="numeric">messages("pound.debits")</th>
+                                <th scope="col" class="numeric">messages("pound.balance")</th>
                             </tr>
                         </thead>
 

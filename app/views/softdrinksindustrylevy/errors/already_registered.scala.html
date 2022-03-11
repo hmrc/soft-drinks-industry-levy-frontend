@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,16 @@
 @(utr: String, organisation: String, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.already-enrolled.heading")) {
-    <h1 class="heading-large" id="registration-status">@Messages("sdil.already-enrolled.heading")</h1>
+    <h1 class="heading-large" id="registration-status">messages("sdil.already-enrolled.heading")</h1>
 
     @businessDetails(utr, organisation, address)
 
     <br/>
 
-    <p>@Messages("sdil.already-enrolled.p1")</p>
-    <p>@Messages("sdil.already-enrolled.p2")
-        <a href="@sdil.controllers.routes.ServicePageController.show()">
-        @Messages("sdil.already-enrolled.p3")
+    <p>messages("sdil.already-enrolled.p1")</p>
+    <p>messages("sdil.already-enrolled.p2")
+        <a href="@sdil.controllers.routes.ServicePageController.show">
+        messages("sdil.already-enrolled.p3")
         </a>
     </p>
 }

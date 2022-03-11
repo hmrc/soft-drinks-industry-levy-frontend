@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 @(key: String, formIn: Form[List[String]], possibleValues: List[String])(implicit messages: Messages)
 
 <div class="@if(formIn.hasErrors) {form-group-error} form-group">
-    @formIn.errors.map { err => <span class="error-message">@Messages(err.message)</span> }
+    @formIn.errors.map { err => <span class="error-message">messages(err.message)</span> }
 
 @for(option <- possibleValues) {
         <div class="multiple-choice">
@@ -30,7 +30,7 @@
                    @formIn.value.getOrElse(Nil).filter( _ == option ).map{_ => checked="checked"} />
 
             <label for="@{key}_@{option}">
-                @Messages(s"$key.option.$option")
+                messages(s"$key.option.$option")
             </label>
         </div>
 }

@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@
 @(utr: String, organisation: String, address: Address)(implicit messages: Messages)
 
 <table class="margin-bottom-25">
-    <caption class="heading-small visuallyhidden">@Messages("sdil.verify.table.caption")</caption>
+    <caption class="heading-small visuallyhidden">messages("sdil.verify.table.caption")</caption>
     <tbody>
         <tr>
-            <th scope="row">@Messages("sdil.verify.utr")</th>
+            <th scope="row">messages("sdil.verify.utr")</th>
             <td class="table-row-answer">@utr</td>
         </tr>
         <tr>
-            <th scope="row">@Messages("sdil.verify.organisation")</th>
+            <th scope="row">messages("sdil.verify.organisation")</th>
             <td class="table-row-answer">@organisation</td>
         </tr>
         <tr>
-            <th scope="row">@Messages("sdil.verify.address")</th>
+            <th scope="row">messages("sdil.verify.address")</th>
             <td class="table-row-answer">
                 @address.line1,<br/>
                 @if(address.line2.nonEmpty) { @address.line2,<br/> }

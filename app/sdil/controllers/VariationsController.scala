@@ -98,7 +98,7 @@ class VariationsController(
             }
           case _ =>
             logger.warn("registrationVariation for address and contact subJourney has failed")
-            Redirect(routes.ServicePageController.show())
+            Redirect(routes.ServicePageController.show)
         }
       case None => Future.successful(NotFound(""))
     }

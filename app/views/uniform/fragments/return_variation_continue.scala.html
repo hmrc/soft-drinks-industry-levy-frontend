@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
 @(isNewImporter: Boolean, isNewPacker: Boolean)(implicit messages: Messages)
 
 @if(isNewImporter && isNewPacker) {
-    <p>@Messages("returns.variation.new-packer-and-importer-explanation")</p>
-    <p>@Messages("returns.variation.update-reg")</p>
+    <p>messages("returns.variation.new-packer-and-importer-explanation")</p>
+    <p>messages("returns.variation.update-reg")</p>
     <p>@Html(Messages("returns.variation.change-answers", "packaged-as-a-contract-packer"))</p>
 } else {
     @if(isNewImporter) {
-        <p>@Messages("returns.variation.new-importer-explanation")</p>
-        <p>@Messages("returns.variation.update-reg")</p>
+        <p>messages("returns.variation.new-importer-explanation")</p>
+        <p>messages("returns.variation.update-reg")</p>
         <p>@Html(Messages("returns.variation.change-answers", "brought-into-uk"))</p>
     }
     @if(isNewPacker) {
-        <p>@Messages("returns.variation.new-packer-explanation")</p>
-        <p>@Messages("returns.variation.update-reg")</p>
-        <p>@Html(Messages("returns.variation.change-answers", "packaged-as-a-contract-packer"))</p>
+        <p>messages("returns.variation.new-packer-explanation")</p>
+        <p>messages("returns.variation.update-reg")</p>
+        <p>@Html(messages("returns.variation.change-answers", "packaged-as-a-contract-packer"))</p>
     }
 }

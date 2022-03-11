@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@
 @v.map { v =>
     @v.deregDate.map { deregDate =>
         <p>
-            @Messages(
+            messages(
                 "dereg.what-happens-next.p1",
                 ReturnPeriod(deregDate).start.format("MMMM yyyy"),
                 ReturnPeriod(deregDate).end.format("MMMM yyyy")
@@ -44,14 +44,14 @@
         </p>
         <div class="panel panel-border-wide">
             <p>
-            @Messages(
+            messages(
                 "dereg.what-happens-next.p2",
                 ReturnPeriod(deregDate).deadline.withDayOfMonth(1).format("d MMMM"),
                 ReturnPeriod(deregDate).deadline.format("d MMMM yyyy")
             )
             </p>
         </div>
-        <p>@Messages("dereg.what-happens-next.p3")</p>
+        <p>messages("dereg.what-happens-next.p3")</p>
     }
 
     @if(key.nonEmpty) {
@@ -59,10 +59,10 @@
             <p>@Html(Messages(s"$x.variationDone.what-happens-next"))</p>
         }
     } else {
-        <p>@Messages("variationDone.what-happens-next")</p>
+        <p>messages("variationDone.what-happens-next")</p>
     }
 
-    @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
+    @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show))
 
     @*NEW:- @v.deregDate.map { _ => *@
     @if(path.contains("cancel-registration-date") || path.contains("cancel-registration-reason")) {
@@ -96,7 +96,7 @@
 }
 
 @a.map { a =>
-    <p>@Messages("return.check-return-changes.what-happens-next")</p>
-    @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show()))
+    <p>messages("return.check-return-changes.what-happens-next")</p>
+    @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show))
     @returnVariationDifferences("check-return-changes", a, showChangeLinks = false, broughtForward)
 }

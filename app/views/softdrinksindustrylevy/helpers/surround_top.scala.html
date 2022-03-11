@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 @if(isListingPage){
     @if(!noShowHeader) {
         <h1 class="heading-large  @{messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")}">
-            @messages(s"heading.$keyDots")
+            messages(s"heading.$keyDots")
         </h1>
     }
     @for(msg <- messages.list(s"$keyDots.paragraph")) {
@@ -47,12 +47,12 @@
         }
     <fieldset class="form-field-group">
         <legend>
-            <h2 class="heading-small add-to-list">@messages(s"$keyDots.listing.heading")</h2>
+            <h2 class="heading-small add-to-list">messages(s"$keyDots.listing.heading")</h2>
         </legend>
         <div class="form-group @if(errors.valueAtRootList.nonEmpty){form-group-error}">
             @errors.valueAtRootList.map { error =>
                 <span id="@fieldKey-error" class="error-message">
-                    <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(pageKey).render(messages)
+                    <span class="visually-hidden">messages("error"):</span> @error.prefixWith(pageKey).render(messages)
                 </span>
             }
             @inner
@@ -64,7 +64,7 @@
             <h1 class="heading-large  @{
                 messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")
             }">
-            @messages(s"heading.$keyDots")
+            messages(s"heading.$keyDots")
             </h1>
         </legend>
         }
@@ -93,7 +93,7 @@
 
             @errors.valueAtRootList.map { error =>
                 <span id="@fieldKey-error" class="error-message">
-                    <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(pageKey).render(messages)
+                    <span class="visually-hidden">messages("error"):</span> @error.prefixWith(pageKey).render(messages)
                 </span>
             }
 
@@ -137,6 +137,6 @@
     }
 
     <button class="button" type="submit" id="continue-button">
-    @messages(List(s"$keyDots.continue","sdil.common.save-continue"))
+    messages(List(s"$keyDots.continue","sdil.common.save-continue"))
     </button>
 

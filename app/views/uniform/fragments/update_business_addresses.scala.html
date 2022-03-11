@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
 
 <legend>
     <span class="govuk-caption-xl">@subscription.orgName</span>
-    <h1 class="heading-large.service-header">@Messages(s"heading.check-answers")</h1>
+    <h1 class="heading-large.service-header">messages(s"heading.check-answers")</h1>
 </legend>
 
     <div class="grid-row">
@@ -37,7 +37,7 @@
                 @declaration_description_list("service-page", "business-details.title") {
                     @declaration_description_term("verify", "organisation", None, s"${subscription.orgName}")
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">@Messages("sdil.verify.address")</dt>
+                        <dt class="govuk-summary-list__key">messages("sdil.verify.address")</dt>
                         <dd class="govuk-summary-list__value">
                             @address.nonEmptyLines.init.map { l =>
                                 <div>@l</div>
@@ -48,7 +48,7 @@
                 }
 
             <button name="edit-business-address" value="@key" class="link-button change-address-button">
-                @Messages("sdil.updateBusinessAddresses.link.1")
+                messages("sdil.updateBusinessAddresses.link.1")
             </button>
 
             @declaration_description_list("service-page", "contact-details.title") {
@@ -63,14 +63,14 @@
             }
 
             <button name="edit-contact-details" value="@key" class="link-button change-address-button">
-                @Messages("sdil.updateBusinessAddresses.link.2")
+                messages("sdil.updateBusinessAddresses.link.2")
             </button>
 
             @if(subscription.productionSites.nonEmpty) {
                 @service_sites("packaging", subscription.productionSites)
 
                 <button name="edit-packaging-sites" value="@key" class="link-button change-address-button">
-                    @Messages("sdil.updateBusinessAddresses.link.3")
+                    messages("sdil.updateBusinessAddresses.link.3")
                 </button>
             }
 
@@ -78,7 +78,7 @@
                 @service_sites("warehouses", subscription.warehouseSites)
                 
                 <button name="edit-warehouses" value="@key" class="link-button change-address-button">
-                    @Messages("sdil.updateBusinessAddresses.link.4")
+                    messages("sdil.updateBusinessAddresses.link.4")
                 </button>
             }
         </div>

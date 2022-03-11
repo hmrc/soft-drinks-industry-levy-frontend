@@ -32,17 +32,28 @@ import play.filters.headers.SecurityHeadersComponents
 import sdil.filters.SdilFilters
 import uk.gov.hmrc.play.bootstrap.config.Base64ConfigDecoder
 import uk.gov.hmrc.play.config.{AccessibilityStatementConfig, AssetsConfig, GTMConfig, OptimizelyConfig}
+import play.api.routing.Router
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
-class SDILComponents(context: Context)
-    extends BuiltInComponentsFromContext(context) with Base64ConfigDecoder with I18nComponents
-    with SecurityHeadersComponents with CSRFComponents with AhcWSComponents with RoutesWiring with FilterWiring
-    with ConnectorWiring with ConfigWiring {
+@Singleton
+class SDILComponents(context: Context)(
+  sdilFilters: SdilFilters,
+  template: Template,
+  errorHandler: SDILErrorHandler,
+  defaultApplication: DefaultApplication,
+  metadata: DefaultAssetsMetadata,
+  messagesControllerComponents: DefaultMessagesControllerComponents,
+  metricsImpl: MetricsImpl,
+  defaultApplicationLifecycle: DefaultApplicationLifecycle
+) extends BuiltInComponentsFromContext(context) with Base64ConfigDecoder with I18nComponents
+    with SecurityHeadersComponents with CSRFComponents with AhcWSComponents {
 
-  override lazy val httpFilters = wire[SdilFilters].filters
-  override lazy val application: DefaultApplication = wire[DefaultApplication]
-  override lazy val applicationLifecycle: ApplicationLifecycle = wire[DefaultApplicationLifecycle]
+  override lazy val httpFilters = sdilFilters.filters
+
+  override lazy val application: DefaultApplication = defaultApplication
+  override lazy val applicationLifecycle: ApplicationLifecycle = defaultApplicationLifecycle
 
   implicit lazy val ec: ExecutionContext = actorSystem.dispatcher
 
@@ -50,7 +61,7 @@ class SDILComponents(context: Context)
 
   override lazy val httpErrorHandler: HttpErrorHandler = errorHandler
 
-  lazy val templateController: Template = wire[Template]
+  lazy val templateController: Template = template
 
   lazy val optimizelyConfig: OptimizelyConfig = new OptimizelyConfig(configuration)
   lazy val assetConfig: AssetsConfig = new AssetsConfig(configuration)
@@ -64,10 +75,12 @@ class SDILComponents(context: Context)
   lazy val messagesActionBuilder = new DefaultMessagesActionBuilderImpl(
     controllerComponents.parsers.defaultBodyParser,
     controllerComponents.messagesApi)
-  override val mcc: MessagesControllerComponents = wire[DefaultMessagesControllerComponents]
-  override val assetsMetadata: AssetsMetadata = wire[DefaultAssetsMetadata]
-  lazy val assetsConfiguration = new AssetsConfiguration()
-  override val appName = configuration.get[String]("appName")
 
-  override lazy val metrics: Metrics = wire[MetricsImpl]
+  lazy val assetsConfiguration = new AssetsConfiguration()
+
+  lazy val applicationController = defaultApplication //new controllers.Application
+  lazy val assets = new controllers.Assets(httpErrorHandler, metadata)
+
+  override def router: Router = ???
+
 }

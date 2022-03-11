@@ -60,7 +60,7 @@ class AuthorisedActionSpec extends ControllerSpec {
 
       val res = testAction(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe sdil.controllers.routes.ServicePageController.show().url
+      redirectLocation(res).value mustBe sdil.controllers.routes.ServicePageController.show.url
     }
 
     "redirect to the service page if the user has a different OBTDS enrolment and an SDIL enrolment" in {
@@ -77,7 +77,7 @@ class AuthorisedActionSpec extends ControllerSpec {
 
       val res = testAction(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe sdil.controllers.routes.ServicePageController.show().url
+      redirectLocation(res).value mustBe sdil.controllers.routes.ServicePageController.show.url
     }
 
     "show the 'invalid affinity group' error page if the user is an agent" in {

@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
 
 @(key: String, returnPeriods: List[ReturnPeriod])(implicit messages: UniformMessages[Html])
 
-<h1>@messages(s"$key.heading")</h1>
+<h1>messages(s"$key.heading")</h1>
 
 @if(returnPeriods.length == 1) {
     @returnPeriods.map { x =>
         <p>
-            @Messages(
+            messages(
                 s"$key.one-return",
                 x.start.format("MMMM"),
                 x.end.format("MMMM yyyy")
@@ -31,9 +31,9 @@
         </p>
     }
 } else {
-    <p>@Messages(s"$key.many-returns", returnPeriods.size.toString)</p>
+    <p>messages(s"$key.many-returns", returnPeriods.size.toString)</p>
 }
 
-<a href="@sdil.controllers.routes.ServicePageController.show()" class="button">
-    @Messages("file-return-before-deregistration.continue")
+<a href="@sdil.controllers.routes.ServicePageController.show" class="button">
+    messages("file-return-before-deregistration.continue")
 </a>

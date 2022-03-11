@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 @(key: String, abortLink: String)(implicit messages: Messages)
 
 <p>
-    @Messages(s"$key.body")
+    messages(s"$key.body")
 </p>
 
 <p>
-    @Messages(Seq(s"$key.doubt1", "doubt1")) <a href="@abortLink">@Messages(Seq(s"$key.doubt1", "doubt2"))</a>.
+    messages(Seq(s"$key.doubt1", "doubt1")) <a href="@abortLink">messages(Seq(s"$key.doubt1", "doubt2"))</a>.
 </p>

@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
         <span class="form-label">@label</span>
         @field.errors.map { error =>
             <span class="error-message" data-journey="search-page:error:@field.name">
-            @Messages(error.message, error.args: _*)
+            messages(error.message, error.args: _*)
             </span>
         }
     </label>

@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,13 +98,13 @@
             '_dataTargetTrue -> "true"
         )
 
-    <input class="button" value="@Messages("sdil.common.continue")" type="submit">
+    <input class="button" value="messages("sdil.common.continue")" type="submit">
     }
     } else {
 
         @orgAddress
 
-        <p>@Messages("sdil.already.received.for.utr.info.p1")</p>
+        <p>messages("sdil.already.received.for.utr.info.p1")</p>
         <p>@Html(
             Messages(
                 "sdil.already.received.for.utr.info.p2",
