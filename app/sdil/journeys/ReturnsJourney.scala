@@ -62,6 +62,9 @@ object ReturnsJourney {
     Map(key -> Tuple2(key, args.toList.map { escape(_).toString }))
   }
 
+  val overClaimHtml = uniform.fragments.overClaim("overclaim-warning", "suggest-overClaim")(_: Messages)
+  val defaultTotalReturn = BigDecimal(0.0)
+
   val NoClaim: (Long, Long) = (0L, 0L)
   def journey(
     period: ReturnPeriod,
@@ -71,6 +74,7 @@ object ReturnsJourney {
     submitReturnVariation: ReturnsVariation => Future[Unit],
     broughtForward: BigDecimal,
     isSmallProd: Boolean,
+    totalReturn: Future[BigDecimal] = Future(defaultTotalReturn),
     canClaim: Boolean = false
   ) =
     for {
@@ -112,8 +116,13 @@ object ReturnsJourney {
       importsSmall <- askEmptyOption[(Long, Long)]("brought-into-uk-from-small-producers", default.map {
                        _.importSmall
                      })
-      exportCredits <- askEmptyOption[(Long, Long)]("claim-credits-for-exports") when canClaim == true
-      wastage       <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged") when canClaim == true
+      exportCredits <- askEmptyOption[(Long, Long)]("claim-credits-for-exports", default.map { _.export }) when canClaim == true
+
+      exports = exportCredits.map(x => x._1 + x._2)
+
+      _ <- tell("overclaim-warning", overClaimHtml) when (exports.getOrElse(0L)) + Await.result(totalReturn, 20.seconds).toLong > 0
+
+      wastage <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged", default.map { _.wastage }) when canClaim == true
       sdilReturn = SdilReturn(
         ownBrands,
         contractPacked,
