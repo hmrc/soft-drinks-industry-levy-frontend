@@ -26,7 +26,6 @@ import sdil.config.{AppConfig, RegistrationFormDataCache, ReturnsFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.journeys.ReturnsJourney
 import sdil.models._
-import sdil.models.variations.ReturnVariationData
 import sdil.uniform.SaveForLaterPersistenceNew
 import sdil.utility.stringToFormatter
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -64,6 +63,7 @@ class ReturnsController @Inject()(
       val period = ReturnPeriod(year, quarter)
       val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
 
+      val totalReturn = sdilConnector.balance(sdilRef, withAssessment = false)
       //THIS CHECKS IF THEY HAVE MADE A PAYMENT
       def madeClaim(): Boolean = {
         val balanceHistory: Future[List[(FinancialLineItem, BigDecimal)]] =
@@ -132,6 +132,7 @@ class ReturnsController @Inject()(
                       submitReturnVariation,
                       broughtForward,
                       isSmallProd,
+                      totalReturn,
                       canClaim
                     )
                 ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
