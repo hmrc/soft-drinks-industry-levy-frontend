@@ -100,7 +100,7 @@ object VariationsJourney {
 
     val diff = old diff newList
 
-    variation.data.updatedWarehouseSites.filter { site =>
+    variation.data.original.warehouseSites.filter { site =>
       diff.exists { address =>
         compareAddress(site.address, address)
       }

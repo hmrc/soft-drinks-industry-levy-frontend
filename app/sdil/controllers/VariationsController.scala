@@ -176,7 +176,7 @@ class VariationsController(
 
     val diff = old diff newList
 
-    variation.updatedWarehouseSites.filter { site =>
+    variation.original.warehouseSites.filter { site =>
       diff.exists { address =>
         compareAddress(site.address, address)
       }

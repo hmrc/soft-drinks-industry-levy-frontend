@@ -301,7 +301,7 @@ trait SdilComponents {
 
       val diff = old diff newList
 
-      variation.updatedWarehouseSites.filter { site =>
+      variation.original.warehouseSites.filter { site =>
         diff.exists { address =>
           compareAddress(site.address, address)
         }
@@ -322,19 +322,19 @@ trait SdilComponents {
         .map(x => x.address)
 
       val diff = old diff newlist
-      diff.toList
+      diff
     }
 
     def newPackagingSites(variation: RegistrationVariationData): List[UkAddress] = {
       val old = variation.original.productionSites.map(x => x.address)
-      val updated = variation.updatedProductionSites.map(x => x.address) //This contains all the packaging sites new and old
+      val updated = variation.updatedProductionSites.map(x => x.address)
       val matching = updated diff old
       matching.toList
     }
 
     def newWarehouseSites(variation: RegistrationVariationData): List[Site] = {
       val oldAddress = variation.original.warehouseSites.map(x => x.address)
-      val updatedAddress = variation.updatedWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
+      val updatedAddress = variation.updatedWarehouseSites.map(x => x.address)
       val newAddress = updatedAddress diff oldAddress
 
       variation.updatedWarehouseSites.filter { site =>
