@@ -308,29 +308,39 @@ trait SdilComponents {
       }
     }.toList
 
-    def closedPackagingSites(variation: RegistrationVariationData): List[UkAddress] = {
+    def closedPackagingSites(variation: RegistrationVariationData): List[Site] = {
       val old = variation.original.productionSites
         .filter { x =>
           x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
         }
         .map(x => x.address)
 
-      val newlist = variation.updatedProductionSites
+      val newList = variation.updatedProductionSites
         .filter { x =>
           x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
         }
         .map(x => x.address)
 
-      val diff = old diff newlist
-      diff
+      val diff = old diff newList
+
+      variation.original.productionSites.filter { site =>
+        diff.exists { address =>
+          compareAddress(site.address, address)
+        }
+      }
     }
 
-    def newPackagingSites(variation: RegistrationVariationData): List[UkAddress] = {
+    def newPackagingSites(variation: RegistrationVariationData): List[Site] = {
       val old = variation.original.productionSites.map(x => x.address)
       val updated = variation.updatedProductionSites.map(x => x.address)
-      val matching = updated diff old
-      matching.toList
-    }
+      val newAddress = updated diff old
+
+      variation.updatedProductionSites.filter { site =>
+        newAddress.exists { address =>
+          compareAddress(site.address, address)
+        }
+      }
+    }.toList
 
     def newWarehouseSites(variation: RegistrationVariationData): List[Site] = {
       val oldAddress = variation.original.warehouseSites.map(x => x.address)

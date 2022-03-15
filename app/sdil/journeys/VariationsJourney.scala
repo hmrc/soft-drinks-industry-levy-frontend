@@ -107,22 +107,39 @@ object VariationsJourney {
     }
   }.toList
 
-  def closedPackagingSites(variation: VariationsJourney.Change.RegChange): List[UkAddress] = {
-    val old = variation.data.original.productionSites.map(x => x.address)
-    val newlist = variation.data.updatedProductionSites.map(x => x.address)
-    val diff = old diff newlist
-    diff
+  def closedPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] = {
+    val old = variation.data.original.productionSites
+      .filter { x =>
+        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+      }
+      .map(x => x.address)
+
+    val newList = variation.data.updatedProductionSites
+      .filter { x =>
+        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+      }
+      .map(x => x.address)
+
+    val diff = old diff newList
+
+    variation.data.original.productionSites.filter { site =>
+      diff.exists { address =>
+        compareAddress(site.address, address)
+      }
+    }
   }
 
-  def newPackagingSites(variation: VariationsJourney.Change.RegChange): List[UkAddress] = {
+  def newPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] = {
     val old = variation.data.original.productionSites.map(x => x.address)
-    val updated = variation.data.updatedProductionSites.map(x => x.address) //This contains all the packaging sites new and old
-    val matching = updated diff (old)
-    val finals = updated.filter(_ != matching)
-    println(s"matching = $matching")
-    println(s"FINAL matching = $finals")
-    matching.toList
-  }
+    val updated = variation.data.updatedProductionSites.map(x => x.address)
+    val newAddress = updated diff old
+
+    variation.data.updatedProductionSites.filter { site =>
+      newAddress.exists { address =>
+        compareAddress(site.address, address)
+      }
+    }
+  }.toList
 
   def newWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] = {
     val oldAddress = variation.data.original.warehouseSites.map(x => x.address)

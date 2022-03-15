@@ -183,25 +183,39 @@ class VariationsController(
     }
   }.toList
 
-  def closedPackagingSites(variation: RegistrationVariationData): List[UkAddress] = {
-    val old = variation.original.productionSites.map(x => x.address)
-    val newlist = variation.updatedProductionSites.map(x => x.address)
-    val diff = old diff newlist
-    println(s"Old = $old")
-    println(s"New = $newlist")
-    println(s"diff = $diff")
-    diff
+  def closedPackagingSites(variation: RegistrationVariationData): List[Site] = {
+    val old = variation.original.productionSites
+      .filter { x =>
+        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+      }
+      .map(x => x.address)
+
+    val newList = variation.updatedProductionSites
+      .filter { x =>
+        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+      }
+      .map(x => x.address)
+
+    val diff = old diff newList
+
+    variation.original.productionSites.filter { site =>
+      diff.exists { address =>
+        compareAddress(site.address, address)
+      }
+    }
   }
 
-  def newPackagingSites(variation: RegistrationVariationData): List[UkAddress] = {
+  def newPackagingSites(variation: RegistrationVariationData): List[Site] = {
     val old = variation.original.productionSites.map(x => x.address)
-    val updated = variation.updatedProductionSites.map(x => x.address) //This contains all the packaging sites new and old
-    val matching = updated diff (old)
-    val finals = updated.filter(_ != matching)
-    println(s"matching = $matching")
-    println(s"FINAL matching = $finals")
-    matching.toList
-  }
+    val updated = variation.updatedProductionSites.map(x => x.address)
+    val newAddress = updated diff old
+
+    variation.updatedProductionSites.filter { site =>
+      newAddress.exists { address =>
+        compareAddress(site.address, address)
+      }
+    }
+  }.toList
 
   def newWarehouseSites(variation: RegistrationVariationData): List[Site] = {
     val oldAddress = variation.original.warehouseSites.map(x => x.address)
