@@ -66,6 +66,7 @@ object ReturnsJourney {
 
   val overClaimHtml = uniform.fragments.overClaim("overclaim-warning", "suggest-overClaim")(_: Messages)
   val defaultTotalReturn = BigDecimal(0.0)
+  val defaultTotalReturnLong = (0L)
 
   val NoClaim: (Long, Long) = (0L, 0L)
   def journey(
@@ -78,6 +79,7 @@ object ReturnsJourney {
     broughtForward: BigDecimal,
     isSmallProd: Boolean,
     totalReturn: Future[BigDecimal] = Future(defaultTotalReturn),
+    interestTotal: Future[Option[Long]] = Future(Option(defaultTotalReturnLong)),
     canClaim: Boolean = false
   ) =
     for {
@@ -128,7 +130,11 @@ object ReturnsJourney {
 
       exports = (exportCredits.foldLeft(0L)(_ + _._2) * costHigher) + (exportCredits.foldLeft(0L)(_ + _._1) * costLower)
 
-      _ <- tell("overclaim-warning", overClaimHtml) when (exports) + Await.result(totalReturn, 20.seconds).toLong > 0
+      resultInterest = Await.result(interestTotal, 20.seconds)
+      resultReturn = Await.result(totalReturn, 20.seconds).toLong
+      noInterestBalance = resultReturn - resultInterest.getOrElse(0L)
+
+      _ <- tell("overclaim-warning", overClaimHtml) when (exports) + noInterestBalance > 0
 
       wastage <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged", default.map { _.wastage }) when canClaim == true
 
@@ -136,7 +142,7 @@ object ReturnsJourney {
         .foldLeft(0L)(_ + _._2) * costHigher) + (exportCredits
         .foldLeft(0L)(_ + _._1) * costLower)
 
-      _ <- tell("overclaim-warning2", overClaimHtml) when (wastages) + Await.result(totalReturn, 20.seconds).toLong > 0
+      _ <- tell("overclaim-warning2", overClaimHtml) when (wastages) + noInterestBalance > 0
 
       sdilReturn = SdilReturn(
         ownBrands,
