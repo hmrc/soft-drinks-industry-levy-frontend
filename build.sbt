@@ -72,7 +72,7 @@ libraryDependencies ++= Seq(
   "org.mockito"            %  "mockito-core"        % "3.10.0",
   "org.scalatestplus.play" %% "scalatestplus-play"  % "5.1.0",
   "org.scalacheck"         %% "scalacheck"          % "1.15.4",
-  "com.luketebbs.uniform"  %% "interpreter-logictable"  % "5.0.0-RC5"
+  "com.luketebbs.uniform"  %% "interpreter-logictable"  % "5.0.0-RC6"
 ).map(_ % "test")
 
 // ================================================================================
@@ -104,8 +104,7 @@ libraryDependencies ++= Seq(
   "com.softwaremill.macwire"  %% "util"                           % "2.3.7",
   "com.softwaremill.macwire"  %% "proxy"                          % "2.3.7",
   "org.typelevel"             %% "cats-core"                      % "2.6.1",
-  //"com.luketebbs.uniform"     %% "interpreter-play26"             % "5.0.0-RC5",
-  "com.luketebbs.uniform"     %% "interpreter-play26"             % "5.0.1-RC1-53-76795c5-SNAPSHOT",
+  "com.luketebbs.uniform"     %% "interpreter-play26"             % "5.0.0-RC6",
   "com.beachape"              %% "enumeratum"                     % "1.7.0"
 )
 

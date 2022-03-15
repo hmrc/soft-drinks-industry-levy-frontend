@@ -17,13 +17,15 @@
 package sdil.config
 
 import play.api.{Application, ApplicationLoader, LoggerConfigurator}
+import javax.inject.{Inject, Singleton}
 
-class SDILApplicationLoader extends ApplicationLoader {
+@Singleton
+class SDILApplicationLoader @Inject()(sidlComponents: SDILComponents) extends ApplicationLoader {
   override def load(context: ApplicationLoader.Context): Application = {
     LoggerConfigurator(context.environment.classLoader).foreach {
       _.configure(context.environment)
     }
 
-    new SDILComponents(context).application
+    sidlComponents.application
   }
 }
