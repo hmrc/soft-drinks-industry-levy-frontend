@@ -16,6 +16,7 @@
 
 package sdil.controllers
 
+import cats.data.OptionT
 import cats.implicits._
 import play.api.Logger
 import play.api.i18n._
@@ -63,7 +64,11 @@ class ReturnsController(
       val period = ReturnPeriod(year, quarter)
       val emptyReturn = SdilReturn((0, 0), (0, 0), Nil, (0, 0), (0, 0), (0, 0), (0, 0), None)
 
-      val totalReturn = sdilConnector.balance(sdilRef, withAssessment = false)
+      def interest(items: List[FinancialLineItem]): BigDecimal =
+        items.distinct.collect { case a: Interest => a.amount }.sum
+      val interestTotal =
+        sdilConnector.balanceHistory(sdilRef, withAssessment = true).map(x => Option(interest(x).toLong))
+      val totalReturn = sdilConnector.balance(sdilRef, withAssessment = true)
       //THIS CHECKS IF THEY HAVE MADE A PAYMENT
       def madeClaim(): Boolean = {
         val balanceHistory: Future[List[(FinancialLineItem, BigDecimal)]] =
@@ -114,6 +119,7 @@ class ReturnsController(
                     broughtForward,
                     isSmallProd,
                     totalReturn,
+                    interestTotal,
                     canClaim
                   )
               ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
