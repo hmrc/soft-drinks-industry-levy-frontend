@@ -22,9 +22,7 @@ import play.api.mvc.Request
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.Views
-import javax.inject.Singleton
 
-@Singleton
 class SDILErrorHandler(val messagesApi: MessagesApi, val configuration: Configuration, val views: Views)(
   implicit config: AppConfig)
     extends FrontendErrorHandler {
