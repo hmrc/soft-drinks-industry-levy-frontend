@@ -392,7 +392,7 @@ object VariationsJourney {
                        } else {
                          convertWithKey("balance")(connector.balance(sdilRef, withAssessment = false))
                        }
-      newReturn <- ReturnsJourney.journey(
+      newReturn <- ReturnsJourney.journeyForAdjustments(
                     id,
                     returnPeriod,
                     origReturn,

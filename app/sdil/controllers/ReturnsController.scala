@@ -83,43 +83,25 @@ class ReturnsController(
               def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
                 sdilConnector.returns_variation(rvd, sdilRef)
 
-              if (nilReturn)
-                interpret(
-                  ReturnsJourney
-                    .cyaJourney(
-                      period,
-                      emptyReturn,
-                      subscription,
-                      submitReturnVariation,
-                      broughtForward,
-                      isSmallProd
-                    )
-                ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
-                  submitReturn(ret._1).flatMap { _ =>
-                    returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
-                      Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
-                    }
-                  }
-                } else
-                interpret(
-                  ReturnsJourney
-                    .journey(
-                      id,
-                      period,
-                      None,
-                      subscription,
-                      checkSmallProducerStatus,
-                      submitReturnVariation,
-                      broughtForward,
-                      isSmallProd
-                    )
-                ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
-                  submitReturn(ret._1).flatMap { _ =>
-                    returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
-                      Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
-                    }
+              interpret(
+                ReturnsJourney
+                  .journey(
+                    id,
+                    period,
+                    if (nilReturn) emptyReturn.some else None,
+                    subscription,
+                    checkSmallProducerStatus,
+                    submitReturnVariation,
+                    broughtForward,
+                    isSmallProd
+                  )
+              ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
+                submitReturn(ret._1).flatMap { _ =>
+                  returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
+                    Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
                   }
                 }
+              }
 
             } else
               Redirect(routes.ServicePageController.show()).pure[Future]

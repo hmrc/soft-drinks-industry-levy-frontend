@@ -42,7 +42,7 @@ trait SdilComponents {
 
   def ufViews: views.uniform.Uniform
 
-  def journeyConfig: JourneyConfig = JourneyConfig(askFirstListItem = true, leapAhead = true)
+  def journeyConfig: JourneyConfig = JourneyConfig(askFirstListItem = true, leapAhead = true, defaultAsEntry = true)
 
   type FormHtml[A] = WebAsk[Html, A]
 
