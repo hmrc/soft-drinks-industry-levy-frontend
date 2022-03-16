@@ -95,8 +95,7 @@ libraryDependencies ++= Seq(
   "uk.gov.hmrc"               %% "govuk-template"                 % s"5.75.0-$playVersion",
   "uk.gov.hmrc"               %% "play-ui"                        % s"9.8.0-$playVersion",
   "uk.gov.hmrc"               %% "play-partials"                  % s"8.3.0-$playVersion",
-  "com.typesafe.play"         %% "play-json"                      % "2.9.2",
-  "com.typesafe.play"         %% "play-json-joda"                 % "2.9.2",
+  "com.typesafe.play"         %% "play-json-joda"                 % "2.10.0-RC5",
   "org.scalactic"             %% "scalactic"                      % "3.0.8",
   "uk.gov.hmrc"               %% "http-caching-client"            % s"9.6.0-$playVersion",
   "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % s"1.11.0-$playVersion",
@@ -104,7 +103,7 @@ libraryDependencies ++= Seq(
   "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.7" % "provided",
   "com.softwaremill.macwire"  %% "util"                           % "2.3.7",
   "com.softwaremill.macwire"  %% "proxy"                          % "2.3.7",
-  "org.typelevel"             %% "cats-core"                      % "2.6.1",
+  "org.typelevel"             %% "cats-core"                      % "2.7.0",
   "com.luketebbs.uniform"     %% "interpreter-play28"             % "5.0.0-RC6",
   "com.luketebbs.uniform"     %% "core"                           % "5.0.0-RC6",
   "com.beachape"              %% "enumeratum"                     % "1.7.0"
@@ -154,12 +153,10 @@ scalacOptions ++= Seq(
 // Misc
 // ================================================================================
 disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
-console / initialCommands := "import cats.implicits._"
+initialCommands in console := "import cats.implicits._"
 
 majorVersion := 0
 
 uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-
-Global / lintUnusedKeysOnLoad := false
 
 // ThisBuild / evictionErrorLevel := Level.Info
