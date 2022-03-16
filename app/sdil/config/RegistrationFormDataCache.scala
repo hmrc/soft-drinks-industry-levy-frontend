@@ -33,7 +33,7 @@ class RegistrationFormDataCache @Inject()(
 )(implicit val crypto: CompositeSymmetricCrypto, ec: ExecutionContext)
     extends ServicesConfig(configuration) with ShortLivedHttpCaching {
 
-  override lazy val baseUri: String = baseUrl("cachable.short-lived-cache")
+  override lazy val baseUri: String = baseUrl("microservice.services.cachable.short-lived-cache")
   override lazy val defaultSource: String =
     getConfString("cachable.short-lived-cache.journey.cache", "soft-drinks-industry-levy-frontend")
   override lazy val domain: String = getConfString(
