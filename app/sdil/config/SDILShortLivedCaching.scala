@@ -21,7 +21,9 @@ import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class SDILShortLivedCaching(val http: HttpClient, val configuration: Configuration, environment: Environment)
+import javax.inject.Inject
+
+class SDILShortLivedCaching @Inject()(val http: HttpClient, val configuration: Configuration, environment: Environment)
     extends ServicesConfig(configuration) with ShortLivedHttpCaching {
 
   override def defaultSource: String = configuration.get[String]("appName")

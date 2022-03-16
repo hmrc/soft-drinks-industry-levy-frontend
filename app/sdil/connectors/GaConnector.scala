@@ -22,9 +22,10 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GaConnector(http: HttpClient, environment: Environment, val configuration: Configuration)
+class GaConnector @Inject()(http: HttpClient, val configuration: Configuration)
     extends ServicesConfig(configuration) with Logging {
 
   implicit val dimensionWrites = Json.writes[DimensionValue]

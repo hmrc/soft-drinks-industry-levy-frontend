@@ -17,17 +17,19 @@
 package sdil.controllers
 
 import scala.language.higherKinds
-
 import cats.implicits._
 import enumeratum._
+
 import java.time.LocalDate
-import ltbs.uniform._, validation._
+import ltbs.uniform._
+import validation._
 import ltbs.uniform.common.web._
 import ltbs.uniform.interpreters.playframework.SessionPersistence
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
+
 import scala.concurrent._
 import sdil.actions._
 import sdil.config._
@@ -40,6 +42,8 @@ import sdil.uniform._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import cats.data.Validated
 
+import javax.inject.Inject
+
 case class Subset[A](options: Set[A]) extends Rule[Set[A]] {
   def apply(values: Set[A]): Validated[ErrorTree, Set[A]] =
     Validated.cond(values.subsetOf(options), values, Rule.error("invalid-option"))
@@ -49,7 +53,7 @@ object Subset {
   def apply[A](values: A*): Subset[A] = Subset(values.toSet)
 }
 
-class WidgetTestController(
+class WidgetTestController @Inject()(
   mcc: MessagesControllerComponents,
   val config: AppConfig,
   val ufViews: views.uniform.Uniform

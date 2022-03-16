@@ -26,9 +26,10 @@ import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FormAction(
+class FormAction @Inject()(
   val messagesApi: MessagesApi,
   cache: RegistrationFormDataCache,
   authorisedAction: AuthorisedAction,

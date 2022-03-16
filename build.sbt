@@ -96,6 +96,7 @@ libraryDependencies ++= Seq(
   "uk.gov.hmrc"               %% "play-ui"                        % s"9.8.0-$playVersion",
   "uk.gov.hmrc"               %% "play-partials"                  % s"8.3.0-$playVersion",
   "com.typesafe.play"         %% "play-json"                      % "2.9.2",
+  "com.typesafe.play"         %% "play-json-joda"                 % "2.9.2",
   "org.scalactic"             %% "scalactic"                      % "3.0.8",
   "uk.gov.hmrc"               %% "http-caching-client"            % s"9.6.0-$playVersion",
   "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % s"1.11.0-$playVersion",

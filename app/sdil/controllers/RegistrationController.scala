@@ -41,7 +41,9 @@ import views.html.uniform
 import play.api.Logger
 import sdil.uniform.SdilComponents.{OrganisationType, OrganisationTypeSoleless, ProducerType}
 
-class RegistrationController(
+import javax.inject.Inject
+
+class RegistrationController @Inject()(
   authorisedAction: AuthorisedAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   cache: RegistrationFormDataCache,
@@ -54,7 +56,7 @@ class RegistrationController(
   override def defaultBackLink = "/soft-drinks-industry-levy"
 
   implicit lazy val persistence =
-    SaveForLaterPersistenceNew[AuthorisedRequest[AnyContent]](_.internalId)("registration", cache.shortLiveCache)
+    SaveForLaterPersistenceNew[AuthorisedRequest[AnyContent]](_.internalId)("registration", cache)
 
   lazy val logger = Logger(this.getClass())
 

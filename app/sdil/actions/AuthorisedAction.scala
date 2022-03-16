@@ -31,9 +31,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.softdrinksindustrylevy.errors.Errors
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedAction(
+class AuthorisedAction @Inject()(
   val authConnector: AuthConnector,
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,

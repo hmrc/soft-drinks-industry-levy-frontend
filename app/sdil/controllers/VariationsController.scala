@@ -45,8 +45,9 @@ import views.html.{main_template, uniform}
 
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
+import javax.inject.Inject
 
-class VariationsController(
+class VariationsController @Inject()(
   mcc: MessagesControllerComponents,
   val config: AppConfig,
   val ufViews: views.uniform.Uniform,
@@ -77,9 +78,7 @@ class VariationsController(
   }
 
   implicit lazy val persistence =
-    SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
-      "variations",
-      regCache.shortLiveCache)
+    SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)("variations", regCache)
 
   def changeAddressAndContact(id: String) = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
@@ -297,7 +296,7 @@ class VariationsController(
   }
 
   def changeActorStatus(id: String): Action[AnyContent] = Action.async { implicit req =>
-    implicit val persistence = new SessionPersistence("test")
+    implicit val persistence: SessionPersistence[MessagesRequest[AnyContent]] = new SessionPersistence("test")
 
     val simpleJourney = ask[LocalDate]("test")
     val wm = interpret(simpleJourney)

@@ -16,16 +16,19 @@
 
 package sdil.config
 
-import play.api.{Application, ApplicationLoader, LoggerConfigurator}
+import play.api.inject.guice.{GuiceApplicationBuilder, GuiceApplicationLoader}
+import play.api.{ApplicationLoader, LoggerConfigurator}
+
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class SDILApplicationLoader @Inject()(sidlComponents: SDILComponents) extends ApplicationLoader {
-  override def load(context: ApplicationLoader.Context): Application = {
+class SDILApplicationLoader @Inject() extends GuiceApplicationLoader {
+
+  override def builder(context: ApplicationLoader.Context): GuiceApplicationBuilder = {
     LoggerConfigurator(context.environment.classLoader).foreach {
       _.configure(context.environment)
     }
 
-    sidlComponents.application
+    super.builder(context)
   }
 }

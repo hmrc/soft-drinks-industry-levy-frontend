@@ -16,24 +16,23 @@
 
 package sdil.connectors
 
-import play.api.libs.json.JsObject
 import play.api.Configuration
+import play.api.libs.json.JsObject
 import sdil.config.SDILSessionCache
 import sdil.models._
 import sdil.models.backend.Subscription
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{ReturnVariationData, VariationsSubmission}
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
+import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, readRaw, _}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.http.HttpReads.Implicits.{readRaw, readFromJson, _}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SoftDrinksIndustryLevyConnector(
+class SoftDrinksIndustryLevyConnector @Inject()(
   http: HttpClient,
   val configuration: Configuration,
-  val shortLiveCache: ShortLivedHttpCaching,
   val sessionCache: SDILSessionCache
 )(implicit ec: ExecutionContext)
     extends ServicesConfig(configuration) {

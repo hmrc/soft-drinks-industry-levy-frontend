@@ -21,9 +21,11 @@ import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.{DirectDebitBackendConnector, StartSdilReturnFromSdilFrontend}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class DirectDebitController(
+class DirectDebitController @Inject()(
   ddConnector: DirectDebitBackendConnector,
   registeredAction: RegisteredAction,
   fcc: MessagesControllerComponents)(implicit config: AppConfig, val ec: ExecutionContext)

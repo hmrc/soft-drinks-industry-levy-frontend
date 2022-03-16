@@ -32,10 +32,10 @@ import views.Views
 import views.softdrinksindustrylevy.errors.Errors
 import sdil.uniform.SdilComponents.addressMapping
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class VerifyController(
-  override val messagesApi: MessagesApi,
+class VerifyController @Inject()(
   cache: RegistrationFormDataCache,
   formAction: FormAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,

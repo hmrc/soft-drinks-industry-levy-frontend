@@ -21,9 +21,10 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DirectDebitBackendConnector(http: HttpClient, config: ServicesConfig)(implicit ec: ExecutionContext) {
+class DirectDebitBackendConnector @Inject()(http: HttpClient, config: ServicesConfig)(implicit ec: ExecutionContext) {
 
   lazy val directDebitBaseUrl: String = s"${config.baseUrl("direct-debit-backend")}/direct-debit-backend"
 

@@ -20,17 +20,25 @@ import play.api.Configuration
 import play.api.libs.json.JsResultException
 import sdil.models.variations.RegistrationVariationData
 import uk.gov.hmrc.crypto.CompositeSymmetricCrypto
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.cache.client.{CacheMap, ShortLivedCache, ShortLivedHttpCaching}
+import uk.gov.hmrc.http.cache.client.{CacheMap, ShortLivedHttpCaching}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegistrationVariationFormDataCache(
-  val configuration: Configuration,
-  val shortLiveCache: ShortLivedHttpCaching
+class RegistrationVariationFormDataCache @Inject()(
+  val http: HttpClient,
+  val configuration: Configuration
 )(implicit val crypto: CompositeSymmetricCrypto, ec: ExecutionContext)
-    extends ServicesConfig(configuration) with ShortLivedCache {
+    extends ServicesConfig(configuration) with ShortLivedHttpCaching {
+
+  override lazy val baseUri: String = baseUrl("cachable.short-lived-cache")
+  override lazy val defaultSource: String =
+    getConfString("cachable.short-lived-cache.journey.cache", "soft-drinks-industry-levy-frontend")
+  override lazy val domain: String = getConfString(
+    "cachable.short-lived-cache.domain",
+    throw new Exception(s"Could not find config 'cachable.short-lived-cache.domain'"))
 
   def cache(internalId: String, body: RegistrationVariationData)(implicit hc: HeaderCarrier): Future[CacheMap] =
     cache(s"$internalId-sdil-registration-variation", "regVarFormData", body)

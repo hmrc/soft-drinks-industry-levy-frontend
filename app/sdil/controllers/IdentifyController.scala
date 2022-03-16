@@ -32,10 +32,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 import sdil.uniform.SdilComponents.postcode
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IdentifyController(
-  override val messagesApi: MessagesApi,
+class IdentifyController @Inject()(
   mcc: MessagesControllerComponents,
   cache: RegistrationFormDataCache,
   authorisedAction: AuthorisedAction,

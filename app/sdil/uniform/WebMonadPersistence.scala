@@ -52,21 +52,21 @@ object DbFormat {
 
 }
 
-case class SaveForLaterPersistenceNew[REQ <: play.api.mvc.Request[AnyContent]](
-  idFunc: REQ => String
+case class SaveForLaterPersistenceNew[Req <: play.api.mvc.Request[AnyContent]](
+  idFunc: Req => String
 )(
   journeyName: String,
   shortLiveCache: ShortLivedHttpCaching
 )(
   implicit
   ec: ExecutionContext)
-    extends PersistenceEngine[REQ] {
+    extends PersistenceEngine[Req] {
 
   implicit val dbFormatter: Format[DB] = DbFormat.dbFormatter
 
-  private implicit def requestToHc(implicit req: REQ) = HeaderCarrierConverter.fromRequest(req)
+  private implicit def requestToHc(implicit req: Req) = HeaderCarrierConverter.fromRequest(req)
 
-  override def apply(request: REQ)(f: DB ⇒ Future[(DB, Result)]): Future[Result] =
+  override def apply(request: Req)(f: DB ⇒ Future[(DB, Result)]): Future[Result] =
     for {
       db              <- dataGet()(request)
       (newDb, result) <- f(db)
@@ -74,14 +74,14 @@ case class SaveForLaterPersistenceNew[REQ <: play.api.mvc.Request[AnyContent]](
     } yield result
 
   def dataGet()(
-    implicit req: REQ
+    implicit req: Req
   ): Future[DB] =
     shortLiveCache.fetchAndGetEntry[DB](idFunc(req), journeyName).map {
       _.getOrElse(Map.empty[List[String], String])
     }
 
   def dataPut(dataIn: DB)(
-    implicit req: REQ
+    implicit req: Req
   ): Future[Unit] =
     shortLiveCache.cache(idFunc(req), journeyName, dataIn).map { _ =>
       (())

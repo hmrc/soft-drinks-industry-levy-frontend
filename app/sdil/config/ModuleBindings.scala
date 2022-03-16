@@ -16,22 +16,15 @@
 
 package sdil.config
 
+import com.google.inject.{AbstractModule, Provides}
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.HttpClient
-import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.crypto.{CompositeSymmetricCrypto, CryptoGCMWithKeysFromConfig}
 
-import javax.inject.Inject
+class ModuleBindings(val environment: Environment, val configuration: Configuration) extends AbstractModule {
 
-class SDILSessionCache @Inject()(val http: HttpClient, val configuration: Configuration, environment: Environment)
-    extends ServicesConfig(configuration) with SessionCache {
+  @Provides def provideCrypto(config: Configuration): CompositeSymmetricCrypto =
+    new CryptoGCMWithKeysFromConfig(baseConfigKey = "json.encryption", config.underlying)
 
-  override def defaultSource: String = configuration.get[String]("appName")
-
-  override def baseUri: String = baseUrl("cacheable.session-cache")
-
-  override def domain: String =
-    getConfString(
-      "cacheable.session-cache.domain",
-      throw new RuntimeException("Missing config cacheable.session-cache.domain"))
+  override def configure() = {}
+//    bind[client.ShortLivedHttpCaching].to[DefaultShortLivedHttpCaching]
 }

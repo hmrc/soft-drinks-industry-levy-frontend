@@ -34,10 +34,11 @@ import views.html.main_template
 
 import java.time.{LocalDate, LocalTime, ZoneId}
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.higherKinds
 
-class ReturnsController(
+class ReturnsController @Inject()(
   mcc: MessagesControllerComponents,
   val config: AppConfig,
   val ufViews: views.uniform.Uniform,
@@ -55,7 +56,7 @@ class ReturnsController(
       implicit lazy val persistence =
         SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
           s"returns-$year-$quarter",
-          cache.shortLiveCache
+          cache
         )
 
       val sdilRef = request.sdilEnrolment.value

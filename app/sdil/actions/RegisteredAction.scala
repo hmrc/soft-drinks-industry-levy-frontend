@@ -25,9 +25,10 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegisteredAction(
+class RegisteredAction @Inject()(
   val authConnector: AuthConnector,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   mcc: MessagesControllerComponents)(implicit val executionContext: ExecutionContext)

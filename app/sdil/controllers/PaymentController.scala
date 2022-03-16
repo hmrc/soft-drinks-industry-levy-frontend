@@ -21,9 +21,11 @@ import sdil.actions.RegisteredAction
 import sdil.config.AppConfig
 import sdil.connectors.{PayApiConnector, SoftDrinksIndustryLevyConnector, SpjRequestBtaSdil}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class PaymentController(
+class PaymentController @Inject()(
   payApiConnector: PayApiConnector,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   registeredAction: RegisteredAction,
