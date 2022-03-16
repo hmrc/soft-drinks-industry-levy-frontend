@@ -1,0 +1,46 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@(pageKey: List[String], fieldKey: List[String], tell: Option[Html], radioOptions: Seq[String], existing: Option[String], errors: ErrorTree, messages: UniformMessages[Html], conditional: PartialFunction[String,Html] = PartialFunction.empty, cond: Option[Html] = None)
+
+@keyDash=@{fieldKey.mkString("-")}
+@keyDots=@{fieldKey.mkString(".")}
+@sortValues=@{pageKey.contains("select-return")}
+@ro=@{if(sortValues){radioOptions.sorted} else radioOptions}
+@restrictInlineKeys=@{List("select-return", "repayment-method").contains(pageKey.head)}
+
+@surround(pageKey, fieldKey, tell, errors, messages, cond) {
+  <div class="@if(radioOptions.length <= 2 && !restrictInlineKeys){inline}">
+
+    @ro.zipWithIndex.map{ case (opt,num) =>
+      <div class="multiple-choice govuk-radios__item" data-target="tg-@{keyDash}-@num">
+        <input type="radio"             
+          id="@{keyDash}-@num"
+          name="@keyDots"
+          value="@opt"
+          @if(Some(opt) == existing){checked="checked"}
+
+          @if(conditional.isDefinedAt(opt)) {
+            aria-controls="tg-@{keyDash}-@num"
+            @if(Some(opt) == existing){aria-expanded="true"} else {aria-expanded="false"}
+          }
+        />
+        <label for="@{keyDash}-@num">@{messages.decompose({fieldKey :+ opt}.mkString("."))}</label>    
+      </div>
+    }
+  </div>
+
+}

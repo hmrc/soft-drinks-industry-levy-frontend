@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ case class ReturnsVariation(
   email: String,
   taxEstimation: BigDecimal)
 object ReturnsVariation {
-  import ltbs.play.scaffold.SdilComponents.longTupleFormatter
   implicit val bllFormat: Format[(Boolean, (Long, Long))] = Json.format[(Boolean, (Long, Long))]
   implicit val format: Format[ReturnsVariation] = Json.format[ReturnsVariation]
 }

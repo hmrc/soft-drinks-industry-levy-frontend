@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.routing.Router
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
 import sdil.connectors._
+import sdil.controllers._
 import sdil.controllers.test.{TestController, TestingController}
-import sdil.controllers.{VariationsController, RegistrationController => UniformRegistrationController, _}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.cache.client.{SessionCache, ShortLivedHttpCaching}
@@ -38,6 +38,9 @@ trait RoutesWiring extends CommonWiring {
   val httpClient: HttpClient
   val authConnector: AuthConnector
   val cache: RegistrationFormDataCache
+  val returnsCache: ReturnsFormDataCache
+  val regVariationCache: RegistrationVariationFormDataCache
+  val retVariationCache: ReturnVariationFormDataCache
   val shortLivedCaching: ShortLivedHttpCaching
   val sdilConnector: SoftDrinksIndustryLevyConnector
   val payApiConnector: PayApiConnector
@@ -60,9 +63,11 @@ trait RoutesWiring extends CommonWiring {
   lazy val testController: TestingController = wire[TestingController]
   lazy val newTestController: TestController = wire[TestController]
 
-  lazy val VariationsController: VariationsController = wire[VariationsController]
-  lazy val returnsController: ReturnsController = wire[ReturnsController]
-  lazy val uniformRegistrationsController: UniformRegistrationController = wire[UniformRegistrationController]
+  lazy val widgetTestController: WidgetTestController = wire[WidgetTestController]
+
+  lazy val returnsController2: ReturnsController = wire[ReturnsController]
+  lazy val variationsController: VariationsController = wire[VariationsController]
+  lazy val uniformRegistrationsController2: RegistrationController = wire[RegistrationController]
 
   private lazy val appRoutes: app.Routes = wire[app.Routes]
   private lazy val healthRoutes = wire[health.Routes]

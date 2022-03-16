@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 
 package sdil.controllers
 
-import ltbs.play.scaffold.GdsComponents.oneOf
-import ltbs.play.scaffold.SdilComponents.addressMapping
+import sidl.uniform.GdsComponents.oneOf
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,6 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 import views.Views
 import views.softdrinksindustrylevy.errors.Errors
+import sdil.uniform.SdilComponents.addressMapping
 
 import scala.concurrent.ExecutionContext
 
@@ -41,7 +41,8 @@ class VerifyController(
   sdilConnector: SoftDrinksIndustryLevyConnector,
   mcc: MessagesControllerComponents,
   errors: Errors,
-  views: Views)(implicit config: AppConfig, ec: ExecutionContext)
+  views: Views
+)(implicit config: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   import VerifyController._
@@ -98,6 +99,7 @@ class VerifyController(
 }
 
 object VerifyController extends FormHelpers {
+
   val form: Form[DetailsCorrect] = Form(
     mapping(
       "detailsCorrect"     -> oneOf(DetailsCorrect.options, "sdil.verify.error.choose-option"),

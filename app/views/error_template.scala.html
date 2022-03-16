@@ -16,7 +16,7 @@
 
 @import sdil.config.AppConfig
 
-@this(govukWrapper: govuk_wrapper)
+@this()
 
 @(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
@@ -28,4 +28,4 @@
     <p>@message</p>
 }
 
-@govukWrapper(appConfig = config, title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)
+@govuk_wrapper(appConfig = config, title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)

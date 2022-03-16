@@ -18,11 +18,17 @@
 @import sdil.config.AppConfig
 @import views.ViewHelpers
 
-@this(main: main_template, viewHelpers: ViewHelpers)
+@this()
 
 @(identifyForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main(Messages("sdil.identify.heading"), form = Some(identifyForm)) {
+@viewHelpers = @{new ViewHelpers(config.configuration)}
+@title = @{Messages("sdil.identify.heading")}
+
+@main_template(
+    if(identifyForm.hasErrors) s"${Messages("sdil.common.error")}: $title" else title,
+    form = Some(identifyForm)
+) {
     @viewHelpers.form(sdil.controllers.routes.IdentifyController.submit()) {
     <fieldset class="form-field-group">
     @error_summary(identifyForm)

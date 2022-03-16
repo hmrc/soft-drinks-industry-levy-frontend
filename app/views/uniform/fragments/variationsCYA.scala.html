@@ -15,6 +15,7 @@
  *@
 
 @import sdil.models.backend.Site
+@import sdil.models.backend.UkAddress
 @import views.html.uniform.helpers._
 
 @(
@@ -23,8 +24,8 @@
         closedPackagingSites: List[Site],
         newWarehouseSites: List[Site],
         closedWarehouses: List[Site],
-        path: List[String])(implicit m: Messages
-)
+        path: List[String]
+)(implicit m: UniformMessages[Html])
 
 @if(path.contains("amount-produced") && !path.contains("cancel-registration-date")) {
     @activty_variations_cya(showChangeLinks = true, v)

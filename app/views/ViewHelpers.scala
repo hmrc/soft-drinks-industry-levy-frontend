@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,41 +19,26 @@ package views
 import javax.inject.Inject
 import uk.gov.hmrc.play.views.html.helpers._
 import uk.gov.hmrc.play.views.html.layouts._
+import play.api.Configuration
+import uk.gov.hmrc.play.config._
 
-class ViewHelpers @Inject()(
-  //copied from uk.gov.hmrc.play.views.html.helpers
-  val address: Address,
-  val dateFields: DateFields,
-  val dateFieldsFreeInline: DateFieldsFreeInline,
-  val dateFieldsFreeInlineLegend: DateFieldsFreeInlineLegend,
-  val dateFieldsFreeYearInline: DateFieldsFreeYearInline,
-  val dateFieldsFreeYear: DateFieldsFreeYear,
-  val dateFieldsInline: DateFieldsInline,
-  val dropdown: Dropdown,
-  val errorInline: ErrorInline,
-  val errorNotifications: ErrorNotifications,
-  val errorSummary: ErrorSummary,
-  val fieldGroup: FieldGroup,
-  val form: FormWithCSRF,
-  val input: Input,
-  val inputRadioGroup: InputRadioGroup,
-  val reportAProblemLink: ReportAProblemLink,
-  val singleCheckbox: SingleCheckbox,
-  val textArea: TextArea,
-  //copied from uk.gov.hmrc.play.views.html.layouts
-  val article: Article,
-  val attorneyBanner: AttorneyBanner,
-  val betaBanner: BetaBanner,
-  val footer: Footer,
-  val euExitLinks: EuExitLinks,
-  val footerLinks: FooterLinks,
-  val head: Head,
-  val headWithTrackingConsent: HeadWithTrackingConsent,
-  val headerNav: HeaderNav,
-  val loginStatus: LoginStatus,
-  val mainContent: MainContent,
-  val mainContentHeader: MainContentHeader,
-  val gtmSnippet: GTMSnippet,
-  val serviceInfo: ServiceInfo,
-  val sidebar: Sidebar
-)
+private[views] case class ViewHelpers(config: Configuration) {
+  lazy val form = new FormWithCSRF
+  lazy val reportAProblemLink = new ReportAProblemLink
+  lazy val article = new Article
+  lazy val footer = new Footer(assetsConfig)
+  lazy val headWithTrackingConsent = {
+    val trackingConfig = new TrackingConsentConfig(config)
+    val optimiselyConfig = new OptimizelyConfig(config)
+    val snippet = new TrackingConsentSnippet(trackingConfig, optimiselyConfig)
+    new HeadWithTrackingConsent(snippet, assetsConfig)
+  }
+  lazy val headerNav = new HeaderNav
+  lazy val mainContent = new MainContent
+  lazy val mainContentHeader = new MainContentHeader
+  lazy val serviceInfo = new ServiceInfo
+  lazy val sidebar = new Sidebar
+  lazy val assetsConfig = new AssetsConfig(config)
+  lazy val footerLinks = new FooterLinks(accessibilityConfig)
+  lazy val accessibilityConfig = new AccessibilityStatementConfig(config)
+}

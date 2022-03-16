@@ -24,7 +24,7 @@ Clone the repository using SSH:
 
 If you need to setup SSH, see [the github guide to setting up SSH](https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/)
 
-Run the code from source using 
+Run the code from source using  
 
 `sbt run`
 

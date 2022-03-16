@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -334,7 +334,6 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     when(m.returns_variable(any())(any())).thenReturn(Future.successful(returnPeriods))
     when(m.returns_vary(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.returns_update(any(), any(), any())(any())).thenReturn(Future.successful(()))
-    //when(m.returns_get(any(),any())(any())).thenReturn(Future.successful(None))
     when(m.returns_variation(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.submitVariation(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.balanceHistory(any(), any())(any())).thenReturn(Future.successful(Nil))
@@ -342,7 +341,6 @@ class ServicePageControllerSpec extends ControllerSpec with BeforeAndAfterAll {
     when(m.shortLiveCache) thenReturn cacheMock
     when(cacheMock.fetchAndGetEntry[Any](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
     when(m.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
-
     m
   }
 

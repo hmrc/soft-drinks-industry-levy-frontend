@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ class RegisteredActionSpec extends ControllerSpec with BeforeAndAfterEach {
   lazy val testAction: Action[AnyContent] = testAuthorisedAction(_ => Ok)
   val fakeRequest: FakeRequest[AnyContent] = FakeRequest()
 
-  val irCtEnrolment = EnrolmentIdentifier("UTR", "1111111111")
   val enrolments = Enrolments(Set(new Enrolment("IR-CT", Seq(irCtEnrolment), "Active")))
 
   val validRetrievedSubscription = RetrievedSubscription(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 
 package sdil.utils
 
+import play.api.Configuration
 import sdil.config.AppConfig
 
-class TestConfig extends AppConfig {
+class TestConfig(val configuration: Configuration) extends AppConfig {
   override val reportAProblemPartialUrl: String = "reportProblem"
   override val reportAProblemNonJSUrl: String = "reportProblemNonJs"
   override val ggLoginUrl: String = "http://localhost:9553/bas-gateway/sign-in"

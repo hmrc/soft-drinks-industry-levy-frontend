@@ -1,0 +1,51 @@
+@import sdil.models.Warehouse
+@(key: String, rows: List[Warehouse], messages: UniformMessages[Html])
+
+@pluralKey =@{if(rows.length >= 2) {s"$key.table.paragraph.plural"} else ({s"$key.table.paragraph.singular"})}
+
+@messages.get(pluralKey, rows.length).map { msg =>
+    <div class="lede">
+        <p tabindex="-1">@msg</p>
+    </div>
+}
+
+<table class="margin-bottom-30">
+    <tbody>
+        @for((row, index) <- rows.zipWithIndex) {
+
+            <tr>
+                <td>
+                    <details role="group">
+                        <summary aria-controls="details-content-1" aria-expanded="false">
+                            <span class="summary">
+                                @if(row.tradingName.isEmpty){@row.address.line1} else {@row.tradingName}, @row.address.postcode
+                            </span>
+                        </summary>
+                        @row.nonEmptyLines.tail.map { line =>
+                            <div class="address progressive-reveal">@line</div>
+                        }
+                    </details>
+                </td>
+                @if(rows.length > 1) {
+                    <td class="align-right">
+                        <a href="@key/delete/@index">
+                            <span aria-hidden="true">@messages(s"$key.remove")</span>
+                            <span class="visually-hidden">
+                            @messages(s"$key.remove.hidden", row.nonEmptyLines.mkString(", "))
+                            </span>
+                        </a>
+                    </td>
+                }
+                <td class="align-centre">
+                    <a href="@key/edit/@index" >
+                        <span aria-hidden="true">@messages(s"$key.edit")</span>
+                        <span class="visually-hidden">
+                            @messages(s"$key.edit.hidden", row.nonEmptyLines.mkString(", "))
+                        </span>
+                    </a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

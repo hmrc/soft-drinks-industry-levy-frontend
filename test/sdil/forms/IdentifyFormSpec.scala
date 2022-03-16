@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ class IdentifyFormSpec extends WordSpecLike with Matchers {
 
       val f = form.bind(emptyUtr)
 
-      errorFor(f, utr) shouldBe "error.utr.required"
+      errorFor(f, utr) shouldBe "utr.required"
     }
 
     "reject UTRs with non-numeric characters" in {
@@ -37,7 +37,7 @@ class IdentifyFormSpec extends WordSpecLike with Matchers {
 
       val f = form.bind(nonNumericUtr)
 
-      errorFor(f, utr) shouldBe "error.utr.invalid"
+      errorFor(f, utr) shouldBe "utr.invalid"
     }
 
     "reject UTRs that are fewer than 10 characters" in {
@@ -45,7 +45,7 @@ class IdentifyFormSpec extends WordSpecLike with Matchers {
 
       val f = form.bind(tooShortUtr)
 
-      errorFor(f, utr) shouldBe "error.utr.length"
+      errorFor(f, utr) shouldBe "utr.length"
     }
 
     "reject UTRs that are longer than 10 characters" in {
@@ -53,7 +53,7 @@ class IdentifyFormSpec extends WordSpecLike with Matchers {
 
       val f = form.bind(tooLongUtr)
 
-      errorFor(f, utr) shouldBe "error.utr.length"
+      errorFor(f, utr) shouldBe "utr.length"
     }
 
     "require the postcode to be non-empty" in {
@@ -61,14 +61,14 @@ class IdentifyFormSpec extends WordSpecLike with Matchers {
 
       val f = form.bind(emptyPostcode)
 
-      errorFor(f, postcode) shouldBe "error.postcode.empty"
+      errorFor(f, postcode) shouldBe "postcode.empty"
     }
 
     "require the postcode to be valid" in {
       Seq("AA11", "A11A 1AA", "not a postcode") map { pc =>
         val f = form.bind(validData.updated(postcode, pc))
 
-        errorFor(f, postcode) shouldBe "error.postcode.invalid"
+        errorFor(f, postcode) shouldBe "postcode.invalid"
       }
     }
 

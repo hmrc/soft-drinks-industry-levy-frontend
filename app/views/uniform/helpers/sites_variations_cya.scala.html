@@ -15,6 +15,7 @@
  *@
 
 @import sdil.models.backend.Site
+@import sdil.models.backend.UkAddress
 @(
         showChangeLinks: Boolean,
         v: sdil.models.variations.RegistrationVariationData,
@@ -22,11 +23,16 @@
         closedPackagingSites: List[Site],
         newWarehouseSites: List[Site],
         closedWarehouses: List[Site],
-        path: List[String])(implicit messages: Messages
-)
+        path: List[String])(implicit messages: Messages)
+
+@if(path.contains("change-warehouses") && newWarehouseSites.isEmpty && closedWarehouses.isEmpty && v.deregDate.isEmpty || path.contains("change-registered-details") || path.contains("cancel-registration-reason") ){
+<legend>
+    <span class="govuk-caption-xl">@v.original.orgName</h1></span>
+    <h1 class="heading-large">Check your answers before sending your update</h1>
+</legend>
+}
 
 @if(newPackingSites.nonEmpty) {
-
     <table class="check-your-answers">
         <caption><h2>@Messages("variations.cya.packsites.add")</h2></caption>
 
@@ -54,7 +60,7 @@
                             <span class="summary">@site.address.lines.head</span>
                         </summary>
                         @for(line <- site.address.lines.tail) {
-                            <div aria-hidden="true">@line</div>
+                        <div aria-hidden="true">@line</div>
                         }
                         <div class="postal-code">@site.address.postCode</div>
                     </details>
@@ -78,8 +84,6 @@
 }
 
 @if(closedPackagingSites.nonEmpty) {
-
-
     <table class="check-your-answers">
         <caption><h2>@Messages("variations.cya.packsites.remove")</h2></caption>
         <thead>
@@ -103,10 +107,10 @@
                 <td>
                     <details role="group">
                         <summary aria-controls="details-content-1" aria-expanded="false">
-                            <span class="summary">@site.address.lines.head</span>
+                        <span class="summary">@site.address.lines.head</span>
                         </summary>
                         @for(line <- site.address.lines.tail) {
-                            <div aria-hidden="true">@line</div>
+                        <div aria-hidden="true">@line</div>
                         }
                         <div class="postal-code">@site.address.postCode</div>
                     </details>
@@ -180,16 +184,20 @@
                     <details role="group">
                         <summary aria-controls="details-content-1" aria-expanded="false">
                             <span class="summary">
+                                @if((site.getLines.head).nonEmpty){
                                 @site.getLines.head
+                                }else{
+                                @site.address.lines.head
+                                }
                             </span>
                         </summary>
-                        @for(line <- site.getLines.tail.dropRight(1)) {
+            @for(line <- site.getLines.tail.dropRight(1)) {
                             <div aria-hidden="true">@line</div>
                         }
-                        <div class="postal-code">@site.address.postCode</div>
+            <div class="postal-code">@site.address.postCode</div>
                     </details>
                 </td>
-                <td>@site.address.postCode</td>
+    <td>@site.address.postCode</td>
                 @if(showChangeLinks) {
                     <td class="change-answer">
                         <a href="@if(path.contains("secondary-warehouse-details")) {

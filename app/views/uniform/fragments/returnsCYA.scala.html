@@ -18,8 +18,18 @@
 @import sdil.models.SdilReturn
 @import sdil.models.retrieved.RetrievedSubscription
 @import views.html.softdrinksindustrylevy.helpers._
+@import sdil.models.ReturnPeriod
 
-@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription, originalReturn: Option[SdilReturn])(implicit m: Messages)
+@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription,period:ReturnPeriod,originalReturn: Option[SdilReturn])(implicit m: Messages)
+<legend>
+    <span class="govuk-caption-xl">@subscription.orgName - @Messages(
+                                    "returnsCYA.returnsDue",
+                                    period.start.format("MMMM"),
+                                    period.end.format("MMMM yyyy"),
+                                    period.deadline.format("MMMM yyyy")
+                                )</span>
+    <h1 class="heading-large.service-header">@Messages(s"heading.check-answers")</h1>
+</legend>
 
 <table class="check-your-answers">
 
@@ -49,22 +59,20 @@
                 <td>@Messages(s"$key.low")</td>
                 <td class="numeric">@{f"${litres._1}%,d"}</td>
                 <td class="no-minus-wrapping numeric">@format_money(costLower * litres._1 * multiplier)</td>
-                <td>
-                    <button name="@key" value="@lineKey" class="link-button">
-                        <span aria-hidden="true" class="edit-change-link">@Messages(s"$key.change")</span>
-                        <span class="visually-hidden">@Messages(s"$key.change.$lineKey.low")</span>
-                    </button>
+                <td class="change-answer">
+                    <a href='@lineKey'>
+                    @Messages(s"$key.change")
+                    </a>
                 </td>
             </tr>
             <tr>
                 <td>@Messages(s"$key.high")</td>
                 <td class="numeric">@{f"${litres._2}%,d"}</td>
                 <td class="no-minus-wrapping numeric"> @format_money(costHigher * litres._2 * multiplier)</td>
-                <td>
-                    <button name="@key" value="@lineKey" class="link-button">
-                        <span aria-hidden="true" class="edit-change-link">@Messages(s"$key.change")</span>
-                        <span class="visually-hidden">@Messages(s"$key.change.$lineKey.high")</span>
-                    </button>
+                <td class="change-answer">
+                    <a href='@lineKey'>
+                    @Messages(s"$key.change")
+                    </a>
                 </td>
             </tr>
         }
@@ -192,7 +200,7 @@
                             <details role="group">
                                 <summary aria-controls="details-content-1" aria-expanded="false">
                                     <span class="summary">
-                                    @site.getLines.head
+                                    @if(site.getLines.head.nonEmpty) {@site.getLines.head} else {@site.getLines.tail.head}
                                     </span>
                                 </summary>
                                 @for(line <- site.getLines.tail.dropRight(1)) {

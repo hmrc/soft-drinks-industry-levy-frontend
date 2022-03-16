@@ -16,7 +16,9 @@
 
 @import sdil.models.ReturnPeriod
 
-@(key: String, returnPeriods: List[ReturnPeriod])(implicit messages: Messages)
+@(key: String, returnPeriods: List[ReturnPeriod])(implicit messages: UniformMessages[Html])
+
+<h1>@messages(s"$key.heading")</h1>
 
 @if(returnPeriods.length == 1) {
     @returnPeriods.map { x =>
@@ -32,3 +34,6 @@
     <p>@Messages(s"$key.many-returns", returnPeriods.size.toString)</p>
 }
 
+<a href="@sdil.controllers.routes.ServicePageController.show()" class="button">
+    @Messages("file-return-before-deregistration.continue")
+</a>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,148 +16,163 @@
 
 package sdil.controllers
 
-import java.time.LocalDate
-
+import scala.language.higherKinds
 import cats.implicits._
-import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents.OrganisationType.{partnership, soleTrader}
-import ltbs.play.scaffold.SdilComponents.ProducerType.{Large, Small}
-import ltbs.play.scaffold.SdilComponents.{extraMessages, litreageForm => approxLitreageForm, _}
-import play.api.data.Mapping
+
+import java.time.LocalDate
+import ltbs.uniform._
+import validation._
 import play.api.i18n._
-import play.api.libs.json.Format
 import play.api.mvc._
 import play.twirl.api.Html
+
+import scala.concurrent.{ExecutionContext, Future}
+import cats.instances.duration._
+import controllers.Assets.Redirect
+
+import scala.language.higherKinds
 import sdil.actions.{AuthorisedAction, AuthorisedRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.models._
 import sdil.models.backend._
-import sdil.models.{Litreage, RegistrationFormData}
-import sdil.uniform.SaveForLaterPersistence
-import uk.gov.hmrc.http.HeaderCarrier
+import sdil.uniform._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.uniform.FormHtml
-import uk.gov.hmrc.uniform.playutil._
-import uk.gov.hmrc.uniform.webmonad._
 import views.html.uniform
-import views.uniform.Uniform
-
-import scala.concurrent.{ExecutionContext, Future}
+import play.api.Logger
+import sdil.uniform.SdilComponents.{OrganisationType, OrganisationTypeSoleless, ProducerType}
 
 class RegistrationController(
   authorisedAction: AuthorisedAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   cache: RegistrationFormDataCache,
   mcc: MessagesControllerComponents,
-  override val uniformHelpers: Uniform)(implicit val config: AppConfig, val ec: ExecutionContext)
-    extends FrontendController(mcc) with SdilWMController with I18nSupport {
+  val config: AppConfig,
+  val ufViews: views.uniform.Uniform
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
 
-  override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
-  override lazy val parse = mcc.parsers
+  override def defaultBackLink = "/soft-drinks-industry-levy"
+
+  implicit lazy val persistence =
+    SaveForLaterPersistenceNew[AuthorisedRequest[AnyContent]](_.internalId)("registration", cache.shortLiveCache)
+
+  lazy val logger = Logger(this.getClass())
 
   def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
-    val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)
+    val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
+
     cache.get(request.internalId) flatMap {
-      case Some(fd) => runInner(request)(program(fd)(request, implicitly))(id)(persistence.dataGet, persistence.dataPut)
-      case None     => NotFound("").pure[Future]
+      case Some(fd) =>
+        def backendCall(s: Subscription): Future[Unit] =
+          sdilConnector.submit(Subscription.desify(s), fd.rosmData.safeId)
+
+        interpret(RegistrationController.journey(hasCTEnrolment, fd, backendCall))
+          .run(id, purgeStateUponCompletion = true, config = journeyConfig) { _ =>
+            Redirect(routes.ServicePageController.show())
+          }
+      case None =>
+        logger.warn("nothing in cache") // TODO we should set the cache and redirect
+        NotFound("").pure[Future]
     }
   }
+}
 
-  private[controllers] def program(
-    fd: RegistrationFormData)(implicit request: AuthorisedRequest[AnyContent], hc: HeaderCarrier): WebMonad[Result] = {
-
-    val hasCTEnrolment = request.enrolments.getEnrolment("IR-CT").isDefined
-    val organisationTypes = OrganisationType.values.toList
-      .filterNot(_ == soleTrader && hasCTEnrolment)
-      .sortBy(x => Messages("organisation-type.option." + x.toString.toLowerCase))
-    implicit val extraMessages: ExtraMessages =
-      ExtraMessages(
-        messages = Map(
-          "pack-at-business-address.lead" -> s"Registered address: ${fd.rosmData.address.nonEmptyLines.mkString(", ")}",
-          "confirm-address.paragraph"     -> s"${fd.rosmData.address.nonEmptyLines.mkString(", ")}"
-        )
-      )
-
+object RegistrationController {
+  def journey(
+    hasCTEnrolment: Boolean,
+    fd: RegistrationFormData,
+    backendCall: Subscription => Future[Unit]
+  )(implicit ec: ExecutionContext, ufMessages: UniformMessages[Html]) =
     for {
-      orgType <- askOneOf("organisation-type", organisationTypes)
-      noPartners = uniform.fragments.partnerships()
-      _ <- if (orgType == partnership) {
-            end("partnerships", noPartners)
-          } else (()).pure[WebMonad]
-      packLarge <- askOneOf("producer", ProducerType.values.toList) map {
-                    case Large => Some(true)
-                    case Small => Some(false)
-                    case _     => None
-                  }
-      useCopacker <- ask(bool("copacked"), "copacked") when packLarge.contains(false)
-      packageOwn <- askOption(litreagePair.nonEmpty, "package-own-uk")(
-                     approxLitreageForm,
-                     implicitly,
-                     implicitly,
-                     implicitly) when packLarge.nonEmpty
-      copacks <- askOption(litreagePair.nonEmpty, "package-copack")(
-                  approxLitreageForm,
-                  implicitly,
-                  implicitly,
-                  implicitly)
-      imports <- askOption(litreagePair.nonEmpty, "import")(approxLitreageForm, implicitly, implicitly, implicitly)
-      noUkActivity = (copacks, imports).isEmpty
-      smallProducerWithNoCopacker = packLarge.forall(_ == false) && useCopacker.forall(_ == false)
+      orgType <- if (hasCTEnrolment) ask[OrganisationTypeSoleless]("organisation-type")
+                else ask[OrganisationType]("organisation-type")
+      _            <- end("partnerships", uniform.fragments.partnerships()(_: Messages)) when (orgType.entryName == OrganisationType.partnership.entryName)
+      producerType <- ask[ProducerType]("producer")
+      useCopacker  <- ask[Boolean]("copacked") when producerType == ProducerType.Small
+      packageOwn <- askEmptyOption[(Long, Long)](
+                     "package-own-uk",
+                     validation =
+                       Rule.condAtPath("Some", "value", "_1")(x => x.fold(true)(y => (y._1 + y._2) > 0L), "min")
+                   ) emptyUnless producerType != ProducerType.XNot
+      copacks <- askEmptyOption[(Long, Long)](
+                  "package-copack",
+                  validation = Rule.condAtPath("Some", "value", "_1")(x => x.fold(true)(y => (y._1 + y._2) > 0L), "min")
+                )
+      imports <- askEmptyOption[(Long, Long)](
+                  "import",
+                  validation =
+                    Rule.condAtPath("Some", "value", "_1")(x => x.fold(true)(y => (y._1 + y._2) >= 1L), "min")
+                )
+      noUkActivity: Boolean = if (copacks._1 + copacks._2 == 0L && imports._1 + imports._2 == 0L) { true } else false
+      smallProducerWithNoCopacker = producerType != ProducerType.Large && useCopacker.forall(_ == false)
       noReg = uniform.fragments.registration_not_required()(implicitly)
-      _ <- if (noUkActivity && smallProducerWithNoCopacker) {
-            end("do-not-register", noReg)
-          } else (()).pure[WebMonad]
-      isVoluntary = packLarge.contains(false) && useCopacker.contains(true) && (copacks, imports).isEmpty
-      regDate <- askRegDate(packLarge, copacks, imports) when (!isVoluntary)
-      askPackingSites = (packLarge.contains(true) && packageOwn.flatten.nonEmpty) || !copacks.isEmpty
-      useBusinessAddress <- ask(bool("pack-at-business-address"), "pack-at-business-address") when askPackingSites
+      _ <- end("do-not-register", noReg) when (smallProducerWithNoCopacker && noUkActivity == true)
+      isVoluntary = producerType == ProducerType.Small && useCopacker.contains(true) && (copacks._1 + copacks._2 == 0L && imports._1 + imports._2 == 0L)
+      regDate <- ask[LocalDate](
+                  "start-date",
+                  validation =
+                    Rule.min(LocalDate.of(2018, 4, 6), "minimum-date") followedBy
+                      Rule.max(LocalDate.now, "maximum-date")
+                ) unless isVoluntary
+      askPackingSites = (producerType == ProducerType.Large && packageOwn > Tuple2(0L, 0L)) || copacks > Tuple2(0L, 0L)
+      useBusinessAddress <- interact[Boolean](
+                             "pack-at-business-address",
+                             fd.rosmData.address
+                           ) when askPackingSites
+
       packingSites = if (useBusinessAddress.getOrElse(false)) {
-        List(Site.fromAddress(fd.rosmData.address))
+        List(fd.rosmData.address)
       } else {
-        List.empty[Site]
+        List.empty[Address]
       }
-      firstPackingSite <- ask(packagingSiteMapping, "first-production-site")(
-                           packagingSiteForm,
-                           implicitly,
-                           ExtraMessages(),
-                           implicitly) when packingSites.isEmpty && askPackingSites
-      packSites     <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x))) emptyUnless askPackingSites
-      addWarehouses <- ask(bool("ask-secondary-warehouses"), "ask-secondary-warehouses") when !isVoluntary
-      firstWarehouse <- ask(warehouseSiteMapping, "first-warehouse")(
-                         warehouseSiteForm,
-                         implicitly,
-                         ExtraMessages(),
-                         implicitly) when addWarehouses.getOrElse(false)
-      warehouses <- askWarehouses(List.empty[Site] ++ firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless addWarehouses
-                     .getOrElse(false)
-      contactDetails <- ask(contactDetailsMapping, "contact-details")
+
+      packSites <- askList[Address]("production-site-details", packingSites.some, Rule.nonEmpty)(
+                    {
+                      case (index: Option[Int], existingAddresses: List[Address]) =>
+                        ask[Address]("p-site", default = index.map(existingAddresses))
+                    }, {
+                      case (index: Int, existingAddresses: List[Address]) =>
+                        interact[Boolean]("remove-packaging-site-details", existingAddresses(index).nonEmptyLines)
+                    }
+                  ).map(_.map(Site.fromAddress)) emptyUnless askPackingSites
+
+      addWarehouses <- ask[Boolean](
+                        "ask-secondary-warehouses"
+                      ) when (!isVoluntary)
+
+      warehouseSites = if (addWarehouses.getOrElse(false)) {
+        List.empty[Warehouse]
+      } else {
+        List.empty[Warehouse]
+      }
+
+      warehouses <- askList[Warehouse]("warehouses", warehouseSites.some, Rule.nonEmpty)(
+                     {
+                       case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
+                         ask[Warehouse]("w-house", default = index.map(existingWarehouses))
+                     }, {
+                       case (index: Int, existingWarehouses: List[Warehouse]) =>
+                         interact[Boolean]("remove-warehouse-details", existingWarehouses(index).nonEmptyLines)
+                     }
+                   ).map(_.map(Site.fromWarehouse)) emptyUnless (addWarehouses == Some(true))
+
+      contactDetails <- ask[ContactDetails]("contact-details")
       activity = Activity(
-        longTupToLitreage(packageOwn.flatten.getOrElse((0, 0))),
-        longTupToLitreage(imports.getOrElse((0, 0))),
-        longTupToLitreage(copacks.getOrElse((0, 0))),
+        longTupToLitreage(packageOwn),
+        longTupToLitreage(imports),
+        longTupToLitreage(copacks),
         useCopacker.collect { case true => Litreage(1, 1) },
-        packLarge.getOrElse(false)
-      )
-      contact = Contact(
-        name = Some(contactDetails.fullName),
-        positionInCompany = Some(contactDetails.position),
-        phoneNumber = contactDetails.phoneNumber,
-        email = contactDetails.email
-      )
-      subscription = Subscription(
-        fd.utr,
-        fd.rosmData.organisationName,
-        orgType.toString,
-        UkAddress.fromAddress(fd.rosmData.address),
-        activity,
-        regDate.getOrElse(LocalDate.now),
-        packSites,
-        warehouses,
-        contact
+        producerType == ProducerType.Large
       )
       declaration = uniform.fragments.registerDeclaration(
         fd,
-        packLarge,
+        producerType match {
+          // old packLarge field - consider template refactor
+          case ProducerType.Large => Some(true)
+          case ProducerType.Small => Some(false)
+          case _                  => None
+        },
         useCopacker,
         activity.ProducedOwnBrand,
         activity.CopackerAll,
@@ -167,36 +182,37 @@ class RegistrationController(
         warehouses,
         packSites,
         contactDetails
-      )(implicitly)
-      _ <- tell("declaration", declaration)(implicitly, ltbs.play.scaffold.SdilComponents.extraMessages)
-      _ <- execute(sdilConnector.submit(Subscription.desify(subscription), fd.rosmData.safeId))
-      _ <- execute(cache.clear(request.internalId))
-      complete = uniform.fragments.registrationComplete(contact.email)
-      subheading = Html(Messages("complete.subheading", subscription.orgName))
-      extraEndMessages = ExtraMessages(
-        Map("complete.extraParagraph" -> s"We have sent a confirmation email to ${contact.email}."))
-      end <- clear >> journeyEnd("complete", whatHappensNext = complete.some, getTotal = subheading.some)(
-              extraEndMessages)
-    } yield end
-  }
-  private[controllers] def askRegDate(
-    packLarge: Option[Boolean],
-    copacks: Option[(Long, Long)],
-    imports: Option[(Long, Long)]): WebMonad[LocalDate] = {
-    def askRD[T](mapping: Mapping[T], key: String, helpText: Option[Html])(
-      implicit htmlForm: FormHtml[T],
-      fmt: Format[T],
-      extraMessages: ExtraMessages): WebMonad[T] =
-      formPage(key)(mapping, None) { (path, form, r) =>
-        implicit val request: Request[AnyContent] = r
-        uniformHelpers.ask(key, form, htmlForm.asHtmlForm(key, form), path, helpText)
-      }
-    askRD(
-      startDate
-        .verifying("error.start-date.in-future", !_.isAfter(LocalDate.now))
-        .verifying("error.start-date.before-tax-start", !_.isBefore(LocalDate.of(2018, 4, 6))),
-      "start-date",
-      Some(uniform.fragments.startDateHelp(packLarge.getOrElse(false), copacks.isDefined, imports.isDefined))
-    )
-  }
+      )(_: Messages)
+      _ <- tell("declaration", declaration)
+      subscription = Subscription(
+        fd.utr,
+        fd.rosmData.organisationName,
+        orgType.toString,
+        UkAddress.fromAddress(fd.rosmData.address),
+        activity,
+        regDate.getOrElse(LocalDate.now),
+        packSites,
+        warehouses,
+        Contact(
+          name = Some(contactDetails.fullName),
+          positionInCompany = Some(contactDetails.position),
+          phoneNumber = contactDetails.phoneNumber,
+          email = contactDetails.email
+        )
+      )
+      _ <- convertWithKey("submission")(backendCall(subscription))
+      _ <- nonReturn("reg-complete")
+      _ <- end(
+            "registration-confirmation", { (msg: Messages) =>
+              val complete = uniform.fragments.registrationComplete(subscription.contact.email)(msg).some
+              val subheading = Html(msg("registration-confirmation.subheading", subscription.orgName)).some
+              views.html.uniform.journeyEndNew(
+                "registration-confirmation",
+                whatHappensNext = complete,
+                getTotal = subheading,
+                email = contactDetails.email.some)(msg)
+            }
+          )
+    } yield subscription
+
 }

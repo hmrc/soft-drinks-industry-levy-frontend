@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package sdil.utils
 
 import java.io.File
 import java.time.LocalDate
-
 import com.softwaremill.macwire.wire
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory, PlaySpec}
 import play.api.i18n.{Lang, Messages, MessagesApi}
@@ -33,12 +33,11 @@ import play.api.{Application, ApplicationLoader, Configuration, Environment}
 import play.core.DefaultWebCommands
 import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
-import sdil.config.{RegistrationFormDataCache, SDILApplicationLoader}
+import sdil.config.{RegistrationFormDataCache, RegistrationVariationFormDataCache, ReturnVariationFormDataCache, ReturnsFormDataCache, SDILApplicationLoader}
 import sdil.connectors.{DirectDebitBackendConnector, GaConnector, PayApiConnector, SoftDrinksIndustryLevyConnector}
-import sdil.controllers.SdilWMController
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.{ReturnPeriod, SdilReturn}
+import sdil.models.{RegistrationFormData, ReturnPeriod, ReturnsFormData, ReturnsVariation, SdilReturn}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -54,6 +53,7 @@ import views.html.softdrinksindustrylevy.{balance_history, deregistered_service_
 import views.softdrinksindustrylevy.errors.Errors
 import views.uniform.Uniform
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicationFactory with MockitoSugar {
@@ -86,10 +86,11 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
       stub.executionContext
     )
   }
+
   val messagesApi: MessagesApi = stubMessagesControllerComponents.messagesApi
   implicit val defaultMessages: Messages = messagesApi.preferred(Seq.empty)
   implicit val ec: ExecutionContext = defaultContext
-
+  val returnPeriod = ReturnPeriod(2018, 1)
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
   val returnPeriods2 = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1), ReturnPeriod(2019, 2), ReturnPeriod(2019, 3))
   val defaultSubscription: Subscription = {
@@ -111,6 +112,27 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     when(m.cache(anyString(), any())(any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
     when(m.get(anyString())(any())).thenReturn(Future.successful(None))
     when(m.clear(anyString())(any())).thenReturn(Future.successful(()))
+    when(m.shortLiveCache) thenReturn cacheMock
+    m
+  }
+
+  val mockReturnsCache: ReturnsFormDataCache = {
+    val m = mock[ReturnsFormDataCache]
+    when(m.get(anyString())(any())).thenReturn(Future.successful(None))
+    m
+  }
+
+  val mockRegVariationsCache: RegistrationVariationFormDataCache = {
+    val m = mock[RegistrationVariationFormDataCache]
+    when(m.get(anyString())(any())).thenReturn(Future.successful(None))
+    when(m.clear(anyString())(any())).thenReturn(Future.successful(()))
+    m
+  }
+
+  val mockRetVariationsCache: ReturnVariationFormDataCache = {
+    val m = mock[ReturnVariationFormDataCache]
+    when(m.get(anyString())(any())).thenReturn(Future.successful(None))
+    when(m.clear(anyString())(any())).thenReturn(Future.successful(()))
     m
   }
 
@@ -127,7 +149,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     m
   }
 
-  implicit lazy val testConfig: TestConfig = new TestConfig
+  implicit lazy val testConfig: TestConfig = new TestConfig(configuration)
 
   lazy val mockErrorHandler = {
     val m = mock[FrontendErrorHandler]
@@ -177,6 +199,46 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     None
   )
 
+  lazy val mockreturnFormData = ReturnsFormData(sdilReturn, mockreturnVariation)
+
+  lazy val mockreturnVariation = ReturnsVariation(
+    "Super Lemonade Plc",
+    UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+    (false, (0, 0)),
+    (false, (0, 0)),
+    List(
+      Site(
+        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+        Some("88"),
+        Some("Wild Lemonade Group"),
+        Some(LocalDate.of(2018, 2, 26))),
+      Site(
+        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
+        Some("87"),
+        Some("Highly Addictive Drinks Plc"),
+        Some(LocalDate.of(2019, 8, 19))),
+      Site(
+        UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
+        Some("94"),
+        Some("Monster Bottle Ltd"),
+        Some(LocalDate.of(2017, 9, 23))),
+      Site(
+        UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
+        Some("27"),
+        Some("Super Lemonade Group"),
+        Some(LocalDate.of(2017, 4, 23))),
+      Site(
+        UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
+        Some("96"),
+        Some("Star Products Ltd"),
+        Some(LocalDate.of(2017, 2, 11)))
+    ),
+    Nil,
+    "0000000000",
+    "Email@FakeEmail.com",
+    10000
+  )
+
   val sdilReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
 
   lazy val cacheMock = mock[ShortLivedHttpCaching]
@@ -198,18 +260,14 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     when(m.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(0)))
     when(m.shortLiveCache) thenReturn cacheMock
     when(cacheMock.fetchAndGetEntry[Any](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+    when(cacheMock.cache(anyString(), anyString(), any())(any(), any(), any()))
+      .thenReturn(Future.successful(CacheMap("jakeAndIan", Map())))
     when(m.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
     when(m.submit(any(), any())(any())) thenReturn Future.successful(())
     m
   }
 
   lazy val mockRegistrationFormDataCache = {}
-
-  lazy val mockSdilWMController: SdilWMController = {
-    val m = mock[SdilWMController]
-    when(m.isSmallProducer(any(), any(), any())(any())) thenReturn Future.successful(false)
-    m
-  }
 
   type Retrieval = Enrolments ~ Option[CredentialRole] ~ Option[String] ~ Option[AffinityGroup]
 
@@ -235,8 +293,9 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
 
   lazy val errors: Errors = wire[Errors]
   lazy val Views: Views = wire[Views]
+  lazy val baseFoo = wire[views.html.uniform.base]
   lazy val uniformHelpers: Uniform = wire[Uniform]
-  lazy val viewHelpers: ViewHelpers = wire[ViewHelpers]
+//  lazy val viewHelpers: ViewHelpers = wire[ViewHelpers]
   lazy val govukTemplate: views.html.layouts.GovUkTemplate = wire[views.html.layouts.GovUkTemplate]
 
   lazy val alreadyRegistered: already_registered = wire[already_registered]
@@ -255,15 +314,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
 
   lazy val updateBusinessAddresses: views.html.uniform.fragments.update_business_addresses =
     wire[views.html.uniform.fragments.update_business_addresses]
-  lazy val ask: views.html.uniform.ask = wire[views.html.uniform.ask]
-  lazy val cya: views.html.uniform.cya = wire[views.html.uniform.cya]
   lazy val end: views.html.uniform.end = wire[views.html.uniform.end]
-  lazy val journeyEnd: views.html.uniform.journeyEnd = wire[views.html.uniform.journeyEnd]
-  lazy val many: views.html.uniform.many = wire[views.html.uniform.many]
-  lazy val tell: views.html.uniform.tell = wire[views.html.uniform.tell]
-
-  lazy val main: main_template = wire[main_template]
-  lazy val govUkWrapper: govuk_wrapper = wire[govuk_wrapper]
 
   //copied from uk.gov.hmrc.play.views.html.helpers
   lazy val addressView: uk.gov.hmrc.play.views.html.helpers.Address = wire[uk.gov.hmrc.play.views.html.helpers.Address]
