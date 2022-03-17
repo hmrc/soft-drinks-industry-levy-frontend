@@ -17,7 +17,7 @@
 @import sdil.models.variations.ReturnVariationData
 @import views.html.softdrinksindustrylevy.helpers._
 
-@(key: String, variation: ReturnVariationData, showChangeLinks: Boolean = true, broughtForward: Option[BigDecimal] = None)(implicit m: Messages)
+@(key: String, variation: ReturnVariationData, showChangeLinks: Boolean = true, broughtForward: Option[BigDecimal] = None)(implicit messages: Messages)
 
 @cost(key: String, value: BigDecimal) = {
     @defining(
@@ -43,8 +43,8 @@
                 @if(showChangeLinks) {
                     <th class="change-answer change-link-title" colspan="1">
                         <a href="@changeLink">
-                            <p class="edit-change-link">messages("sdil.declaration.change-link")</p>
-                            <span class="visuallyhidden">messages(s"$key.change.$title")</span>
+                            <p class="edit-change-link">@messages("sdil.declaration.change-link")</p>
+                            <span class="visuallyhidden">@messages(s"$key.change.$title")</span>
                         </a>
                     </th>
                 }

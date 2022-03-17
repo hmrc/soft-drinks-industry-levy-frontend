@@ -1,5 +1,5 @@
 resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
-resolvers += "HMRC-open-artefacts-maven" at "https://open.artefacts.tax.service.gov.uk/maven2"
+resolvers += MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
 resolvers += Resolver.url("HMRC-open-artefacts-ivy", url("https://open.artefacts.tax.service.gov.uk/ivy2"))(Resolver.ivyStylePatterns)
 resolvers += Resolver.jcenterRepo
 
@@ -14,4 +14,4 @@ addSbtPlugin("org.scalastyle"       %% "scalastyle-sbt-plugin"   % "1.0.0")
 addSbtPlugin("net.ground5hark.sbt"  %  "sbt-concat"              % "0.2.0")
 addSbtPlugin("com.typesafe.sbt"     %  "sbt-uglify"              % "2.0.0")
 addSbtPlugin("com.lucidchart"       %  "sbt-scalafmt"            % "1.16")
-addSbtPlugin("org.irundaia.sbt"     %  "sbt-sassify"             % "1.4.13")
+addSbtPlugin("org.irundaia.sbt"     %  "sbt-sassify"             % "1.5.1")

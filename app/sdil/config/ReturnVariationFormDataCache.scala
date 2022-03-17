@@ -34,12 +34,12 @@ class ReturnVariationFormDataCache @Inject()(
 )(implicit val crypto: CompositeSymmetricCrypto, ec: ExecutionContext)
     extends ServicesConfig(configuration) with ShortLivedHttpCaching {
 
-  override lazy val baseUri: String = baseUrl("microservice.services.cachable.short-lived-cache")
+  override lazy val baseUri: String = baseUrl("cacheable.short-lived-cache")
   override lazy val defaultSource: String =
-    getConfString("cachable.short-lived-cache.journey.cache", "soft-drinks-industry-levy-frontend")
+    getConfString("cacheable.short-lived-cache.journey.cache", "soft-drinks-industry-levy-frontend")
   override lazy val domain: String = getConfString(
-    "cachable.short-lived-cache.domain",
-    throw new Exception(s"Could not find config 'cachable.short-lived-cache.domain'"))
+    "cacheable.short-lived-cache.domain",
+    throw new Exception(s"Could not find config 'cacheable.short-lived-cache.domain'"))
 
   def cache(internalId: String, body: ReturnVariationData)(implicit hc: HeaderCarrier): Future[CacheMap] =
     cache(s"$internalId-sdil-return-variation", "retVarFormData", body)

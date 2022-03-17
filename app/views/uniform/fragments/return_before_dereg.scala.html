@@ -23,7 +23,7 @@
 @if(returnPeriods.length == 1) {
     @returnPeriods.map { x =>
         <p>
-            messages(
+            @messages(
                 s"$key.one-return",
                 x.start.format("MMMM"),
                 x.end.format("MMMM yyyy")
@@ -35,5 +35,5 @@
 }
 
 <a href="@sdil.controllers.routes.ServicePageController.show" class="button">
-    messages("file-return-before-deregistration.continue")
+    @messages("file-return-before-deregistration.continue")
 </a>

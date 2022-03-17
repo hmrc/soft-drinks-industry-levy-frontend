@@ -22,7 +22,7 @@
         <span class="form-label">@label</span>
         @field.errors.map { error =>
             <span class="error-message" data-journey="search-page:error:@field.name">
-            messages(error.message, error.args: _*)
+            @messages(error.message, error.args: _*)
             </span>
         }
     </label>

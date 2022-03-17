@@ -21,7 +21,7 @@
 @if(isListingPage){
     @if(!noShowHeader) {
         <h1 class="heading-large  @{messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")}">
-            messages(s"heading.$keyDots")
+            @messages(s"heading.$keyDots")
         </h1>
     }
     @for(msg <- messages.list(s"$keyDots.paragraph")) {
@@ -47,7 +47,7 @@
         }
     <fieldset class="form-field-group">
         <legend>
-            <h2 class="heading-small add-to-list">messages(s"$keyDots.listing.heading")</h2>
+            <h2 class="heading-small add-to-list">@messages(s"$keyDots.listing.heading")</h2>
         </legend>
         <div class="form-group @if(errors.valueAtRootList.nonEmpty){form-group-error}">
             @errors.valueAtRootList.map { error =>
@@ -64,7 +64,7 @@
             <h1 class="heading-large  @{
                 messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")
             }">
-            messages(s"heading.$keyDots")
+            @messages(s"heading.$keyDots")
             </h1>
         </legend>
         }
@@ -137,6 +137,6 @@
     }
 
     <button class="button" type="submit" id="continue-button">
-    messages(List(s"$keyDots.continue","sdil.common.save-continue"))
+    @messages(List(s"$keyDots.continue","sdil.common.save-continue"))
     </button>
 

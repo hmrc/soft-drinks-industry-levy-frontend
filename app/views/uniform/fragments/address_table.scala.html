@@ -49,9 +49,9 @@
                 @if(rows.length > 1) {
                     <td class="align-right">
                         <a href="@key/delete/@index">
-                            <span aria-hidden="true">messages(s"$key.remove")</span>
+                            <span aria-hidden="true">@messages(s"$key.remove")</span>
                             <span class="visually-hidden">
-                              messages(s"$key.edit.hidden", row.nonEmptyLines.mkString(", "))
+                              @messages(s"$key.edit.hidden", row.nonEmptyLines.mkString(", "))
                             </span>
                         </a>
                     </td>
@@ -59,9 +59,9 @@
 
                 <td class="align-centre">
                     <a href="@key/edit/@index" >
-                        <span aria-hidden="true">messages(s"$key.edit")</span>
+                        <span aria-hidden="true">@messages(s"$key.edit")</span>
                         <span class="visually-hidden">
-                          messages(s"$key.remove.hidden", row.nonEmptyLines.mkString(", "))
+                          @messages(s"$key.remove.hidden", row.nonEmptyLines.mkString(", "))
                         </span>
                     </a>
                 </td>

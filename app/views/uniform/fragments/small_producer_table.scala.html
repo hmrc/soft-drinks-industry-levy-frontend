@@ -32,25 +32,25 @@
                 @if(row.alias.nonEmpty) {
                     <p class="heading-small">messages("small-producer-details.name", row.alias)</p>
                 }
-                <p class="service-header heading-small">messages("small-producer-details.refNumber", row.sdilRef)</p>
-                <p class="small-prod-litres">messages("small-producer-details.lowBand", row.litreage._1)</p>
-                <p class="service-header small-prod-litres">messages("small-producer-details.highBand", row.litreage._2)</p>
+                <p class="service-header heading-small">@messages("small-producer-details.refNumber", row.sdilRef)</p>
+                <p class="small-prod-litres">@messages("small-producer-details.lowBand", row.litreage._1)</p>
+                <p class="service-header small-prod-litres">@messages("small-producer-details.highBand", row.litreage._2)</p>
             </td>
             @if(rows.length > 1) {
                 <td class="align-right">
                     <a href="@key/delete/@index">
-                        <span aria-hidden="true">messages(s"$key.remove")</span>
+                        <span aria-hidden="true">@messages(s"$key.remove")</span>
                         <span class="visually-hidden">
-                        messages(s"$key.remove.hidden", row.alias, row.sdilRef)
+                        @messages(s"$key.remove.hidden", row.alias, row.sdilRef)
                         </span>
                     </a>
                 </td>
             }
             <td class="align-centre">
                 <a href="@key/edit/@index" >
-                    <span aria-hidden="true">messages(s"$key.edit")</span>
+                    <span aria-hidden="true">@messages(s"$key.edit")</span>
                     <span class="visually-hidden">
-                        messages(s"$key.edit.hidden", row.alias, row.sdilRef)
+                        @messages(s"$key.edit.hidden", row.alias, row.sdilRef)
                     </span>
                 </a>
             </td>

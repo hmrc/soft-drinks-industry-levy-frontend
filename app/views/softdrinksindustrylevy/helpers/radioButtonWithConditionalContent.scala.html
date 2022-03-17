@@ -25,7 +25,7 @@
 @errorClass = {@if(elements.hasErrors) {form-group-error}}
 
 <div class="form-field-group @errorClass">
-@elements.errors.map{error => <span class="error-message">messages(error)</span>}
+@elements.errors.map{error => <span class="error-message">@messages("error.radio-form.choose-option.continue")</span>}
 
 @radioOptions.map { case (value, (label, extra)) =>
 

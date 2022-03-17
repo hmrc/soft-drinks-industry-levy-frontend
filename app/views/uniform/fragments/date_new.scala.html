@@ -23,7 +23,7 @@
 <div class="form-date">
     @for(field <- List("day", "month", "year")) {
       <div class="form-group form-group-@{field}">
-        <label class="form-label" for="@keyDots.@field">messages(keyDots + "." + field)</label>
+        <label class="form-label" for="@keyDots.@field">@messages(keyDots + "." + field)</label>
         <input class="form-control @if(errors./(field).nonEmpty) {form-control-error}"
                id="@{keyDash}-@{field}"
                name="@{keyDots}.@{field}"

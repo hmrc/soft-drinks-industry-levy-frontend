@@ -52,9 +52,9 @@
 @headerNavLinks = {
     <li>
         @if(request.path.contains("submit-return")) {
-            <a href="@sdil.controllers.routes.AuthenticationController.signOutReturns()">messages("sdil.common.sign-out")</a>
+            <a href="@sdil.controllers.routes.AuthenticationController.signOutReturns()">@messages("sdil.common.sign-out")</a>
         } else {
-            <a href="@sdil.controllers.routes.AuthenticationController.signOut()">messages("sdil.common.sign-out")</a>
+            <a href="@sdil.controllers.routes.AuthenticationController.signOut()">@messages("sdil.common.sign-out")</a>
     }
     </li>
 }

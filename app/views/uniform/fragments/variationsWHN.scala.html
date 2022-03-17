@@ -36,7 +36,7 @@
 @v.map { v =>
     @v.deregDate.map { deregDate =>
         <p>
-            messages(
+            @messages(
                 "dereg.what-happens-next.p1",
                 ReturnPeriod(deregDate).start.format("MMMM yyyy"),
                 ReturnPeriod(deregDate).end.format("MMMM yyyy")
@@ -44,7 +44,7 @@
         </p>
         <div class="panel panel-border-wide">
             <p>
-            messages(
+            @messages(
                 "dereg.what-happens-next.p2",
                 ReturnPeriod(deregDate).deadline.withDayOfMonth(1).format("d MMMM"),
                 ReturnPeriod(deregDate).deadline.format("d MMMM yyyy")
@@ -59,7 +59,7 @@
             <p>@Html(Messages(s"$x.variationDone.what-happens-next"))</p>
         }
     } else {
-        <p>messages("variationDone.what-happens-next")</p>
+        <p>@messages("variationDone.what-happens-next")</p>
     }
 
     @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show))

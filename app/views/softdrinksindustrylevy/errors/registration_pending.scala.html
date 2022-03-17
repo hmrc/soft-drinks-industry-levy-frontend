@@ -24,10 +24,10 @@
 
 @main_template(Messages("sdil.registration-pending.title")) {
 
-    <h1 class="heading-large" id="registration-pending-title">messages("sdil.registration-pending.title")</h1>
+    <h1 class="heading-large" id="registration-pending-title">@messages("sdil.registration-pending.title")</h1>
 
     @businessDetails(utr, organisation, address)
     
-    <p>messages("sdil.registration-pending.p1")</p>
-    <p>messages("sdil.registration-pending.p2")</p>
+    <p>@messages("sdil.registration-pending.p1")</p>
+    <p>@messages("sdil.registration-pending.p2")</p>
 }

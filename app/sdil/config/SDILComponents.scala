@@ -16,14 +16,16 @@
 
 package sdil.config
 
+import com.kenshoo.play.metrics.{Metrics, MetricsImpl}
+import com.softwaremill.macwire.wire
 import controllers.template.Template
-import controllers.AssetsConfiguration
+import controllers.{AssetsConfiguration, AssetsMetadata, DefaultAssetsMetadata}
 import play.api.ApplicationLoader.Context
 import play.api.http.HttpErrorHandler
 import play.api.i18n.I18nComponents
 import play.api.inject.{ApplicationLifecycle, DefaultApplicationLifecycle, Injector, SimpleInjector}
 import play.api.libs.ws.ahc.AhcWSComponents
-import play.api.mvc.DefaultMessagesActionBuilderImpl
+import play.api.mvc.{DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents, MessagesControllerComponents}
 import play.api.{BuiltInComponentsFromContext, Configuration, DefaultApplication}
 import play.filters.csrf.CSRFComponents
 import play.filters.headers.SecurityHeadersComponents
@@ -38,6 +40,7 @@ import scala.concurrent.ExecutionContext
 class SDILComponents @Inject()(context: Context)(
   sdilFilters: SdilFilters,
   template: Template,
+  metric: MetricsImpl,
   errorHandler: SDILErrorHandler,
   defaultApplication: DefaultApplication,
   defaultApplicationLifecycle: DefaultApplicationLifecycle
@@ -68,8 +71,13 @@ class SDILComponents @Inject()(context: Context)(
   lazy val messagesActionBuilder = new DefaultMessagesActionBuilderImpl(
     controllerComponents.parsers.defaultBodyParser,
     controllerComponents.messagesApi)
+  val mcc: MessagesControllerComponents = wire[DefaultMessagesControllerComponents]
+  val assetsMetadata: AssetsMetadata = wire[DefaultAssetsMetadata]
+  val appName = configuration.get[String]("appName")
+  lazy val metrics: Metrics = metric
 
   lazy val assetsConfiguration = new AssetsConfiguration()
 
   override def router = ???
+
 }

@@ -40,12 +40,12 @@
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    messages("variations.cya.packsites.address")
+                    @messages("variations.cya.packsites.address")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    messages("variations.cya.postcode")
+                    @messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -85,17 +85,17 @@
 
 @if(closedPackagingSites.nonEmpty) {
     <table class="check-your-answers">
-        <caption><h2>messages("variations.cya.packsites.remove")</h2></caption>
+        <caption><h2>@messages("variations.cya.packsites.remove")</h2></caption>
         <thead>
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    messages("variations.cya.packsites.address")
+                    @messages("variations.cya.packsites.address")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    messages("variations.cya.postcode")
+                    @messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -139,10 +139,10 @@
         <tbody>
             <tr>
                 <th class="table-header-bold">
-                messages("variations.cya.packsites.addOrRemove")
+                @messages("variations.cya.packsites.addOrRemove")
                 </th>
                 <th>
-                messages("variations.cya.false")
+                @messages("variations.cya.false")
                 </th>
                 @if(showChangeLinks) {
                 <th>
@@ -160,18 +160,18 @@
 
 @if(newWarehouseSites.nonEmpty) {
     <table class="check-your-answers">
-        <caption><h2>messages("variations.cya.warehouses.add")</h2></caption>
+        <caption><h2>@messages("variations.cya.warehouses.add")</h2></caption>
 
         <thead>
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    messages("variations.cya.warehouses")
+                    @messages("variations.cya.warehouses")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    messages("variations.cya.postcode")
+                    @messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -222,12 +222,12 @@
             <tr>
                 <th class="cya-width">
                     <span class="heading-small">
-                    messages("variations.cya.warehouses")
+                    @messages("variations.cya.warehouses")
                     </span>
                 </th>
                 <th colspan="2">
                     <span class="heading-small">
-                    messages("variations.cya.postcode")
+                    @messages("variations.cya.postcode")
                     </span>
                 </th>
             </tr>
@@ -275,10 +275,10 @@
         <tbody>
             <tr>
                 <th class="table-header-bold">
-                messages("variations.cya.warehouses.addOrRemove")
+                @messages("variations.cya.warehouses.addOrRemove")
                 </th>
                 <td>
-                messages("variations.cya.false")
+                @messages("variations.cya.false")
                 </td>
                 @if(showChangeLinks) {
                     <th>

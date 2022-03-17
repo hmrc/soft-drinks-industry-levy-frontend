@@ -38,7 +38,7 @@
                     <div class="alert alert--info margin-bottom-30">
                         <h2 class="heading-medium no-margin">messages("sdil.service-page.deregistered.pending.title")</h2>
                         <p>
-                        messages("sdil.service-page.deregistered.pending.p1",
+                        @messages("sdil.service-page.deregistered.pending.p1",
                             ReturnPeriod(deregDate).start.format("MMMM yyyy"),
                             ReturnPeriod(deregDate).end.format("MMMM yyyy"),
                             ReturnPeriod(deregDate).next.start.format("d MMMM"),
@@ -50,7 +50,7 @@
                         @if(LocalDate.now.isAfter(ReturnPeriod(LocalDate.of(2018,1,1)).end)) {
                             <h2 class="heading-medium no-margin">messages("returnsHome.dereg.final-return-title")</h2>
                             <p>
-                                messages(
+                                @messages(
                                     "returnsHome.dereg.final-return-p1",
                                     ReturnPeriod(deregDate).start.format("MMMM yyyy"),
                                     ReturnPeriod(deregDate).end.format("MMMM yyyy")
@@ -81,7 +81,7 @@
                                     nilReturn = false,
                                     "own-brands-packaged-at-own-sites"
                                 )' class="button">
-                                messages("return.file.final")
+                                @messages("return.file.final")
                                 </a>
                             </div>
                             <div>
@@ -90,7 +90,7 @@
                                     ReturnPeriod(deregDate).quarter,
                                     nilReturn = true,
                                     "nil-return")'>
-                                messages("return.file.nil")
+                                @messages("return.file.nil")
                                 </a>
                             </div>
                         }
@@ -107,7 +107,7 @@
                 @lastReturn.map { lr =>
                     <div class="panel-border-narrow panel">
                         <p>
-                            messages(
+                            @messages(
                                 "sdil.service-page.completed-return",
                                 ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
                                 ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
@@ -124,7 +124,7 @@
                 @lastReturn.map { lr =>
                     <div class="panel-border-narrow panel">
                         <p>
-                            messages(
+                            @messages(
                                 "sdil.service-page.completed-return.dereg",
                                 ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
                                 ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
@@ -139,7 +139,7 @@
                 <p>messages("returnsHome.rereg.p1")</p>
                 <div>
                     <a href='@sdil.controllers.routes.IdentifyController.start' class="button">
-                    messages("returnsHome.rereg.button")
+                    @messages("returnsHome.rereg.button")
                     </a>
                 </div>
             }
@@ -154,9 +154,9 @@
                 } else {
                     @printbalance("account.balance.amount", balance)
                     @if(balance < 0) {
-                        messages("account.balance.amount.pay")
+                        @messages("account.balance.amount.pay")
                     } else {
-                        messages("account.balance.amount.closed")
+                        @messages("account.balance.amount.closed")
                     }
                 }
                 </p>
@@ -170,7 +170,7 @@
 
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                    messages("sdil.verify.address")
+                    @messages("sdil.verify.address")
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @address.nonEmptyLines.init.map { l =>
@@ -187,7 +187,7 @@
                     <div class="column-one-half">
                         <h3 class="heading-small">
                             <a href='@sdil.controllers.routes.VariationsController.index("changeType")'>
-                                messages("sdil.service-page.deregistered.variations.subtitle.3")
+                                @messages("sdil.service-page.deregistered.variations.subtitle.3")
                             </a>
                         </h3>
                         <div>
@@ -206,13 +206,13 @@
 
             <p><a href='messages("sdil.service-page.support.link1")'
             onclick="ga('send', 'event', 'moreLinks', 'click', 'guidance')">
-                messages("sdil.service-page.support.p3")
+                @messages("sdil.service-page.support.p3")
             </a></p>
 
 
             <p><a href='messages("sdil.service-page.support.link2")'
             onclick="ga('send', 'event', 'moreLinks', 'click', 'legislation')">
-                messages("sdil.service-page.support.p4")
+                @messages("sdil.service-page.support.p4")
             </a></p>
 
             <span>messages("sdil.service-page.support.p5")</span>

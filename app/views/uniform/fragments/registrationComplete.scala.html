@@ -16,21 +16,21 @@
 
 @(email: String)(implicit messages: Messages)
 
-<p>messages("registration-confirmation.what-happens.p1")</p>
-<p>messages("registration-confirmation.what-happens.p2", email)</p>
+<p>@messages("registration-confirmation.what-happens.p1")</p>
+<p>@messages("registration-confirmation.what-happens.p2", email)</p>
 
-<h2 class="heading-medium">messages("registration-confirmation.what-happens.help.title")</h2>
+<h2 class="heading-medium">@messages("registration-confirmation.what-happens.help.title")</h2>
 
-<p>messages("registration-confirmation.what-happens.help.p1")</p>
+<p>@messages("registration-confirmation.what-happens.help.p1")</p>
 
 <ul class="list list-bullet">
-    <li>messages("registration-confirmation.what-happens.help.ul1")</li>
-    <li>messages("registration-confirmation.what-happens.help.ul2")</li>
+    <li>@messages("registration-confirmation.what-happens.help.ul1")</li>
+    <li>@messages("registration-confirmation.what-happens.help.ul2")</li>
 </ul>
 
 <p>
     <a href="@sdil.controllers.routes.AuthenticationController.signOut()">
-        messages("registration-confirmation.what-happens.help.link")
+        @messages("registration-confirmation.what-happens.help.link")
     </a>
-    messages("registration-confirmation.what-happens.help.p2")
+    @messages("registration-confirmation.what-happens.help.p2")
 </p>

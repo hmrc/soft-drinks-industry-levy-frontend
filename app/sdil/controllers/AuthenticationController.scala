@@ -16,6 +16,7 @@
 
 package sdil.controllers
 
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -23,7 +24,10 @@ import views.Views
 
 import javax.inject.Inject
 
-class AuthenticationController @Inject()(mcc: MessagesControllerComponents, views: Views)(implicit config: AppConfig)
+class AuthenticationController @Inject()(
+  override val messagesApi: MessagesApi,
+  mcc: MessagesControllerComponents,
+  views: Views)(implicit config: AppConfig)
     extends FrontendController(mcc) {
 
   def signIn = Action {

@@ -23,7 +23,7 @@
 @(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod)(implicit messages: Messages)
 
 <p>
-    messages(
+    @messages(
         "returnVariationDone.corrected.return",
         returnPeriod.start.format(ofPattern("MMMM")),
         returnPeriod.end.format(ofPattern("MMMM yyyy")),
@@ -39,7 +39,7 @@
     </i>
     <p>
         <strong class="bold-small">
-            messages("returnVariationDone.payments.notice")
+            @messages("returnVariationDone.payments.notice")
         </strong>
     </p>
 </div>

@@ -30,7 +30,7 @@
                    @formIn.value.getOrElse(Nil).filter( _ == option ).map{_ => checked="checked"} />
 
             <label for="@{key}_@{option}">
-                messages(s"$key.option.$option")
+                @messages(s"$key.option.$option")
             </label>
         </div>
 }

@@ -36,6 +36,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class VerifyController @Inject()(
+  override val messagesApi: MessagesApi,
   cache: RegistrationFormDataCache,
   formAction: FormAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,

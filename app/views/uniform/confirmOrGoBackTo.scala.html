@@ -17,9 +17,9 @@
 @(key: String, abortLink: String)(implicit messages: Messages)
 
 <p>
-    messages(s"$key.body")
+    @messages(s"$key.body")
 </p>
 
 <p>
-    messages(Seq(s"$key.doubt1", "doubt1")) <a href="@abortLink">messages(Seq(s"$key.doubt1", "doubt2"))</a>.
+    @messages(Seq(s"$key.doubt1", "doubt1")) <a href="@abortLink">messages(Seq(s"$key.doubt1", "doubt2"))</a>.
 </p>

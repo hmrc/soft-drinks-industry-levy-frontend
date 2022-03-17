@@ -21,11 +21,11 @@
 @()(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(title = Messages("sdil.time-out.title")) {
-    <h1>messages("sdil.time-out.title")</h1>
-    <p>messages("sdil.time-out.p1")</p>
+    <h1>@messages("sdil.time-out.title")</h1>
+    <p>@messages("sdil.time-out.p1")</p>
 
     <a href="@sdil.controllers.routes.AuthenticationController.timeIn(request.headers.get("Referer")
             .getOrElse(config.sdilHomePage))" class="button">
-    messages("sdil.common.sign-in")
+    @messages("sdil.common.sign-in")
     </a>
 }

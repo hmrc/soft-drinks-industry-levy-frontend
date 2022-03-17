@@ -24,8 +24,8 @@
     <td>@formatLitres(rowData.atLowRate)</td>
     <td class="change-answer">
         <a href="@changeRoute" onclick="ga('send', 'event', 'registerDeclaration', 'clickChange', '@changeRoute')">
-            <span aria-hidden="true">messages("sdil.declaration.change-link")</span>
-            <span class="visuallyhidden">messages(s"sdil.hidden.registerDeclaration.low-band.$questionKey")</span>
+            <span aria-hidden="true">@messages("sdil.declaration.change-link")</span>
+            <span class="visuallyhidden">@messages(s"sdil.hidden.registerDeclaration.low-band.$questionKey")</span>
         </a>
     </td>
 </tr>
@@ -35,8 +35,8 @@
     <td>@formatLitres(rowData.atHighRate)</td>
     <td class="change-answer">
         <a href="@changeRoute" onclick="ga('send', 'event', 'registerDeclaration', 'clickChange', '@changeRoute')">
-            <span aria-hidden="true">messages("sdil.declaration.change-link")</span>
-            <span class="visuallyhidden">messages(s"sdil.hidden.registerDeclaration.high-band.$questionKey")</span>
+            <span aria-hidden="true">@messages("sdil.declaration.change-link")</span>
+            <span class="visuallyhidden">@messages(s"sdil.hidden.registerDeclaration.high-band.$questionKey")</span>
         </a>
     </td>
 </tr>

@@ -23,14 +23,14 @@
       role="alert"
       aria-labelledby="error-summary-heading"
       tabindex="-1">
-        <h2 id="error-summary-heading" class="heading-medium error-summary-heading">messages("sdil.common.errorSummary")</h2>
+        <h2 id="error-summary-heading" class="heading-medium error-summary-heading">@messages("sdil.common.errorSummary")</h2>
         <ul class="error-summary-list">
             @form.errors.map { error =>
                 <li>
                     <a href="#@error.key"
                     id="@{error.key}-error-summary"
                     data-focuses="@error.key">
-                    messages(error.message.split("[|]"), error.args: _*)
+                    @messages(error.message.split("[|]"), error.args: _*)
                     </a>
                 </li>
             }

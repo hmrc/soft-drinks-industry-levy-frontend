@@ -17,10 +17,10 @@
 @(pageRef: String, tableHeading: String, tableContent: Option[String] = None, changeLink: Option[Call] = None)(rowContent: Html)(implicit messages: Messages)
 <table class="check-your-answers">
     <caption class="heading-medium business-details-heading-help">
-        messages(s"sdil.$pageRef.$tableHeading") <br>
+        @messages(s"sdil.$pageRef.$tableHeading") <br>
         @tableContent.map { x =>
             <p class="business-details-help">
-                messages(s"sdil.$pageRef.$tableHeading.$x")
+                @messages(s"sdil.$pageRef.$tableHeading.$x")
             </p>
         }
     </caption>
@@ -28,7 +28,7 @@
     <thead>
         <tr>
             <th class="change-answer" colspan="4">
-                <a href="@link">messages("sdil.declaration.change-link")</a>
+                <a href="@link">@messages("sdil.declaration.change-link")</a>
             </th>
         </tr>
     </thead>

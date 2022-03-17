@@ -18,16 +18,16 @@
 
 <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">
-        messages(s"sdil.$pageRef.$questionKey")
+        @messages(s"sdil.$pageRef.$questionKey")
     </dt>
     <dd class="govuk-summary-list__value">
         @rowData
     </dd>
-    @changeRoute.map { route =>
+        @changeRoute.map { route =>
         <dd class="cya-change-no-word-break govuk-summary-list__value">
             <a href="@route" onclick="ga('send', 'event', 'registerDeclaration', 'clickChange', '@changeRoute')">
-                <span aria-hidden="true">messages("sdil.declaration.change-link")</span>
-                <span class="visually-hidden">messages(s"sdil.hidden.$pageRef.$questionKey")</span>
+                <span aria-hidden="true">@messages("sdil.declaration.change-link")</span>
+                <span class="visually-hidden">@messages(s"sdil.hidden.$pageRef.$questionKey")</span>
             </a>
         </dd>
     }

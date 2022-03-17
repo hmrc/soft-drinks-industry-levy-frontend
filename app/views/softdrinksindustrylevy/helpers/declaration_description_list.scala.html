@@ -16,11 +16,11 @@
 
 @(pageRef: String, tableHeading: String, tableContent: Option[String] = None)(rowContent: Html)(implicit messages: Messages)
 
-<h2 class="heading-medium">messages(s"sdil.$pageRef.$tableHeading")</h2>
+<h2 class="heading-medium">@messages(s"sdil.$pageRef.$tableHeading")</h2>
 
 @tableContent.map { x =>
     <p class="business-details-help">
-        messages(s"sdil.$pageRef.$tableHeading.$x")
+        @messages(s"sdil.$pageRef.$tableHeading.$x")
     </p>
 }
 

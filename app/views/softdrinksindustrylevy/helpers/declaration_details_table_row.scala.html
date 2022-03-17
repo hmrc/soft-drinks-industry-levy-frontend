@@ -20,7 +20,7 @@
 
 <tr>
     <td class="table-row-question" @args.toMap.get('_colspan).map(t => s"""colspan=$t""")>
-        messages(s"sdil.$pageRef.$questionKey")
+        @messages(s"sdil.$pageRef.$questionKey")
     </td>
     <td class="table-row-answer@if(wrap) { word-break}">
         @rowData
@@ -28,8 +28,8 @@
     @changeRoute.map { route =>
         <td class="change-answer">
             <a href="@route" onclick="ga('send', 'event', 'registerDeclaration', 'clickChange', '@changeRoute')">
-                <span aria-hidden="true">messages("sdil.declaration.change-link")</span>
-                <span class="visually-hidden">messages(s"sdil.hidden.$pageRef.$questionKey")</span>
+                <span aria-hidden="true">@messages("sdil.declaration.change-link")</span>
+                <span class="visually-hidden">@messages(s"sdil.hidden.$pageRef.$questionKey")</span>
             </a>
         </td>
     }

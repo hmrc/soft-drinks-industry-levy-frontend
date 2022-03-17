@@ -16,11 +16,11 @@
 
 @(prefix: String, balance: BigDecimal)(implicit messages: Messages)
 @if(balance == 0) {
-  messages(Seq(s"${prefix}.zero", prefix), balance.pounds)
+  @messages(Seq(s"${prefix}.zero", prefix), balance.pounds)
 }
 @if(balance < 0) {
-    messages(Seq(s"${prefix}.negative", prefix), balance.pounds)
+    @messages(Seq(s"${prefix}.negative", prefix), balance.pounds)
 }
 @if(balance > 0) {
-    messages(Seq(s"${prefix}.positive", prefix), balance.pounds)
+    @messages(Seq(s"${prefix}.positive", prefix), balance.pounds)
 }

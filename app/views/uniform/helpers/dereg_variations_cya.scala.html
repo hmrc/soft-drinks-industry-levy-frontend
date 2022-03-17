@@ -19,7 +19,7 @@
 @(showChangeLinks : Boolean, v: sdil.models.variations.RegistrationVariationData)(implicit messages: Messages)
 
 <h2 class="heading-medium">
-    messages("variations.cya.deregistration")
+    @messages("variations.cya.deregistration")
 </h2>
 
 <table class="check-your-answers">
@@ -27,7 +27,7 @@
         @v.reason.map{ reason =>
             <tr>
                 <td class="cya-question table-header-bold">
-                    messages("variations.cya.deregistration.reason")
+                    @messages("variations.cya.deregistration.reason")
                 </td>
                 <td>
                 @reason
@@ -45,7 +45,7 @@
         @v.deregDate.map{ date =>
             <tr>
                 <td class="cya-question table-header-bold">
-                    messages("variations.cya.deregistration.date")
+                    @messages("variations.cya.deregistration.date")
                 </td>
                 <td>
                 @{date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}
