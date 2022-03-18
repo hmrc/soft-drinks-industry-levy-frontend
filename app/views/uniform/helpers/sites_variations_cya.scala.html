@@ -34,7 +34,7 @@
 
 @if(newPackingSites.nonEmpty) {
     <table class="check-your-answers">
-        <caption><h2>messages("variations.cya.packsites.add")</h2></caption>
+        <caption><h2>@messages("variations.cya.packsites.add")</h2></caption>
 
         <thead>
             <tr>
@@ -135,7 +135,7 @@
 
 @if(path.contains("change-packaging-sites") && newPackingSites.isEmpty && closedPackagingSites.isEmpty && v.deregDate.isEmpty) {
     <table class="check-your-answers">
-        <caption><h2>messages("variations.cya.packsites.same")</h2></caption>
+        <caption><h2>@messages("variations.cya.packsites.same")</h2></caption>
         <tbody>
             <tr>
                 <th class="table-header-bold">

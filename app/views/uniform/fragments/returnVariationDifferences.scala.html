@@ -37,7 +37,7 @@
             <tr>
                 <th @if(showChangeLinks) {colspan="3"} else {colspan="4"} >
                     <p class="heading-medium">
-                    messages(s"$key.$title")
+                    @messages(s"$key.$title")
                     </p>
                 </th>
                 @if(showChangeLinks) {
@@ -147,16 +147,16 @@
 
 @if(showChangeLinks) {
     <h2 class="heading-medium">
-        messages("check-return-changes.submit.heading")
+        @messages("check-return-changes.submit.heading")
     </h2>
 
     <p>
-        messages("check-return-changes.submit.p")
+        @messages("check-return-changes.submit.p")
     </p>
 
     <p>
         <a href="javascript:window.print()" class="print-link" onclick="ga('send', 'event', 'print', 'click', 'Print')">
-        messages("sdil.common.print")
+        @messages("sdil.common.print")
         </a>
     </p>
 }

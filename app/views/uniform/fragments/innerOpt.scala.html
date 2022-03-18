@@ -21,11 +21,11 @@
 
 @innerSection={ 
   @if(messages.isDefinedAt(s"${key}.inner-heading")) {
-    <h2 class="heading-medium">messages(s"${key}.inner-heading")</h2>
+    <h2 class="heading-medium">@messages(s"${key}.inner-heading")</h2>
   }
   @if(messages.isDefinedAt(s"${key}.inner-paragraph")) {
     <div class="panel-border-narrow panel">
-        <p>messages(s"${key}.inner-paragraph")</p>
+        <p>@messages(s"${key}.inner-paragraph")</p>
     </div>
   }
   @inner
