@@ -42,7 +42,7 @@
 
             @if(subscription.activity.voluntaryRegistration) {
                 <div class="panel panel-border-wide">
-                    <p>messages("sdil.service-page.p2.voluntary-only")</p>
+                    <p>@messages("sdil.service-page.p2.voluntary-only")</p>
                     <p>@Html(
                          Messages(
                              "sdil.service-page.p3.voluntary-only",
@@ -169,7 +169,7 @@
                 } else {
                     @if(interest < 0) {
                         @printbalance("account.balance.amount.need-to-pay", balance.abs)
-                        messages("account.balance.amount.need-to-pay.interest.fullstop", format_money(interest.abs))
+                        @messages("account.balance.amount.need-to-pay.interest.fullstop", format_money(interest.abs))
                     } else {
                         @printbalance("account.balance.amount.need-to-pay.fullstop", balance.abs)
                     }
@@ -179,7 +179,7 @@
 
             @if(balance < 0) {
                 @if(periodsDue.nonEmpty) {
-                  <p>messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
+                  <p>@messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
                 }
 
                 @manage_direct_debit_section(hasExistingDD)

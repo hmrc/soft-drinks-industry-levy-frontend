@@ -20,34 +20,34 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.models.ReturnPeriod
 
-@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription,period:ReturnPeriod,originalReturn: Option[SdilReturn])(implicit m: Messages)
+@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription,period:ReturnPeriod,originalReturn: Option[SdilReturn])(implicit messages: Messages)
 <legend>
-    <span class="govuk-caption-xl">@subscription.orgName - messages(
+    <span class="govuk-caption-xl">@subscription.orgName - @messages(
                                     "returnsCYA.returnsDue",
                                     period.start.format("MMMM"),
                                     period.end.format("MMMM yyyy"),
                                     period.deadline.format("MMMM yyyy")
                                 )</span>
-    <h1 class="heading-large.service-header">messages(s"heading.check-answers")</h1>
+    <h1 class="heading-large.service-header">@messages(s"heading.check-answers")</h1>
 </legend>
 
 <table class="check-your-answers">
 
     @if(total == 0) {
-        <caption><h2>messages(s"$key.balance.nil", format_money(total))</h2></caption>
+        <caption><h2>@messages(s"$key.balance.nil", format_money(total))</h2></caption>
     } else {
         @if(total > 0) {
-            <caption><h2>messages(s"$key.balance.due", format_money(total))</h2></caption>
+            <caption><h2>@messages(s"$key.balance.due", format_money(total))</h2></caption>
         } else {
-            <caption><h2>messages(s"$key.balance.credit", format_money(total.abs))</h2></caption>
+            <caption><h2>@messages(s"$key.balance.credit", format_money(total.abs))</h2></caption>
         }
     }
     <thead>
         <tr>
-            <th scope="col" class="table-header-bold">messages(s"$key.activity")</th>
-            <th scope="col" class="table-header-bold">messages(s"$key.band")</th>
-            <th scope="col" class="table-header-bold numeric">messages(s"$key.litres")</th>
-            <th scope="col" class="table-header-bold numeric">messages(s"$key.levy")</th>
+            <th scope="col" class="table-header-bold">@messages(s"$key.activity")</th>
+            <th scope="col" class="table-header-bold">@messages(s"$key.band")</th>
+            <th scope="col" class="table-header-bold numeric">@messages(s"$key.litres")</th>
+            <th scope="col" class="table-header-bold numeric">@messages(s"$key.levy")</th>
             <td>&nbsp;</td>
         </tr>
     </thead>
@@ -55,34 +55,34 @@
     <tbody>
         @for((lineKey, litres, multiplier) <- lineItems) {
             <tr>
-                <td rowspan="2">messages(s"$key.$lineKey")</td>
-                <td>messages(s"$key.low")</td>
+                <td rowspan="2">@messages(s"$key.$lineKey")</td>
+                <td>@messages(s"$key.low")</td>
                 <td class="numeric">@{f"${litres._1}%,d"}</td>
                 <td class="no-minus-wrapping numeric">@format_money(costLower * litres._1 * multiplier)</td>
                 <td class="change-answer">
                     <a href='@lineKey'>
-                    messages(s"$key.change")
+                    @messages(s"$key.change")
                     </a>
                 </td>
             </tr>
             <tr>
-                <td>messages(s"$key.high")</td>
+                <td>@messages(s"$key.high")</td>
                 <td class="numeric">@{f"${litres._2}%,d"}</td>
                 <td class="no-minus-wrapping numeric"> @format_money(costHigher * litres._2 * multiplier)</td>
                 <td class="change-answer">
                     <a href='@lineKey'>
-                    messages(s"$key.change")
+                    @messages(s"$key.change")
                     </a>
                 </td>
             </tr>
         }
         @if(originalReturn.isEmpty) {
         <tr>
-            <th scope="row" colspan="3"><span class="heading-small">messages(s"$key.subtotal")</span></th>
+            <th scope="row" colspan="3"><span class="heading-small">@messages(s"$key.subtotal")</span></th>
             <td class="numeric"><span class="heading-small no-minus-wrapping numeric">@format_money(subtotal)</span></td>
         </tr>
         <tr>
-            <th scope="row" colspan="3"><span class="heading-small">messages(s"$key.balance.brought.forward")</span></th>
+            <th scope="row" colspan="3"><span class="heading-small">@messages(s"$key.balance.brought.forward")</span></th>
             <td class="numeric"><span class="heading-small no-minus-wrapping numeric">@format_money(-broughtForward, "+")</span></td>
         </tr>
         }
@@ -90,22 +90,22 @@
             @originalReturn.map { r =>
 
                 <tr>
-                    <th scope="row" colspan="3">messages(s"$key.total.original")</th>
+                    <th scope="row" colspan="3">@messages(s"$key.total.original")</th>
                     <td class="numeric">@format_money(r.total)</td>
                 </tr>
                 <tr>
-                    <th scope="row" colspan="3">messages(s"$key.total.new")</th>
+                    <th scope="row" colspan="3">@messages(s"$key.total.new")</th>
                     <td class="numeric">@format_money(subtotal)</td>
                 </tr>
                 <tr>
-                    <th scope="row" colspan="3">messages(s"$key.total.balance")</th>
+                    <th scope="row" colspan="3">@messages(s"$key.total.balance")</th>
                     <td class="numeric">@format_money(-broughtForward, "+")</td>
                 </tr>
                 <tr>
                     @if((total - r.total) < 0) {
-                        <th scope="row" colspan="3"><span class="heading-small">messages(s"$key.net.adjusted.negative")</span></th>
+                        <th scope="row" colspan="3"><span class="heading-small">@messages(s"$key.net.adjusted.negative")</span></th>
                     } else {
-                        <th scope="row" colspan="3"><span class="heading-small">messages(s"$key.net.adjusted.positive")</span></th>
+                        <th scope="row" colspan="3"><span class="heading-small">@messages(s"$key.net.adjusted.positive")</span></th>
                     }
                     <td class="numeric"><span class="heading-small no-minus-wrapping">@format_money(total - r.total)</span></td>
                 </tr>
@@ -113,7 +113,7 @@
 
         } else {
             <tr>
-                <th scope="row" colspan="3"><span class="heading-small">messages(s"$key.total")</span></th>
+                <th scope="row" colspan="3"><span class="heading-small">@messages(s"$key.total")</span></th>
                 <td class="numeric"><span class="heading-small no-minus-wrapping numeric">@format_money(total)</span></td>
             </tr>
         }
@@ -139,15 +139,15 @@
         @if(variation.packingSites.nonEmpty) {
 
             <table class="check-your-answers">
-                <caption><h2>messages("variations.cya.packsites.add")</h2></caption>
+                <caption><h2>@messages("variations.cya.packsites.add")</h2></caption>
 
                 <thead>
                     <tr>
                         <th class="cya-width">
-                            messages("variations.cya.packsites.address")
+                            @messages("variations.cya.packsites.address")
                         </th>
                         <th colspan="2">
-                            messages("variations.cya.postcode")
+                            @messages("variations.cya.postcode")
                         </th>
                     </tr>
                 </thead>
@@ -180,15 +180,15 @@
 
         @if(variation.warehouses.nonEmpty) {
             <table class="check-your-answers">
-                <caption><h2>messages("variations.cya.warehouses.add")</h2></caption>
+                <caption><h2>@messages("variations.cya.warehouses.add")</h2></caption>
 
                 <thead>
                     <tr>
                         <th class="cya-width">
-                            messages("variations.cya.warehouses")
+                            @messages("variations.cya.warehouses")
                         </th>
                         <th colspan="2">
-                            messages("variations.cya.postcode")
+                            @messages("variations.cya.postcode")
                         </th>
                     </tr>
                 </thead>
@@ -222,7 +222,7 @@
         }
 
         @if(variation.importer._1 || variation.packer._1) {
-            <h2 class="heading-medium">messages(s"$key.variations.subheading")</h2>
+            <h2 class="heading-medium">@messages(s"$key.variations.subheading")</h2>
         }
 
         @if(variation.importer._1 && subscription.warehouseSites.isEmpty && variation.warehouses.nonEmpty) {
@@ -234,7 +234,7 @@
         }
 
         @if(variation.importer._1 && subscription.warehouseSites.nonEmpty) {
-            <p>messages("check-your-answers.variations.import-without-warehouses")</p>
+            <p>@messages("check-your-answers.variations.import-without-warehouses")</p>
         }
 
         @if(variation.packer._1 && subscription.productionSites.isEmpty) {
@@ -247,12 +247,12 @@
     }
 
 @if(originalReturn.isEmpty) {
-    <h2 class="heading-medium">messages(s"$key.submit-subheading")</h2>
-    <p>messages(s"$key.submit-paragraph")</p>
+    <h2 class="heading-medium">@messages(s"$key.submit-subheading")</h2>
+    <p>@messages(s"$key.submit-paragraph")</p>
 }
 
 <p>
     <a href="javascript:window.print()" class="print-link" onclick="ga('send', 'event', 'print', 'click', 'Print')">
-       messages("sdil.common.print")
+       @messages("sdil.common.print")
     </a>
 </p>

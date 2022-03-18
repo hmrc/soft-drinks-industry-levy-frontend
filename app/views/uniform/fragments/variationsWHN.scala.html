@@ -51,7 +51,7 @@
             )
             </p>
         </div>
-        <p>messages("dereg.what-happens-next.p3")</p>
+        <p>@messages("dereg.what-happens-next.p3")</p>
     }
 
     @if(key.nonEmpty) {
@@ -96,7 +96,7 @@
 }
 
 @a.map { a =>
-    <p>messages("return.check-return-changes.what-happens-next")</p>
+    <p>@messages("return.check-return-changes.what-happens-next")</p>
     @Html(Messages("return-sent.servicePage", sdil.controllers.routes.ServicePageController.show))
     @returnVariationDifferences("check-return-changes", a, showChangeLinks = false, broughtForward)
 }

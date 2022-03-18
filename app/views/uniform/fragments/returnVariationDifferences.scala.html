@@ -59,25 +59,25 @@
 @for(change <- variation.changedLitreages) {
     @table_head(change._1, change._1) {
         <tr>
-            <th class="bold">messages(s"$key.correction.title")</th>
-            <th class="bold">messages(s"$key.band.title")</th>
-            <th class="bold numeric">messages(s"$key.litres.title")</th>
-            <th class="bold numeric">messages(s"$key.cost.title")</th>
+            <th class="bold">@messages(s"$key.correction.title")</th>
+            <th class="bold">@messages(s"$key.band.title")</th>
+            <th class="bold numeric">@messages(s"$key.litres.title")</th>
+            <th class="bold numeric">@messages(s"$key.cost.title")</th>
         </tr>
         <tr>
-            <th rowspan="2">messages(s"$key.correction.label.original")</th>
-            <td>messages(s"$key.band.label.low")</td>
+            <th rowspan="2">@messages(s"$key.correction.label.original")</th>
+            <td>@messages(s"$key.band.label.low")</td>
             <td class="numeric">@{f"${change._2._2._1}%,d"}</td>
             <td class="numeric">@cost(change._1, change._2._2._1 * BigDecimal(0.18))</td>
         </tr>
         <tr>
-            <td>messages(s"$key.band.label.high")</td>
+            <td>@messages(s"$key.band.label.high")</td>
             <td class="numeric">@{f"${change._2._2._2}%,d"}</td>
             <td class="numeric">@cost(change._1, change._2._2._2 * BigDecimal(0.24))</td>
         </tr>
         <tr>
-            <th rowspan="2">messages(s"$key.correction.label.revised")</th>
-            <td>messages(s"$key.band.label.low")</td>
+            <th rowspan="2">@messages(s"$key.correction.label.revised")</th>
+            <td>@messages(s"$key.band.label.low")</td>
             <td class="numeric">@{f"${change._2._1._1}%,d"}</td>
             <td class="numeric">@cost(change._1, change._2._1._1 * BigDecimal(0.18))</td>
         </tr>
@@ -92,23 +92,23 @@
 @declaration_table(s"$key.balance", "return-correction-reason.subheading") {
 
     <tr>
-        <th scope="row">messages(s"$key.total.original")</th>
+        <th scope="row">@messages(s"$key.total.original")</th>
         <td class="numeric">@format_money(variation.original.total)</td>
     </tr>
     <tr>
-        <th scope="row">messages(s"$key.total.new")</th>
+        <th scope="row">@messages(s"$key.total.new")</th>
         <td class="numeric">@format_money(variation.revised.total)</td>
     </tr>
     @broughtForward.map { broughtForward =>
         <tr>
-            <th scope="row">messages(s"$key.total.balance")</th>
+            <th scope="row">@messages(s"$key.total.balance")</th>
             <td class="numeric">@format_money(-broughtForward, "+")</td>
         </tr>
         <tr>
             @if((variation.revised.total - variation.original.total) < 0) {
-                <th scope="row"><span class="heading-small">messages(s"$key.net.adjusted.negative")</span></th>
+                <th scope="row"><span class="heading-small">@messages(s"$key.net.adjusted.negative")</span></th>
             } else {
-                <th scope="row"><span class="heading-small">messages(s"$key.net.adjusted.positive")</span></th>
+                <th scope="row"><span class="heading-small">@messages(s"$key.net.adjusted.positive")</span></th>
 
             }
             <td class="numeric"><span class="heading-small">@format_money(variation.revised.total - variation.original.total - broughtForward)</span></td>
@@ -118,26 +118,26 @@
 
 @declaration_table(s"$key.reason", "return-correction-reason.subheading") {
     <tr>
-        <th>messages("return-correction-reason.label")</th>
+        <th>@messages("return-correction-reason.label")</th>
         <td>@variation.reason</td>
         @if(showChangeLinks) {
             <td class="change-answer">
                 <a href="return-correction-reason">
-                    <p class="edit-change-link">messages(s"sdil.declaration.change-link")</p>
-                    <span class="visually-hidden">messages(s"$key.change.reason")</span>
+                    <p class="edit-change-link">@messages(s"sdil.declaration.change-link")</p>
+                    <span class="visually-hidden">@messages(s"$key.change.reason")</span>
                 </a>
             </td>
         }
     </tr>
     @variation.repaymentMethod.map { x =>
         <tr>
-            <th>messages("return-variation-repayments.label")</th>
-            <td>messages(s"$x.short")</td>
+            <th>@messages("return-variation-repayments.label")</th>
+            <td>@messages(s"$x.short")</td>
             @if(showChangeLinks) {
                 <td class="change-answer" >
                     <a href="repayment-method">
-                        <p class="edit-change-link">messages(s"sdil.declaration.change-link")</p>
-                        <span class="visually-hidden">messages(s"$key.change.repayment")</span>
+                        <p class="edit-change-link">@messages(s"sdil.declaration.change-link")</p>
+                        <span class="visually-hidden">@messages(s"$key.change.repayment")</span>
                     </a>
                 </td>
             }
