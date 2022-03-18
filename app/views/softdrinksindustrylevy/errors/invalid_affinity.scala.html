@@ -21,10 +21,10 @@
 @()(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.invalid-affinity.title")) {
-    <h1 class="heading-large">messages("sdil.invalid-affinity.title")</h1>
+    <h1 class="heading-large">@messages("sdil.invalid-affinity.title")</h1>
 
-    <p id="registration-status">messages("sdil.invalid-affinity.p1")</p>
-    <p>messages("sdil.invalid-affinity.p2")</p>
+    <p id="registration-status">@messages("sdil.invalid-affinity.p1")</p>
+    <p>@messages("sdil.invalid-affinity.p2")</p>
 
-    <p><a href="@sdil.controllers.routes.AuthenticationController.signIn()">messages("sdil.common.return-to-sign-in")</a></p>
+    <p><a href="@sdil.controllers.routes.AuthenticationController.signIn()">@messages("sdil.common.return-to-sign-in")</a></p>
 }
