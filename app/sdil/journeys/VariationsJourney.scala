@@ -384,7 +384,7 @@ object VariationsJourney {
     val isVoluntary = subscription.activity.voluntaryRegistration
     for {
       variation <- changeActor(base, subscription, pendingReturns)
-      _         <- tell("check-answers", CYA(variation))
+   //   _         <- tell("check-answers", CYA(variation))
     } yield variation.data
   }
 
