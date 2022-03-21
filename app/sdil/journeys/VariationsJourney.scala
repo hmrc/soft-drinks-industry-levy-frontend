@@ -269,6 +269,129 @@ object VariationsJourney {
       )
   }
 
+  def changeActor(
+    data: RegistrationVariationData,
+    subscription: RetrievedSubscription,
+    returnPeriods: List[ReturnPeriod]
+  )(implicit ec: ExecutionContext, ufMessages: UniformMessages[Html]) =
+    for {
+      producerType <- ask[ProducerType]("amount-produced")
+      useCopacker  <- if (producerType == ProducerType.Small) ask[Boolean]("third-party-packagers") else pure(false)
+      packageOwn   <- askEmptyOption[(Long, Long)]("packaging-site") when producerType != ProducerType.XNot
+      copacks      <- askEmptyOption[(Long, Long)]("contract-packing")
+      imports      <- askEmptyOption[(Long, Long)]("imports")
+      noUkActivity = (copacks._1 + copacks._2 + imports._1 + imports._2) == 0
+      smallProducerWithNoCopacker = producerType != ProducerType.Large && !useCopacker
+      shouldDereg = noUkActivity && smallProducerWithNoCopacker
+      packer = (producerType == ProducerType.Large && (packageOwn.get._1 + packageOwn.get._2) > 0) || (copacks._1 > 0L || copacks._2 > 0L)
+      isVoluntary = subscription.activity.voluntaryRegistration
+
+      variation <- if (shouldDereg) {
+                    if (returnPeriods.isEmpty || isVoluntary) {
+                      val deregHtml =
+                        uniform.confirmOrGoBackTo("suggest-deregistration", "amount-produced")(_: Messages)
+                      for {
+                        _              <- tell("suggest-deregistration", deregHtml)
+                        deregVariation <- deregisterUpdate(data)
+                        _              <- tell("check-answers", dereg_variations_cya(showChangeLinks = true, data)(_: Messages))
+                      } yield deregVariation
+                    } else {
+                      end(
+                        "file-return-before-deregistration",
+                        uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods)
+                      )
+                    }
+                  } else {
+                    val warehouseShow = producerType == ProducerType.Small && useCopacker && (copacks._1 + copacks._2 + imports._1 + imports._2) == 0
+                    for {
+                      usePPOBAddress <- (
+                                         ask[Boolean]("pack-at-business-address")
+                                           when packer && data.original.productionSites.isEmpty
+                                       ).map(_.getOrElse(false))
+                      pSites = if (usePPOBAddress) {
+                        List(Address.fromUkAddress(data.original.address))
+                      } else {
+                        data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address))
+                      }
+                      packSites <- askList[Address](
+                                    "production-site-details",
+                                    data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some,
+                                    Rule.nonEmpty[List[Address]]
+                                  )(
+                                    {
+                                      case (index: Option[Int], existingAddresses: List[Address]) =>
+                                        ask[Address]("p-site", default = index.map(existingAddresses))
+                                    }, {
+                                      case (index: Int, existingAddresses: List[Address]) =>
+                                        interact[Boolean](
+                                          "remove-production-site-details",
+                                          existingAddresses(index).nonEmptyLines)
+                                    }
+                                  ).map(_.map(Site.fromAddress)) emptyUnless packer
+
+                      warehouses <- askList[Warehouse](
+                                     "secondary-warehouse-details",
+                                     data.updatedWarehouseSites.toList
+                                       .map(x =>
+                                         Warehouse.fromSite(Site(x.address, x.ref, x.tradingName, x.closureDate)))
+                                       .some
+                                   )(
+                                     {
+                                       case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
+                                         ask[Warehouse]("w-house", default = index.map(existingWarehouses))
+                                     }, {
+                                       case (index: Int, existingWarehouses: List[Warehouse]) =>
+                                         interact[Boolean](
+                                           "remove-warehouse-details",
+                                           existingWarehouses(index).nonEmptyLines)
+                                     }
+                                   ).map(_.map(Site.fromWarehouse)).emptyUnless(!warehouseShow)
+                    } yield
+                      Change.RegChange(
+                        data.copy(
+                          producer =
+                            Producer(producerType != ProducerType.XNot, (producerType == ProducerType.Large).some),
+                          usesCopacker = useCopacker.some,
+                          packageOwn =
+                            if (packageOwn
+                                  .getOrElse(0) == 0) { Some(false) } else if ((packageOwn.get._1 + packageOwn.get._2) > 0) {
+                              Some(true)
+                            } else { Some(false) },
+                          packageOwnVol = longTupToLitreage(packageOwn),
+                          copackForOthers = if ((copacks._1 + copacks._2) == 0) { false } else { true },
+                          copackForOthersVol = longTupToLitreage(copacks),
+                          imports = if ((imports._1 + imports._2) == 0) { false } else { true },
+                          importsVol = longTupToLitreage(imports),
+                          updatedProductionSites = packSites,
+                          updatedWarehouseSites = warehouses
+                        ))
+                  }
+    } yield variation
+
+  def changeActorJourney(
+    id: String,
+    subscription: RetrievedSubscription,
+    sdilRef: String,
+    variableReturns: List[ReturnPeriod],
+    pendingReturns: List[ReturnPeriod],
+    sdilConnector: SoftDrinksIndustryLevyConnector,
+    checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
+    getReturn: ReturnPeriod => Future[Option[SdilReturn]],
+    submitReturnVariation: ReturnsVariation => Future[Unit],
+    appConfig: AppConfig,
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) = {
+    val base = RegistrationVariationData(subscription)
+    val isVoluntary = subscription.activity.voluntaryRegistration
+    for {
+      variation <- changeActor(base, subscription, pendingReturns)
+      //TODO - this page needs to be added but throw an error      _         <- tell("check-answers", CYA(variation))
+    } yield {
+      variation match {
+        case Change.RegChange(regChange) => Right(regChange)
+      }
+    }
+  }
+
   def activityUpdateJourney(
     data: RegistrationVariationData,
     subscription: RetrievedSubscription,
@@ -445,7 +568,7 @@ object VariationsJourney {
     checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
     getReturn: ReturnPeriod => Future[Option[SdilReturn]],
     submitReturnVariation: ReturnsVariation => Future[Unit],
-    appConfig: AppConfig
+    appConfig: AppConfig,
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) = {
     val base = RegistrationVariationData(subscription)
     val isVoluntary = subscription.activity.voluntaryRegistration

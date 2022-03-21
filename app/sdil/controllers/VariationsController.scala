@@ -62,6 +62,7 @@ class VariationsController @Inject()(
   override def defaultBackLink = "/soft-drinks-industry-levy"
 
   override def blockCollections[X[_] <: Traversable[_], A]: common.web.WebAsk[Html, X[A]] = ???
+
   override def blockCollections2[X[_] <: Traversable[_], A]: common.web.WebAsk[Html, X[A]] = ???
 
   implicit lazy val codecOptRet: common.web.Codec[Option[SdilReturn]] = {
@@ -74,6 +75,7 @@ class VariationsController @Inject()(
           )
           .leftMap(_ => ErrorTree.oneErr(ErrorMsg("not-a-date")))
       }(_.toString)
+
     common.web.InferCodec.gen[Option[SdilReturn]]
   }
 
@@ -108,16 +110,19 @@ class VariationsController @Inject()(
   def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     val x = sdilConnector.retrieveSubscription(sdilRef)
-
     x flatMap {
       case Some(subscription) =>
         val base = RegistrationVariationData(subscription)
+
         def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] =
           sdilConnector.returns_get(subscription.utr, period)
+
         def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
           sdilConnector.checkSmallProducerStatus(sdilRef, period)
+
         def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
           sdilConnector.returns_variation(rvd, sdilRef)
+
         def submitAdjustment(rvd: ReturnVariationData) =
           sdilConnector.returns_vary(sdilRef, rvd)
 
@@ -163,13 +168,17 @@ class VariationsController @Inject()(
   def closedWarehouseSites(variation: RegistrationVariationData): List[Site] = {
     val old = variation.original.warehouseSites
       .filter { x =>
-        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+        x.closureDate.fold(true) {
+          _.isAfter(LocalDate.now)
+        }
       }
       .map(x => x.address)
 
     val newList = variation.updatedWarehouseSites
       .filter { x =>
-        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+        x.closureDate.fold(true) {
+          _.isAfter(LocalDate.now)
+        }
       }
       .map(x => x.address)
 
@@ -227,9 +236,11 @@ class VariationsController @Inject()(
   def showVariationsComplete() = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     for {
-      regDB        <- regVariationsCache.get(sdilRef)
-      retDB        <- returnsVariationsCache.get(sdilRef)
-      subscription <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
+      regDB <- regVariationsCache.get(sdilRef)
+      retDB <- returnsVariationsCache.get(sdilRef)
+      subscription <- sdilConnector.retrieveSubscription(sdilRef).map {
+                       _.get
+                     }
       broughtForward <- if (config.balanceAllEnabled)
                          sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
                            extractTotal(listItemsWithTotal(x))
@@ -254,7 +265,9 @@ class VariationsController @Inject()(
           )
           val varySubheading = Html(
             Messages(
-              if (regVar.deregDate.nonEmpty) { "variationDone.your.request" } else {
+              if (regVar.deregDate.nonEmpty) {
+                "variationDone.your.request"
+              } else {
                 "returnVariationDone.your.updates"
               },
               subscription.orgName,
@@ -295,13 +308,77 @@ class VariationsController @Inject()(
     }
   }
 
-  def changeActorStatus(id: String): Action[AnyContent] = Action.async { implicit req =>
-    implicit val persistence: SessionPersistence[MessagesRequest[AnyContent]] = new SessionPersistence("test")
+//  def changeActorStatus(id: String): Action[AnyContent] = Action.async { implicit req =>
+//    implicit val persistence: SessionPersistence[MessagesRequest[AnyContent]] = new SessionPersistence("test")
+//    val simpleJourney = ask[LocalDate]("test")
+//    val wm = interpret(simpleJourney)
+//    wm.run(id, config = journeyConfig) { date =>
+//      Future.successful(Ok(date.toString))
+//    }
+//  }
+//}
+  def changeActorStatus(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    val x = sdilConnector.retrieveSubscription(sdilRef)
 
-    val simpleJourney = ask[LocalDate]("test")
-    val wm = interpret(simpleJourney)
-    wm.run(id, config = journeyConfig) { date =>
-      Future.successful(Ok(date.toString))
+    x flatMap {
+      case Some(subscription) =>
+        val base = RegistrationVariationData(subscription)
+
+        def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] =
+          sdilConnector.returns_get(subscription.utr, period)
+
+        def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
+          sdilConnector.checkSmallProducerStatus(sdilRef, period)
+
+        def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
+          sdilConnector.returns_variation(rvd, sdilRef)
+
+        def submitAdjustment(rvd: ReturnVariationData) =
+          sdilConnector.returns_vary(sdilRef, rvd)
+
+        for {
+          variableReturns <- sdilConnector.returns_variable(base.original.utr)
+          returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
+          response <- interpret(
+                       VariationsJourney.changeActorJourney(
+                         id,
+                         subscription,
+                         sdilRef,
+                         variableReturns,
+                         returnPeriods,
+                         sdilConnector,
+                         checkSmallProducerStatus,
+                         getReturn,
+                         submitReturnVariation,
+                         config
+                       ))
+                       .run(id, purgeStateUponCompletion = true, config = journeyConfig) {
+                         case Right(reg) =>
+                           println(".run executed successful")
+                           sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
+                             regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
+                               logger.info("variation of Registration is complete")
+                               Redirect(routes.VariationsController.showVariationsComplete())
+                             }
+                           }
+                       }
+        } yield response
+      case None => Future.successful(NotFound(""))
     }
   }
 }
+
+//  def changeActorStatusJourney(
+//    subscription: RetrievedSubscription,
+//    sdilRef: String
+//    )(implicit hc: HeaderCarrier): Unit ={
+//      val base = RegistrationVariationData(subscription)
+//
+//        for {
+//        producerType <- ask[ProducerType]("amount-produced")
+//        useCopacker  <- if (producerType == ProducerType.Small) ask[Boolean]("third-party-packagers") else pure(false)
+//        copacks      <- askEmptyOption[(Long, Long)]("contract-packing")
+//        imports      <- askEmptyOption[(Long, Long)]("imports")
+//        } yield
+//
