@@ -19,19 +19,19 @@
 @(largeProducer: Boolean, contractPacker: Boolean, importer: Boolean)(implicit messages: Messages)
 
 @details("start-date.help.header.1") {
-    <p>messages("start-date.help.p1")</p>
+    <p>@messages("start-date.help.p1")</p>
     <ul class="list list-bullet">
     @if(largeProducer) {
-        <li>messages("start-date.help.large-producer.li1")</li>
-        <li>messages("start-date.help.large-producer.li2")</li>
+        <li>@messages("start-date.help.large-producer.li1")</li>
+        <li>@messages("start-date.help.large-producer.li2")</li>
     }
     @if(contractPacker) {
-        <li>messages("start-date.help.importer.li1")</li>
-        <li>messages("start-date.help.importer.li2")</li>
+        <li>@messages("start-date.help.importer.li1")</li>
+        <li>@messages("start-date.help.importer.li2")</li>
     }
     @if(importer) {
-        <li>messages("start-date.help.copacker.li1")</li>
-        <li>messages("start-date.help.copacker.li2")</li>
+        <li>@messages("start-date.help.copacker.li1")</li>
+        <li>@messages("start-date.help.copacker.li2")</li>
     }
     </ul>
 }

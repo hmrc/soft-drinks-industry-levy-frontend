@@ -22,7 +22,7 @@
 @for((h) <- messages.list(keyDots+".repayment.warning")){
   <div class="notice" id="single-warning">
     <i class="icon icon-important warning-icon-style">
-      <span class="visually-hidden">messages("generic.warning")</span>
+      <span class="visually-hidden">@messages("generic.warning")</span>
     </i>
     <strong class="bold-small warning-text-style" id="warning">
       @h
@@ -36,7 +36,7 @@
   </label>
     @errors.valueAtRootList.map { error =>
         <span id="@keyDash-error" class="error-message">
-            <span class="visually-hidden">messages("error"):</span> @error.prefixWith(fieldKey).render(messages)
+            <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(fieldKey).render(messages)
         </span>
     }
   @contents

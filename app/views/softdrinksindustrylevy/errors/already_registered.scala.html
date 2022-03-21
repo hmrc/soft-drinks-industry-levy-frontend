@@ -23,14 +23,14 @@
 @(utr: String, organisation: String, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(Messages("sdil.already-enrolled.heading")) {
-    <h1 class="heading-large" id="registration-status">messages("sdil.already-enrolled.heading")</h1>
+    <h1 class="heading-large" id="registration-status">@messages("sdil.already-enrolled.heading")</h1>
 
     @businessDetails(utr, organisation, address)
 
     <br/>
 
-    <p>messages("sdil.already-enrolled.p1")</p>
-    <p>messages("sdil.already-enrolled.p2")
+    <p>@messages("sdil.already-enrolled.p1")</p>
+    <p>@messages("sdil.already-enrolled.p2")
         <a href="@sdil.controllers.routes.ServicePageController.show">
         @messages("sdil.already-enrolled.p3")
         </a>

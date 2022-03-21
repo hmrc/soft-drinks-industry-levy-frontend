@@ -30,7 +30,7 @@
         <tr>
             <td>
                 @if(row.alias.nonEmpty) {
-                    <p class="heading-small">messages("small-producer-details.name", row.alias)</p>
+                    <p class="heading-small">@messages("small-producer-details.name", row.alias)</p>
                 }
                 <p class="service-header heading-small">@messages("small-producer-details.refNumber", row.sdilRef)</p>
                 <p class="small-prod-litres">@messages("small-producer-details.lowBand", row.litreage._1)</p>

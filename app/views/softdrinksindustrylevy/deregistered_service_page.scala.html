@@ -32,11 +32,11 @@
 @main_template(Messages("sdil.service-page.title"), noArticle = true) {
     <div class="grid-row">
         <div class="column-two-thirds">
-            <h1 class="heading-large">messages("sdil.service-page.title")</h1>
+            <h1 class="heading-large">@messages("sdil.service-page.title")</h1>
             @subscription.deregDate.map { deregDate =>
                 @if(pendingDereg.isEmpty) {
                     <div class="alert alert--info margin-bottom-30">
-                        <h2 class="heading-medium no-margin">messages("sdil.service-page.deregistered.pending.title")</h2>
+                        <h2 class="heading-medium no-margin">@messages("sdil.service-page.deregistered.pending.title")</h2>
                         <p>
                         @messages("sdil.service-page.deregistered.pending.p1",
                             ReturnPeriod(deregDate).start.format("MMMM yyyy"),
@@ -44,11 +44,11 @@
                             ReturnPeriod(deregDate).next.start.format("d MMMM"),
                             ReturnPeriod(deregDate).deadline.format("d MMMM yyyy"))
                         </p>
-                        <p>messages("sdil.service-page.deregistered.pending.p2")</p>
-                        <p>messages("sdil.service-page.deregistered.pending.p3")</p>
+                        <p>@messages("sdil.service-page.deregistered.pending.p2")</p>
+                        <p>@messages("sdil.service-page.deregistered.pending.p3")</p>
                     </div>
                         @if(LocalDate.now.isAfter(ReturnPeriod(LocalDate.of(2018,1,1)).end)) {
-                            <h2 class="heading-medium no-margin">messages("returnsHome.dereg.final-return-title")</h2>
+                            <h2 class="heading-medium no-margin">@messages("returnsHome.dereg.final-return-title")</h2>
                             <p>
                                 @messages(
                                     "returnsHome.dereg.final-return-p1",
@@ -58,18 +58,18 @@
                             </p>
                             <div>
                             @details("returnsHome.help.title") {
-                                <p>messages("returnsHome.help.p1")</p>
+                                <p>@messages("returnsHome.help.p1")</p>
                                 <ul class="list list-bullet">
-                                    <li>messages("returnsHome.help.li1")</li>
-                                    <li>messages("returnsHome.help.li2")</li>
-                                    <li>messages("returnsHome.help.li3")</li>
-                                    <li>messages("returnsHome.help.li4")</li>
+                                    <li>@messages("returnsHome.help.li1")</li>
+                                    <li>@messages("returnsHome.help.li2")</li>
+                                    <li>@messages("returnsHome.help.li3")</li>
+                                    <li>@messages("returnsHome.help.li4")</li>
                                 </ul>
-                                <p>messages("returnsHome.help.p2")</p>
-                                <p>messages("returnsHome.help.p3")</p>
+                                <p>@messages("returnsHome.help.p2")</p>
+                                <p>@messages("returnsHome.help.p3")</p>
                                 <ul class="list list-bullet">
-                                    <li>messages("returnsHome.help.li5")</li>
-                                    <li>messages("returnsHome.help.li6")</li>
+                                    <li>@messages("returnsHome.help.li5")</li>
+                                    <li>@messages("returnsHome.help.li6")</li>
                                 </ul>
                                 <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
                             }
@@ -96,8 +96,8 @@
                         }
                 } else {
                     <div class="alert alert--info margin-bottom-30">
-                        <h2 class="heading-medium no-margin">messages("returnsHome.dereg.title")</h2>
-                        <p>messages("returnsHome.dereg.p1", deregDate.format("dd MMMM yyyy"), deregDate.plusYears(7).format("dd MMMM yyyy"))</p>
+                        <h2 class="heading-medium no-margin">@messages("returnsHome.dereg.title")</h2>
+                        <p>@messages("returnsHome.dereg.p1", deregDate.format("dd MMMM yyyy"), deregDate.plusYears(7).format("dd MMMM yyyy"))</p>
                     </div>
 
 
@@ -135,8 +135,8 @@
                     </div>
                 }
                 <hr class="govuk-section-break--visible">
-                <h2 class="heading-medium">messages("returnsHome.rereg.title")</h2>
-                <p>messages("returnsHome.rereg.p1")</p>
+                <h2 class="heading-medium">@messages("returnsHome.rereg.title")</h2>
+                <p>@messages("returnsHome.rereg.p1")</p>
                 <div>
                     <a href='@sdil.controllers.routes.IdentifyController.start' class="button">
                     @messages("returnsHome.rereg.button")
@@ -147,7 +147,7 @@
             <hr class="govuk-section-break--visible">
 
             <div>
-                <h2 class="heading-medium">messages("account.balance")</h2>
+                <h2 class="heading-medium">@messages("account.balance")</h2>
                 <p>
                 @if(subscription.deregDate.nonEmpty && pendingDereg.nonEmpty && balance > 0) {
                     @Html(Messages("account.balance.amount.dereg-in-credit", balance.pounds))
@@ -160,7 +160,7 @@
                     }
                 }
                 </p>
-                <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">messages("view.balance.history")</a>
+                <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@messages("view.balance.history")</a>
             </div>
 
             <hr class="govuk-section-break--visible">
@@ -181,7 +181,7 @@
                 </div>
             }
             @if(variableReturns.nonEmpty) {
-                <h2 class="heading-medium">messages("sdil.service-page.variations.title")</h2>
+                <h2 class="heading-medium">@messages("sdil.service-page.variations.title")</h2>
 
                 <div class="grid-row">
                     <div class="column-one-half">
@@ -191,7 +191,7 @@
                             </a>
                         </h3>
                         <div>
-                            <p>messages("sdil.service-page.variations.vary-returns-dereg")</p>
+                            <p>@messages("sdil.service-page.variations.vary-returns-dereg")</p>
                         </div>
                     </div>
                 </div>
@@ -202,7 +202,7 @@
 
     <div class="column-one-third option-box-padding">
         <div class="section--blue-top">
-            <h2 class="heading-small">messages("sdil.service-page.support.title2")</h2>
+            <h2 class="heading-small">@messages("sdil.service-page.support.title2")</h2>
 
             <p><a href='@messages("sdil.service-page.support.link1")'
             onclick="ga('send', 'event', 'moreLinks', 'click', 'guidance')">
@@ -215,8 +215,8 @@
                 @messages("sdil.service-page.support.p4")
             </a></p>
 
-            <span>messages("sdil.service-page.support.p5")</span>
-            <span>messages("sdil.service-page.support.p6")</span>
+            <span>@messages("sdil.service-page.support.p5")</span>
+            <span>@messages("sdil.service-page.support.p6")</span>
         </div>
     </div>
 }

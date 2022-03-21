@@ -21,13 +21,13 @@
 @optHasExistingDD.map{ hasExistingDD =>
 <div>
     @if(hasExistingDD){
-        <h3>messages("direct-debit.manage.section.existing.header")</h3>
+        <h3>@messages("direct-debit.manage.section.existing.header")</h3>
 
-        <p>messages("direct-debit.manage.section.existing.p1")</p>
+        <p>@messages("direct-debit.manage.section.existing.p1")</p>
 
-        <p><a href="@startDdJourneyLink">messages("direct-debit.manage.section.existing.l1")</a></p>
+        <p><a href="@startDdJourneyLink">@messages("direct-debit.manage.section.existing.l1")</a></p>
     }else{
-        <h3>messages("direct-debit.manage.section.setup.header")</h3>
+        <h3>@messages("direct-debit.manage.section.setup.header")</h3>
 
         <p>@Html(Messages("direct-debit.manage.section.setup.p1", startDdJourneyLink.url))</p>
     }

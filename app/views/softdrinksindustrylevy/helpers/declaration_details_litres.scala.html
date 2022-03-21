@@ -19,8 +19,8 @@
 @(questionKey: String, changeRoute: Call, rowData: Litreage)(implicit messages: Messages)
 
 <tr>
-    <td rowspan="2">messages(s"sdil.registerDeclaration.$questionKey")</td>
-    <td>messages("sdil.declaration.low-band")</td>
+    <td rowspan="2">@messages(s"sdil.registerDeclaration.$questionKey")</td>
+    <td>@messages("sdil.declaration.low-band")</td>
     <td>@formatLitres(rowData.atLowRate)</td>
     <td class="change-answer">
         <a href="@changeRoute" onclick="ga('send', 'event', 'registerDeclaration', 'clickChange', '@changeRoute')">
@@ -31,7 +31,7 @@
 </tr>
 
 <tr>
-    <td>messages("sdil.declaration.high-band")</td>
+    <td>@messages("sdil.declaration.high-band")</td>
     <td>@formatLitres(rowData.atHighRate)</td>
     <td class="change-answer">
         <a href="@changeRoute" onclick="ga('send', 'event', 'registerDeclaration', 'clickChange', '@changeRoute')">
