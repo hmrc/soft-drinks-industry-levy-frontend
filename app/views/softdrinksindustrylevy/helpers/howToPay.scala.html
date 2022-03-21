@@ -17,14 +17,14 @@
 @(sdilRef: String)(implicit messages: Messages)
 
 @details(s"how-to-pay.title") {
-  <p>messages("how-to-pay.pay-by")</p>
+  <p>@messages("how-to-pay.pay-by")</p>
 
   <ul class="list list-bullet">
-      <li>messages("how-to-pay.sort-code")</li>
-      <li>messages("how-to-pay.acct-no")</li>
-      <li>messages("how-to-pay.acct-name")</li>
-      <li>messages("how-to-pay.payment-ref", sdilRef)</li>
+      <li>@messages("how-to-pay.sort-code")</li>
+      <li>@messages("how-to-pay.acct-no")</li>
+      <li>@messages("how-to-pay.acct-name")</li>
+      <li>@messages("how-to-pay.payment-ref", sdilRef)</li>
   </ul>
 
-  <p>messages("how-to-pay.delay")</p>
+  <p>@messages("how-to-pay.delay")</p>
 }

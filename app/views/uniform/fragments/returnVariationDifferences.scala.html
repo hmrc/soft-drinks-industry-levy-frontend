@@ -82,7 +82,7 @@
             <td class="numeric">@cost(change._1, change._2._1._1 * BigDecimal(0.18))</td>
         </tr>
         <tr>
-            <td>messages(s"$key.band.label.high")</td>
+            <td>@messages(s"$key.band.label.high")</td>
             <td class="numeric">@{f"${change._2._1._2}%,d"}</td>
             <td class="numeric">@cost(change._1, change._2._1._2 * BigDecimal(0.24))</td>
         </tr>

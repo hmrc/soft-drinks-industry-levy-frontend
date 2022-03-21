@@ -19,12 +19,12 @@
 
 @(key: String, form: Form[LocalDate])(implicit messages: Messages)
 <div class="form-group @if(form.hasErrors) {form-group-error}">
-    <span class="form-hint">messages("sdil.start-date.example")</span>
+    <span class="form-hint">@messages("sdil.start-date.example")</span>
     <div class="form-date">
-        @form.errors.map { err => <span class="error-message">messages(err.message)</span> }
+        @form.errors.map { err => <span class="error-message">@messages(err.message)</span> }
         @for(field <- List("day", "month", "year")) {
           <div class="form-group form-group-@{field}">
-            <label class="form-label" for="@{key}.@{field}">messages(field)</label>
+            <label class="form-label" for="@{key}.@{field}">@messages(field)</label>
             <input class="form-control @if(form(s"$key.$field").hasErrors) {form-control-error}"
                    id="@{key}.@{field}"
                    name="@{key}.@{field}"
