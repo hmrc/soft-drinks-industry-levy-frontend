@@ -384,12 +384,8 @@ object VariationsJourney {
     val isVoluntary = subscription.activity.voluntaryRegistration
     for {
       variation <- changeActor(base, subscription, pendingReturns)
-      //TODO - this page needs to be added but throw an error      _         <- tell("check-answers", CYA(variation))
-    } yield {
-      variation match {
-        case Change.RegChange(regChange) => Right(regChange)
-      }
-    }
+      _         <- tell("check-answers", CYA(variation))
+    } yield variation.data
   }
 
   def activityUpdateJourney(
