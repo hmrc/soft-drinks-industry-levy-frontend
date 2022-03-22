@@ -19,6 +19,7 @@ package sdil.journeys
 import cats.implicits._
 import enumeratum.{Enum, EnumEntry}
 import ltbs.uniform._
+import ltbs.uniform.common.web.WebTell
 import ltbs.uniform.validation.{Rule, _}
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -28,7 +29,7 @@ import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.{Subset, askEmptyOption, longTupToLitreage}
 import sdil.models.backend.{Site, UkAddress}
 import sdil.models.retrieved.RetrievedSubscription
-import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData}
+import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData, VariationData}
 import sdil.models.{Address, CYA, ContactDetails, Producer, ReturnPeriod, ReturnsVariation, SdilReturn, Warehouse, extractTotal, listItemsWithTotal}
 import sdil.uniform.SdilComponents.ProducerType
 import uk.gov.hmrc.http.HeaderCarrier
@@ -56,7 +57,9 @@ object VariationsJourney {
     case object Returns extends ChangeTypeWithReturns
   }
 
-  sealed trait Change
+  sealed trait Change {
+    val data: VariationData
+  }
   object Change {
     case class RegChange(data: RegistrationVariationData) extends Change
     case class Returns(data: ReturnVariationData) extends Change
@@ -286,6 +289,106 @@ object VariationsJourney {
       )
   }
 
+  def changeActor(
+    data: RegistrationVariationData,
+    subscription: RetrievedSubscription,
+    returnPeriods: List[ReturnPeriod]
+  )(implicit ec: ExecutionContext, ufMessages: UniformMessages[Html]) =
+    for {
+      producerType <- ask[ProducerType]("amount-produced")
+      useCopacker  <- if (producerType == ProducerType.Small) ask[Boolean]("third-party-packagers") else pure(false)
+      packageOwn   <- askEmptyOption[(Long, Long)]("packaging-site") when producerType != ProducerType.XNot
+      copacks      <- askEmptyOption[(Long, Long)]("contract-packing")
+      imports      <- askEmptyOption[(Long, Long)]("imports")
+      noUkActivity = (copacks._1 + copacks._2 + imports._1 + imports._2) == 0
+      smallProducerWithNoCopacker = producerType != ProducerType.Large && !useCopacker
+      shouldDereg = noUkActivity && smallProducerWithNoCopacker
+      packer = (producerType == ProducerType.Large && (packageOwn.get._1 + packageOwn.get._2) > 0) || (copacks._1 > 0L || copacks._2 > 0L)
+      isVoluntary = subscription.activity.voluntaryRegistration
+
+      variation <- if (shouldDereg) {
+                    if (returnPeriods.isEmpty || isVoluntary) {
+                      val deregHtml =
+                        uniform.confirmOrGoBackTo("suggest-deregistration", "amount-produced")(_: Messages)
+                      for {
+                        _              <- tell("suggest-deregistration", deregHtml)
+                        deregVariation <- deregisterUpdate(data)
+                        _              <- tell("check-answers", dereg_variations_cya(showChangeLinks = true, data)(_: Messages))
+                      } yield deregVariation: Change
+                    } else {
+                      end(
+                        "file-return-before-deregistration",
+                        uniform.fragments.return_before_dereg("file-return-before-deregistration", returnPeriods)
+                      )
+                    }
+                  } else {
+                    val warehouseShow = producerType == ProducerType.Small && useCopacker && (copacks._1 + copacks._2 + imports._1 + imports._2) == 0
+                    for {
+                      usePPOBAddress <- (
+                                         ask[Boolean]("pack-at-business-address")
+                                           when packer && data.original.productionSites.isEmpty
+                                       ).map(_.getOrElse(false))
+                      pSites = if (usePPOBAddress) {
+                        List(Address.fromUkAddress(data.original.address))
+                      } else {
+                        data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address))
+                      }
+                      packSites <- askList[Address](
+                                    "production-site-details",
+                                    data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some,
+                                    Rule.nonEmpty[List[Address]]
+                                  )(
+                                    {
+                                      case (index: Option[Int], existingAddresses: List[Address]) =>
+                                        ask[Address]("p-site", default = index.map(existingAddresses))
+                                    }, {
+                                      case (index: Int, existingAddresses: List[Address]) =>
+                                        interact[Boolean](
+                                          "remove-production-site-details",
+                                          existingAddresses(index).nonEmptyLines)
+                                    }
+                                  ).map(_.map(Site.fromAddress)) emptyUnless packer
+
+                      warehouses <- askList[Warehouse](
+                                     "secondary-warehouse-details",
+                                     data.updatedWarehouseSites.toList
+                                       .map(x =>
+                                         Warehouse.fromSite(Site(x.address, x.ref, x.tradingName, x.closureDate)))
+                                       .some
+                                   )(
+                                     {
+                                       case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
+                                         ask[Warehouse]("w-house", default = index.map(existingWarehouses))
+                                     }, {
+                                       case (index: Int, existingWarehouses: List[Warehouse]) =>
+                                         interact[Boolean](
+                                           "remove-warehouse-details",
+                                           existingWarehouses(index).nonEmptyLines)
+                                     }
+                                   ).map(_.map(Site.fromWarehouse)).emptyUnless(!warehouseShow)
+                    } yield
+                      Change.RegChange(
+                        data.copy(
+                          producer =
+                            Producer(producerType != ProducerType.XNot, (producerType == ProducerType.Large).some),
+                          usesCopacker = useCopacker.some,
+                          packageOwn =
+                            if (packageOwn
+                                  .getOrElse(0) == 0) { Some(false) } else if ((packageOwn.get._1 + packageOwn.get._2) > 0) {
+                              Some(true)
+                            } else { Some(false) },
+                          packageOwnVol = longTupToLitreage(packageOwn),
+                          copackForOthers = if ((copacks._1 + copacks._2) == 0) { false } else { true },
+                          copackForOthersVol = longTupToLitreage(copacks),
+                          imports = if ((imports._1 + imports._2) == 0) { false } else { true },
+                          importsVol = longTupToLitreage(imports),
+                          updatedProductionSites = packSites,
+                          updatedWarehouseSites = warehouses
+                        ))
+                  }
+    } yield variation: Change
+
+
   def changeActorJourney(
     id: String,
     subscription: RetrievedSubscription,
@@ -301,8 +404,8 @@ object VariationsJourney {
     val base = RegistrationVariationData(subscription)
     val isVoluntary = subscription.activity.voluntaryRegistration
     for {
-      variation <- activityUpdateJourney(base, subscription, pendingReturns)
-      //   _         <- tell("check-answers", CYA(variation))
+      variation <- changeActor(base, subscription, pendingReturns)
+      _         <- tell("check-answers", CYA(variation))
     } yield variation.data
   }
 
