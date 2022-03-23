@@ -16,27 +16,24 @@
 
 package sdil.utils
 
-import java.io.File
-import java.time.LocalDate
 import com.softwaremill.macwire.wire
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
-import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory, PlaySpec}
+import play.api.ApplicationLoader.Context
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.DefaultApplicationLifecycle
 import play.api.mvc._
 import play.api.test.Helpers
-import play.api.{Application, ApplicationLoader, Configuration, Environment}
-import play.core.DefaultWebCommands
+import play.api.{Application, Configuration, Environment}
 import play.twirl.api.Html
 import sdil.actions.{AuthorisedAction, FormAction, RegisteredAction}
-import sdil.config.{RegistrationFormDataCache, RegistrationVariationFormDataCache, ReturnVariationFormDataCache, ReturnsFormDataCache, SDILApplicationLoader}
+import sdil.config._
 import sdil.connectors.{DirectDebitBackendConnector, GaConnector, PayApiConnector, SoftDrinksIndustryLevyConnector}
 import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import sdil.models.{RegistrationFormData, ReturnPeriod, ReturnsFormData, ReturnsVariation, SdilReturn}
+import sdil.models.{ReturnPeriod, ReturnsFormData, ReturnsVariation, SdilReturn}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -45,23 +42,22 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.config._
 import uk.gov.hmrc.play.views.html.helpers._
 import uk.gov.hmrc.play.views.html.layouts._
-import views.{ViewHelpers, Views}
-import views.html.{error_template, govuk_wrapper, main_template, time_out}
+import views.Views
 import views.html.softdrinksindustrylevy.errors.{already_registered, invalid_affinity, invalid_role, registration_pending}
 import views.html.softdrinksindustrylevy.{balance_history, deregistered_service_page, service_page}
+import views.html.{error_template, time_out}
 import views.softdrinksindustrylevy.errors.Errors
 import views.uniform.Uniform
 
+import java.io.File
+import java.time.LocalDate
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
 
 trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicationFactory with MockitoSugar {
   override def fakeApplication: Application = {
-    val context = ApplicationLoader.Context(
+    val context = Context.create(
       environment = env,
-      sourceMapper = None,
-      webCommands = new DefaultWebCommands,
-      initialConfiguration = configuration,
       lifecycle = new DefaultApplicationLifecycle()
     )
     val loader = new SDILApplicationLoader
