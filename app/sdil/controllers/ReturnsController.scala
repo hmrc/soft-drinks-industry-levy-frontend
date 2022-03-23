@@ -261,7 +261,7 @@ class ReturnsController @Inject()(
           } else {
             //TODO Change the fragments
             val whatHappensNext = views.html.uniform.fragments
-              .returnsPaymentsBlurbNoClaim(
+              .returnsPaymentBlurNoClaim(
                 subscription = subscription,
                 paymentDate = period,
                 sdilRef = sdilRef,
