@@ -55,6 +55,7 @@
     <tbody>
     @for((lineKey, litres, multiplier) <- lineItems) {
     <tr>
+        @if(lineKey == "claim-credits-for-exports" || lineKey == "claim-credits-for-lost-damaged") {} else{
         <td rowspan="2">@Messages(s"$key.$lineKey")</td>
         <td>@Messages(s"$key.low")</td>
         <td class="numeric">@{f"${litres._1}%,d"}</td>
@@ -76,6 +77,7 @@
         </td>
     </tr>
     }
+    }
     @if(originalReturn.isEmpty) {
     <tr>
         <th scope="row" colspan="3"><span class="heading-small">@Messages(s"$key.subtotal")</span></th>
@@ -86,6 +88,7 @@
         <td class="numeric"><span class="heading-small no-minus-wrapping numeric">@format_money(-broughtForward, "+")</span></td>
     </tr>
     }
+
     @if(originalReturn.nonEmpty) {
     @originalReturn.map { r =>
 

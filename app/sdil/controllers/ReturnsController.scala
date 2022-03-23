@@ -259,7 +259,6 @@ class ReturnsController @Inject()(
               )(implicitly, implicitly, config)
             )
           } else {
-            //TODO Change the fragments
             val whatHappensNext = views.html.uniform.fragments
               .returnsPaymentBlurNoClaim(
                 subscription = subscription,

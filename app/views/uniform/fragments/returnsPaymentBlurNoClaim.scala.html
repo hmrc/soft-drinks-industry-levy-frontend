@@ -74,6 +74,7 @@
     <tbody>
     @for((lineKey, litres, multiplier) <- lineItems) {
     <tr>
+        @if(lineKey == "claim-credits-for-exports" || lineKey == "claim-credits-for-lost-damaged") {} else{
         <td rowspan="2">@messages(s"check-your-answers.$lineKey")</td>
         <td>@messages(s"check-your-answers.low")</td>
         <td class="numeric">@{f"${litres._1}%,d"}</td>
@@ -84,6 +85,7 @@
         <td class="numeric">@{f"${litres._2}%,d"}</td>
         <td class="no-minus-wrapping numeric">@format_money(costHigher * litres._2 * multiplier)</td>
     </tr>
+    }
     }
     <tr>
         <th scope="row" colspan="3"><span class="heading-small">@messages("check-your-answers.subtotal")</span></th>
