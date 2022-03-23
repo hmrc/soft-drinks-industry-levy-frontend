@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,15 @@
 @(form: Form[_], fieldName: String, labelPrefix: String, showHint: Boolean = true, showTradingName: Boolean = true)(implicit messages: Messages)
 
 <div id="@fieldName-fields">
-    <h2 class="heading-small">@Messages(s"$labelPrefix.heading")</h2>
+    <h2 class="heading-small">@messages(s"$labelPrefix.heading")</h2>
 
     @if(showHint) {
-        <span class="form-hint">@Messages(s"$labelPrefix.hint")</span>
+        <span class="form-hint">@messages(s"$labelPrefix.hint")</span>
     }
 
     <fieldset>
 
-        <legend class="visuallyhidden">@Messages(s"$labelPrefix.legend")</legend>
+        <legend class="visuallyhidden">@messages(s"$labelPrefix.legend")</legend>
 
         @if(showTradingName) {
             @inputText(

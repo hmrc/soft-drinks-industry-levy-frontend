@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,14 @@
 
 package sdil
 
+import java.time.format.DateTimeFormatter
+import scala.language.implicitConversions
+
 object utility {
   implicit class MoneyFormat(in: BigDecimal) {
     def pounds: String = f"£$in%,.2f".replace("£-", "-£")
   }
+
+  implicit def stringToFormatter(in: String): DateTimeFormatter =
+    DateTimeFormatter.ofPattern(in)
 }

@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
 
 @if(showBackLink.show) {
  @breadcrumbs.headOption.fold {
-  <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@Messages("sdil.common.back")</a>
+  <a class="link-back" href="@sdil.controllers.routes.ServicePageController.show">@messages("sdil.common.back")</a>
  } { x =>
-  <a class="link-back" href="./@x">@Messages("sdil.common.back")</a>
+  <a class="link-back" href="./@x">@messages("sdil.common.back")</a>
  }
 }

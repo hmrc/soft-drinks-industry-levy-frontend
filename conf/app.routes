@@ -1,54 +1,58 @@
 # microservice specific routes
-GET         /assets/*file                                      controllers.Assets.at(path="/public", file)
+GET      /assets/*file                                                             controllers.Assets.at(path="/public", file)
 
-GET         /                                                  sdil.controllers.ServicePageController.show
-GET         /home                                              sdil.controllers.ServicePageController.show
-GET         /transaction-history                               sdil.controllers.ServicePageController.balanceHistory
+GET      /                                                                         sdil.controllers.ServicePageController.show
+GET      /home                                                                     sdil.controllers.ServicePageController.show
+GET      /transaction-history                                                      sdil.controllers.ServicePageController.balanceHistory
 
-GET         /register/start                                    sdil.controllers.IdentifyController.start
-GET         /register/identify                                 sdil.controllers.IdentifyController.show()
-POST        /register/identify                                 sdil.controllers.IdentifyController.submit()
+GET      /register/start                                                           sdil.controllers.IdentifyController.start
+GET      /register/identify                                                        sdil.controllers.IdentifyController.show()
+POST     /register/identify                                                        sdil.controllers.IdentifyController.submit()
 
-GET         /register/verify                                   sdil.controllers.VerifyController.show()
-POST        /register/verify                                   sdil.controllers.VerifyController.submit()
+GET      /register/verify                                                          sdil.controllers.VerifyController.show()
+POST     /register/verify                                                          sdil.controllers.VerifyController.submit()
 
-GET         /sign-in                                           sdil.controllers.AuthenticationController.signIn()
-GET         /time-in                                           sdil.controllers.AuthenticationController.timeIn(referrer)
-GET         /sign-out                                          sdil.controllers.AuthenticationController.signOut()
-GET         /sign-out-returns                                  sdil.controllers.AuthenticationController.signOutReturns()
-GET         /sign-out-no-feedback                              sdil.controllers.AuthenticationController.signOutNoFeedback()
+GET      /sign-in                                                                  sdil.controllers.AuthenticationController.signIn()
+GET      /time-in                                                                  sdil.controllers.AuthenticationController.timeIn(referrer)
+GET      /sign-out                                                                 sdil.controllers.AuthenticationController.signOut()
+GET      /sign-out-returns                                                         sdil.controllers.AuthenticationController.signOutReturns()
+GET      /sign-out-no-feedback                                                     sdil.controllers.AuthenticationController.signOutNoFeedback()
 
-GET         /time-out                                          sdil.controllers.AuthenticationController.timeOut()
+GET      /time-out                                                                 sdil.controllers.AuthenticationController.timeOut()
 
-GET         /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/        sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
-GET         /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
-POST        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/        sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
-POST        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/:id     sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
+GET      /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
+GET      /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/*id      sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
+POST     /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
+POST     /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/*id      sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
+GET      /submit-return/year/:year/quarter/:quarter/return-sent                    sdil.controllers.ReturnsController.showReturnComplete(year: Int, quarter: Int)
 
-GET         /ufvariations/                                     sdil.controllers.VariationsController.index(id = "")
-GET         /ufvariations/:id                                  sdil.controllers.VariationsController.index(id: String)
-POST        /ufvariations/                                     sdil.controllers.VariationsController.index(id = "")
-POST        /ufvariations/:id                                  sdil.controllers.VariationsController.index(id: String)
+GET      /ufvariations/variationDone                                               sdil.controllers.VariationsController.showVariationsComplete()
 
-GET         /ufadjustment/year/:year/quarter/:quarter/         sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id = "")
-GET         /ufadjustment/year/:year/quarter/:quarter/:id      sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id: String)
-POST        /ufadjustment/year/:year/quarter/:quarter/         sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id = "")
-POST        /ufadjustment/year/:year/quarter/:quarter/:id      sdil.controllers.VariationsController.adjustment(year: Int, quarter: Int, id: String)
+GET      /ufvariations/                                                            sdil.controllers.VariationsController.index(id = "")
+GET      /ufvariations/*id                                                         sdil.controllers.VariationsController.index(id: String)
+POST     /ufvariations/                                                            sdil.controllers.VariationsController.index(id = "")
+POST     /ufvariations/*id                                                         sdil.controllers.VariationsController.index(id: String)
 
-GET         /variations/                                       sdil.controllers.VariationsController.changeBusinessAddress(id = "")
-GET         /variations/:id                                    sdil.controllers.VariationsController.changeBusinessAddress(id: String)
-POST        /variations/                                       sdil.controllers.VariationsController.changeBusinessAddress(id = "")
-POST        /variations/:id                                    sdil.controllers.VariationsController.changeBusinessAddress(id: String)
+GET      /variations/                                                              sdil.controllers.VariationsController.changeAddressAndContact(id = "")
+GET      /variations/*id                                                           sdil.controllers.VariationsController.changeAddressAndContact(id: String)
+POST     /variations/                                                              sdil.controllers.VariationsController.changeAddressAndContact(id = "")
+POST     /variations/*id                                                           sdil.controllers.VariationsController.changeAddressAndContact(id: String)
 
-GET         /change-registered-account-status/                sdil.controllers.VariationsController.changeActorStatus(id = "")
-GET         /change-registered-account-status/:id             sdil.controllers.VariationsController.changeActorStatus(id: String)
-POST        /change-registered-account-status/                sdil.controllers.VariationsController.changeActorStatus(id = "")
-POST        /change-registered-account-status/:id             sdil.controllers.VariationsController.changeActorStatus(id: String)
+GET      /change-actor-status/                                                     sdil.controllers.VariationsController.changeActorStatus(id = "")
+GET      /change-actor-status/*id                                                  sdil.controllers.VariationsController.changeActorStatus(id: String)
+POST     /change-actor-status/                                                     sdil.controllers.VariationsController.changeActorStatus(id = "")
+POST     /change-actor-status/*id                                                  sdil.controllers.VariationsController.changeActorStatus(id: String)
 
-GET         /uregistrations/                                   sdil.controllers.RegistrationController.index(id = "")
-GET         /uregistrations/:id                                sdil.controllers.RegistrationController.index(id: String)
-POST        /uregistrations/                                   sdil.controllers.RegistrationController.index(id = "")
-POST        /uregistrations/:id                                sdil.controllers.RegistrationController.index(id: String)
+GET      /uregistrations/                                                          sdil.controllers.RegistrationController.index(id = "")
+GET      /uregistrations/*id                                                       sdil.controllers.RegistrationController.index(id: String)
+POST     /uregistrations/                                                          sdil.controllers.RegistrationController.index(id = "")
+POST     /uregistrations/*id                                                       sdil.controllers.RegistrationController.index(id: String)
 
-GET         /pay-now                                           sdil.controllers.PaymentController.payNow()
-GET         /start-direct-debit-journey                        sdil.controllers.DirectDebitController.startDirectDebitJourney()
+GET      /pay-now                                                                  sdil.controllers.PaymentController.payNow()
+GET      /start-direct-debit-journey                                               sdil.controllers.DirectDebitController.startDirectDebitJourney()
+
+# For testing widgets - Delete when done
+GET      /widgets/                                                                 sdil.controllers.WidgetTestController.index(id = "")
+GET      /widgets/*id                                                              sdil.controllers.WidgetTestController.index(id: String)
+POST     /widgets/                                                                 sdil.controllers.WidgetTestController.index(id = "")
+POST     /widgets/*id                                                              sdil.controllers.WidgetTestController.index(id: String)

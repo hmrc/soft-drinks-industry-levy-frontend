@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,29 @@
 
 package sdil.config
 
-import play.api.libs.json.JsResultException
 import play.api.Configuration
+import play.api.libs.json.JsResultException
 import sdil.models.RegistrationFormData
 import uk.gov.hmrc.crypto.CompositeSymmetricCrypto
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.cache.client.{CacheMap, ShortLivedCache, ShortLivedHttpCaching}
+import uk.gov.hmrc.http.cache.client.{CacheMap, ShortLivedHttpCaching}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext
 
-class RegistrationFormDataCache(
-  val configuration: Configuration,
-  val shortLiveCache: ShortLivedHttpCaching
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
+
+class RegistrationFormDataCache @Inject()(
+  val http: HttpClient,
+  val configuration: Configuration
 )(implicit val crypto: CompositeSymmetricCrypto, ec: ExecutionContext)
-    extends ServicesConfig(configuration) with ShortLivedCache {
+    extends ServicesConfig(configuration) with ShortLivedHttpCaching {
+
+  override lazy val baseUri: String = baseUrl("cacheable.short-lived-cache")
+  override lazy val defaultSource: String =
+    getConfString("cacheable.short-lived-cache.journey.cache", "soft-drinks-industry-levy-frontend")
+  override lazy val domain: String = getConfString(
+    "cacheable.short-lived-cache.domain",
+    throw new Exception(s"Could not find config 'cacheable.short-lived-cache.domain'"))
 
   def cache(internalId: String, body: RegistrationFormData)(implicit hc: HeaderCarrier): Future[CacheMap] =
     cache(s"$internalId-sdil-registration", "formData", body)

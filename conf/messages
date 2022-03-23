@@ -17,22 +17,37 @@ sdil.hint.optional=Optional
 sdil.common.error=Error
 sdil.common.cancel=Cancel
 
-error.sdilref.invalid=Small producer reference number must be 6 letters and 9 numbers
-error.sdilref.notSmall=Small producer reference number does not match a business that is currently registered as a \
-  small producer. Check and try again.
-error.sdilref.same=​Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
-error.sdilref.alreadyexists=Small producer reference number must be different to a small producer reference number you have already added
+generic.warning=Generic warning
+
+Some=Yes
+None=No
+true=Yes
+false=No
+Add=Yes
+Continue=No
+
+common.remove=Remove
+common.edit=Edit
+
+g.subfieldDetailHeader=What are the bands?
+g.subfieldDetailBody=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
+
 
 #Address lines
+line1=Address line 1
+line2=Address line 2
+line3=Address line 3 (optional)
+line4=Address line 4 (optional)
+postcode=Postcode
 sdil.address.line1=Address line 1
 sdil.address.line2=Address line 2
 sdil.address.line3=Address line 3 (optional)
 sdil.address.line4=Address line 4 (optional)
 sdil.address.postcode=Postcode
 
-error.utr.required=Enter the Unique Taxpayer Reference (UTR) for your business
-error.utr.length=Unique Taxpayer Reference (UTR) must be 10 numbers
-error.utr.invalid=Unique Taxpayer Reference (UTR) must be 10 numbers
+utr.required=Enter the Unique Taxpayer Reference (UTR) for your business
+utr.length=Unique Taxpayer Reference (UTR) must be 10 numbers
+utr.invalid=Unique Taxpayer Reference (UTR) must be 10 numbers
 
 #Identify
 sdil.identify.heading=Enter your business details
@@ -40,7 +55,7 @@ sdil.identify.p1=This will help us match your details against information we cur
 sdil.identify.utr=Corporation Tax or company Unique Taxpayer Reference number (UTR)
 sdil.identify.postcode=Registered business postcode
 sdil.identify.postcode.hint=This is the postcode of your registered business address
-error.utr.no-record=This Unique Taxpayer Reference (UTR) and postcode do not match our records
+utr.no-record=This Unique Taxpayer Reference (UTR) and postcode do not match our records
 sdil.identify.help.header=What is a UTR?
 sdil.identify.help.hint=For example, 12345 67890
 sdil.identify.help.p1=This is 10 numbers, for example 12345 67890. It will be on tax returns and other letters about \
@@ -79,11 +94,11 @@ confirm-address.paragraph=
 
 #Organisation Type
 sdil.organisation-type.heading=Which of these best describes your business?
-sdil.organisation-type.limited-company=Limited company
-sdil.organisation-type.llp=Limited liability partnership (LLP)
-sdil.organisation-type.partnership=Partnership
+organisation-type.limitedCompany=Limited company
+organisation-type.limitedLiabilityPartnership=Limited liability partnership (LLP)
+organisation-type.partnership=Partnership
 sdil.organisation-type.sole-trader=Sole trader
-sdil.organisation-type.unincorporated-body=Unincorporated body
+organisation-type.unincorporatedBody=Unincorporated body
 
 #Partnership page
 sdil.partnership.heading=You cannot register online as a partnership
@@ -93,8 +108,10 @@ sdil.partnership.info.p1=You need to call 0300 200 3700 to register.
 sdil.producer.heading=In the past 12 months, have you packaged or had packaged on your behalf, any liable drink for\
    brands you own or have the rights to manufacture, worldwide?
 sdil.producer.hidden-heading=How many litres worldwide?
-sdil.producer.over-one-million=1 million litres or more
-sdil.producer.under-one-million=Less than 1 million litres
+
+producer.Large=1 million litres or more
+producer.Small=Less than 1 million litres
+producer.XNot=None
 
 #Package
 sdil.package.heading=Will you package liable drinks at a packaging site you operate?
@@ -107,6 +124,13 @@ error.packaging.none-selected=Choose at least one option
 
 #Copacking page
 sdil.packageCopack.heading=Do you operate any packaging sites in the UK to package liable drinks for your customers as a third party?
+package-own-uk.Some.value=<h2 class="heading-medium">How many litres will you package in the next 12 months?</h2>
+package-own-uk.Some.value._1=Litres in the low band
+package-own-uk.Some.value._2=Litres in the high band
+package-own-uk.Some.value.subfield.help.header=What are the bands?
+package-own-uk.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
+package-own-uk.Some.value.subfield.help.header.1=I do not know how many litres
+package-own-uk.Some.value.subfield.help.1=If you do not have the exact volumes you can enter an estimate.
 
 #Package copack small page
 error.copack-small.lower-greater-than-total-lower=Litres for small producers must be less than total litres for customers
@@ -134,16 +158,22 @@ sdil.litreage.rates.content.p2=The high band applies where the liable drink cont
 sdil.litreage.volumes.help=I do not know how many litres
 sdil.litreage.volumes.content.p1=If you do not have the exact volumes you can enter an estimate.
 
-error.litreage.required.lower=Enter the number of litres in the low band
-error.litreage.required.higher=Enter the number of litres in the high band
-error.litreage.numeric=Number of litres must be a whole number
-error.litreage.max.lower=Number of litres in the low band must be less than 100,000,000,000,000
-error.litreage.max.higher=Number of litres in the high band must be less than 100,000,000,000,000
-error.litreage.min=Number of litres must be 0 or more
-error.litreage.zero=Number of litres must be 1 or more
-
 #Production sites
-sdil.productionSite.heading=Tell us about the packaging sites your business operates in the UK to package liable drinks
+heading.production-site-details=Your packaging sites
+production-site-details.table.paragraph.singular=You have added {0} packaging site.
+production-site-details.table.paragraph.plural=You have added {0} packaging sites.
+production-site-details.table.paragraph.small=You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+production-site-details.required=Select yes if you need to add another packaging site
+production-site-details.listing.heading=Do you need to add another packaging site?
+
+production-site-details.remove=Remove
+production-site-details.remove.hidden=Remove {0}
+production-site-details.edit=Edit
+production-site-details.edit.hidden=Edit {0}
+
+heading.p-site=Enter your UK packaging site details
+p-site.paragraph=Only add the addresses of the packaging sites you operate
+
 sdil.production-sites.select-applicable=Select all that apply
 label.production-sites.add=I need to add another packaging site
 sdil.production-site.add.heading=Enter a packaging site
@@ -153,22 +183,28 @@ sdil.production-site.add=Add address to list
 sdil.production-site.help.summary=If you have more than one packaging site
 sdil.production-site.help.p1=You need to tell us the addresses of all of the packaging sites you operate in the UK to package liable drinks.
 sdil.production-site.help.p2=If you have got more packaging sites you can add them next.
-error.no-production-sites=Choose at least one option
 
 #Secondary warehouse
-sdil.warehouse.heading=Do you want to register any of the UK warehouses you use to store liable drinks?
+heading.warehouses=Your registered UK warehouses
+warehouses.table.paragraph.singular=You have added {0} warehouse.
+warehouses.table.paragraph.plural=You have added {0} warehouses.
+warehouses.help.header=Why should I register a warehouse?
+warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
+warehouses.help.1=You do not need to register an address as a warehouse if you have already registered it as a packaging site.
+warehouses.listing.heading=Do you want to register another UK warehouse?
+warehouses.required=Select yes if you want to register another warehouse
+heading.w-house=Enter the UK warehouse details
+w-house.address=
+w-house.tradingName=Trading name (optional)
+
 label.warehouse-sites.add=I want to register another warehouse
-sdil.warehouse.register.help=Why should I register a warehouse?
-sdil.warehouse.register.help.content-1=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
-sdil.warehouse.register.help.content-2=You do not need to register an address as a warehouse if you have already registered it as a packaging site.
-sdil.warehouse.add.heading=Do you want to register another UK warehouse?
 sdil.warehouse-site.add.heading=Enter a warehouse site
 sdil.warehouse-site.add.hint=You can enter more sites after if you need to
 sdil.warehouse-site.add.legend=A warehouse site address
 sdil.warehouse-site.add=Add address to list
-error.tradingName.required=Enter a trading name
-error.tradingName.length=Trading name must be 160 characters or less
-error.tradingName.invalid=Trading name must only include letters a to z, numbers, spaces, apostrophes, ampersands and full stops
+tradingName.required=Enter a trading name
+tradingName.max=Trading name must be 160 characters or less
+tradingName.invalid=Trading name must only include letters a to z, numbers, spaces, apostrophes, ampersands and full stops
 
 #Package Copack Small
 sdil.packageCopackSmall.heading=Do you expect to claim a small producer exemption for any of your customers?
@@ -187,14 +223,14 @@ sdil.import.heading=Do you bring liable drinks into the UK from anywhere outside
 
 sdil.registration-not-required.heading=You do not need to register
 sdil.registration-not-required.p1=Based on your answers you do not need to register. You will need to register within 30 days of the:
-sdil.registration-not-required.li.1=end of the month if you have produced over 1 million litres of liable drinks in the \
+sdil.registration-not-required.li=end of the month if you have produced over 1 million litres of liable drinks in the \
   past 12 months
-sdil.registration-not-required.li.2=date you know that you will produce over 1 million litres of liable drinks in the \
+sdil.registration-not-required.li.1=date you know that you will produce over 1 million litres of liable drinks in the \
   next 30 days
-sdil.registration-not-required.li.3=end of the month in which you packaged liable drinks for someone else
-sdil.registration-not-required.li.4=date you know you are going to package liable drinks for someone else
-sdil.registration-not-required.li.5=end of the month in which you brought liable drinks into the UK
-sdil.registration-not-required.li.6=date you know you are going to bring liable drinks into the UK
+sdil.registration-not-required.li.2=end of the month in which you packaged liable drinks for someone else
+sdil.registration-not-required.li.3=date you know you are going to package liable drinks for someone else
+sdil.registration-not-required.li.4=end of the month in which you brought liable drinks into the UK
+sdil.registration-not-required.li.5=date you know you are going to bring liable drinks into the UK
 sdil.registration-not-required.p3=If this is not right you need to <a href="{0}">go back and change your answers.</a>
 
 #Small Producer Confrim
@@ -205,52 +241,72 @@ sdil.small-prod-confirm.body=If this is not accurate, you need to <a href="{0}" 
 sdil.small-prod-confirm.continue=Accept and continue
 
 #Start date
-heading.regDate=What date did you become liable for the Soft Drinks Levy?
-sdil.start-date.heading=What date did you become liable to register for the Soft Drinks Industry Levy?
-sdil.start-date.example=For example, 6 4 2018
-sdil.start-date.day=Day
-sdil.start-date.month=Month
-sdil.start-date.year=Year
-sdil.start-date.help-heading=How do I know when I became liable?
-sdil.start-date.help-p1=The date you became liable is the date that you first:
-sdil.start-date.help-li1=produced more than 1 million litres of liable drink over the past 12 months
-sdil.start-date.help-li2=knew you would produce more than 1 million litres of liable drink in the next 30 days
-sdil.start-date.help-li3=packaged liable drinks for someone else
-sdil.start-date.help-li4=knew you were going to package liable drinks for someone else
-sdil.start-date.help-li5=brought liable drinks into the UK
-sdil.start-date.help-li6=knew you were going to bring liable drinks into the UK
+heading.start-date=What date did you become liable to register for the Soft Drinks Industry Levy?
+start-date.heading=What date did you become liable to register for the Soft Drinks Industry Levy?
+start-date.error.hint=For example, 6 4 2018
+start-date.day=Day
+start-date.month=Month
+start-date.year=Year
+start-date.list.help.header=How do I know when I became liable?
+start-date.list.help=The date you became liable is the date that you first:
+start-date.list.help.2=produced more than 1 million litres of liable drink over the past 12 months
+start-date.list.help.3=knew you would produce more than 1 million litres of liable drink in the next 30 days
+start-date.list.help.4=packaged liable drinks for someone else
+start-date.list.help.5=knew you were going to package liable drinks for someone else
+start-date.list.help.6=brought liable drinks into the UK
+start-date.list.help.7=knew you were going to bring liable drinks into the UK
 
-error.day.required=Enter a day
-error.month.required=Enter a month
-error.year.required=Enter a year
-error.day.number=Day must only include numbers
-error.month.number=Month must only include numbers
-error.year.number=Year must only include numbers
-error.start-day.invalid=Enter a real day
-error.start-month.invalid=Enter a real month
-error.start-year.invalid=Enter a real year
-error.start-date.before-tax-start=The date you became liable to register must be after 5 April 2018
-error.start-date.in-future=The date you became liable to register must be today or in the past
-error.date.invalid=Enter a real date
-error.date.emptyfields=Enter the date you became liable to register for the Soft Drinks Industry Levy
-error.start-date.missing=The date you became liable to register must include a day
-error.start-month.missing=The date you became liable to register must include a month
-error.start-year.missing=The date you became liable to register must include a year
-error.start-day-and-month.missing=The date you became liable to register must include a day and month
-error.start-month-and-year.missing=The date you became liable to register must include a month and year
-error.start-day-and-year.missing=The date you became liable to register must include a day and year
+#TODO Add in as custom content
+#start-date.help.header.1=What is my liability start date?
+#start-date.help.p1=You become liable to register within 30 days of the:
+#start-date.help.large-producer.li1=end of the month in which you have produced over 1 million litres of liable drink in the past 12 months
+#start-date.help.large-producer.li2=date you know you will produce over 1 million litres of liable drinks in the next 30 days
+#start-date.help.copacker.li1=end of the month in which you brought liable drinks into the UK
+#start-date.help.copacker.li2=date you know you will bring liable drinks into the UK
+#start-date.help.importer.li1=end of the month in which you packaged liable drinks for someone else
+#start-date.help.importer.li2=date you know you will package liable drinks for someone else
+
+start-date.day.empty=The date you became liable to register must include a day
+start-date.month.empty=The date you became liable to register must include a month
+start-date.year.empty=The date you became liable to register must include a year
+start-date.day-and-month.empty=The date you became liable to register must include a day and month
+start-date.day-and-year.empty=The date you became liable to register must include a day and year
+start-date.month-and-year.empty=The date you became liable to register must include a month and year
+start-date.day-and-month-and-year.empty=Enter the date you became liable to register
+
+start-date.day.nan=Day must only include numbers
+start-date.month.nan=Month must only include numbers
+start-date.year.nan=Year must only include numbers
+start-date.day-and-month.nan=The day and month must be in numbers
+start-date.day-and-year.nan=The day and year must be in numbers
+start-date.month-and-year.nan=The month and year must be in numbers
+start-date.day-and-month-and-year.nan=The date you became liable to register must be a real date, like  31 7 2020
+
+start-date.day.invalid=Enter a real day
+start-date.month.invalid=Enter a real month
+start-date.year.invalid=Enter a real year
+start-date.day-and-month.invalid=The day and month must be part of a real date, like  31 7 2020
+start-date.day-and-year.invalid=The day and year must be part of a real date, like  31 7 2020
+start-date.month-and-year.invalid=The month and year must be part of a real date, like  31 7 2020
+start-date.day-and-month-and-year.invalid=The date you became liable to register must be a real date, like  31 7 2020
+
+start-date.minimum-date=The date you became liable to register must be after 5 April 2018
+start-date.maximum-date=The date you became liable to register must be today or in the past
+start-date.not-a-date=Enter a real date
 
 #Contact details
 
-error.fullName.required=Enter your contact person’s full name
-error.fullName.over=Name must be 40 characters or less
-error.position.required=Enter your contact person’s job title
-error.position.over=Job title must be 155 characters or less
-error.phoneNumber.required=Enter your contact person’s telephone number
-error.phoneNumber.over=Telephone number must be 24 characters or less
-error.email.required=Enter your contact person’s email address
-error.email.over=Email address must be 132 characters or less
-error.phoneNumber.invalid=Enter a telephone number, like 01632 960999 or 07700 900999
+fullName.invalid=Full name must only include letters a to z, apostrophes, hyphens and spaces
+fullName.required=Enter your contact person’s full name
+fullName.max=Full name must be 40 characters or less
+position.required=Enter your contact person’s job title
+position.max=Job title must be 155 characters or less
+position.invalid=Job title must only include letters a to z, apostrophes, dashes, hyphens and spaces
+phoneNumber.required=Enter your contact person’s telephone number
+phoneNumber.max=Telephone number must be 24 characters or less
+phoneNumber.invalid=Enter a telephone number, like 01632 960999 or 07700 900999
+email.required=Enter your contact person’s email address
+email.max=Email address must be 132 characters or less
 
 # Declaration
 sdil.declaration.heading=Check your answers
@@ -372,15 +428,19 @@ sdil.remove.site.button=Remove {0}.
 sdil.edit.site.button=Edit {0}.
 
 #Complete
-sdil.complete.what-happens.title=What happens next
-sdil.complete.what-happens.p1=You do not need to do anything else at this time.
-sdil.complete.what-happens.p2=We will send your Soft Drinks Industry Levy reference number to {0} within 24 hours.
-sdil.complete.what-happens.help.title=Help using this service
-sdil.complete.what-happens.help.p1=Call the Soft Drinks Industry Helpline on 0300 200 3700 if you:
-sdil.complete.what-happens.help.ul1=do not receive your reference number
-sdil.complete.what-happens.help.ul2=need to make a change to your application
-sdil.complete.what-happens.help.link=What do you think of this service?
-sdil.complete.what-happens.help.p2= (takes 30 seconds)
+registration-confirmation.title=Application complete
+registration-confirmation.subheading=We have received your application to register {0} for the Soft Drinks Industry Levy
+registration-confirmation.your.updates=Your application to register for the Soft Drinks Industry Levy was sent on {0} at {1}.
+registration-confirmation.extraParagraph=We have sent a confirmation email to {0}.
+registration-confirmation.what-happens.title=What happens next
+registration-confirmation.what-happens.p1=You do not need to do anything else at this time.
+registration-confirmation.what-happens.p2=We will send your Soft Drinks Industry Levy reference number to {0} within 24 hours.
+registration-confirmation.what-happens.help.title=Help using this service
+registration-confirmation.what-happens.help.p1=Call the Soft Drinks Industry Helpline on 0300 200 3700 if you:
+registration-confirmation.what-happens.help.ul1=do not receive your reference number
+registration-confirmation.what-happens.help.ul2=need to make a change to your application
+registration-confirmation.what-happens.help.link=What do you think of this service?
+registration-confirmation.what-happens.help.p2= (takes 30 seconds)
 
 #Service page
 sdil.service-page.repayment.warning=You can only claim credit if you''ve registered for the levy and paid it directly to HMRC. Claiming credits you''re not entitled to is a criminal offence.
@@ -450,7 +510,7 @@ sdil.service-page.reregister.title=Register again for the Soft Drinks Industry L
 sdil.service-page.reregister.p1=If you become liable for the levy again, you will need to <a href="{0}">register.</a>
 sdil.service-page.reregister.p2=Check the guidance to \
   <a href="https://www.gov.uk/guidance/check-if-you-need-to-register-for-the-soft-drinks-industry-levy"> \
-  find out if you need to register.</a> 
+  find out if you need to register.</a>
 
 #service page when deregistered
 sdil.service-page.deregistered.pending.title=Your request to cancel your registration is on hold
@@ -461,6 +521,8 @@ sdil.service-page.deregistered.pending.p3=If you do not want to cancel your regi
 
 #Update business addresses from service page
 sdil.updateBusinessAddresses.heading=Soft Drinks Industry Levy addresses and contact details
+heading.change-registered-account-details=Soft Drinks Industry Levy addresses and contact details
+heading.change-registered-account-details.orgName={0}
 heading.updateBusinessAddresses=Soft Drinks Industry Levy addresses
 sdil.updateBusinessAddresses.link.1=Edit business address
 sdil.updateBusinessAddresses.link.2=Edit contact details
@@ -502,53 +564,94 @@ financiallineitem.officerasstinterest=Interest on Officers Assessment
 financiallineitem.paymentonaccount=Payment on account
 
 #Common errors
+line1.required=Enter address line 1
+line2.required=Enter address line 2
 error.line1.required=Enter address line 1
 error.line2.required=Enter address line 2
+line1.invalid=Address line 1 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
+line2.invalid=Address line 2 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
+line3.invalid=Address line 3 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
+line4.invalid=Address line 4 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
 error.line1.invalid=Address line 1 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
 error.line2.invalid=Address line 2 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
 error.line3.invalid=Address line 3 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
 error.line4.invalid=Address line 4 must only include letters a to z, numbers, spaces, commas, hyphens, apostrophes, ampersands and full stops
+line1.max=Address line 1 must be 35 characters or less
+line2.max=Address line 2 must be 35 characters or less
+line3.max=Address line 3 must be 35 characters or less
+line4.max=Address line 4 must be 35 characters or less
 error.line1.over=Address line 1 must be 35 characters or less
 error.line2.over=Address line 2 must be 35 characters or less
 error.line3.over=Address line 3 must be 35 characters or less
 error.line4.over=Address line 4 must be 35 characters or less
-error.address-line.length=This must be no more than 35 characters
-error.postcode.required=Enter a postcode
-error.postcode.empty=Enter a postcode
-error.postcode.invalid=Enter a real postcode
-error.postcode.special=Enter a real postcode
-error.number.negative=Must be greater than or equal to 0
-error.full-name.invalid=Enter a name
-error.fullName.invalid=Full name must only include letters a to z, apostrophes, hyphens and spaces
-error.position.invalid=Job title must only include letters a to z, apostrophes, dashes, hyphens and spaces
-error.phone-number.invalid=Enter a valid telephone number
-error.email=Enter a real email address, like name@example.com
+address-line.length=This must be no more than 35 characters
+postcode.required=Enter a postcode
+postcode.empty=Enter a postcode
+postcode.invalid=Enter a real postcode
+postcode.special=Enter a real postcode
+tradingName.max=Trading name must be 160 characters or less
+number.negative=Must be greater than or equal to 0
+
+email.invalid=Enter a real email address, like name@example.com
 error.radio-form.choose-option=Choose an option
 error.radio-form.choose-option.=Choose an option
 error.radio-form.choose-option.continue=Select an option to continue
-error.radio-form.choose-option.select-change=Select what you need to do
-error.radio-form.choose-option.select-return=Select which return you need to correct
+select-change.required=Select what you need to do
+select-return.required=Select which return you need to correct
 error.radio-form.choose-option.repayment-method=Select how you want the credit to be repaid
-error.radio-form.choose-option.organisation-type=Select the option that best describes your business
-error.radio-form.choose-option.producer=Select how many litres of your own brands of liable drinks have been \
-  packaged globally in the past 12 months
-error.radio-form.choose-option.amount-produced=Select how many litres of your own brands of liable drinks have been \
-  packaged globally in the past 12 months
-error.radio-form.choose-option.copacked=Select yes if you use any third parties in the UK to package liable drinks on \
-  your behalf
-error.radio-form.choose-option.third-party-packagers=Select yes if you use any third parties in the UK to package liable drinks on \
-  your behalf
-error.radio-form.choose-option.package-own-uk=Select yes if you operate any packaging sites in the UK to package \
+
+organisation-type.required=Select the option that best describes your business
+producer.required=Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months
+
+package-own-uk.required=Select yes if you operate any packaging sites in the UK to package \
   liable drinks for brands you own
-error.radio-form.choose-option.packaging-site=Select yes if you operate any packaging sites in the UK to package \
-  liable drinks for brands you own
-error.radio-form.choose-option.package-copack=Select yes if you operate any packaging sites in the UK to package \
+package-own-uk.Some.value._1.required=Enter the number of litres in the low band
+package-own-uk.Some.value._2.required=Enter the number of litres in the high band
+package-own-uk.Some.value._1.not-a-number=Number of litres must be a whole number
+package-own-uk.Some.value._2.not-a-number=Number of litres must be a whole number
+package-own-uk.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+package-own-uk.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+package-own-uk.Some.value._1.min=Number of litres must be 1 or more
+package-own-uk.Some.value._2.min=Number of litres must be 1 or more
+
+package-copack.Some.value._1=Litres in the low band
+package-copack.Some.value._2=Litres in the high band
+package-copack.required=Select yes if you operate any packaging sites in the UK to package \
   liable drinks as a third party or contract packer
-error.radio-form.choose-option.contract-packing=Select yes if you operate any packaging sites in the UK to package \
-  liable drinks as a third party or contract packer
-error.radio-form.choose-option.import=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
+package-copack.Some.value._1.required=Enter the number of litres in the low band
+package-copack.Some.value._2.required=Enter the number of litres in the high band
+package-copack.Some.value._1.not-a-number=Number of litres must be a whole number
+package-copack.Some.value._2.not-a-number=Number of litres must be a whole number
+package-copack.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+package-copack.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+package-copack.Some.value._1.min=Number of litres must be 1 or more
+package-copack.Some.value._2.min=Number of litres must be 1 or more
+package-copack.Some.value.subfield.help.header=What are the bands?
+package-copack.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p> \
+  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
+package-copack.Some.value.subfield.help.header.1=I do not know how many litres
+package-copack.Some.value.subfield.help.1=If you do not have the exact volumes you can enter an estimate.
+
+import.required=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
+import.Some.value._1.required=Enter the number of litres in the low band
+import.Some.value._2.required=Enter the number of litres in the high band
+import.Some.value._1.not-a-number=Number of litres must be a whole number
+import.Some.value._2.not-a-number=Number of litres must be a whole number
+import.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+import.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+import.Some.value._1.min=Number of litres must be 1 or more
+import.Some.value._2.min=Number of litres must be 1 or more
+import.Some.value=<h2 class="heading-medium">How many litres will you bring into the UK in the next 12 months?</h2>
+import.Some.value._1=Litres in the low band
+import.Some.value._2=Litres in the high band
+import.Some.value.subfield.help.header=What are the bands?
+import.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p> \
+  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
+import.Some.value.subfield.help.header.1=I do not know how many litres
+import.Some.value.subfield.help.1=If you do not have the exact volumes you can enter an estimate.
+
 error.radio-form.choose-option.imports=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
-error.radio-form.choose-option.pack-at-business-address=Select yes if your registered business address is a UK\
+pack-at-business-address.required=Select yes if your registered business address is a UK\
    packaging site that you operate to produce liable drinks
 error.radio-form.choose-option.production-site-details=Select yes if you need to add another packaging site
 error.radio-form.choose-option.packaging-site-details=Select yes if you need to add another packaging site
@@ -636,7 +739,7 @@ heading.producer=How many litres of your own brands of liable drinks have been p
 producer.lead=This includes brands you own or have the rights to manufacture.
 producer.option.large=1 million litres or more
 producer.option.small=Less than 1 million litres
-producer.option.not=None
+producer.option.Xnot=None
 
 producer.help.header.1=What does ‘packaged’ mean?
 producer.help.1=A liable drink is packaged if it is bottled, canned or otherwise packaged so it is ready to either drink or dilute.
@@ -663,25 +766,18 @@ producer.help.2=<h2>Liable drinks</h2>\
    total diet replacement or dietary food used for special medical purposes</li></ul>
 
 heading.copacked=Do you use any third parties in the UK to package liable drinks on your behalf?
+copacked.required=Select yes if you use any third parties in the UK to package liable drinks on your behalf
 
 heading.package-own-uk=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
 package-own-uk.inner-heading=How many litres will you package in the next 12 months?
 
 heading.package-copack=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
-package-copack.inner-heading=How many litres will you package in the next 12 months?
+package-copack.Some.value=<h2 class="heading-medium">How many litres will you package in the next 12 months?</h2>
 
 heading.import=Do you bring liable drinks into the UK from anywhere outside of the UK?
 import.inner-heading=How many litres will you bring into the UK in the next 12 months?
 
-heading.start-date=What date did you become liable to register for the Soft Drinks Industry Levy?
-start-date.help.header.1=What is my liability start date?
-start-date.help.p1=You become liable to register within 30 days of the:
-start-date.help.large-producer.li1=end of the month in which you have produced over 1 million litres of liable drink in the past 12 months
-start-date.help.large-producer.li2=date you know you will produce over 1 million litres of liable drinks in the next 30 days
-start-date.help.copacker.li1=end of the month in which you brought liable drinks into the UK
-start-date.help.copacker.li2=date you know you will bring liable drinks into the UK
-start-date.help.importer.li1=end of the month in which you packaged liable drinks for someone else
-start-date.help.importer.li2=date you know you will package liable drinks for someone else
+heading.pack-at-business-address=Is your registered business address a UK packaging site that you operate to produce liable drinks?
 
 heading.contact-details=Contact person’s details
 contact-details.paragraph=This is the person we will contact about the Soft Drinks Industry Levy, if we need to.
@@ -692,63 +788,74 @@ contact-details.email=Email address
 
 sdil.declaration.package-own-uk=Litres in next 12 months
 
-complete.title=Application complete
-complete.subheading=We have received your application to register {0} for the Soft Drinks Industry Levy
-complete.your.updates=Your application to register for the Soft Drinks Industry Levy was sent on {0} at {1}.
-
 # Uniform variation process
 heading.select-change=What do you need to do?
-select-change.option.sites=Update contact, packaging site or warehouse details
-select-change.option.activity=Change business activity
-select-change.option.deregister=Cancel Soft Drinks Industry Levy registration
+select-change.AASites=Update contact, packaging site or warehouse details
+select-change.Activity=Change business activity
+select-change.Deregister=Cancel Soft Drinks Industry Levy registration
+select-change.Returns=Correct an error in a previous return
 select-change.continue=Continue
 
 heading.change-registered-details=What do you need to change?
 change-registered-details.hint=Select all that apply
-change-registered-details.option.Sites=Add or remove packaging sites or warehouse addresses
-change-registered-details.option.ContactPerson=Update your contact person for the Soft Drinks Industry Levy
-change-registered-details.option.ContactAddress=Update your registered business address for the Soft Drinks Industry Levy
+change-registered-details.Sites=Add or remove packaging sites or warehouse addresses
+change-registered-details.ContactPerson=Update your contact person for the Soft Drinks Industry Levy
+change-registered-details.ContactAddress=Update your registered business address for the Soft Drinks Industry Levy
 change-registered-details.continue=Continue
+change-registered-details.button.paragraph=Changes can take up to 15 working days to process.
+change-registered-details.required=Select at least one option to continue
 
 heading.ask-secondary-warehouses=Do you want to register any of the UK warehouses you use to store liable drinks?
+ask-secondary-warehouses.required=Select yes if you want to register any of the UK warehouses you use to store liable drinks
+
 heading.ask-secondary-warehouses-in-return=Do you want to register any UK warehouses you use to store liable drinks?
+ask-secondary-warehouses-in-return.required=Select yes if you want to register any UK warehouses you use to store liable drinks
 ask-secondary-warehouses-in-return.help.header=Why should I register a warehouse?
-ask-secondary-warehouses-in-return.help=You can delay when you have to report liable drinks in your quarterly return and pay the levy on them if \
-  you register the warehouses you use to store them.<p>Because you changed your business activity,  \
+ask-secondary-warehouses-in-return.help=<p>You can delay when you have to report liable drinks in your quarterly return and pay the levy on them if \
+  you register the warehouses you use to store them.</p><p>Because you changed your business activity,  \
   you can choose to register any of the UK warehouses you use to store liable drinks.</p>
+heading.warehouse-in-return=Enter the UK warehouse details
+warehouse-in-return.address=
+warehouse-in-return.tradingName=Trading name (optional)
 heading.first-warehouse=Enter the UK warehouse details
 ask-secondary-warehouses.help.header=Why should I register a warehouse?
-ask-secondary-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
-  the warehouses you use to store them.
+ask-secondary-warehouses.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register\
+ the warehouses you use to store them.
 heading.add-warehouse-details=Enter your warehouse details
 heading.add-secondary-warehouse-details=Enter the UK warehouse details
 secondary-warehouse-details.help.header=Why should I register a warehouse?
-secondary-warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register \
-  the warehouses you use to store them.
+secondary-warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register\
+ the warehouses you use to store them.
+
 heading.remove-warehouse-details=Are you sure you want to remove this warehouse?
 remove-warehouse-details.continue=Save and continue
-error.radio-form.choose-option.remove-warehouse-details=Select yes if you want to remove this warehouse
+remove-warehouse-details.required=Select yes if you want to remove this warehouse
+
 heading.remove-secondary-warehouse-details=Are you sure you want to remove this warehouse?
 remove-secondary-warehouse-details.continue=Save and continue
-error.radio-form.choose-option.remove-secondary-warehouse-details=Select yes if you want to remove this warehouse
+remove-secondary-warehouse-details.required=Select yes if you want to remove this warehouse
+
 heading.add-packaging-site-details=Enter your packaging site details
-heading.add-production-site-details=Enter your UK packaging site details
+heading.production-sites.element=Enter your UK packaging site details
 heading.first-production-site=Enter your UK packaging site details
 first-production-site.paragraph=Only add the addresses of the packaging sites you operate
-add-packaging-site.paragraph=Only add the addresses of the packaging sites you operate
+production-sites.element.paragraph=Only add the addresses of the packaging sites you operate
 add-production-site-details.paragraph=Only add the addresses of the packaging sites you operate
+
 heading.remove-packaging-site-details=Are you sure you want to remove this packaging site?
 remove-packaging-site-details.continue=Save and continue
-error.radio-form.choose-option.remove-packaging-site-details=Select yes if you want to remove this packaging site
+remove-packaging-site-details.required=Select yes if you want to remove this packaging site
+
 heading.remove-production-site-details=Are you sure you want to remove this packaging site?
 remove-production-site-details.continue=Save and continue
-error.radio-form.choose-option.remove-production-site-details=Select yes if you want to remove this packaging site
+remove-production-site-details.required=Select yes if you want to remove this packaging site
 
 heading.amount-produced=How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
+amount-produced.required=Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months
 amount-produced.lead=This includes brands you own or have the rights to manufacture.
-amount-produced.option.large=1 million litres or more
-amount-produced.option.small=Less than 1 million litres
-amount-produced.option.not=None
+amount-produced.Large=1 million litres or more
+amount-produced.Small=Less than 1 million litres
+amount-produced.XNot=None
 amount-produced.help.header.1=What does ‘packaged’ mean?
 amount-produced.help.1=A liable drink is packaged if it is bottled, canned or otherwise packaged so it is ready to either drink or dilute.
 amount-produced.help.header.2=What is a liable drink?
@@ -778,21 +885,39 @@ production-site-details.option.done=No
 secondary-warehouse-details.option.add=Yes
 secondary-warehouse-details.option.done=No
 
-production-site-details.edit=Edit
+production-sites.edit=Edit
+production-sites.edit.hidden=Edit {0}
+production-sites.remove=Remove
+production-sites.remove.hidden=Remove {0}
 ask-secondary-warehouses.edit=Edit
 secondary-warehouse-details.edit=Edit
 packSites.edit=Edit
 warehouses.edit=Edit
 small-producer-details.edit=Edit
-small-producer-details.delete=Remove
-production-site-details.delete=Remove
-heading.pack-at-business-address=Is your registered business address a UK packaging site that you operate to produce liable drinks?
+small-producer-details.remove=Remove
 heading.pack-at-business-address-in-return=Is this address a UK packaging site you operate to produce liable drinks?
+pack-at-business-address-in-return.required=Select yes if this address is a UK packaging site that you operate to produce liable drinks
 pack-at-business-address-in-return.help.header=Why we need these details
 pack-at-business-address-in-return.help=Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate
 
+start-date.day-and-month-and-year.empty=Enter the date you became liable to register for the Soft Drinks Industry Levy
+select-change.button.paragraph=Changes can take up to 15 working days to process.
+
+pack-at-business-address.true=Yes
+pack-at-business-address.false=No
+
 heading.packaging-site=Do you operate any packaging sites in the UK to package liable drinks for brands you own?
-packaging-site.inner-heading=How many litres will you package in the next 12 months?
+packaging-site.Some.value=<h2 class="heading-medium">How many litres will you package in the next 12 months?</h2>
+packaging-site.required=Select yes if you operate any packaging sites in the UK to package liable drinks for brands you own
+packaging-site.Some.value._1.required=Enter the number of litres in the low band
+packaging-site.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+packaging-site.Some.value._2.required=Enter the number of litres in the high band
+packaging-site.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+packaging-site.Some.value.subfield.help.header.1=What are the bands?
+packaging-site.Some.value.subfield.help.1=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p> \
+<p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
+packaging-site.Some.value.subfield.help.header.2=I do not know how many litres
+packaging-site.Some.value.subfield.help.2=If you do not have the exact volumes you can enter an estimate.
 
 heading.packQty=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
 packQty.inner-heading=How many litres will you package in the next 12 months?
@@ -801,45 +926,66 @@ packQty.lower=Litres in the low band
 packQty.higher=Litres in the high band
 
 heading.contract-packing=Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
-contract-packing.inner-heading=How many litres will you package in the next 12 months?
+contract-packing.Some.value=<h2 class="heading-medium">How many litres will you package in the next 12 months?</h2>
+contract-packing.required=Select yes if you operate any packaging sites in the UK to package liable drinks as a third party or contract packer
+contract-packing.Some.value._1.required=Enter the number of litres in the low band
+contract-packing.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+contract-packing.Some.value._2.required=Enter the number of litres in the high band
+contract-packing.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+contract-packing.Some.value.subfield.help.header.1=I do not know how many litres
+contract-packing.Some.value.subfield.help.1=If you do not have the exact volumes you can enter an estimate.
 
 heading.imports=Do you bring liable drinks into the UK from anywhere outside of the UK?
-imports.inner-heading=How many litres will you bring into the UK in the next 12 months?
+imports.Some.value=<h2 class="heading-medium">How many litres will you bring into the UK in the next 12 months?</h2>
+imports.required=Select yes if you bring liable drinks into the UK from anywhere outside of the UK
+imports.Some.value._1.required=Enter the number of litres in the low band
+imports.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+imports.Some.value._2.required=Enter the number of litres in the high band
+imports.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+imports.Some.value.subfield.help.header.1=I do not know how many litres
+imports.Some.value.subfield.help.1=If you do not have the exact volumes you can enter an estimate.
 
 heading.third-party-packagers=Do you use any third parties in the UK to package liable drinks on your behalf?
+third-party-packagers.required=Select yes if you use any third parties in the UK to package liable drinks on your behalf
 
-heading.packaging-site-details=Change your UK packaging site details
-heading.multi.packaging-site-details=Change your UK packaging site details
+production-site-details.table.paragraph.singular=You have added {0} packaging site.
+production-site-details.table.paragraph.plural=You have added {0} packaging sites.
+production-site-details.table.paragraph.small=You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+production-site-details.required=Select yes if you need to add another packaging site
+production-site-details.listing.heading=Do you need to add another packaging site?
+
 heading.production-site-details=Your packaging sites
-heading.multi.production-site-details=Your packaging sites
-production-site-details.lead=Tell us about the packaging sites you operate in the UK to package liable drinks.
 production-site-details.multi.lead=You have added {0} packaging site{1}.
-production-site-details.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
-  drinks. You must have at least one registered packaging site.
-production-site-details.list-control.heading=Do you need to add another packaging site?
-packaging-site-details.paragraph=You must tell us about all of the UK packaging sites you operate to produce liable \
-  drinks. You must have at least one registered packaging site.
-heading.edit-production-site-details=Enter your UK packaging site details
+production-site-details.Add=Yes
+production-site-details.Continue=No
+
+heading.site-in-return=Enter your UK packaging site details
 edit-production-site-details.paragraph=Only add the addresses of UK packaging sites you operate.
-packaging-site-details.list-control.heading=Do you want to add another packaging site?
+packaging-site-details.listing.heading=Do you want to add another packaging site?
 packaging-site-details.option.add=Yes
 packaging-site-details.option.done=No
 heading.edit-packaging-site-details=Enter your UK packaging site details
 
-heading.secondary-warehouse-details=Do you want to register any of the UK warehouses you use to store liable drinks? 
-heading.multi.secondary-warehouse-details=Your registered UK warehouses
+heading.secondary-warehouse-details=Your registered UK warehouses
+secondary-warehouse-details.required=Select yes if you want to register another UK warehouse
 secondary-warehouse-details.lead=
-secondary-warehouse-details.multi.lead=You have added {0} warehouse{1}.
-secondary-warehouse-details.list-control.heading=Do you want to add another warehouse?
+secondary-warehouse-details.listing.heading=Do you want to register another UK warehouse?
+secondary-warehouse-details.help.1=You do not need to register an address as a warehouse if you have already registered it as a packaging site.
+secondary-warehouse-details.table.paragraph.singular=You have added {0} warehouse.
+secondary-warehouse-details.table.paragraph.plural=You have added {0} warehouses.
+
 warehouse-details.help.header=Why should I register a warehouse?
 warehouse-details.help=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
   if you register the warehouses you use to store them.
 heading.edit-secondary-warehouse-details=Enter the UK warehouse details
-heading.multi.warehouse-details=Change your UK warehouse details
-heading.warehouse-details=Do you want to register any of the UK warehouses you use to store liable drinks?
-warehouse-details.list-control.heading=Do you want to add another warehouse?
+heading.warehouse-details=Change your UK warehouse details
+warehouse-details.listing.heading=Do you want to add another warehouse?
 warehouse-details.option.add=Yes
 warehouse-details.option.done=No
+
+heading.packaging-site-details=Change your UK packaging site details
+packaging-site-details.table.paragraph.small=You can delay the point you will have to report liable drinks in a return and pay the levy on them \
+  if you register the warehouses you use to store them.
 
 heading.contact=Update your contact person for the Soft Drinks Industry Levy
 
@@ -852,8 +998,9 @@ heading.updatedBusinessDetails_address=What address should we send correspondenc
 variationDone.title=Update sent
 variationDone.subheading=We have received the updates to your Soft Drinks Industry Levy details
 variationDone.what-happens.title=What happens next
-variationDone.what-happens-next=You do not need to do anything else. We will update your details with the information \
-you provided. We will send you confirmation that the changes have been made.
+variationDone.what-happens-next=You do not need to do anything else. We will update your details with the \
+information you provided. We will send you confirmation that the changes have \
+been made.
 deregDone.title=Cancellation request sent
 deregDone.subtitle=We have received your request to cancel your Soft Drinks Industry Levy registration
 heading.check-answers.dereg=Check your answers before sending your update
@@ -895,13 +1042,40 @@ sdil.variation.anotherChangeLink=go back and start again
 
 #dereg
 heading.deregister.cancel-registration-reason=Why are you deregistering from the Soft Drinks Industry Levy?
-heading.cancel-registration-reason.orgName=
 deregister.cancel-registration-reason.label=Reason for deregistering
-error.cancel-registration-reason.empty=Enter why you need to cancel your registration
+cancel-registration-reason.required=Enter why you need to cancel your registration
+cancel-registration-reason.maxLength=The reason you are deregistering must be 255 characters or less
+
 heading.cancel-registration-date=What date are you cancelling your registration from?
-heading.cancel-registration-date.orgName=
-error.cancel-registration-date.nopast=The date you are cancelling your registration must be today or in the future
-error.cancel-registration-date.nofuture=The date you are cancelling your registration from cannot be more than 14 days in the future
+
+cancel-registration-date.day.empty=The date you are cancelling your registration must include a day
+cancel-registration-date.month.empty=The date you are cancelling your registration must include a month
+cancel-registration-date.year.empty=The date you are cancelling your registration must include a year
+cancel-registration-date.day-and-month.empty=The date you are cancelling your registration must include a day and month
+cancel-registration-date.day-and-year.empty=The date you are cancelling your registration must include a day and year
+cancel-registration-date.month-and-year.empty=The date you are cancelling your registration must include a month and year
+cancel-registration-date.day-and-month-and-year.empty=Enter The date you are cancelling your registration
+
+cancel-registration-date.day.nan=Day must only include numbers
+cancel-registration-date.month.nan=Month must only include numbers
+cancel-registration-date.year.nan=Year must only include numbers
+cancel-registration-date.day-and-month.nan=The day and month must be in numbers
+cancel-registration-date.day-and-year.nan=The day and year must be in numbers
+cancel-registration-date.month-and-year.nan=The month and year must be in numbers
+cancel-registration-date.day-and-month-and-year.nan=The date you are cancelling your registration must be a real date, like  31 7 2020
+
+cancel-registration-date.day.invalid=Enter a real day
+cancel-registration-date.month.invalid=Enter a real month
+cancel-registration-date.year.invalid=Enter a real year
+cancel-registration-date.day-and-month.invalid=The day and month must be part of a real date, like  31 7 2020
+cancel-registration-date.day-and-year.invalid=The day and year must be part of a real date, like  31 7 2020
+cancel-registration-date.month-and-year.invalid=The month and year must be part of a real date, like  31 7 2020
+cancel-registration-date.day-and-month-and-year.invalid=The date you are cancelling your registration must be a real date, like  31 7 2020
+
+cancel-registration-date.not-a-date=Enter a real date
+cancel-registration-date.min=The date you are cancelling your registration must be today or in the future
+cancel-registration-date.max=The date you are cancelling your registration from cannot be more than 14 days in the future
+
 
 error.cancel-registration-date.emptyfields=Enter the date you are cancelling your registration from
 error.cancel-registration-date-day.missing=The date you are cancelling your registration from must include a day
@@ -960,8 +1134,8 @@ variations.cya.deregistration.change.reason=Change <span class="visually-hidden"
 variations.cya.deregistration.date=Date of cancellation
 variations.cya.deregistration.change.date=Change <span class="visually-hidden">effective date of cancellation</span>
 
-error.deregReason.tooLong=Deregistration reason must be 255 characters or less
-error.return-correction-reason.tooLong=Reason for correcting the return must be 255 characters or less
+deregReason.max=Deregistration reason must be 255 characters or less
+return-correction-reason.maxLength=Reason for correcting the return must be 255 characters or less
 day=Day
 month=Month
 year=Year
@@ -1005,7 +1179,7 @@ variations.cya.reason=Reason
 variations.cya.deregDate=Date
 
 heading.cancel-registration-reason=Why do you need to cancel your registration?
-cancel-registration-reason.label=Reason for deregistering
+cancel-registration-reason.inner=Reason for deregistering
 cancel-registration-reason.hint=Enter a maximum of 255 characters
 
 heading.suggest-deregistration=You need to cancel your Soft Drinks Industry Levy registration
@@ -1014,19 +1188,15 @@ suggest-deregistration.continue=Cancel your registration
 
 doubt1=If you do not think this is right you need to
 doubt2=go back and change your answers
-
 heading.removePackSites=[Remove your packing sites?]
 removePackSites.body=[Based on your answers, you are no longer packing any soft drinks and therefore will not be operating any packing sites. In continuing all packing sites will be removed.]
 removePackSites.continue=[Remove all packing sites]
 
 heading.business-address=Update your registered business address for the Soft Drinks Industry Levy
 
-heading.check-answers=Check the updates you have made
-heading.check-answers.orgName=
-heading.return-details.orgName=
-heading.check-return-changes.orgName=
-heading.repayment-method.orgName=
-heading.return-correction-reason.orgName=
+heading.check-answers=Check your answers before sending your return
+#TODO custom message
+heading.check-answers.orgDefaultName=Service-Header
 check-answers.continue=Confirm updates and send
 
 # Returns
@@ -1034,6 +1204,17 @@ error.empty=Number of litres must be 1 or more
 heading.own-brands-packaged-at-own-sites=Are you reporting your own brands of liable drink you have packaged at UK sites you operate?
 own-brands-packaged-at-own-sites.lead=This includes brands you own or have the rights to manufacture.
 own-brands-packaged-at-own-sites.inner-heading=How many litres do you need to report?
+own-brands-packaged-at-own-sites.Some.value.subfield.help.header=What are the bands?
+own-brands-packaged-at-own-sites.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per \
+  100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
+  millilitres.</p>
+own-brands-packaged-at-own-sites.required=Select yes if you are reporting your own brands of liable drink you have packaged at UK sites you operate
+own-brands-packaged-at-own-sites.Some.value._1.required=Enter the number of litres in the low band
+own-brands-packaged-at-own-sites.Some.value._2.required=Enter the number of litres in the high band
+own-brands-packaged-at-own-sites.Some.value._1.not-a-number=Number of litres must be a whole number
+own-brands-packaged-at-own-sites.Some.value._2.not-a-number=Number of litres must be a whole number
+own-brands-packaged-at-own-sites.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+own-brands-packaged-at-own-sites.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
 heading.packaged-as-a-contract-packer=Are you reporting liable drink you have packaged as a third party or contract packer at UK sites you operate?
 packaged-as-a-contract-packer.inner-heading=How many litres do you need to report?
 packaged-as-a-contract-packer.paragraph=Do not include liable drinks you have packaged for registered small producers.
@@ -1044,42 +1225,65 @@ packaged-as-a-contract-packer.help=A business is a small producer if it:\
   <li>has had less than 1 million litres of its own brands of liable drink packaged globally in the past 12 months</li>\
   <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
   </ul>
+packaged-as-a-contract-packer.Some.value.subfield.help.header=What are the bands?
+packaged-as-a-contract-packer.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar   per 100 millilitres.</p>
+packaged-as-a-contract-packer.required=Select yes if you are reporting liable drink you have packaged as a third party or contract packer at UK sites you operate
+packaged-as-a-contract-packer.Some.value._1.required=Enter the number of litres in the low band
+packaged-as-a-contract-packer.Some.value._2.required=Enter the number of litres in the high band
+packaged-as-a-contract-packer.Some.value._1.not-a-number=Number of litres must be a whole number
+packaged-as-a-contract-packer.Some.value._2.not-a-number=Number of litres must be a whole number
+packaged-as-a-contract-packer.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+packaged-as-a-contract-packer.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
 exemptions-for-small-producers.help.header=What is a small producer?
 exemptions-for-small-producers.help=A business is a small producer if it:\
   <ul class="list list-bullet">\
   <li>has had less than 1 million litres of its own brands of liable drink packaged globally in the past 12 months</li>\
   <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
   </ul>
+exemptions-for-small-producers.required=Select yes if you need to claim an exemption for any of the liable drink you have packaged for registered small producers
 heading.small-producer-details=Your small producer exemptions
-error.alias.tooLong=Small producer name must be 160 characters or less
+alias.max=Small producer name must be 160 characters or less
+add-small-producer.litreage._1.required=Enter the number of litres in the low band
+add-small-producer.litreage._2.required=Enter the number of litres in the high band
+add-small-producer.litreage._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+add-small-producer.litreage._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+add-small-producer.sdilRef.same=Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
+add-small-producer.sdilRef.alreadyexists=Small producer reference number must be different to a small producer reference number you have already added
+add-small-producer.sdilRef.invalid=Small producer reference number must be 6 letters and 9 numbers
+sdilRef.invalid=Small producer reference number must be 6 letters and 9 numbers
+add-small-producer.sdilRef.notSmall=Small producer reference number does not match a business that is currently registered as a \
+small producer. Check and try again.
 heading.multi.small-producer-details=You have added {0} small producer{1}
-small-producer-details.list-control.heading=Do you want to add another small producer?
+small-producer-details.listing.heading=Do you want to add another small producer?
 heading.edit-small-producer-details=Enter the registered small producer’s details
 
-small-producer-details.option.add=Yes
-small-producer-details.option.done=No
-
-heading.add-small-producer-details=Enter the registered small producer’s details
-heading.first-small-producer-details=Enter the registered small producer’s details
-add-small-producer-details.help.header=What are the bands?
-first-small-producer-details.help.header=What are the bands?
-add-small-producer-details.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per \
-  100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
-  millilitres.</p>
-first-small-producer-details.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per \
-  100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
-  millilitres.</p>
+small-producer-details.table.heading.singular=You have added {0} small producer
+small-producer-details.table.heading.plural=You have added {0} small producers
+heading.add-small-producer=Enter the registered small producer’s details
+add-small-producer.alias=Small producer name (optional)
+add-small-producer.sdilRef=Soft Drinks Industry Levy reference number
+add-small-producer.litreage=
+add-small-producer.litreage._1=Litres in the low band for this quarter
+add-small-producer.litreage._2=Litres in the high band for this quarter
+add-small-producer.help.header=What are the bands?
+add-small-producer.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per \
+                          100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 \
+                          millilitres.</p>
+small-producer-details.listing.heading=Do you want to add another small producer?
+small-producer-details.required=Select yes if you need to add another small producer
 small-producer-details.name=Name: {0}
 small-producer-details.refNumber=Reference number: {0}
 small-producer-details.lowBand=Low band: {0} litres
 small-producer-details.highBand=High band: {0} litres
-sdil.alias=Small producer name (optional)
-sdil.sdilRef=Soft Drinks Industry Levy reference number
-sdil.litreage.highRate.smallProducer=Litres in the high band for this quarter
-sdil.litreage.lowRate.smallProducer=Litres in the low band for this quarter
+small-producer-details.remove=Remove
+small-producer-details.remove.hidden=Remove {0}, {1}
+small-producer-details.edit=Edit
+small-producer-details.edit.hidden=Edit {0}, {1}
+
 heading.remove-small-producer-details=Are you sure you want to remove this small producer?
+remove-small-producer-details.required=Select yes if you want to remove this small producer
 remove-small-producer-details.continue=Save and continue
-error.radio-form.choose-option.remove-small-producer-details=Select yes if you want to remove this small producer
+
 heading.brought-into-uk=Are you reporting liable drink you have brought into the UK from anywhere outside of the UK?
 brought-into-uk.inner-heading=How many litres do you need to report?
 brought-into-uk.paragraph=Do not include liable drink from small producers or your own brands if you are a registered small producer.
@@ -1089,8 +1293,15 @@ brought-into-uk.help=A business is a small producer if it:\
   <li>has had less than 1 million litres of its own brands of liable drink packaged globally in the past 12 months</li>\
   <li>will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days</li>\
   </ul>
+brought-into-uk.required=Select yes if you are reporting liable drink you have brought into the UK from anywhere outside of the UK
+brought-into-uk.Some.value._1.required=Enter the number of litres in the low band
+brought-into-uk.Some.value._2.required=Enter the number of litres in the high band
+brought-into-uk.Some.value._1.not-a-number=Number of litres must be a whole number
+brought-into-uk.Some.value._2.not-a-number=Number of litres must be a whole number
+brought-into-uk.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+brought-into-uk.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
 heading.brought-into-uk-from-small-producers=Are you reporting any liable drink you have brought into the UK from small producers?
-brought-into-uk-from-small-producers.lead.volMan=Include your own brands of liable drink produced outside of the UK.
+brought-into-uk-from-small-producers.paragraph=Include your own brands of liable drink produced outside of the UK.
 brought-into-uk-from-small-producers.inner-heading=How many litres?
 brought-into-uk-from-small-producers.help.header=Liable drink from small producers
 brought-into-uk-from-small-producers.help=<p>If you are a registered small producer and you bring your own brand of \
@@ -1101,23 +1312,60 @@ brought-into-uk-from-small-producers.help=<p>If you are a registered small produ
   <li>contact details, EU VAT number (if they have one) and website of the business</li>\
   <li>amount of litres of liable drink packaged globally for brands the business owns in the past 12 months</li> \
   <li>signature of someone from the business, their position and the date of the signature</li></ul>
+brought-into-uk-from-small-producers.Some.value=<h2 class="heading-medium">How many litres?</h2>
+brought-into-uk.Some.value.subfield.help.header=What are the bands?
+brought-into-uk.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p> \
+  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
+brought-into-uk-from-small-producers.Some.value.subfield.help.header=What are the bands?
+brought-into-uk-from-small-producers.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100   millilitres.</p> \
+  <p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
+brought-into-uk-from-small-producers.required=Select yes if you are reporting any liable drink you have brought into the UK from small producers
+brought-into-uk-from-small-producers.Some.value._1.required=Enter the number of litres in the low band
+brought-into-uk-from-small-producers.Some.value._2.required=Enter the number of litres in the high band
+brought-into-uk-from-small-producers.Some.value._1.not-a-number=Number of litres must be a whole number
+brought-into-uk-from-small-producers.Some.value._2.not-a-number=Number of litres must be a whole number
+brought-into-uk-from-small-producers.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+brought-into-uk-from-small-producers.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
 heading.claim-credits-for-exports=Do you want to claim a credit for liable drink that has been exported?
 claim-credits-for-exports.help.header=What can I claim a credit for?
 claim-credits-for-exports.help=You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: \
   <ul class="list list-bullet"><li>brand of the liable drinks</li><li>supplier or consigner</li><li>customer and destination the liable drinks are supplied to</li><li>method of delivery</li></ul> \
   <p>If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.</p>
 claim-credits-for-exports.inner-heading=How many litres are you claiming a credit for?
+claim-credits-for-exports.Some.value=<h2 class="heading-medium">How many litres are you claiming a credit for?</h2>
+claim-credits-for-exports.Some.value.repayment.warning=You can only claim credit if you''ve registered for the levy and paid it directly to HMRC. Claiming credits you''re not entitled to is a criminal offence.
+claim-credits-for-exports.Some.value.subfield.help.header=What are the bands?
+claim-credits-for-exports.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
 heading.claim-credits-for-lost-damaged=Do you want to claim a credit for any liable drink which have been lost or destroyed?
 claim-credits-for-lost-damaged.inner-heading=How many litres are you claiming a credit for?
-claim-credits-for-exports.lead.volMan=You can only claim a levy credit for drinks that you have paid the levy on \
+claim-credits-for-exports.paragraph=You can only claim a levy credit for drinks that you have paid the levy on \
   or will pay the levy on. Do not include drinks produced for small producers or imported from them.
+claim-credits-for-exports.required=Select yes if you want to claim a credit for liable drink that has been exported
+claim-credits-for-exports.Some.value._1.required=Enter the number of litres in the low band
+claim-credits-for-exports.Some.value._2.required=Enter the number of litres in the high band
+claim-credits-for-exports.Some.value._1.not-a-number=Number of litres must be a whole number
+claim-credits-for-exports.Some.value._2.not-a-number=Number of litres must be a whole number
+claim-credits-for-exports.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+claim-credits-for-exports.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
 claim-credits-for-lost-damaged.help.header=What can I claim credit for?
 claim-credits-for-lost-damaged.help=You can claim a credit for liable drinks that have been:<ul class="list list-bullet"><li>lost</li><li>destroyed</li>\
   <li>disposed of as waste</li><li>reprocessed</li><li>spilled and cannot be used</li></ul>\
   <p>To be able to claim this credit, you must have documentation containing information such as the details of the incident,\
    how and where it occurred, the amount of liable drink and whether it was in the low band or the high band.</p>
+claim-credits-for-lost-damaged.Some.value.repayment.warning=You can only claim credit if you''ve registered for the levy and paid it directly to HMRC. Claiming credits you''re not entitled to is a criminal offence.
+claim-credits-for-lost-damaged.Some.value=<h2 class="heading-medium">How many litres are you claiming a credit for?</h2>
+claim-credits-for-lost-damaged.Some.value.subfield.help.header=What are the bands?
+claim-credits-for-lost-damaged.Some.value.subfield.help=<p tabindex="-1">The low band applies where the liable drink contains at least 5 grams of sugar per 100 millilitres.</p><p tabindex="-1">The high band applies where the liable drink contains at least 8 grams of sugar per 100 millilitres.</p>
+claim-credits-for-lost-damaged.required=Select yes if you want to claim a credit for any liable drink that has been lost or destroyed
+claim-credits-for-lost-damaged.Some.value._1.required=Enter the number of litres in the low band
+claim-credits-for-lost-damaged.Some.value._2.required=Enter the number of litres in the high band
+claim-credits-for-lost-damaged.Some.value._1.not-a-number=Number of litres must be a whole number
+claim-credits-for-lost-damaged.Some.value._2.not-a-number=Number of litres must be a whole number
+claim-credits-for-lost-damaged.Some.value._1.max=Number of litres in the low band must be less than 100,000,000,000,000
+claim-credits-for-lost-damaged.Some.value._2.max=Number of litres in the high band must be less than 100,000,000,000,000
+
 heading.check-your-answers=Check your answers before sending your return
-heading.check-your-answers.orgName=
+heading.check-your-answers.orgName={0}
 period.check-your-answers={0} to {1}
 check-your-answers.balance.due=You need to pay {0}
 check-your-answers.balance.nil=You don’t need to pay anything
@@ -1209,6 +1457,7 @@ return-sent.paymentsBlurb.variation=We will send you a letter to confirm that yo
 return-sent.cya-table.header=Details of your return
 
 warning=Warning
+returnsCYA.returnsDue= {0} to {1}
 returnsHome.returnsDue=The return for {0} from {1} to {2} is due by {3}.
 returnsHome.returnsDueMulti=You have {0} overdue returns.
 returnsHome.returnsDueList.p1=You must send your {0} overdue returns in this order, oldest first:
@@ -1242,7 +1491,7 @@ return.file.nil=I have no activity to report for this quarter
 heading.return-change-registration=You changed your soft drinks business activity
 return-change-registration.continue=Update registration
 returns.variation.new-importer-explanation=You have declared in this return that you have brought liable drinks into the UK.
-returns.variation.new-packer-explanation=You have declared in this return that you have packaged liable drinks in the UK. 
+returns.variation.new-packer-explanation=You have declared in this return that you have packaged liable drinks in the UK.
 returns.variation.new-packer-and-importer-explanation=You have declared in this return that that you have brought liable drinks into the UK and that you have packaged liable drinks in the UK.
 returns.variation.update-reg=This is different to your registered business activity, so we will update your registration.
 returns.variation.change-answers=If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
@@ -1305,16 +1554,73 @@ how-to-pay.delay=CHAPS payments usually reach HMRC the same working day. Bacs pa
 
 select-change.option.returns=Correct an error in a previous return
 heading.select-return=Which return do you need to correct?
+
 select-return.help.header=I cannot find the return I’m looking for
 select-return.help=<p>If you did not send a return, then it will not be listed here.</p>\
   <p>You can correct returns up to 4 years after the end of the tax year the return is in.</p>\
   <p>You cannot correct a return if we estimated how much levy you need to pay.</p>
 select-return.continue=Continue
 
-select-return.option.0=January to March
-select-return.option.1=April to June
-select-return.option.2=July to September
-select-return.option.3=October to December
+select-return.2018.0=January to March 2018
+select-return.2018.1=April to June 2018
+select-return.2018.2=July to September 2018
+select-return.2018.3=October to December 2018
+select-return.2019.0=January to March 2019
+select-return.2019.1=April to June 2019
+select-return.2019.2=July to September 2019
+select-return.2019.3=October to December 2019
+select-return.2020.0=January to March 2020
+select-return.2020.1=April to June 2020
+select-return.2020.2=July to September 2020
+select-return.2020.3=October to December 2020
+select-return.2021.0=January to March 2021
+select-return.2021.1=April to June 2021
+select-return.2021.2=July to September 2021
+select-return.2021.3=October to December 2021
+select-return.2022.0=January to March 2022
+select-return.2022.1=April to June 2022
+select-return.2022.2=July to September 2022
+select-return.2022.3=October to December 2022
+select-return.2023.0=January to March 2023
+select-return.2023.1=April to June 2023
+select-return.2023.2=July to September 2023
+select-return.2023.3=October to December 2023
+select-return.2024.0=January to March 2024
+select-return.2024.1=April to June 2024
+select-return.2024.2=July to September 2024
+select-return.2024.3=October to December 2024
+select-return.2025.0=January to March 2025
+select-return.2025.1=April to June 2025
+select-return.2025.2=July to September 2025
+select-return.2025.3=October to December 2025
+select-return.2026.0=January to March 2026
+select-return.2026.1=April to June 2026
+select-return.2026.2=July to September 2026
+select-return.2026.3=October to December 2026
+select-return.2027.0=January to March 2027
+select-return.2027.1=April to June 2027
+select-return.2027.2=July to September 2027
+select-return.2027.3=October to December 2027
+select-return.2028.0=January to March 2028
+select-return.2028.1=April to June 2028
+select-return.2028.2=July to September 2028
+select-return.2028.3=October to December 2028
+select-return.2029.0=January to March 2029
+select-return.2029.1=April to June 2029
+select-return.2029.2=July to September 2029
+select-return.2029.3=October to December 2029
+select-return.2030.0=January to March 2030
+select-return.2030.1=April to June 2030
+select-return.2030.2=July to September 2030
+select-return.2030.3=October to December 2030
+select-return.2031.0=January to March 2031
+select-return.2031.1=April to June 2031
+select-return.2031.2=July to September 2031
+select-return.2031.3=October to December 2031
+select-return.2032.0=January to March 2032
+select-return.2032.1=April to June 2032
+select-return.2032.2=July to September 2032
+select-return.2032.3=October to December 2032
 
 return-details.balance.due=You need to pay {0}
 return-details.balance.nil=You don’t need to pay anything
@@ -1408,7 +1714,7 @@ check-return-changes.net.adjusted.positive=Net adjusted amount excluding interes
 check-return-changes.net.adjusted.negative=Net adjusted amount
 
 check-return-changes.submit.heading=Send your correction
-check-return-changes.submit.p=By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct. 
+check-return-changes.submit.p=By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct.
 
 check-return-changes.correction.title=Correction
 check-return-changes.band.title=Band
@@ -1422,7 +1728,7 @@ check-return-changes.continue=Confirm details and send correction
 
 heading.return-correction-reason=Why do you need to correct this return?
 return-correction-reason.lead=Make sure you provide as much detail as you can. We may get in touch with your contact person to discuss this.
-error.return-correction-reason.empty=Enter a reason for correcting your return
+return-correction-reason.required=Enter a reason for correcting your return
 sdil.check-return-changes.reason.return-correction-reason.subheading=Correction details
 return-correction-reason.label=Reason for correction
 return-correction-reason.hint=Enter up to 255 characters
@@ -1444,18 +1750,18 @@ return.check-return-changes.what-happens-next=We may get in touch with your cont
 
 heading.repayment-method=How do you want the credit to be repaid?
 repayment-method.lead=Repayment is not guaranteed. We may wish to discuss the claim with you before deciding whether to make a repayment.
-credit=Credited to our Soft Drinks Industry Levy account
+repayment-method.Credit=Credited to our Soft Drinks Industry Levy account
 credit.short=Credited to our Soft Drinks Industry Levy account
-bankPayment=Paid into the bank account for this business
+repayment-method.BankPayment=Paid into the bank account for this business
 bankPayment.short=Paid into the bank account for this business
 return-variation-repayments.label=Repayment method
 
-heading.file-return-before-deregistration=You cannot cancel your registration while you have returns to send
+file-return-before-deregistration.heading=You cannot cancel your registration while you have returns to send
 file-return-before-deregistration.one-return=Before you can cancel your registration, you must send a return for {0} to {1} and make any payments due.
 file-return-before-deregistration.many-returns=Before you can cancel your registration, you must send {0} returns and make any payments due.
 file-return-before-deregistration.continue=Go to your account
 
-error.sdilref.empty=Enter the small producer’s reference number
+sdilRef.required=Enter the small producer’s reference number
 change.latency=<p>Changes can take up to 15 working days to process.</p>
 heading.package-own-uk.inner=How many litres will you package in the next 12 months?
 heading.package-copack.inner=How many litres will you package in the next 12 months?
@@ -1470,4 +1776,11 @@ heading.brought-into-uk-from-small-producers.inner=How many litres?
 heading.claim-credits-for-exports.inner=How many litres are you claiming a credit for?
 heading.claim-credits-for-lost-damaged.inner=How many litres are you claiming a credit for?
 
+producer.summarydetailHeader=What does ‘packaged’ mean? 
+producer.summarydetail=A liable drink is packaged if it is bottled, canned or otherwise packaged so it is ready to either drink or dilute.
+producer.summarydetailHeader.1=What is a liable drink?
+producer.summarydetail.1=<h2>Liable drinks</h2><p>A drink is liable if it meets all the following conditions:</p><ul class="list list-bullet"><li>it has a content of 1.2% alcohol by volume or less</li><li>it is either ready to drink, or to be drunk it must be diluted with water, mixed with   crushed ice or processed to make crushed ice, mixed with carbon dioxide or a combination of these</li><li>it is packaged ready for sale</li><li>it has had sugar added during production, including pure cane sugars like sucrose and   glucose as well as substances (other than fruit juice, vegetable juice and milk) that contain sugar, such as honey</li><li>it contains at least 5 grams (g) of sugar per 100 millilitres (ml) in its ready to   drink or diluted form</li></ul><h2>Exempt drinks</h2><p>A drink is exempt if it meets one of the following conditions:</p><ul class="list list-bullet"><li>it contains at least 75% milk</li><li>it is a milk-substitute which contains at least 120 milligrams of calcium per 100ml,   for example soya or almond milk</li><li>it is an alcohol replacement drink, for example de-alcoholised beer or wine</li><li>it is infant formula, follow-on formula, baby foods, formulated food intended as a   total diet replacement or dietary food used for special medical purposes</li></ul>
 
+Some.value=<h2 class="heading-medium">How many litres do you need to report?</h2>
+Some.value._1=Litres in the low band
+Some.value._2=Litres in the high band

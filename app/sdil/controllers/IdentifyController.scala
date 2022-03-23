@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,7 @@ package sdil.controllers
 
 import cats.data.OptionT
 import cats.implicits._
-import ltbs.play.scaffold.SdilComponents._
-import play.api.data.Form
+import play.api.data.{Form, Mapping}
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,11 +30,12 @@ import sdil.forms.FormHelpers
 import sdil.models.{Address, Identification, RegistrationFormData}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
+import sdil.uniform.SdilComponents.postcode
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IdentifyController(
-  override val messagesApi: MessagesApi,
+class IdentifyController @Inject()(
   mcc: MessagesControllerComponents,
   cache: RegistrationFormDataCache,
   authorisedAction: AuthorisedAction,
@@ -81,7 +81,7 @@ class IdentifyController(
               cache.cache(request.internalId, RegistrationFormData(reg, identification.utr)) map { _ =>
                 Redirect(routes.VerifyController.show())
               }
-            case _ => BadRequest(views.identify(form.fill(identification).withError("utr", "error.utr.no-record")))
+            case _ => BadRequest(views.identify(form.fill(identification).withError("utr", "utr.no-record")))
         }
       )
   }
@@ -91,13 +91,14 @@ class IdentifyController(
 }
 
 object IdentifyController extends FormHelpers {
+
   val form: Form[Identification] = Form(
     mapping(
       "utr" -> text.verifying(Constraint { x: String =>
         x match {
-          case ""                            => Invalid("error.utr.required")
-          case utr if utr.exists(!_.isDigit) => Invalid("error.utr.invalid")
-          case utr if utr.length != 10       => Invalid("error.utr.length")
+          case ""                            => Invalid("utr.required")
+          case utr if utr.exists(!_.isDigit) => Invalid("utr.invalid")
+          case utr if utr.length != 10       => Invalid("utr.length")
           case _                             => Valid
         }
       }),

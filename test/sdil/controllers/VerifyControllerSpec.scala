@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import play.api.test.Helpers._
 import sdil.models.Address
 import sdil.models.DetailsCorrect.DifferentAddress
 import uk.gov.hmrc.http.HttpResponse
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 

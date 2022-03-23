@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,6 @@
 @import sdil.config.AppConfig
 @import views.ViewHelpers
 
-@this(govukWrapper: govuk_wrapper,
-      viewHelpers: ViewHelpers)
-
 @(
     title: String,
     sidebarLinks: Option[Html] = None,
@@ -30,6 +27,8 @@
     form: Option[Form[_]] = None
 )(mainContent: Html)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
+@viewHelpers = @{new ViewHelpers(config.configuration)}
+
 @serviceInfoContent = {}
 
 @sidebar = {
@@ -38,7 +37,7 @@
     }
 }
 
-@govukWrapper(
+@govuk_wrapper(
     appConfig = config,
     title = title ++ " - Soft Drinks Industry Levy - GOV.UK",
     mainClass = mainClass,
@@ -47,5 +46,4 @@
     contentHeader = contentHeader,
     mainContent = if(noArticle) mainContent else viewHelpers.article(mainContent),
     serviceInfoContent = serviceInfoContent,
-    form = form
 )

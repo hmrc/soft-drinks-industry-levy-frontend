@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class IdentifyControllerSpec extends ControllerSpec {
@@ -145,7 +146,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       val res = testController.submit()(request)
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include(Messages("error.utr.no-record"))
+      contentAsString(res) must include(Messages("utr.no-record"))
     }
 
     "return 400 - Bad Request and the identify page if the postcode does not match ROSM's business partner record" in {
@@ -158,7 +159,7 @@ class IdentifyControllerSpec extends ControllerSpec {
       val res = testController.submit()(request)
 
       status(res) mustBe BAD_REQUEST
-      contentAsString(res) must include(Messages("error.utr.no-record"))
+      contentAsString(res) must include(Messages("utr.no-record"))
     }
 
     "redirect to the verify page if the form data is valid" in {

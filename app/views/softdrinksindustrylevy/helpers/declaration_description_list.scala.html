@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 @(pageRef: String, tableHeading: String, tableContent: Option[String] = None)(rowContent: Html)(implicit messages: Messages)
 
-<h2 class="heading-medium">@Messages(s"sdil.$pageRef.$tableHeading")</h2>
+<h2 class="heading-medium">@messages(s"sdil.$pageRef.$tableHeading")</h2>
 
 @tableContent.map { x =>
     <p class="business-details-help">
-        @Messages(s"sdil.$pageRef.$tableHeading.$x")
+        @messages(s"sdil.$pageRef.$tableHeading.$x")
     </p>
 }
 

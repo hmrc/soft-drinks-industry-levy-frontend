@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 @(prefix: String, balance: BigDecimal)(implicit messages: Messages)
 @if(balance == 0) {
-  @Messages(Seq(s"${prefix}.zero", prefix), balance.pounds)
+  @messages(Seq(s"${prefix}.zero", prefix), balance.pounds)
 }
 @if(balance < 0) {
-    @Messages(Seq(s"${prefix}.negative", prefix), balance.pounds)
+    @messages(Seq(s"${prefix}.negative", prefix), balance.pounds)
 }
 @if(balance > 0) {
-    @Messages(Seq(s"${prefix}.positive", prefix), balance.pounds)
+    @messages(Seq(s"${prefix}.positive", prefix), balance.pounds)
 }

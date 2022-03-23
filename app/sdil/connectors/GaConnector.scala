@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,16 @@
 package sdil.connectors
 
 import play.api.libs.json.Json
-import play.api.{Configuration, Environment, Logger}
+import play.api.{Configuration, Environment, Logging}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GaConnector(http: HttpClient, environment: Environment, val configuration: Configuration)
-    extends ServicesConfig(configuration) {
+class GaConnector @Inject()(http: HttpClient, val configuration: Configuration)
+    extends ServicesConfig(configuration) with Logging {
 
   implicit val dimensionWrites = Json.writes[DimensionValue]
   implicit val eventWrites = Json.writes[Event]
@@ -35,7 +36,7 @@ class GaConnector(http: HttpClient, environment: Environment, val configuration:
 
   def sendEvent(request: AnalyticsRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     http.POST(serviceUrl, request).map(_ => ()) recover {
-      case e: Exception => Logger.error(s"Couldn't send analytics event $request", e)
+      case e: Exception => logger.error(s"Couldn't send analytics event $request", e)
     }
 }
 

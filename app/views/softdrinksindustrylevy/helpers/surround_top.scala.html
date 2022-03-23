@@ -1,0 +1,142 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@(pageKey: List[String], fieldKey: String, tell: Option[Html], errors: ErrorTree, messages: UniformMessages[Html], cond: Option[Html] = None)(inner: Html*)
+@keyDots = @{pageKey.mkString(".")}
+@isListingPage= @{List("production-sites", "warehouses", "small-producer-details", "production-site-details", "secondary-warehouse-details","warehouse-details","packaging-site-details").contains(pageKey.head)}
+@noShowHeader= @{List("small-producer-details","check-your-answers","check-answers","change-registered-account-details").contains(pageKey.head)}
+@if(isListingPage){
+    @if(!noShowHeader) {
+        <h1 class="heading-large  @{messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")}">
+            @messages(s"heading.$keyDots")
+        </h1>
+    }
+    @for(msg <- messages.list(s"$keyDots.paragraph")) {
+        <div class="lede">
+            <p tabindex="-1">@msg</p>
+        </div>
+    }
+
+    @for(msg <- messages.list(s"$keyDots.paragraph.small")) {
+        <p tabindex="-1">@msg</p>
+    }
+
+    @for(m <- messages.get(s"$keyDots.lead")) {
+        <p tabindex="-1" class="lede">@m</p>
+    }
+
+    @for(m <- messages.get(s"$keyDots.hint")) {
+        <span class="form-hint">@m</span>
+    }
+        @tell
+        @for(m <- messages.get(s"$keyDots.error.hint")) {
+            <span class="form-hint">@m</span>
+        }
+    <fieldset class="form-field-group">
+        <legend>
+            <h2 class="heading-small add-to-list">@messages(s"$keyDots.listing.heading")</h2>
+        </legend>
+        <div class="form-group @if(errors.valueAtRootList.nonEmpty){form-group-error}">
+            @errors.valueAtRootList.map { error =>
+                <span id="@fieldKey-error" class="error-message">
+                    <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(pageKey).render(messages)
+                </span>
+            }
+            @inner
+        </div>
+} else {
+    <fieldset class="form-field-group  @if(errors.nonEmpty) {after-error-summary}">
+        @if(!noShowHeader){
+        <legend>
+            <h1 class="heading-large  @{
+                messages.get(s"heading.$keyDots.orgName").map(_ => "service-header")
+            }">
+            @messages(s"heading.$keyDots")
+            </h1>
+        </legend>
+        }
+
+        @for(msg <- messages.list(s"$keyDots.paragraph")) {
+            <div class="lede">
+                <p tabindex="-1">@msg</p>
+            </div>
+        }
+
+        @for(msg <- messages.list(s"$keyDots.paragraph.small")) {
+            <p tabindex="-1">@msg</p>
+        }
+
+        @for(m <- messages.get(s"$keyDots.lead")) {
+            <p tabindex="-1" class="lede">@m</p>
+        }
+
+        @for(m <- messages.get(s"$keyDots.hint")) {
+            <span class="form-hint">@m</span>
+        }
+        <div class="form-group @if(errors.valueAtRootList.nonEmpty) {form-group-error}">
+            @for(m <- messages.get(s"$keyDots.error.hint")) {
+                <span class="form-hint">@m</span>
+            }
+
+            @errors.valueAtRootList.map { error =>
+                <span id="@fieldKey-error" class="error-message">
+                    <span class="visually-hidden">@messages("error"):</span> @error.prefixWith(pageKey).render(messages)
+                </span>
+            }
+
+            @tell
+            @inner
+
+        </legend>
+
+        </div>
+}
+
+@cond.getOrElse(Html(""))
+
+@for((h,t) <- messages.list(keyDots+".help.header").zip(messages.list(keyDots+".help"))){
+        <details class="padding-bottom-10 govuk-details">
+          <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
+          <div class="panel panel-border-narrow margin-bottom-1">
+            @t
+          </div>
+        </details>
+}
+
+@for((h,t) <- messages.list(keyDots+".list.help.header").zip(messages.list(keyDots+".list.help"))) {
+        <details class="padding-bottom-10 govuk-details">
+            <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@h</span></summary>
+            <div class="panel panel-border-narrow margin-bottom-1">
+                <p>@t</p>
+                <ul class="list list-bullet">
+                @for(x <- messages.list(keyDots+".list.help").tail) {
+                    <li>@x</li>
+                }
+                </ul>
+            </div>
+        </details>
+}
+
+   </fieldset>
+
+    @messages.get(keyDots+".button.paragraph").map{ p =>
+      <p>@p</p>
+    }
+
+    <button class="button" type="submit" id="continue-button">
+    @messages(List(s"$keyDots.continue","sdil.common.save-continue"))
+    </button>
+

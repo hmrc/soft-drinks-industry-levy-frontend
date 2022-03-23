@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,9 @@ package sdil.config
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-trait AppConfig {
-  val reportAProblemPartialUrl: String
-  val reportAProblemNonJSUrl: String
-  val ggLoginUrl: String
-  val signoutRegVarUrl: String
-  val signoutReturnsUrl: String
-  val signoutUrlNoFeedback: String
-  val sdilHomePage: String
-  val appName: String
-  val balanceAllEnabled: Boolean
-  val directDebitEnabled: Boolean
-}
+import javax.inject.Inject
 
-class FrontendAppConfig(val configuration: Configuration) extends ServicesConfig(configuration) with AppConfig {
+class AppConfig @Inject()(val configuration: Configuration) extends ServicesConfig(configuration) {
 
   private def loadConfig(key: String) =
     configuration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
@@ -40,9 +29,9 @@ class FrontendAppConfig(val configuration: Configuration) extends ServicesConfig
   private lazy val contactHost = configuration.getOptional[String](s"contact-frontend.host").getOrElse("")
   private lazy val contactFormServiceIdentifier = configuration.get[String]("appName")
 
-  override lazy val reportAProblemPartialUrl =
+  lazy val reportAProblemPartialUrl =
     s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  override lazy val reportAProblemNonJSUrl =
+  lazy val reportAProblemNonJSUrl =
     s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
 
   //Auth related config
@@ -58,8 +47,8 @@ class FrontendAppConfig(val configuration: Configuration) extends ServicesConfig
   lazy val signoutUrlNoFeedback: String = s"$basGatewayFrontend$basGatewaySignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
 
-  override val balanceAllEnabled: Boolean = getBoolean("balanceAll.enabled")
+  val balanceAllEnabled: Boolean = getBoolean("balanceAll.enabled")
 
-  override val directDebitEnabled: Boolean = getBoolean("directDebit.enabled")
+  val directDebitEnabled: Boolean = getBoolean("directDebit.enabled")
 
 }

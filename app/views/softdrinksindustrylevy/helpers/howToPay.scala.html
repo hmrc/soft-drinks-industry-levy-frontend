@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
 @(sdilRef: String)(implicit messages: Messages)
 
 @details(s"how-to-pay.title") {
-  <p>@Messages("how-to-pay.pay-by")</p>
+  <p>@messages("how-to-pay.pay-by")</p>
 
   <ul class="list list-bullet">
-      <li>@Messages("how-to-pay.sort-code")</li>
-      <li>@Messages("how-to-pay.acct-no")</li>
-      <li>@Messages("how-to-pay.acct-name")</li>
-      <li>@Messages("how-to-pay.payment-ref", sdilRef)</li>
+      <li>@messages("how-to-pay.sort-code")</li>
+      <li>@messages("how-to-pay.acct-no")</li>
+      <li>@messages("how-to-pay.acct-name")</li>
+      <li>@messages("how-to-pay.payment-ref", sdilRef)</li>
   </ul>
 
-  <p>@Messages("how-to-pay.delay")</p>
+  <p>@messages("how-to-pay.delay")</p>
 }

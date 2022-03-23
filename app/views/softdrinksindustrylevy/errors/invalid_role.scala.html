@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 @import sdil.config.AppConfig
 
-@this(main: main_template)
+@this()
 
 @()(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main(Messages("sdil.invalid-role.title")) {
-    <h1 class="heading-large">@Messages("sdil.invalid-role.title")</h1>
+@main_template(Messages("sdil.invalid-role.title")) {
+    <h1 class="heading-large">@messages("sdil.invalid-role.title")</h1>
 
-    <p id="registration-status">@Messages("sdil.invalid-role.p1")</p>
-    <p>@Messages("sdil.invalid-role.p2")</p>
+    <p id="registration-status">@messages("sdil.invalid-role.p1")</p>
+    <p>@messages("sdil.invalid-role.p2")</p>
 
-    <p><a href="@sdil.controllers.routes.AuthenticationController.signIn()">@Messages("sdil.common.return-to-sign-in")</a></p>
+    <p><a href="@sdil.controllers.routes.AuthenticationController.signIn()">@messages("sdil.common.return-to-sign-in")</a></p>
 }

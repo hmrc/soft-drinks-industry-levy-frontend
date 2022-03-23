@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,13 +43,13 @@
 
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-            @Messages("sdil.verify.address")
+            @messages("sdil.verify.address")
             </dt>
             <dd class="govuk-summary-list__value">
                 @formData.primaryAddress.nonEmptyLines.map { l =>
                     <div>@l</div>
                 }
-                <div>@Messages("sdil.declaration.uk")</div>
+                <div>@messages("sdil.declaration.uk")</div>
             </dd>
         </div>
     }
@@ -74,15 +74,14 @@
             @if(useCopacker.nonEmpty) {
                 @declaration_description_term("registerDeclaration", "third-party",
                     Some(sdil.controllers.routes.RegistrationController.index("copacked")),
-                    Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"), '_colspan -> "2")
+                    Messages(s"sdil.registerDeclaration.${useCopacker.getOrElse(false)}"))
             }
             @producer.map { _ =>
                 @declaration_description_term(
                     "registerDeclaration",
                     "packaging",
                     Some(sdil.controllers.routes.RegistrationController.index("package-own-uk")),
-                    Messages(s"sdil.registerDeclaration.${packageOwn.fold(false)(_ => true)}"),
-                    '_colspan -> "2")
+                    Messages(s"sdil.registerDeclaration.${packageOwn.fold(false)(_ => true)}"))
             }
             @if(packageOwn.fold(false)(_ => true)) {
                 @declaration_description_litres(
@@ -96,8 +95,7 @@
             "registerDeclaration",
             "customers",
             Some(sdil.controllers.routes.RegistrationController.index("package-copack")),
-            Messages(s"sdil.registerDeclaration.${copacks.fold(false)(_ => true)}"),
-            '_colspan -> "2"
+            Messages(s"sdil.registerDeclaration.${copacks.fold(false)(_ => true)}")
         )
 
         @if(copacks.fold(false)(_ => true)) {
@@ -110,7 +108,7 @@
 
         @declaration_description_term("registerDeclaration", "import",
             Some(sdil.controllers.routes.RegistrationController.index("import")),
-            Messages(s"sdil.registerDeclaration.${imports.fold(false)(_ => true)}"), '_colspan -> "2")
+            Messages(s"sdil.registerDeclaration.${imports.fold(false)(_ => true)}"))
 
         @if(imports.fold(false)(_ => true)) {
             @declaration_description_litres(
@@ -144,7 +142,7 @@
                 @declaration_description_term(
                     "registerDeclaration",
                     "warehouses",
-                    Some(sdil.controllers.routes.RegistrationController.index("secondary-warehouse-details")),
+                    Some(sdil.controllers.routes.RegistrationController.index("warehouses")),
                     warehouses.size.toString
                 )
             }
@@ -163,6 +161,6 @@
     }
 
     <p class="print-link-padding">
-        <a href="javascript:window.print()" class="print-link">@Messages("sdil.common.print")</a>
+        <a href="javascript:window.print()" class="print-link">@messages("sdil.common.print")</a>
     </p>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,12 @@ import sdil.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 
-class AuthenticationController(override val messagesApi: MessagesApi, mcc: MessagesControllerComponents, views: Views)(
-  implicit config: AppConfig)
+import javax.inject.Inject
+
+class AuthenticationController @Inject()(
+  override val messagesApi: MessagesApi,
+  mcc: MessagesControllerComponents,
+  views: Views)(implicit config: AppConfig)
     extends FrontendController(mcc) {
 
   def signIn = Action {

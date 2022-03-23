@@ -1,0 +1,45 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@(pageKey: List[String], fieldKey: List[String], tell: Option[Html], checkboxes: Seq[(String, Boolean)], errors: ErrorTree, messages: UniformMessages[Html], conditional: PartialFunction[String,Html] = PartialFunction.empty)
+
+@keyDash=@{fieldKey.mkString("-")}
+@keyDots=@{fieldKey.mkString(".")}
+
+@surround(pageKey, fieldKey, tell, errors, messages) {
+
+    <div class="govuk-checkboxes">
+    @checkboxes.zipWithIndex.map{ case ((opt, ticked),num) =>
+
+        <div class="multiple-choice govuk-checkboxes__item">
+            <input type="checkbox"
+                   id="@{keyDash}-@num"
+                   name="@keyDots"
+                   value="@opt"
+                   @if(ticked){checked="checked"}
+                   @if(conditional.isDefinedAt(opt)) { aria-expanded="true" }
+            />
+            <label for="@{keyDash}-@num">@{messages.decompose({fieldKey :+ opt}.mkString("."))}</label>
+            @for(cond <- conditional.lift(opt)) {
+                <div id="conditional-@keyDash-@opt" class=s"conditional conditional-@keyDash">@cond</div>
+            }
+
+        </div>
+
+    }
+    </div>
+
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,17 @@
 package sdil.controllers
 
 import java.time.LocalDate
-
 import org.mockito.ArgumentMatchers.{eq => matching, _}
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.libs.json._
 import sdil.models._
 import sdil.models.backend._
-import sdil.models.retrieved.RetrievedSubscription
+import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
+import sdil.models.variations.RegistrationVariationData
 import sdil.utils.FakeApplicationSpec
+import uk.gov.hmrc.auth.core.EnrolmentIdentifier
 import uk.gov.hmrc.http.cache.client.CacheMap
 
 import scala.concurrent.Future
@@ -65,17 +67,8 @@ trait ControllerSpec extends FakeApplicationSpec {
     when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), any())(any()))
       .thenReturn(Future.successful(Some(retrievedSubscription)))
 
-  def checkSmallProdStatus(isSmall: Boolean): OngoingStubbing[Future[Boolean]] =
-    when(
-      mockSdilWMController.isSmallProducer(
-        matching("XPSDIL000000205"),
-        matching(mockSdilConnector),
-        matching(ReturnPeriod(2018, 3))
-      )(any())
-    ) thenReturn Future.successful(isSmall)
-
-  def fetchAndGet(smallProd: JsValue): OngoingStubbing[Future[Option[JsValue]]] = {
-    when(mockSdilConnector.shortLiveCache) thenReturn cacheMock
+  def fetchAndGet(smallProd: JsValue): OngoingStubbing[Future[Option[JsValue]]] =
+    //when(mockSdilConnector.shortLiveCache) thenReturn cacheMock
     when(
       cacheMock.fetchAndGetEntry[JsValue](
         matching("XCSDIL000000002"),
@@ -83,7 +76,6 @@ trait ControllerSpec extends FakeApplicationSpec {
       )(any(), any(), any())).thenReturn {
       Future.successful(Some(smallProd))
     }
-  }
 
   def balanceHistory(financialData: List[FinancialLineItem]): OngoingStubbing[Future[List[FinancialLineItem]]] =
     when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn {
@@ -142,6 +134,53 @@ trait ControllerSpec extends FakeApplicationSpec {
   when(mockSdilConnector.getRosmRegistration(any())(any()))
     .thenReturn(Future.successful(Some(defaultRosmData)))
 
+  private lazy val emptySub = RetrievedSubscription(
+    "0000000022",
+    "",
+    "",
+    UkAddress(Nil, ""),
+    RetrievedActivity(
+      smallProducer = false,
+      largeProducer = false,
+      contractPacker = false,
+      importer = false,
+      voluntaryRegistration = false),
+    java.time.LocalDate.now,
+    Nil,
+    Nil,
+    Contact(None, None, "", "")
+  )
+  private lazy val sampleSub = emptySub.copy(
+    activity = RetrievedActivity(
+      smallProducer = true,
+      largeProducer = false,
+      contractPacker = false,
+      importer = true,
+      voluntaryRegistration = false)
+  )
+
+  private lazy val updatedBusinessAddress =
+    Address.fromUkAddress(UkAddress(List("32", "new street", "new town", "new county"), "BN5 5GT"))
+
+  val smallProducer = Producer(true, Some(false))
+
+  lazy val registeredUserInformation = RegistrationVariationData(
+    emptySub,
+    updatedBusinessAddress,
+    smallProducer,
+    Some(false),
+    Some(false),
+    None,
+    false,
+    None,
+    false,
+    None,
+    Seq.empty,
+    Seq.empty,
+    mock[ContactDetails],
+    Seq.empty
+  )
+
   lazy val defaultFormData: RegistrationFormData = {
     RegistrationFormData(
       rosmData = defaultRosmData,
@@ -196,4 +235,37 @@ trait ControllerSpec extends FakeApplicationSpec {
     None,
     Address("1", "The Road", "", "", "AA11 1AA")
   )
+
+  val closedSites = List()
+
+  val sites = List(
+    Site(
+      UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+      Some("88"),
+      Some("Wild Lemonade Group"),
+      Some(LocalDate.of(2018, 2, 26))),
+    Site(
+      UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
+      Some("87"),
+      Some("Highly Addictive Drinks Plc"),
+      Some(LocalDate.of(2019, 8, 19))),
+    Site(
+      UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
+      Some("94"),
+      Some("Monster Bottle Ltd"),
+      Some(LocalDate.of(2017, 9, 23))),
+    Site(
+      UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
+      Some("27"),
+      Some("Super Lemonade Group"),
+      Some(LocalDate.of(2017, 4, 23))),
+    Site(
+      UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
+      Some("96"),
+      Some("Star Products Ltd"),
+      Some(LocalDate.of(2017, 2, 11)))
+  )
+
+  val irCtEnrolment = EnrolmentIdentifier("UTR", "1111111111")
+
 }

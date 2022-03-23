@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,16 @@
 @import sdil.models.Address
 @import views.html.softdrinksindustrylevy.helpers._
 
-@this(main: main_template)
+@this()
 
 @(utr: String, organisation: String, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main(Messages("sdil.registration-pending.title")) {
+@main_template(Messages("sdil.registration-pending.title")) {
 
-    <h1 class="heading-large" id="registration-pending-title">@Messages("sdil.registration-pending.title")</h1>
+    <h1 class="heading-large" id="registration-pending-title">@messages("sdil.registration-pending.title")</h1>
 
     @businessDetails(utr, organisation, address)
     
-    <p>@Messages("sdil.registration-pending.p1")</p>
-    <p>@Messages("sdil.registration-pending.p2")</p>
+    <p>@messages("sdil.registration-pending.p1")</p>
+    <p>@messages("sdil.registration-pending.p2")</p>
 }
