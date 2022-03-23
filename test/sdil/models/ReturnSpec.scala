@@ -18,11 +18,12 @@ package sdil.models
 
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.flatspec.AnyFlatSpecLike
 
 import java.time.LocalDate
 
-class ReturnSpec extends FlatSpec with Matchers with ScalaCheckPropertyChecks {
+class ReturnSpec extends AnyFlatSpecLike with Matchers with ScalaCheckPropertyChecks {
 
   val lowPosInts = Gen.choose(0, 1000)
 

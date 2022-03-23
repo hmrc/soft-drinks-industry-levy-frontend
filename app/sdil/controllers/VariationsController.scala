@@ -367,13 +367,14 @@ class VariationsController @Inject()(
                          submitReturnVariation,
                          config
                        ))
-                       .run(id, purgeStateUponCompletion = true, config = journeyConfig) { case reg: RegistrationVariationData =>
-                         sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
-                           regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
-                             logger.info("variation of Registration is complete")
-                             Redirect(routes.VariationsController.showVariationsComplete())
+                       .run(id, purgeStateUponCompletion = true, config = journeyConfig) {
+                         case reg: RegistrationVariationData =>
+                           sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
+                             regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
+                               logger.info("variation of Registration is complete")
+                               Redirect(routes.VariationsController.showVariationsComplete())
+                             }
                            }
-                         }
                        }
         } yield response
       case None => Future.successful(NotFound(""))

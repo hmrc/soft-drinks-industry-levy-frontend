@@ -32,6 +32,7 @@ import sdil.models.backend._
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import uk.gov.hmrc.auth.core._
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RegisteredActionSpec extends ControllerSpec with BeforeAndAfterEach {
@@ -145,7 +146,7 @@ class RegisteredActionSpec extends ControllerSpec with BeforeAndAfterEach {
     when(m.submitVariation(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.balanceHistory(any(), any())(any())).thenReturn(Future.successful(Nil))
     when(m.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(0)))
-    when(m.shortLiveCache) thenReturn cacheMock
+    //when(m.shortLiveCache) thenReturn cacheMock
     when(cacheMock.fetchAndGetEntry[Any](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
     when(m.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
 

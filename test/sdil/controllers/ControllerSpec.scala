@@ -67,8 +67,8 @@ trait ControllerSpec extends FakeApplicationSpec {
     when(mockSdilConnector.retrieveSubscription(matching("XZSDIL000100107"), any())(any()))
       .thenReturn(Future.successful(Some(retrievedSubscription)))
 
-  def fetchAndGet(smallProd: JsValue): OngoingStubbing[Future[Option[JsValue]]] = {
-    when(mockSdilConnector.shortLiveCache) thenReturn cacheMock
+  def fetchAndGet(smallProd: JsValue): OngoingStubbing[Future[Option[JsValue]]] =
+    //when(mockSdilConnector.shortLiveCache) thenReturn cacheMock
     when(
       cacheMock.fetchAndGetEntry[JsValue](
         matching("XCSDIL000000002"),
@@ -76,7 +76,6 @@ trait ControllerSpec extends FakeApplicationSpec {
       )(any(), any(), any())).thenReturn {
       Future.successful(Some(smallProd))
     }
-  }
 
   def balanceHistory(financialData: List[FinancialLineItem]): OngoingStubbing[Future[List[FinancialLineItem]]] =
     when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn {

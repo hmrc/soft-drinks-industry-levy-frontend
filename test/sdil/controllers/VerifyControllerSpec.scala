@@ -27,6 +27,8 @@ import sdil.models.Address
 import sdil.models.DetailsCorrect.DifferentAddress
 import uk.gov.hmrc.http.HttpResponse
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   "GET /verify" should {

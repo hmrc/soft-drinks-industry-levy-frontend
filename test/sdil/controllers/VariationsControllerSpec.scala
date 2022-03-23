@@ -15,6 +15,7 @@
  */
 
 package sdil.controllers
+
 import org.mockito.ArgumentMatchers.{any, eq => matching, _}
 import org.mockito.Mockito._
 import play.api.test.FakeRequest
@@ -23,6 +24,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
 
 import javax.inject.Inject
+//import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class VariationsControllerSpec @Inject()(implicit ec: ExecutionContext) extends ControllerSpec {

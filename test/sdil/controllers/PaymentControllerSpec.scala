@@ -24,6 +24,7 @@ import play.api.test.Helpers._
 import sdil.connectors.{NextUrl, SpjRequestBtaSdil}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class PaymentControllerSpec extends ControllerSpec {

@@ -388,7 +388,6 @@ object VariationsJourney {
                   }
     } yield variation: Change
 
-
   def changeActorJourney(
     id: String,
     subscription: RetrievedSubscription,

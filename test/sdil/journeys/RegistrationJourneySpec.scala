@@ -21,7 +21,8 @@ import cats.~>
 import ltbs.uniform.UniformMessages
 import ltbs.uniform.interpreters.logictable.{Logic, LogicTableInterpreter, SampleListQty}
 import org.mockito.Mockito.mock
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.twirl.api.Html
 import sdil.controllers.{ControllerSpec, RegistrationController}
 import sdil.models.{Address, ContactDetails, DetailsCorrect, Litreage, OrganisationDetails, Producer, RegistrationFormData, RosmRegistration, Warehouse}
@@ -34,7 +35,7 @@ import scala.concurrent.{Await, ExecutionContext, Future, duration}
 import duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class RegistrationJourneySpec extends WordSpec with Matchers {
+class RegistrationJourneySpec extends AnyWordSpecLike with Matchers {
 
   lazy val defaultRosmData: RosmRegistration = RosmRegistration(
     "some-safe-id",

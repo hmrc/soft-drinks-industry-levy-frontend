@@ -26,7 +26,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory, PlaySpec}
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.DefaultApplicationLifecycle
-import play.api.libs.concurrent.Execution.defaultContext
 import play.api.mvc._
 import play.api.test.Helpers
 import play.api.{Application, ApplicationLoader, Configuration, Environment}
@@ -53,7 +52,7 @@ import views.html.softdrinksindustrylevy.{balance_history, deregistered_service_
 import views.softdrinksindustrylevy.errors.Errors
 import views.uniform.Uniform
 
-import javax.inject.Inject
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeApplicationFactory with MockitoSugar {
@@ -89,7 +88,6 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
 
   val messagesApi: MessagesApi = stubMessagesControllerComponents.messagesApi
   implicit val defaultMessages: Messages = messagesApi.preferred(Seq.empty)
-  implicit val ec: ExecutionContext = defaultContext
   val returnPeriod = ReturnPeriod(2018, 1)
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
   val returnPeriods2 = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1), ReturnPeriod(2019, 2), ReturnPeriod(2019, 3))
@@ -112,7 +110,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     when(m.cache(anyString(), any())(any())).thenReturn(Future.successful(CacheMap("", Map.empty)))
     when(m.get(anyString())(any())).thenReturn(Future.successful(None))
     when(m.clear(anyString())(any())).thenReturn(Future.successful(()))
-    when(m.shortLiveCache) thenReturn cacheMock
+    //when(m.shortLiveCache) thenReturn cacheMock
     m
   }
 
@@ -258,7 +256,7 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     when(m.submitVariation(any(), any())(any())).thenReturn(Future.successful(()))
     when(m.balanceHistory(any(), any())(any())).thenReturn(Future.successful(Nil))
     when(m.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(0)))
-    when(m.shortLiveCache) thenReturn cacheMock
+    //when(m.shortLiveCache) thenReturn cacheMock
     when(cacheMock.fetchAndGetEntry[Any](any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
     when(cacheMock.cache(anyString(), anyString(), any())(any(), any(), any()))
       .thenReturn(Future.successful(CacheMap("jakeAndIan", Map())))

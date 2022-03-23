@@ -16,10 +16,11 @@
 
 package sdil.uniform
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.flatspec.AnyFlatSpecLike
 import sidl.uniform.GdsComponents
 
-class GDS extends FlatSpec with Matchers {
+class GDS extends AnyFlatSpecLike with Matchers {
 
   "A GDC Call for " should "be correctly" in {
 

@@ -94,14 +94,31 @@ coverageHighlighting := true
 Compile / scalafmtOnCompile := true
 Test / scalafmtOnCompile := true
 
+//libraryDependencies ++= Seq(
+//  "org.scalatest"          %% "scalatest"           % "3.2.9",
+//  "org.jsoup"              %  "jsoup"               % "1.13.1",
+//  "com.typesafe.play"      %% "play-test"           % play.core.PlayVersion.current,
+//  "org.mockito"            %  "mockito-core"        % "3.11.0",
+//  "org.scalatestplus.play" %% "scalatestplus-play"  % "5.1.0",
+//  //"org.scalacheck"         %% "scalacheck"          % "1.15.4",
+//  "com.luketebbs.uniform"  %% "interpreter-logictable"  % "5.0.0-RC6",
+//  "org.scalatestplus"          %% "scalatestplus-scalacheck"  % "3.1.0.0-RC2",
+//  "org.scalatestplus" %% "mockito-3-12" % "3.2.10.0",
+//  "com.vladsch.flexmark"        % "flexmark-all"              % "0.35.10"
+//).map(_ % "test")
+
 libraryDependencies ++= Seq(
-  "org.scalatest"          %% "scalatest"           % "3.2.9",
-  "org.jsoup"              %  "jsoup"               % "1.13.1",
-  "com.typesafe.play"      %% "play-test"           % play.core.PlayVersion.current,
-  "org.mockito"            %  "mockito-core"        % "3.10.0",
-  "org.scalatestplus.play" %% "scalatestplus-play"  % "5.1.0",
-  "org.scalacheck"         %% "scalacheck"          % "1.15.4",
-  "com.luketebbs.uniform"  %% "interpreter-logictable"  % "5.0.0-RC6"
+  "org.scalatest"               %% "scalatest"                  % "3.2.9" ,
+  "org.jsoup"                    % "jsoup"                      % "1.12.1" ,
+  "com.typesafe.play"           %% "play-test"                  % play.core.PlayVersion.current,
+  "org.scalamock"               %% "scalamock"                  % "4.2.0" ,
+  "org.scalatestplus"           %% "scalatestplus-scalacheck"   % "3.1.0.0-RC2",
+  "com.vladsch.flexmark"         % "flexmark-all"               % "0.62.2" ,
+  "uk.gov.hmrc"                 %% "reactivemongo-test"         % s"5.0.0-$playVersion",
+  //"com.github.alexarchambault"  %% "scalacheck-shapeless_1.14"  % "1.2.1" ,
+  "org.scalatestplus.play"      %% "scalatestplus-play"         % "5.1.0" ,
+  "com.luketebbs.uniform"       %% "interpreter-logictable"     % "5.0.0-RC6",
+  "org.scalatestplus"           %% "mockito-3-12"               % "3.2.10.0"
 ).map(_ % "test")
 
 // ================================================================================
