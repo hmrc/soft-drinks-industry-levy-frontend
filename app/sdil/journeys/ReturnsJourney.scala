@@ -25,7 +25,6 @@ import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.{Address, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
 import views.html.uniform
-import views.uniform.fragments.returnsCYACantClaim
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
@@ -218,7 +217,7 @@ object ReturnsJourney {
           ) when canClaim == true
       _ <- tell(
             "check-your-answers",
-            returnsCYACantClaim(
+            uniform.fragments.returnsCYACantClaim(
               key = "check-your-answers",
               lineItems = data,
               costLower = costLower,
@@ -228,6 +227,7 @@ object ReturnsJourney {
               total = total,
               variation = variation.some,
               subscription = subscription,
+              period = period,
               originalReturn = None
             )(_: Messages)
             //TODO: Custom Content doesn't appear to be working

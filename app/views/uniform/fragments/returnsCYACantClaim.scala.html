@@ -1,25 +1,35 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import sdil.models.ReturnsVariation
 @import sdil.models.SdilReturn
 @import sdil.models.retrieved.RetrievedSubscription
 @import views.html.softdrinksindustrylevy.helpers._
+@import sdil.models.ReturnPeriod
 
-@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription, originalReturn: Option[SdilReturn])(implicit m: Messages)
+@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription,period:ReturnPeriod,originalReturn: Option[SdilReturn])(implicit messages: Messages)
+<legend>
+    <span class="govuk-caption-xl">@subscription.orgName - @messages(
+                                    "returnsCYA.returnsDue",
+                                    period.start.format("MMMM"),
+                                    period.end.format("MMMM yyyy"),
+                                    period.deadline.format("MMMM yyyy")
+                                )</span>
+    <h1 class="heading-large.service-header">@messages(s"heading.check-your-answers")</h1>
+</legend>
 
 <table class="check-your-answers">
 
