@@ -72,7 +72,7 @@ class ReturnsControllerSpec extends ControllerSpec {
 
       val result = controller.index(2018, 1, nilReturn = false, "idvalue").apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some("own-brands-packaged-at-own-sites")
+      redirectLocation(result) mustEqual Some("/soft-drinks-industry-levy") //Some("own-brands-packaged-at-own-sites")
     }
 
     "execute index journey and throw a NoSuchElementException" in {

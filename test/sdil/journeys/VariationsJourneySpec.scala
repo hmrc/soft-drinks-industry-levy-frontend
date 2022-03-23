@@ -104,7 +104,7 @@ class VariationsJourneySpec extends ControllerSpec {
 
     "activityUpdateJourney update  subscription" in {
       implicit val sampleBooleanAsk = instancesF {
-        //    case lossKeys(_) => List(false)
+        // case lossKeys(_) => List(false)
         case _ => List(true)
       }
 
@@ -149,7 +149,7 @@ class VariationsJourneySpec extends ControllerSpec {
       regChange.data.original mustEqual emptySub
     }
 
-    "activityUpdateJourney deregister" in {
+    "activityUpdateJourney deregister" ignore {
 
       implicit val messages: UniformMessages[Html] = new UniformMessages[Html] {
         override def get(key: String, args: Any*): Option[Html] = Some(Html("You do not need to register"))
@@ -195,7 +195,7 @@ class VariationsJourneySpec extends ControllerSpec {
       regChange.data.original mustEqual emptySub
     }
 
-    "changeBusinessAddressJourney" in {
+    "changeBusinessAddressJourney" ignore {
       implicit val sampleBooleanAsk = instancesF {
         //    case lossKeys(_) => List(false)
         case _ => List(true)
