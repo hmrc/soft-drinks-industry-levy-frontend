@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,243 +16,210 @@
 
 package sdil.controllers
 
-import java.time._
-import java.time.format._
-
 import cats.implicits._
-import ltbs.play.scaffold.GdsComponents._
-import ltbs.play.scaffold.SdilComponents._
 import play.api.Logger
 import play.api.i18n._
-import play.api.mvc.{AnyContent, _}
+import play.api.mvc._
 import play.twirl.api.Html
-import sdil.actions.RegisteredAction
-import sdil.config._
+import sdil.actions.{RegisteredAction, RegisteredRequest}
+import sdil.config.{AppConfig, RegistrationFormDataCache, ReturnsFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
+import sdil.journeys.ReturnsJourney
 import sdil.models._
-import sdil.models.backend.Site
-import sdil.models.retrieved.{RetrievedSubscription => Subscription}
-import sdil.uniform._
-import uk.gov.hmrc.domain.Modulus23Check
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
+import sdil.models.variations.ReturnVariationData
+import sdil.uniform.SaveForLaterPersistenceNew
+import sdil.utility.stringToFormatter
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.uniform.playutil._
-import uk.gov.hmrc.uniform.webmonad._
-import views.html.uniform
-import views.uniform.Uniform
+import views.html.main_template
 
-import scala.concurrent._
+import java.time.{LocalDate, LocalTime, ZoneId}
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
+import scala.language.higherKinds
 
-class ReturnsController(
-  override val messagesApi: MessagesApi,
-  sdilConnector: SoftDrinksIndustryLevyConnector,
-  registeredAction: RegisteredAction,
-  cache: ShortLivedHttpCaching,
+class ReturnsController @Inject()(
   mcc: MessagesControllerComponents,
-  override val uniformHelpers: Uniform
-)(implicit val config: AppConfig, val ec: ExecutionContext)
-    extends FrontendController(mcc) with SdilWMController with Modulus23Check with ReturnJourney with I18nSupport {
+  val config: AppConfig,
+  val ufViews: views.uniform.Uniform,
+  registeredAction: RegisteredAction,
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  cache: RegistrationFormDataCache,
+  returnsCache: ReturnsFormDataCache
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
+  val logger: Logger = Logger(this.getClass())
+  override def defaultBackLink = "/soft-drinks-industry-levy"
 
-  override lazy val parse = mcc.parsers
-  override implicit lazy val messages = MessagesImpl(mcc.langs.availables.head, messagesApi)
-
-  def confirmationPage(
-    key: String,
-    period: ReturnPeriod,
-    subscription: Subscription,
-    sdilReturn: SdilReturn,
-    broughtForward: BigDecimal,
-    sdilRef: String,
-    isSmallProducer: Boolean,
-    variation: ReturnsVariation)(implicit messages: Messages): WebMonad[Result] = {
-
-    val now = LocalDate.now
-    val data = returnAmount(sdilReturn, isSmallProducer)
-    val subtotal = calculateSubtotal(data)
-    val total = subtotal - broughtForward
-    val prettyPeriod =
-      messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))
-
-    def formatMoney(total: BigDecimal) =
-      if (total < 0)
-        f"-£${total.abs}%,.2f"
-      else
-        f"£$total%,.2f"
-
-    val getTotal =
-      if (total <= 0)
-        messages("return-sent.subheading.nil-return")
-      else {
-        messages(
-          "return-sent.subheading",
-          prettyPeriod,
-          subscription.orgName
-        )
-      }
-
-    val returnDate = messages(
-      "return-sent.returnsDoneMessage",
-      period.start.format("MMMM"),
-      period.end.format("MMMM"),
-      period.start.getYear.toString,
-      subscription.orgName,
-      LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
-      now.format("dd MMMM yyyy")
-    )
-
-    val whatHappensNext = uniform.fragments
-      .returnsPaymentsBlurb(
-        subscription,
-        period,
-        sdilRef,
-        total,
-        formatMoney(total),
-        variation,
-        data,
-        costLower,
-        costHigher,
-        subtotal,
-        broughtForward)(messages)
-      .some
-
-    journeyEnd(key, now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
-  }
-
-  private def askNewWarehouses(): WebMonad[List[Site]] =
-    for {
-      addWarehouses <- ask(bool(), "ask-secondary-warehouses-in-return")
-      firstWarehouse <- ask(warehouseSiteMapping, "first-warehouse")(
-                         warehouseSiteForm,
-                         implicitly,
-                         extraMessages,
-                         implicitly) when
-                         addWarehouses
-      warehouses <- askWarehouses(firstWarehouse.fold(List.empty[Site])(x => List(x))) emptyUnless
-                     addWarehouses
-    } yield warehouses
-
-  private def askNewPackingSites(subscription: Subscription): WebMonad[List[Site]] = {
-    implicit val extraMessages = ExtraMessages(
-      messages = Map(
-        "pack-at-business-address-in-return.lead" -> s"${Address.fromUkAddress(subscription.address).nonEmptyLines.mkString("<br/>")}")
-    )
-    for {
-      usePPOBAddress <- ask(bool(), "pack-at-business-address-in-return")
-      packingSites = if (usePPOBAddress) {
-        List(Site.fromAddress(Address.fromUkAddress(subscription.address)))
-      } else {
-        List.empty[Site]
-      }
-      firstPackingSite <- ask(packagingSiteMapping, "first-production-site")(
-                           packagingSiteForm,
-                           implicitly,
-                           implicitly,
-                           implicitly) when
-                           packingSites.isEmpty
-      packingSites <- askPackSites(packingSites ++ firstPackingSite.fold(List.empty[Site])(x => List(x)))
-    } yield packingSites
-  }
-
-  private[controllers] def program(
-    period: ReturnPeriod,
-    subscription: Subscription,
-    sdilRef: String,
-    nilReturn: Boolean,
-    id: String)(implicit hc: HeaderCarrier): WebMonad[Result] = {
-    val em = ExtraMessages(Map(
-      "heading.check-your-answers.orgName" ->
-        s"${subscription.orgName} - ${Messages(s"period.check-your-answers", period.start.format("MMMM"), period.end.format("MMMM yyyy"))}"
-    ))
-    for {
-      _ <- write[Boolean]("_editSmallProducers", true)
-      emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
-      sdilReturn <- askReturn(
-                     subscription,
-                     sdilRef,
-                     sdilConnector,
-                     period,
-                     if (nilReturn) emptyReturn.some else None,
-                     Some(id))
-
-      // check if they need to vary
-      isNewImporter = !sdilReturn.totalImported.isEmpty && !subscription.activity.importer
-      isNewPacker = !sdilReturn.totalPacked.isEmpty && !subscription.activity.contractPacker
-      inner = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)
-      _               <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
-      newPackingSites <- askNewPackingSites(subscription) when isNewPacker && subscription.productionSites.isEmpty
-      newWarehouses   <- askNewWarehouses when isNewImporter && subscription.warehouseSites.isEmpty
-      broughtForward <- if (config.balanceAllEnabled)
-                         execute(sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
-                           extractTotal(listItemsWithTotal(x))
-                         })
-                       else
-                         execute(sdilConnector.balance(sdilRef, withAssessment = false))
-
-      isSmallProd <- execute(isSmallProducer(sdilRef, sdilConnector, period))
-
-      variation = ReturnsVariation(
-        orgName = subscription.orgName,
-        ppobAddress = subscription.address,
-        importer = (isNewImporter, (sdilReturn.totalImported).combineN(4)),
-        packer = (isNewPacker, (sdilReturn.totalPacked).combineN(4)),
-        warehouses = newWarehouses.getOrElse(List.empty[Site]),
-        packingSites = newPackingSites.getOrElse(List.empty[Site]),
-        phoneNumber = subscription.contact.phoneNumber,
-        email = subscription.contact.email,
-        taxEstimation = taxEstimation(sdilReturn)
-      )
-      _ <- checkYourReturnAnswers(
-            "check-your-answers",
-            sdilReturn,
-            broughtForward,
-            subscription,
-            isSmallProd,
-            Some(variation))(em, implicitly)
-      _ <- cachedFuture(s"return-${period.count}")(sdilConnector.returns_update(subscription.utr, period, sdilReturn))
-      _ <- if (isNewImporter || isNewPacker) {
-            execute(sdilConnector.returns_variation(variation, sdilRef))
-          } else {
-            (()).pure[WebMonad]
-          }
-      end <- clear >> confirmationPage(
-              "return-sent",
-              period,
-              subscription,
-              sdilReturn,
-              broughtForward,
-              sdilRef,
-              isSmallProd,
-              variation
-            )
-    } yield end
-  }
   def index(year: Int, quarter: Int, nilReturn: Boolean, id: String): Action[AnyContent] = registeredAction.async {
     implicit request =>
+      implicit lazy val persistence =
+        SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
+          s"returns-$year-$quarter",
+          cache
+        )
+
       val sdilRef = request.sdilEnrolment.value
       val period = ReturnPeriod(year, quarter)
-      val persistence = SaveForLaterPersistence(s"returns-$year$quarter", sdilRef, cache)
+      val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
+
       (for {
         subscription   <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
         pendingReturns <- sdilConnector.returns_pending(subscription.utr)
-        r <- if (pendingReturns.contains(period))
-              runInner(request)(program(period, subscription, sdilRef, nilReturn, id))(id)(
-                persistence.dataGet,
-                persistence.dataPut,
-                if (nilReturn) JourneyConfig(LeapAhead) else JourneyConfig(SingleStep))
-            else
-              Redirect(routes.ServicePageController.show()).pure[Future]
+        broughtForward <- if (config.balanceAllEnabled)
+                           sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+                             extractTotal(listItemsWithTotal(x))
+                           } else sdilConnector.balance(sdilRef, withAssessment = false)
+        isSmallProd <- sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
+                        case Some(x) =>
+                          x // the given sdilRef matches a customer that was a small producer at some point in the quarter
+                        case None => false
+                      }
+
+        r <- if (pendingReturns.contains(period)) {
+              def submitReturn(sdilReturn: SdilReturn): Future[Unit] =
+                sdilConnector.returns_update(subscription.utr, period, sdilReturn)
+              def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
+                sdilConnector.checkSmallProducerStatus(sdilRef, period)
+              def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
+                sdilConnector.returns_variation(rvd, sdilRef)
+
+              if (nilReturn)
+                interpret(
+                  ReturnsJourney
+                    .cyaJourney(
+                      period,
+                      emptyReturn,
+                      subscription,
+                      submitReturnVariation,
+                      broughtForward,
+                      isSmallProd
+                    )
+                ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
+                  submitReturn(ret._1).flatMap { _ =>
+                    returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
+                      Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
+                    }
+                  }
+                } else
+                interpret(
+                  ReturnsJourney
+                    .journey(
+                      id,
+                      period,
+                      None,
+                      subscription,
+                      checkSmallProducerStatus,
+                      submitReturnVariation,
+                      broughtForward,
+                      isSmallProd
+                    )
+                ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
+                  submitReturn(ret._1).flatMap { _ =>
+                    returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
+                      Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
+                    }
+                  }
+                }
+
+            } else
+              Redirect(routes.ServicePageController.show).pure[Future]
       } yield r) recoverWith {
         case t: Throwable => {
-          Logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
-          Redirect(routes.ServicePageController.show()).pure[Future]
+          logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
+          Redirect(routes.ServicePageController.show).pure[Future]
         }
       }
   }
 
-  def taxEstimation(r: SdilReturn): BigDecimal = {
-    val t = r.packLarge |+| r.importLarge |+| r.ownBrand
-    (t._1 * costLower |+| t._2 * costHigher) * 4
+  def showReturnComplete(year: Int, quarter: Int): Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    val period = ReturnPeriod(year, quarter)
+
+    for {
+      subscription <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
+      isSmallProd <- sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
+                      case Some(x) =>
+                        x // the given sdilRef matches a customer that was a small producer at some point in the quarter
+                      case None => false
+                    }
+      broughtForward <- if (config.balanceAllEnabled)
+                         sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+                           extractTotal(listItemsWithTotal(x))
+                         } else sdilConnector.balance(sdilRef, withAssessment = false)
+      cache <- returnsCache.get(sdilRef)
+    } yield {
+      cache match {
+        case Some(rd) =>
+          val now = LocalDate.now
+          val returnDate = Messages(
+            "return-sent.returnsDoneMessage",
+            period.start.format("MMMM"),
+            period.end.format("MMMM"),
+            period.start.getYear.toString,
+            subscription.orgName,
+            LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
+            now.format("dd MMMM yyyy")
+          )
+
+          val data = ReturnsJourney.returnAmount(rd.sdilReturn, isSmallProd)
+          val subtotal = ReturnsJourney.calculateSubtotal(data)
+          val total = subtotal - broughtForward
+
+          val formatTotal =
+            if (total < 0)
+              f"-£${total.abs}%,.2f"
+            else
+              f"£$total%,.2f"
+
+          val prettyPeriod =
+            Messages(
+              s"period.check-your-answers",
+              period.start.format("MMMM"),
+              period.end.format("MMMM yyyy")
+            )
+
+          val getTotal =
+            if (total <= 0)
+              Messages("return-sent.subheading.nil-return")
+            else {
+              Messages(
+                "return-sent.subheading",
+                prettyPeriod,
+                subscription.orgName
+              )
+            }
+
+          val whatHappensNext = views.html.uniform.fragments
+            .returnsPaymentsBlurb(
+              subscription = subscription,
+              paymentDate = period,
+              sdilRef = sdilRef,
+              total = total,
+              formattedTotal = formatTotal,
+              variation = rd.variation,
+              lineItems = data,
+              costLower = ReturnsJourney.costLower,
+              costHigher = ReturnsJourney.costHigher,
+              subtotal = ReturnsJourney.calculateSubtotal(data),
+              broughtForward = broughtForward
+            )
+            .some
+
+          Ok(
+            main_template(
+              Messages("return-sent.title")
+            )(
+              views.html.uniform
+                .journeyEndNew("return-sent", now, Html(returnDate).some, whatHappensNext, Html(getTotal).some)
+            )(implicitly, implicitly, config)
+          )
+
+        case None =>
+          logger.warn("nothing in ReturnsFormDataCache, redirecting user to ServicePage")
+          Redirect(routes.ServicePageController.show)
+      }
+    }
   }
 
 }

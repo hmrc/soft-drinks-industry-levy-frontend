@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
 @errorClass = {@if(elements.hasErrors) {form-group-error}}
 
 <div class="form-field-group @errorClass">
-@elements.errors.map{error => <span class="error-message">@Messages(error)</span>}
+@elements.errors.map{error => <span class="error-message">@messages("error.radio-form.choose-option.continue")</span>}
 
 @radioOptions.map { case (value, (label, extra)) =>
 

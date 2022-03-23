@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class SDILShortLivedCaching(val http: HttpClient, val configuration: Configuration, environment: Environment)
+import javax.inject.Inject
+
+class SDILShortLivedCaching @Inject()(val http: HttpClient, val configuration: Configuration, environment: Environment)
     extends ServicesConfig(configuration) with ShortLivedHttpCaching {
 
   override def defaultSource: String = configuration.get[String]("appName")

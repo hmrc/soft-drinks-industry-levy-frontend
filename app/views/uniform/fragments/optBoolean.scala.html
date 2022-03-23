@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 @(key: String, form: Form[Option[Boolean]])(implicit messages: Messages)
 
 @innerRadioButtons = {
-    <h2 class="heading-medium">@Messages(s"${key}.inner-heading")</h2>
+    <h2 class="heading-medium">@messages(s"${key}.inner-heading")</h2>
 
     @inputRadioGroup(
         form(s"${key}.inner"),

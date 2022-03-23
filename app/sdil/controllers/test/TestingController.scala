@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,12 @@ package sdil.controllers.test
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import sdil.connectors.TestConnector
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class TestingController(testConnector: TestConnector, mcc: MessagesControllerComponents)(implicit ec: ExecutionContext)
+class TestingController @Inject()(testConnector: TestConnector, mcc: MessagesControllerComponents)(
+  implicit ec: ExecutionContext)
     extends FrontendController(mcc) {
 
   def reset(url: String): Action[AnyContent] = Action.async { implicit request =>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,18 @@
 
 package sdil.utils
 
+import play.api.Configuration
 import sdil.config.AppConfig
 
-class TestConfig extends AppConfig {
-  override val reportAProblemPartialUrl: String = "reportProblem"
-  override val reportAProblemNonJSUrl: String = "reportProblemNonJs"
-  override val ggLoginUrl: String = "http://localhost:9553/bas-gateway/sign-in"
-  override val sdilHomePage: String = "http://localhost:8700/soft-drinks-industry-levy/register/identify"
-  override val appName: String = "soft-drinks-industry-levy-frontend"
-  override val signoutRegVarUrl: String = "http://localhost:9553/bas-gateway/sign-out-without-state"
-  override val signoutReturnsUrl: String = "http://localhost:9553/bas-gateway/sign-out-without-state"
-  override val signoutUrlNoFeedback: String = "http://localhost:9553/bas-gateway/sign-out-without-state"
+class TestConfig(override val configuration: Configuration) extends AppConfig(configuration) {
+  override lazy val reportAProblemPartialUrl: String = "reportProblem"
+  override lazy val reportAProblemNonJSUrl: String = "reportProblemNonJs"
+  override lazy val ggLoginUrl: String = "http://localhost:9553/bas-gateway/sign-in"
+  override lazy val sdilHomePage: String = "http://localhost:8700/soft-drinks-industry-levy/register/identify"
+  override lazy val appName: String = "soft-drinks-industry-levy-frontend"
+  override lazy val signoutRegVarUrl: String = "http://localhost:9553/bas-gateway/sign-out-without-state"
+  override lazy val signoutReturnsUrl: String = "http://localhost:9553/bas-gateway/sign-out-without-state"
+  override lazy val signoutUrlNoFeedback: String = "http://localhost:9553/bas-gateway/sign-out-without-state"
   override val balanceAllEnabled: Boolean = true
   override val directDebitEnabled: Boolean = true
 }

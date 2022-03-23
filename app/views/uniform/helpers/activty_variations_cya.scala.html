@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,29 @@
 
 @(showChangeLinks : Boolean, v: sdil.models.variations.RegistrationVariationData)(implicit messages: Messages)
 
-<h2 class="heading-medium">@Messages("variations.cya.activity-change")</h2>
+
+<legend>
+    <span class="govuk-caption-xl">@v.original.orgName</h1></span>
+    <h1 class="heading-large">Check the updates you have made</h1>
+</legend>
+
+<h2 class="heading-medium">@messages("variations.cya.activity-change")</h2>
 <table class="check-your-answers">
     <tbody>
 
         <tr>
             <td class="cya-question">
-            @Messages("variations.cya.activity-change.producer")
+            @messages("variations.cya.activity-change.producer")
             </td>
             <td>
-                @Messages(s"variations.cya.${v.producer.isProducer}")
+                @messages(s"variations.cya.${v.producer.isProducer}")
                 @if(v.producer.isProducer) {
                     @v.producer.isLarge.map {
                         case true => {
-                            : @Messages("sdil.declaration.largeProducer")
+                            : @messages("sdil.declaration.largeProducer")
                         }
                         case _ => {
-                            : @Messages("sdil.declaration.smallProducer")
+                            : @messages("sdil.declaration.smallProducer")
                     }
                 }
             }
@@ -51,11 +57,11 @@
         @if(v.usesCopacker.isDefined) {
             <tr>
                 <td class="cya-question">
-                @Messages("variations.cya.activity-change.use-copacker")
+                @messages("variations.cya.activity-change.use-copacker")
                 </td>
                 <td>
                 @v.usesCopacker.map { x =>
-                    @Messages(s"variations.cya.$x")
+                    @messages(s"variations.cya.$x")
                 }
                 </td>
                 @if(showChangeLinks) {
@@ -70,11 +76,11 @@
         @if(v.producer.isProducer) {
             <tr>
                 <td class="cya-question">
-                @Messages("variations.cya.activity-change.package-own")
+                @messages("variations.cya.activity-change.package-own")
                 </td>
                 <td>
                 @v.packageOwn.map { x =>
-                    @Messages(s"variations.cya.$x")
+                    @messages(s"variations.cya.$x")
                 }
                 </td>
                 @if(showChangeLinks) {
@@ -89,13 +95,13 @@
         @if(v.packageOwn.getOrElse(false)) {
             <tr>
                 <td class="cya-question">
-                @Messages("variations.cya.activity-change.litres-own")
+                @messages("variations.cya.activity-change.litres-own")
                 </td>
                 <td>
                 @v.packageOwnVol.map { x =>
-                    @Messages("variations.cya.activity-change.low-band")
+                    @messages("variations.cya.activity-change.low-band")
                     @format_litres(x.atLowRate) <br/>
-                @Messages("variations.cya.activity-change.high-band")
+                @messages("variations.cya.activity-change.high-band")
                 @format_litres(x.atHighRate)
                 }
                 </td>
@@ -111,10 +117,10 @@
 
         <tr>
             <td class="cya-question">
-            @Messages("variations.cya.activity-change.package-others")
+            @messages("variations.cya.activity-change.package-others")
             </td>
             <td>
-            @Messages(s"variations.cya.${v.copackForOthers}")
+            @messages(s"variations.cya.${v.copackForOthers}")
             </td>
             @if(showChangeLinks) {
                 <td class="cya-change">
@@ -128,13 +134,13 @@
         @if(v.copackForOthers) {
             <tr>
                 <td class="cya-question">
-                @Messages("variations.cya.activity-change.litres-others")
+                @messages("variations.cya.activity-change.litres-others")
                 </td>
                 <td>
                 @v.copackForOthersVol.map { x =>
-                    @Messages("variations.cya.activity-change.low-band")
+                    @messages("variations.cya.activity-change.low-band")
                     @format_litres(x.atLowRate) <br/>
-                @Messages("variations.cya.activity-change.high-band")
+                @messages("variations.cya.activity-change.high-band")
                 @format_litres(x.atHighRate)
                 }
                 </td>
@@ -150,10 +156,10 @@
 
         <tr>
             <td class="cya-question">
-            @Messages("variations.cya.activity-change.import")
+            @messages("variations.cya.activity-change.import")
             </td>
             <td>
-            @Messages(s"variations.cya.${v.imports}")
+            @messages(s"variations.cya.${v.imports}")
             </td>
             @if(showChangeLinks) {
                 <td class="cya-change">
@@ -167,13 +173,13 @@
         @if(v.imports) {
             <tr>
                 <td class="cya-question">
-                @Messages("variations.cya.activity-change.litres-import")
+                @messages("variations.cya.activity-change.litres-import")
                 </td>
                 <td>
                 @v.importsVol.map { x =>
-                    @Messages("variations.cya.activity-change.low-band")
+                    @messages("variations.cya.activity-change.low-band")
                     @format_litres(x.atLowRate) <br/>
-                @Messages("variations.cya.activity-change.high-band")
+                @messages("variations.cya.activity-change.high-band")
                 @format_litres(x.atHighRate)
                 }
                 </td>

@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,17 @@
  * limitations under the License.
  *@
 
-@import helper.{inputRadioGroup => _}
+@import helper.{inputRadioGroup => _, _}
 @import views.html.softdrinksindustrylevy.helpers._
+@import views.html.helper.options
 
-@(key: String, form: Form[String], possibleValues: List[String])(implicit messages: Messages, extraMessages: ExtraMessages, lang: Lang)
-@inputRadioGroup(
-    form(key),
-    possibleValues.map{v => (v, Messages.extraMessages(Seq(key + ".option." + v.toLowerCase, v)))},
-    '_labelClass -> "block-label less-padding",
-    '_labelAfter -> true,
-    '_groupClass -> "form-field-group",
-    '_div -> true,
-    '_groupDivClass -> "form-group",
-    '_inputClass -> "govuk-radios__input",
-    '_labelClass -> "govuk-radios__label"
+@(key: String, existing: Option[Boolean])(implicit messages: UniformMessages[Html])
+
+@inputRadioGroup_new(
+    key,
+    options(
+        true.toString -> Messages(Seq(s"option.$key.true","sdil.common.yes")),
+        false.toString -> Messages(Seq(s"option.$key.false", "sdil.common.no"))
+    ),
+    existing.map(_.toString)
 )

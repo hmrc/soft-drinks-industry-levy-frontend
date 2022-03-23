@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,11 @@
 @import sdil.models.Address
 @import views.ViewHelpers
 
-@this(main: main_template, viewHelpers: ViewHelpers)
+@this()
 
 @(verifyForm: Form[_], utr: String, organisation: String, address: Address, alreadyRegistered: Boolean = false)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@viewHelpers = @{new ViewHelpers(config.configuration)}
 
 @verifyTitle = @{
     if(!alreadyRegistered) {
@@ -50,7 +52,10 @@
         </dl>
 }
 
-@main(title = verifyTitle, form = Some(verifyForm)) {
+@main_template(
+    title = if(verifyForm.hasErrors) s"${Messages("sdil.common.error")}: $verifyTitle" else verifyTitle,
+    form = Some(verifyForm)
+) {
     @if(!alreadyRegistered) {
     @error_summary(verifyForm)
     @viewHelpers.form(sdil.controllers.routes.VerifyController.submit()) {
@@ -93,13 +98,13 @@
             '_dataTargetTrue -> "true"
         )
 
-    <input class="button" value="@Messages("sdil.common.continue")" type="submit">
+    <input class="button" value="@messages("sdil.common.continue")" type="submit">
     }
     } else {
 
         @orgAddress
 
-        <p>@Messages("sdil.already.received.for.utr.info.p1")</p>
+        <p>@messages("sdil.already.received.for.utr.info.p1")</p>
         <p>@Html(
             Messages(
                 "sdil.already.received.for.utr.info.p2",

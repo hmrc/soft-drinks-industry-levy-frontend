@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,10 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.Views
 
-class SDILErrorHandler(val messagesApi: MessagesApi, val configuration: Configuration, val views: Views)(
+import javax.inject.{Inject, Singleton}
+
+@Singleton
+class SDILErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Configuration, val views: Views)(
   implicit config: AppConfig)
     extends FrontendErrorHandler {
 

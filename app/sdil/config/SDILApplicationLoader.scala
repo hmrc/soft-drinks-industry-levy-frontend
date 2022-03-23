@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,19 @@
 
 package sdil.config
 
-import play.api.{Application, ApplicationLoader, LoggerConfigurator}
+import play.api.inject.guice.{GuiceApplicationBuilder, GuiceApplicationLoader}
+import play.api.{ApplicationLoader, LoggerConfigurator}
 
-class SDILApplicationLoader extends ApplicationLoader {
-  override def load(context: ApplicationLoader.Context): Application = {
+import javax.inject.{Inject, Singleton}
+
+@Singleton
+class SDILApplicationLoader @Inject() extends GuiceApplicationLoader {
+
+  override def builder(context: ApplicationLoader.Context): GuiceApplicationBuilder = {
     LoggerConfigurator(context.environment.classLoader).foreach {
       _.configure(context.environment)
     }
 
-    new SDILComponents(context).application
+    super.builder(context)
   }
 }

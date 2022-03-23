@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package sdil.forms
 
-import ltbs.play.scaffold.SdilComponents._
+import sdil.uniform.SdilComponents._
 
 class PostcodeMappingSpec extends FormSpec with FormHelpers {
 
   "The postcode mapping" should {
     "require the postcode to be non-empty" in {
-      expectError("", "error.postcode.empty")
+      expectError("", "postcode.empty")
     }
 
     "require the postcode to be valid" in {
       Seq("AA11", "A11A 1AA", "not a postcode") map { pc =>
-        expectError(pc, "error.postcode.invalid")
+        expectError(pc, "postcode.invalid")
       }
     }
 

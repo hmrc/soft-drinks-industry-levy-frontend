@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AuthorisedActionSpec extends ControllerSpec {
@@ -60,7 +61,7 @@ class AuthorisedActionSpec extends ControllerSpec {
 
       val res = testAction(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe sdil.controllers.routes.ServicePageController.show().url
+      redirectLocation(res).value mustBe sdil.controllers.routes.ServicePageController.show.url
     }
 
     "redirect to the service page if the user has a different OBTDS enrolment and an SDIL enrolment" in {
@@ -77,7 +78,7 @@ class AuthorisedActionSpec extends ControllerSpec {
 
       val res = testAction(FakeRequest())
       status(res) mustBe SEE_OTHER
-      redirectLocation(res).value mustBe sdil.controllers.routes.ServicePageController.show().url
+      redirectLocation(res).value mustBe sdil.controllers.routes.ServicePageController.show.url
     }
 
     "show the 'invalid affinity group' error page if the user is an agent" in {

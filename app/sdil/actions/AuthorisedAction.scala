@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.softdrinksindustrylevy.errors.Errors
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedAction(
+class AuthorisedAction @Inject()(
   val authConnector: AuthConnector,
   val messagesApi: MessagesApi,
   sdilConnector: SoftDrinksIndustryLevyConnector,
@@ -63,7 +64,7 @@ class AuthorisedAction(
           case (Some(utr), None) =>
             sdilConnector.retrieveSubscription(utr, "utr") map {
               case Some(sub) if sub.deregDate.isEmpty =>
-                Left(Redirect(routes.ServicePageController.show()))
+                Left(Redirect(routes.ServicePageController.show))
               case _ =>
                 Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
             }
@@ -76,10 +77,10 @@ class AuthorisedAction(
             }
           case (None, Some(sdilEnrolment)) =>
             sdilConnector.retrieveSubscription(sdilEnrolment.value).map {
-              case Some(sub) if sub.deregDate.isEmpty => Left(Redirect(routes.ServicePageController.show()))
+              case Some(sub) if sub.deregDate.isEmpty => Left(Redirect(routes.ServicePageController.show))
               case Some(sub) if sub.deregDate.nonEmpty =>
                 Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
-              case _ => Left(Redirect(routes.ServicePageController.show()))
+              case _ => Left(Redirect(routes.ServicePageController.show))
             }
           case _ if error.nonEmpty =>
             Future.successful(Left(error.get))

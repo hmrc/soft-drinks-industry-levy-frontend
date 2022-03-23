@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  *@
 
 @import sdil.config.AppConfig
+@import sdil.uniform.AdaptMessages.ufMessagesToPlayMessages
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.models.Address
 @import sdil.models.retrieved.RetrievedSubscription
@@ -25,23 +26,23 @@
 @import sdil.models.ReturnPeriod
 @import sdil.models.SdilReturn
 
-@this(main: main_template)
+@this()
 
 @(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, interest: BigDecimal = 0, hasExistingDD: Option[Boolean])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main(Messages("sdil.service-page.title"), noArticle = true) {
+@main_template(Messages("sdil.service-page.title"), noArticle = true) {
     <div class="grid-row">
         <div class="column-two-thirds">
             <span class="govuk-caption-xl service-comp-name">
                 @subscription.orgName
             </span>
             <h1 class="heading-large service-header">
-                @Messages("sdil.service-page.title")
+                @messages("sdil.service-page.title")
             </h1>
 
             @if(subscription.activity.voluntaryRegistration) {
                 <div class="panel panel-border-wide">
-                    <p>@Messages("sdil.service-page.p2.voluntary-only")</p>
+                    <p>@messages("sdil.service-page.p2.voluntary-only")</p>
                     <p>@Html(
                          Messages(
                              "sdil.service-page.p3.voluntary-only",
@@ -54,7 +55,7 @@
                 @lastReturn.map { lr =>
                     <div class="panel-border-narrow panel">
                         <p>
-                            @Messages(
+                            @messages(
                                 "sdil.service-page.completed-return",
                                 ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
                                 ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
@@ -71,12 +72,12 @@
                 @for(period <- periodsDue.take(1)) {
                     <div class="notice">
                         <i class="icon icon-important icon-image">
-                            <span class="visually-hidden">@Messages("warning")</span>
+                            <span class="visually-hidden">@messages("warning")</span>
                         </i>
                         <p>
                             <strong class="bold-small">
                             @if(periodsDue.length == 1) {
-                                @Messages(
+                                @messages(
                                     "returnsHome.returnsDue",
                                     subscription.orgName,
                                     period.start.format("MMMM"),
@@ -87,18 +88,18 @@
                         </p>
                     </div>
                 } else {
-                    @Messages("returnsHome.returnsDueMulti", periodsDue.length)
+                    @messages("returnsHome.returnsDueMulti", periodsDue.length)
                         </strong>
                         </p>
                     </div>
 
-        <p>@Messages("returnsHome.returnsDueList.p1", periodsDue.length)</p>
+        <p>@messages("returnsHome.returnsDueList.p1", periodsDue.length)</p>
 
         @if(periodsDue.nonEmpty) {
             <ol class="no-break-margin">
             @for(periodList <- periodsDue) {
                 <li>
-                @Messages("returnsHome.returnsDueList.li",
+                @messages("returnsHome.returnsDueList.li",
                     periodsDue.indexOf(periodList) + 1,
                     periodList.start.format("MMMM"),
                     periodList.end.format("MMMM yyyy")
@@ -113,17 +114,17 @@
         @details("returnsHome.help.title") {
             <p>@messages("returnsHome.help.p1")</p>
             <ul class="list list-bullet">
-                <li>@Messages("returnsHome.help.li1")</li>
-                <li>@Messages("returnsHome.help.li2")</li>
-                <li>@Messages("returnsHome.help.li3")</li>
-                <li>@Messages("returnsHome.help.li4")</li>
+                <li>@messages("returnsHome.help.li1")</li>
+                <li>@messages("returnsHome.help.li2")</li>
+                <li>@messages("returnsHome.help.li3")</li>
+                <li>@messages("returnsHome.help.li4")</li>
             </ul>
-            <p>@Messages("returnsHome.help.p2")</p>
-            <p class="bold">@Messages("sdil.service-page.repayment.warning")</p>
-            <p>@Messages("returnsHome.help.p3")</p>
+            <p>@messages("returnsHome.help.p2")</p>
+            <p class="bold">@messages("sdil.service-page.repayment.warning")</p>
+            <p>@messages("returnsHome.help.p3")</p>
             <ul class="list list-bullet">
-                <li>@Messages("returnsHome.help.li5")</li>
-                <li>@Messages("returnsHome.help.li6")</li>
+                <li>@messages("returnsHome.help.li5")</li>
+                <li>@messages("returnsHome.help.li6")</li>
             </ul>
             <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
         }
@@ -139,12 +140,17 @@
                     "own-brands-packaged-at-own-sites"
                 }
             )' class="button">
-                @Messages("return.file")
+                @messages("return.file")
             </a>
         </div>
         <div>
-            <a href='@sdil.controllers.routes.ReturnsController.index(period.year, period.quarter, true, "nil-return")'>
-                @Messages("return.file.nil")
+            <a href='@sdil.controllers.routes.ReturnsController.index(
+                period.year,
+                period.quarter,
+                nilReturn = true,
+                "nil-return"
+            )'>
+                @messages("return.file.nil")
             </a>
         </div>
         }
@@ -152,7 +158,7 @@
         <hr class="govuk-section-break--visible">
 
         <div>
-            <h2 class="heading-medium">@Messages("account.balance")</h2>
+            <h2 class="heading-medium">@messages("account.balance")</h2>
 
             <p @if(balance < 0){ class="bold" }>
             @if(balance == 0) {
@@ -163,7 +169,7 @@
                 } else {
                     @if(interest < 0) {
                         @printbalance("account.balance.amount.need-to-pay", balance.abs)
-                        @Messages("account.balance.amount.need-to-pay.interest.fullstop", format_money(interest.abs))
+                        @messages("account.balance.amount.need-to-pay.interest.fullstop", format_money(interest.abs))
                     } else {
                         @printbalance("account.balance.amount.need-to-pay.fullstop", balance.abs)
                     }
@@ -173,7 +179,7 @@
 
             @if(balance < 0) {
                 @if(periodsDue.nonEmpty) {
-                  <p>@Messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
+                  <p>@messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
                 }
 
                 @manage_direct_debit_section(hasExistingDD)
@@ -183,15 +189,15 @@
                     @Html(Messages("how-to-pay.title", sdilReference))
                     </p>
                 </div>
-                <p class="font-xsmall">@Messages("balance.table.p1")</p>
+                <p class="font-xsmall">@messages("balance.table.p1")</p>
 
-                <a class="button--secondary" href="@sdil.controllers.routes.PaymentController.payNow()">@Messages("account.balance.pay-now")</a>
+                <a class="button--secondary" href="@sdil.controllers.routes.PaymentController.payNow()">@messages("account.balance.pay-now")</a>
                 <br>
                 <br>
             } else {
                 @manage_direct_debit_section(hasExistingDD)
             }
-            <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@Messages("view.balance.history")</a>
+            <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@messages("view.balance.history")</a>
         </div>
         <hr class="govuk-section-break--visible">
         @defining(
@@ -210,7 +216,7 @@
 
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        @Messages("sdil.verify.address")
+                        @messages("sdil.verify.address")
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @address.nonEmptyLines.init.map { l =>
@@ -222,49 +228,49 @@
             }
         }
 
-        <h2 class="heading-medium">@Messages("sdil.service-page.variations.title")</h2>
+        <h2 class="heading-medium">@messages("sdil.service-page.variations.title")</h2>
         <div class="grid-row">
             <div class="column-one-half">
                 <h3 class="heading-small">
-                    <a href='@sdil.controllers.routes.VariationsController.index("changeType")'>
-                    @Messages("sdil.service-page.variations.subtitle.3")
+                    <a href='@sdil.controllers.routes.VariationsController.index("select-change")'>
+                    @messages("sdil.service-page.variations.subtitle.3")
                     </a>
                 </h3>
-                <p>@Messages("sdil.service-page.variations.p3")</p>
+                <p>@messages("sdil.service-page.variations.p3")</p>
                 <ul class="list-bullet">
-                    <li>@Messages("sdil.service-page.variations.li.1")</li>
-                    <li>@Messages("sdil.service-page.variations.li.2")</li>
-                    <li>@Messages("sdil.service-page.variations.li.3")</li>
-                    <li>@Messages("sdil.service-page.variations.li.4")</li>
+                    <li>@messages("sdil.service-page.variations.li.1")</li>
+                    <li>@messages("sdil.service-page.variations.li.2")</li>
+                    <li>@messages("sdil.service-page.variations.li.3")</li>
+                    <li>@messages("sdil.service-page.variations.li.4")</li>
                 </ul>
             </div>
             <div class="column-one-half">
                 <h3 class="heading-small">
-                    <a href="@sdil.controllers.routes.VariationsController.changeBusinessAddress("")">
-                    @Messages("sdil.service-page.variations.subtitle.2")
+                    <a href='@sdil.controllers.routes.VariationsController.changeAddressAndContact("")'>
+                    @messages("sdil.service-page.variations.subtitle.2")
                     </a>
                 </h3>
-                <p>@Messages("sdil.service-page.variations.p2")</p>
+                <p>@messages("sdil.service-page.variations.p2")</p>
             </div>
         </div>
     </div>
 
     <div class="column-one-third option-box-padding">
         <div class="section--blue-top">
-            <h2 class="heading-small">@Messages("sdil.service-page.support.title2")</h2>
+            <h2 class="heading-small">@messages("sdil.service-page.support.title2")</h2>
 
-            <p><a href='@Messages("sdil.service-page.support.link1")' target="_blank"
+            <p><a href='@messages("sdil.service-page.support.link1")' target="_blank"
             onclick="ga('send', 'event', 'moreLinks', 'click', 'guidance')">
-                @Messages("sdil.service-page.support.p3")
+                @messages("sdil.service-page.support.p3")
             </a></p>
 
-            <p><a href='@Messages("sdil.service-page.support.link2")' target="_blank"
+            <p><a href='@messages("sdil.service-page.support.link2")' target="_blank"
             onclick="ga('send', 'event', 'moreLinks', 'click', 'legislation')">
-                @Messages("sdil.service-page.support.p4")
+                @messages("sdil.service-page.support.p4")
             </a></p>
 
-            <span>@Messages("sdil.service-page.support.p5")</span>
-            <span>@Messages("sdil.service-page.support.p6")</span>
+            <span>@messages("sdil.service-page.support.p5")</span>
+            <span>@messages("sdil.service-page.support.p6")</span>
         </div>
     </div>
 }

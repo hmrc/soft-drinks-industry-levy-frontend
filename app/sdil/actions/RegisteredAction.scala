@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,10 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegisteredAction(
+class RegisteredAction @Inject()(
   val authConnector: AuthConnector,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   mcc: MessagesControllerComponents)(implicit val executionContext: ExecutionContext)
@@ -48,9 +49,9 @@ class RegisteredAction(
             case Some(subscription) =>
               Right(RegisteredRequest(EnrolmentIdentifier("sdil", subscription.sdilRef), request))
             case None =>
-              Left(Redirect(sdil.controllers.routes.IdentifyController.start()))
+              Left(Redirect(sdil.controllers.routes.IdentifyController.start))
           }
-        case _ => Future.successful(Left(Redirect(sdil.controllers.routes.IdentifyController.start())))
+        case _ => Future.successful(Left(Redirect(sdil.controllers.routes.IdentifyController.start)))
       }
 
     } recover {

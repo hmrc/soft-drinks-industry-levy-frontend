@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package sdil.uniform
 
-import ltbs.play.scaffold.GdsComponents
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.flatspec.AnyFlatSpecLike
+import sidl.uniform.GdsComponents
 
-class GDS extends FlatSpec with Matchers {
+class GDS extends AnyFlatSpecLike with Matchers {
 
   "A GDC Call for " should "be correctly" in {
 

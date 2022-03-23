@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +19,24 @@
 @(questionKey: String, changeRoute: Call, rowData: Litreage)(implicit messages: Messages)
 
 <tr>
-    <td rowspan="2">@Messages(s"sdil.registerDeclaration.$questionKey")</td>
-    <td>@Messages("sdil.declaration.low-band")</td>
+    <td rowspan="2">@messages(s"sdil.registerDeclaration.$questionKey")</td>
+    <td>@messages("sdil.declaration.low-band")</td>
     <td>@formatLitres(rowData.atLowRate)</td>
     <td class="change-answer">
         <a href="@changeRoute" onclick="ga('send', 'event', 'registerDeclaration', 'clickChange', '@changeRoute')">
-            <span aria-hidden="true">@Messages("sdil.declaration.change-link")</span>
-            <span class="visuallyhidden">@Messages(s"sdil.hidden.registerDeclaration.low-band.$questionKey")</span>
+            <span aria-hidden="true">@messages("sdil.declaration.change-link")</span>
+            <span class="visuallyhidden">@messages(s"sdil.hidden.registerDeclaration.low-band.$questionKey")</span>
         </a>
     </td>
 </tr>
 
 <tr>
-    <td>@Messages("sdil.declaration.high-band")</td>
+    <td>@messages("sdil.declaration.high-band")</td>
     <td>@formatLitres(rowData.atHighRate)</td>
     <td class="change-answer">
         <a href="@changeRoute" onclick="ga('send', 'event', 'registerDeclaration', 'clickChange', '@changeRoute')">
-            <span aria-hidden="true">@Messages("sdil.declaration.change-link")</span>
-            <span class="visuallyhidden">@Messages(s"sdil.hidden.registerDeclaration.high-band.$questionKey")</span>
+            <span aria-hidden="true">@messages("sdil.declaration.change-link")</span>
+            <span class="visuallyhidden">@messages(s"sdil.hidden.registerDeclaration.high-band.$questionKey")</span>
         </a>
     </td>
 </tr>
