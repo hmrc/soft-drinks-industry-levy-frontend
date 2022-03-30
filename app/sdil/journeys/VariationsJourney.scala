@@ -212,6 +212,41 @@ object VariationsJourney {
       }
       .filter(x => closedSites.contains(x.ref.getOrElse("")))
 
+  def contactAndBusinessUpdateCheck(variation: VariationsJourney.Change.RegChange): List[String] = {
+    val updatedContactDetails = List(
+      variation.data.updatedContactDetails.email,
+      variation.data.updatedContactDetails.phoneNumber,
+      variation.data.updatedContactDetails.fullName,
+      variation.data.updatedContactDetails.position
+    )
+    val originalContactDetails = List(
+      variation.data.original.contact.email,
+      variation.data.original.contact.phoneNumber,
+      variation.data.original.contact.name.getOrElse(""),
+      variation.data.original.contact.positionInCompany.getOrElse("")
+    )
+
+    val updatedBusinessDetails = List(
+      variation.data.updatedBusinessAddress.postcode,
+      variation.data.updatedBusinessAddress.line1,
+      variation.data.updatedBusinessAddress.line2,
+      variation.data.updatedBusinessAddress.line3,
+      variation.data.updatedBusinessAddress.line4
+    ).filter(_.length > 1)
+
+    val originalBusinessDetails = List(
+      variation.data.original.address.postCode
+    ) ++ variation.data.original.address.lines
+
+    println(s"originalBusinessDetails: $originalBusinessDetails")
+    println(s"updatedBusinessDetails: $updatedBusinessDetails")
+
+    if ((updatedContactDetails equals (originalContactDetails)) && (updatedBusinessDetails equals originalBusinessDetails)) {
+      List("contact-details", "business-address")
+    } else if (updatedContactDetails equals (originalContactDetails)) { List("business-address") } else
+      List("contact-details")
+  }
+
   def changeBusinessAddressJourney(
     id: String,
     subscription: RetrievedSubscription,
@@ -237,7 +272,7 @@ object VariationsJourney {
               closedPackagingSites(variation, ShowNone = ChangeCheckProduction(variation)),
               newWarehouseSites(variation),
               closedWarehouseSites(variation, ShowNone = ChangeCheckWarehouse(variation)),
-              List("contact-details")
+              contactAndBusinessUpdateCheck(variation)
             )(_: Messages)
           )
 
