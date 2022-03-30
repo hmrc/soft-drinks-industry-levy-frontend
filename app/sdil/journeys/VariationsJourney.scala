@@ -241,7 +241,7 @@ object VariationsJourney {
     println(s"originalBusinessDetails: $originalBusinessDetails")
     println(s"updatedBusinessDetails: $updatedBusinessDetails")
 
-    if ((updatedContactDetails equals (originalContactDetails)) && (updatedBusinessDetails equals originalBusinessDetails)) {
+    if ((updatedContactDetails equals (originalContactDetails)) && (updatedBusinessDetails equals originalBusinessDetails) || (updatedContactDetails != (originalContactDetails)) && (updatedBusinessDetails != originalBusinessDetails)) {
       List("contact-details", "business-address")
     } else if (updatedContactDetails equals (originalContactDetails)) { List("business-address") } else
       List("contact-details")

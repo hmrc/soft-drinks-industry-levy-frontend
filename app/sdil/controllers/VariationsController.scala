@@ -286,6 +286,41 @@ class VariationsController @Inject()(
       }
       .filter(x => closedSites.contains(x.ref.getOrElse("")))
 
+  def contactAndBusinessUpdateCheck(variation: RegistrationVariationData): List[String] = {
+    val updatedContactDetails = List(
+      variation.updatedContactDetails.email,
+      variation.updatedContactDetails.phoneNumber,
+      variation.updatedContactDetails.fullName,
+      variation.updatedContactDetails.position
+    )
+    val originalContactDetails = List(
+      variation.original.contact.email,
+      variation.original.contact.phoneNumber,
+      variation.original.contact.name.getOrElse(""),
+      variation.original.contact.positionInCompany.getOrElse("")
+    )
+
+    val updatedBusinessDetails = List(
+      variation.updatedBusinessAddress.postcode,
+      variation.updatedBusinessAddress.line1,
+      variation.updatedBusinessAddress.line2,
+      variation.updatedBusinessAddress.line3,
+      variation.updatedBusinessAddress.line4
+    ).filter(_.length > 1)
+
+    val originalBusinessDetails = List(
+      variation.original.address.postCode
+    ) ++ variation.original.address.lines
+
+    println(s"originalBusinessDetails: $originalBusinessDetails")
+    println(s"updatedBusinessDetails: $updatedBusinessDetails")
+
+    if ((updatedContactDetails equals (originalContactDetails)) && (updatedBusinessDetails equals originalBusinessDetails) || (updatedContactDetails != (originalContactDetails)) && (updatedBusinessDetails != originalBusinessDetails)) {
+      List("contact-details", "business-address")
+    } else if (updatedContactDetails equals (originalContactDetails)) { List("business-address") } else
+      List("contact-details")
+  }
+
   def showVariationsComplete() = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     for {
@@ -307,7 +342,7 @@ class VariationsController @Inject()(
             case _                 => None
           }
           val whn = uniform.fragments.variationsWHN(
-            List("contact-details"),
+            contactAndBusinessUpdateCheck(regVar),
             newPackagingSites(regVar),
             closedPackagingSites(regVar, ShowNone = ChangeCheckProduction(regVar)),
             newWarehouseSites(regVar),
