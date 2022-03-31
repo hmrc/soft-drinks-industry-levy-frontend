@@ -312,8 +312,6 @@ class VariationsController @Inject()(
       variation.original.address.postCode
     ) ++ variation.original.address.lines
 
-    println(s"originalBusinessDetails: $originalBusinessDetails")
-    println(s"updatedBusinessDetails: $updatedBusinessDetails")
 
     if ((updatedContactDetails equals (originalContactDetails)) && (updatedBusinessDetails equals originalBusinessDetails) || (updatedContactDetails != (originalContactDetails)) && (updatedBusinessDetails != originalBusinessDetails)) {
       List("contact-details", "business-address")
