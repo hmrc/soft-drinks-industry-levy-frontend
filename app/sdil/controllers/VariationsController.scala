@@ -40,7 +40,7 @@ import sdil.uniform.SaveForLaterPersistenceNew
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import ltbs.uniform.interpreters.playframework.SessionPersistence
 import sdil.journeys.VariationsJourney
-import sdil.journeys.VariationsJourney._
+import sdil.journeys.VariationsJourney.{ChangeCheckProduction, _}
 import views.html.{main_template, uniform}
 
 import java.time.format.DateTimeFormatter
@@ -86,7 +86,6 @@ class VariationsController @Inject()(
     val sdilRef = request.sdilEnrolment.value
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(subscription) =>
-        println(s"Subscription: $subscription")
         interpret(
           VariationsJourney.changeBusinessAddressJourney(id, subscription, ufViews)(request)
         ).run(id, purgeStateUponCompletion = true) {
@@ -165,14 +164,22 @@ class VariationsController @Inject()(
     }
   }
 
-  def closedWarehouseSites(variation: RegistrationVariationData): List[Site] = {
-    val old = variation.original.warehouseSites
+  def ChangeCheckProduction(variation: RegistrationVariationData): Boolean = {
+
+    val newList = variation.updatedProductionSites
       .filter { x =>
         x.closureDate.fold(true) {
           _.isAfter(LocalDate.now)
         }
       }
       .map(x => x.address)
+
+    if (newList.isEmpty) {
+      return false
+    } else true
+  }
+
+  def ChangeCheckWarehouse(variation: RegistrationVariationData): Boolean = {
 
     val newList = variation.updatedWarehouseSites
       .filter { x =>
@@ -182,36 +189,68 @@ class VariationsController @Inject()(
       }
       .map(x => x.address)
 
-    val diff = old diff newList
-
-    variation.original.warehouseSites.filter { site =>
-      diff.exists { address =>
-        compareAddress(site.address, address)
-      }
-    }
-  }.toList
-
-  def closedPackagingSites(variation: RegistrationVariationData): List[Site] = {
-    val old = variation.original.productionSites
-      .filter { x =>
-        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
-      }
-      .map(x => x.address)
-
-    val newList = variation.updatedProductionSites
-      .filter { x =>
-        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
-      }
-      .map(x => x.address)
-
-    val diff = old diff newList
-
-    variation.original.productionSites.filter { site =>
-      diff.exists { address =>
-        compareAddress(site.address, address)
-      }
-    }
+    if (newList.isEmpty) {
+      return false
+    } else true
   }
+
+  def closedWarehouseSites(variation: RegistrationVariationData, ShowNone: Boolean): List[Site] =
+    if (ShowNone == true) {
+      val old = variation.original.warehouseSites
+        .filter { x =>
+          x.closureDate.fold(true) {
+            _.isAfter(LocalDate.now)
+          }
+        }
+        .map(x => x.address)
+
+      val newList = variation.updatedWarehouseSites
+        .filter { x =>
+          x.closureDate.fold(true) {
+            _.isAfter(LocalDate.now)
+          }
+        }
+        .map(x => x.address)
+
+      val diff = old diff newList
+
+      variation.original.warehouseSites.filter { site =>
+        diff.exists { address =>
+          compareAddress(site.address, address)
+        }
+      }
+    } else {
+      Nil
+    }
+
+  def closedPackagingSites(variation: RegistrationVariationData, ShowNone: Boolean): List[Site] =
+    if (ShowNone == true) {
+      val old = variation.original.productionSites
+        .filter { x =>
+          x.closureDate.fold(true) {
+            _.isAfter(LocalDate.now)
+          }
+        }
+        .map(x => x.address)
+
+      val newList = variation.updatedProductionSites
+        .filter { x =>
+          x.closureDate.fold(true) {
+            _.isAfter(LocalDate.now)
+          }
+        }
+        .map(x => x.address)
+
+      val diff = old diff newList
+
+      variation.original.productionSites.filter { site =>
+        diff.exists { address =>
+          compareAddress(site.address, address)
+        }
+      }
+    } else {
+      Nil
+    }
 
   def newPackagingSites(variation: RegistrationVariationData): List[Site] = {
     val old = variation.original.productionSites.map(x => x.address)
@@ -247,6 +286,39 @@ class VariationsController @Inject()(
       }
       .filter(x => closedSites.contains(x.ref.getOrElse("")))
 
+  def contactAndBusinessUpdateCheck(variation: RegistrationVariationData): List[String] = {
+    val updatedContactDetails = List(
+      variation.updatedContactDetails.email,
+      variation.updatedContactDetails.phoneNumber,
+      variation.updatedContactDetails.fullName,
+      variation.updatedContactDetails.position
+    )
+    val originalContactDetails = List(
+      variation.original.contact.email,
+      variation.original.contact.phoneNumber,
+      variation.original.contact.name.getOrElse(""),
+      variation.original.contact.positionInCompany.getOrElse("")
+    )
+
+    val updatedBusinessDetails = List(
+      variation.updatedBusinessAddress.postcode,
+      variation.updatedBusinessAddress.line1,
+      variation.updatedBusinessAddress.line2,
+      variation.updatedBusinessAddress.line3,
+      variation.updatedBusinessAddress.line4
+    ).filter(_.length > 1)
+
+    val originalBusinessDetails = List(
+      variation.original.address.postCode
+    ) ++ variation.original.address.lines
+
+
+    if ((updatedContactDetails equals (originalContactDetails)) && (updatedBusinessDetails equals originalBusinessDetails) || (updatedContactDetails != (originalContactDetails)) && (updatedBusinessDetails != originalBusinessDetails)) {
+      List("contact-details", "business-address")
+    } else if (updatedContactDetails equals (originalContactDetails)) { List("business-address") } else
+      List("contact-details")
+  }
+
   def showVariationsComplete() = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     for {
@@ -268,11 +340,11 @@ class VariationsController @Inject()(
             case _                 => None
           }
           val whn = uniform.fragments.variationsWHN(
-            List("contact-details"),
+            contactAndBusinessUpdateCheck(regVar),
             newPackagingSites(regVar),
-            closedPackagingSites(regVar),
+            closedPackagingSites(regVar, ShowNone = ChangeCheckProduction(regVar)),
             newWarehouseSites(regVar),
-            closedWarehouseSites(regVar),
+            closedWarehouseSites(regVar, ShowNone = ChangeCheckWarehouse(regVar)),
             regVar.some,
             None,
             whnKey

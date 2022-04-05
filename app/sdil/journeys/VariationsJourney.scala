@@ -88,49 +88,93 @@ object VariationsJourney {
   import cats.Order
   implicit val ldOrder: Order[LocalDate] = Order.by(_.toEpochDay)
 
-  def closedWarehouseSites(variation: VariationsJourney.Change.RegChange): List[Site] = {
-    val old = variation.data.original.warehouseSites
-      .filter { x =>
-        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
-      }
-      .map(x => x.address)
-
-    val newList = variation.data.updatedWarehouseSites
-      .filter { x =>
-        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
-      }
-      .map(x => x.address)
-
-    val diff = old diff newList
-
-    variation.data.original.warehouseSites.filter { site =>
-      diff.exists { address =>
-        compareAddress(site.address, address)
-      }
-    }
-  }.toList
-
-  def closedPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] = {
-    val old = variation.data.original.productionSites
-      .filter { x =>
-        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
-      }
-      .map(x => x.address)
+  def ChangeCheckProduction(variation: VariationsJourney.Change.RegChange): Boolean = {
 
     val newList = variation.data.updatedProductionSites
       .filter { x =>
-        x.closureDate.fold(true) { _.isAfter(LocalDate.now) }
+        x.closureDate.fold(true) {
+          _.isAfter(LocalDate.now)
+        }
       }
       .map(x => x.address)
 
-    val diff = old diff newList
-
-    variation.data.original.productionSites.filter { site =>
-      diff.exists { address =>
-        compareAddress(site.address, address)
-      }
-    }
+    if (newList.isEmpty) {
+      return false
+    } else true
   }
+
+  def ChangeCheckWarehouse(variation: VariationsJourney.Change.RegChange): Boolean = {
+
+    val newList = variation.data.updatedWarehouseSites
+      .filter { x =>
+        x.closureDate.fold(true) {
+          _.isAfter(LocalDate.now)
+        }
+      }
+      .map(x => x.address)
+
+    if (newList.isEmpty) {
+      return false
+    } else true
+  }
+
+  def closedWarehouseSites(variation: VariationsJourney.Change.RegChange, ShowNone: Boolean): List[Site] =
+    if (ShowNone == true) {
+      val old = variation.data.original.warehouseSites
+        .filter { x =>
+          x.closureDate.fold(true) {
+            _.isAfter(LocalDate.now)
+          }
+        }
+        .map(x => x.address)
+
+      val newList = variation.data.updatedWarehouseSites
+        .filter { x =>
+          x.closureDate.fold(true) {
+            _.isAfter(LocalDate.now)
+          }
+        }
+        .map(x => x.address)
+
+      val diff = old diff newList
+
+      variation.data.original.warehouseSites.filter { site =>
+        diff.exists { address =>
+          compareAddress(site.address, address)
+        }
+      }
+    } else {
+      Nil
+    }
+
+  def closedPackagingSites(variation: VariationsJourney.Change.RegChange, ShowNone: Boolean): List[Site] =
+    if (ShowNone == true) {
+      val old = variation.data.original.productionSites
+        .filter { x =>
+          x.closureDate.fold(true) {
+            _.isAfter(LocalDate.now)
+          }
+        }
+        .map(x => x.address)
+
+      val newList = variation.data.updatedProductionSites
+        .filter { x =>
+          x.closureDate.fold(true) {
+            _.isAfter(LocalDate.now)
+          }
+        }
+        .map(x => x.address)
+
+      val diff = old diff newList
+
+      variation.data.original.productionSites.filter { site =>
+        diff.exists { address =>
+          compareAddress(site.address, address)
+        }
+      }
+    } else {
+      Nil
+    }
 
   def newPackagingSites(variation: VariationsJourney.Change.RegChange): List[Site] = {
     val old = variation.data.original.productionSites.map(x => x.address)
@@ -168,6 +212,40 @@ object VariationsJourney {
       }
       .filter(x => closedSites.contains(x.ref.getOrElse("")))
 
+  def contactAndBusinessUpdateCheck(variation: VariationsJourney.Change.RegChange): List[String] = {
+    val updatedContactDetails = List(
+      variation.data.updatedContactDetails.email,
+      variation.data.updatedContactDetails.phoneNumber,
+      variation.data.updatedContactDetails.fullName,
+      variation.data.updatedContactDetails.position
+    )
+    val originalContactDetails = List(
+      variation.data.original.contact.email,
+      variation.data.original.contact.phoneNumber,
+      variation.data.original.contact.name.getOrElse(""),
+      variation.data.original.contact.positionInCompany.getOrElse("")
+    )
+
+    val updatedBusinessDetails = List(
+      variation.data.updatedBusinessAddress.postcode,
+      variation.data.updatedBusinessAddress.line1,
+      variation.data.updatedBusinessAddress.line2,
+      variation.data.updatedBusinessAddress.line3,
+      variation.data.updatedBusinessAddress.line4
+    ).filter(_.length > 1)
+
+    val originalBusinessDetails = List(
+      variation.data.original.address.postCode
+    ) ++ variation.data.original.address.lines
+
+
+
+    if ((updatedContactDetails equals (originalContactDetails)) && (updatedBusinessDetails equals originalBusinessDetails) || (updatedContactDetails != (originalContactDetails)) && (updatedBusinessDetails != originalBusinessDetails)) {
+      List("contact-details", "business-address")
+    } else if (updatedContactDetails equals (originalContactDetails)) { List("business-address") } else
+      List("contact-details")
+  }
+
   def changeBusinessAddressJourney(
     id: String,
     subscription: RetrievedSubscription,
@@ -190,10 +268,10 @@ object VariationsJourney {
             views.html.uniform.fragments.variations_cya(
               variation.data,
               newPackagingSites(variation),
-              closedPackagingSites(variation),
+              closedPackagingSites(variation, ShowNone = ChangeCheckProduction(variation)),
               newWarehouseSites(variation),
-              closedWarehouseSites(variation),
-              List("contact-details")
+              closedWarehouseSites(variation, ShowNone = ChangeCheckWarehouse(variation)),
+              contactAndBusinessUpdateCheck(variation)
             )(_: Messages)
           )
 
@@ -277,7 +355,6 @@ object VariationsJourney {
       businessAddress <- if (change.contains(ContactAddress)) {
                           ask[Address]("business-address", default = data.updatedBusinessAddress.some)
                         } else pure(data.updatedBusinessAddress)
-
     } yield
       Change.RegChange(
         data.copy(
