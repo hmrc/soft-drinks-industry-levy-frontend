@@ -41,6 +41,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import ltbs.uniform.interpreters.playframework.SessionPersistence
 import sdil.journeys.VariationsJourney
 import sdil.journeys.VariationsJourney.{ChangeCheckProduction, _}
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.{main_template, uniform}
 
 import java.time.format.DateTimeFormatter
@@ -105,8 +106,8 @@ class VariationsController @Inject()(
   }
 
   val logger: Logger = Logger(this.getClass())
-
-  def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+//TODO make this select only return the selection from the user
+  def index(id: String) = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     val x = sdilConnector.retrieveSubscription(sdilRef)
     x flatMap {
@@ -125,11 +126,79 @@ class VariationsController @Inject()(
         def submitAdjustment(rvd: ReturnVariationData) =
           sdilConnector.returns_vary(sdilRef, rvd)
 
+        def runWithReturnsJourney(
+          id: String,
+          subscription: RetrievedSubscription,
+          sdilRef: String,
+          variableReturns: List[ReturnPeriod],
+          pendingReturns: List[ReturnPeriod],
+          connector: SoftDrinksIndustryLevyConnector,
+          checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
+          getReturn: ReturnPeriod => Future[Option[SdilReturn]],
+          submitReturnVariation: ReturnsVariation => Future[Unit],
+          config: AppConfig): Future[play.api.mvc.Result] =
+          for {
+            variableReturns <- sdilConnector.returns_variable(base.original.utr)
+            returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
+            response <- interpret(
+                         VariationsJourney.withReturnsJourney(
+                           id,
+                           subscription,
+                           sdilRef,
+                           variableReturns,
+                           returnPeriods,
+                           sdilConnector,
+                           checkSmallProducerStatus,
+                           getReturn,
+                           submitReturnVariation,
+                           config
+                         ))
+                         .run(id, purgeStateUponCompletion = true, config = journeyConfig) {
+                           case _ =>
+                             logger.warn(" has failed")
+                             Redirect(routes.ServicePageController.show)
+                         }
+          } yield response
+
+        def runAAsitesJourney(
+          id: String,
+          subscription: RetrievedSubscription,
+          sdilRef: String,
+          variableReturns: List[ReturnPeriod],
+          pendingReturns: List[ReturnPeriod],
+          connector: SoftDrinksIndustryLevyConnector,
+          checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
+          getReturn: ReturnPeriod => Future[Option[SdilReturn]],
+          submitReturnVariation: ReturnsVariation => Future[Unit],
+          config: AppConfig): Future[play.api.mvc.Result] =
+          for {
+            variableReturns <- sdilConnector.returns_variable(base.original.utr)
+            returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
+            response <- interpret(
+                         VariationsJourney.journey(
+                           id,
+                           subscription,
+                           sdilRef,
+                           variableReturns,
+                           returnPeriods,
+                           sdilConnector,
+                           checkSmallProducerStatus,
+                           getReturn,
+                           submitReturnVariation,
+                           config
+                         ))
+                         .run(id, purgeStateUponCompletion = true, config = journeyConfig) {
+                           case _ =>
+                             logger.warn(" has failed")
+                             Redirect(routes.ServicePageController.show)
+                         }
+          } yield response
+
         for {
           variableReturns <- sdilConnector.returns_variable(base.original.utr)
           returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
           response <- interpret(
-                       VariationsJourney.journey(
+                       VariationsJourney.selectJourney(
                          id,
                          subscription,
                          sdilRef,
@@ -142,27 +211,193 @@ class VariationsController @Inject()(
                          config
                        ))
                        .run(id, purgeStateUponCompletion = true, config = journeyConfig) {
-                         case Left(ret) =>
-                           println(".run executed successful")
-                           submitAdjustment(ret).flatMap { _ =>
-                             returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
-                               logger.info("adjustment of Return is complete")
-                               Redirect(routes.VariationsController.showVariationsComplete())
-                             }
-                           }
-                         case Right(reg) =>
-                           println(".run executed successful")
-                           sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
-                             regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
-                               logger.info("variation of Registration is complete")
-                               Redirect(routes.VariationsController.showVariationsComplete())
-                             }
-                           }
+
+                         case VariationsJourney.ChangeType.AASites => {
+                           runWithReturnsJourney(
+                             id,
+                             subscription,
+                             sdilRef,
+                             variableReturns,
+                             returnPeriods,
+                             sdilConnector,
+                             checkSmallProducerStatus,
+                             getReturn,
+                             submitReturnVariation,
+                             config)
+                         }
+                         case VariationsJourney.ChangeType.Deregister => {
+                           runWithReturnsJourney(
+                             id,
+                             subscription,
+                             sdilRef,
+                             variableReturns,
+                             returnPeriods,
+                             sdilConnector,
+                             checkSmallProducerStatus,
+                             getReturn,
+                             submitReturnVariation,
+                             config)
+                         }
+
+                         case VariationsJourney.ChangeTypeWithReturns.Returns => {
+                           runWithReturnsJourney(
+                             id,
+                             subscription,
+                             sdilRef,
+                             variableReturns,
+                             returnPeriods,
+                             sdilConnector,
+                             checkSmallProducerStatus,
+                             getReturn,
+                             submitReturnVariation,
+                             config)
+                         }
+
+                         case VariationsJourney.ChangeTypeWithReturns.Returns => {
+                           runWithReturnsJourney(
+                             id,
+                             subscription,
+                             sdilRef,
+                             variableReturns,
+                             returnPeriods,
+                             sdilConnector,
+                             checkSmallProducerStatus,
+                             getReturn,
+                             submitReturnVariation,
+                             config)
+                         }
                        }
         } yield response
-      case None => Future.successful(NotFound(""))
     }
   }
+
+//  def runWithReturnsJourney(
+//    base: RegistrationVariationData,
+//    id: String,
+//    subscription: RetrievedSubscription,
+//    sdilRef: String,
+//    variableReturns: List[ReturnPeriod],
+//    pendingReturns: List[ReturnPeriod],
+//    connector: SoftDrinksIndustryLevyConnector,
+//    checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
+//    getReturn: ReturnPeriod => Future[Option[SdilReturn]],
+//    submitReturnVariation: ReturnsVariation => Future[Unit],
+//    config: AppConfig)(implicit hc: HeaderCarrier, ufMessages: UniformMessages[Html]): Future[play.api.mvc.Result] =
+//    for {
+//      variableReturns <- sdilConnector.returns_variable(base.original.utr)
+//      returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
+//      response <- interpret(
+//                   VariationsJourney.withReturnsJourney(
+//                     id,
+//                     subscription,
+//                     sdilRef,
+//                     variableReturns,
+//                     returnPeriods,
+//                     sdilConnector,
+//                     checkSmallProducerStatus,
+//                     getReturn,
+//                     submitReturnVariation,
+//                     config
+//                   ))
+//                   .run(id) {
+//                     case _ =>
+//                       logger.warn(" has failed")
+//                       Redirect(routes.ServicePageController.show)
+//                   }
+//    } yield response
+
+//  def runAAsitesJourney(
+//    base: RegistrationVariationData,
+//    id: String,
+//    subscription: RetrievedSubscription,
+//    sdilRef: String,
+//    variableReturns: List[ReturnPeriod],
+//    pendingReturns: List[ReturnPeriod],
+//    connector: SoftDrinksIndustryLevyConnector,
+//    checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
+//    getReturn: ReturnPeriod => Future[Option[SdilReturn]],
+//    submitReturnVariation: ReturnsVariation => Future[Unit],
+//    config: AppConfig)(implicit hc: HeaderCarrier,ufMessages: UniformMessages[Html]): Future[play.api.mvc.Result] =
+//    for {
+//      variableReturns <- sdilConnector.returns_variable(base.original.utr)
+//      returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
+//      response <- interpret(
+//                   VariationsJourney.journey(
+//                     id,
+//                     subscription,
+//                     sdilRef,
+//                     variableReturns,
+//                     returnPeriods,
+//                     sdilConnector,
+//                     checkSmallProducerStatus,
+//                     getReturn,
+//                     submitReturnVariation,
+//                     config
+//                   ))
+//                   .run(id) {
+//                     case _ =>
+//                       logger.warn(" has failed")
+//                       Redirect(routes.ServicePageController.show)
+//                   }
+//    } yield response
+
+//  def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+//    val sdilRef = request.sdilEnrolment.value
+//    val x = sdilConnector.retrieveSubscription(sdilRef)
+//    x flatMap {
+//      case Some(subscription) =>
+//        val base = RegistrationVariationData(subscription)
+//
+//        def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] =
+//          sdilConnector.returns_get(subscription.utr, period)
+//
+//        def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
+//          sdilConnector.checkSmallProducerStatus(sdilRef, period)
+//
+//        def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
+//          sdilConnector.returns_variation(rvd, sdilRef)
+//
+//        def submitAdjustment(rvd: ReturnVariationData) =
+//          sdilConnector.returns_vary(sdilRef, rvd)
+//
+//        for {
+//          variableReturns <- sdilConnector.returns_variable(base.original.utr)
+//          returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
+//          response <- interpret(
+//                       VariationsJourney.journey(
+//                         id,
+//                         subscription,
+//                         sdilRef,
+//                         variableReturns,
+//                         returnPeriods,
+//                         sdilConnector,
+//                         checkSmallProducerStatus,
+//                         getReturn,
+//                         submitReturnVariation,
+//                         config
+//                       ))
+//                       .run(id, purgeStateUponCompletion = true, config = journeyConfig) {
+//                         case Left(ret) =>
+//                           println(".run executed successful")
+//                           submitAdjustment(ret).flatMap { _ =>
+//                             returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
+//                               logger.info("adjustment of Return is complete")
+//                               Redirect(routes.VariationsController.showVariationsComplete())
+//                             }
+//                           }
+//                         case Right(reg) =>
+//                           println(".run executed successful")
+//                           sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
+//                             regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
+//                               logger.info("variation of Registration is complete")
+//                               Redirect(routes.VariationsController.showVariationsComplete())
+//                             }
+//                           }
+//                       }
+//        } yield response
+//      case None => Future.successful(NotFound(""))
+//    }
+//  }
 
   def ChangeCheckProduction(variation: RegistrationVariationData): Boolean = {
 
@@ -311,7 +546,6 @@ class VariationsController @Inject()(
     val originalBusinessDetails = List(
       variation.original.address.postCode
     ) ++ variation.original.address.lines
-
 
     if ((updatedContactDetails equals (originalContactDetails)) && (updatedBusinessDetails equals originalBusinessDetails) || (updatedContactDetails != (originalContactDetails)) && (updatedBusinessDetails != originalBusinessDetails)) {
       List("contact-details", "business-address")

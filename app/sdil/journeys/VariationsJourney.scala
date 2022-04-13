@@ -238,8 +238,6 @@ object VariationsJourney {
       variation.data.original.address.postCode
     ) ++ variation.data.original.address.lines
 
-
-
     if ((updatedContactDetails equals (originalContactDetails)) && (updatedBusinessDetails equals originalBusinessDetails) || (updatedContactDetails != (originalContactDetails)) && (updatedBusinessDetails != originalBusinessDetails)) {
       List("contact-details", "business-address")
     } else if (updatedContactDetails equals (originalContactDetails)) { List("business-address") } else
@@ -299,7 +297,7 @@ object VariationsJourney {
         )
       )
 
-  private def contactUpdate(
+  def contactUpdate(
     data: RegistrationVariationData
   ) = {
 
@@ -584,21 +582,49 @@ object VariationsJourney {
                   }
     } yield variation
 
-  private def adjust(
+  def selectJourney(
     id: String,
     subscription: RetrievedSubscription,
     sdilRef: String,
-    connector: SoftDrinksIndustryLevyConnector,
-    returnPeriod: ReturnPeriod,
+    variableReturns: List[ReturnPeriod],
+    pendingReturns: List[ReturnPeriod],
+    sdilConnector: SoftDrinksIndustryLevyConnector,
     checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
     getReturn: ReturnPeriod => Future[Option[SdilReturn]],
     submitReturnVariation: ReturnsVariation => Future[Unit],
-    config: AppConfig
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier) = {
+    appConfig: AppConfig,
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) = {
     val base = RegistrationVariationData(subscription)
+    val isVoluntary = subscription.activity.voluntaryRegistration
+
     for {
-      isSmallProd <- convertWithKey("is-small-producer")(checkSmallProducerStatus(sdilRef, returnPeriod))
-      origReturn  <- convertWithKey("return-lookup")(getReturn(returnPeriod))
+      changeType <- if (variableReturns.nonEmpty) {
+                     ask[AbstractChangeType]("select-change")
+                   } else ask[ChangeType]("select-change")
+    } yield (changeType)
+  }
+
+  def withReturnsJourney(
+    id: String,
+    subscription: RetrievedSubscription,
+    sdilRef: String,
+    variableReturns: List[ReturnPeriod],
+    pendingReturns: List[ReturnPeriod],
+    connector: SoftDrinksIndustryLevyConnector,
+    checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
+    getReturn: ReturnPeriod => Future[Option[SdilReturn]],
+    submitReturnVariation: ReturnsVariation => Future[Unit],
+    config: AppConfig,
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) = {
+    val base = RegistrationVariationData(subscription)
+    val isVoluntary = subscription.activity.voluntaryRegistration
+    for {
+      period <- ask[ReturnPeriod](
+                 "select-return",
+                 validation = Rule.in(variableReturns)
+               )
+      isSmallProd <- convertWithKey("is-small-producer")(checkSmallProducerStatus(sdilRef, period))
+      origReturn  <- convertWithKey("return-lookup")(getReturn(period))
       broughtForward <- if (config.balanceAllEnabled) {
                          convertWithKey("balance-history") {
                            connector.balanceHistory(sdilRef, withAssessment = false).map { x =>
@@ -610,7 +636,7 @@ object VariationsJourney {
                        }
       newReturn <- ReturnsJourney.journey(
                     id,
-                    returnPeriod,
+                    period,
                     origReturn,
                     subscription,
                     checkSmallProducerStatus,
@@ -622,7 +648,7 @@ object VariationsJourney {
       variation = ReturnVariationData(
         origReturn.getOrElse(emptyReturn),
         newReturn._1,
-        returnPeriod,
+        period,
         base.original.orgName,
         base.original.address,
         "")
@@ -638,6 +664,7 @@ object VariationsJourney {
         case None                              => None
       }
       payMethodAndReason = variation.copy(reason = reason, repaymentMethod = repaymentString)
+
       _ <- tell(
             "check-return-changes",
             uniform.fragments.returnVariationDifferences(
@@ -647,8 +674,8 @@ object VariationsJourney {
               broughtForward.some
             )(_: Messages)
           )
-
-    } yield Change.Returns(payMethodAndReason)
+      //_ <- tell("check-answers", CYA(variation))
+    } yield { Change.Returns(payMethodAndReason) }
   }
 
   def journey(
@@ -672,22 +699,18 @@ object VariationsJourney {
                    } else ask[ChangeType]("select-change")
       variation <- changeType match {
                     case ChangeTypeWithReturns.Returns =>
-                      for {
-                        period <- ask[ReturnPeriod](
-                                   "select-return",
-                                   validation = Rule.in(variableReturns)
-                                 )
-                        adjustedReturn <- adjust(
-                                           id,
-                                           subscription,
-                                           sdilRef,
-                                           sdilConnector,
-                                           period,
-                                           checkSmallProducerStatus,
-                                           getReturn,
-                                           submitReturnVariation,
-                                           appConfig)
-                      } yield { adjustedReturn: Change }
+                      withReturnsJourney(
+                        id,
+                        subscription,
+                        sdilRef,
+                        variableReturns,
+                        pendingReturns,
+                        sdilConnector,
+                        checkSmallProducerStatus,
+                        getReturn,
+                        submitReturnVariation,
+                        appConfig,
+                      )
 
                     case ChangeType.Activity =>
                       activityUpdateJourney(base, subscription, pendingReturns)
