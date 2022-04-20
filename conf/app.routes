@@ -38,6 +38,9 @@ GET      /variations/*id                                                        
 POST     /variations/                                                              sdil.controllers.VariationsController.changeAddressAndContact(id = "")
 POST     /variations/*id                                                           sdil.controllers.VariationsController.changeAddressAndContact(id: String)
 
+GET     /returns-journey/                                                          sdil.controllers.VariationsController.runWithReturnsJourney(id = "")
+GET     /returns-journey/*id                                                       sdil.controllers.VariationsController.runWithReturnsJourney(id: String)
+
 GET      /change-actor-status/                                                     sdil.controllers.VariationsController.changeActorStatus(id = "")
 GET      /change-actor-status/*id                                                  sdil.controllers.VariationsController.changeActorStatus(id: String)
 POST     /change-actor-status/                                                     sdil.controllers.VariationsController.changeActorStatus(id = "")
