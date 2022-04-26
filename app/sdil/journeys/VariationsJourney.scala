@@ -27,6 +27,7 @@ import play.twirl.api.Html
 import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.{Subset, askEmptyOption, longTupToLitreage}
+import sdil.journeys.VariationsJourney.ContactChangeType.{ContactAddress, ContactPerson}
 import sdil.models.backend.{Site, UkAddress}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData, VariationData}
@@ -357,13 +358,6 @@ object VariationsJourney {
     } yield (variation)
   }
 
-  def deregisterCheck(data: RegistrationVariationData) =
-    if (data.previousPages.contains("cancel-registration-date")) {
-      List("cancel-registration-date")
-    } else if (data.previousPages.contains("cancel-registration-reason")) {
-      List("cancel-registration-reason")
-    } else List("")
-
   def deregisterUpdate(
     subscription: RetrievedSubscription,
     pendingReturns: List[ReturnPeriod]
@@ -388,18 +382,19 @@ object VariationsJourney {
                       validation = Rule.between[LocalDate](LocalDate.now, LocalDate.now.plusDays(15))
                     )
 
-        _ <- tell("check-answers", dereg_variations_cya(showChangeLinks = true, data)(_: Messages))
-        //        _ <- tell(
-        //              "check-answers",
-        //              views.html.uniform.fragments.variations_cya(
-        //                data,
-        //                newPackagingSites2(data),
-        //                closedPackagingSites2(data, false),
-        //                newWarehouseSites2(data),
-        //                closedWarehouseSites2(data, false),
-        //                deregisterCheck(data),
-        //              )(_: Messages)
-        //            )
+        _ <- tell(
+              "check-answers",
+              views.html.uniform.fragments.variations_cya(
+                data,
+                newPackagingSites2(data),
+                closedPackagingSites2(data, false),
+                newWarehouseSites2(data),
+                closedWarehouseSites2(data, false),
+                if (data.isVoluntary || pendingReturns.isEmpty) {
+                  List("cancel-registration-date", "cancel-registration-reason")
+                } else List(""),
+              )(_: Messages)
+            )
       } yield
         Change.RegChange(
           data.copy(
@@ -471,6 +466,9 @@ object VariationsJourney {
                           ask[Address]("business-address", default = data.updatedBusinessAddress.some)
                         } else pure(data.updatedBusinessAddress)
 
+      val packaging = closedPackagingSites2(data, false)
+      _ <- tell("data", Html(s"data = $packaging"))
+
       _ <- tell(
             "check-answers",
             views.html.uniform.fragments.variations_cya(
@@ -479,7 +477,13 @@ object VariationsJourney {
               closedPackagingSites2(data, false),
               newWarehouseSites2(data),
               closedWarehouseSites2(data, false),
-              deregisterCheck(data),
+              if (change.contains(ContactPerson) && change.contains(ContactAddress)) {
+                List("business-address", "contact-details")
+              } else if (change.contains(ContactPerson)) {
+                List("contact-details")
+              } else if (change.contains(ContactAddress)) {
+                List("business-address")
+              } else { List("") },
             )(_: Messages)
           )
 
@@ -573,6 +577,19 @@ object VariationsJourney {
                                            existingWarehouses(index).nonEmptyLines)
                                      }
                                    ).map(_.map(Site.fromWarehouse)).emptyUnless(!warehouseShow)
+                      _ <- tell(
+                            "check-answers",
+                            views.html.uniform.fragments.variations_cya(
+                              data.orig,
+                              newPackagingSites2(data),
+                              closedPackagingSites2(data, false),
+                              newWarehouseSites2(data),
+                              closedWarehouseSites2(data, false),
+                              if (!shouldDereg) {
+                                List("business-address")
+                              } else { List("") },
+                            )(_: Messages)
+                          )
                     } yield
                       Change.RegChange(
                         data.copy(
@@ -692,6 +709,19 @@ object VariationsJourney {
                                            existingWarehouses(index).nonEmptyLines)
                                      }
                                    ).map(_.map(Site.fromWarehouse)).emptyUnless(!warehouseShow)
+
+                      _ <- tell(
+                            "check-answers",
+                            views.html.uniform.fragments.variations_cya(
+                              data.orig,
+                              newPackagingSites2(data),
+                              closedPackagingSites2(data, false),
+                              newWarehouseSites2(data),
+                              closedWarehouseSites2(data, false),
+                              List("amount-produced"),
+                            )(_: Messages)
+                          )
+
                     } yield
                       Change.RegChange(
                         data.copy(
