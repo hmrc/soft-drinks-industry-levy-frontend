@@ -28,7 +28,7 @@ import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.controllers.{Subset, askEmptyOption, longTupToLitreage}
 import sdil.journeys.VariationsJourney.ContactChangeType.{ContactAddress, ContactPerson}
-import sdil.models.backend.{Site, UkAddress}
+import sdil.models.backend.{Contact, Site, UkAddress}
 import sdil.models.retrieved.RetrievedSubscription
 import sdil.models.variations.{Convert, RegistrationVariationData, ReturnVariationData, VariationData}
 import sdil.models.{Address, CYA, ContactDetails, Producer, ReturnPeriod, ReturnsVariation, SdilReturn, Warehouse, extractTotal, listItemsWithTotal}
@@ -213,7 +213,7 @@ object VariationsJourney {
     variation: RegistrationVariationData,
     newWarehouseSites: List[Site],
     ShowNone: Boolean): List[Site] =
-    if (ShowNone == true) {
+    if (ShowNone == false) {
       val old = variation.original.warehouseSites
         .filter { x =>
           x.closureDate.fold(true) {
@@ -472,13 +472,35 @@ object VariationsJourney {
                           ask[Address]("business-address", default = data.updatedBusinessAddress.some)
                         } else pure(data.updatedBusinessAddress)
 
-      packaging = data.orig.updatedProductionSites
-      _ <- tell("data", Html(s"data = $packaging"))
+      contactDetails = ContactDetails(contact.fullName, contact.position, contact.phoneNumber, contact.email)
+      businessDetails = Address(
+        businessAddress.line1,
+        businessAddress.line2,
+        businessAddress.line3,
+        businessAddress.line4,
+        businessAddress.postcode)
 
       _ <- tell(
             "check-answers",
             views.html.uniform.fragments.variations_cya(
-              data,
+              RegistrationVariationData(
+                data.original,
+                businessDetails,
+                data.producer,
+                data.usesCopacker,
+                data.packageOwn,
+                data.packageOwnVol,
+                data.copackForOthers,
+                data.copackForOthersVol,
+                data.imports,
+                data.importsVol,
+                data.updatedProductionSites,
+                data.updatedWarehouseSites,
+                contactDetails,
+                data.previousPages,
+                data.reason,
+                data.deregDate
+              ),
               newPackagingSites3(data, packSites),
               closedPackagingSites3(data, packSites, false),
               newWarehouseSites3(data, warehouses),
