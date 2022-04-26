@@ -394,15 +394,6 @@ class VariationsController @Inject()(
     }
   }
 
-//  def changeActorStatus(id: String): Action[AnyContent] = Action.async { implicit req =>
-//    implicit val persistence: SessionPersistence[MessagesRequest[AnyContent]] = new SessionPersistence("test")
-//    val simpleJourney = ask[LocalDate]("test")
-//    val wm = interpret(simpleJourney)
-//    wm.run(id, config = journeyConfig) { date =>
-//      Future.successful(Ok(date.toString))
-//    }
-//  }
-//}
   def changeActorStatus(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     val x = sdilConnector.retrieveSubscription(sdilRef)
@@ -453,17 +444,3 @@ class VariationsController @Inject()(
     }
   }
 }
-
-//  def changeActorStatusJourney(
-//    subscription: RetrievedSubscription,
-//    sdilRef: String
-//    )(implicit hc: HeaderCarrier): Unit ={
-//      val base = RegistrationVariationData(subscription)
-//
-//        for {
-//        producerType <- ask[ProducerType]("amount-produced")
-//        useCopacker  <- if (producerType == ProducerType.Small) ask[Boolean]("third-party-packagers") else pure(false)
-//        copacks      <- askEmptyOption[(Long, Long)]("contract-packing")
-//        imports      <- askEmptyOption[(Long, Long)]("imports")
-//        } yield
-//
