@@ -177,37 +177,11 @@ object VariationsJourney {
       Nil
     }
 
-  def closedWarehouseSites2(variation: RegistrationVariationData, ShowNone: Boolean): List[Site] =
-    if (ShowNone == true) {
-      val old = variation.original.warehouseSites
-        .filter { x =>
-          x.closureDate.fold(true) {
-            _.isAfter(LocalDate.now)
-          }
-        }
-        .map(x => x.address)
-
-      val newList = variation.updatedWarehouseSites
-        .filter { x =>
-          x.closureDate.fold(true) {
-            _.isAfter(LocalDate.now)
-          }
-        }
-        .map(x => x.address)
-
-      val diff = old diff newList
-
-      variation.original.warehouseSites.filter { site =>
-        diff.exists { address =>
-          compareAddress(site.address, address)
-        }
-      }
-    } else {
-      Nil
-    }
-
-  def closedPackagingSites2(variation: RegistrationVariationData, ShowNone: Boolean): List[Site] =
-    if (ShowNone == true) {
+  def closedPackagingSites3(
+    variation: RegistrationVariationData,
+    newPackSites: List[Site],
+    ShowNone: Boolean): List[Site] =
+    if (ShowNone == false) {
       val old = variation.original.productionSites
         .filter { x =>
           x.closureDate.fold(true) {
@@ -216,7 +190,7 @@ object VariationsJourney {
         }
         .map(x => x.address)
 
-      val newList = variation.updatedProductionSites
+      val newList = newPackSites
         .filter { x =>
           x.closureDate.fold(true) {
             _.isAfter(LocalDate.now)
@@ -235,24 +209,56 @@ object VariationsJourney {
       Nil
     }
 
-  def newPackagingSites2(variation: RegistrationVariationData): List[Site] = {
+  def closedWarehouseSites3(
+    variation: RegistrationVariationData,
+    newWarehouseSites: List[Site],
+    ShowNone: Boolean): List[Site] =
+    if (ShowNone == true) {
+      val old = variation.original.warehouseSites
+        .filter { x =>
+          x.closureDate.fold(true) {
+            _.isAfter(LocalDate.now)
+          }
+        }
+        .map(x => x.address)
+
+      val newList = newWarehouseSites
+        .filter { x =>
+          x.closureDate.fold(true) {
+            _.isAfter(LocalDate.now)
+          }
+        }
+        .map(x => x.address)
+
+      val diff = old diff newList
+
+      variation.original.warehouseSites.filter { site =>
+        diff.exists { address =>
+          compareAddress(site.address, address)
+        }
+      }
+    } else {
+      Nil
+    }
+
+  def newPackagingSites3(variation: RegistrationVariationData, newPackSites: List[Site]): List[Site] = {
     val old = variation.original.productionSites.map(x => x.address)
-    val updated = variation.updatedProductionSites.map(x => x.address)
+    val updated = newPackSites.map(x => x.address)
     val newAddress = updated diff old
 
-    variation.updatedProductionSites.filter { site =>
+    newPackSites.filter { site =>
       newAddress.exists { address =>
         compareAddress(site.address, address)
       }
     }
   }.toList
 
-  def newWarehouseSites2(variation: RegistrationVariationData): List[Site] = {
+  def newWarehouseSites3(variation: RegistrationVariationData, newWarehouseSites: List[Site]): List[Site] = {
     val oldAddress = variation.original.warehouseSites.map(x => x.address)
-    val updatedAddress = variation.updatedWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
+    val updatedAddress = newWarehouseSites.map(x => x.address) //This contains all the packaging sites new and old
     val newAddress = updatedAddress diff oldAddress
 
-    variation.updatedWarehouseSites.filter { site =>
+    newWarehouseSites.filter { site =>
       newAddress.exists { address =>
         compareAddress(site.address, address)
       }
@@ -386,10 +392,10 @@ object VariationsJourney {
               "check-answers",
               views.html.uniform.fragments.variations_cya(
                 data,
-                newPackagingSites2(data),
-                closedPackagingSites2(data, false),
-                newWarehouseSites2(data),
-                closedWarehouseSites2(data, false),
+                newPackagingSites3(data, data.updatedProductionSites.toList),
+                closedPackagingSites3(data, data.updatedProductionSites.toList, false),
+                newWarehouseSites3(data, data.updatedWarehouseSites.toList),
+                closedWarehouseSites3(data, data.updatedWarehouseSites.toList, false),
                 if (data.isVoluntary || pendingReturns.isEmpty) {
                   List("cancel-registration-date", "cancel-registration-reason")
                 } else List(""),
@@ -466,17 +472,17 @@ object VariationsJourney {
                           ask[Address]("business-address", default = data.updatedBusinessAddress.some)
                         } else pure(data.updatedBusinessAddress)
 
-      val packaging = closedPackagingSites2(data, false)
+      packaging = data.orig.updatedProductionSites
       _ <- tell("data", Html(s"data = $packaging"))
 
       _ <- tell(
             "check-answers",
             views.html.uniform.fragments.variations_cya(
-              data.orig,
-              newPackagingSites2(data),
-              closedPackagingSites2(data, false),
-              newWarehouseSites2(data),
-              closedWarehouseSites2(data, false),
+              data,
+              newPackagingSites3(data, packSites),
+              closedPackagingSites3(data, packSites, false),
+              newWarehouseSites3(data, warehouses),
+              closedWarehouseSites3(data, warehouses, false),
               if (change.contains(ContactPerson) && change.contains(ContactAddress)) {
                 List("business-address", "contact-details")
               } else if (change.contains(ContactPerson)) {
@@ -580,11 +586,11 @@ object VariationsJourney {
                       _ <- tell(
                             "check-answers",
                             views.html.uniform.fragments.variations_cya(
-                              data.orig,
-                              newPackagingSites2(data),
-                              closedPackagingSites2(data, false),
-                              newWarehouseSites2(data),
-                              closedWarehouseSites2(data, false),
+                              data,
+                              newPackagingSites3(data, data.updatedProductionSites.toList),
+                              closedPackagingSites3(data, data.updatedProductionSites.toList, false),
+                              newWarehouseSites3(data, data.updatedWarehouseSites.toList),
+                              closedWarehouseSites3(data, data.updatedWarehouseSites.toList, false),
                               if (!shouldDereg) {
                                 List("business-address")
                               } else { List("") },
@@ -714,10 +720,10 @@ object VariationsJourney {
                             "check-answers",
                             views.html.uniform.fragments.variations_cya(
                               data.orig,
-                              newPackagingSites2(data),
-                              closedPackagingSites2(data, false),
-                              newWarehouseSites2(data),
-                              closedWarehouseSites2(data, false),
+                              newPackagingSites3(data, data.updatedProductionSites.toList),
+                              closedPackagingSites3(data, data.updatedProductionSites.toList, false),
+                              newWarehouseSites3(data, data.updatedWarehouseSites.toList),
+                              closedWarehouseSites3(data, data.updatedWarehouseSites.toList, false),
                               List("amount-produced"),
                             )(_: Messages)
                           )
