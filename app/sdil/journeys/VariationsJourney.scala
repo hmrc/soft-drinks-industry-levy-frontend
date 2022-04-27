@@ -408,41 +408,6 @@ object VariationsJourney {
         businessAddress.line4,
         businessAddress.postcode)
 
-      _ <- tell(
-            "check-answers",
-            views.html.uniform.fragments.variations_cya(
-              RegistrationVariationData(
-                data.original,
-                businessDetails,
-                data.producer,
-                data.usesCopacker,
-                data.packageOwn,
-                data.packageOwnVol,
-                data.copackForOthers,
-                data.copackForOthersVol,
-                data.imports,
-                data.importsVol,
-                data.updatedProductionSites,
-                data.updatedWarehouseSites,
-                contactDetails,
-                data.previousPages,
-                data.reason,
-                data.deregDate
-              ),
-              newPackagingSites3(data, packSites),
-              closedPackagingSites3(data, packSites, false),
-              newWarehouseSites3(data, warehouses),
-              closedWarehouseSites3(data, warehouses, false),
-              if (change.contains(ContactPerson) && change.contains(ContactAddress)) {
-                List("business-address", "contact-details")
-              } else if (change.contains(ContactPerson)) {
-                List("contact-details")
-              } else if (change.contains(ContactAddress)) {
-                List("business-address")
-              } else { List("") },
-            )(_: Messages)
-          )
-
     } yield {
       Change.RegChange(
         data
