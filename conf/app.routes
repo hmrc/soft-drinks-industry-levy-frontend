@@ -28,10 +28,25 @@ GET      /submit-return/year/:year/quarter/:quarter/return-sent                 
 
 GET      /ufvariations/variationDone                                               sdil.controllers.VariationsController.showVariationsComplete()
 
-GET      /ufvariations/                                                            sdil.controllers.VariationsController.index(id = "")
-GET      /ufvariations/*id                                                         sdil.controllers.VariationsController.index(id: String)
-POST     /ufvariations/                                                            sdil.controllers.VariationsController.index(id = "")
-POST     /ufvariations/*id                                                         sdil.controllers.VariationsController.index(id: String)
+GET      /ufvariations/                                                             sdil.controllers.VariationsController.index(id = "")
+GET      /ufvariations/*id                                                          sdil.controllers.VariationsController.index(id: String)
+POST     /ufvariations/                                                             sdil.controllers.VariationsController.index(id = "")
+POST     /ufvariations/*id                                                          sdil.controllers.VariationsController.index(id: String)
+
+GET      /activity-update-journey/                                                  sdil.controllers.VariationsController.activityUpdateJourney(id = "")
+GET      /activity-update-journey/*id                                               sdil.controllers.VariationsController.activityUpdateJourney(id: String)
+POST     /activity-update-journey/                                                  sdil.controllers.VariationsController.activityUpdateJourney(id = "")
+POST     /activity-update-journey/*id                                               sdil.controllers.VariationsController.activityUpdateJourney(id: String)
+
+GET      /contact-update-journey/                                                   sdil.controllers.VariationsController.contactUpdateJourney(id = "")
+GET      /contact-update-journey/*id                                                sdil.controllers.VariationsController.contactUpdateJourney(id: String)
+POST     /contact-update-journey/                                                   sdil.controllers.VariationsController.contactUpdateJourney(id = "")
+POST     /contact-update-journey/*id                                                sdil.controllers.VariationsController.contactUpdateJourney(id: String)
+
+GET      /deregister-journey/                                                       sdil.controllers.VariationsController.deregisterUpdate(id = "")
+GET      /deregister-journey/*id                                                    sdil.controllers.VariationsController.deregisterUpdate(id: String)
+POST     /deregister-journey/                                                       sdil.controllers.VariationsController.deregisterUpdate(id = "")
+POST     /deregister-journey/*id                                                    sdil.controllers.VariationsController.deregisterUpdate(id: String)
 
 GET      /variations/                                                              sdil.controllers.VariationsController.changeAddressAndContact(id = "")
 GET      /variations/*id                                                           sdil.controllers.VariationsController.changeAddressAndContact(id: String)

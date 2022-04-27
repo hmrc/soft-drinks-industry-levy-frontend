@@ -42,6 +42,7 @@ import ltbs.uniform.interpreters.playframework.SessionPersistence
 import sdil.journeys.VariationsJourney
 import sdil.journeys.VariationsJourney.{ChangeCheckProduction, _}
 import views.html.{main_template, uniform}
+import scala.concurrent.duration.DurationInt
 
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
@@ -89,6 +90,100 @@ class VariationsController @Inject()(
         interpret(
           VariationsJourney.changeBusinessAddressJourney(id, subscription, ufViews)(request)
         ).run(id, purgeStateUponCompletion = true) {
+          case Change.RegChange(reg) =>
+            sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
+              regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
+                logger.info("variation of Address and Contact  is complete")
+                Redirect(routes.VariationsController.showVariationsComplete())
+              }
+            }
+          case _ =>
+            logger.warn("registrationVariation for address and contact subJourney has failed")
+            Redirect(routes.ServicePageController.show)
+        }
+      case None => Future.successful(NotFound(""))
+    }
+  }
+
+  def withReturnsJourney(id: String) = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(subscription) =>
+        val base = RegistrationVariationData(subscription)
+        val returnPeriods = sdilConnector.returns_pending(subscription.utr)
+        interpret(
+          VariationsJourney.activityUpdateJourney(subscription, Await.result((returnPeriods), 10.seconds))
+        ).run(id) {
+          case Change.RegChange(reg) =>
+            sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
+              regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
+                logger.info("variation of Address and Contact  is complete")
+                Redirect(routes.VariationsController.showVariationsComplete())
+              }
+            }
+          case _ =>
+            logger.warn("registrationVariation for address and contact subJourney has failed")
+            Redirect(routes.ServicePageController.show)
+        }
+      case None => Future.successful(NotFound(""))
+    }
+  }
+
+  def activityUpdateJourney(id: String) = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(subscription) =>
+        val base = RegistrationVariationData(subscription)
+        val returnPeriods = sdilConnector.returns_pending(subscription.utr)
+        interpret(
+          VariationsJourney.activityUpdateJourney(subscription, Await.result((returnPeriods), 10.seconds))
+        ).run(id) {
+          case Change.RegChange(reg) =>
+            sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
+              regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
+                logger.info("variation of Address and Contact  is complete")
+                Redirect(routes.VariationsController.showVariationsComplete())
+              }
+            }
+          case _ =>
+            logger.warn("registrationVariation for address and contact subJourney has failed")
+            Redirect(routes.ServicePageController.show)
+        }
+      case None => Future.successful(NotFound(""))
+    }
+  }
+
+  def contactUpdateJourney(id: String) = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(subscription) =>
+        interpret(
+          VariationsJourney.contactUpdate(subscription)
+        ).run(id, purgeStateUponCompletion = true) {
+          case Change.RegChange(reg) =>
+            sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
+              regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
+                logger.info("variation of Address and Contact  is complete")
+                Redirect(routes.VariationsController.showVariationsComplete())
+              }
+            }
+          case _ =>
+            logger.warn("registrationVariation for address and contact subJourney has failed")
+            Redirect(routes.ServicePageController.show)
+        }
+      case None => Future.successful(NotFound(""))
+    }
+  }
+
+  def deregisterUpdate(id: String) = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(subscription) =>
+        val base = RegistrationVariationData(subscription)
+        val variableReturn = sdilConnector.returns_variable(base.original.utr)
+        interpret(
+          VariationsJourney.deregisterUpdate(subscription, Await.result((variableReturn), 10.seconds))
+        ).run(id) {
           case Change.RegChange(reg) =>
             sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
               regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
@@ -311,7 +406,6 @@ class VariationsController @Inject()(
     val originalBusinessDetails = List(
       variation.original.address.postCode
     ) ++ variation.original.address.lines
-
 
     if ((updatedContactDetails equals (originalContactDetails)) && (updatedBusinessDetails equals originalBusinessDetails) || (updatedContactDetails != (originalContactDetails)) && (updatedBusinessDetails != originalBusinessDetails)) {
       List("contact-details", "business-address")
