@@ -338,8 +338,13 @@ object VariationsJourney {
     subscription: RetrievedSubscription,
     ufViews: views.uniform.Uniform
   )(implicit request: Request[_]) = {
-
-    val base = RegistrationVariationData(subscription)
+    val data = RegistrationVariationData(subscription)
+    import ContactChangeType._
+    val changeOptions =
+      if (data.isVoluntary)
+        ContactChangeType.values.filter(_ != ContactChangeType.Sites)
+      else
+        ContactChangeType.values
 
     for {
       _ <- tell(
@@ -349,19 +354,106 @@ object VariationsJourney {
               _: Messages),
             customContent = message("change-registered-account-details.caption", subscription.orgName)
           )
-      variation <- contactUpdate(subscription)
+
+      change <- ask[Set[ContactChangeType]](
+                 "change-registered-details",
+                 validation = Rule.nonEmpty[Set[ContactChangeType]] alongWith Subset(changeOptions: _*)
+               )
+
+      packSites <- askList[Address](
+                    "packaging-site-details",
+                    data.updatedProductionSites.toList.map(x => Address.fromUkAddress(x.address)).some,
+                    Rule.nonEmpty[List[Address]]
+                  )(
+                    {
+                      case (index: Option[Int], existingAddresses: List[Address]) =>
+                        ask[Address](
+                          "p-site",
+                          default = index.map(existingAddresses)
+                        )
+                    }, {
+                      case (index: Int, existingAddresses: List[Address]) =>
+                        interact[Boolean]("remove-packaging-site-details", existingAddresses(index).nonEmptyLines)
+                    }
+                  ).map(_.map(Site.fromAddress)) emptyUnless (
+                    (data.producer.isLarge.contains(true) || data.copackForOthers) && change.contains(Sites)
+                  )
+
+      warehouses <- askList[Warehouse](
+                     "warehouse-details",
+                     data.updatedWarehouseSites.toList.map(Warehouse.fromSite).some
+                   )(
+                     {
+                       case (index: Option[Int], existingWarehouses: List[Warehouse]) =>
+                         ask[Warehouse]("w-house", default = index.map(existingWarehouses))
+                     }, {
+                       case (index: Int, existingWarehouses: List[Warehouse]) =>
+                         interact[Boolean]("remove-warehouse-details", existingWarehouses(index).nonEmptyLines)
+                     }
+                   ).map(_.map(Site.fromWarehouse)) emptyUnless change.contains(Sites)
+
+      contact <- if (change.contains(ContactPerson)) {
+                  ask[ContactDetails]("contact-details", default = data.updatedContactDetails.some)
+                } else pure(data.updatedContactDetails)
+
+      businessAddress <- if (change.contains(ContactAddress)) {
+                          ask[Address]("business-address", default = data.updatedBusinessAddress.some)
+                        } else pure(data.updatedBusinessAddress)
+
+      contactDetails = ContactDetails(contact.fullName, contact.position, contact.phoneNumber, contact.email)
+      businessDetails = Address(
+        businessAddress.line1,
+        businessAddress.line2,
+        businessAddress.line3,
+        businessAddress.line4,
+        businessAddress.postcode)
+
       _ <- tell(
             "check-answers",
             views.html.uniform.fragments.variations_cya(
-              variation.data,
-              newPackagingSites(variation),
-              closedPackagingSites(variation, ShowNone = ChangeCheckProduction(variation)),
-              newWarehouseSites(variation),
-              closedWarehouseSites(variation, ShowNone = ChangeCheckWarehouse(variation)),
-              contactAndBusinessUpdateCheck(variation)
+              RegistrationVariationData(
+                data.original,
+                businessDetails,
+                data.producer,
+                data.usesCopacker,
+                data.packageOwn,
+                data.packageOwnVol,
+                data.copackForOthers,
+                data.copackForOthersVol,
+                data.imports,
+                data.importsVol,
+                data.updatedProductionSites,
+                data.updatedWarehouseSites,
+                contactDetails,
+                data.previousPages,
+                data.reason,
+                data.deregDate
+              ),
+              newPackagingSites3(data, packSites),
+              closedPackagingSites3(data, packSites, false),
+              newWarehouseSites3(data, warehouses),
+              closedWarehouseSites3(data, warehouses, false),
+              if (change.contains(ContactPerson) && change.contains(ContactAddress)) {
+                List("business-address", "contact-details")
+              } else if (change.contains(ContactPerson)) {
+                List("contact-details")
+              } else if (change.contains(ContactAddress)) {
+                List("business-address")
+              } else { List("") },
             )(_: Messages)
           )
-    } yield (variation)
+
+    } yield {
+      Change.RegChange(
+        data
+          .copy(
+            updatedBusinessAddress = businessAddress,
+            updatedProductionSites = packSites,
+            updatedWarehouseSites = warehouses,
+            updatedContactDetails = contact
+          )
+      )
+    }
   }
 
   def deregisterUpdate(
