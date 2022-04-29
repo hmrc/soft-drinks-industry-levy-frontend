@@ -1,0 +1,66 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.softdrinksindustrylevy.helpers._
+
+@(key: String)(implicit request: Request[_], messages: Messages)
+
+<a class="link-back" href="/soft-drinks-industry-levy">Back</a>
+
+<form action="" method="post">
+
+ <input type="hidden" name="csrfToken" value="2637e92757a6b933cb67be0879b0f38a85fe7367-1651219161173-0834787e163bdbd450d133e8">
+
+ <fieldset class="form-field-group  ">
+
+  <legend>
+   <h1 class="heading-large.service-header">@messages(s"heading.select-change")</h1>
+  </legend>
+
+  <div class="form-group ">
+   <div class="">
+    <div class="multiple-choice govuk-radios__item" data-target="tg-select-change-0">
+     <input type="radio" id="select-change-0" name="select-change" value="AASites" checked="checked">
+     <label for="select-change-0">Update contact, packaging site or warehouse details</label>
+    </div>
+
+    <div class="multiple-choice govuk-radios__item" data-target="tg-select-change-1">
+     <input type="radio" id="select-change-1" name="select-change" value="Activity">
+     <label for="select-change-1">Change business activity</label>
+    </div>
+
+    <div class="multiple-choice govuk-radios__item" data-target="tg-select-change-2">
+     <input type="radio" id="select-change-2" name="select-change" value="Deregister">
+     <label for="select-change-2">Cancel Soft Drinks Industry Levy registration</label>
+    </div>
+
+    <div class="multiple-choice govuk-radios__item" data-target="tg-select-change-3">
+     <input type="radio" id="select-change-3" name="select-change" value="Returns">
+     <label for="select-change-3">Correct an error in a previous return</label>
+    </div>
+   </div>
+  </div>
+ </fieldset>
+
+
+ <p>Changes can take up to 15 working days to process.</p>
+
+
+ <button class="button" type="submit" id="continue-button">
+  Continue
+ </button>
+
+</form>

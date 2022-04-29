@@ -1,32 +1,34 @@
 # microservice specific routes
 GET      /assets/*file                                                             controllers.Assets.at(path="/public", file)
 
-GET      /                                                                         sdil.controllers.ServicePageController.show
-GET      /home                                                                     sdil.controllers.ServicePageController.show
-GET      /transaction-history                                                      sdil.controllers.ServicePageController.balanceHistory
+GET      /                                                                          sdil.controllers.ServicePageController.show
+GET      /home                                                                      sdil.controllers.ServicePageController.show
+GET      /transaction-history                                                       sdil.controllers.ServicePageController.balanceHistory
 
-GET      /register/start                                                           sdil.controllers.IdentifyController.start
-GET      /register/identify                                                        sdil.controllers.IdentifyController.show()
-POST     /register/identify                                                        sdil.controllers.IdentifyController.submit()
+GET      /register/start                                                            sdil.controllers.IdentifyController.start
+GET      /register/identify                                                         sdil.controllers.IdentifyController.show()
+POST     /register/identify                                                         sdil.controllers.IdentifyController.submit()
 
-GET      /register/verify                                                          sdil.controllers.VerifyController.show()
-POST     /register/verify                                                          sdil.controllers.VerifyController.submit()
+GET      /register/verify                                                           sdil.controllers.VerifyController.show()
+POST     /register/verify                                                           sdil.controllers.VerifyController.submit()
 
-GET      /sign-in                                                                  sdil.controllers.AuthenticationController.signIn()
-GET      /time-in                                                                  sdil.controllers.AuthenticationController.timeIn(referrer)
-GET      /sign-out                                                                 sdil.controllers.AuthenticationController.signOut()
-GET      /sign-out-returns                                                         sdil.controllers.AuthenticationController.signOutReturns()
-GET      /sign-out-no-feedback                                                     sdil.controllers.AuthenticationController.signOutNoFeedback()
+GET      /sign-in                                                                   sdil.controllers.AuthenticationController.signIn()
+GET      /time-in                                                                   sdil.controllers.AuthenticationController.timeIn(referrer)
+GET      /sign-out                                                                  sdil.controllers.AuthenticationController.signOut()
+GET      /sign-out-returns                                                          sdil.controllers.AuthenticationController.signOutReturns()
+GET      /sign-out-no-feedback                                                      sdil.controllers.AuthenticationController.signOutNoFeedback()
 
-GET      /time-out                                                                 sdil.controllers.AuthenticationController.timeOut()
+GET      /time-out                                                                  sdil.controllers.AuthenticationController.timeOut()
 
-GET      /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
-GET      /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/*id      sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
-POST     /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/         sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
-POST     /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/*id      sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
-GET      /submit-return/year/:year/quarter/:quarter/return-sent                    sdil.controllers.ReturnsController.showReturnComplete(year: Int, quarter: Int)
+GET      /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/          sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
+GET      /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/*id       sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
+POST     /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/          sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id = "")
+POST     /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/*id       sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
+GET      /submit-return/year/:year/quarter/:quarter/return-sent                     sdil.controllers.ReturnsController.showReturnComplete(year: Int, quarter: Int)
 
-GET      /ufvariations/variationDone                                               sdil.controllers.VariationsController.showVariationsComplete()
+GET      /ufvariations/variationDone                                                sdil.controllers.VariationsController.showVariationsComplete()
+
+GET      /select-journey                                                            sdil.controllers.VariationsController.selectJourney
 
 GET      /ufvariations/                                                             sdil.controllers.VariationsController.index(id = "")
 GET      /ufvariations/*id                                                          sdil.controllers.VariationsController.index(id: String)

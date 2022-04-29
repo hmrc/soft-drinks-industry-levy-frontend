@@ -16,6 +16,8 @@
 
 package sdil.controllers
 
+import cats.data.OptionT
+
 import scala.language.{higherKinds, postfixOps}
 import cats.implicits._
 
@@ -41,9 +43,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import ltbs.uniform.interpreters.playframework.SessionPersistence
 import sdil.journeys.VariationsJourney
 import sdil.journeys.VariationsJourney.{ChangeCheckProduction, _}
+import views.Views
 import views.html.{main_template, uniform}
-import scala.concurrent.duration.DurationInt
 
+import scala.concurrent.duration.DurationInt
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
 import javax.inject.Inject
@@ -52,11 +55,12 @@ class VariationsController @Inject()(
   mcc: MessagesControllerComponents,
   val config: AppConfig,
   val ufViews: views.uniform.Uniform,
+  errorHandler: SDILErrorHandler,
   registeredAction: RegisteredAction,
   sdilConnector: SoftDrinksIndustryLevyConnector,
   regCache: RegistrationFormDataCache,
   regVariationsCache: RegistrationVariationFormDataCache,
-  returnsVariationsCache: ReturnVariationFormDataCache
+  returnsVariationsCache: ReturnVariationFormDataCache,
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with HmrcPlayInterpreter {
 
@@ -82,6 +86,23 @@ class VariationsController @Inject()(
 
   implicit lazy val persistence =
     SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)("variations", regCache)
+
+  def selectJourney: Action[AnyContent] = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(subscription) =>
+        Ok(
+          main_template(
+            Messages("return-sent.title")
+          )(
+            views.html.uniform.fragments.selectJourney(
+              "variationDone"
+            )
+          )(implicitly, implicitly, config))
+
+      case None => Future.successful(NotFound(""))
+    }
+  }
 
   def changeAddressAndContact(id: String) = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
