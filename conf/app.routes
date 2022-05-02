@@ -28,7 +28,10 @@ GET      /submit-return/year/:year/quarter/:quarter/return-sent                 
 
 GET      /ufvariations/variationDone                                                sdil.controllers.VariationsController.showVariationsComplete()
 
-GET      /select-journey                                                            sdil.controllers.VariationsController.selectJourney
+GET      /select-journey                                                            sdil.controllers.VariationsController.selectJourney(id = "")
+GET      /select-journey                                                            sdil.controllers.VariationsController.selectJourney(id: String)
+POST     /journey                                                                   sdil.controllers.VariationsController.selectJourneyPost(id = "")
+POST     /journey                                                                   sdil.controllers.VariationsController.selectJourneyPost(id:String)
 
 GET      /ufvariations/                                                             sdil.controllers.VariationsController.index(id = "")
 GET      /ufvariations/*id                                                          sdil.controllers.VariationsController.index(id: String)

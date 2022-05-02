@@ -41,6 +41,7 @@ import sdil.uniform.SdilComponents.ProducerType
 import sdil.uniform.SaveForLaterPersistenceNew
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import ltbs.uniform.interpreters.playframework.SessionPersistence
+import sdil.forms.selectJourneyForm
 import sdil.journeys.VariationsJourney
 import sdil.journeys.VariationsJourney.{ChangeCheckProduction, _}
 import views.Views
@@ -87,7 +88,7 @@ class VariationsController @Inject()(
   implicit lazy val persistence =
     SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)("variations", regCache)
 
-  def selectJourney: Action[AnyContent] = registeredAction.async { implicit request =>
+  def selectJourney(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(subscription) =>
@@ -96,12 +97,31 @@ class VariationsController @Inject()(
             Messages("return-sent.title")
           )(
             views.html.uniform.fragments.selectJourney(
-              "variationDone"
+              "variationDone",
+              selectJourneyForm.form,
+              id
             )
           )(implicitly, implicitly, config))
 
       case None => Future.successful(NotFound(""))
     }
+  }
+
+  def selectJourneyPost(id: String) = Action { implicit request =>
+    selectJourneyForm.form.bindFromRequest.fold(
+      formWithErrors => {
+        BadRequest(formWithErrors.errors.toString)
+      },
+      formData => {
+        val form = formData.toString
+//        Ok(form)
+        form match {
+          case "selectJourneyForm(AASites)"    => Redirect(routes.VariationsController.contactUpdateJourney(id = ""))
+          case "selectJourneyForm(Activity)"   => Redirect(routes.VariationsController.activityUpdateJourney(id = ""))
+          case "selectJourneyForm(Deregister)" => Redirect(routes.VariationsController.deregisterUpdate(id = ""))
+        }
+      }
+    )
   }
 
   def changeAddressAndContact(id: String) = registeredAction.async { implicit request =>

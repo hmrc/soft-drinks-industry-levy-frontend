@@ -14,53 +14,30 @@
  * limitations under the License.
  *@
 
+@import sdil.forms.selectJourneyForm
+@import helper.{inputRadioGroup => _, _}
 @import views.html.softdrinksindustrylevy.helpers._
+@import views.html.helper.options
 
-@(key: String)(implicit request: Request[_], messages: Messages)
+@(key: String,userForm: Form[selectJourneyForm], id: String)(implicit request: Request[_], messages: Messages)
 
 <a class="link-back" href="/soft-drinks-industry-levy">Back</a>
 
-<form action="" method="post">
-
- <input type="hidden" name="csrfToken" value="2637e92757a6b933cb67be0879b0f38a85fe7367-1651219161173-0834787e163bdbd450d133e8">
-
- <fieldset class="form-field-group  ">
+<fieldset class="form-field-group ">
 
   <legend>
    <h1 class="heading-large.service-header">@messages(s"heading.select-change")</h1>
   </legend>
 
-  <div class="form-group ">
-   <div class="">
-    <div class="multiple-choice govuk-radios__item" data-target="tg-select-change-0">
-     <input type="radio" id="select-change-0" name="select-change" value="AASites" checked="checked">
-     <label for="select-change-0">Update contact, packaging site or warehouse details</label>
-    </div>
+ @form(action = sdil.controllers.routes.VariationsController.selectJourneyPost(id), 'enctype -> "multipart/form-data") {
+ @CSRF.formField(request)
 
-    <div class="multiple-choice govuk-radios__item" data-target="tg-select-change-1">
-     <input type="radio" id="select-change-1" name="select-change" value="Activity">
-     <label for="select-change-1">Change business activity</label>
-    </div>
+ @inputRadioGroup(userForm("favColor"), selectJourneyForm.Preferences.values.toSeq.map(pref => pref.toString -> pref.toString))
 
-    <div class="multiple-choice govuk-radios__item" data-target="tg-select-change-2">
-     <input type="radio" id="select-change-2" name="select-change" value="Deregister">
-     <label for="select-change-2">Cancel Soft Drinks Industry Levy registration</label>
-    </div>
+</fieldset>
+<p>Changes can take up to 15 working days to process.</p>
 
-    <div class="multiple-choice govuk-radios__item" data-target="tg-select-change-3">
-     <input type="radio" id="select-change-3" name="select-change" value="Returns">
-     <label for="select-change-3">Correct an error in a previous return</label>
-    </div>
-   </div>
-  </div>
- </fieldset>
+<input class="button" type="submit" value="Continue" id="continue-button">
 
+}
 
- <p>Changes can take up to 15 working days to process.</p>
-
-
- <button class="button" type="submit" id="continue-button">
-  Continue
- </button>
-
-</form>
