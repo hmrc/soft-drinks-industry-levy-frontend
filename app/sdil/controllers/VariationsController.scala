@@ -90,8 +90,14 @@ class VariationsController @Inject()(
 
   def selectJourney(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
+
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(subscription) =>
+        val base = RegistrationVariationData(subscription)
+        val returns: Boolean =
+          if ((Await.result(sdilConnector.returns_variable(base.original.utr), 10 seconds).isEmpty)) {
+            false
+          } else true
         Ok(
           main_template(
             Messages("return-sent.title")
@@ -99,7 +105,8 @@ class VariationsController @Inject()(
             views.html.uniform.fragments.selectJourney(
               "variationDone",
               selectJourneyForm.form,
-              id
+              id,
+              returns
             )
           )(implicitly, implicitly, config))
 

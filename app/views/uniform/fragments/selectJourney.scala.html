@@ -19,7 +19,7 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import views.html.helper.options
 
-@(key: String,userForm: Form[selectJourneyForm], id: String)(implicit request: Request[_], messages: Messages)
+@(key: String,userForm: Form[selectJourneyForm], id: String ,returns: Boolean)(implicit request: Request[_], messages: Messages)
 
 <a class="link-back" href="/soft-drinks-industry-levy">Back</a>
 
@@ -32,12 +32,21 @@
  @form(action = sdil.controllers.routes.VariationsController.selectJourneyPost(id), 'enctype -> "multipart/form-data") {
  @CSRF.formField(request)
 
+ @if(returns == true){
+
  @inputRadioGroup(userForm("favColor"),options(
- "AASites" -> messages(Seq(s"option.$key.inner.true","sdil.select-page.option-one")),
- "Activity" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-two")),
- "Deregister" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-three")),
- "Returns" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-four"))
- ))
+  "AASites" -> messages(Seq(s"option.$key.inner.true","sdil.select-page.option-one")),
+  "Activity" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-two")),
+  "Deregister" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-three")),
+  "Returns" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-four"))
+  ))
+ }else{
+  @inputRadioGroup(userForm("favColor"),options(
+  "AASites" -> messages(Seq(s"option.$key.inner.true","sdil.select-page.option-one")),
+  "Activity" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-two")),
+  "Deregister" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-three"))
+  ))
+ }
 
 </fieldset>
 <p>Changes can take up to 15 working days to process.</p>
