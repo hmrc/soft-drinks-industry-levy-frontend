@@ -32,7 +32,12 @@
  @form(action = sdil.controllers.routes.VariationsController.selectJourneyPost(id), 'enctype -> "multipart/form-data") {
  @CSRF.formField(request)
 
- @inputRadioGroup(userForm("favColor"), selectJourneyForm.Preferences.values.toSeq.map(pref => pref.toString -> pref.toString))
+ @inputRadioGroup(userForm("favColor"),options(
+ "AASites" -> messages(Seq(s"option.$key.inner.true","sdil.select-page.option-one")),
+ "Activity" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-two")),
+ "Deregister" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-three")),
+ "Returns" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-four"))
+ ))
 
 </fieldset>
 <p>Changes can take up to 15 working days to process.</p>

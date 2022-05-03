@@ -17,6 +17,11 @@ sdil.hint.optional=Optional
 sdil.common.error=Error
 sdil.common.cancel=Cancel
 
+sdil.select-page.option-one=Update contact, packaging site or warehouse details
+sdil.select-page.option-two=Change business activity
+sdil.select-page.option-three=Cancel Soft Drinks Industry Levy registration
+sdil.select-page.option-four=Correct an error in a previous return
+
 generic.warning=Generic warning
 
 Some=Yes
