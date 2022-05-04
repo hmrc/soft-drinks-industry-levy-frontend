@@ -87,15 +87,17 @@ class ReturnsController @Inject()(
               if (nilReturn)
                 interpret(
                   ReturnsJourney
-                    .cyaJourney(
+                    .journey(
+                      id,
                       period,
-                      emptyReturn,
+                      None,
                       subscription,
+                      checkSmallProducerStatus,
                       submitReturnVariation,
                       broughtForward,
                       isSmallProd
                     )
-                ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
+                ).run(id, purgeStateUponCompletion = true, config = cyajourneyConfig) { ret =>
                   submitReturn(ret._1).flatMap { _ =>
                     returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
                       Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
