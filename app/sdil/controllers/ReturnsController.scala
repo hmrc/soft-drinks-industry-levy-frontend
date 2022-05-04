@@ -90,7 +90,7 @@ class ReturnsController @Inject()(
                     .journey(
                       id,
                       period,
-                      None,
+                      emptyReturn,
                       subscription,
                       checkSmallProducerStatus,
                       submitReturnVariation,
