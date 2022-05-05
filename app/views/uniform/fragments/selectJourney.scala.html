@@ -51,7 +51,7 @@
    ))
  </div>
  }else{
- <div id="select-one-option">
+ <div class="@{"form-group" + {if(hasNotSelected) " form-group-error" else "" }}" id="select-one-option">
   @inputRadioGroup(userForm("favColor"),options(
   "AASites" -> messages(Seq(s"option.$key.inner.true","sdil.select-page.option-one")),
   "Activity" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-two")),
