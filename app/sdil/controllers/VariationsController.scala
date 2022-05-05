@@ -147,7 +147,7 @@ class VariationsController @Inject()(
               case "selectJourneyForm(AASites)"    => Redirect(routes.VariationsController.contactUpdateJourney(id = ""))
               case "selectJourneyForm(Activity)"   => Redirect(routes.VariationsController.activityUpdateJourney(id = ""))
               case "selectJourneyForm(Deregister)" => Redirect(routes.VariationsController.deregisterUpdate(id = ""))
-              case "selectJourneyForm(Returns)"    => Redirect(routes.VariationsController.withReturnsJourney(id = ""))
+              case "selectJourneyForm(Returns)"    => Redirect(routes.VariationsReturnsController.journey(id = ""))
             }
           }
         )
@@ -172,60 +172,6 @@ class VariationsController @Inject()(
             logger.warn("registrationVariation for address and contact subJourney has failed")
             Redirect(routes.ServicePageController.show)
         }
-      case None => Future.successful(NotFound(""))
-    }
-  }
-
-  def withReturnsJourney(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    val sdilRef = request.sdilEnrolment.value
-    val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
-    val x = sdilConnector.retrieveSubscription(sdilRef)
-    x flatMap {
-      case Some(subscription) =>
-        val base = RegistrationVariationData(subscription)
-
-        def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] =
-          sdilConnector.returns_get(subscription.utr, period)
-
-        def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
-          sdilConnector.checkSmallProducerStatus(sdilRef, period)
-
-        def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
-          sdilConnector.returns_variation(rvd, sdilRef)
-
-        def submitAdjustment(rvd: ReturnVariationData) =
-          sdilConnector.returns_vary(sdilRef, rvd)
-
-        for {
-          variableReturns <- sdilConnector.returns_variable(base.original.utr)
-          returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
-          response <- interpret(
-                       VariationsJourney.withReturnsJourney(
-                         id,
-                         subscription,
-                         Some(emptyReturn),
-                         sdilRef,
-                         variableReturns,
-                         returnPeriods,
-                         sdilConnector,
-                         checkSmallProducerStatus,
-                         getReturn,
-                         submitReturnVariation,
-                         config
-                       )).run(id, purgeStateUponCompletion = true, config = cyajourneyConfig) {
-                       case ret =>
-                         println(".run executed successful")
-                         submitAdjustment(ret).flatMap { _ =>
-                           returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
-                             logger.info("adjustment of Return is complete")
-                             Redirect(routes.VariationsController.showVariationsComplete())
-                           }
-                         }
-                       case _ =>
-                         logger.info("failed to find return")
-                         Redirect(routes.ServicePageController.show)
-                     }
-        } yield response
       case None => Future.successful(NotFound(""))
     }
   }

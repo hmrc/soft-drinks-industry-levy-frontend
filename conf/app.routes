@@ -49,10 +49,10 @@ GET      /deregister-journey/*id                                                
 POST     /deregister-journey/                                                       sdil.controllers.VariationsController.deregisterUpdate(id = "")
 POST     /deregister-journey/*id                                                    sdil.controllers.VariationsController.deregisterUpdate(id: String)
 
-GET      /update-return-journey/                                                  sdil.controllers.VariationsController.withReturnsJourney(id = "")
-GET      /update-return-journey/*id                                               sdil.controllers.VariationsController.withReturnsJourney(id: String)
-POST     /update-return-journey/                                                  sdil.controllers.VariationsController.withReturnsJourney(id = "")
-POST     /update-return-journey/*id                                               sdil.controllers.VariationsController.withReturnsJourney(id: String)
+GET      /update-return-journey/                                                  sdil.controllers.VariationsReturnsController.journey(id = "")
+GET      /update-return-journey/*id                                               sdil.controllers.VariationsReturnsController.journey(id: String)
+POST     /update-return-journey/                                                  sdil.controllers.VariationsReturnsController.journey(id = "")
+POST     /update-return-journey/*id                                               sdil.controllers.VariationsReturnsController.journey(id: String)
 
 GET      /variations/                                                              sdil.controllers.VariationsController.changeAddressAndContact(id = "")
 GET      /variations/*id                                                           sdil.controllers.VariationsController.changeAddressAndContact(id: String)
