@@ -90,6 +90,7 @@ class VariationsController @Inject()(
 
   def selectJourney(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
+    var hasNotSelected: Boolean = false
 
     sdilConnector.retrieveSubscription(sdilRef) flatMap {
       case Some(subscription) =>
@@ -106,7 +107,8 @@ class VariationsController @Inject()(
               "variationDone",
               selectJourneyForm.form,
               id,
-              returns
+              returns,
+              hasNotSelected
             )
           )(implicitly, implicitly, config))
 
@@ -114,22 +116,42 @@ class VariationsController @Inject()(
     }
   }
 
-  def selectJourneyPost(id: String) = Action { implicit request =>
-    selectJourneyForm.form.bindFromRequest.fold(
-      formWithErrors => {
-        BadRequest(formWithErrors.errors.toString)
-      },
-      formData => {
-        val form = formData.toString
-//        Ok(form)
-        form match {
-          case "selectJourneyForm(AASites)"    => Redirect(routes.VariationsController.contactUpdateJourney(id = ""))
-          case "selectJourneyForm(Activity)"   => Redirect(routes.VariationsController.activityUpdateJourney(id = ""))
-          case "selectJourneyForm(Deregister)" => Redirect(routes.VariationsController.deregisterUpdate(id = ""))
-          case "selectJourneyForm(Returns)"    => Redirect(routes.VariationsController.withReturnsJourney(id = ""))
-        }
-      }
-    )
+  def selectJourneyPost(id: String) = registeredAction.async { implicit request =>
+    val sdilRef = request.sdilEnrolment.value
+    var hasNotSelected: Boolean = false
+    sdilConnector.retrieveSubscription(sdilRef) flatMap {
+      case Some(subscription) =>
+        val base = RegistrationVariationData(subscription)
+        val returns: Boolean =
+          if ((Await.result(sdilConnector.returns_variable(base.original.utr), 10 seconds).isEmpty)) {
+            false
+          } else true
+        selectJourneyForm.form.bindFromRequest.fold(
+          formWithErrors => {
+            Ok(
+              main_template(
+                Messages("return-sent.title")
+              )(
+                views.html.uniform.fragments.selectJourney(
+                  "variationDone",
+                  selectJourneyForm.form,
+                  id,
+                  returns,
+                  hasNotSelected = true
+                )
+              )(implicitly, implicitly, config))
+          },
+          formData => {
+            val form = formData.toString
+            form match {
+              case "selectJourneyForm(AASites)"    => Redirect(routes.VariationsController.contactUpdateJourney(id = ""))
+              case "selectJourneyForm(Activity)"   => Redirect(routes.VariationsController.activityUpdateJourney(id = ""))
+              case "selectJourneyForm(Deregister)" => Redirect(routes.VariationsController.deregisterUpdate(id = ""))
+              case "selectJourneyForm(Returns)"    => Redirect(routes.VariationsController.withReturnsJourney(id = ""))
+            }
+          }
+        )
+    }
   }
 
   def changeAddressAndContact(id: String) = registeredAction.async { implicit request =>

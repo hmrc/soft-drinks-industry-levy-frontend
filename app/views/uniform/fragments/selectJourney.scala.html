@@ -19,7 +19,7 @@
 @import views.html.softdrinksindustrylevy.helpers._
 @import views.html.helper.options
 
-@(key: String,userForm: Form[selectJourneyForm], id: String ,returns: Boolean)(implicit request: Request[_], messages: Messages)
+@(key: String,userForm: Form[selectJourneyForm], id: String ,returns: Boolean,hasNotSelected:Boolean)(implicit request: Request[_], messages: Messages)
 
 <a class="link-back" href="/soft-drinks-industry-levy">Back</a>
 
@@ -29,23 +29,35 @@
    <h1 class="heading-large.service-header">@messages(s"heading.select-change")</h1>
   </legend>
 
+ @{if(hasNotSelected)
+ <div class="error-summary" role="alert" aria-labelledby="error-summary-select-one-option" tabindex="-1">
+  <h2 class="heading-medium error-summary-heading" id="error-summary-select-one-option">{Messages("error.radio-form.choose-one-option")}</h2>
+  <ul class="error-summary-list">
+   <li><a href="#select-one-option">{Messages("change-registered-details.required")}</a></li>
+  </ul>
+ </div>
+ }
+
  @form(action = sdil.controllers.routes.VariationsController.selectJourneyPost(id), 'enctype -> "multipart/form-data") {
  @CSRF.formField(request)
 
  @if(returns == true){
-
- @inputRadioGroup(userForm("favColor"),options(
-  "AASites" -> messages(Seq(s"option.$key.inner.true","sdil.select-page.option-one")),
-  "Activity" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-two")),
-  "Deregister" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-three")),
-  "Returns" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-four"))
-  ))
+ <div class="@{"form-group" + {if(hasNotSelected) " form-group-error" else "" }}" id="select-one-option">
+  @inputRadioGroup(userForm("favColor"),options(
+   "AASites" -> messages(Seq(s"option.$key.inner.true","sdil.select-page.option-one")),
+   "Activity" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-two")),
+   "Deregister" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-three")),
+   "Returns" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-four"))
+   ))
+ </div>
  }else{
+ <div id="select-one-option">
   @inputRadioGroup(userForm("favColor"),options(
   "AASites" -> messages(Seq(s"option.$key.inner.true","sdil.select-page.option-one")),
   "Activity" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-two")),
   "Deregister" -> messages(Seq(s"option.$key.inner.false", "sdil.select-page.option-three"))
   ))
+ </div>
  }
 
 </fieldset>
