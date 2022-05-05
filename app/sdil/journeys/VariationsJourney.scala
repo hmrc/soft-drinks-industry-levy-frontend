@@ -429,15 +429,13 @@ object VariationsJourney {
   )(implicit ufMessages: UniformMessages[Html]) = {
 
     val data = RegistrationVariationData(subscription)
-
-    if (!data.isVoluntary || pendingReturns.nonEmpty) {
+    if (pendingReturns.nonEmpty) {
       end(
         "file-return-before-deregistration",
         uniform.fragments.return_before_dereg("file-return-before-deregistration", pendingReturns)
       )
     } else {
       for {
-
         reason <- ask[String](
                    "cancel-registration-reason",
                    validation = Rule.nonEmpty[String] followedBy Rule.maxLength[String](255)
@@ -467,7 +465,6 @@ object VariationsJourney {
             deregDate = deregDate.some
           )
         )
-
     }
   }
 
