@@ -33,10 +33,6 @@ GET      /select-journey                                                        
 POST     /journey                                                                   sdil.controllers.VariationsController.selectJourneyPost(id = "")
 POST     /journey                                                                   sdil.controllers.VariationsController.selectJourneyPost(id:String)
 
-GET      /ufvariations/                                                             sdil.controllers.VariationsController.index(id = "")
-GET      /ufvariations/*id                                                          sdil.controllers.VariationsController.index(id: String)
-POST     /ufvariations/                                                             sdil.controllers.VariationsController.index(id = "")
-POST     /ufvariations/*id                                                          sdil.controllers.VariationsController.index(id: String)
 
 GET      /activity-update-journey/                                                  sdil.controllers.VariationsController.activityUpdateJourney(id = "")
 GET      /activity-update-journey/*id                                               sdil.controllers.VariationsController.activityUpdateJourney(id: String)

@@ -156,6 +156,7 @@ class VariationsController @Inject()(
 
   def withReturnsJourney(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
+    val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
     val x = sdilConnector.retrieveSubscription(sdilRef)
     x flatMap {
       case Some(subscription) =>
@@ -180,6 +181,7 @@ class VariationsController @Inject()(
                        VariationsJourney.withReturnsJourney(
                          id,
                          subscription,
+                         Some(emptyReturn),
                          sdilRef,
                          variableReturns,
                          returnPeriods,
@@ -188,14 +190,18 @@ class VariationsController @Inject()(
                          getReturn,
                          submitReturnVariation,
                          config
-                       )).run(id, purgeStateUponCompletion = true, config = journeyConfig) {
-                       case reg: RegistrationVariationData =>
-                         sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
-                           regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
-                             logger.info("variation of Registration is complete")
+                       )).run(id, purgeStateUponCompletion = true, config = cyajourneyConfig) {
+                       case ret =>
+                         println(".run executed successful")
+                         submitAdjustment(ret).flatMap { _ =>
+                           returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
+                             logger.info("adjustment of Return is complete")
                              Redirect(routes.VariationsController.showVariationsComplete())
                            }
                          }
+                       case _ =>
+                         logger.info("failed to find return")
+                         Redirect(routes.ServicePageController.show)
                      }
         } yield response
       case None => Future.successful(NotFound(""))
@@ -273,64 +279,6 @@ class VariationsController @Inject()(
   }
 
   val logger: Logger = Logger(this.getClass())
-
-  def index(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
-    val sdilRef = request.sdilEnrolment.value
-    val x = sdilConnector.retrieveSubscription(sdilRef)
-    x flatMap {
-      case Some(subscription) =>
-        val base = RegistrationVariationData(subscription)
-
-        def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] =
-          sdilConnector.returns_get(subscription.utr, period)
-
-        def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
-          sdilConnector.checkSmallProducerStatus(sdilRef, period)
-
-        def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
-          sdilConnector.returns_variation(rvd, sdilRef)
-
-        def submitAdjustment(rvd: ReturnVariationData) =
-          sdilConnector.returns_vary(sdilRef, rvd)
-
-        for {
-          variableReturns <- sdilConnector.returns_variable(base.original.utr)
-          returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
-          response <- interpret(
-                       VariationsJourney.journey(
-                         id,
-                         subscription,
-                         sdilRef,
-                         variableReturns,
-                         returnPeriods,
-                         sdilConnector,
-                         checkSmallProducerStatus,
-                         getReturn,
-                         submitReturnVariation,
-                         config
-                       ))
-                       .run(id, purgeStateUponCompletion = true, config = journeyConfig) {
-                         case Left(ret) =>
-                           println(".run executed successful")
-                           submitAdjustment(ret).flatMap { _ =>
-                             returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
-                               logger.info("adjustment of Return is complete")
-                               Redirect(routes.VariationsController.showVariationsComplete())
-                             }
-                           }
-                         case Right(reg) =>
-                           println(".run executed successful")
-                           sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
-                             regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
-                               logger.info("variation of Registration is complete")
-                               Redirect(routes.VariationsController.showVariationsComplete())
-                             }
-                           }
-                       }
-        } yield response
-      case None => Future.successful(NotFound(""))
-    }
-  }
 
   def ChangeCheckProduction(variation: RegistrationVariationData): Boolean = {
 
