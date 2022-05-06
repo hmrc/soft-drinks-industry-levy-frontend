@@ -55,22 +55,24 @@ object VariationsReturnsJourney {
     default: Option[SdilReturn] = None,
     sdilRef: String,
     variableReturns: List[ReturnPeriod],
-    pendingReturns: List[ReturnPeriod],
     connector: SoftDrinksIndustryLevyConnector,
     checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
     getReturn: ReturnPeriod => Future[Option[SdilReturn]],
-    submitReturnVariation: ReturnsVariation => Future[Unit],
     config: AppConfig,
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) = {
     val base = RegistrationVariationData(subscription)
-    val isVoluntary = subscription.activity.voluntaryRegistration
+
     for {
+
       period <- ask[ReturnPeriod](
                  "select-return",
                  validation = Rule.in(variableReturns)
                )
+
       isSmallProd <- convertWithKey("is-small-producer")(checkSmallProducerStatus(sdilRef, period))
-      origReturn  <- convertWithKey("return-lookup")(getReturn(period))
+
+      origReturn <- convertWithKey("return-lookup")(getReturn(period))
+
       broughtForward <- if (config.balanceAllEnabled) {
                          convertWithKey("balance-history") {
                            connector.balanceHistory(sdilRef, withAssessment = false).map { x =>
@@ -80,19 +82,22 @@ object VariationsReturnsJourney {
                        } else {
                          convertWithKey("balance")(connector.balance(sdilRef, withAssessment = false))
                        }
-      newReturn <- (for {
+
+      newReturn <- for {
                     ownBrands <- askEmptyOption[(Long, Long)](
                                   "own-brands-packaged-at-own-sites",
                                   default = default.map {
                                     _.ownBrand
                                   }
                                 ) emptyUnless !subscription.activity.smallProducer
+
                     contractPacked <- askEmptyOption[(Long, Long)](
                                        "packaged-as-a-contract-packer",
                                        default = default.map {
                                          _.packLarge
                                        }
                                      )
+
                     smallProds <- askList[SmallProducer]("small-producer-details", default.map {
                                    _.packSmall
                                  }, Rule.nonEmpty[List[SmallProducer]])(
@@ -128,18 +133,23 @@ object VariationsReturnsJourney {
                                  ) emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
                                    _.packSmall.nonEmpty
                                  })
+
                     imports <- askEmptyOption[(Long, Long)]("brought-into-uk", default.map {
                                 _.importLarge
                               })
+
                     importsSmall <- askEmptyOption[(Long, Long)]("brought-into-uk-from-small-producers", default.map {
                                      _.importSmall
                                    })
+
                     exportCredits <- askEmptyOption[(Long, Long)]("claim-credits-for-exports", default.map {
                                       _.export
                                     })
+
                     wastage <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged", default.map {
                                 _.wastage
                               })
+
                     sdilReturn = SdilReturn(
                       ownBrands,
                       contractPacked,
@@ -148,10 +158,15 @@ object VariationsReturnsJourney {
                       importsSmall,
                       exportCredits,
                       wastage)
+
                     isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
+
                     isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
+
                     inner = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)(_: Messages)
+
                     _ <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
+
                     newPackingSites <- (
                                         for {
                                           firstPackingSite <- interact[Boolean](
@@ -161,6 +176,7 @@ object VariationsReturnsJourney {
                                                                  pure(Address.fromUkAddress(subscription.address))
                                                                case false => ask[Address]("first-production-site")
                                                              }
+
                                           packingSites <- askListSimple[Address](
                                                            "production-site-details",
                                                            "site-in-return",
@@ -169,8 +185,11 @@ object VariationsReturnsJourney {
                                                          ).map(_.map(Site.fromAddress))
                                         } yield packingSites
                                       ) when isNewPacker && subscription.productionSites.isEmpty
+
                     newWarehouses <- (for {
+
                                       addWarehouses <- ask[Boolean]("ask-secondary-warehouses-in-return")
+
                                       warehouses <- askListSimple[Warehouse](
                                                      "secondary-warehouse-details",
                                                      "warehouse-in-return",
@@ -191,7 +210,7 @@ object VariationsReturnsJourney {
                       email = subscription.contact.email,
                       taxEstimation = taxEstimation(sdilReturn)
                     )
-                    _ <- convertWithKey("vary-in-return")(submitReturnVariation(thisVariation))
+
                     _ <- tell(
                           "check-your-answers",
                           uniform.fragments.returnsCYA(
@@ -208,7 +227,7 @@ object VariationsReturnsJourney {
                             originalReturn = None
                           )(_: Messages)
                         )
-                  } yield (sdilReturn, thisVariation))
+                  } yield (sdilReturn, thisVariation)
 
       emptyReturn = SdilReturn((0, 0), (0, 0), Nil, (0, 0), (0, 0), (0, 0), (0, 0), None)
       variation = ReturnVariationData(
@@ -222,13 +241,16 @@ object VariationsReturnsJourney {
       reason <- ask[String](
                  "return-correction-reason",
                  validation = Rule.nonEmpty[String]("required") followedBy Rule.maxLength(255))
+
       repayment <- ask[RepaymentMethod]("repayment-method") when
                     (variation.revised.total - variation.original.total < 0)
+
       repaymentString = repayment match {
         case Some(RepaymentMethod.Credit)      => "credit".some
         case Some(RepaymentMethod.BankPayment) => "bankPayment".some
         case None                              => None
       }
+
       payMethodAndReason = variation.copy(reason = reason, repaymentMethod = repaymentString)
 
       _ <- tell(
@@ -242,5 +264,4 @@ object VariationsReturnsJourney {
           )
     } yield { payMethodAndReason }
   }
-
 }

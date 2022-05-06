@@ -33,6 +33,7 @@ import sdil.models.variations._
 import sdil.uniform.SaveForLaterPersistenceNew
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import sdil.journeys.{VariationsJourney, VariationsReturnsJourney}
+import scala.concurrent.{ExecutionContext, Future}
 
 import javax.inject.Inject
 
@@ -69,10 +70,11 @@ class VariationsReturnsController @Inject()(
     common.web.InferCodec.gen[Option[SdilReturn]]
   }
 
-  implicit lazy val persistence =
-    SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)("variations", regCache)
-
   def journey(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
+    implicit lazy val persistence = {
+      SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)("variations", regCache)
+    }
+
     val sdilRef = request.sdilEnrolment.value
     val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
     val x = sdilConnector.retrieveSubscription(sdilRef)
@@ -92,37 +94,41 @@ class VariationsReturnsController @Inject()(
         def submitAdjustment(rvd: ReturnVariationData) =
           sdilConnector.returns_vary(sdilRef, rvd)
 
-        for {
+        (for {
           variableReturns <- sdilConnector.returns_variable(base.original.utr)
           returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
-          response <- interpret(
-                       VariationsReturnsJourney.journey(
-                         id,
-                         subscription,
-                         Some(emptyReturn),
-                         sdilRef,
-                         variableReturns,
-                         returnPeriods,
-                         sdilConnector,
-                         checkSmallProducerStatus,
-                         getReturn,
-                         submitReturnVariation,
-                         config
-                       )).run(id, purgeStateUponCompletion = true, config = cyajourneyConfig) {
-                       case ret =>
-                         println(".run executed successful")
-                         submitAdjustment(ret).flatMap { _ =>
-                           returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
-                             logger.info("adjustment of Return is complete")
-                             Redirect(routes.VariationsController.showVariationsComplete())
-                           }
-                         }
-                       case _ =>
-                         logger.info("failed to find return")
-                         Redirect(routes.ServicePageController.show)
-                     }
-        } yield response
-      case None => Future.successful(NotFound(""))
+
+          r <- interpret(
+                VariationsReturnsJourney.journey(
+                  id,
+                  subscription,
+                  Some(emptyReturn),
+                  sdilRef,
+                  variableReturns,
+                  sdilConnector,
+                  checkSmallProducerStatus,
+                  getReturn,
+                  config
+                )
+              ).run(id, purgeStateUponCompletion = true, config = cyajourneyConfig) {
+                case ret =>
+                  println(".run executed successful")
+                  submitAdjustment(ret).flatMap { _ =>
+                    returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
+                      logger.info("adjustment of Return is complete")
+                      Redirect(routes.VariationsController.showVariationsComplete())
+                    }
+                  }
+                case _ =>
+                  logger.info("failed to find return")
+                  Redirect(routes.ServicePageController.show)
+              }
+        } yield r) recoverWith {
+          case t: Throwable => {
+            logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
+            Redirect(routes.ServicePageController.show).pure[Future]
+          }
+        }
     }
   }
 }
