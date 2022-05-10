@@ -59,11 +59,8 @@ object VariationsReturnsJourney {
     checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
     getReturn: ReturnPeriod => Future[Option[SdilReturn]],
     config: AppConfig,
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) = {
-    val base = RegistrationVariationData(subscription)
-
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) =
     for {
-
       period <- ask[ReturnPeriod](
                  "select-return",
                  validation = Rule.in(variableReturns)
@@ -86,19 +83,19 @@ object VariationsReturnsJourney {
       newReturn <- for {
                     ownBrands <- askEmptyOption[(Long, Long)](
                                   "own-brands-packaged-at-own-sites",
-                                  default = default.map {
+                                  default = origReturn.map {
                                     _.ownBrand
                                   }
                                 ) emptyUnless !subscription.activity.smallProducer
 
                     contractPacked <- askEmptyOption[(Long, Long)](
                                        "packaged-as-a-contract-packer",
-                                       default = default.map {
+                                       default = origReturn.map {
                                          _.packLarge
                                        }
                                      )
 
-                    smallProds <- askList[SmallProducer]("small-producer-details", default.map {
+                    smallProds <- askList[SmallProducer]("small-producer-details", origReturn.map {
                                    _.packSmall
                                  }, Rule.nonEmpty[List[SmallProducer]])(
                                    {
@@ -130,23 +127,25 @@ object VariationsReturnsJourney {
                                          "remove-small-producer-details",
                                          existingSmallProducers(index).sdilRef)
                                    }
-                                 ) emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
+                                 ) emptyUnless ask[Boolean]("exemptions-for-small-producers", default = origReturn.map {
                                    _.packSmall.nonEmpty
                                  })
 
-                    imports <- askEmptyOption[(Long, Long)]("brought-into-uk", default.map {
+                    imports <- askEmptyOption[(Long, Long)]("brought-into-uk", origReturn.map {
                                 _.importLarge
                               })
 
-                    importsSmall <- askEmptyOption[(Long, Long)]("brought-into-uk-from-small-producers", default.map {
-                                     _.importSmall
-                                   })
+                    importsSmall <- askEmptyOption[(Long, Long)](
+                                     "brought-into-uk-from-small-producers",
+                                     origReturn.map {
+                                       _.importSmall
+                                     })
 
-                    exportCredits <- askEmptyOption[(Long, Long)]("claim-credits-for-exports", default.map {
+                    exportCredits <- askEmptyOption[(Long, Long)]("claim-credits-for-exports", origReturn.map {
                                       _.export
                                     })
 
-                    wastage <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged", default.map {
+                    wastage <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged", origReturn.map {
                                 _.wastage
                               })
 
@@ -187,7 +186,6 @@ object VariationsReturnsJourney {
                                       ) when isNewPacker && subscription.productionSites.isEmpty
 
                     newWarehouses <- (for {
-
                                       addWarehouses <- ask[Boolean]("ask-secondary-warehouses-in-return")
 
                                       warehouses <- askListSimple[Warehouse](
@@ -234,9 +232,10 @@ object VariationsReturnsJourney {
         origReturn.getOrElse(emptyReturn),
         newReturn._1,
         period,
-        base.original.orgName,
-        base.original.address,
-        "")
+        RegistrationVariationData(subscription).original.orgName,
+        RegistrationVariationData(subscription).original.address,
+        ""
+      )
 
       reason <- ask[String](
                  "return-correction-reason",
@@ -262,6 +261,5 @@ object VariationsReturnsJourney {
               broughtForward.some
             )(_: Messages)
           )
-    } yield { payMethodAndReason }
-  }
+    } yield (payMethodAndReason)
 }

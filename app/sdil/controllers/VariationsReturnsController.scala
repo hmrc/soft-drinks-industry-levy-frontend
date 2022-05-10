@@ -77,29 +77,23 @@ class VariationsReturnsController @Inject()(
 
     val sdilRef = request.sdilEnrolment.value
     val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
-    val x = sdilConnector.retrieveSubscription(sdilRef)
-    x flatMap {
-      case Some(subscription) =>
-        val base = RegistrationVariationData(subscription)
 
-        def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] =
-          sdilConnector.returns_get(subscription.utr, period)
+    (for {
+      subscription <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
+      base = RegistrationVariationData(subscription)
+      variableReturns <- sdilConnector.returns_variable(base.original.utr)
 
-        def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
-          sdilConnector.checkSmallProducerStatus(sdilRef, period)
+      r <-  {
+            def getReturn(period: ReturnPeriod): Future[Option[SdilReturn]] =
+              sdilConnector.returns_get(subscription.utr, period)
+            def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
+              sdilConnector.checkSmallProducerStatus(sdilRef, period)
+            def submitAdjustment(rvd: ReturnVariationData) =
+              sdilConnector.returns_vary(sdilRef, rvd)
 
-        def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
-          sdilConnector.returns_variation(rvd, sdilRef)
-
-        def submitAdjustment(rvd: ReturnVariationData) =
-          sdilConnector.returns_vary(sdilRef, rvd)
-
-        (for {
-          variableReturns <- sdilConnector.returns_variable(base.original.utr)
-          returnPeriods   <- sdilConnector.returns_pending(subscription.utr)
-
-          r <- interpret(
-                VariationsReturnsJourney.journey(
+            interpret(
+              VariationsReturnsJourney
+                .journey(
                   id,
                   subscription,
                   Some(emptyReturn),
@@ -110,25 +104,23 @@ class VariationsReturnsController @Inject()(
                   getReturn,
                   config
                 )
-              ).run(id, purgeStateUponCompletion = true, config = cyajourneyConfig) {
-                case ret =>
-                  println(".run executed successful")
-                  submitAdjustment(ret).flatMap { _ =>
-                    returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
-                      logger.info("adjustment of Return is complete")
-                      Redirect(routes.VariationsController.showVariationsComplete())
-                    }
+            ).run(id, purgeStateUponCompletion = true, config = cyajourneyConfig) {
+              case ret =>
+                submitAdjustment(ret).flatMap { _ =>
+                  returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
+                    logger.info("adjustment of Return is complete")
+                    Redirect(routes.VariationsController.showVariationsComplete())
                   }
-                case _ =>
-                  logger.info("failed to find return")
-                  Redirect(routes.ServicePageController.show)
-              }
-        } yield r) recoverWith {
-          case t: Throwable => {
-            logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
-            Redirect(routes.ServicePageController.show).pure[Future]
-          }
-        }
+                }
+              case _ =>
+                logger.info("failed to find return")
+                Redirect(routes.ServicePageController.show)
+            }
+    } yield r) recoverWith {
+      case t: Throwable => {
+        logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
+        Redirect(routes.ServicePageController.show).pure[Future]
+      }
     }
   }
 }
