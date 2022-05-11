@@ -26,6 +26,8 @@ POST     /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/      
 POST     /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/*id       sdil.controllers.ReturnsController.index(year: Int, quarter: Int, nilReturn: Boolean, id: String)
 GET      /submit-return/year/:year/quarter/:quarter/return-sent                     sdil.controllers.ReturnsController.showReturnComplete(year: Int, quarter: Int)
 
+GET      /submit-update-return/return-sent                                          sdil.controllers.VariationsReturnsController.showVariationsComplete()
+
 GET      /ufvariations/variationDone                                                sdil.controllers.VariationsController.showVariationsComplete()
 
 GET      /select-journey                                                            sdil.controllers.VariationsController.selectJourney(id = "")

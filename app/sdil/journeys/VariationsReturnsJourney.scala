@@ -52,14 +52,13 @@ object VariationsReturnsJourney {
   def journey(
     id: String,
     subscription: RetrievedSubscription,
-    default: Option[SdilReturn] = None,
     sdilRef: String,
     variableReturns: List[ReturnPeriod],
-    connector: SoftDrinksIndustryLevyConnector,
+    broughtForward: BigDecimal,
     checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
     getReturn: ReturnPeriod => Future[Option[SdilReturn]],
     config: AppConfig,
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) =
+  ) =
     for {
       period <- ask[ReturnPeriod](
                  "select-return",
@@ -69,16 +68,6 @@ object VariationsReturnsJourney {
       isSmallProd <- convertWithKey("is-small-producer")(checkSmallProducerStatus(sdilRef, period))
 
       origReturn <- convertWithKey("return-lookup")(getReturn(period))
-
-      broughtForward <- if (config.balanceAllEnabled) {
-                         convertWithKey("balance-history") {
-                           connector.balanceHistory(sdilRef, withAssessment = false).map { x =>
-                             extractTotal(listItemsWithTotal(x))
-                           }
-                         }
-                       } else {
-                         convertWithKey("balance")(connector.balance(sdilRef, withAssessment = false))
-                       }
 
       newReturn <- for {
                     ownBrands <- askEmptyOption[(Long, Long)](
