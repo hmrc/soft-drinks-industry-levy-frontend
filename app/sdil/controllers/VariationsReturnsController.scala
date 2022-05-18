@@ -53,6 +53,7 @@ class VariationsReturnsController @Inject()(
   override def defaultBackLink = "/soft-drinks-industry-levy"
 
   override def blockCollections[X[_] <: Traversable[_], A]: common.web.WebAsk[Html, X[A]] = ???
+  override def blockCollections2[X[_] <: Traversable[_], A]: common.web.WebAsk[Html, X[A]] = ???
 
   implicit lazy val codecOptRet: common.web.Codec[Option[SdilReturn]] = {
     import java.time.LocalDateTime
@@ -73,6 +74,7 @@ class VariationsReturnsController @Inject()(
     }
 
     val sdilRef = request.sdilEnrolment.value
+    val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
     val broughtForward = if (config.balanceAllEnabled) {
       connector.balanceHistory(sdilRef, withAssessment = false).map { x =>
         extractTotal(listItemsWithTotal(x))
@@ -93,13 +95,13 @@ class VariationsReturnsController @Inject()(
           connector.checkSmallProducerStatus(sdilRef, period)
         def submitAdjustment(rvd: ReturnVariationData) =
           connector.returns_vary(sdilRef, rvd)
-
         interpret(
           VariationsReturnsJourney
             .journey(
               id,
               subscription,
               sdilRef,
+              Some(emptyReturn),
               variableReturns,
               Await.result(broughtForward, 10.seconds),
               checkSmallProducerStatus,

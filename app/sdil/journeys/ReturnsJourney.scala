@@ -77,10 +77,12 @@ object ReturnsJourney {
                     "own-brands-packaged-at-own-sites",
                     default = default.map { _.ownBrand }
                   ) emptyUnless !subscription.activity.smallProducer
+
       contractPacked <- askEmptyOption[(Long, Long)](
                          "packaged-as-a-contract-packer",
                          default = default.map { _.packLarge }
                        )
+
       smallProds <- askList[SmallProducer](
                      "small-producer-details",
                      default.map { _.packSmall },
@@ -111,16 +113,24 @@ object ReturnsJourney {
                    ) emptyUnless ask[Boolean]("exemptions-for-small-producers", default = default.map {
                      _.packSmall.nonEmpty
                    })
+
       imports <- askEmptyOption[(Long, Long)]("brought-into-uk", default.map { _.importLarge })
+
       importsSmall <- askEmptyOption[(Long, Long)]("brought-into-uk-from-small-producers", default.map {
                        _.importSmall
                      })
       exportCredits <- askEmptyOption[(Long, Long)]("claim-credits-for-exports", default.map { _.export })
-      wastage       <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged", default.map { _.wastage })
+
+      wastage <- askEmptyOption[(Long, Long)]("claim-credits-for-lost-damaged", default.map { _.wastage })
+
       sdilReturn = SdilReturn(ownBrands, contractPacked, smallProds, imports, importsSmall, exportCredits, wastage)
+
       isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
+
       isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
+
       inner = uniform.fragments.return_variation_continue(isNewImporter, isNewPacker)(_: Messages)
+
       _ <- tell("return-change-registration", inner) when isNewImporter || isNewPacker
       newPackingSites <- (
                           for {
@@ -139,6 +149,7 @@ object ReturnsJourney {
                                            ).map(_.map(Site.fromAddress))
                           } yield packingSites
                         ) when isNewPacker && subscription.productionSites.isEmpty
+
       newWarehouses <- (for {
                         addWarehouses <- ask[Boolean]("ask-secondary-warehouses-in-return")
                         warehouses <- askListSimple[Warehouse](
