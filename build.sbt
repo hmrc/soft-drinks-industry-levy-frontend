@@ -114,7 +114,7 @@ libraryDependencies ++= Seq(
   "org.scalamock"               %% "scalamock"                  % "4.2.0" ,
   "org.scalatestplus"           %% "scalatestplus-scalacheck"   % "3.1.0.0-RC2",
   "com.vladsch.flexmark"         % "flexmark-all"               % "0.62.2" ,
-  "uk.gov.hmrc"                 %% "reactivemongo-test"         % s"5.0.0-$playVersion",
+  "uk.gov.hmrc.mongo"           %% "hmrc-mongo-test-play-28"  % "0.73.0",
   //"com.github.alexarchambault"  %% "scalacheck-shapeless_1.14"  % "1.2.1" ,
   "org.scalatestplus.play"      %% "scalatestplus-play"         % "5.1.0" ,
   "com.luketebbs.uniform"       %% "interpreter-logictable"     % "5.0.0-RC6",
