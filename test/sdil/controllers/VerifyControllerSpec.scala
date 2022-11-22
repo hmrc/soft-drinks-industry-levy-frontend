@@ -58,7 +58,7 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "redirect to the gg sign in page if the details are incorrect" in {
-      val request = FakeRequest().withFormUrlEncodedBody("detailsCorrect" -> "no")
+      val request = FakeRequest().withMethod(POST).withFormUrlEncodedBody("detailsCorrect" -> "no")
       val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
@@ -66,14 +66,16 @@ class VerifyControllerSpec extends ControllerSpec with BeforeAndAfterEach {
     }
 
     "store the form data in keystore if it is valid" in {
-      val request = FakeRequest().withFormUrlEncodedBody(
-        "detailsCorrect"              -> "differentAddress",
-        "alternativeAddress.line1"    -> "line1",
-        "alternativeAddress.line2"    -> "line2",
-        "alternativeAddress.line3"    -> "line3",
-        "alternativeAddress.line4"    -> "line4",
-        "alternativeAddress.postcode" -> "AA11 1AA"
-      )
+      val request = FakeRequest()
+        .withMethod(POST)
+        .withFormUrlEncodedBody(
+          "detailsCorrect"              -> "differentAddress",
+          "alternativeAddress.line1"    -> "line1",
+          "alternativeAddress.line2"    -> "line2",
+          "alternativeAddress.line3"    -> "line3",
+          "alternativeAddress.line4"    -> "line4",
+          "alternativeAddress.postcode" -> "AA11 1AA"
+        )
 
       val res = testController.submit()(request)
 

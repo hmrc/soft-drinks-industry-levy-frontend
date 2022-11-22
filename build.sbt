@@ -13,19 +13,20 @@ enablePlugins(
 // ================================================================================
 // Play configuration
 // ================================================================================
+resolvers += MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
 
 val appName = "soft-drinks-industry-levy-frontend"
 
 PlayKeys.playDefaultPort := 8700
 
-val allCrossScala = Seq(
-  //  "2.11.12",
-  "2.12.14",
-  "2.13.6"
-)
+//val allCrossScala = Seq(
+//  //  "2.11.12",
+//  "2.12.14",
+//  "2.13.6"
+//)
 
-addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
-scalaVersion := allCrossScala.find(_.startsWith("2.12")).get
+addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3") // upgrade to 0.13.2 causes compile errors
+scalaVersion := "2.12.14"  //allCrossScala.find(_.startsWith("2.12")).get
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
@@ -94,28 +95,14 @@ coverageHighlighting := true
 Compile / scalafmtOnCompile := true
 Test / scalafmtOnCompile := true
 
-//libraryDependencies ++= Seq(
-//  "org.scalatest"          %% "scalatest"           % "3.2.9",
-//  "org.jsoup"              %  "jsoup"               % "1.13.1",
-//  "com.typesafe.play"      %% "play-test"           % play.core.PlayVersion.current,
-//  "org.mockito"            %  "mockito-core"        % "3.11.0",
-//  "org.scalatestplus.play" %% "scalatestplus-play"  % "5.1.0",
-//  //"org.scalacheck"         %% "scalacheck"          % "1.15.4",
-//  "com.luketebbs.uniform"  %% "interpreter-logictable"  % "5.0.0-RC6",
-//  "org.scalatestplus"          %% "scalatestplus-scalacheck"  % "3.1.0.0-RC2",
-//  "org.scalatestplus" %% "mockito-3-12" % "3.2.10.0",
-//  "com.vladsch.flexmark"        % "flexmark-all"              % "0.35.10"
-//).map(_ % "test")
-
 libraryDependencies ++= Seq(
-  "org.scalatest"               %% "scalatest"                  % "3.2.9" ,
-  "org.jsoup"                    % "jsoup"                      % "1.12.1" ,
+  "org.scalatest"               %% "scalatest"                  % "3.2.14" ,
+  "org.jsoup"                    % "jsoup"                      % "1.15.3" ,
   "com.typesafe.play"           %% "play-test"                  % play.core.PlayVersion.current,
-  "org.scalamock"               %% "scalamock"                  % "4.2.0" ,
+  "org.scalamock"               %% "scalamock"                  % "5.2.0" ,
   "org.scalatestplus"           %% "scalatestplus-scalacheck"   % "3.1.0.0-RC2",
-  "com.vladsch.flexmark"         % "flexmark-all"               % "0.62.2" ,
-  "uk.gov.hmrc.mongo"           %% "hmrc-mongo-test-play-28"  % "0.73.0",
-  //"com.github.alexarchambault"  %% "scalacheck-shapeless_1.14"  % "1.2.1" ,
+  "com.vladsch.flexmark"         % "flexmark-all"               % "0.62.2" , // upgrade to 0.64.0 causes compile errors
+  "uk.gov.hmrc.mongo"           %% "hmrc-mongo-test-play-28"    % "0.74.0",
   "org.scalatestplus.play"      %% "scalatestplus-play"         % "5.1.0" ,
   "com.luketebbs.uniform"       %% "interpreter-logictable"     % "5.0.0-RC6",
   "org.scalatestplus"           %% "mockito-3-12"               % "3.2.10.0"
@@ -135,20 +122,21 @@ val playVersion = "play-28"
 
 libraryDependencies ++= Seq(
   ws,
-  "uk.gov.hmrc"               %% s"bootstrap-frontend-$playVersion" % "5.20.0",
+  "uk.gov.hmrc"               %% s"bootstrap-frontend-$playVersion" % "7.12.0",
+  "uk.gov.hmrc"               %% "play-frontend-hmrc"              % "3.33.0-play-28",
   "uk.gov.hmrc"               %% "domain"                         % s"8.0.0-$playVersion",
-  "uk.gov.hmrc"               %% "govuk-template"                 % s"5.75.0-$playVersion",
-  "uk.gov.hmrc"               %% "play-ui"                        % s"9.8.0-$playVersion",
+  "uk.gov.hmrc"               %% "govuk-template"                 % s"5.78.0-$playVersion",
+  "uk.gov.hmrc"               %% "play-ui"                        % s"9.11.0-$playVersion",
   "uk.gov.hmrc"               %% "play-partials"                  % s"8.3.0-$playVersion",
   "com.typesafe.play"         %% "play-json-joda"                 % "2.10.0-RC5",
-  "org.scalactic"             %% "scalactic"                      % "3.2.0",
+  "org.scalactic"             %% "scalactic"                      % "3.2.14",
   "uk.gov.hmrc"               %% "http-caching-client"            % s"9.6.0-$playVersion",
   "uk.gov.hmrc"               %% "play-conditional-form-mapping"  % s"1.11.0-$playVersion",
-  "com.softwaremill.macwire"  %% "macros"                         % "2.3.7" % "provided",
-  "com.softwaremill.macwire"  %% "macrosakka"                     % "2.3.7" % "provided",
-  "com.softwaremill.macwire"  %% "util"                           % "2.3.7",
-  "com.softwaremill.macwire"  %% "proxy"                          % "2.3.7",
-  "org.typelevel"             %% "cats-core"                      % "2.7.0",
+  "com.softwaremill.macwire"  %% "macros"                         % "2.5.8" % "provided",
+  "com.softwaremill.macwire"  %% "macrosakka"                     % "2.5.8" % "provided",
+  "com.softwaremill.macwire"  %% "util"                           % "2.5.8",
+  "com.softwaremill.macwire"  %% "proxy"                          % "2.5.8",
+  "org.typelevel"             %% "cats-core"                      % "2.9.0",
   "com.luketebbs.uniform"     %% "interpreter-play28"             % "5.0.0-RC6",
   "com.luketebbs.uniform"     %% "core"                           % "5.0.0-RC6",
   "com.beachape"              %% "enumeratum"                     % "1.7.0"

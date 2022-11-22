@@ -132,7 +132,7 @@ class IdentifyControllerSpec extends ControllerSpec {
 
   "POST /identify" should {
     "return 400 - Bad Request and the identify page when the form data is invalid" in {
-      val request = FakeRequest().withFormUrlEncodedBody("utr" -> "", "postcode" -> "")
+      val request = FakeRequest().withMethod(POST).withFormUrlEncodedBody("utr" -> "", "postcode" -> "")
       val res = testController.submit()(request)
 
       status(res) mustBe BAD_REQUEST
@@ -142,7 +142,8 @@ class IdentifyControllerSpec extends ControllerSpec {
     "return 400 - Bad Request and the identify page if there is no record in ROSM for the entered UTR" in {
       when(mockSdilConnector.getRosmRegistration(matching("2233445566"))(any())).thenReturn(Future.successful(None))
 
-      val request = FakeRequest().withFormUrlEncodedBody("utr" -> "2233445566", "postcode" -> "AA11 1AA")
+      val request =
+        FakeRequest().withMethod(POST).withFormUrlEncodedBody("utr" -> "2233445566", "postcode" -> "AA11 1AA")
       val res = testController.submit()(request)
 
       status(res) mustBe BAD_REQUEST
@@ -155,7 +156,8 @@ class IdentifyControllerSpec extends ControllerSpec {
       when(mockSdilConnector.getRosmRegistration(matching("4455667788"))(any()))
         .thenReturn(Future.successful(Some(rosmData)))
 
-      val request = FakeRequest().withFormUrlEncodedBody("utr" -> "4455667788", "postcode" -> "AA11 1AA")
+      val request =
+        FakeRequest().withMethod(POST).withFormUrlEncodedBody("utr" -> "4455667788", "postcode" -> "AA11 1AA")
       val res = testController.submit()(request)
 
       status(res) mustBe BAD_REQUEST
@@ -163,7 +165,8 @@ class IdentifyControllerSpec extends ControllerSpec {
     }
 
     "redirect to the verify page if the form data is valid" in {
-      val request = FakeRequest().withFormUrlEncodedBody("utr" -> "1122334455", "postcode" -> "AA11 1AA")
+      val request =
+        FakeRequest().withMethod(POST).withFormUrlEncodedBody("utr" -> "1122334455", "postcode" -> "AA11 1AA")
       val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
@@ -171,7 +174,8 @@ class IdentifyControllerSpec extends ControllerSpec {
     }
 
     "match against the BPR postcode if the entered postcode does not contain a space" in {
-      val request = FakeRequest().withFormUrlEncodedBody("utr" -> "1122334455", "postcode" -> "AA111AA")
+      val request =
+        FakeRequest().withMethod(POST).withFormUrlEncodedBody("utr" -> "1122334455", "postcode" -> "AA111AA")
       val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
@@ -179,7 +183,8 @@ class IdentifyControllerSpec extends ControllerSpec {
     }
 
     "match against the BPR postcode if the entered postcode is lower case" in {
-      val request = FakeRequest().withFormUrlEncodedBody("utr" -> "1122334455", "postcode" -> "aa11 1aa")
+      val request =
+        FakeRequest().withMethod(POST).withFormUrlEncodedBody("utr" -> "1122334455", "postcode" -> "aa11 1aa")
       val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
@@ -187,7 +192,8 @@ class IdentifyControllerSpec extends ControllerSpec {
     }
 
     "store the UTR and business partner record in keystore if the form data is valid" in {
-      val request = FakeRequest().withFormUrlEncodedBody("utr" -> "1234567890", "postcode" -> "AA11 1AA")
+      val request =
+        FakeRequest().withMethod(POST).withFormUrlEncodedBody("utr" -> "1234567890", "postcode" -> "AA11 1AA")
       val res = testController.submit()(request)
 
       status(res) mustBe SEE_OTHER
