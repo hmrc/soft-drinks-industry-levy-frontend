@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import sdil.models.backend.{Contact, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.{Address, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
 import ltbs.uniform.interpreters.logictable._
-
+import scala.language.postfixOps
 import javax.inject.Inject
 import scala.concurrent.{Await, ExecutionContext, Future, duration}
 import duration._
