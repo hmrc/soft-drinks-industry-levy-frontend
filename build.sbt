@@ -26,7 +26,7 @@ PlayKeys.playDefaultPort := 8700
 //)
 
 addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3") // upgrade to 0.13.2 causes compile errors
-scalaVersion := "2.13.9"  //allCrossScala.find(_.startsWith("2.12")).get
+scalaVersion := "2.13.10"  //allCrossScala.find(_.startsWith("2.12")).get
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
@@ -35,7 +35,6 @@ lazy val microservice = Project(appName, file("."))
     majorVersion := 0
   )
 
-resolvers ++= Seq(Resolver.bintrayRepo("hmrc", "releases"), Resolver.jcenterRepo)
 scalacOptions -= "-Xfatal-warnings"
 TwirlKeys.templateImports ++= Seq(
     "sdil.utility._",
