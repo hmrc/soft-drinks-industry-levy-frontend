@@ -9,7 +9,7 @@ enablePlugins(
   play.sbt.PlayScala,
   SbtDistributablesPlugin
 )
-
+// remove this comment
 // ================================================================================
 // Play configuration
 // ================================================================================
