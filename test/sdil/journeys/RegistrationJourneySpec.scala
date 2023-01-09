@@ -28,6 +28,7 @@ import sdil.controllers.{ControllerSpec, RegistrationController}
 import sdil.models.{Address, ContactDetails, DetailsCorrect, Litreage, OrganisationDetails, Producer, RegistrationFormData, RosmRegistration, Warehouse}
 import sdil.models.backend.{Site, Subscription, UkAddress}
 import sdil.uniform.SdilComponents.{OrganisationType, OrganisationTypeSoleless, ProducerType}
+import scala.language.postfixOps
 
 import java.time.LocalDate
 import javax.inject.Inject

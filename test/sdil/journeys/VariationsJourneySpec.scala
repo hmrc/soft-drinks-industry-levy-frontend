@@ -32,6 +32,7 @@ import sdil.models.{Address, ContactDetails, Producer, ReturnPeriod, ReturnsVari
 import sdil.uniform.SdilComponents._
 import sdil.journeys.VariationsJourney._
 import views.uniform.Uniform
+import scala.language.postfixOps
 
 import java.time.LocalDate
 import scala.concurrent.{Await, ExecutionContext, Future, duration}

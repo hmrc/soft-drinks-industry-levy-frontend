@@ -227,7 +227,7 @@ trait SdilComponents {
           List("year")  -> in.getYear(),
           List("month") -> in.getMonthValue(),
           List("day")   -> in.getDayOfMonth()
-        ).mapValues(_.toString.pure[List])
+        ).mapValues(_.toString.pure[List]).toMap
 
       def render(
         pageIn: PageIn[Html],

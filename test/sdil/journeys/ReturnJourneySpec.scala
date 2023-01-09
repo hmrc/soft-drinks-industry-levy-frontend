@@ -24,7 +24,7 @@ import sdil.models.backend.{Contact, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import sdil.models.{Address, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, Warehouse}
 import ltbs.uniform.interpreters.logictable._
-
+import scala.language.postfixOps
 import javax.inject.Inject
 import scala.concurrent.{Await, ExecutionContext, Future, duration}
 import duration._

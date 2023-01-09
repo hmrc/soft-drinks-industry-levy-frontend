@@ -143,7 +143,6 @@ class VariationsController @Inject()(
                        ))
                        .run(id, purgeStateUponCompletion = true, config = journeyConfig) {
                          case Left(ret) =>
-                           println(".run executed successful")
                            submitAdjustment(ret).flatMap { _ =>
                              returnsVariationsCache.cache(sdilRef, ret).flatMap { _ =>
                                logger.info("adjustment of Return is complete")
@@ -151,7 +150,6 @@ class VariationsController @Inject()(
                              }
                            }
                          case Right(reg) =>
-                           println(".run executed successful")
                            sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
                              regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
                                logger.info("variation of Registration is complete")
