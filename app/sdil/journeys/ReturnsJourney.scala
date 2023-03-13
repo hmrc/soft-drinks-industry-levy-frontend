@@ -20,6 +20,7 @@ import cats.implicits._
 import ltbs.uniform.validation.{Rule, _}
 import ltbs.uniform._
 import play.api.i18n.Messages
+import sdil.config.AppConfig
 import sdil.controllers.{askEmptyOption, askListSimple}
 import sdil.models.backend.Site
 import sdil.models.retrieved.RetrievedSubscription
@@ -70,7 +71,8 @@ object ReturnsJourney {
     checkSmallProducerStatus: (String, ReturnPeriod) => Future[Option[Boolean]],
     submitReturnVariation: ReturnsVariation => Future[Unit],
     broughtForward: BigDecimal,
-    isSmallProd: Boolean
+    isSmallProd: Boolean,
+    config: AppConfig
   ) =
     for {
       ownBrands <- askEmptyOption[(Long, Long)](
@@ -175,7 +177,8 @@ object ReturnsJourney {
               variation = variation.some,
               subscription = subscription,
               period = period,
-              originalReturn = None
+              originalReturn = None,
+              appConfig = config
             )(_: Messages)
           )
     } yield (sdilReturn, variation)
@@ -186,7 +189,8 @@ object ReturnsJourney {
     subscription: RetrievedSubscription,
     submitReturnVariation: ReturnsVariation => Future[Unit],
     broughtForward: BigDecimal,
-    isSmallProd: Boolean
+    isSmallProd: Boolean,
+    config: AppConfig
   ) = {
     val data = returnAmount(nilReturn, isSmallProd)
     val subtotal = calculateSubtotal(data)
@@ -221,7 +225,8 @@ object ReturnsJourney {
               variation = variation.some,
               subscription = subscription,
               period = period,
-              originalReturn = None
+              originalReturn = None,
+              appConfig = config
             )(_: Messages)
           )
     } yield (nilReturn, variation)

@@ -29,6 +29,16 @@ class AppConfig @Inject()(val configuration: Configuration) extends ServicesConf
   private lazy val contactHost = configuration.getOptional[String](s"contact-frontend.host").getOrElse("")
   private lazy val contactFormServiceIdentifier = configuration.get[String]("appName")
 
+  def lowLevy(taxYear: Int): BigDecimal = {
+    val taxYearStr = if (taxYear < 2024) "default" else taxYear.toString
+    configuration.get[String](s"levies.$taxYearStr.lowLevy").toFloat
+  }
+
+  def highLevy(taxYear: Int): BigDecimal = {
+    val taxYearStr = if (taxYear < 2024) "default" else taxYear.toString
+    configuration.get[String](s"levies.$taxYearStr.highLevy").toFloat
+  }
+
   lazy val reportAProblemPartialUrl =
     s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl =

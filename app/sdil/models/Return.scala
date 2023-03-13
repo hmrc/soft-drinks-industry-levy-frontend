@@ -18,7 +18,9 @@ package sdil.models
 
 import java.time.{LocalDate, LocalDateTime}
 import cats.implicits._
+import sdil.config.AppConfig
 import sdil.controllers.returnLiterageList
+
 import scala.collection.immutable.ListMap
 
 case class SdilReturn(
@@ -38,7 +40,8 @@ case class SdilReturn(
   private def toLongs: List[(Long, Long)] =
     List(ownBrand, packLarge, packSmall.total, importLarge, importSmall, export, wastage)
   private val keys = returnLiterageList
-  private def sumLitres(l: List[(Long, Long)]) = l.map(x => LitreOps(x).dueLevy).sum
+  private def sumLitres(l: List[(Long, Long)], lowLevy: BigDecimal, highLevy: BigDecimal) =
+    l.map(x => calculateDueLevy(x, lowLevy, highLevy)).sum
 
   /*
    Produces a map of differing litreage fields containing the revised and original litreages as a tuple
@@ -56,16 +59,23 @@ case class SdilReturn(
         }: _*)
   }
 
-  def total: BigDecimal =
-    sumLitres(List(ownBrand, packLarge, importLarge)) - sumLitres(List(export, wastage))
+  // where taxYear is sourced from the request (somewhere)
+  def total(appConfig: AppConfig, taxYear: Int = 2023): BigDecimal =
+    sumLitres(List(ownBrand, packLarge, importLarge), appConfig.lowLevy(taxYear), appConfig.highLevy(taxYear)) -
+      sumLitres(List(export, wastage), appConfig.lowLevy(taxYear), appConfig.highLevy(taxYear))
 
   type Litres = Long
   type LitreBands = (Litres, Litres)
 
-  implicit class LitreOps(litreBands: LitreBands) {
-    lazy val lowLevy: BigDecimal = litreBands._1 * BigDecimal("0.18")
-    lazy val highLevy: BigDecimal = litreBands._2 * BigDecimal("0.24")
-    lazy val dueLevy: BigDecimal = lowLevy + highLevy
+  def calculateDueLevy(
+    litreBands: LitreBands,
+    lowLevyFraction: BigDecimal,
+    highLevyFraction: BigDecimal): BigDecimal = {
+    val lowLevy: BigDecimal = litreBands._1 * lowLevyFraction
+    val highLevy: BigDecimal = litreBands._2 * highLevyFraction
+    val dueLevy: BigDecimal = lowLevy + highLevy
+
+    dueLevy
   }
 }
 

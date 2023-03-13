@@ -16,8 +16,9 @@
 
 @import sdil.models.variations.ReturnVariationData
 @import views.html.softdrinksindustrylevy.helpers._
+@import sdil.config.AppConfig
 
-@(key: String, variation: ReturnVariationData, showChangeLinks: Boolean = true, broughtForward: Option[BigDecimal] = None)(implicit messages: Messages)
+@(key: String, variation: ReturnVariationData, showChangeLinks: Boolean = true, broughtForward: Option[BigDecimal] = None, appConfig: AppConfig)(implicit messages: Messages)
 
 @cost(key: String, value: BigDecimal) = {
     @defining(
@@ -93,11 +94,11 @@
 
     <tr>
         <th scope="row">@messages(s"$key.total.original")</th>
-        <td class="numeric">@format_money(variation.original.total)</td>
+        <td class="numeric">@format_money(variation.original.total(appConfig))</td>
     </tr>
     <tr>
         <th scope="row">@messages(s"$key.total.new")</th>
-        <td class="numeric">@format_money(variation.revised.total)</td>
+        <td class="numeric">@format_money(variation.revised.total(appConfig))</td>
     </tr>
     @broughtForward.map { broughtForward =>
         <tr>
@@ -105,13 +106,13 @@
             <td class="numeric">@format_money(-broughtForward, "+")</td>
         </tr>
         <tr>
-            @if((variation.revised.total - variation.original.total) < 0) {
+            @if((variation.revised.total(appConfig) - variation.original.total(appConfig)) < 0) {
                 <th scope="row"><span class="heading-small">@messages(s"$key.net.adjusted.negative")</span></th>
             } else {
                 <th scope="row"><span class="heading-small">@messages(s"$key.net.adjusted.positive")</span></th>
 
             }
-            <td class="numeric"><span class="heading-small">@format_money(variation.revised.total - variation.original.total - broughtForward)</span></td>
+            <td class="numeric"><span class="heading-small">@format_money(variation.revised.total(appConfig) - variation.original.total(appConfig) - broughtForward)</span></td>
         </tr>
     }
 }

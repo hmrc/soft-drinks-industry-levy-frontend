@@ -344,7 +344,8 @@ class VariationsController @Inject()(
             closedWarehouseSites(regVar, ShowNone = ChangeCheckWarehouse(regVar)),
             regVar.some,
             None,
-            whnKey
+            whnKey,
+            config = config
           )
           val varySubheading = Html(
             Messages(
@@ -373,7 +374,7 @@ class VariationsController @Inject()(
 
         case (_, Some(retVar)) =>
           val whn = uniform.fragments
-            .variationsWHN(a = retVar.some, key = Some("return"), broughtForward = broughtForward.some)
+            .variationsWHN(a = retVar.some, key = Some("return"), broughtForward = broughtForward.some, config = config)
 
           val retSubheading = uniform.fragments.return_variation_done_subheading(subscription, retVar.period).some
           Ok(
