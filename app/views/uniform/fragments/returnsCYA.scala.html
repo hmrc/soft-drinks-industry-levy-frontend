@@ -19,8 +19,9 @@
 @import sdil.models.retrieved.RetrievedSubscription
 @import views.html.softdrinksindustrylevy.helpers._
 @import sdil.models.ReturnPeriod
+@import sdil.config.AppConfig
 
-@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription,period:ReturnPeriod,originalReturn: Option[SdilReturn])(implicit messages: Messages)
+@(key: String, lineItems: List[(String, (Long, Long), Int)], costLower: BigDecimal, costHigher: BigDecimal, subtotal: BigDecimal, broughtForward: BigDecimal, total: BigDecimal, variation: Option[ReturnsVariation] = None, subscription: RetrievedSubscription,period:ReturnPeriod,originalReturn: Option[SdilReturn], appConfig: AppConfig)(implicit messages: Messages)
 <legend>
     <span class="govuk-caption-xl">@subscription.orgName - @messages(
                                     "returnsCYA.returnsDue",
@@ -91,7 +92,7 @@
 
                 <tr>
                     <th scope="row" colspan="3">@messages(s"$key.total.original")</th>
-                    <td class="numeric">@format_money(r.total)</td>
+                    <td class="numeric">@format_money(r.total(appConfig))</td>
                 </tr>
                 <tr>
                     <th scope="row" colspan="3">@messages(s"$key.total.new")</th>
@@ -102,12 +103,12 @@
                     <td class="numeric">@format_money(-broughtForward, "+")</td>
                 </tr>
                 <tr>
-                    @if((total - r.total) < 0) {
+                    @if((total - r.total(appConfig)) < 0) {
                         <th scope="row" colspan="3"><span class="heading-small">@messages(s"$key.net.adjusted.negative")</span></th>
                     } else {
                         <th scope="row" colspan="3"><span class="heading-small">@messages(s"$key.net.adjusted.positive")</span></th>
                     }
-                    <td class="numeric"><span class="heading-small no-minus-wrapping">@format_money(total - r.total)</span></td>
+                    <td class="numeric"><span class="heading-small no-minus-wrapping">@format_money(total - r.total(appConfig))</span></td>
                 </tr>
             }
 
@@ -122,7 +123,7 @@
 
 
 @originalReturn.map { r =>
-    @if((total - r.total) > 0) {
+    @if((total - r.total(appConfig)) > 0) {
         <br/>
         <div class="panel panel-border-wide form-group">
             <p>

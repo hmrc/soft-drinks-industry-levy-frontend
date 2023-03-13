@@ -93,7 +93,8 @@ class ReturnsController @Inject()(
                       subscription,
                       submitReturnVariation,
                       broughtForward,
-                      isSmallProd
+                      isSmallProd,
+                      config
                     )
                 ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
                   submitReturn(ret._1).flatMap { _ =>
@@ -112,7 +113,8 @@ class ReturnsController @Inject()(
                       checkSmallProducerStatus,
                       submitReturnVariation,
                       broughtForward,
-                      isSmallProd
+                      isSmallProd,
+                      config
                     )
                 ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
                   submitReturn(ret._1).flatMap { _ =>

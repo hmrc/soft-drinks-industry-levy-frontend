@@ -615,6 +615,7 @@ object VariationsJourney {
                     submitReturnVariation,
                     broughtForward,
                     isSmallProd.getOrElse(false),
+                    config
                   )
       emptyReturn = SdilReturn((0, 0), (0, 0), Nil, (0, 0), (0, 0), (0, 0), (0, 0), None)
       variation = ReturnVariationData(
@@ -629,7 +630,7 @@ object VariationsJourney {
                  "return-correction-reason",
                  validation = Rule.nonEmpty[String]("required") followedBy Rule.maxLength(255))
       repayment <- ask[RepaymentMethod]("repayment-method") when
-                    (variation.revised.total - variation.original.total < 0)
+                    (variation.revised.total(config) - variation.original.total(config) < 0)
       repaymentString = repayment match {
         case Some(RepaymentMethod.Credit)      => "credit".some
         case Some(RepaymentMethod.BankPayment) => "bankPayment".some
@@ -642,7 +643,8 @@ object VariationsJourney {
               "check-return-changes",
               payMethodAndReason,
               showChangeLinks = true,
-              broughtForward.some
+              broughtForward.some,
+              appConfig = config
             )(_: Messages)
           )
 
