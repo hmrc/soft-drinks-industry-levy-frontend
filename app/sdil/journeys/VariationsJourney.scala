@@ -475,6 +475,9 @@ object VariationsJourney {
     submitReturnVariation: ReturnsVariation => Future[Unit],
     appConfig: AppConfig,
   )(implicit ec: ExecutionContext, hc: HeaderCarrier, ufMessages: UniformMessages[Html]) = {
+    println(
+      "*********************                                   &&&&&&&&&                Change actor journey            ******************* ")
+    println(subscription)
     val base = RegistrationVariationData(subscription)
     val isVoluntary = subscription.activity.voluntaryRegistration
     for {
@@ -516,6 +519,10 @@ object VariationsJourney {
                       )
                     }
                   } else {
+                    println(
+                      "*********************                                   &&&&&&&&&                activity update journey            ******************* ")
+
+                    println(subscription)
                     val warehouseShow = producerType == ProducerType.Small && useCopacker && (copacks._1 + copacks._2 + imports._1 + imports._2) == 0
                     for {
                       usePPOBAddress <- (

@@ -194,6 +194,11 @@ class VariationsController @Inject()(
 
   def closedWarehouseSites(variation: RegistrationVariationData, ShowNone: Boolean): List[Site] =
     if (ShowNone == true) {
+      variation.updatedWarehouseSites.map(x => {
+        x.closureDate match {
+          case x: Option[LocalDate] => println(" ---------------------------------" + x.getOrElse("No closure"))
+        }
+      })
       val old = variation.original.warehouseSites
         .filter { x =>
           x.closureDate.fold(true) {

@@ -60,6 +60,9 @@ class ServicePageController @Inject()(
                         if (config.directDebitEnabled) sdilConnector.checkDirectDebitStatus(sdilRef).map(Some(_))
                         else Future.successful(None))
     } yield {
+      println(
+        "&&&&&&&&&&&&&&&&&&&&&&&&                                   &&&&&&&&&                On dashboard load &&&&&&&&&&&&&&&&&&&&    ")
+      println(subscription)
       val addr = Address.fromUkAddress(subscription.address)
       if (subscription.deregDate.nonEmpty) {
         Ok(views.deregisteredServicePage(addr, subscription, lastReturn, balance, pendingDereg, variableReturns))
