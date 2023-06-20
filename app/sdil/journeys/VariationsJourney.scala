@@ -523,6 +523,9 @@ object VariationsJourney {
                       "*********************                                   &&&&&&&&&                activity update journey            ******************* ")
 
                     println(subscription)
+                    println("*********************")
+                    println(data)
+
                     val warehouseShow = producerType == ProducerType.Small && useCopacker && (copacks._1 + copacks._2 + imports._1 + imports._2) == 0
                     for {
                       usePPOBAddress <- (
