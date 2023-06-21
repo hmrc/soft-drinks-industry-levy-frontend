@@ -139,15 +139,21 @@ object Convert {
         vd.updatedProductionSites.diff(orig.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))))
       val newWarehouses =
         vd.updatedWarehouseSites.diff(orig.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))))
-
       variationsSites(newProductionSites, newWarehouses)
     }
 
     val closedSites: List[ClosedSite] = {
 
+      println("===================================================================")
+      val notExpiredSites = orig.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))) // STEP 1 -  CHECK DATE IS NOT IN THE PAST
+      println("not expried sites \n" + notExpiredSites)
+      println("Updated sites \n" + vd.updatedProductionSites)
+//      val difference = notExpiredSites.diff(vd.updatedProductionSites)
+//      println("Difference between not closed site and the new list of updated production site \n" + difference)
+
       val closedProductionSites = orig.productionSites
-        .filter(_.closureDate.forall(_.isAfter(LocalDate.now)))
-        .diff(vd.updatedProductionSites)
+        .filter(_.closureDate.forall(_.isAfter(LocalDate.now))) // STEP 1 -  CHECK DATE IS NOT IN THE PAST
+        .diff(vd.updatedProductionSites) // STEP 2 - COMPARE TO EXISTING OR NEW PRODUCTION SITES
         .map { site =>
           ClosedSite("", site.ref.getOrElse("1"), "This site is no longer open.")
         }
@@ -159,6 +165,11 @@ object Convert {
         ) map { warehouse =>
         ClosedSite("", warehouse.ref.getOrElse("1"), "This site is no longer open.")
       }
+
+      println("====================================START===============================")
+      println(closedProductionSites)
+      println(closedWarehouses)
+      println("================================END ===================================")
 
       closedProductionSites ++ closedWarehouses
     }
