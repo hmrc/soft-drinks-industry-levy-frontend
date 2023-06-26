@@ -90,10 +90,14 @@ class SoftDrinksIndustryLevyConnector @Inject()(
           }
     }
 
-  def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Unit] =
+  def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+    Future[Unit](println(
+      "^^^^^^^^^^^^^^^^^^^^^^  Post - SubmitVariation                  ^^^^^^^^^^^^^^^^^^^^^^                     ^^^^^^^^^^^^^^^^^^^^^^"))
+    Future[Unit](println(variation))
     http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map { _ =>
       ()
     }
+  }
 
   def returns_pending(
     utr: String
@@ -109,6 +113,9 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     sdilRef: String,
     data: ReturnVariationData
   )(implicit hc: HeaderCarrier): Future[Unit] = {
+    Future[Unit](println(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ post Returns_vary           @@@@@@@@@@@@@@@@@@@@@@@@@@@@@                     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@"))
+    Future[Unit](println(data))
     val uri = s"$sdilUrl/returns/vary/$sdilRef"
     http.POST[ReturnVariationData, HttpResponse](uri, data) map { _ =>
       ()
@@ -120,6 +127,9 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     period: ReturnPeriod,
     sdilReturn: SdilReturn
   )(implicit hc: HeaderCarrier): Future[Unit] = {
+    Future[Unit](println(
+      "%%%%%%%%%%%%%%%%%%%% post Returns_update                    %%%%%%%%%%%%%%%%%%%%                     %%%%%%%%%%%%%%%%%%%%"))
+    Future[Unit](println(sdilReturn))
     val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
     http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map { _ =>
       ()
@@ -134,10 +144,16 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     http.GET[Option[SdilReturn]](uri)
   }
 
-  def returns_variation(variation: ReturnsVariation, sdilRef: String)(implicit hc: HeaderCarrier): Future[Unit] =
+  def returns_variation(variation: ReturnsVariation, sdilRef: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+
+    Future[Unit](println(
+      "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  POST returns_variation                  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!                     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!"))
+    Future[Unit](println(variation))
+
     http.POST[ReturnsVariation, HttpResponse](s"$sdilUrl/returns/variation/sdil/$sdilRef", variation) map { _ =>
       ()
     }
+  }
 
   def balance(
     sdilRef: String,
