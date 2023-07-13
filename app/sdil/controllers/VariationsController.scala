@@ -90,6 +90,22 @@ class VariationsController @Inject()(
           VariationsJourney.changeBusinessAddressJourney(id, subscription, ufViews)(request)
         ).run(id, purgeStateUponCompletion = true) {
           case Change.RegChange(reg) =>
+            println("========================================================================================")
+            println("========================================================================================")
+
+            println(Console.YELLOW + "-----------index------------" + Console.WHITE)
+            reg.original.productionSites.map { x =>
+              println(Console.YELLOW + x + Console.WHITE)
+            }
+            println(Console.YELLOW + "----------- updated ------------" + Console.WHITE)
+            reg.updatedProductionSites.map { x =>
+              println(Console.YELLOW + x + Console.WHITE)
+            }
+            println(Console.YELLOW + "-----------------------" + Console.WHITE)
+
+            println("========================================================================================")
+            println("========================================================================================")
+
             sdilConnector.submitVariation(Convert(reg), sdilRef).flatMap { _ =>
               regVariationsCache.cache(sdilRef, reg).flatMap { _ =>
                 logger.info("variation of Address and Contact  is complete")
@@ -194,11 +210,7 @@ class VariationsController @Inject()(
 
   def closedWarehouseSites(variation: RegistrationVariationData, ShowNone: Boolean): List[Site] =
     if (ShowNone == true) {
-      variation.updatedWarehouseSites.map(x => {
-        x.closureDate match {
-          case x: Option[LocalDate] => println(" ---------------------------------" + x.getOrElse("No closure"))
-        }
-      })
+
       val old = variation.original.warehouseSites
         .filter { x =>
           x.closureDate.fold(true) {
@@ -216,6 +228,14 @@ class VariationsController @Inject()(
         .map(x => x.address)
 
       val diff = old diff newList
+
+      println("======================= WAREHOUSES =======================")
+      println("OLD LIST =======================")
+      old.foreach(println)
+      println("NEW LIST =======================")
+      newList.foreach(println)
+      println("DIFF LIST ======================")
+      diff.foreach(println)
 
       variation.original.warehouseSites.filter { site =>
         diff.exists { address =>
@@ -396,15 +416,6 @@ class VariationsController @Inject()(
     }
   }
 
-//  def changeActorStatus(id: String): Action[AnyContent] = Action.async { implicit req =>
-//    implicit val persistence: SessionPersistence[MessagesRequest[AnyContent]] = new SessionPersistence("test")
-//    val simpleJourney = ask[LocalDate]("test")
-//    val wm = interpret(simpleJourney)
-//    wm.run(id, config = journeyConfig) { date =>
-//      Future.successful(Ok(date.toString))
-//    }
-//  }
-//}
   def changeActorStatus(id: String): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value
     val x = sdilConnector.retrieveSubscription(sdilRef)
@@ -455,17 +466,3 @@ class VariationsController @Inject()(
     }
   }
 }
-
-//  def changeActorStatusJourney(
-//    subscription: RetrievedSubscription,
-//    sdilRef: String
-//    )(implicit hc: HeaderCarrier): Unit ={
-//      val base = RegistrationVariationData(subscription)
-//
-//        for {
-//        producerType <- ask[ProducerType]("amount-produced")
-//        useCopacker  <- if (producerType == ProducerType.Small) ask[Boolean]("third-party-packagers") else pure(false)
-//        copacks      <- askEmptyOption[(Long, Long)]("contract-packing")
-//        imports      <- askEmptyOption[(Long, Long)]("imports")
-//        } yield
-//

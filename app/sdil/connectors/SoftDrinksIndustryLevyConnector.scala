@@ -90,12 +90,10 @@ class SoftDrinksIndustryLevyConnector @Inject()(
           }
     }
 
-  def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    Future.successful(println(Console.YELLOW + variation + Console.WHITE))
+  def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Unit] =
     http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map { _ =>
       ()
     }
-  }
 
   def returns_pending(
     utr: String

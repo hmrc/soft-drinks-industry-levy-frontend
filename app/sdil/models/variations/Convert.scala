@@ -39,6 +39,7 @@ object Convert {
   }
 
   def apply(vd: RegistrationVariationData, todaysDate: LocalDate = LocalDate.now()): VariationsSubmission = {
+
     val orig = vd.original
 
     val newBusinessContact = {
@@ -144,12 +145,12 @@ object Convert {
 
     val closedSites: List[ClosedSite] = {
 
-      println("===================================================================")
       val notExpiredSites = orig.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))) // STEP 1 -  CHECK DATE IS NOT IN THE PAST
-      println("not expried sites \n" + notExpiredSites)
-      println("Updated sites \n" + vd.updatedProductionSites)
-//      val difference = notExpiredSites.diff(vd.updatedProductionSites)
-//      println("Difference between not closed site and the new list of updated production site \n" + difference)
+
+      notExpiredSites.map { x =>
+        x.ref
+
+      }
 
       val closedProductionSites = orig.productionSites
         .filter(_.closureDate.forall(_.isAfter(LocalDate.now))) // STEP 1 -  CHECK DATE IS NOT IN THE PAST
@@ -166,15 +167,32 @@ object Convert {
         ClosedSite("", warehouse.ref.getOrElse("1"), "This site is no longer open.")
       }
 
-      println("====================================START===============================")
-      println(closedProductionSites)
-      println(closedWarehouses)
-      println("================================END ===================================")
-
       closedProductionSites ++ closedWarehouses
     }
 
-    VariationsSubmission(
+    println(Console.YELLOW + "Ref   ClosureDate    TradingName      =============  Original PackSites" + Console.WHITE)
+    orig.productionSites.map { x =>
+      println(Console.YELLOW + s"${x.ref.get}   ${x.closureDate.get}  ${x.tradingName.get} " + Console.WHITE)
+    }
+    println(Console.YELLOW + "Ref   ClosureDate    TradingName      =============  Original Warehouses" + Console.WHITE)
+    orig.warehouseSites.map { x =>
+      println(Console.YELLOW + s"${x.ref.get}   ${x.closureDate.get}  ${x.tradingName.get} " + Console.WHITE)
+    }
+
+    println(Console.YELLOW + "\nVariations Data contact details : " + vd.updatedContactDetails + Console.WHITE)
+    println(Console.YELLOW + "Variations Data business address: " + vd.updatedBusinessAddress + Console.WHITE)
+    println(
+      Console.YELLOW + "Ref   ClosureDate    TradingName      =============  VariationData PackSites" + Console.WHITE)
+    vd.updatedProductionSites.map { x =>
+      println(Console.YELLOW + s"${x.ref.get}   ${x.closureDate.get}  ${x.tradingName.get} " + Console.WHITE)
+    }
+    println(
+      Console.YELLOW + "Ref   ClosureDate    TradingName      =============  VariationData Warehouses" + Console.WHITE)
+    vd.updatedWarehouseSites.map { x =>
+      println(Console.YELLOW + s"${x.ref.get}   ${x.closureDate.get}  ${x.tradingName.get} " + Console.WHITE)
+    }
+
+    val x = VariationsSubmission(
       displayOrgName = orig.orgName,
       ppobAddress = orig.address,
       businessContact = newBusinessContact.ifNonEmpty,
@@ -187,5 +205,39 @@ object Convert {
       amendSites = Nil,
       closeSites = closedSites
     )
+
+    println(
+      Console.YELLOW + "\nVariations Request ==================================================== " + Console.WHITE)
+    println(Console.YELLOW + "Trading Name          : " + x.tradingName.getOrElse("N/A") + Console.WHITE)
+    println(Console.YELLOW + "Display Org Name      : " + x.displayOrgName + Console.WHITE)
+    println(Console.YELLOW + "PPOB Address          : " + x.ppobAddress + Console.WHITE)
+    println(Console.YELLOW + "Business Contact      : " + x.businessContact.getOrElse("N/A") + Console.WHITE)
+    println(Console.YELLOW + "Corespondence Contact : " + x.correspondenceContact.getOrElse("N/A") + Console.WHITE)
+    println(Console.YELLOW + "Primary Person Contact: " + x.primaryPersonContact.getOrElse("N/A") + Console.WHITE)
+    println(Console.YELLOW + "SDIL Activity         : " + x.sdilActivity.getOrElse("N/A") + Console.WHITE)
+    println(Console.YELLOW + "Deregistration text   : " + x.deregistrationText.getOrElse("N/A") + Console.WHITE)
+    println(Console.YELLOW + "Deregistration date   : " + x.deregistrationDate.getOrElse("N/A") + Console.WHITE)
+    println(Console.YELLOW + "New Sites ================================== " + Console.WHITE)
+
+    x.newSites.map { site =>
+      println(Console.YELLOW + site + Console.WHITE)
+    }
+
+    println(Console.YELLOW + "Amended Sites ================================== " + Console.WHITE)
+
+    x.amendSites.map { site =>
+      println(Console.YELLOW + site + Console.WHITE)
+    }
+
+    println(Console.YELLOW + "Closed Sites ================================== " + Console.WHITE)
+
+    x.closeSites.map { site =>
+      println(Console.YELLOW + site + Console.WHITE)
+    }
+
+    println(
+      Console.YELLOW + "Variations Request =========================  FINISH  ======================= " + Console.WHITE)
+
+    x
   }
 }
