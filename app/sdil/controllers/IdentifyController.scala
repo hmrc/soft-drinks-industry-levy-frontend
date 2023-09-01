@@ -58,7 +58,7 @@ class IdentifyController @Inject()(
   private def restoreSession(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] =
     OptionT(cache.get(request.internalId) map {
       case Some(_) => Some(Redirect(routes.VerifyController.show()))
-      case None    => None
+      case None    => Some(Redirect(config.sdilNewRegistrationUrl))
     })
 
   private def retrieveRosmData(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] =

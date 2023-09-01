@@ -46,7 +46,7 @@ class AppConfig @Inject()(val configuration: Configuration) extends ServicesConf
   lazy val signoutReturnsUrl: String = s"$signOutSdilUrl/SDILRETURN"
   lazy val signoutUrlNoFeedback: String = s"$basGatewayFrontend$basGatewaySignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
-
+  lazy val sdilNewRegistrationUrl: String = loadConfig("sdilNewRegistrationUrl")
   val balanceAllEnabled: Boolean = getBoolean("balanceAll.enabled")
 
   val directDebitEnabled: Boolean = getBoolean("directDebit.enabled")
