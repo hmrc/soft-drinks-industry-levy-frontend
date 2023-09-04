@@ -51,6 +51,7 @@ class IdentifyController @Inject()(
 
   def start = authorisedAction.async { implicit request =>
     restoreSession
+      .orElse(redirectSessionToNewAccountHomeForNewRegistrationsURL)
       .orElse(retrieveRosmData)
       .getOrElse(Redirect(routes.IdentifyController.show))
   }
@@ -58,7 +59,17 @@ class IdentifyController @Inject()(
   private def restoreSession(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] =
     OptionT(cache.get(request.internalId) map {
       case Some(_) => Some(Redirect(routes.VerifyController.show()))
-      case None    => Some(Redirect(config.sdilNewRegistrationUrl))
+      case None    => None
+
+    })
+
+  private def redirectSessionToNewAccountHomeForNewRegistrationsURL: OptionT[Future, Result] =
+    OptionT(Future {
+      if (config.redirectToNewRegistrationsEnabled) {
+        Some(Redirect(config.sdilNewRegistrationUrl))
+      } else {
+        None
+      }
     })
 
   private def retrieveRosmData(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] =

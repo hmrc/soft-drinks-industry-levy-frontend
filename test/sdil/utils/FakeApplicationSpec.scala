@@ -143,7 +143,9 @@ trait FakeApplicationSpec extends PlaySpec with BaseOneAppPerSuite with FakeAppl
     m
   }
 
-  implicit lazy val testConfig: TestConfig = new TestConfig(configuration)
+  implicit lazy val testConfig: TestConfig = new TestConfig(configuration) {
+    override val redirectToNewRegistrationsEnabled = false
+  }
 
   lazy val mockErrorHandler = {
     val m = mock[FrontendErrorHandler]
