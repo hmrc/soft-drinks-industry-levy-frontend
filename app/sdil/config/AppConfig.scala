@@ -46,7 +46,9 @@ class AppConfig @Inject()(val configuration: Configuration) extends ServicesConf
   lazy val signoutReturnsUrl: String = s"$signOutSdilUrl/SDILRETURN"
   lazy val signoutUrlNoFeedback: String = s"$basGatewayFrontend$basGatewaySignOutPath"
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
-  lazy val sdilNewRegistrationUrl: String = getConfString("sdilNewRegistrationUrl", "")
+  lazy val sdilNewRegistrationFrontendBaseUrl: String = getConfString("soft-drinks-industry-levy-account-frontend", "")
+  lazy val sdilNewRegistrationPath: String = getConfString("sdilNewRegistrationUrl", "")
+  lazy val sdilNewRegistrationUrl: String = s"$sdilNewRegistrationFrontendBaseUrl$sdilNewRegistrationPath"
   val redirectToNewRegistrationsEnabled: Boolean = getBoolean("redirectToNewRegistration.enabled")
   val balanceAllEnabled: Boolean = getBoolean("balanceAll.enabled")
   val directDebitEnabled: Boolean = getBoolean("directDebit.enabled")
