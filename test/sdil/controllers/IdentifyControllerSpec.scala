@@ -125,16 +125,17 @@ class IdentifyControllerSpec extends ControllerSpec {
       val config = new TestConfig(configuration) {
         override val redirectToNewRegistrationsEnabled: Boolean = true
       }
-      implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
       val controller =
         new IdentifyController(stubMessagesControllerComponents, mockCache, authorisedAction, mockSdilConnector, Views)(
-          config, ec) {
+          config,
+          ec) {
           stubAuthResult(new ~(Enrolments(Set.empty), Some(User)))
         }
       val res = controller.start()(FakeRequest())
       status(res) mustBe SEE_OTHER
 
+      redirectLocation(res).value mustBe config.sdilNewRegistrationUrl
     }
   }
 
@@ -220,8 +221,8 @@ class IdentifyControllerSpec extends ControllerSpec {
       )(any())
     }
   }
-
-  lazy val testController = wire[IdentifyController]
+  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+  lazy val testController: IdentifyController = wire[IdentifyController]
 
   def stubAuthResult(res: Enrolments ~ Option[CredentialRole]) =
     when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
