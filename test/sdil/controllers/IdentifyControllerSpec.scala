@@ -23,12 +23,12 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models.RegistrationFormData
+import sdil.utils.TestConfig
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class IdentifyControllerSpec extends ControllerSpec {
 
@@ -120,6 +120,23 @@ class IdentifyControllerSpec extends ControllerSpec {
 
       redirectLocation(res).value mustBe routes.IdentifyController.show().url
     }
+
+    "redirect to registration frontend" in {
+      val config = new TestConfig(configuration) {
+        override val redirectToNewRegistrationsEnabled: Boolean = true
+      }
+
+      val controller =
+        new IdentifyController(stubMessagesControllerComponents, mockCache, authorisedAction, mockSdilConnector, Views)(
+          config,
+          ec) {
+          stubAuthResult(new ~(Enrolments(Set.empty), Some(User)))
+        }
+      val res = controller.start()(FakeRequest())
+      status(res) mustBe SEE_OTHER
+
+      redirectLocation(res).value mustBe config.sdilNewRegistrationUrl
+    }
   }
 
   "GET /identify" should {
@@ -204,8 +221,8 @@ class IdentifyControllerSpec extends ControllerSpec {
       )(any())
     }
   }
-
-  lazy val testController = wire[IdentifyController]
+  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+  lazy val testController: IdentifyController = wire[IdentifyController]
 
   def stubAuthResult(res: Enrolments ~ Option[CredentialRole]) =
     when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
