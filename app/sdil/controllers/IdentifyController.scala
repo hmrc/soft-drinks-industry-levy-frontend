@@ -59,16 +59,8 @@ class IdentifyController @Inject()(
   private def restoreSession(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] =
     OptionT(cache.get(request.internalId) map {
       case Some(_) => Some(Redirect(routes.VerifyController.show()))
-      case None    => redirectSessionToNewAccountHomeForNewRegistrationsURL(config.redirectToNewRegistrationsEnabled)
+      case None    => None
     })
-
-  private def redirectSessionToNewAccountHomeForNewRegistrationsURL(
-    redirectToNewRegistrationsEnabled: Boolean): Option[Result] =
-    if (redirectToNewRegistrationsEnabled) {
-      Some(Redirect("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"))
-    } else {
-      None
-    }
 
   private def redirectSessionToNewRegistrationsURL: OptionT[Future, Result] =
     OptionT(Future {
