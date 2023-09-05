@@ -41,17 +41,11 @@ import views.softdrinksindustrylevy.errors.Errors
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class RedirectToNewServiceTests extends AnyFreeSpec
-  with GuiceOneAppPerSuite
-  with Matchers
-  with Injecting
-  with StubMessagesFactory
-  with ScalaFutures
-  with IntegrationPatience
-  with MockitoSugar {
+class RedirectToNewServiceTests
+    extends AnyFreeSpec with GuiceOneAppPerSuite with Matchers with Injecting with StubMessagesFactory with ScalaFutures
+    with IntegrationPatience with MockitoSugar {
 
   type Retrieval = Enrolments ~ Option[CredentialRole] ~ Option[String] ~ Option[AffinityGroup]
-
 
   lazy val injector: Injector = app.injector
   implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
@@ -65,11 +59,11 @@ class RedirectToNewServiceTests extends AnyFreeSpec
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockConfig = mock[AppConfig]
 
-  val UTR = "1234567890"
   val INTERNALID = "abcdefghijkl"
   val REQUEST: Request[AnyContent] = FakeRequest()
 
-  val authorisedRequest: AuthorisedRequest[AnyContent] = AuthorisedRequest(Some(UTR), INTERNALID, Enrolments(Set.empty), REQUEST)
+  val authorisedRequest: AuthorisedRequest[AnyContent] =
+    AuthorisedRequest(None, INTERNALID, Enrolments(Set.empty), REQUEST)
 
   val authAction = new AuthorisedAction(mockAuthConnector, messagesApi, mockSdilConnector, mcc, errors)(mockConfig, ec)
   lazy val defaultRosmData: RosmRegistration = RosmRegistration(
@@ -83,7 +77,7 @@ class RedirectToNewServiceTests extends AnyFreeSpec
   )
   def stubAuthResult(res: Enrolments ~ Option[CredentialRole]) =
     when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
-      Future.successful(new~(new~(res, Some(INTERNALID)), Some(Organisation)))
+      Future.successful(new ~(new ~(res, Some(INTERNALID)), Some(Organisation)))
     }
   val identifyController = new IdentifyController(mcc, mockCache, authAction, mockSdilConnector, views)(mockConfig, ec)
 
@@ -105,13 +99,14 @@ class RedirectToNewServiceTests extends AnyFreeSpec
 
       "and the cache is not empty" - {
         "should redirect to verify and not to the new sdilRegistration" in {
-          stubAuthResult(new~(Enrolments(Set.empty), Some(User)))
-          when(mockCache.get(any())(any())).thenReturn(Future.successful(Some(RegistrationFormData(defaultRosmData, "1234567892"))))
+          stubAuthResult(new ~(Enrolments(Set.empty), Some(User)))
+          when(mockCache.get(any())(any()))
+            .thenReturn(Future.successful(Some(RegistrationFormData(defaultRosmData, "1234567892"))))
 
           val res = identifyController.start.apply(REQUEST)
 
           status(res) mustBe SEE_OTHER
-          redirectLocation(res) mustBe Some("http://example.com")
+          redirectLocation(res) mustBe Some("/soft-drinks-industry-levy/register/verify")
         }
       }
     }
