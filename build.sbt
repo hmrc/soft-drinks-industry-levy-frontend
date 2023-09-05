@@ -122,6 +122,7 @@ libraryDependencies ++= Seq(
   ws,
   "uk.gov.hmrc"               %% s"bootstrap-frontend-$playVersion" % "7.12.0",
   "uk.gov.hmrc"               %% "play-frontend-hmrc"              % "3.8.0-play-28",
+  "uk.gov.hmrc"               %% "url-builder"                    % "3.8.0-play-28",
   "uk.gov.hmrc"               %% "domain"                         % s"8.0.0-$playVersion",
   "uk.gov.hmrc"               %% "govuk-template"                 % s"5.78.0-$playVersion",
   "uk.gov.hmrc"               %% "play-ui"                        % s"9.11.0-$playVersion",
