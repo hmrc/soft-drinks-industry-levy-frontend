@@ -51,7 +51,6 @@ class IdentifyController @Inject()(
 
   def start = authorisedAction.async { implicit request =>
     restoreSession
-      .orElse(redirectSessionToNewRegistrationsURL)
       .orElse(retrieveRosmData)
       .getOrElse(Redirect(routes.IdentifyController.show))
   }
@@ -59,24 +58,7 @@ class IdentifyController @Inject()(
   private def restoreSession(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] =
     OptionT(cache.get(request.internalId) map {
       case Some(_) => Some(Redirect(routes.VerifyController.show()))
-      case None    => redirectSessionToNewAccountHomeForNewRegistrationsURL(config.redirectToNewRegistrationsEnabled)
-    })
-
-  private def redirectSessionToNewAccountHomeForNewRegistrationsURL(
-    redirectToNewRegistrationsEnabled: Boolean): Option[Result] =
-    if (redirectToNewRegistrationsEnabled) {
-      Some(Redirect("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"))
-    } else {
-      None
-    }
-
-  private def redirectSessionToNewRegistrationsURL: OptionT[Future, Result] =
-    OptionT(Future {
-      if (config.redirectToNewRegistrationsEnabled) {
-        Some(Redirect(config.sdilNewRegistrationUrl))
-      } else {
-        None
-      }
+      case None    => None
     })
 
   private def retrieveRosmData(implicit request: AuthorisedRequest[_]): OptionT[Future, Result] =
