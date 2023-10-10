@@ -46,7 +46,6 @@ class IdentifyController @Inject()(
   import IdentifyController.form
 
   def show = authorisedAction { implicit request =>
-    println("Identify Controller - Show")
     Ok(views.identify(form))
   }
 
@@ -65,7 +64,6 @@ class IdentifyController @Inject()(
 
   private def redirectSessionToNewRegistrationsURL: OptionT[Future, Result] =
     OptionT(Future {
-      println(Console.YELLOW + "Hit start of redirect to new reg " + Console.WHITE)
       if (config.redirectToNewRegistrationsEnabled) {
         Some(Redirect(config.sdilNewRegistrationUrl))
       } else {

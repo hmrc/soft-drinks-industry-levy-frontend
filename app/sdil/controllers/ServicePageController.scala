@@ -77,7 +77,6 @@ class ServicePageController @Inject()(
           ))
       }
     }
-    println("On show page ")
     ret.getOrElse { NotFound(errorHandler.notFoundTemplate) }
   }
 

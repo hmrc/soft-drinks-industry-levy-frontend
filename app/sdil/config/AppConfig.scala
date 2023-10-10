@@ -48,10 +48,10 @@ class AppConfig @Inject()(val configuration: Configuration) extends ServicesConf
   lazy val sdilHomePage: String = loadConfig("sdil-home-page-url")
   lazy val sdilNewRegistrationUrl: String = loadConfig("sdilNewRegistrationUrl")
   val redirectToNewRegistrationsEnabled: Boolean = getBoolean("redirectToNewRegistration.enabled")
-  val redirectToNewReturnsEnabled: Boolean = getBoolean("redirectToNewRegistration.enabled")
+  val redirectToNewReturnsEnabled: Boolean = getBoolean("redirectToNewReturns.enabled")
   val returnsBaseUrl = loadConfig("sdilNewReturnsFrontend")
   def startReturnUrl(year: Int, quarter: Int, isNilReturn: Boolean) =
-    s"$returnsBaseUrl/soft-drinks-industry-levy-returns-frontend/submit-return/year/$year/quarter/$quarter/nil-return/$isNilReturn"
+    s"$returnsBaseUrl/submit-return/year/$year/quarter/$quarter/nil-return/$isNilReturn"
 
   val balanceAllEnabled: Boolean = getBoolean("balanceAll.enabled")
   val directDebitEnabled: Boolean = getBoolean("directDebit.enabled")
