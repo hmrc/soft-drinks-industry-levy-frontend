@@ -16,6 +16,7 @@
 
 package sdil.controllers
 
+import cats.data.OptionT
 import cats.implicits._
 import play.api.Logger
 import play.api.i18n._
@@ -53,6 +54,8 @@ class ReturnsController @Inject()(
 
   def index(year: Int, quarter: Int, nilReturn: Boolean, id: String): Action[AnyContent] = registeredAction.async {
     implicit request =>
+      println(Console.YELLOW + "reaching index of returns controller " + Console.WHITE)
+      redirectSessionToNewReturnsURL(ReturnPeriod(year, quarter), nilReturn)
       implicit lazy val persistence =
         SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
           s"returns-$year-$quarter",
@@ -131,6 +134,16 @@ class ReturnsController @Inject()(
         }
       }
   }
+
+  private def redirectSessionToNewReturnsURL(returnPeriod: ReturnPeriod, nilReturn: Boolean): OptionT[Future, Result] =
+    OptionT(Future {
+      if (config.redirectToNewReturnsEnabled) {
+        val url = config.startReturnUrl(returnPeriod.year, returnPeriod.quarter, nilReturn)
+        Some(Redirect(url))
+      } else {
+        None
+      }
+    })
 
   def showReturnComplete(year: Int, quarter: Int): Action[AnyContent] = registeredAction.async { implicit request =>
     val sdilRef = request.sdilEnrolment.value

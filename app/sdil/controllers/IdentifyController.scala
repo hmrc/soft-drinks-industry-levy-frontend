@@ -64,6 +64,7 @@ class IdentifyController @Inject()(
 
   private def redirectSessionToNewRegistrationsURL: OptionT[Future, Result] =
     OptionT(Future {
+      println(Console.YELLOW + "Hit start of redirect to new reg " + Console.WHITE)
       if (config.redirectToNewRegistrationsEnabled) {
         Some(Redirect(config.sdilNewRegistrationUrl))
       } else {

@@ -50,7 +50,7 @@ class VerifyController @Inject()(
 
   def show = formAction.async { implicit request =>
     val data = request.formData
-
+    println(Console.YELLOW + "reaching show of verify controller" + Console.WHITE)
     sdilConnector.checkPendingQueue(data.utr) map { res =>
       (res.status, Journey.expectedPage(VerifyPage)) match {
         case (ACCEPTED, _) =>
