@@ -46,6 +46,7 @@ class IdentifyController @Inject()(
   import IdentifyController.form
 
   def show = authorisedAction { implicit request =>
+    println("Identify Controller - Show")
     Ok(views.identify(form))
   }
 
