@@ -60,9 +60,7 @@ class ReturnsController @Inject()(
           s"returns-$year-$quarter",
           cache
         )
-
       }
-      persistence.dataGet().map(x => x.isEmpty)
 
       val sdilRef = request.sdilEnrolment.value
       val period = ReturnPeriod(year, quarter)

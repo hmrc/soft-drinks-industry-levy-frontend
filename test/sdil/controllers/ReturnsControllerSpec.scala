@@ -18,12 +18,15 @@ package sdil.controllers
 
 import org.mockito.ArgumentMatchers.{any, eq => matching, _}
 import org.mockito.Mockito._
+import play.api.data
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models._
+import sdil.utils.TestConfig
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.cache.client.CacheMap
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -50,6 +53,10 @@ class ReturnsControllerSpec extends ControllerSpec {
       when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
         Future.successful(Some(aSubscription))
       }
+
+      when(cacheMock.cache(anyString(), anyString(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(CacheMap("", Map.empty)))
+
       when(mockSdilConnector.returns_pending(matching("0000000022"))(any()))
         .thenReturn(Future.successful(List.empty[ReturnPeriod]))
 
@@ -144,6 +151,25 @@ class ReturnsControllerSpec extends ControllerSpec {
 
       val result = controller.showReturnComplete(2018, 1).apply(FakeRequest())
       status(result) mustEqual SEE_OTHER
+    }
+
+    "redirect to new returns frontend when redirect to new returns flag is true" in {
+      val config = new TestConfig(configuration) {
+        override val redirectToNewReturnsEnabled: Boolean = true
+      }
+      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
+      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
+        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
+      }
+      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+        Future.successful(Some(aSubscription))
+      }
+      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful(any))
+
+      val result = controller.index(2018, 1, false, "idvalue").apply(FakeRequest())
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe "http://localhost:8703/soft-drinks-industry-levy-returns-frontend/submit-return/year/2018/quarter/1/nil-return/false"
+
     }
 
   }
