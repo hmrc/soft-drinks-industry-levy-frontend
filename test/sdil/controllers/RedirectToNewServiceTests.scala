@@ -17,6 +17,7 @@
 package sdil.controllers
 
 import com.softwaremill.macwire.wire
+import ltbs.uniform.common.web.DB
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
@@ -29,10 +30,10 @@ import play.api.http.Status.SEE_OTHER
 import play.api.i18n.MessagesApi
 import play.api.inject.Injector
 import play.api.libs.json.JsValue
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting, StubMessagesFactory}
-import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction}
+import sdil.actions.{AuthorisedAction, AuthorisedRequest, RegisteredAction, RegisteredRequest}
 import sdil.config.{AppConfig, RegistrationFormDataCache, ReturnsFormDataCache}
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import sdil.models.{Address, OrganisationDetails, RegistrationFormData, ReturnsFormData, RosmRegistration}
@@ -40,6 +41,7 @@ import sdil.uniform.SaveForLaterPersistenceNew
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
 import views.Views
 import views.softdrinksindustrylevy.errors.Errors
@@ -62,8 +64,8 @@ class RedirectToNewServiceTests
     stubMessagesControllerComponents()
   val mockCache: RegistrationFormDataCache = mock[RegistrationFormDataCache]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
-//  val mockPersistenceBase: SaveForLaterPersistenceNew[Request[AnyContent]] =
-//    injector.instanceOf[SaveForLaterPersistenceNew[Request[AnyContent]]]
+  val mockPersistenceBase: SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]] =
+    mock[SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]]]
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockConfig: AppConfig = mock[AppConfig]
   val mockReturnsCache: ReturnsFormDataCache = mock[ReturnsFormDataCache]
@@ -99,7 +101,21 @@ class RedirectToNewServiceTests
 
   val identifyController = new IdentifyController(mcc, mockCache, authAction, mockSdilConnector, views)(mockConfig, ec)
   val returnsController =
-    new ReturnsController(mcc, mockConfig, ufViews, regAction, mockSdilConnector, mockCache, mockReturnsCache)
+    new ReturnsController(mcc, mockConfig, ufViews, regAction, mockSdilConnector, mockCache, mockReturnsCache) {
+      override def getPersistance(year: Int, quarter: Int)(
+        implicit request: RegisteredRequest[AnyContent]): SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]] =
+        mockPersistenceBase
+
+      override def completeReturnInCurrentService(
+        year: Int,
+        quarter: Int,
+        nilReturn: Boolean,
+        id: String,
+        sdilRef: String)(
+        implicit request: RegisteredRequest[AnyContent],
+        persistence: SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]]): Future[Result] =
+        Future.successful(Redirect("http://diffExample.com"))
+    }
 
   "Identify.start" - {
     "when redirectToNewRegistrationsEnabled is true" - {
@@ -137,13 +153,11 @@ class RedirectToNewServiceTests
       "and the cache is empty " - {
         "should redirect to new returns frontend" in {
           stubAuthResultEnrolled(Enrolments(Set.empty))
-          when(mockCache.get(any())(any())).thenReturn(Future.successful(None))
           when(mockConfig.redirectToNewReturnsEnabled).thenReturn(true)
-          //when(mockPersistenceBase.dataGet()(any())).thenReturn(Future.successful(Map.empty[List[String], String]))
-          when(mockConfig.startReturnUrl(2018, 1, isNilReturn = false)).thenReturn("http://example.com")
-          when(mockReturnsCache.get(anyString())(any())).thenReturn(Future.successful(None))
+          when(mockPersistenceBase.dataGet()(any())).thenReturn(Future.successful(Map.empty[List[String], String]))
+          when(mockConfig.startReturnUrl(2023, 1, isNilReturn = false)).thenReturn("http://example.com")
 
-          val res = returnsController.index(2023, 1, nilReturn = false, "idvalue").apply(REQUEST)
+          lazy val res = returnsController.index(2023, 1, nilReturn = false, "idvalue").apply(REQUEST)
 
           status(res) mustBe SEE_OTHER
           redirectLocation(res) mustBe Some("http://example.com")
@@ -154,14 +168,11 @@ class RedirectToNewServiceTests
         "should stay on old service and start a return" in {
           stubAuthResultEnrolled(Enrolments(Set.empty))
           when(mockConfig.redirectToNewReturnsEnabled).thenReturn(true)
-          when(mockCache.get(any())(any())).thenReturn(Future.successful(None))
-          when(mockReturnsCache.get(anyString())(any()))
-            .thenReturn(Future.successful(Some(ReturnsFormData(any(), any()))))
-          //when(mockPersistenceBase.dataGet()(any())).thenReturn(Future.successful(any()))
+          when(mockPersistenceBase.dataGet()(any())).thenReturn(Future.successful(Map(List("test") -> "example")))
           val res = returnsController.index(2023, 1, nilReturn = false, "idvalue").apply(REQUEST)
 
           status(res) mustBe SEE_OTHER
-          redirectLocation(res) mustBe Some("/soft-drinks-industry-levy/own-brands-packaged-at-own-sites")
+          redirectLocation(res) mustBe Some("http://diffExample.com")
         }
       }
     }
