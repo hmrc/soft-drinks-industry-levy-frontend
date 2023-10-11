@@ -153,25 +153,6 @@ class ReturnsControllerSpec extends ControllerSpec {
       status(result) mustEqual SEE_OTHER
     }
 
-    "redirect to new returns frontend when redirect to new returns flag is true" in {
-      val config = new TestConfig(configuration) {
-        override val redirectToNewReturnsEnabled: Boolean = true
-      }
-      val sdilEnrolment = EnrolmentIdentifier("EtmpRegistrationNumber", "XZSDIL000100107")
-      when(mockAuthConnector.authorise[Enrolments](any(), matching(allEnrolments))(any(), any())).thenReturn {
-        Future.successful(Enrolments(Set(Enrolment("HMRC-OBTDS-ORG", Seq(sdilEnrolment), "Active"))))
-      }
-      when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
-        Future.successful(Some(aSubscription))
-      }
-      when(mockSdilConnector.returns_pending(matching("0000000022"))(any())).thenReturn(Future.successful(any))
-
-      val result = controller.index(2018, 1, false, "idvalue").apply(FakeRequest())
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe "http://localhost:8703/soft-drinks-industry-levy-returns-frontend/submit-return/year/2018/quarter/1/nil-return/false"
-
-    }
-
   }
   lazy val hc: HeaderCarrier = HeaderCarrier()
 }

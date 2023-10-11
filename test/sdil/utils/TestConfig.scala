@@ -30,4 +30,5 @@ class TestConfig(override val configuration: Configuration) extends AppConfig(co
   override lazy val signoutUrlNoFeedback: String = "http://localhost:9553/bas-gateway/sign-out-without-state"
   override val balanceAllEnabled: Boolean = true
   override val directDebitEnabled: Boolean = true
+  override val redirectToNewReturnsEnabled: Boolean = false
 }
