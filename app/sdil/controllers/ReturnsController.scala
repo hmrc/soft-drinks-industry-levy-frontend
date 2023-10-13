@@ -16,6 +16,7 @@
 
 package sdil.controllers
 
+import cats.data.OptionT
 import cats.implicits._
 import play.api.Logger
 import play.api.i18n._
@@ -52,84 +53,113 @@ class ReturnsController @Inject()(
   override def defaultBackLink = "/soft-drinks-industry-levy"
 
   def index(year: Int, quarter: Int, nilReturn: Boolean, id: String): Action[AnyContent] = registeredAction.async {
+
     implicit request =>
-      implicit lazy val persistence =
-        SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
-          s"returns-$year-$quarter",
-          cache
-        )
-
+      implicit val persistence = getPersistance(year, quarter)
       val sdilRef = request.sdilEnrolment.value
-      val period = ReturnPeriod(year, quarter)
-      val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
 
-      (for {
-        subscription   <- sdilConnector.retrieveSubscription(sdilRef).map { _.get }
-        pendingReturns <- sdilConnector.returns_pending(subscription.utr)
-        broughtForward <- if (config.balanceAllEnabled)
-                           sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
-                             extractTotal(listItemsWithTotal(x))
-                           } else sdilConnector.balance(sdilRef, withAssessment = false)
-        isSmallProd <- sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
-                        case Some(x) =>
-                          x // the given sdilRef matches a customer that was a small producer at some point in the quarter
-                        case None => false
-                      }
+      redirectToNewService.flatMap {
+        case true =>
+          val url = config.startReturnUrl(year, quarter, nilReturn)
+          Future.successful(Redirect(url))
+        case false => completeReturnInCurrentService(year, quarter, nilReturn, id, sdilRef)
+      }
+  }
 
-        r <- if (pendingReturns.contains(period)) {
-              def submitReturn(sdilReturn: SdilReturn): Future[Unit] =
-                sdilConnector.returns_update(subscription.utr, period, sdilReturn)
-              def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
-                sdilConnector.checkSmallProducerStatus(sdilRef, period)
-              def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
-                sdilConnector.returns_variation(rvd, sdilRef)
+  def getPersistance(year: Int, quarter: Int)(
+    implicit request: RegisteredRequest[AnyContent]): SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]] =
+    SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]](_.sdilEnrolment.value)(
+      s"returns-$year-$quarter",
+      cache
+    )
 
-              if (nilReturn)
-                interpret(
-                  ReturnsJourney
-                    .cyaJourney(
-                      period,
-                      emptyReturn,
-                      subscription,
-                      submitReturnVariation,
-                      broughtForward,
-                      isSmallProd
-                    )
-                ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
-                  submitReturn(ret._1).flatMap { _ =>
-                    returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
-                      Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
+  def redirectToNewService(
+    implicit request: RegisteredRequest[AnyContent],
+    persistence: SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]]): Future[Boolean] =
+    if (config.redirectToNewReturnsEnabled) {
+      persistence.dataGet().map(_.isEmpty)
+    } else {
+      Future.successful(false)
+    }
+
+  def completeReturnInCurrentService(year: Int, quarter: Int, nilReturn: Boolean, id: String, sdilRef: String)(
+    implicit request: RegisteredRequest[AnyContent],
+    persistence: SaveForLaterPersistenceNew[RegisteredRequest[AnyContent]]): Future[Result] = {
+    val period = ReturnPeriod(year, quarter)
+    val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
+
+    (for {
+      subscription <- sdilConnector.retrieveSubscription(sdilRef).map {
+                       _.get
+                     }
+      pendingReturns <- sdilConnector.returns_pending(subscription.utr)
+      broughtForward <- if (config.balanceAllEnabled)
+                         sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { x =>
+                           extractTotal(listItemsWithTotal(x))
+                         } else sdilConnector.balance(sdilRef, withAssessment = false)
+      isSmallProd <- sdilConnector.checkSmallProducerStatus(sdilRef, period).flatMap {
+                      case Some(x) =>
+                        x // the given sdilRef matches a customer that was a small producer at some point in the quarter
+                      case None => false
                     }
-                  }
-                } else
-                interpret(
-                  ReturnsJourney
-                    .journey(
-                      id,
-                      period,
-                      None,
-                      subscription,
-                      checkSmallProducerStatus,
-                      submitReturnVariation,
-                      broughtForward,
-                      isSmallProd
-                    )
-                ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
-                  submitReturn(ret._1).flatMap { _ =>
-                    returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
-                      Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
-                    }
+
+      r <- if (pendingReturns.contains(period)) {
+            def submitReturn(sdilReturn: SdilReturn): Future[Unit] =
+              sdilConnector.returns_update(subscription.utr, period, sdilReturn)
+
+            def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
+              sdilConnector.checkSmallProducerStatus(sdilRef, period)
+
+            def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
+              sdilConnector.returns_variation(rvd, sdilRef)
+
+            if (nilReturn)
+              interpret(
+                ReturnsJourney
+                  .cyaJourney(
+                    period,
+                    emptyReturn,
+                    subscription,
+                    submitReturnVariation,
+                    broughtForward,
+                    isSmallProd
+                  )
+              ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
+                submitReturn(ret._1).flatMap { _ =>
+                  returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
+                    Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
                   }
                 }
+              } else {}
 
-            } else
-              Redirect(routes.ServicePageController.show).pure[Future]
-      } yield r) recoverWith {
-        case t: Throwable => {
-          logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
-          Redirect(routes.ServicePageController.show).pure[Future]
-        }
+            interpret(
+              ReturnsJourney
+                .journey(
+                  id,
+                  period,
+                  None,
+                  subscription,
+                  checkSmallProducerStatus,
+                  submitReturnVariation,
+                  broughtForward,
+                  isSmallProd
+                )
+            ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
+              submitReturn(ret._1).flatMap { _ =>
+                returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
+                  Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
+                }
+              }
+            }
+
+          } else
+            Redirect(routes.ServicePageController.show).pure[Future]
+    } yield r) recoverWith {
+      case t: Throwable => {
+        logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
+        Redirect(routes.ServicePageController.show).pure[Future]
       }
+    }
   }
 
   def showReturnComplete(year: Int, quarter: Int): Action[AnyContent] = registeredAction.async { implicit request =>

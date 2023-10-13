@@ -18,12 +18,15 @@ package sdil.controllers
 
 import org.mockito.ArgumentMatchers.{any, eq => matching, _}
 import org.mockito.Mockito._
+import play.api.data
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import sdil.models._
+import sdil.utils.TestConfig
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.cache.client.CacheMap
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -50,6 +53,10 @@ class ReturnsControllerSpec extends ControllerSpec {
       when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
         Future.successful(Some(aSubscription))
       }
+
+      when(cacheMock.cache(anyString(), anyString(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(CacheMap("", Map.empty)))
+
       when(mockSdilConnector.returns_pending(matching("0000000022"))(any()))
         .thenReturn(Future.successful(List.empty[ReturnPeriod]))
 
