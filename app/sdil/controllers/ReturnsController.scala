@@ -53,7 +53,6 @@ class ReturnsController @Inject()(
   override def defaultBackLink = "/soft-drinks-industry-levy"
 
   def index(year: Int, quarter: Int, nilReturn: Boolean, id: String): Action[AnyContent] = registeredAction.async {
-
     implicit request =>
       implicit val persistence = getPersistance(year, quarter)
       val sdilRef = request.sdilEnrolment.value
@@ -113,7 +112,7 @@ class ReturnsController @Inject()(
             def submitReturnVariation(rvd: ReturnsVariation): Future[Unit] =
               sdilConnector.returns_variation(rvd, sdilRef)
 
-            if (nilReturn)
+            if (nilReturn) {
               interpret(
                 ReturnsJourney
                   .cyaJourney(
@@ -130,30 +129,33 @@ class ReturnsController @Inject()(
                     Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
                   }
                 }
-              } else {}
+              }
+            } else {
 
-            interpret(
-              ReturnsJourney
-                .journey(
-                  id,
-                  period,
-                  None,
-                  subscription,
-                  checkSmallProducerStatus,
-                  submitReturnVariation,
-                  broughtForward,
-                  isSmallProd
-                )
-            ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
-              submitReturn(ret._1).flatMap { _ =>
-                returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
-                  Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
+              interpret(
+                ReturnsJourney
+                  .journey(
+                    id,
+                    period,
+                    None,
+                    subscription,
+                    checkSmallProducerStatus,
+                    submitReturnVariation,
+                    broughtForward,
+                    isSmallProd
+                  )
+              ).run(id, purgeStateUponCompletion = true, config = journeyConfig) { ret =>
+                submitReturn(ret._1).flatMap { _ =>
+                  returnsCache.cache(request.sdilEnrolment.value, ReturnsFormData(ret._1, ret._2)).flatMap { _ =>
+                    Redirect(routes.ReturnsController.showReturnComplete(year, quarter))
+                  }
                 }
               }
-            }
 
-          } else
+            }
+          } else {
             Redirect(routes.ServicePageController.show).pure[Future]
+          }
     } yield r) recoverWith {
       case t: Throwable => {
         logger.error(s"Exception occurred while retrieving pendingReturns for sdilRef =  $sdilRef", t)
