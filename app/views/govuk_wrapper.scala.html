@@ -105,8 +105,10 @@
 }
 }
 
-@getHelpForm = @{
-    viewHelpers.reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)
+@getHelpForm = {
+    <div class="report-error">
+        <a class="report-error__toggle" href="@appConfig.reportAProblemNonJSUrl">@Messages("report.a.problem.link")</a>
+    </div>
 }
 
 @content = {
