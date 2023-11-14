@@ -29,10 +29,8 @@ class AppConfig @Inject()(val configuration: Configuration) extends ServicesConf
   private lazy val contactHost = configuration.getOptional[String](s"contact-frontend.host").getOrElse("")
   private lazy val contactFormServiceIdentifier = configuration.get[String]("appName")
 
-  lazy val reportAProblemPartialUrl =
-    s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl =
-    s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+    s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier"
 
   //Auth related config
   lazy val appName: String = loadConfig("appName")

@@ -20,7 +20,6 @@ import play.api.Configuration
 import sdil.config.AppConfig
 
 class TestConfig(override val configuration: Configuration) extends AppConfig(configuration) {
-  override lazy val reportAProblemPartialUrl: String = "reportProblem"
   override lazy val reportAProblemNonJSUrl: String = "reportProblemNonJs"
   override lazy val ggLoginUrl: String = "http://localhost:9553/bas-gateway/sign-in"
   override lazy val sdilHomePage: String = "http://localhost:8700/soft-drinks-industry-levy/register/identify"
