@@ -18,6 +18,7 @@ package sdil.actions
 
 import play.api.mvc.Results._
 import play.api.mvc._
+import sdil.config.AppConfig
 import sdil.connectors.SoftDrinksIndustryLevyConnector
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
@@ -31,6 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RegisteredAction @Inject()(
   val authConnector: AuthConnector,
   sdilConnector: SoftDrinksIndustryLevyConnector,
+  appConfig: AppConfig,
   mcc: MessagesControllerComponents)(implicit val executionContext: ExecutionContext)
     extends ActionRefiner[Request, RegisteredRequest] with ActionBuilder[RegisteredRequest, AnyContent]
     with AuthorisedFunctions with ActionHelpers {
@@ -38,24 +40,31 @@ class RegisteredAction @Inject()(
   val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, RegisteredRequest[A]]] = {
-    implicit val hc: HeaderCarrier =
+    implicit val hc: HeaderCarrier = {
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    }
+    if (appConfig.redirectToNewServiceEnabled) {
+      Future.successful(Left(Redirect(appConfig.sdilNewHomeUrl)))
+    } else {
+      authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
+        (getSdilEnrolment(enrolments), getUtr(enrolments)) match {
+          case (Some(e), _) =>
+            Future.successful {
+              Right(RegisteredRequest(e, request))
+            }
+          case (None, Some(utr)) =>
+            sdilConnector.retrieveSubscription(utr, "utr").map {
+              case Some(subscription) =>
+                Right(RegisteredRequest(EnrolmentIdentifier("sdil", subscription.sdilRef), request))
+              case None =>
+                Left(Redirect(sdil.controllers.routes.IdentifyController.start))
+            }
+          case _ => Future.successful(Left(Redirect(sdil.controllers.routes.IdentifyController.start)))
+        }
 
-    authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
-      (getSdilEnrolment(enrolments), getUtr(enrolments)) match {
-        case (Some(e), _) => Future.successful { Right(RegisteredRequest(e, request)) }
-        case (None, Some(utr)) =>
-          sdilConnector.retrieveSubscription(utr, "utr").map {
-            case Some(subscription) =>
-              Right(RegisteredRequest(EnrolmentIdentifier("sdil", subscription.sdilRef), request))
-            case None =>
-              Left(Redirect(sdil.controllers.routes.IdentifyController.start))
-          }
-        case _ => Future.successful(Left(Redirect(sdil.controllers.routes.IdentifyController.start)))
+      } recover {
+        case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
       }
-
-    } recover {
-      case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
     }
   }
 }

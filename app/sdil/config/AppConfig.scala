@@ -47,6 +47,9 @@ class AppConfig @Inject()(val configuration: Configuration) extends ServicesConf
   lazy val sdilNewRegistrationUrl: String = loadConfig("sdilNewRegistrationUrl")
   val redirectToNewRegistrationsEnabled: Boolean = getBoolean("redirectToNewRegistration.enabled")
   val redirectToNewReturnsEnabled: Boolean = getBoolean("redirectToNewReturns.enabled")
+  val redirectToNewServiceEnabled: Boolean = getBoolean("redirectToNewService.enabled")
+  lazy val sdilNewHomeUrl: String = loadConfig("sdilNewHomeUrl")
+
   val returnsBaseUrl = loadConfig("sdilNewReturnsFrontend")
   def startReturnUrl(year: Int, quarter: Int, isNilReturn: Boolean) =
     s"$returnsBaseUrl/submit-return/year/$year/quarter/$quarter/nil-return/$isNilReturn"
