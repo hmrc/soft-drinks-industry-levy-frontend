@@ -24,7 +24,7 @@ import play.api.mvc.Results._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import play.api.test.{FakeRequest, StubMessagesFactory}
 import play.api.test.Helpers._
-import sdil.config.AppConfig
+import sdil.config.{AppConfig, RegistrationFormDataCache}
 import sdil.controllers.ControllerSpec
 import sdil.models.backend.{Contact, Site, UkAddress}
 import sdil.models.retrieved.{RetrievedActivity, RetrievedSubscription}
@@ -53,7 +53,7 @@ class ActionsWithNewServiceEnabledSpec extends ControllerSpec with StubMessagesF
     }
   }
 
-  class HarnessForm(formAction: RegisteredAction) {
+  class HarnessForm(formAction: FormAction) {
     def onPageLoad() = formAction { _ =>
       Results.Ok
     }
@@ -87,6 +87,30 @@ class ActionsWithNewServiceEnabledSpec extends ControllerSpec with StubMessagesF
           new RegisteredAction(mockAuthConnector, mockSdilConnector, mockConfig, stubMessagesControllerComponents)(ec)
 
         val controller = new HarnessRegistered(action)
+        when(mockConfig.redirectToNewServiceEnabled) thenReturn true
+        when(mockConfig.sdilNewHomeUrl) thenReturn "http://newSdilHome.com"
+        val result = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe "http://newSdilHome.com"
+      }
+    }
+  }
+
+  "FormAction" should {
+    "redirect to the new sdilHome" when {
+      "the newSdilService is enabled" in {
+        val mockCache: RegistrationFormDataCache = mock[RegistrationFormDataCache]
+        val authAction: AuthorisedAction = new AuthorisedAction(
+          mockAuthConnector,
+          messagesApi,
+          mockSdilConnector,
+          stubMessagesControllerComponents,
+          errors)(mockConfig, ec)
+
+        val formAction = new FormAction(messagesApi, mockCache, authAction, stubMessagesControllerComponents)
+
+        val controller = new HarnessForm(formAction)
         when(mockConfig.redirectToNewServiceEnabled) thenReturn true
         when(mockConfig.sdilNewHomeUrl) thenReturn "http://newSdilHome.com"
         val result = controller.onPageLoad()(FakeRequest())
