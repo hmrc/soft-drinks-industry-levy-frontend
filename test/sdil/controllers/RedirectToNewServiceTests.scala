@@ -88,7 +88,7 @@ class RedirectToNewServiceTests
     Address("1", "The Road", "", "", "AA11 1AA")
   )
 
-  val regAction = new RegisteredAction(mockAuthConnector, mockSdilConnector, mcc)(ec)
+  val regAction = new RegisteredAction(mockAuthConnector, mockSdilConnector, mockConfig, mcc)(ec)
   def stubAuthResult(res: Enrolments ~ Option[CredentialRole]): OngoingStubbing[Future[Retrieval]] =
     when(mockAuthConnector.authorise[Retrieval](any(), any())(any(), any())).thenReturn {
       Future.successful(new ~(new ~(res, Some(INTERNALID)), Some(Organisation)))

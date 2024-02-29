@@ -50,46 +50,50 @@ class AuthorisedAction @Inject()(
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    val retrieval = allEnrolments and credentialRole and internalId and affinityGroup
+    if (config.redirectToNewServiceEnabled) {
+      Future.successful(Left(Redirect(config.sdilNewHomeUrl)))
+    } else {
+      val retrieval = allEnrolments and credentialRole and internalId and affinityGroup
 
-    authorised(AuthProviders(GovernmentGateway)).retrieve(retrieval) {
-      case enrolments ~ role ~ id ~ affinity =>
-        val maybeUtr = getUtr(enrolments)
-        val maybeSdil = getSdilEnrolment(enrolments)
+      authorised(AuthProviders(GovernmentGateway)).retrieve(retrieval) {
+        case enrolments ~ role ~ id ~ affinity =>
+          val maybeUtr = getUtr(enrolments)
+          val maybeSdil = getSdilEnrolment(enrolments)
 
-        val error: Option[Result] = invalidRole(role)(request).orElse(invalidAffinityGroup(affinity)(request))
+          val error: Option[Result] = invalidRole(role)(request).orElse(invalidAffinityGroup(affinity)(request))
 
-        val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
-        (maybeUtr, maybeSdil) match {
-          case (Some(utr), None) =>
-            sdilConnector.retrieveSubscription(utr, "utr") map {
-              case Some(sub) if sub.deregDate.isEmpty =>
-                Left(Redirect(routes.ServicePageController.show))
-              case _ =>
-                Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
-            }
-          case (Some(utr), Some(_)) =>
-            sdilConnector.retrieveSubscription(utr, "utr") flatMap {
-              case Some(sub) if sub.deregDate.isEmpty =>
-                alreadyRegistered(utr).map(Left.apply)
-              case _ =>
-                Future.successful(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
-            }
-          case (None, Some(sdilEnrolment)) =>
-            sdilConnector.retrieveSubscription(sdilEnrolment.value).map {
-              case Some(sub) if sub.deregDate.isEmpty => Left(Redirect(routes.ServicePageController.show))
-              case Some(sub) if sub.deregDate.nonEmpty =>
-                Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
-              case _ => Left(Redirect(routes.ServicePageController.show))
-            }
-          case _ if error.nonEmpty =>
-            Future.successful(Left(error.get))
-          case _ =>
-            Future.successful(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
-        }
+          val internalId = id.getOrElse(throw new RuntimeException("No internal ID for user"))
+          (maybeUtr, maybeSdil) match {
+            case (Some(utr), None) =>
+              sdilConnector.retrieveSubscription(utr, "utr") map {
+                case Some(sub) if sub.deregDate.isEmpty =>
+                  Left(Redirect(routes.ServicePageController.show))
+                case _ =>
+                  Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
+              }
+            case (Some(utr), Some(_)) =>
+              sdilConnector.retrieveSubscription(utr, "utr") flatMap {
+                case Some(sub) if sub.deregDate.isEmpty =>
+                  alreadyRegistered(utr).map(Left.apply)
+                case _ =>
+                  Future.successful(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
+              }
+            case (None, Some(sdilEnrolment)) =>
+              sdilConnector.retrieveSubscription(sdilEnrolment.value).map {
+                case Some(sub) if sub.deregDate.isEmpty => Left(Redirect(routes.ServicePageController.show))
+                case Some(sub) if sub.deregDate.nonEmpty =>
+                  Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request))
+                case _ => Left(Redirect(routes.ServicePageController.show))
+              }
+            case _ if error.nonEmpty =>
+              Future.successful(Left(error.get))
+            case _ =>
+              Future.successful(Right(AuthorisedRequest(maybeUtr, internalId, enrolments, request)))
+          }
 
-    } recover {
-      case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
+      } recover {
+        case _: NoActiveSession => Left(Redirect(sdil.controllers.routes.AuthenticationController.signIn()))
+      }
     }
   }
 
