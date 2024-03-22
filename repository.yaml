@@ -1,2 +1,6 @@
 digital-service: SDIL
 repoVisibility: public_0C3F0CE3E6E6448FAD341E7BFA50FCD333E06A20CFF05FCACE61154DDBBADF71
+test-repositories:
+  - soft-drinks-industry-levy-all-performance-tests
+  - soft-drinks-industry-levy-performance-tests
+  - soft-drinks-industry-levy-acceptance-tests
