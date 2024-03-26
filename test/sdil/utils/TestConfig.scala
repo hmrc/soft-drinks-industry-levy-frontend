@@ -30,4 +30,6 @@ class TestConfig(override val configuration: Configuration) extends AppConfig(co
   override val balanceAllEnabled: Boolean = true
   override val directDebitEnabled: Boolean = true
   override val redirectToNewReturnsEnabled: Boolean = false
+  override val redirectToNewRegistrationsEnabled: Boolean = false
+  override val redirectToNewServiceEnabled: Boolean = false
 }
